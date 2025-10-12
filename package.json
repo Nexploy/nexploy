@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
     "dev": "turbo run dev",
+    "build": "turbo run build",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{js,ts,tsx,css,md}\"",
     "check-types": "turbo run check-types"
@@ -17,7 +17,7 @@
     "turbo": "^2.5.8",
     "typescript": "5.9.3"
   },
-  "packageManager": "pnpm@10.4.1",
+  "packageManager": "pnpm@10.18.2+sha256.93421022fe0156d7cbdf699edc3d7eab39654986eac14f927d02b85f0dac6d61",
   "engines": {
     "node": ">=20"
   },

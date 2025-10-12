@@ -29,6 +29,9 @@ importers:
 
   apps/desktop:
     dependencies:
+      electron:
+        specifier: ^38.2.2
+        version: 38.2.2
       next:
         specifier: 15.5.4
         version: 15.5.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -57,9 +60,6 @@ importers:
       concurrently:
         specifier: ^9.2.1
         version: 9.2.1
-      electron:
-        specifier: ^38.2.2
-        version: 38.2.2
       electron-builder:
         specifier: ^26.0.12
         version: 26.0.12(electron-builder-squirrel-windows@26.0.12)
@@ -72,9 +72,6 @@ importers:
       tailwindcss:
         specifier: ^4.1.14
         version: 4.1.14
-      ts-node:
-        specifier: ^10.9.2
-        version: 10.9.2(@types/node@24.7.2)(typescript@5.9.3)
       typescript:
         specifier: ^5.9.3
         version: 5.9.3

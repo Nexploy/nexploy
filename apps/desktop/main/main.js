@@ -23,11 +23,10 @@ function createWindow() {
         mainWindow.show();
     });
 
-    if (isDev) {
-        mainWindow.loadURL('http://localhost:3001');
-    } else {
-        mainWindow.loadFile(path.join(__dirname, '../renderer/out/index.html'));
-    }
+    mainWindow.loadURL('http://localhost:3001');
+    // } else {
+    //     mainWindow.loadFile(path.join(__dirname, '../renderer/out/index.html'));
+    // }
 
     mainWindow.on('closed', () => {
         mainWindow = null;
