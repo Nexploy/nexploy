@@ -1,0 +1,60 @@
+{
+  "name": "desktop",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently --prefix '[{name}]' --names 'renderer,electron' \"pnpm run dev:renderer\" \"pnpm run dev:electron\"",
+    "dev:renderer": "cd renderer && next dev -p 3001",
+    "dev:electron": "wait-on tcp:3001 && electron ./main/main.js",
+    "build": "cd renderer && next build && electron-builder",
+    "start": "electron ./main/main.js"
+  },
+  "dependencies": {
+    "next": "15.5.4",
+    "electron": "^38.2.2",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@tailwindcss/postcss": "^4.1.14",
+    "@types/node": "^24.7.2",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
+    "concurrently": "^9.2.1",
+    "electron": "^38.2.2",
+    "electron-builder": "^26.0.12",
+    "eslint": "^9.37.0",
+    "eslint-config-next": "15.5.4",
+    "tailwindcss": "^4.1.14",
+    "typescript": "^5.9.3",
+    "wait-on": "^9.0.1"
+  },
+  "build": {
+    "appId": "com.myapp.desktop",
+    "productName": "MyDesktopApp",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main/**/*",
+      "renderer/.next/**/*",
+      "renderer/package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "renderer/.next",
+        "to": "renderer/.next"
+      }
+    ],
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}
