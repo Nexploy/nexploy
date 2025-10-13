@@ -4,8 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "turbo run dev",
+    "dev:nexploy": "turbo run dev --filter=nexploy",
+    "dev:desktop": "turbo run dev --filter=desktop",
     "build": "turbo run build",
     "lint": "turbo run lint",
+    "types": "tsc --noEmit",
     "format": "prettier --write \"**/*.{js,ts,tsx,css,md}\"",
     "check-types": "turbo run check-types"
   },

@@ -1,0 +1,27 @@
+name: nexploy_dev
+services:
+  postgres:
+    image: postgres:18.0
+    container_name: nexploy_postgres_dev
+    ports:
+      - "5433:5432"
+    networks:
+      - nexploy_network
+    environment:
+      - POSTGRES_DB=nexploy
+      - POSTGRES_USER=nexploy
+      - POSTGRES_PASSWORD=nexploy
+    volumes:
+      - nexploy_db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $POSTGRES_USER" ]
+      interval: 60s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  nexploy_db:
+
+networks:
+  nexploy_network:
+
