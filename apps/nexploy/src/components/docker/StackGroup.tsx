@@ -42,7 +42,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
         <Accordion type="single" collapsible defaultValue={stackName}>
             <AccordionItem value={stackName} className="border rounded-lg !border-b bg-card">
                 <AccordionTrigger asChild
-                                  className="px-6 py-4 hover:no-underline cursor-pointer">
+                                  className="px-4 py-4 hover:no-underline cursor-pointer">
                     <div className="flex  flex-1 w-full">
                         <ChevronDownIcon
                             className="text-muted-foreground size-5 self-center transition-transform duration-200"/>
@@ -77,7 +77,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
 
                         <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                             <Status
-                                className={"mr-2"}
+                                className={'mr-2'}
                                 status={allRunning ? 'online' : 'offline'}
                             >
                                 <StatusIndicator/>

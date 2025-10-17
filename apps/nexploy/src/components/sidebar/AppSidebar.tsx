@@ -1,5 +1,15 @@
-import { Activity, ChevronUp, Container, Folder, Network, Send, User2 } from 'lucide-react'
-
+import {
+    Activity,
+    Box,
+    ChevronRight,
+    ChevronUp,
+    Container,
+    Folder,
+    LayoutList,
+    Network,
+    Send,
+    User2
+} from 'lucide-react'
 import {
     Sidebar,
     SidebarContent,
@@ -11,6 +21,9 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubButton,
+    SidebarMenuSubItem,
 } from '@workspace/ui/components/sidebar'
 import Link from 'next/link';
 import {
@@ -19,61 +32,90 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@workspace/ui/components/dropdown-menu';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@workspace/ui/components/collapsible';
+import * as React from 'react';
+import { ElementType } from 'react';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset'
 }
 
-const items = [
-    {
-        title: 'Projects',
-        icon: Folder,
-    },
-    {
-        title: 'Monitoring',
-        icon: Activity,
-    },
+interface SidebarItem {
+    title: string;
+    icon: ElementType;
+    href: string;
+    children?: { title: string; href: string, icon: ElementType }[];
+}
+
+const items: SidebarItem[] = [
+    { title: 'Projects', href: '/projects', icon: Folder },
+    { title: 'Monitoring', href: '/monitoring', icon: Activity },
     {
         title: 'Docker',
-        icon: Container,
+        href: '/docker/containers',
+        icon: Box,
+        children: [
+            { title: 'Containers', icon: Container, href: './containers' },
+            { title: 'Images', icon: LayoutList, href: './images' },
+        ]
     },
-    {
-        title: 'Swarm',
-        icon: Network,
-    },
-    {
-        title: 'Requests',
-        icon: Send,
-    },
+    { title: 'Swarm', href: '/swarm', icon: Network },
+    { title: 'Requests', href: '/requests', icon: Send },
 ];
+
 
 export function AppSidebar({ variant }: AppSidebarProps) {
     return (
-        <Sidebar className={'whitespace-nowrap'} collapsible={'icon'} variant={variant}>
-            <SidebarHeader className={'flex flex-col gap-0 truncate'}>
+        <Sidebar className="whitespace-nowrap" collapsible="icon" variant={variant}>
+            <SidebarHeader className="flex flex-col gap-0 truncate">
                 <span>Nexploy</span>
-                <span className={'text-xs text-muted-foreground'}>v1.0.0</span>
+                <span className="text-xs text-muted-foreground">v1.0.0</span>
             </SidebarHeader>
+
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupLabel>Home</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {items.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
-                                        <Link
-                                            href={`./${item.title.toLowerCase()}`}>
-                                            <item.icon/>
-                                            <span>{item.title}</span>
-                                        </Link>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
+                                <Collapsible key={item.title} className="group/collapsible">
+                                    <SidebarMenuItem>
+                                        <CollapsibleTrigger asChild>
+                                            <SidebarMenuButton tooltip={item.title} asChild>
+                                                <Link href={item.href}>
+                                                    <item.icon/>
+                                                    <span>{item.title}</span>
+                                                    {item.children && (
+                                                        <ChevronRight
+                                                            className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"/>
+                                                    )}
+                                                </Link>
+                                            </SidebarMenuButton>
+                                        </CollapsibleTrigger>
+                                        {item.children && (
+                                            <CollapsibleContent>
+                                                <SidebarMenuSub>
+                                                    {item.children.map((child) => (
+                                                        <SidebarMenuSubItem key={child.title}>
+                                                            <SidebarMenuSubButton asChild>
+                                                                <Link href={child.href}>
+                                                                    <child.icon/>
+                                                                    {child.title}
+                                                                </Link>
+                                                            </SidebarMenuSubButton>
+                                                        </SidebarMenuSubItem>
+                                                    ))}
+                                                </SidebarMenuSub>
+                                            </CollapsibleContent>
+                                        )}
+                                    </SidebarMenuItem>
+                                </Collapsible>
                             ))}
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
+
             <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>
@@ -84,16 +126,10 @@ export function AppSidebar({ variant }: AppSidebarProps) {
                                     <ChevronUp className="ml-auto"/>
                                 </SidebarMenuButton>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className={'min-w-32 w-[var(--radix-dropdown-menu-trigger-width)]'}>
-                                <DropdownMenuItem>
-                                    <span>Account</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <span>Billing</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <span>Sign out</span>
-                                </DropdownMenuItem>
+                            <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
+                                <DropdownMenuItem>Account</DropdownMenuItem>
+                                <DropdownMenuItem>Billing</DropdownMenuItem>
+                                <DropdownMenuItem>Sign out</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </SidebarMenuItem>

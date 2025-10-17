@@ -17,9 +17,9 @@ export const handleAsync = (fn: Handler, opts?: { status?: ContentfulStatusCode 
         } catch (err: any) {
             logger.error({ err, path: c.req.url, method: c.req.method }, 'handler error')
 
-            const message = process.env.NODE_ENV === 'production' ? 'internal server error' : (err.message || String(err))
+            const message = err.message
             const status = (err && err.status) ? err.status : 500
-            return c.json({ error: message }, status)
+            return c.json({ message }, status)
         }
     }
 }

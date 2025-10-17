@@ -8,7 +8,7 @@ export function GlobalSheet() {
 
     return (
         <Sheet open={isOpen} onOpenChange={(open) => !open && closeSheet()}>
-            <SheetContent side={data?.side || 'right'}>
+            <SheetContent side={data?.side || 'right'} className="sm:max-w-2/5">
                 {data && (
                     <>
                         <SheetHeader>

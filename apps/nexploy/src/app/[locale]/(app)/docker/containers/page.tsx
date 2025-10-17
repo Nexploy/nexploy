@@ -1,6 +1,6 @@
 import { ContainerInfo } from 'dockerode';
 import { Button } from '@workspace/ui/components/button';
-import { AlertCircleIcon, Box, Layers, LayoutGrid, Plus } from 'lucide-react';
+import { AlertCircleIcon, Box, Container, Layers, LayoutGrid, Plus } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { StackGroup } from '@/components/docker/StackGroup';
 import {
@@ -58,22 +58,56 @@ export default async function DockerPage() {
         {
             id: 'containers',
             label: 'Conteneurs',
-            icon: Box,
+            icon: Container,
             count: standaloneContainers.length,
         },
     ];
 
+    const Containers = () => (
+        <div className="space-y-2">
+            {stacks.size > 0 && (
+                <div className="flex items-center gap-2 px-1">
+                    <span className="text-lg font-semibold">Conteneurs individuels</span>
+                    <Badge variant={'secondary'}>{standaloneContainers.length}</Badge>
+                </div>
+            )}
+            <div className={`grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3`}>
+                {standaloneContainers.map((container) => (
+                    <ContainerCard key={container.Id} container={container}/>
+                ))}
+            </div>
+        </div>
+    )
+
+    const Stacks = () => (
+        <div className="space-y-2">
+            <div className="flex items-center gap-2 px-1">
+                <span className="text-lg font-semibold">Stacks</span>
+                <Badge variant={'secondary'}>{Array.from(stacks.entries()).length}</Badge>
+            </div>
+            <div className="space-y-3">
+                {Array.from(stacks.entries()).map(([stackName, stackContainers]) => (
+                    <StackGroup
+                        key={stackName}
+                        stackName={stackName}
+                        containers={stackContainers}
+                    />
+                ))}
+            </div>
+        </div>
+    )
+
     return (
-        <div className="flex flex-col gap-6 h-full pt-6">
+        <div className="flex flex-col gap-6 h-full pt-5">
             <div className="flex justify-between gap-4 px-6">
                 <div>
-                    <h1 className="text-3xl font-semibold tracking-tight">Conteneurs Docker</h1>
+                    <h1 className="text-3xl font-semibold tracking-tight">Containers Docker</h1>
                     <p className="text-sm text-muted-foreground">
                         {containers.length} conteneur
                         {stacks.size > 0 && ` · ${stacks.size} stack`}
                     </p>
                 </div>
-                <Button>
+                <Button className={'mt-1'}>
                     <Plus/>
                     Ajouter un conteneur
                 </Button>
@@ -87,7 +121,7 @@ export default async function DockerPage() {
             )}
 
             <Tabs className="flex flex-1 flex-col overflow-hidden" defaultValue="all">
-                <TabsList className={'mx-6'}>
+                <TabsList className={'mx-6 mb-2'}>
                     {tabs.map((tab, index) => (
                         <TabsTrigger key={index} value={tab.id} className={'flex flex-1 gap-2'}>
                             <div className={'flex items-center gap-2'}>
@@ -119,68 +153,19 @@ export default async function DockerPage() {
                 ) : (
                     <ScrollAreaWithShadow className="h-full overflow-hidden px-6">
                         <div className={'pb-6'}>
-                            <TabsContent value="all" className="space-y-3">
-                                <div className="space-y-3">
-                                    {Array.from(stacks.entries()).map(([stackName, stackContainers]) => (
-                                        <StackGroup
-                                            key={stackName}
-                                            stackName={stackName}
-                                            containers={stackContainers}
-                                        />
-                                    ))}
-                                </div>
-                                {stacks.size > 0 && (
-                                    <div className="space-y-3">
-                                        <div className="flex items-center gap-2 px-1">
-                                            <Box size={18} className="text-gray-600"/>
-                                            <h2 className="text-lg font-semibold text-gray-800">
-                                                Conteneurs individuels
-                                            </h2>
-                                            <span className="text-sm text-gray-500">
-                                                ({standaloneContainers.length})
-                                            </span>
-                                        </div>
-                                        <div
-                                            className={`grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 pl-7`}>
-                                            {standaloneContainers.map((container) => (
-                                                <ContainerCard key={container.Id} container={container}/>
-                                            ))}
-                                        </div>
-                                    </div>
+                            <TabsContent value="all" className="flex flex-col gap-5">
+                                <Stacks/>
+                                {stacks.size && (
+                                    <Containers/>
                                 )}
                             </TabsContent>
 
-                            <TabsContent value="stacks">
-                                <div className="space-y-3">
-                                    {Array.from(stacks.entries()).map(([stackName, stackContainers]) => (
-                                        <StackGroup
-                                            key={stackName}
-                                            stackName={stackName}
-                                            containers={stackContainers}
-                                        />
-                                    ))}
-                                </div>
+                            <TabsContent className={'space-y-2'} value="stacks">
+                                <Stacks/>
                             </TabsContent>
 
                             <TabsContent value="containers">
-                                <div className="space-y-3">
-                                    {stacks.size > 0 && (
-                                        <div className="flex items-center gap-2 px-1">
-                                            <Box size={18} className="text-gray-600"/>
-                                            <h2 className="text-lg font-semibold text-gray-800">
-                                                Conteneurs individuels
-                                            </h2>
-                                            <span className="text-sm text-gray-500">
-                                                ({standaloneContainers.length})
-                                            </span>
-                                        </div>
-                                    )}
-                                    <div className={`grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 pl-7`}>
-                                        {standaloneContainers.map((container) => (
-                                            <ContainerCard key={container.Id} container={container}/>
-                                        ))}
-                                    </div>
-                                </div>
+                                <Containers/>
                             </TabsContent>
                         </div>
                     </ScrollAreaWithShadow>
