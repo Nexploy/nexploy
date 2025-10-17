@@ -1,5 +1,5 @@
 import type { Context } from 'hono'
-import { logger } from '../utils/logger.js'
+import { logger } from '../utils/logger'
 
 export const safeAction = (fn: (c: Context) => Promise<void>) => {
     return async (c: Context) => {
@@ -9,7 +9,7 @@ export const safeAction = (fn: (c: Context) => Promise<void>) => {
             return c.json({ ok: true })
         } catch (err: any) {
             logger.error(err)
-            return c.json({ ok: false, error: err.message || 'Internal error' }, 500)
+            return c.json({ ok: false, message: err.json.message || 'Internal error' }, 500)
         }
     }
 }

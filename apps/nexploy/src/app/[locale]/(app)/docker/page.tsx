@@ -187,6 +187,5 @@ export default async function DockerPage() {
                 )}
             </Tabs>
         </div>
-    )
-        ;
+    );
 }

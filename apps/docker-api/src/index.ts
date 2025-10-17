@@ -1,13 +1,13 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import info from './docker/info.js';
-import volumes from './docker/volumes.js';
-import networks from './docker/networks.js';
-import images from './docker/images.js';
-import containers from './docker/containers.js';
-import { logger } from './utils/logger.js';
-import composes from './docker/composes.js';
+import info from './docker/info';
+import volumes from './docker/volumes';
+import networks from './docker/networks';
+import images from './docker/images';
+import containers from './docker/containers';
+import { logger } from './utils/logger';
+import composes from './docker/composes';
 
 export const app = new Hono()
 

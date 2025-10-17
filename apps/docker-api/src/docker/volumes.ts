@@ -1,6 +1,6 @@
-import { docker } from '../utils/dockerClient.js'
-import { handleAsync } from '../helpers/handleAsync.js'
-import { safeAction } from '../helpers/safeAction.js'
+import { docker } from '../utils/dockerClient'
+import { handleAsync } from '../helpers/handleAsync'
+import { safeAction } from '../helpers/safeAction'
 import { Hono } from 'hono';
 
 const app = new Hono()

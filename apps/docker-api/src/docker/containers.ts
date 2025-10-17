@@ -1,10 +1,19 @@
-import { docker } from '../utils/dockerClient.js'
-import { handleAsync } from '../helpers/handleAsync.js'
-import { safeAction } from '../helpers/safeAction.js'
-import { parseQuery } from '../helpers/parseQuery.js'
+import { docker } from '../utils/dockerClient'
+import { handleAsync } from '../helpers/handleAsync'
+import { safeAction } from '../helpers/safeAction'
+import { parseQuery } from '../helpers/parseQuery'
 import { Hono } from 'hono';
 
 const app = new Hono()
+
+/**
+ * Helper to get container state
+ */
+async function getContainerState(containerId: string) {
+    const container = docker.getContainer(containerId)
+    const info = await container.inspect()
+    return info.State
+}
 
 /**
  * @openapi
@@ -61,6 +70,7 @@ app.post('/create', handleAsync(async (c) => {
  * /containers/{id}/start:
  *   post:
  *     summary: Start container
+ *     description: Starts a stopped container or unpauses a paused container
  *     parameters:
  *       - in: path
  *         name: id
@@ -69,10 +79,18 @@ app.post('/create', handleAsync(async (c) => {
  *           type: string
  *     responses:
  *       200:
- *         description: Container started
+ *         description: Container started or unpaused
+ *       400:
+ *         description: Container already running
  */
 app.post('/:id/start', safeAction(async (c) => {
-    const container = docker.getContainer(c.req.param('id')) 
+    const container = docker.getContainer(c.req.param('id'))
+    const state = await getContainerState(c.req.param('id'))
+
+    if (state.Paused) {
+        await container.unpause()
+    }
+
     await container.start()
 }))
 
@@ -90,10 +108,56 @@ app.post('/:id/start', safeAction(async (c) => {
  *     responses:
  *       200:
  *         description: Container stopped
+ *       400:
+ *         description: Container already stopped
  */
 app.post('/:id/stop', safeAction(async (c) => {
     const container = docker.getContainer(c.req.param('id'))
     await container.stop()
+}))
+
+/**
+ * @openapi
+ * /containers/{id}/pause:
+ *   post:
+ *     summary: Pause container
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Container paused
+ *       400:
+ *         description: Container not running or already paused
+ */
+app.post('/:id/pause', safeAction(async (c) => {
+    const container = docker.getContainer(c.req.param('id'))
+    await container.pause()
+}))
+
+/**
+ * @openapi
+ * /containers/{id}/unpause:
+ *   post:
+ *     summary: Unpause container
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Container unpaused
+ *       400:
+ *         description: Container not paused
+ */
+app.post('/:id/unpause', safeAction(async (c) => {
+    const container = docker.getContainer(c.req.param('id'))
+    await container.unpause()
 }))
 
 /**
@@ -113,7 +177,37 @@ app.post('/:id/stop', safeAction(async (c) => {
  */
 app.post('/:id/restart', safeAction(async (c) => {
     const container = docker.getContainer(c.req.param('id'))
+    const state = await getContainerState(c.req.param('id'))
+
+    if (state.Paused) {
+        await container.unpause()
+    }
+
     await container.restart()
+}))
+
+/**
+ * @openapi
+ * /containers/{id}/info:
+ *   get:
+ *     summary: Get container information
+ *     description: Returns detailed information about a specific container
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Container ID or name
+ *     responses:
+ *       200:
+ *         description: Container information
+ *       404:
+ *         description: Container not found
+ */
+app.get('/:id/info', handleAsync(async (c) => {
+    const container = docker.getContainer(c.req.param('id'))
+    return await container.inspect()
 }))
 
 /**

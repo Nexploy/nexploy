@@ -1,18 +1,15 @@
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { NextIntlClientProvider } from 'next-intl';
 import { Toaster } from '@workspace/ui/components/sonner';
-import { CookiesToaster } from '@/components/utils/cookiesToaster/CookiesToaster';
-import { Suspense } from 'react';
+import { GlobalSheet } from '@/providers/GlobalSheet';
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
         <NextIntlClientProvider>
             <ThemeProvider>
                 {children}
+                <GlobalSheet/>
                 <Toaster/>
-                <Suspense>
-                    <CookiesToaster/>
-                </Suspense>
             </ThemeProvider>
         </NextIntlClientProvider>
     );

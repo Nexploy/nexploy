@@ -1,5 +1,5 @@
 import type { Context } from 'hono';
-import { logger } from '../utils/logger.js';
+import { logger } from '../utils/logger';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
 
 type Handler = (c: Context) => Promise<any>

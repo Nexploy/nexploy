@@ -24,19 +24,19 @@ export const StatusIndicator = ({
     <span
       className={cn(
         "absolute inline-flex h-full w-full animate-ping rounded-full opacity-75",
-        "group-[.online]:bg-emerald-500",
-        "group-[.offline]:bg-red-500",
-        "group-[.maintenance]:bg-blue-500",
-        "group-[.degraded]:bg-amber-500"
+          "group-[.online]:bg-online",
+          "group-[.offline]:bg-offline",
+          "group-[.maintenance]:bg-maintenance",
+          "group-[.degraded]:bg-degraded"
       )}
     />
     <span
       className={cn(
         "relative inline-flex h-2 w-2 rounded-full",
-        "group-[.online]:bg-emerald-500",
-        "group-[.offline]:bg-red-500",
-        "group-[.maintenance]:bg-blue-500",
-        "group-[.degraded]:bg-amber-500"
+        "group-[.online]:bg-online",
+        "group-[.offline]:bg-offline",
+        "group-[.maintenance]:bg-maintenance",
+        "group-[.degraded]:bg-degraded"
       )}
     />
   </span>

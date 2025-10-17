@@ -20,6 +20,10 @@
     --secondary-foreground: oklch(0.2050 0 0);
     --muted: oklch(0.9700 0 0);
     --muted-foreground: oklch(0.5560 0 0);
+    --online: theme('colors.emerald.500');
+    --offline: theme('colors.red.500');
+    --maintenance: theme('colors.blue.500');
+    --degraded: theme('colors.amber.500');
     --accent: oklch(0.9700 0 0);
     --accent-foreground: oklch(0.5465 0.2455 262.8657);
     --destructive: oklch(0.5770 0.2450 27.3250);
@@ -100,6 +104,10 @@
     --secondary-foreground: oklch(0.9850 0 0);
     --muted: oklch(0.2690 0 0);
     --muted-foreground: oklch(0.7080 0 0);
+    --online: theme('colors.emerald.500');
+    --offline: theme('colors.red.500');
+    --maintenance: theme('colors.blue.500');
+    --degraded: theme('colors.amber.500');
     --accent: oklch(0.3710 0 0);
     --accent-foreground: oklch(0.5465 0.2455 262.8657);
     --destructive: oklch(0.7040 0.1910 22.2160);
@@ -179,6 +187,10 @@
     --color-secondary-foreground: var(--secondary-foreground);
     --color-muted: var(--muted);
     --color-muted-foreground: var(--muted-foreground);
+    --color-online: var(--online);
+    --color-offline: var(--offline);
+    --color-maintenance: var(--maintenance);
+    --color-degraded: var(--degraded);
     --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);
     --color-destructive: var(--destructive);
@@ -262,6 +274,6 @@
 
     body {
         @apply bg-sidebar text-foreground font-medium;
-    letter-spacing: var(--tracking-normal);
+        letter-spacing: var(--tracking-normal);
     }
 }

@@ -1,5 +1,5 @@
-import { docker } from '../utils/dockerClient.js'
-import { handleAsync } from '../helpers/handleAsync.js'
+import { docker } from '../utils/dockerClient'
+import { handleAsync } from '../helpers/handleAsync'
 import { Hono } from 'hono';
 
 const app = new Hono()
