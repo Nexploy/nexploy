@@ -1,0 +1,49 @@
+{
+  "HomePage": {
+    "title": "Bonjour, Monde !"
+  },
+  "SignIn": {
+    "title": "Connexion",
+    "description": "Connectez-vous à votre compte pour continuer",
+    "emailLabel": "Email",
+    "emailPlaceholder": "vous@exemple.com",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "••••••••",
+    "errorGeneric": "Une erreur est survenue",
+    "errorSignin": "Une erreur est survenue lors de la connexion",
+    "errorGithub": "Une erreur est survenue lors de la connexion avec GitHub",
+    "submit": "Se connecter",
+    "submitting": "Connexion...",
+    "orContinueWith": "Ou continuer avec",
+    "github": "GitHub",
+    "footerText": "Pas encore de compte ?",
+    "footerLink": "S'inscrire"
+  },
+  "SignUp": {
+    "title": "Créer un compte",
+    "description": "Inscrivez-vous pour commencer à utiliser Nexploy",
+    "nameLabel": "Nom",
+    "namePlaceholder": "Votre nom",
+    "nameRequired": "Le nom est requis",
+    "emailLabel": "Email",
+    "emailPlaceholder": "vous@exemple.com",
+    "emailRequired": "L’email est requis",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "••••••••",
+    "passwordRequired": "Le mot de passe est requis",
+    "passwordMin": "Minimum 6 caractères",
+    "confirmPasswordLabel": "Confirmer le mot de passe",
+    "confirmPasswordPlaceholder": "••••••••",
+    "confirmPasswordRequired": "Veuillez confirmer votre mot de passe",
+    "passwordsMismatch": "Les mots de passe ne correspondent pas",
+    "errorGeneric": "Une erreur est survenue",
+    "errorSignup": "Une erreur est survenue lors de l'inscription",
+    "errorGithub": "Une erreur est survenue lors de l'inscription avec GitHub",
+    "submit": "S'inscrire",
+    "submitting": "Inscription...",
+    "orContinueWith": "Ou continuer avec",
+    "github": "GitHub",
+    "footerText": "Vous avez déjà un compte ?",
+    "footerLink": "Se connecter"
+  }
+}

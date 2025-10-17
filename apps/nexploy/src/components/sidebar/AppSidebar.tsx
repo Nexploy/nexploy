@@ -1,6 +1,4 @@
-'use client'
-
-import { Activity, Container, Folder, LayoutDashboard, Network, Send } from 'lucide-react'
+import { Activity, ChevronUp, Container, Folder, Network, Send, User2 } from 'lucide-react'
 
 import {
     Sidebar,
@@ -9,19 +7,21 @@ import {
     SidebarGroup,
     SidebarGroupContent,
     SidebarGroupLabel,
+    SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarSeparator,
-    useSidebar,
 } from '@workspace/ui/components/sidebar'
 import Link from 'next/link';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@workspace/ui/components/dropdown-menu';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset'
-    paths: {
-        accountId: string
-    }
 }
 
 const items = [
@@ -47,21 +47,14 @@ const items = [
     },
 ];
 
-export function AppSidebar({ variant, paths }: AppSidebarProps) {
-    const { setOpenMobile } = useSidebar()
-
+export function AppSidebar({ variant }: AppSidebarProps) {
     return (
         <Sidebar className={'whitespace-nowrap'} collapsible={'icon'} variant={variant}>
-            <SidebarContent className={'overflow-hidden'}>
-                <SidebarGroup>
-                    <SidebarMenuButton asChild>
-                        <Link onClick={() => setOpenMobile(false)} href={`/dashboard`}>
-                            <LayoutDashboard/>
-                            <span>Dashboard</span>
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarGroup>
-                <SidebarSeparator/>
+            <SidebarHeader className={'flex flex-col gap-0 truncate'}>
+                <span>Nexploy</span>
+                <span className={'text-xs text-muted-foreground'}>v1.0.0</span>
+            </SidebarHeader>
+            <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupLabel>Home</SidebarGroupLabel>
                     <SidebarGroupContent>
@@ -70,7 +63,6 @@ export function AppSidebar({ variant, paths }: AppSidebarProps) {
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild>
                                         <Link
-                                            onClick={() => setOpenMobile(false)}
                                             href={`./${item.title.toLowerCase()}`}>
                                             <item.icon/>
                                             <span>{item.title}</span>
@@ -83,6 +75,29 @@ export function AppSidebar({ variant, paths }: AppSidebarProps) {
                 </SidebarGroup>
             </SidebarContent>
             <SidebarFooter>
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <SidebarMenuButton>
+                                    <User2/> Username
+                                    <ChevronUp className="ml-auto"/>
+                                </SidebarMenuButton>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className={'min-w-32 w-[var(--radix-dropdown-menu-trigger-width)]'}>
+                                <DropdownMenuItem>
+                                    <span>Account</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <span>Billing</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <span>Sign out</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </SidebarMenuItem>
+                </SidebarMenu>
             </SidebarFooter>
         </Sidebar>
     )

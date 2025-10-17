@@ -1,6 +1,6 @@
 import '@workspace/ui/globals.css';
-import { Geist, Geist_Mono, Inter } from 'next/font/google';
-import { Providers } from '@/components/providers';
+import { Geist, Geist_Mono } from 'next/font/google';
+import { Providers } from '@/providers/Providers';
 
 const fontSans = Geist({
     subsets: ['latin'],
@@ -19,13 +19,6 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" suppressHydrationWarning>
-        <head>
-            <script
-                async
-                crossOrigin="anonymous"
-                src="https://tweakcn.com/live-preview.min.js"
-            />
-        </head>
         <body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased`}>
         <Providers>{children}</Providers>
         </body>

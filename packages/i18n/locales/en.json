@@ -1,0 +1,49 @@
+{
+  "HomePage": {
+    "title": "Hello World"
+  },
+  "SignIn": {
+    "title": "Sign in",
+    "description": "Sign in to your account to continue",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••",
+    "errorGeneric": "An error occurred",
+    "errorSignin": "An error occurred while signing in",
+    "errorGithub": "An error occurred while signing in with GitHub",
+    "submit": "Sign in",
+    "submitting": "Signing in...",
+    "orContinueWith": "Or continue with",
+    "github": "GitHub",
+    "footerText": "Don't have an account yet?",
+    "footerLink": "Sign up"
+  },
+  "SignUp": {
+    "title": "Create an account",
+    "description": "Sign up to start using Nexploy",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your name",
+    "nameRequired": "Name is required",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "emailRequired": "Email is required",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••",
+    "passwordRequired": "Password is required",
+    "passwordMin": "Minimum 6 characters",
+    "confirmPasswordLabel": "Confirm password",
+    "confirmPasswordPlaceholder": "••••••••",
+    "confirmPasswordRequired": "Please confirm your password",
+    "passwordsMismatch": "Passwords do not match",
+    "errorGeneric": "An error occurred",
+    "errorSignup": "An error occurred during sign up",
+    "errorGithub": "An error occurred while signing up with GitHub",
+    "submit": "Sign up",
+    "submitting": "Signing up...",
+    "orContinueWith": "Or continue with",
+    "github": "GitHub",
+    "footerText": "Already have an account?",
+    "footerLink": "Sign in"
+  }
+}

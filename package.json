@@ -3,9 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --filter=nexploy --filter=docker-api --filter=scalar-server",
     "dev:nexploy": "turbo run dev --filter=nexploy",
     "dev:desktop": "turbo run dev --filter=desktop",
+    "scalar": "turbo run dev --filter=scalar-server",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "types": "tsc --noEmit",
@@ -27,8 +28,11 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@tailwindcss/oxide",
+      "cpu-features",
       "electron",
       "electron-winstaller",
+      "protobufjs",
+      "ssh2",
       "unrs-resolver"
     ]
   }

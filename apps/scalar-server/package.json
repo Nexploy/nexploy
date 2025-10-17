@@ -1,0 +1,20 @@
+{
+  "name": "scalar-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.5",
+    "@scalar/hono-api-reference": "^0.9.22",
+    "swagger-jsdoc": "^6.2.8",
+    "hono": "^4.9.12"
+  },
+  "devDependencies": {
+    "@types/swagger-jsdoc": "^6.0.4",
+    "tsx": "^4.20.6"
+  }
+}
