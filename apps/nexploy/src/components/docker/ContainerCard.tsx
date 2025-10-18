@@ -1,24 +1,21 @@
 'use client';
 
-import { ContainerInfo } from 'dockerode';
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { DropdownMenu, DropdownMenuTrigger, } from '@workspace/ui/components/dropdown-menu';
 import { Button } from '@workspace/ui/components/button';
-import { Container, MoreVertical } from 'lucide-react';
+import { Container as IconContainer, MoreVertical } from 'lucide-react';
 import { useTransition } from 'react';
 import { Status, StatusIndicator, StatusLabel, StatusProps } from '@workspace/ui/components/kibo-ui/status';
-import { ContainerState } from '@workspace/typescript-interface/docker';
-import { ContainerDropdownActions } from '@/components/docker/ContainerDropdownActions';
+import { Container, ContainerState } from '@workspace/typescript-interface/docker';
 
 interface ContainerCardProps {
-    container: ContainerInfo;
+    container: Container;
 }
 
 const containerStatus: Record<ContainerState, StatusProps['status']> = {
     created: 'offline',
     running: 'online',
     restarting: 'degraded',
-    removing: 'maintenance',
     paused: 'maintenance',
     exited: 'offline',
     dead: 'degraded',
@@ -28,8 +25,8 @@ const containerStatus: Record<ContainerState, StatusProps['status']> = {
 export function ContainerCard({ container }: ContainerCardProps) {
     const [isPending] = useTransition();
 
-    const containerName = container.Names?.[0]!.replace('/', '');
-    const containerState = container.State as ContainerState;
+    const containerName = container.name
+    const containerState = container.state;
 
     return (
         <Card className="transition-shadow cursor-pointer duration-300 hover:shadow-xl border rounded-xl">
@@ -37,7 +34,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
                 <div className="flex flex-1 truncate items-center gap-3">
                     <div
                         className="flex items-center justify-center size-9 rounded-lg bg-primary/10 shrink-0">
-                        <Container className="size-5 text-primary"/>
+                        <IconContainer className="size-5 text-primary"/>
                     </div>
                     <CardTitle className="truncate text-lg font-semibold">
                         {containerName}
@@ -49,8 +46,8 @@ export function ContainerCard({ container }: ContainerCardProps) {
                             <MoreVertical/>
                         </Button>
                     </DropdownMenuTrigger>
-                    <ContainerDropdownActions containerId={container.Id} containerName={containerName}
-                                              containerState={containerState}/>
+                    {/*<ContainerDropdownActions containerId={container.id} containerName={containerName}*/}
+                    {/*                          containerState={containerState}/>*/}
                 </DropdownMenu>
             </CardHeader>
 
@@ -71,7 +68,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
 
                 <div>
                     <span className="font-medium">Image :</span> <span
-                    className={'text-muted-foreground'}>{container.Image}</span>
+                    className={'text-muted-foreground'}>{container.image}</span>
                 </div>
 
                 <div>

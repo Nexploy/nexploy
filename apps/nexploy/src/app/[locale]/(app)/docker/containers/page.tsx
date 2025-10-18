@@ -12,10 +12,10 @@ import {
     EmptyTitle
 } from '@workspace/ui/components/empty';
 import { drinoDocker } from '@/lib/api/drinoDocker';
-import { ContainerCard } from '@/components/docker/ContainerCard';
 import { Badge } from '@workspace/ui/components/badge';
 import { ScrollAreaWithShadow } from '@/components/docker/ScrollAreaWithShadow';
 import { Alert, AlertTitle } from '@workspace/ui/components/alert';
+import { Containers } from '@/components/docker/Containers';
 
 
 export default async function DockerPage() {
@@ -62,22 +62,6 @@ export default async function DockerPage() {
             count: standaloneContainers.length,
         },
     ];
-
-    const Containers = () => (
-        <div className="space-y-2">
-            {stacks.size > 0 && (
-                <div className="flex items-center gap-2 px-1">
-                    <span className="text-lg font-semibold">Conteneurs individuels</span>
-                    <Badge variant={'secondary'}>{standaloneContainers.length}</Badge>
-                </div>
-            )}
-            <div className={`grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3`}>
-                {standaloneContainers.map((container) => (
-                    <ContainerCard key={container.Id} container={container}/>
-                ))}
-            </div>
-        </div>
-    )
 
     const Stacks = () => (
         <div className="space-y-2">
@@ -171,6 +155,7 @@ export default async function DockerPage() {
                     </ScrollAreaWithShadow>
                 )}
             </Tabs>
+            {/*<ContainerDashboard/>*/}
         </div>
     );
 }

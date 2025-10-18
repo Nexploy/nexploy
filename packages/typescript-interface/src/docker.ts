@@ -4,7 +4,6 @@ export type ContainerState =
     | 'created'
     | 'running'
     | 'restarting'
-    | 'removing'
     | 'paused'
     | 'exited'
     | 'dead';
@@ -15,4 +14,16 @@ export interface ContainerTool {
     state?: ContainerState[];
     action?: () => Promise<void> | void;
     separator?: boolean;
+}
+
+export interface Container {
+    id: string
+    name: string
+    status: string
+    state: ContainerState
+    image: string
+    health?: string
+    exitCode?: number
+    error?: string
+    timestamp: number
 }

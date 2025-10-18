@@ -8,15 +8,17 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.19.5",
+    "@types/byline": "^4.2.36",
+    "byline": "^5.0.0",
     "dockerode": "^4.0.9",
     "hono": "^4.9.12",
     "pino": "^10.0.0",
     "pino-pretty": "^13.1.2"
   },
   "devDependencies": {
-    "@workspace/typescript-interface": "workspace:*",
     "@types/dockerode": "^3.3.44",
     "@types/node": "^20.11.17",
+    "@workspace/typescript-interface": "workspace:*",
     "tsx": "^4.20.6",
     "typescript": "^5.8.3"
   }
