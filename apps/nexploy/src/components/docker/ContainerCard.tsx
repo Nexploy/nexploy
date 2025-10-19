@@ -1,12 +1,18 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
-import { DropdownMenu, DropdownMenuTrigger, } from '@workspace/ui/components/dropdown-menu';
+import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
 import { Button } from '@workspace/ui/components/button';
 import { Container as IconContainer, MoreVertical } from 'lucide-react';
 import { useTransition } from 'react';
-import { Status, StatusIndicator, StatusLabel, StatusProps } from '@workspace/ui/components/kibo-ui/status';
+import {
+    Status,
+    StatusIndicator,
+    StatusLabel,
+    StatusProps,
+} from '@workspace/ui/components/kibo-ui/status';
 import { Container, ContainerState } from '@workspace/typescript-interface/docker';
+import { ContainerDropdownActions } from '@/components/docker/ContainerDropdownActions';
 
 interface ContainerCardProps {
     container: Container;
@@ -21,20 +27,18 @@ const containerStatus: Record<ContainerState, StatusProps['status']> = {
     dead: 'degraded',
 };
 
-
 export function ContainerCard({ container }: ContainerCardProps) {
     const [isPending] = useTransition();
 
-    const containerName = container.name
+    const containerName = container.name;
     const containerState = container.state;
 
     return (
-        <Card className="transition-shadow cursor-pointer duration-300 hover:shadow-xl border rounded-xl">
+        <Card className="cursor-pointer rounded-xl border transition-all duration-300 hover:scale-[1.01] hover:shadow-xl">
             <CardHeader className="flex">
-                <div className="flex flex-1 truncate items-center gap-3">
-                    <div
-                        className="flex items-center justify-center size-9 rounded-lg bg-primary/10 shrink-0">
-                        <IconContainer className="size-5 text-primary"/>
+                <div className="flex flex-1 items-center gap-3 truncate">
+                    <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
+                        <IconContainer className="text-primary size-5" />
                     </div>
                     <CardTitle className="truncate text-lg font-semibold">
                         {containerName}
@@ -43,11 +47,14 @@ export function ContainerCard({ container }: ContainerCardProps) {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm" disabled={isPending}>
-                            <MoreVertical/>
+                            <MoreVertical />
                         </Button>
                     </DropdownMenuTrigger>
-                    {/*<ContainerDropdownActions containerId={container.id} containerName={containerName}*/}
-                    {/*                          containerState={containerState}/>*/}
+                    <ContainerDropdownActions
+                        containerId={container.id}
+                        containerName={containerName}
+                        containerState={containerState}
+                    />
                 </DropdownMenu>
             </CardHeader>
 
@@ -59,35 +66,32 @@ export function ContainerCard({ container }: ContainerCardProps) {
                         status={containerStatus[containerState] ?? 'offline'}
                         variant="outline"
                     >
-                        <StatusIndicator/>
-                        <StatusLabel className="font-mono">
-                            {containerState}
-                        </StatusLabel>
+                        <StatusIndicator />
+                        <StatusLabel className="font-mono">{containerState}</StatusLabel>
                     </Status>
                 </div>
 
                 <div>
-                    <span className="font-medium">Image :</span> <span
-                    className={'text-muted-foreground'}>{container.image}</span>
+                    <span className="font-medium">Image :</span>{' '}
+                    <span className={'text-muted-foreground'}>{container.image}</span>
                 </div>
 
-                <div>
+                <div className={'flex flex-col gap-1'}>
                     <p className="text-sm font-medium">Ports :</p>
-                    {container.Ports?.length ? (
-                        <div className="flex flex-wrap gap-2">
-                            {container.Ports.map((p, idx) => (
+                    {container.ports.length ? (
+                        <div className="flex flex-col items-start gap-2">
+                            {container.ports.map((p, idx) => (
                                 <span
                                     key={idx}
-                                    className="text-xs text-muted-foreground px-2 py-1 rounded-md"
+                                    className="text-muted-foreground bg-muted rounded-md px-2 py-1 text-xs"
                                 >
-                                    {p.PublicPort ?? '—'} → {p.PrivatePort} ({p.Type})
+                                    {p.publicPort ?? '—'} → {p.privatePort} ({p.type}) -{' '}
+                                    {p.hostIps.map((hostIp) => `${hostIp} `)}
                                 </span>
                             ))}
                         </div>
                     ) : (
-                        <span className="text-muted-foreground">
-                            Aucun port exposé
-                        </span>
+                        <span className="text-muted-foreground">Aucun port exposé</span>
                     )}
                 </div>
             </CardContent>

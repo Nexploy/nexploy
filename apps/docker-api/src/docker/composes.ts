@@ -1,34 +1,34 @@
-import Docker from 'dockerode'
-import { Hono } from 'hono'
-import { handleAsync } from '../helpers/handleAsync'
-import { logger } from '../utils/logger';
+import Docker from 'dockerode';
+import { Hono } from 'hono';
+import { handleAsync } from '@/helpers/handleAsync';
+import { logger } from '@/utils/logger';
 import { DockerAction } from '@workspace/typescript-interface/docker';
 
-const docker = new Docker()
-const app = new Hono()
+const docker = new Docker();
+const app = new Hono();
 
 /**
  * Contrôle les conteneurs d'une stack Docker Compose.
  */
 async function controlComposeStack(projectName: string, action: DockerAction) {
-    const containers = await docker.listContainers({ all: true })
+    const containers = await docker.listContainers({ all: true });
     const composeContainers = containers.filter(
-        (c) => c.Labels['com.docker.compose.project'] === projectName
-    )
+        (c) => c.Labels['com.docker.compose.project'] === projectName,
+    );
 
     const actions = composeContainers.map(async (containerInfo) => {
-        const container = docker.getContainer(containerInfo.Id)
+        const container = docker.getContainer(containerInfo.Id);
 
         try {
-            if (action === 'start') await container.start()
-            if (action === 'stop') await container.stop()
-            if (action === 'pause') await container.pause()
-            if (action === 'restart') await container.restart()
+            if (action === 'start') await container.start();
+            if (action === 'stop') await container.stop();
+            if (action === 'pause') await container.pause();
+            if (action === 'restart') await container.restart();
         } catch (error: any) {
             if (error?.message?.includes('already')) {
-                logger.debug(`Container ${containerInfo.Names[0]}: ${error.message}`)
+                logger.debug(`Container ${containerInfo.Names[0]}: ${error.message}`);
             } else {
-                throw error
+                throw error;
             }
         }
 
@@ -37,12 +37,11 @@ async function controlComposeStack(projectName: string, action: DockerAction) {
             name: containerInfo.Names[0],
             state: containerInfo.State,
             status: containerInfo.Status,
-        }
-    })
+        };
+    });
 
-    return await Promise.all(actions)
+    return await Promise.all(actions);
 }
-
 
 /**
  * @openapi
@@ -53,13 +52,16 @@ async function controlComposeStack(projectName: string, action: DockerAction) {
  *       200:
  *         description: Liste des projets Docker Compose détectés
  */
-app.get('/', handleAsync(async (c) => {
-    const containers = await docker.listContainers({ all: true })
-    const projects = Array.from(
-        new Set(containers.map((c) => c.Labels['com.docker.compose.project']).filter(Boolean))
-    )
-    return { projects }
-}))
+app.get(
+    '/',
+    handleAsync(async (c) => {
+        const containers = await docker.listContainers({ all: true });
+        const projects = Array.from(
+            new Set(containers.map((c) => c.Labels['com.docker.compose.project']).filter(Boolean)),
+        );
+        return { projects };
+    }),
+);
 
 /**
  * @openapi
@@ -73,10 +75,13 @@ app.get('/', handleAsync(async (c) => {
  *         schema:
  *           type: string
  */
-app.post('/:project/start', handleAsync(async (c) => {
-    const project = c.req.param('project')
-    return controlComposeStack(project, 'start')
-}))
+app.post(
+    '/:project/start',
+    handleAsync(async (c) => {
+        const project = c.req.param('project');
+        return controlComposeStack(project, 'start');
+    }),
+);
 
 /**
  * @openapi
@@ -90,10 +95,13 @@ app.post('/:project/start', handleAsync(async (c) => {
  *         schema:
  *           type: string
  */
-app.post('/:project/pause', handleAsync(async (c) => {
-    const project = c.req.param('project')
-    return controlComposeStack(project, 'pause')
-}))
+app.post(
+    '/:project/pause',
+    handleAsync(async (c) => {
+        const project = c.req.param('project');
+        return controlComposeStack(project, 'pause');
+    }),
+);
 
 /**
  * @openapi
@@ -107,10 +115,13 @@ app.post('/:project/pause', handleAsync(async (c) => {
  *         schema:
  *           type: string
  */
-app.post('/:project/stop', handleAsync(async (c) => {
-    const project = c.req.param('project')
-    return controlComposeStack(project, 'stop')
-}))
+app.post(
+    '/:project/stop',
+    handleAsync(async (c) => {
+        const project = c.req.param('project');
+        return controlComposeStack(project, 'stop');
+    }),
+);
 
 /**
  * @openapi
@@ -124,10 +135,13 @@ app.post('/:project/stop', handleAsync(async (c) => {
  *         schema:
  *           type: string
  */
-app.post('/:project/restart', handleAsync(async (c) => {
-    const project = c.req.param('project')
-    return controlComposeStack(project, 'restart')
-}))
+app.post(
+    '/:project/restart',
+    handleAsync(async (c) => {
+        const project = c.req.param('project');
+        return controlComposeStack(project, 'restart');
+    }),
+);
 
 /**
  * @openapi
@@ -141,19 +155,22 @@ app.post('/:project/restart', handleAsync(async (c) => {
  *         schema:
  *           type: string
  */
-app.get('/:project', handleAsync(async (c) => {
-    const project = c.req.param('project')
-    const containers = await docker.listContainers({ all: true })
-    const composeContainers = containers.filter(
-        (c) => c.Labels['com.docker.compose.project'] === project
-    )
-    return composeContainers.map((c) => ({
-        id: c.Id,
-        name: c.Names[0],
-        image: c.Image,
-        state: c.State,
-        status: c.Status,
-    }))
-}))
+app.get(
+    '/:project',
+    handleAsync(async (c) => {
+        const project = c.req.param('project');
+        const containers = await docker.listContainers({ all: true });
+        const composeContainers = containers.filter(
+            (c) => c.Labels['com.docker.compose.project'] === project,
+        );
+        return composeContainers.map((c) => ({
+            id: c.Id,
+            name: c.Names[0],
+            image: c.Image,
+            state: c.State,
+            status: c.Status,
+        }));
+    }),
+);
 
-export default app
+export default app;

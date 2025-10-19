@@ -5,6 +5,6 @@ export async function toastServer(message: string) {
     const id = crypto.randomUUID();
     cookieStore.set(`toast-${id}`, message, {
         path: '/',
-        maxAge: 60 * 60 * 24
+        maxAge: 60 * 60 * 24,
     });
 }

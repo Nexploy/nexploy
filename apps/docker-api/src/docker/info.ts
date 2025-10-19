@@ -1,8 +1,8 @@
-import { docker } from '../utils/dockerClient'
-import { handleAsync } from '../helpers/handleAsync'
+import { docker } from '@/utils/dockerClient';
+import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 
-const app = new Hono()
+const app = new Hono();
 
 /**
  * @openapi
@@ -14,10 +14,13 @@ const app = new Hono()
  *       200:
  *         description: Docker is healthy
  */
-app.get('/_health', handleAsync(async () => {
-    await docker.ping()
-    return { healthy: true }
-}))
+app.get(
+    '/_health',
+    handleAsync(async () => {
+        await docker.ping();
+        return { healthy: true };
+    }),
+);
 
 /**
  * @openapi
@@ -28,7 +31,10 @@ app.get('/_health', handleAsync(async () => {
  *       200:
  *         description: Returns Docker version info
  */
-app.get('/version', handleAsync(async () => docker.version()))
+app.get(
+    '/version',
+    handleAsync(async () => docker.version()),
+);
 
 /**
  * @openapi
@@ -39,6 +45,9 @@ app.get('/version', handleAsync(async () => docker.version()))
  *       200:
  *         description: Returns Docker system info
  */
-app.get('/info', handleAsync(async () => docker.info()))
+app.get(
+    '/info',
+    handleAsync(async () => docker.info()),
+);
 
-export default app
+export default app;

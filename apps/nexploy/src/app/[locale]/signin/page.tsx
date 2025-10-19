@@ -4,7 +4,14 @@ import { useState } from 'react';
 import { authClient } from '@/lib/auth/auth-client';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@workspace/ui/components/card';
 import { Label } from '@workspace/ui/components/label';
 import { useRouter } from '@/i18n/navigation';
 import { GithubIcon } from 'lucide-react';
@@ -94,7 +101,7 @@ export default function SigninPage() {
 
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t"/>
+                            <span className="w-full border-t" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
                             <span className="bg-card text-muted-foreground px-2">
@@ -108,8 +115,9 @@ export default function SigninPage() {
                         type="button"
                         className="w-full"
                         onClick={handleGithubSignin}
-                        disabled={isLoading}>
-                        <GithubIcon className="h-4 w-4"/>
+                        disabled={isLoading}
+                    >
+                        <GithubIcon className="h-4 w-4" />
                         GitHub
                     </Button>
                 </CardContent>

@@ -17,5 +17,5 @@ export async function CookiesToaster() {
             },
         }));
 
-    return <ClientToaster toasts={toasts}/>;
+    return <ClientToaster toasts={toasts} />;
 }

@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "turbo run dev --filter=nexploy --filter=docker-api --filter=scalar-server",
+    "dev": "turbo run dev --filter=nexploy --filter=docker-api",
     "dev:nexploy": "turbo run dev --filter=nexploy",
     "dev:desktop": "turbo run dev --filter=desktop",
     "scalar": "turbo run dev --filter=scalar-server",

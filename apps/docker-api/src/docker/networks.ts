@@ -1,9 +1,9 @@
-import { docker } from '../utils/dockerClient'
-import { handleAsync } from '../helpers/handleAsync'
-import { safeAction } from '../helpers/safeAction'
+import { docker } from '@/utils/dockerClient';
+import { handleAsync } from '@/helpers/handleAsync';
+import { safeAction } from '@/helpers/safeAction';
 import { Hono } from 'hono';
 
-const app = new Hono()
+const app = new Hono();
 
 /**
  * @openapi
@@ -14,7 +14,10 @@ const app = new Hono()
  *       200:
  *         description: Array of networks
  */
-app.get('/', handleAsync(async () => docker.listNetworks()))
+app.get(
+    '/',
+    handleAsync(async () => docker.listNetworks()),
+);
 
 /**
  * @openapi
@@ -31,10 +34,13 @@ app.get('/', handleAsync(async () => docker.listNetworks()))
  *       200:
  *         description: Network created
  */
-app.post('/create', handleAsync(async (c) => {
-    const body = await c.req.json()
-    return docker.createNetwork(body)
-}))
+app.post(
+    '/create',
+    handleAsync(async (c) => {
+        const body = await c.req.json();
+        return docker.createNetwork(body);
+    }),
+);
 
 /**
  * @openapi
@@ -51,9 +57,12 @@ app.post('/create', handleAsync(async (c) => {
  *       200:
  *         description: Network removed
  */
-app.delete('/:id', safeAction(async (c) => {
-    const network = docker.getNetwork(c.req.param('id'))
-    await network.remove()
-}))
+app.delete(
+    '/:id',
+    safeAction(async (c) => {
+        const network = docker.getNetwork(c.req.param('id'));
+        await network.remove();
+    }),
+);
 
-export default app
+export default app;

@@ -1,5 +1,4 @@
-import pino from 'pino'
-
+import pino from 'pino';
 
 export const logger = pino(
     {
@@ -12,5 +11,5 @@ export const logger = pino(
             translateTime: 'HH:MM:ss',
             ignore: 'pid,hostname',
         },
-    })
-)
+    }),
+);

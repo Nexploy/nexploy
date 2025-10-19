@@ -1,9 +1,9 @@
-import { docker } from '../utils/dockerClient'
-import { handleAsync } from '../helpers/handleAsync'
-import { safeAction } from '../helpers/safeAction'
+import { docker } from '@/utils/dockerClient';
+import { handleAsync } from '@/helpers/handleAsync';
+import { safeAction } from '@/helpers/safeAction';
 import { Hono } from 'hono';
 
-const app = new Hono()
+const app = new Hono();
 
 /**
  * @openapi
@@ -14,10 +14,13 @@ const app = new Hono()
  *       200:
  *         description: Array of volumes
  */
-app.get('/', handleAsync(async () => {
-    const data = await docker.listVolumes()
-    return data.Volumes || []
-}))
+app.get(
+    '/',
+    handleAsync(async () => {
+        const data = await docker.listVolumes();
+        return data.Volumes || [];
+    }),
+);
 
 /**
  * @openapi
@@ -34,10 +37,13 @@ app.get('/', handleAsync(async () => {
  *       200:
  *         description: Volume created
  */
-app.post('/create', handleAsync(async (c) => {
-    const body = await c.req.json()
-    return docker.createVolume(body)
-}))
+app.post(
+    '/create',
+    handleAsync(async (c) => {
+        const body = await c.req.json();
+        return docker.createVolume(body);
+    }),
+);
 
 /**
  * @openapi
@@ -54,9 +60,12 @@ app.post('/create', handleAsync(async (c) => {
  *       200:
  *         description: Volume removed
  */
-app.delete('/:name', safeAction(async (c) => {
-    const volume = docker.getVolume(c.req.param('name'))
-    await volume.remove()
-}))
+app.delete(
+    '/:name',
+    safeAction(async (c) => {
+        const volume = docker.getVolume(c.req.param('name'));
+        await volume.remove();
+    }),
+);
 
-export default app
+export default app;

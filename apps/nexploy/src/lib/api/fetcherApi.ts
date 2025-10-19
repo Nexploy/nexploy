@@ -1,4 +1,4 @@
-import { toast } from 'sonner'
+import { toast } from 'sonner';
 
 export const fetcherApi = async <T>(...args: Parameters<typeof fetch>): Promise<T> => {
     const res = await fetch(...args);
@@ -8,5 +8,5 @@ export const fetcherApi = async <T>(...args: Parameters<typeof fetch>): Promise<
         throw new Error('An error occurred while fetching the data.');
     }
 
-    return await res.json() as Promise<T>;
+    return (await res.json()) as Promise<T>;
 };

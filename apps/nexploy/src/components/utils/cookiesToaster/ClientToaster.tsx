@@ -39,5 +39,5 @@ export function ClientToaster({ toasts }: { toasts: Toast[] }) {
             });
     }, [localToasts, sentToSonner]);
 
-    return <Toaster/>;
+    return <Toaster />;
 }

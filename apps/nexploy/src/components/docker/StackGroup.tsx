@@ -2,27 +2,32 @@
 
 import * as React from 'react';
 import { MouseEvent, useTransition } from 'react';
-import { ContainerInfo } from 'dockerode';
 import { ContainerCard } from '@/components/docker/ContainerCard';
 import { ChevronDownIcon, Layers, Loader2, Play, RotateCw, Square } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from '@workspace/ui/components/accordion';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@workspace/ui/components/accordion';
 import { useRouter } from 'next/navigation';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
+import { Container } from '@workspace/typescript-interface/docker';
 
 interface StackGroupProps {
     stackName: string;
-    containers: ContainerInfo[];
+    containers: Container[];
 }
 
 export function StackGroup({ stackName, containers }: StackGroupProps) {
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
 
-    const runningCount = containers.filter(c => c.State === 'running').length;
-    const stoppedCount = containers.filter(c => c.State === 'exited').length;
+    const runningCount = containers.filter((c) => c.state === 'running').length;
+    const stoppedCount = containers.filter((c) => c.state === 'exited').length;
     const hasRunning = runningCount > 0;
     const allRunning = runningCount === containers.length;
 
@@ -40,51 +45,48 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
 
     return (
         <Accordion type="single" collapsible defaultValue={stackName}>
-            <AccordionItem value={stackName} className="border rounded-lg !border-b bg-card">
-                <AccordionTrigger asChild
-                                  className="px-4 py-4 hover:no-underline cursor-pointer">
-                    <div className="flex  flex-1 w-full">
-                        <ChevronDownIcon
-                            className="text-muted-foreground size-5 self-center transition-transform duration-200"/>
-                        <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <div
-                                className="flex items-center justify-center h-10 w-10 rounded-lg bg-primary/10 shrink-0">
-                                <Layers className="h-5 w-5 text-primary"/>
+            <AccordionItem value={stackName} className="bg-card rounded-lg border !border-b">
+                <AccordionTrigger asChild className="cursor-pointer px-4 py-4 hover:no-underline">
+                    <div className="flex w-full flex-1">
+                        <ChevronDownIcon className="text-muted-foreground size-5 self-center transition-transform duration-200" />
+                        <div className="flex min-w-0 flex-1 items-center gap-3">
+                            <div className="bg-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
+                                <Layers className="text-primary h-5 w-5" />
                             </div>
-                            <div className="flex flex-col min-w-0 text-left">
-                                <h2 className="text-base font-semibold truncate">
-                                    {stackName}
-                                </h2>
-                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <div className="flex min-w-0 flex-col text-left">
+                                <h2 className="truncate text-base font-semibold">{stackName}</h2>
+                                <div className="text-muted-foreground flex items-center gap-2 text-xs">
                                     <span>{containers.length} conteneur</span>
                                     {runningCount > 0 && (
                                         <>
                                             <span>•</span>
-                                            <span
-                                                className="text-online font-medium">{runningCount} actif</span>
+                                            <span className="text-online font-medium">
+                                                {runningCount} actif
+                                            </span>
                                         </>
                                     )}
                                     {stoppedCount > 0 && (
                                         <>
                                             <span>•</span>
-                                            <span
-                                                className="text-offline">{stoppedCount} arrêté</span>
+                                            <span className="text-offline">
+                                                {stoppedCount} arrêté
+                                            </span>
                                         </>
                                     )}
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                            <Status
-                                className={'mr-2'}
-                                status={allRunning ? 'online' : 'offline'}
-                            >
-                                <StatusIndicator/>
+                        <div
+                            className="flex items-center gap-2"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <Status className={'mr-2'} status={allRunning ? 'online' : 'offline'}>
+                                <StatusIndicator />
                                 <StatusLabel>{allRunning ? 'Up' : 'Down'}</StatusLabel>
                             </Status>
 
-                            <Separator orientation="vertical" className="!h-6"/>
+                            <Separator orientation="vertical" className="!h-6" />
 
                             <div className="flex items-center gap-1">
                                 <Button
@@ -94,9 +96,9 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                                     size="icon"
                                 >
                                     {isPending ? (
-                                        <Loader2 className="h-4 w-4 animate-spin"/>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
                                     ) : (
-                                        <Play/>
+                                        <Play />
                                     )}
                                     <span className="sr-only">Démarrer</span>
                                 </Button>
@@ -108,9 +110,9 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                                     size="icon"
                                 >
                                     {isPending ? (
-                                        <Loader2 className="h-4 w-4 animate-spin"/>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
                                     ) : (
-                                        <Square className="h-4 w-4"/>
+                                        <Square className="h-4 w-4" />
                                     )}
                                     <span className="sr-only">Arrêter</span>
                                 </Button>
@@ -122,9 +124,9 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                                     size="icon"
                                 >
                                     {isPending ? (
-                                        <Loader2 className="h-4 w-4 animate-spin"/>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
                                     ) : (
-                                        <RotateCw className="h-4 w-4"/>
+                                        <RotateCw className="h-4 w-4" />
                                     )}
                                     <span className="sr-only">Redémarrer</span>
                                 </Button>
@@ -133,10 +135,10 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                     </div>
                 </AccordionTrigger>
 
-                <AccordionContent className="px-6 pb-6 pt-4 bg-muted/40 border-t">
+                <AccordionContent className="bg-muted/40 border-t px-6 pb-6 pt-4">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {containers.map((container) => (
-                            <ContainerCard key={container.Id} container={container}/>
+                            <ContainerCard key={container.id} container={container} />
                         ))}
                     </div>
                 </AccordionContent>

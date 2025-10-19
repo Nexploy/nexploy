@@ -1,10 +1,10 @@
-import { docker } from '../utils/dockerClient'
-import { handleAsync } from '../helpers/handleAsync'
-import { safeAction } from '../helpers/safeAction'
-import { parseQuery } from '../helpers/parseQuery'
+import { docker } from '@/utils/dockerClient';
+import { handleAsync } from '@/helpers/handleAsync';
+import { safeAction } from '@/helpers/safeAction';
+import { parseQuery } from '@/helpers/parseQuery';
 import { Hono } from 'hono';
 
-const app = new Hono()
+const app = new Hono();
 
 /**
  * @openapi
@@ -20,10 +20,13 @@ const app = new Hono()
  *       200:
  *         description: Array of images
  */
-app.get('/', handleAsync(async (c) => {
-    const all = parseQuery(c.req.query('all'))
-    return docker.listImages({ all })
-}))
+app.get(
+    '/',
+    handleAsync(async (c) => {
+        const all = parseQuery(c.req.query('all'));
+        return docker.listImages({ all });
+    }),
+);
 
 /**
  * @openapi
@@ -43,15 +46,20 @@ app.get('/', handleAsync(async (c) => {
  *       200:
  *         description: Image pulled
  */
-app.post('/pull', safeAction(async (c) => {
-    const { image } = await c.req.json()
-    await new Promise((resolve, reject) => {
-        docker.pull(image, (err: any, stream: NodeJS.ReadableStream) => {
-            if (err) return reject(err)
-            docker.modem.followProgress(stream, (err2) => (err2 ? reject(err2) : resolve(undefined)))
-        })
-    })
-}))
+app.post(
+    '/pull',
+    safeAction(async (c) => {
+        const { image } = await c.req.json();
+        await new Promise((resolve, reject) => {
+            docker.pull(image, (err: any, stream: NodeJS.ReadableStream) => {
+                if (err) return reject(err);
+                docker.modem.followProgress(stream, (err2) =>
+                    err2 ? reject(err2) : resolve(undefined),
+                );
+            });
+        });
+    }),
+);
 
 /**
  * @openapi
@@ -79,11 +87,14 @@ app.post('/pull', safeAction(async (c) => {
  *       200:
  *         description: Image tagged
  */
-app.post('/:id/tag', safeAction(async (c) => {
-    const { repo, tag } = await c.req.json()
-    const image = docker.getImage(c.req.param('id'))
-    await image.tag({ repo, tag })
-}))
+app.post(
+    '/:id/tag',
+    safeAction(async (c) => {
+        const { repo, tag } = await c.req.json();
+        const image = docker.getImage(c.req.param('id'));
+        await image.tag({ repo, tag });
+    }),
+);
 
 /**
  * @openapi
@@ -104,10 +115,13 @@ app.post('/:id/tag', safeAction(async (c) => {
  *       200:
  *         description: Image removed
  */
-app.delete('/:id', safeAction(async (c) => {
-    const image = docker.getImage(c.req.param('id'))
-    const force = parseQuery(c.req.query('force'))
-    await image.remove({ force })
-}))
+app.delete(
+    '/:id',
+    safeAction(async (c) => {
+        const image = docker.getImage(c.req.param('id'));
+        const force = parseQuery(c.req.query('force'));
+        await image.remove({ force });
+    }),
+);
 
-export default app
+export default app;

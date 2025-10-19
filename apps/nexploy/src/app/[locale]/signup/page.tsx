@@ -6,7 +6,14 @@ import { authClient } from '@/lib/auth/auth-client';
 import { useRouter } from '@/i18n/navigation';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@workspace/ui/components/card';
 import { Label } from '@workspace/ui/components/label';
 import { GithubIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -19,7 +26,12 @@ type SignupFormValues = {
 };
 
 export default function SignupPage() {
-    const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm<SignupFormValues>();
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors, isSubmitting },
+    } = useForm<SignupFormValues>();
     const [error, setError] = useState('');
     const router = useRouter();
 
@@ -46,7 +58,7 @@ export default function SignupPage() {
                 router.push('/projects');
             }
         } catch (err) {
-            setError('Une erreur est survenue lors de l\'inscription');
+            setError("Une erreur est survenue lors de l'inscription");
         }
     };
 
@@ -57,7 +69,7 @@ export default function SignupPage() {
                 callbackURL: '/projects',
             });
         } catch (err) {
-            setError('Une erreur est survenue lors de l\'inscription avec GitHub');
+            setError("Une erreur est survenue lors de l'inscription avec GitHub");
         }
     };
 
@@ -82,7 +94,11 @@ export default function SignupPage() {
                                 {...register('name', { required: 'Le nom est requis' })}
                                 disabled={isSubmitting}
                             />
-                            {errors.name && <span className="text-destructive text-sm">{errors.name.message}</span>}
+                            {errors.name && (
+                                <span className="text-destructive text-sm">
+                                    {errors.name.message}
+                                </span>
+                            )}
                         </div>
 
                         <div className="space-y-2">
@@ -94,7 +110,11 @@ export default function SignupPage() {
                                 {...register('email', { required: 'L’email est requis' })}
                                 disabled={isSubmitting}
                             />
-                            {errors.email && <span className="text-destructive text-sm">{errors.email.message}</span>}
+                            {errors.email && (
+                                <span className="text-destructive text-sm">
+                                    {errors.email.message}
+                                </span>
+                            )}
                         </div>
 
                         <div className="space-y-2">
@@ -105,12 +125,15 @@ export default function SignupPage() {
                                 placeholder="••••••••"
                                 {...register('password', {
                                     required: 'Le mot de passe est requis',
-                                    minLength: { value: 6, message: 'Minimum 6 caractères' }
+                                    minLength: { value: 6, message: 'Minimum 6 caractères' },
                                 })}
                                 disabled={isSubmitting}
                             />
-                            {errors.password &&
-                                <span className="text-destructive text-sm">{errors.password.message}</span>}
+                            {errors.password && (
+                                <span className="text-destructive text-sm">
+                                    {errors.password.message}
+                                </span>
+                            )}
                         </div>
 
                         <div className="space-y-2">
@@ -121,29 +144,34 @@ export default function SignupPage() {
                                 placeholder="••••••••"
                                 {...register('confirmPassword', {
                                     required: 'Veuillez confirmer votre mot de passe',
-                                    validate: (value) => value === passwordValue || 'Les mots de passe ne correspondent pas',
+                                    validate: (value) =>
+                                        value === passwordValue ||
+                                        'Les mots de passe ne correspondent pas',
                                 })}
                                 disabled={isSubmitting}
                             />
-                            {errors.confirmPassword &&
-                                <span className="text-destructive text-sm">{errors.confirmPassword.message}</span>}
+                            {errors.confirmPassword && (
+                                <span className="text-destructive text-sm">
+                                    {errors.confirmPassword.message}
+                                </span>
+                            )}
                         </div>
 
                         {error && <div className="text-destructive text-sm">{error}</div>}
 
                         <Button type="submit" className="w-full" disabled={isSubmitting}>
-                            {isSubmitting ? 'Inscription...' : 'S\'inscrire'}
+                            {isSubmitting ? 'Inscription...' : "S'inscrire"}
                         </Button>
                     </form>
 
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t"/>
+                            <span className="w-full border-t" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                          <span className="bg-card text-muted-foreground px-2">
-                            Ou continuer avec
-                          </span>
+                            <span className="bg-card text-muted-foreground px-2">
+                                Ou continuer avec
+                            </span>
                         </div>
                     </div>
 
@@ -154,7 +182,7 @@ export default function SignupPage() {
                         onClick={handleGithubSignup}
                         disabled={isSubmitting}
                     >
-                        <GithubIcon className="h-4 w-4"/>
+                        <GithubIcon className="h-4 w-4" />
                         GitHub
                     </Button>
                 </CardContent>

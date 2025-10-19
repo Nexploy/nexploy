@@ -1,161 +1,138 @@
-import { ContainerInfo } from 'dockerode';
-import { Button } from '@workspace/ui/components/button';
-import { AlertCircleIcon, Box, Container, Layers, LayoutGrid, Plus } from 'lucide-react';
+'use client';
+
+import { useContainerStore } from '@/stores/useContainerStore';
+import {
+    AlertCircleIcon,
+    Box,
+    Container as IconContainer,
+    Container,
+    Layers,
+    LayoutGrid,
+} from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
-import { StackGroup } from '@/components/docker/StackGroup';
+import { Badge } from '@workspace/ui/components/badge';
 import {
     Empty,
     EmptyContent,
     EmptyDescription,
     EmptyHeader,
     EmptyMedia,
-    EmptyTitle
+    EmptyTitle,
 } from '@workspace/ui/components/empty';
-import { drinoDocker } from '@/lib/api/drinoDocker';
-import { Badge } from '@workspace/ui/components/badge';
 import { ScrollAreaWithShadow } from '@/components/docker/ScrollAreaWithShadow';
+import { StatusDocker } from '@/components/docker/StatusDocker';
+import { ContainersStandalone } from '@/components/docker/ContainersStandalone';
+import { ContainersStack } from '@/components/docker/ContainersStack';
 import { Alert, AlertTitle } from '@workspace/ui/components/alert';
-import { Containers } from '@/components/docker/Containers';
+import { AddContainer } from '@/components/docker/AddContainer';
 
+export default function DockerContainersPage() {
+    const stacksSize = useContainerStore().getOrganizedContainers().stacks.size;
+    const standaloneContainersLenght =
+        useContainerStore().getOrganizedContainers().standaloneContainers.length;
+    const error = useContainerStore((state) => state.error);
 
-export default async function DockerPage() {
-    let containers: ContainerInfo[] = [];
-    let errorContainer: string | null = null;
-    try {
-        containers = await drinoDocker.get<ContainerInfo[]>('/containers').consume();
-    } catch (error: any) {
-        errorContainer = error.message;
-    }
-
-    const stacks = new Map<string, ContainerInfo[]>();
-    const standaloneContainers: ContainerInfo[] = [];
-
-    containers.forEach((container) => {
-        const projectLabel = container.Labels?.['com.docker.compose.project'];
-        if (projectLabel) {
-            if (!stacks.has(projectLabel)) {
-                stacks.set(projectLabel, []);
-            }
-            stacks.get(projectLabel)!.push(container);
-        } else {
-            standaloneContainers.push(container);
-        }
-    });
+    const numberOfContainers = stacksSize + standaloneContainersLenght;
 
     const tabs = [
         {
             id: 'all',
             label: 'Tout',
             icon: LayoutGrid,
-            count: containers.length,
+            count: numberOfContainers,
         },
         {
             id: 'stacks',
             label: 'Stacks',
             icon: Layers,
-            count: stacks.size,
+            count: stacksSize,
         },
         {
             id: 'containers',
             label: 'Conteneurs',
             icon: Container,
-            count: standaloneContainers.length,
+            count: standaloneContainersLenght,
         },
     ];
 
-    const Stacks = () => (
-        <div className="space-y-2">
-            <div className="flex items-center gap-2 px-1">
-                <span className="text-lg font-semibold">Stacks</span>
-                <Badge variant={'secondary'}>{Array.from(stacks.entries()).length}</Badge>
-            </div>
-            <div className="space-y-3">
-                {Array.from(stacks.entries()).map(([stackName, stackContainers]) => (
-                    <StackGroup
-                        key={stackName}
-                        stackName={stackName}
-                        containers={stackContainers}
-                    />
-                ))}
-            </div>
-        </div>
-    )
-
     return (
-        <div className="flex flex-col gap-6 h-full pt-5">
+        <div className="flex h-full flex-col gap-6 pt-5">
             <div className="flex justify-between gap-4 px-6">
-                <div>
-                    <h1 className="text-3xl font-semibold tracking-tight">Containers Docker</h1>
-                    <p className="text-sm text-muted-foreground">
-                        {containers.length} conteneur
-                        {stacks.size > 0 && ` · ${stacks.size} stack`}
-                    </p>
+                <div className={'flex gap-2'}>
+                    <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+                        <Box className="text-primary" />
+                    </div>
+                    <div>
+                        <div className={'flex items-end gap-2'}>
+                            <h1 className="text-3xl font-semibold leading-none tracking-tight">
+                                Docker Containers
+                            </h1>
+                            <StatusDocker className={'mb-1'} />
+                        </div>
+                        {numberOfContainers > 0 && (
+                            <p className="text-muted-foreground text-sm">
+                                {numberOfContainers} conteneur
+                                {stacksSize > 0 && ` · ${stacksSize} stack`}
+                            </p>
+                        )}
+                    </div>
                 </div>
-                <Button className={'mt-1'}>
-                    <Plus/>
-                    Ajouter un conteneur
-                </Button>
+                <AddContainer />
             </div>
 
-            {errorContainer && (
+            {error && (
                 <Alert className={'mx-6 w-auto'} variant="destructive">
-                    <AlertCircleIcon/>
-                    <AlertTitle>{errorContainer}</AlertTitle>
+                    <AlertCircleIcon />
+                    <AlertTitle>{error.message}</AlertTitle>
                 </Alert>
             )}
 
-            <Tabs className="flex flex-1 flex-col overflow-hidden" defaultValue="all">
-                <TabsList className={'mx-6 mb-2'}>
-                    {tabs.map((tab, index) => (
-                        <TabsTrigger key={index} value={tab.id} className={'flex flex-1 gap-2'}>
-                            <div className={'flex items-center gap-2'}>
-                                <tab.icon/>
-                                <span>{tab.label}</span>
-                            </div>
-                            <Badge className={'rounded-full'} variant={'secondary'}>{tab.count}</Badge>
-                        </TabsTrigger>
-                    ))}
-                </TabsList>
-                {containers.length === 0 ? (
-                    <Empty>
-                        <EmptyHeader>
-                            <EmptyMedia variant="icon">
-                                <Box/>
-                            </EmptyMedia>
-                            <EmptyTitle>Aucun conteneur</EmptyTitle>
-                            <EmptyDescription>
-                                Vous n’avez encore créé aucun conteneur.
-                            </EmptyDescription>
-                        </EmptyHeader>
-                        <EmptyContent>
-                            <Button>
-                                <Plus/>
-                                Ajouter un conteneur
-                            </Button>
-                        </EmptyContent>
-                    </Empty>
-                ) : (
-                    <ScrollAreaWithShadow className="h-full overflow-hidden px-6">
+            {numberOfContainers === 0 ? (
+                <Empty className={'mb-32'}>
+                    <EmptyHeader>
+                        <EmptyMedia variant="icon" className={'bg-primary/10'}>
+                            <IconContainer className="text-primary" />
+                        </EmptyMedia>
+                        <EmptyTitle>Aucun conteneur</EmptyTitle>
+                        <EmptyDescription>
+                            Vous n’avez encore créé aucun conteneur.
+                        </EmptyDescription>
+                    </EmptyHeader>
+                    <EmptyContent>
+                        <AddContainer />
+                    </EmptyContent>
+                </Empty>
+            ) : (
+                <Tabs className="flex flex-1 flex-col overflow-hidden" defaultValue="all">
+                    <TabsList className={'mx-6 mb-2'}>
+                        {tabs.map((tab, index) => (
+                            <TabsTrigger key={index} value={tab.id} className={'flex flex-1 gap-2'}>
+                                <div className={'flex items-center gap-2'}>
+                                    <tab.icon />
+                                    <span>{tab.label}</span>
+                                </div>
+                                <Badge className={'rounded-full'} variant={'secondary'}>
+                                    {tab.count}
+                                </Badge>
+                            </TabsTrigger>
+                        ))}
+                    </TabsList>
+                    <ScrollAreaWithShadow className="h-full overflow-hidden">
                         <div className={'pb-6'}>
                             <TabsContent value="all" className="flex flex-col gap-5">
-                                <Stacks/>
-                                {stacks.size && (
-                                    <Containers/>
-                                )}
+                                <ContainersStack />
+                                <ContainersStandalone />
                             </TabsContent>
-
                             <TabsContent className={'space-y-2'} value="stacks">
-                                <Stacks/>
+                                <ContainersStack />
                             </TabsContent>
-
                             <TabsContent value="containers">
-                                <Containers/>
+                                <ContainersStandalone />
                             </TabsContent>
                         </div>
                     </ScrollAreaWithShadow>
-                )}
-            </Tabs>
-            {/*<ContainerDashboard/>*/}
+                </Tabs>
+            )}
         </div>
     );
 }

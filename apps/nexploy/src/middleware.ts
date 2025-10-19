@@ -4,24 +4,28 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const handleI18nRouting = createMiddleware(routing);
 
+const redirects: Record<string, string> = {
+    '/': '/projects',
+    '/docker': '/docker/containers',
+};
+
 export default async function middleware(request: NextRequest) {
     const response = handleI18nRouting(request);
     const { pathname } = request.nextUrl;
 
-    if (pathname === '/') {
+    const redirectTarget = redirects[pathname];
+    if (redirectTarget) {
         const url = request.nextUrl.clone();
-        url.pathname = '/projects';
+        url.pathname = redirectTarget;
         return NextResponse.redirect(url);
     }
 
-    return response
+    return response;
 }
 
-
 export const config = {
-
     // Match all pathnames except for
     // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
     // - … the ones containing a dot (e.g. `favicon.ico`)
-    matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
+    matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)',
 };

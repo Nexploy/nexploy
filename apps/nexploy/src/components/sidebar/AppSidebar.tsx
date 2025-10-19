@@ -8,8 +8,8 @@ import {
     LayoutList,
     Network,
     Send,
-    User2
-} from 'lucide-react'
+    User2,
+} from 'lucide-react';
 import {
     Sidebar,
     SidebarContent,
@@ -24,27 +24,31 @@ import {
     SidebarMenuSub,
     SidebarMenuSubButton,
     SidebarMenuSubItem,
-} from '@workspace/ui/components/sidebar'
+} from '@workspace/ui/components/sidebar';
 import Link from 'next/link';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuTrigger
+    DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@workspace/ui/components/collapsible';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@workspace/ui/components/collapsible';
 import * as React from 'react';
 import { ElementType } from 'react';
 
 interface AppSidebarProps {
-    variant?: 'sidebar' | 'floating' | 'inset'
+    variant?: 'sidebar' | 'floating' | 'inset';
 }
 
 interface SidebarItem {
     title: string;
     icon: ElementType;
     href: string;
-    children?: { title: string; href: string, icon: ElementType }[];
+    children?: { title: string; href: string; icon: ElementType }[];
 }
 
 const items: SidebarItem[] = [
@@ -57,19 +61,18 @@ const items: SidebarItem[] = [
         children: [
             { title: 'Containers', icon: Container, href: './containers' },
             { title: 'Images', icon: LayoutList, href: './images' },
-        ]
+        ],
     },
     { title: 'Swarm', href: '/swarm', icon: Network },
     { title: 'Requests', href: '/requests', icon: Send },
 ];
-
 
 export function AppSidebar({ variant }: AppSidebarProps) {
     return (
         <Sidebar className="whitespace-nowrap" collapsible="icon" variant={variant}>
             <SidebarHeader className="flex flex-col gap-0 truncate">
                 <span>Nexploy</span>
-                <span className="text-xs text-muted-foreground">v1.0.0</span>
+                <span className="text-muted-foreground text-xs">v1.0.0</span>
             </SidebarHeader>
 
             <SidebarContent>
@@ -83,11 +86,10 @@ export function AppSidebar({ variant }: AppSidebarProps) {
                                         <CollapsibleTrigger asChild>
                                             <SidebarMenuButton tooltip={item.title} asChild>
                                                 <Link href={item.href}>
-                                                    <item.icon/>
+                                                    <item.icon />
                                                     <span>{item.title}</span>
                                                     {item.children && (
-                                                        <ChevronRight
-                                                            className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"/>
+                                                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                                                     )}
                                                 </Link>
                                             </SidebarMenuButton>
@@ -99,7 +101,7 @@ export function AppSidebar({ variant }: AppSidebarProps) {
                                                         <SidebarMenuSubItem key={child.title}>
                                                             <SidebarMenuSubButton asChild>
                                                                 <Link href={child.href}>
-                                                                    <child.icon/>
+                                                                    <child.icon />
                                                                     {child.title}
                                                                 </Link>
                                                             </SidebarMenuSubButton>
@@ -122,8 +124,8 @@ export function AppSidebar({ variant }: AppSidebarProps) {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <SidebarMenuButton>
-                                    <User2/> Username
-                                    <ChevronUp className="ml-auto"/>
+                                    <User2 /> Username
+                                    <ChevronUp className="ml-auto" />
                                 </SidebarMenuButton>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
@@ -136,5 +138,5 @@ export function AppSidebar({ variant }: AppSidebarProps) {
                 </SidebarMenu>
             </SidebarFooter>
         </Sidebar>
-    )
+    );
 }

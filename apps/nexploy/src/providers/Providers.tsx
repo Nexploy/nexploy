@@ -8,8 +8,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <NextIntlClientProvider>
             <ThemeProvider>
                 {children}
-                <GlobalSheet/>
-                <Toaster/>
+                <GlobalSheet />
+                <Toaster />
             </ThemeProvider>
         </NextIntlClientProvider>
     );

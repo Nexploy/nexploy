@@ -3,5 +3,5 @@ import fr from './locales/fr.json';
 
 export const locales = {
     en,
-    fr
+    fr,
 };

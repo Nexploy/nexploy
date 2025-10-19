@@ -1,6 +1,14 @@
-import { Fragment, startTransition } from 'react';
-import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, } from '@workspace/ui/components/dropdown-menu';
-import { ContainerState, ContainerTool, DockerAction, } from '@workspace/typescript-interface/docker';
+import { Fragment } from 'react';
+import {
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+} from '@workspace/ui/components/dropdown-menu';
+import {
+    ContainerState,
+    ContainerTool,
+    DockerAction,
+} from '@workspace/typescript-interface/docker';
 import { toast } from 'sonner';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { HttpErrorResponse } from 'drino';
@@ -19,10 +27,15 @@ import {
     Square,
     TrendingUp,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useSheetStore } from '@/stores/useSheetStore';
 import { ContainerInspectInfo } from 'dockerode';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@workspace/ui/components/card';
 import { Badge } from '@workspace/ui/components/badge';
 import { Separator } from '@workspace/ui/components/separator';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@workspace/ui/components/chart';
@@ -38,17 +51,18 @@ interface ContainerDropdownActionsProps {
 
 const messageAction: Record<DockerAction, string> = {
     start: 'démarre',
-    stop: 's\'arrête',
+    stop: "s'arrête",
     pause: 'se met en pause',
     restart: 'redémarre',
+    unpause: 'reprend',
+    kill: 'est kill',
 };
 
 export function ContainerDropdownActions({
-                                             containerName,
-                                             containerId,
-                                             containerState,
-                                         }: ContainerDropdownActionsProps) {
-    const router = useRouter();
+    containerName,
+    containerId,
+    containerState,
+}: ContainerDropdownActionsProps) {
     const { openSheet } = useSheetStore();
 
     const handleAction = async (action: DockerAction) => {
@@ -57,15 +71,11 @@ export function ContainerDropdownActions({
             await drinoDocker.post(`/containers/${containerId}/${action}`, null).consume();
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
-                toast.dismiss()
+                toast.dismiss();
                 toast.error(err.error.message);
             }
-        } finally {
-            startTransition(() => {
-                router.refresh();
-            });
         }
-    }
+    };
 
     const handleActionInfo = async () => {
         try {
@@ -80,83 +90,85 @@ export function ContainerDropdownActions({
                 content: (
                     <ScrollArea className="h-[calc(100vh-8rem)] px-1">
                         <Tabs defaultValue="all" className="w-full">
-                            <TabsList className="grid w-full grid-cols-5 mb-6">
+                            <TabsList className="mb-6 grid w-full grid-cols-5">
                                 <TabsTrigger value="all" className="text-xs">
-                                    <LayoutGrid className="h-3 w-3 mr-1.5"/>
+                                    <LayoutGrid className="mr-1.5 h-3 w-3" />
                                     Tout
                                 </TabsTrigger>
                                 <TabsTrigger value="image" className="text-xs">
-                                    <Layers className="h-3 w-3 mr-1.5"/>
+                                    <Layers className="mr-1.5 h-3 w-3" />
                                     Image
                                 </TabsTrigger>
                                 <TabsTrigger value="network" className="text-xs">
-                                    <Network className="h-3 w-3 mr-1.5"/>
+                                    <Network className="mr-1.5 h-3 w-3" />
                                     Réseau
                                 </TabsTrigger>
                                 <TabsTrigger value="resources" className="text-xs">
-                                    <Settings className="h-3 w-3 mr-1.5"/>
+                                    <Settings className="mr-1.5 h-3 w-3" />
                                     Ressources
                                 </TabsTrigger>
                                 <TabsTrigger value="volumes" className="text-xs">
-                                    <HardDrive className="h-3 w-3 mr-1.5"/>
+                                    <HardDrive className="mr-1.5 h-3 w-3" />
                                     Volumes
                                 </TabsTrigger>
                             </TabsList>
 
-                            <TabsContent value="all" className="space-y-6 mt-0">
+                            <TabsContent value="all" className="mt-0 space-y-6">
                                 <div className="grid gap-4 md:grid-cols-2">
                                     <Card>
                                         <CardHeader className="pb-3">
                                             <CardTitle className="flex items-center gap-2 text-sm font-medium">
-                                                <Activity className="text-muted-foreground h-4 w-4"/>
+                                                <Activity className="text-muted-foreground h-4 w-4" />
                                                 État
                                             </CardTitle>
                                         </CardHeader>
                                         <CardContent className="space-y-3">
                                             <div className="flex items-center justify-between">
-                                        <span className="text-muted-foreground text-sm">
-                                            Status
-                                        </span>
+                                                <span className="text-muted-foreground text-sm">
+                                                    Status
+                                                </span>
                                                 <Badge
                                                     variant={
                                                         containerInfo.State.Running
                                                             ? 'default'
                                                             : 'secondary'
-                                                    }>
+                                                    }
+                                                >
                                                     {containerInfo.State.Status}
                                                 </Badge>
                                             </div>
                                             <div className="flex items-center justify-between">
-                                        <span className="text-muted-foreground text-sm">
-                                            Running
-                                        </span>
+                                                <span className="text-muted-foreground text-sm">
+                                                    Running
+                                                </span>
                                                 <Badge
                                                     variant={
                                                         containerInfo.State.Running
                                                             ? 'default'
                                                             : 'destructive'
-                                                    }>
+                                                    }
+                                                >
                                                     {containerInfo.State.Running ? 'Oui' : 'Non'}
                                                 </Badge>
                                             </div>
                                             {containerInfo.State.Paused && (
                                                 <div className="flex items-center justify-between">
-                                            <span className="text-muted-foreground text-sm">
-                                                Paused
-                                            </span>
+                                                    <span className="text-muted-foreground text-sm">
+                                                        Paused
+                                                    </span>
                                                     <Badge variant="secondary">Oui</Badge>
                                                 </div>
                                             )}
                                             {containerInfo.State.StartedAt && (
                                                 <div className="flex flex-col gap-1 border-t pt-2">
-                                            <span className="text-muted-foreground text-xs">
-                                                Démarré
-                                            </span>
+                                                    <span className="text-muted-foreground text-xs">
+                                                        Démarré
+                                                    </span>
                                                     <span className="font-mono text-sm">
-                                                {new Date(
-                                                    containerInfo.State.StartedAt,
-                                                ).toLocaleString('fr-FR')}
-                                            </span>
+                                                        {new Date(
+                                                            containerInfo.State.StartedAt,
+                                                        ).toLocaleString('fr-FR')}
+                                                    </span>
                                                 </div>
                                             )}
                                             {containerInfo.State.Error && (
@@ -174,32 +186,34 @@ export function ContainerDropdownActions({
 
                                     <Card>
                                         <CardHeader className="pb-3">
-                                            <CardTitle className="text-sm font-medium">Image</CardTitle>
+                                            <CardTitle className="text-sm font-medium">
+                                                Image
+                                            </CardTitle>
                                         </CardHeader>
                                         <CardContent>
                                             <p className="break-all font-mono text-sm">
                                                 {containerInfo.Image}
                                             </p>
-                                            <Separator className="my-3"/>
+                                            <Separator className="my-3" />
                                             <div className="space-y-2">
                                                 <div className="flex flex-col gap-1">
-                                            <span className="text-muted-foreground text-xs">
-                                                Créé
-                                            </span>
+                                                    <span className="text-muted-foreground text-xs">
+                                                        Créé
+                                                    </span>
                                                     <span className="font-mono text-sm">
-                                                {new Date(containerInfo.Created).toLocaleString(
-                                                    'fr-FR',
-                                                )}
-                                            </span>
+                                                        {new Date(
+                                                            containerInfo.Created,
+                                                        ).toLocaleString('fr-FR')}
+                                                    </span>
                                                 </div>
                                                 {containerInfo.HostConfig.RestartPolicy && (
                                                     <div className="flex flex-col gap-1">
-                                                <span className="text-muted-foreground text-xs">
-                                                    Politique de redémarrage
-                                                </span>
+                                                        <span className="text-muted-foreground text-xs">
+                                                            Politique de redémarrage
+                                                        </span>
                                                         <Badge variant="outline" className="w-fit">
-                                                            {containerInfo.HostConfig.RestartPolicy.Name ||
-                                                                'Aucune'}
+                                                            {containerInfo.HostConfig.RestartPolicy
+                                                                .Name || 'Aucune'}
                                                         </Badge>
                                                     </div>
                                                 )}
@@ -211,7 +225,7 @@ export function ContainerDropdownActions({
                                 <Card>
                                     <CardHeader>
                                         <CardTitle className="flex items-center gap-2 text-sm font-medium">
-                                            <Network className="text-muted-foreground h-4 w-4"/>
+                                            <Network className="text-muted-foreground h-4 w-4" />
                                             Réseau
                                         </CardTitle>
                                         <CardDescription>
@@ -242,49 +256,50 @@ export function ContainerDropdownActions({
                                             )}
                                         </div>
 
-                                        {Object.keys(containerInfo.NetworkSettings.Ports || {}).length >
-                                            0 && (
+                                        {Object.keys(containerInfo.NetworkSettings.Ports || {})
+                                            .length > 0 && (
+                                            <div className="space-y-2">
+                                                <Separator />
+                                                <p className="text-muted-foreground text-xs font-medium">
+                                                    Mappings de ports
+                                                </p>
                                                 <div className="space-y-2">
-                                                    <Separator/>
-                                                    <p className="text-muted-foreground text-xs font-medium">
-                                                        Mappings de ports
-                                                    </p>
-                                                    <div className="space-y-2">
-                                                        {Object.entries(
-                                                            containerInfo.NetworkSettings.Ports,
-                                                        ).map(([port, bindings]) => (
-                                                            <div
-                                                                key={port}
-                                                                className="bg-muted/30 flex items-center justify-between rounded-md px-3 py-2">
-                                                    <span className="font-mono text-sm">
-                                                        {port}
-                                                    </span>
-                                                                <span className="text-muted-foreground text-xs">
-                                                        →
-                                                    </span>
-                                                                <span className="font-mono text-sm">
-                                                        {bindings
-                                                            ? bindings
-                                                                .map(
-                                                                    (b) =>
-                                                                        `${b.HostIp || '*'}:${b.HostPort}`,
-                                                                )
-                                                                .join(', ')
-                                                            : 'non mappé'}
-                                                    </span>
-                                                            </div>
-                                                        ))}
-                                                    </div>
+                                                    {Object.entries(
+                                                        containerInfo.NetworkSettings.Ports,
+                                                    ).map(([port, bindings]) => (
+                                                        <div
+                                                            key={port}
+                                                            className="bg-muted/30 flex items-center justify-between rounded-md px-3 py-2"
+                                                        >
+                                                            <span className="font-mono text-sm">
+                                                                {port}
+                                                            </span>
+                                                            <span className="text-muted-foreground text-xs">
+                                                                →
+                                                            </span>
+                                                            <span className="font-mono text-sm">
+                                                                {bindings
+                                                                    ? bindings
+                                                                          .map(
+                                                                              (b) =>
+                                                                                  `${b.HostIp || '*'}:${b.HostPort}`,
+                                                                          )
+                                                                          .join(', ')
+                                                                    : 'non mappé'}
+                                                            </span>
+                                                        </div>
+                                                    ))}
                                                 </div>
-                                            )}
+                                            </div>
+                                        )}
 
                                         <div className="space-y-2">
-                                            <Separator/>
+                                            <Separator />
                                             <div className="flex items-center justify-between">
                                                 <p className="text-muted-foreground text-xs font-medium">
                                                     Trafic réseau
                                                 </p>
-                                                <TrendingUp className="text-muted-foreground h-3 w-3"/>
+                                                <TrendingUp className="text-muted-foreground h-3 w-3" />
                                             </div>
                                             <ChartContainer
                                                 config={{
@@ -297,9 +312,13 @@ export function ContainerDropdownActions({
                                                         color: 'hsl(var(--chart-2))',
                                                     },
                                                 }}
-                                                className="h-[200px] w-full">
+                                                className="h-[200px] w-full"
+                                            >
                                                 <AreaChart data={networkData}>
-                                                    <CartesianGrid strokeDasharray="3 3" vertical={false}/>
+                                                    <CartesianGrid
+                                                        strokeDasharray="3 3"
+                                                        vertical={false}
+                                                    />
                                                     <XAxis
                                                         dataKey="time"
                                                         tickLine={false}
@@ -313,7 +332,9 @@ export function ContainerDropdownActions({
                                                         tickMargin={8}
                                                         tickFormatter={(value) => `${value}`}
                                                     />
-                                                    <ChartTooltip content={<ChartTooltipContent/>}/>
+                                                    <ChartTooltip
+                                                        content={<ChartTooltipContent />}
+                                                    />
                                                     <Area
                                                         type="monotone"
                                                         dataKey="rx"
@@ -336,7 +357,8 @@ export function ContainerDropdownActions({
                                     </CardContent>
                                 </Card>
 
-                                {(containerInfo.HostConfig.Memory || containerInfo.HostConfig.NanoCpus) && (
+                                {(containerInfo.HostConfig.Memory ||
+                                    containerInfo.HostConfig.NanoCpus) && (
                                     <Card>
                                         <CardHeader>
                                             <CardTitle className="text-sm font-medium">
@@ -351,16 +373,17 @@ export function ContainerDropdownActions({
                                                             Limite mémoire
                                                         </p>
                                                         <div className="flex items-baseline gap-2">
-                                                    <span className="text-2xl font-bold">
-                                                        {(
-                                                            containerInfo.HostConfig.Memory /
-                                                            1024 /
-                                                            1024
-                                                        ).toFixed(0)}
-                                                    </span>
+                                                            <span className="text-2xl font-bold">
+                                                                {(
+                                                                    containerInfo.HostConfig
+                                                                        .Memory /
+                                                                    1024 /
+                                                                    1024
+                                                                ).toFixed(0)}
+                                                            </span>
                                                             <span className="text-muted-foreground text-sm">
-                                                        MB
-                                                    </span>
+                                                                MB
+                                                            </span>
                                                         </div>
                                                     </div>
                                                 )}
@@ -370,15 +393,15 @@ export function ContainerDropdownActions({
                                                             Limite CPU
                                                         </p>
                                                         <div className="flex items-baseline gap-2">
-                                                    <span className="text-2xl font-bold">
-                                                        {(
-                                                            containerInfo.HostConfig.NanoCpus /
-                                                            1000000000
-                                                        ).toFixed(2)}
-                                                    </span>
+                                                            <span className="text-2xl font-bold">
+                                                                {(
+                                                                    containerInfo.HostConfig
+                                                                        .NanoCpus / 1000000000
+                                                                ).toFixed(2)}
+                                                            </span>
                                                             <span className="text-muted-foreground text-sm">
-                                                        cores
-                                                    </span>
+                                                                cores
+                                                            </span>
                                                         </div>
                                                     </div>
                                                 )}
@@ -398,12 +421,12 @@ export function ContainerDropdownActions({
                                             </CardDescription>
                                         </CardHeader>
                                         <CardContent>
-                                            <div
-                                                className="bg-muted/30 max-h-60 space-y-1 overflow-y-auto rounded-md p-3 font-mono text-xs">
+                                            <div className="bg-muted/30 max-h-60 space-y-1 overflow-y-auto rounded-md p-3 font-mono text-xs">
                                                 {containerInfo.Config.Env.map((env, idx) => (
                                                     <div
                                                         key={idx}
-                                                        className="border-border/40 break-all border-b py-1 last:border-0">
+                                                        className="border-border/40 break-all border-b py-1 last:border-0"
+                                                    >
                                                         {env}
                                                     </div>
                                                 ))}
@@ -426,7 +449,8 @@ export function ContainerDropdownActions({
                                             {containerInfo.Mounts.map((mount, idx) => (
                                                 <div
                                                     key={idx}
-                                                    className="bg-muted/20 space-y-2 rounded-lg border p-3">
+                                                    className="bg-muted/20 space-y-2 rounded-lg border p-3"
+                                                >
                                                     <div className="break-all font-mono text-xs">
                                                         <span className="text-muted-foreground">
                                                             Source:
@@ -440,14 +464,23 @@ export function ContainerDropdownActions({
                                                         {mount.Destination}
                                                     </div>
                                                     <div className="flex gap-2">
-                                                        <Badge variant="outline" className="text-xs">
+                                                        <Badge
+                                                            variant="outline"
+                                                            className="text-xs"
+                                                        >
                                                             {mount.Type}
                                                         </Badge>
-                                                        <Badge variant="outline" className="text-xs">
+                                                        <Badge
+                                                            variant="outline"
+                                                            className="text-xs"
+                                                        >
                                                             {mount.Mode}
                                                         </Badge>
                                                         {mount.RW === false && (
-                                                            <Badge variant="secondary" className="text-xs">
+                                                            <Badge
+                                                                variant="secondary"
+                                                                className="text-xs"
+                                                            >
                                                                 Read-only
                                                             </Badge>
                                                         )}
@@ -461,14 +494,13 @@ export function ContainerDropdownActions({
                         </Tabs>
                     </ScrollArea>
                 ),
-            })
-
+            });
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
                 toast.error(err.error.message);
             }
         }
-    }
+    };
 
     const generateNetworkData = () => {
         const data = [];
@@ -483,38 +515,51 @@ export function ContainerDropdownActions({
         return data;
     };
 
+    const isPaused = containerState === 'paused';
+
     const containerTools: ContainerTool[] = [
-        { icon: Eye, label: 'Ouvrir', state: [] },
         {
-            icon: Play,
-            label: 'Démarrer',
-            action: () => handleAction('start'),
-            state: ['running', 'restarting', 'paused'],
+            icon: Eye,
+            label: 'Ouvrir',
+            disabledStates: [],
         },
+        isPaused
+            ? {
+                  icon: Play,
+                  label: 'Reprendre',
+                  action: () => handleAction('unpause'),
+                  disabledStates: [],
+              }
+            : {
+                  icon: Play,
+                  label: 'Démarrer',
+                  action: () => handleAction('start'),
+                  disabledStates: ['running', 'restarting', 'paused'],
+              },
         {
             icon: Square,
             label: 'Arrêter',
             action: () => handleAction('stop'),
-            state: ['created', 'dead'],
+            disabledStates: ['exited', 'created', 'dead'],
         },
         {
             icon: Pause,
             label: 'Pause',
             action: () => handleAction('pause'),
-            state: ['paused', 'exited', 'dead', 'created'],
+            disabledStates: ['paused', 'exited', 'dead', 'created'],
         },
         {
             icon: RotateCw,
             label: 'Redémarrer',
             action: () => handleAction('restart'),
-            state: ['created', 'dead'],
+            disabledStates: ['created', 'dead'],
         },
         {
             icon: Info,
             label: 'Info',
             action: handleActionInfo,
             separator: true,
-            state: [],
+            disabledStates: [],
         },
     ];
 
@@ -522,11 +567,12 @@ export function ContainerDropdownActions({
         <DropdownMenuContent align="end">
             {containerTools.map((tool, index) => (
                 <Fragment key={index}>
-                    {tool.separator && <DropdownMenuSeparator/>}
+                    {tool.separator && <DropdownMenuSeparator />}
                     <DropdownMenuItem
                         onClick={tool.action}
-                        disabled={tool.state?.includes(containerState)}>
-                        <tool.icon/>
+                        disabled={tool.disabledStates.includes(containerState)}
+                    >
+                        <tool.icon />
                         {tool.label}
                     </DropdownMenuItem>
                 </Fragment>

@@ -1,6 +1,12 @@
-'use client'
+'use client';
 
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, } from '@workspace/ui/components/sheet';
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+} from '@workspace/ui/components/sheet';
 import { useSheetStore } from '@/stores/useSheetStore';
 
 export function GlobalSheet() {
@@ -17,9 +23,7 @@ export function GlobalSheet() {
                                 <SheetDescription>{data.description}</SheetDescription>
                             )}
                         </SheetHeader>
-                        <div className="mt-4">
-                            {data.content}
-                        </div>
+                        <div className="mt-4">{data.content}</div>
                     </>
                 )}
             </SheetContent>
