@@ -30,7 +30,7 @@ app.post(
         const id = c.req.param('id');
         const container = docker.getContainer(id);
 
-        await container.start();
+        return await container.start();
     }),
 );
 
@@ -64,7 +64,7 @@ app.post(
         const id = c.req.param('id');
         const container = docker.getContainer(id);
 
-        await container.stop();
+        return await container.stop();
     }),
 );
 

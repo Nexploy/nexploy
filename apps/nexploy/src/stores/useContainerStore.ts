@@ -101,7 +101,8 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
         }
 
         try {
-            const url = new URL(`${apiUrl}/api/containers/events/stream`);
+            const url = new URL(`${apiUrl}/stream`, window.location.origin);
+
             if (containerIds && containerIds.length > 0) {
                 url.searchParams.set('containers', containerIds.join(','));
             }

@@ -27,8 +27,6 @@ export function Header() {
         isLast: index === segments.length - 1,
     }));
 
-    console.log(paths);
-
     return (
         <div
             className={'peer ml-2 mr-2 flex h-14 items-center justify-between gap-3 md:ml-0'}

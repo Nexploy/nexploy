@@ -9,7 +9,13 @@ import { ArrowLeft, Container, Loader2, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@workspace/ui/components/card';
 import {
     Form,
     FormControl,
@@ -19,7 +25,13 @@ import {
     FormLabel,
     FormMessage,
 } from '@workspace/ui/components/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from '@workspace/ui/components/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@workspace/ui/components/select';
 import { Switch } from '@workspace/ui/components/switch';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { ScrollAreaWithShadow } from '@/components/docker/ScrollAreaWithShadow';
@@ -144,8 +156,8 @@ export default function AddContainerPage() {
 
     return (
         <div className="flex flex-1 flex-col gap-6 overflow-hidden pt-5">
-            <div className={'flex justify-between px-6'}>
-                <div className="flex gap-2">
+            <div className={'flex justify-between gap-4 px-6'}>
+                <div className="flex gap-3">
                     <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
                         <Container className="text-primary" />
                     </div>
@@ -295,22 +307,24 @@ export default function AddContainerPage() {
                                         control={form.control}
                                         name="autoRemove"
                                         render={({ field }) => (
-                                            <FormItem className="flex items-center justify-between rounded-lg border p-4">
-                                                <div className="space-y-0.5">
-                                                    <FormLabel className="text-base">
-                                                        Suppression automatique
-                                                    </FormLabel>
-                                                    <FormDescription>
-                                                        Supprimer le conteneur automatiquement après
-                                                        arrêt
-                                                    </FormDescription>
-                                                </div>
-                                                <FormControl>
-                                                    <Switch
-                                                        checked={field.value}
-                                                        onCheckedChange={field.onChange}
-                                                    />
-                                                </FormControl>
+                                            <FormItem>
+                                                <Label className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
+                                                    <div className="flex flex-col gap-0.5">
+                                                        <span className="text-base">
+                                                            Suppression automatique
+                                                        </span>
+                                                        <FormDescription>
+                                                            Supprimer le conteneur automatiquement
+                                                            après arrêt
+                                                        </FormDescription>
+                                                    </div>
+                                                    <FormControl>
+                                                        <Switch
+                                                            checked={field.value}
+                                                            onCheckedChange={field.onChange}
+                                                        />
+                                                    </FormControl>
+                                                </Label>
                                             </FormItem>
                                         )}
                                     />
@@ -319,21 +333,24 @@ export default function AddContainerPage() {
                                         control={form.control}
                                         name="privileged"
                                         render={({ field }) => (
-                                            <FormItem className="flex items-center justify-between rounded-lg border p-4">
-                                                <div className="space-y-0.5">
-                                                    <FormLabel className="text-base">
-                                                        Mode privilégié
-                                                    </FormLabel>
-                                                    <FormDescription>
-                                                        Donner des privilèges étendus au conteneur
-                                                    </FormDescription>
-                                                </div>
-                                                <FormControl>
-                                                    <Switch
-                                                        checked={field.value}
-                                                        onCheckedChange={field.onChange}
-                                                    />
-                                                </FormControl>
+                                            <FormItem>
+                                                <Label className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
+                                                    <div className="flex flex-col gap-0.5">
+                                                        <span className="text-base">
+                                                            Mode privilégié
+                                                        </span>
+                                                        <FormDescription>
+                                                            Donner des privilèges étendus au
+                                                            conteneur
+                                                        </FormDescription>
+                                                    </div>
+                                                    <FormControl>
+                                                        <Switch
+                                                            checked={field.value}
+                                                            onCheckedChange={field.onChange}
+                                                        />
+                                                    </FormControl>
+                                                </Label>
                                             </FormItem>
                                         )}
                                     />

@@ -1,4 +1,4 @@
-export type DockerAction = 'start' | 'stop' | 'restart' | 'pause' | 'unpause' | 'kill';
+export type DockerAction = 'start' | 'stop' | 'restart' | 'pause' | 'unpause' | 'kill' | 'remove';
 
 export type ContainerState = 'created' | 'running' | 'restarting' | 'paused' | 'exited' | 'dead';
 

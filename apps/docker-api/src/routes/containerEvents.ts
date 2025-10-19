@@ -11,7 +11,7 @@ app.get('/stream', (c) => {
 
     return streamSSE(c, async (stream) => {
         let isActive = true;
-        const clientId = `client-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 
         logger.info({ clientId, watchContainers }, 'SSE client connected');
 

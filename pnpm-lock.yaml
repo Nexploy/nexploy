@@ -7,293 +7,22 @@ settings:
 importers:
 
   .:
-    devDependencies:
-      '@workspace/eslint-config':
-        specifier: workspace:*
-        version: link:packages/eslint-config
-      '@workspace/typescript-config':
-        specifier: workspace:*
-        version: link:packages/typescript-config
-      prettier:
-        specifier: ^3.6.2
-        version: 3.6.2
-      prettier-plugin-tailwindcss:
-        specifier: ^0.6.14
-        version: 0.6.14(prettier@3.6.2)
-      turbo:
-        specifier: ^2.5.8
-        version: 2.5.8
-      typescript:
-        specifier: 5.9.3
-        version: 5.9.3
-
-  apps/desktop:
     dependencies:
-      '@workspace/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      next:
-        specifier: 15.5.4
-        version: 15.5.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      react:
-        specifier: 19.2.0
-        version: 19.2.0
-      react-dom:
-        specifier: 19.2.0
-        version: 19.2.0(react@19.2.0)
-    devDependencies:
-      '@eslint/eslintrc':
-        specifier: ^3.3.1
-        version: 3.3.1
-      '@tailwindcss/postcss':
-        specifier: ^4.1.14
-        version: 4.1.14
-      '@types/node':
-        specifier: ^24.7.2
-        version: 24.7.2
-      '@types/react':
-        specifier: ^19.2.2
-        version: 19.2.2
-      '@types/react-dom':
-        specifier: ^19.2.1
-        version: 19.2.1(@types/react@19.2.2)
-      '@workspace/eslint-config':
-        specifier: workspace:^
-        version: link:../../packages/eslint-config
-      '@workspace/typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/typescript-config
-      concurrently:
-        specifier: ^9.2.1
-        version: 9.2.1
-      electron:
-        specifier: ^38.2.2
-        version: 38.2.2
-      electron-builder:
-        specifier: ^26.0.12
-        version: 26.0.12(electron-builder-squirrel-windows@26.0.12)
-      eslint:
-        specifier: ^9.37.0
-        version: 9.37.0(jiti@2.6.1)
-      eslint-config-next:
-        specifier: 15.5.4
-        version: 15.5.4(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
-      tailwindcss:
-        specifier: ^4.1.14
-        version: 4.1.14
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
-      wait-on:
-        specifier: ^9.0.1
-        version: 9.0.1
-
-  apps/docker-api:
-    dependencies:
+      '@eslint/js':
+        specifier: ^9.38.0
+        version: 9.38.0
       '@hono/node-server':
         specifier: ^1.19.5
         version: 1.19.5(hono@4.9.12)
-      '@types/byline':
-        specifier: ^4.2.36
-        version: 4.2.36
-      byline:
-        specifier: ^5.0.0
-        version: 5.0.0
-      dockerode:
-        specifier: ^4.0.9
-        version: 4.0.9
-      hono:
-        specifier: ^4.9.12
-        version: 4.9.12
-      pino:
-        specifier: ^10.0.0
-        version: 10.0.0
-      pino-pretty:
-        specifier: ^13.1.2
-        version: 13.1.2
-    devDependencies:
-      '@types/dockerode':
-        specifier: ^3.3.44
-        version: 3.3.44
-      '@types/node':
-        specifier: ^20.11.17
-        version: 20.19.21
-      '@workspace/typescript-interface':
-        specifier: workspace:*
-        version: link:../../packages/typescript-interface
-      tsx:
-        specifier: ^4.20.6
-        version: 4.20.6
-      typescript:
-        specifier: ^5.8.3
-        version: 5.9.3
-
-  apps/nexploy:
-    dependencies:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.65.0(react@19.2.0))
+      '@next-safe-action/adapter-react-hook-form':
+        specifier: ^2.0.0
+        version: 2.0.0(@hookform/resolvers@5.2.2(react-hook-form@7.65.0(react@19.2.0)))(next-safe-action@8.0.11(next@15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(next@15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react-hook-form@7.65.0(react@19.2.0))(react@19.2.0)
       '@prisma/client':
         specifier: ^6.17.1
         version: 6.17.1(prisma@6.17.1(typescript@5.9.3))(typescript@5.9.3)
-      '@radix-ui/react-label':
-        specifier: ^2.1.7
-        version: 2.1.7(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@radix-ui/react-slot':
-        specifier: ^1.2.3
-        version: 1.2.3(@types/react@19.2.2)(react@19.2.0)
-      '@workspace/i18n':
-        specifier: workspace:*
-        version: link:../../packages/i18n
-      '@workspace/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      better-auth:
-        specifier: ^1.3.27
-        version: 1.3.27(next@15.5.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      drino:
-        specifier: ^2.0.0
-        version: 2.0.0(thror@1.0.3)
-      lucide-react:
-        specifier: ^0.545.0
-        version: 0.545.0(react@19.2.0)
-      next:
-        specifier: ^15.5.4
-        version: 15.5.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      next-intl:
-        specifier: ^4.3.12
-        version: 4.3.12(next@15.5.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)(typescript@5.9.3)
-      next-themes:
-        specifier: ^0.4.6
-        version: 0.4.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      react:
-        specifier: ^19.2.0
-        version: 19.2.0
-      react-dom:
-        specifier: ^19.2.0
-        version: 19.2.0(react@19.2.0)
-      react-hook-form:
-        specifier: ^7.65.0
-        version: 7.65.0(react@19.2.0)
-      recharts:
-        specifier: 2.15.4
-        version: 2.15.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      sonner:
-        specifier: ^2.0.7
-        version: 2.0.7(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      swr:
-        specifier: ^2.3.6
-        version: 2.3.6(react@19.2.0)
-      zod:
-        specifier: ^4.1.12
-        version: 4.1.12
-      zustand:
-        specifier: ^5.0.8
-        version: 5.0.8(@types/react@19.2.2)(react@19.2.0)(use-sync-external-store@1.6.0(react@19.2.0))
-    devDependencies:
-      '@types/dockerode':
-        specifier: ^3.3.44
-        version: 3.3.44
-      '@types/node':
-        specifier: ^24.7.2
-        version: 24.7.2
-      '@types/react':
-        specifier: ^19.2.2
-        version: 19.2.2
-      '@types/react-dom':
-        specifier: ^19.2.1
-        version: 19.2.1(@types/react@19.2.2)
-      '@workspace/eslint-config':
-        specifier: workspace:^
-        version: link:../../packages/eslint-config
-      '@workspace/typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/typescript-config
-      '@workspace/typescript-interface':
-        specifier: workspace:*
-        version: link:../../packages/typescript-interface
-      prisma:
-        specifier: ^6.17.1
-        version: 6.17.1(typescript@5.9.3)
-      tsx:
-        specifier: ^4.20.6
-        version: 4.20.6
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
-
-  apps/scalar-server:
-    dependencies:
-      '@hono/node-server':
-        specifier: ^1.19.5
-        version: 1.19.5(hono@4.9.12)
-      '@scalar/hono-api-reference':
-        specifier: ^0.9.22
-        version: 0.9.22(hono@4.9.12)
-      hono:
-        specifier: ^4.9.12
-        version: 4.9.12
-      swagger-jsdoc:
-        specifier: ^6.2.8
-        version: 6.2.8(openapi-types@12.1.3)
-    devDependencies:
-      '@types/swagger-jsdoc':
-        specifier: ^6.0.4
-        version: 6.0.4
-      tsx:
-        specifier: ^4.20.6
-        version: 4.20.6
-
-  packages/eslint-config:
-    devDependencies:
-      '@next/eslint-plugin-next':
-        specifier: ^15.5.4
-        version: 15.5.4
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^8.46.0
-        version: 8.46.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
-      '@typescript-eslint/parser':
-        specifier: ^8.46.0
-        version: 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
-      eslint:
-        specifier: ^9.37.0
-        version: 9.37.0(jiti@2.6.1)
-      eslint-config-prettier:
-        specifier: ^10.1.8
-        version: 10.1.8(eslint@9.37.0(jiti@2.6.1))
-      eslint-plugin-only-warn:
-        specifier: ^1.1.0
-        version: 1.1.0
-      eslint-plugin-react:
-        specifier: ^7.37.5
-        version: 7.37.5(eslint@9.37.0(jiti@2.6.1))
-      eslint-plugin-react-hooks:
-        specifier: ^7.0.0
-        version: 7.0.0(eslint@9.37.0(jiti@2.6.1))
-      eslint-plugin-turbo:
-        specifier: ^2.5.8
-        version: 2.5.8(eslint@9.37.0(jiti@2.6.1))(turbo@2.5.8)
-      globals:
-        specifier: ^16.4.0
-        version: 16.4.0
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
-      typescript-eslint:
-        specifier: ^8.46.0
-        version: 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
-
-  packages/i18n: {}
-
-  packages/typescript-config: {}
-
-  packages/typescript-interface: {}
-
-  packages/ui:
-    dependencies:
-      '@hookform/resolvers':
-        specifier: ^5.2.2
-        version: 5.2.2(react-hook-form@7.65.0(react@19.2.0))
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -360,6 +89,21 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.2.8
         version: 1.2.8(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@types/byline':
+        specifier: ^4.2.36
+        version: 4.2.36
+      '@workspace/i18n':
+        specifier: workspace:*
+        version: link:packages/i18n
+      '@workspace/ui':
+        specifier: workspace:*
+        version: link:packages/ui
+      better-auth:
+        specifier: ^1.3.27
+        version: 1.3.27(next@15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      byline:
+        specifier: ^5.0.0
+        version: 5.0.0
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -369,12 +113,36 @@ importers:
       cmdk:
         specifier: ^1.1.1
         version: 1.1.1(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      dockerode:
+        specifier: ^4.0.9
+        version: 4.0.9
+      drino:
+        specifier: ^2.0.0
+        version: 2.0.0(thror@1.0.3)
+      hono:
+        specifier: ^4.9.12
+        version: 4.9.12
       lucide-react:
         specifier: ^0.545.0
         version: 0.545.0(react@19.2.0)
+      next:
+        specifier: ^15.5.4
+        version: 15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      next-intl:
+        specifier: ^4.3.12
+        version: 4.3.12(next@15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)(typescript@5.9.3)
+      next-safe-action:
+        specifier: ^8.0.11
+        version: 8.0.11(next@15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      pino:
+        specifier: ^10.0.0
+        version: 10.0.0
+      pino-pretty:
+        specifier: ^13.1.2
+        version: 13.1.2
       react:
         specifier: ^19.2.0
         version: 19.2.0
@@ -390,6 +158,9 @@ importers:
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      swr:
+        specifier: ^2.3.6
+        version: 2.3.6(react@19.2.0)
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
@@ -402,13 +173,113 @@ importers:
       zod:
         specifier: ^4.1.12
         version: 4.1.12
+      zustand:
+        specifier: ^5.0.8
+        version: 5.0.8(@types/react@19.2.2)(react@19.2.0)(use-sync-external-store@1.6.0(react@19.2.0))
     devDependencies:
+      '@next/eslint-plugin-next':
+        specifier: ^15.5.4
+        version: 15.5.4
       '@tailwindcss/postcss':
         specifier: ^4.1.14
         version: 4.1.14
       '@turbo/gen':
         specifier: ^2.5.8
         version: 2.5.8(@types/node@24.7.2)(typescript@5.9.3)
+      '@types/dockerode':
+        specifier: ^3.3.44
+        version: 3.3.44
+      '@types/node':
+        specifier: ^24.7.2
+        version: 24.7.2
+      '@types/react':
+        specifier: ^19.2.2
+        version: 19.2.2
+      '@types/react-dom':
+        specifier: ^19.2.1
+        version: 19.2.1(@types/react@19.2.2)
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^8.46.0
+        version: 8.46.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/parser':
+        specifier: ^8.46.0
+        version: 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
+      '@workspace/eslint-config':
+        specifier: workspace:^
+        version: link:packages/eslint-config
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:packages/typescript-config
+      '@workspace/typescript-interface':
+        specifier: workspace:*
+        version: link:packages/typescript-interface
+      eslint:
+        specifier: ^9.37.0
+        version: 9.37.0(jiti@2.6.1)
+      eslint-config-prettier:
+        specifier: ^10.1.8
+        version: 10.1.8(eslint@9.37.0(jiti@2.6.1))
+      eslint-plugin-only-warn:
+        specifier: ^1.1.0
+        version: 1.1.0
+      eslint-plugin-react:
+        specifier: ^7.37.5
+        version: 7.37.5(eslint@9.37.0(jiti@2.6.1))
+      eslint-plugin-react-hooks:
+        specifier: ^7.0.0
+        version: 7.0.0(eslint@9.37.0(jiti@2.6.1))
+      eslint-plugin-turbo:
+        specifier: ^2.5.8
+        version: 2.5.8(eslint@9.37.0(jiti@2.6.1))(turbo@2.5.8)
+      globals:
+        specifier: ^16.4.0
+        version: 16.4.0
+      prettier:
+        specifier: ^3.6.2
+        version: 3.6.2
+      prettier-plugin-tailwindcss:
+        specifier: ^0.6.14
+        version: 0.6.14(prettier@3.6.2)
+      prisma:
+        specifier: ^6.17.1
+        version: 6.17.1(typescript@5.9.3)
+      tailwindcss:
+        specifier: ^4.1.14
+        version: 4.1.14
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      turbo:
+        specifier: ^2.5.8
+        version: 2.5.8
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.46.0
+        version: 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
+
+  apps/desktop:
+    dependencies:
+      '@workspace/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      next:
+        specifier: 15.5.4
+        version: 15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      react:
+        specifier: 19.2.0
+        version: 19.2.0
+      react-dom:
+        specifier: 19.2.0
+        version: 19.2.0(react@19.2.0)
+    devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3.3.1
+        version: 3.3.1
+      '@tailwindcss/postcss':
+        specifier: ^4.1.14
+        version: 4.1.14
       '@types/node':
         specifier: ^24.7.2
         version: 24.7.2
@@ -419,17 +290,71 @@ importers:
         specifier: ^19.2.1
         version: 19.2.1(@types/react@19.2.2)
       '@workspace/eslint-config':
-        specifier: workspace:*
-        version: link:../eslint-config
+        specifier: workspace:^
+        version: link:../../packages/eslint-config
       '@workspace/typescript-config':
         specifier: workspace:*
-        version: link:../typescript-config
+        version: link:../../packages/typescript-config
+      concurrently:
+        specifier: ^9.2.1
+        version: 9.2.1
+      electron:
+        specifier: ^38.2.2
+        version: 38.2.2
+      electron-builder:
+        specifier: ^26.0.12
+        version: 26.0.12(electron-builder-squirrel-windows@26.0.12)
+      eslint:
+        specifier: ^9.37.0
+        version: 9.37.0(jiti@2.6.1)
+      eslint-config-next:
+        specifier: 15.5.4
+        version: 15.5.4(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
       tailwindcss:
         specifier: ^4.1.14
         version: 4.1.14
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      wait-on:
+        specifier: ^9.0.1
+        version: 9.0.1
+
+  apps/docker-api: {}
+
+  apps/nexploy: {}
+
+  apps/scalar-server:
+    dependencies:
+      '@hono/node-server':
+        specifier: ^1.19.5
+        version: 1.19.5(hono@4.9.12)
+      '@scalar/hono-api-reference':
+        specifier: ^0.9.22
+        version: 0.9.22(hono@4.9.12)
+      hono:
+        specifier: ^4.9.12
+        version: 4.9.12
+      swagger-jsdoc:
+        specifier: ^6.2.8
+        version: 6.2.8(openapi-types@12.1.3)
+    devDependencies:
+      '@types/swagger-jsdoc':
+        specifier: ^6.0.4
+        version: 6.0.4
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+
+  packages/eslint-config: {}
+
+  packages/i18n: {}
+
+  packages/typescript-config: {}
+
+  packages/typescript-interface: {}
+
+  packages/ui: {}
 
 packages:
 
@@ -792,6 +717,10 @@ packages:
     resolution: {integrity: sha512-jaS+NJ+hximswBG6pjNX0uEJZkrT0zwpVi3BA3vX22aFGjJjmgSTSmPpZCRKmoBL5VY/M6p0xsSJx7rk7sy5gg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  '@eslint/js@9.38.0':
+    resolution: {integrity: sha512-UZ1VpFvXf9J06YG9xQBdnzU+kthors6KjhMAl6f4gH4usHyh31rUf2DLGInT8RFYIReYXNSydgPY0V2LuWgl7A==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
   '@eslint/object-schema@2.1.6':
     resolution: {integrity: sha512-RBMg5FRL0I0gs51M/guSAj5/e14VQ4tpZnQNWwuDT66P14I43ItmPfIZRhO9fUVIPOAQXU47atlywZ/czoqFPA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -1080,6 +1009,16 @@ packages:
 
   '@napi-rs/wasm-runtime@0.2.12':
     resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
+
+  '@next-safe-action/adapter-react-hook-form@2.0.0':
+    resolution: {integrity: sha512-vp3KAd5NKnBBCF/3b8kDxEYj0+BUYVjlSZOWHikz/Y2O+yLheRmtj8Vcm379itlqGUKcLV5O2o/dwKHvH8pYog==}
+    peerDependencies:
+      '@hookform/resolvers': '>= 5.0.0'
+      next: '>= 14.0.0'
+      next-safe-action: '>= 8.0.0'
+      react: '>= 18.2.0'
+      react-dom: '>= 18.2.0'
+      react-hook-form: '>= 7.0.0'
 
   '@next/env@15.5.4':
     resolution: {integrity: sha512-27SQhYp5QryzIT5uO8hq99C69eLQ7qkzkDPsk3N+GuS2XgOgoYEeOav7Pf8Tn4drECOVDsDg8oj+/DVy8qQL2A==}
@@ -2072,9 +2011,6 @@ packages:
 
   '@types/node@18.19.130':
     resolution: {integrity: sha512-GRaXQx6jGfL8sKfaIDD6OupbIHBr9jv7Jnaml9tB7l4v068PAOXqfcujMMo5PhbIs6ggR1XODELqahT2R8v0fg==}
-
-  '@types/node@20.19.21':
-    resolution: {integrity: sha512-CsGG2P3I5y48RPMfprQGfy4JPRZ6csfC3ltBZSRItG3ngggmNY/qs2uZKp4p9VbrpqNNSMzUZNFZKzgOGnd/VA==}
 
   '@types/node@22.18.10':
     resolution: {integrity: sha512-anNG/V/Efn/YZY4pRzbACnKxNKoBng2VTFydVu8RRs5hQjikP8CQfaeAV59VFSCzKNp90mXiVXW2QzV56rwMrg==}
@@ -4250,6 +4186,14 @@ packages:
       typescript:
         optional: true
 
+  next-safe-action@8.0.11:
+    resolution: {integrity: sha512-gqJLmnQLAoFCq1kRBopN46New+vx1n9J9Y/qDQLXpv/VqU40AWxDakvshwwnWAt8R0kLvlakNYNLX5PqlXWSMg==}
+    engines: {node: '>=18.17'}
+    peerDependencies:
+      next: '>= 14.0.0'
+      react: '>= 18.2.0'
+      react-dom: '>= 18.2.0'
+
   next-themes@0.4.6:
     resolution: {integrity: sha512-pZvgD5L0IEvX5/9GWyHMf3m8BKiVQwsCMHfoFosXtXBMnaS0ZnIJ9ST4b4NqLVKDEm8QBxoNNGNaBv2JNF6XNA==}
     peerDependencies:
@@ -6021,6 +5965,8 @@ snapshots:
 
   '@eslint/js@9.37.0': {}
 
+  '@eslint/js@9.38.0': {}
+
   '@eslint/object-schema@2.1.6': {}
 
   '@eslint/plugin-kit@0.4.0':
@@ -6290,6 +6236,15 @@ snapshots:
       '@emnapi/runtime': 1.4.5
       '@tybys/wasm-util': 0.10.1
     optional: true
+
+  '@next-safe-action/adapter-react-hook-form@2.0.0(@hookform/resolvers@5.2.2(react-hook-form@7.65.0(react@19.2.0)))(next-safe-action@8.0.11(next@15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(next@15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react-hook-form@7.65.0(react@19.2.0))(react@19.2.0)':
+    dependencies:
+      '@hookform/resolvers': 5.2.2(react-hook-form@7.65.0(react@19.2.0))
+      next: 15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      next-safe-action: 8.0.11(next@15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      react: 19.2.0
+      react-dom: 19.2.0(react@19.2.0)
+      react-hook-form: 7.65.0(react@19.2.0)
 
   '@next/env@15.5.4': {}
 
@@ -7355,10 +7310,6 @@ snapshots:
     dependencies:
       undici-types: 5.26.5
 
-  '@types/node@20.19.21':
-    dependencies:
-      undici-types: 6.21.0
-
   '@types/node@22.18.10':
     dependencies:
       undici-types: 6.21.0
@@ -7801,7 +7752,7 @@ snapshots:
     dependencies:
       tweetnacl: 0.14.5
 
-  better-auth@1.3.27(next@15.5.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
+  better-auth@1.3.27(next@15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
       '@better-auth/core': 1.3.27
       '@better-auth/utils': 0.3.0
@@ -7817,7 +7768,7 @@ snapshots:
       nanostores: 1.0.1
       zod: 4.1.12
     optionalDependencies:
-      next: 15.5.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      next: 15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
 
@@ -8662,7 +8613,7 @@ snapshots:
       '@typescript-eslint/parser': 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
       eslint: 9.37.0(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.37.0(jiti@2.6.1)))(eslint@9.37.0(jiti@2.6.1))
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.37.0(jiti@2.6.1))
       eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.37.0(jiti@2.6.1))
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.37.0(jiti@2.6.1))
       eslint-plugin-react: 7.37.5(eslint@9.37.0(jiti@2.6.1))
@@ -8686,7 +8637,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.37.0(jiti@2.6.1)))(eslint@9.37.0(jiti@2.6.1)):
+  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@9.37.0(jiti@2.6.1)):
     dependencies:
       '@nolyfill/is-core-module': 1.0.39
       debug: 4.4.1
@@ -8701,14 +8652,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.37.0(jiti@2.6.1)))(eslint@9.37.0(jiti@2.6.1)))(eslint@9.37.0(jiti@2.6.1)):
+  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.37.0(jiti@2.6.1)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       '@typescript-eslint/parser': 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
       eslint: 9.37.0(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.37.0(jiti@2.6.1)))(eslint@9.37.0(jiti@2.6.1))
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.37.0(jiti@2.6.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -8723,7 +8674,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.37.0(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.37.0(jiti@2.6.1)))(eslint@9.37.0(jiti@2.6.1)))(eslint@9.37.0(jiti@2.6.1))
+      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.37.0(jiti@2.6.1))
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -9898,22 +9849,28 @@ snapshots:
 
   netmask@2.0.2: {}
 
-  next-intl@4.3.12(next@15.5.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)(typescript@5.9.3):
+  next-intl@4.3.12(next@15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)(typescript@5.9.3):
     dependencies:
       '@formatjs/intl-localematcher': 0.5.10
       negotiator: 1.0.0
-      next: 15.5.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      next: 15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react: 19.2.0
       use-intl: 4.3.12(react@19.2.0)
     optionalDependencies:
       typescript: 5.9.3
+
+  next-safe-action@8.0.11(next@15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
+    dependencies:
+      next: 15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      react: 19.2.0
+      react-dom: 19.2.0(react@19.2.0)
 
   next-themes@0.4.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
 
-  next@15.5.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
+  next@15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
       '@next/env': 15.5.4
       '@swc/helpers': 0.5.15
@@ -9921,7 +9878,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
-      styled-jsx: 5.1.6(react@19.2.0)
+      styled-jsx: 5.1.6(@babel/core@7.28.4)(react@19.2.0)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.5.4
       '@next/swc-darwin-x64': 15.5.4
@@ -10855,10 +10812,12 @@ snapshots:
 
   strip-json-comments@5.0.3: {}
 
-  styled-jsx@5.1.6(react@19.2.0):
+  styled-jsx@5.1.6(@babel/core@7.28.4)(react@19.2.0):
     dependencies:
       client-only: 0.0.1
       react: 19.2.0
+    optionalDependencies:
+      '@babel/core': 7.28.4
 
   sumchecker@3.0.1:
     dependencies:

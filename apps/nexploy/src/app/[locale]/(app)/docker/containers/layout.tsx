@@ -2,12 +2,12 @@
 
 import { useContainerSSE } from '@/hooks/useContainerSSE';
 
-export default async function ContainerLayout({
+export default function ContainerLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    useContainerSSE('http://localhost:3300');
+    useContainerSSE('/api/containers/events');
 
     return children;
 }

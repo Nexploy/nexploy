@@ -1,14 +1,7 @@
 'use client';
 
 import { useContainerStore } from '@/stores/useContainerStore';
-import {
-    AlertCircleIcon,
-    Box,
-    Container as IconContainer,
-    Container,
-    Layers,
-    LayoutGrid,
-} from 'lucide-react';
+import { AlertCircleIcon, Box, Container as IconContainer, Container, Layers, LayoutGrid, } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { Badge } from '@workspace/ui/components/badge';
 import {
@@ -57,17 +50,17 @@ export default function DockerContainersPage() {
 
     return (
         <div className="flex h-full flex-col gap-6 pt-5">
-            <div className="flex justify-between gap-4 px-6">
-                <div className={'flex gap-2'}>
+            <div className="flex justify-between gap-2 px-6">
+                <div className={'flex gap-3'}>
                     <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
                         <Box className="text-primary" />
                     </div>
                     <div>
-                        <div className={'flex items-end gap-2'}>
-                            <h1 className="text-3xl font-semibold leading-none tracking-tight">
+                        <div className={'flex items-start gap-3'}>
+                            <h1 className="text-3xl leading-none font-semibold tracking-tight">
                                 Docker Containers
                             </h1>
-                            <StatusDocker className={'mb-1'} />
+                            <StatusDocker className={'my-1'} />
                         </div>
                         {numberOfContainers > 0 && (
                             <p className="text-muted-foreground text-sm">

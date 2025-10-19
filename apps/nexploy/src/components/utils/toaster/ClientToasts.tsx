@@ -3,14 +3,9 @@
 import { startTransition, useEffect, useOptimistic, useState } from 'react';
 import { Toaster } from '@workspace/ui/components/sonner';
 import { toast as sonnerToast } from 'sonner';
+import { ToastItem } from '@workspace/typescript-interface/toast';
 
-type Toast = {
-    id: string;
-    message: string;
-    dismiss: () => Promise<void>;
-};
-
-export function ClientToaster({ toasts }: { toasts: Toast[] }) {
+export function ClientToasts({ toasts }: { toasts: ToastItem[] }) {
     const [optimisticToasts, remove] = useOptimistic(toasts, (current, id) =>
         current.filter((toast) => toast.id !== id),
     );
@@ -30,12 +25,16 @@ export function ClientToaster({ toasts }: { toasts: Toast[] }) {
             .filter((toast) => !sentToSonner.includes(toast.id))
             .forEach((toast) => {
                 setSentToSonner((prev) => [...prev, toast.id]);
-                sonnerToast(toast.message, {
+
+                const options = {
                     id: toast.id,
+                    description: toast.description,
                     onDismiss: () => startTransition(toast.dismiss),
                     onAutoClose: () => startTransition(toast.dismiss),
-                    position: 'top-right',
-                });
+                    position: 'top-right' as const,
+                };
+
+                sonnerToast[toast.type](toast.message, options);
             });
     }, [localToasts, sentToSonner]);
 
