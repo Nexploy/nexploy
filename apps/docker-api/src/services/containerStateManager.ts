@@ -3,7 +3,14 @@ import { EventEmitter } from 'events';
 import { logger } from '@/utils/logger';
 import { ContainerInfo, ContainerInspectInfo } from 'dockerode';
 import byline from 'byline';
-import { Container, DockerStatus, Ports } from '@workspace/typescript-interface/docker';
+import {
+    Container,
+    ContainerPorts,
+    ContainerStateChanges,
+    ContainerStateEvents,
+} from '@workspace/typescript-interface/docker.container';
+import { DockerStatus } from '@workspace/typescript-interface/docker.status';
+import { dockerStatusManager } from '@/services/dockerStatusManager';
 
 class ContainerStateManager extends EventEmitter {
     private containers: Map<string, Container> = new Map();
@@ -13,24 +20,45 @@ class ContainerStateManager extends EventEmitter {
     private dockerEventStream: any = null;
     private reconnectAttempts = 0;
     private readonly MAX_RECONNECT_ATTEMPTS = 5;
-    private dockerHealthCheckInterval: NodeJS.Timeout | null = null;
-    private readonly DOCKER_HEALTH_CHECK_MS = 5000;
-    private dockerStatus: DockerStatus = 'disconnected';
-    private lastDockerCheck: number = 0;
 
     constructor() {
         super();
         this.setMaxListeners(100);
+        this.setupDockerStatusListeners();
     }
 
-    private async checkDockerHealth(): Promise<DockerStatus> {
-        try {
-            await docker.ping();
-            return 'connected';
-        } catch (err) {
-            logger.error('Docker daemon not available');
-            return 'error';
-        }
+    private setupDockerStatusListeners() {
+        dockerStatusManager.on('docker-reconnected', async () => {
+            if (this.polling) {
+                logger.info('Docker reconnected, reinitializing container manager');
+                try {
+                    await this.loadInitialState();
+                    await this.startDockerEventsListener();
+                    this.reconnectAttempts = 0;
+
+                    const containers = Array.from(this.containers.values());
+                    logger.info(
+                        { count: containers.length },
+                        'Sending containers after Docker reconnection',
+                    );
+                    this.emit('initial-state', containers);
+                } catch (err) {
+                    logger.error({ err }, 'Failed to reinitialize after Docker reconnection');
+                }
+            }
+        });
+
+        dockerStatusManager.on('docker-disconnected', () => {
+            logger.warn('Docker disconnected, stopping event stream');
+            if (this.dockerEventStream) {
+                try {
+                    this.dockerEventStream.destroy();
+                } catch (err) {
+                    logger.error({ err }, 'Error destroying Docker event stream');
+                }
+                this.dockerEventStream = null;
+            }
+        });
     }
 
     async start() {
@@ -42,101 +70,31 @@ class ContainerStateManager extends EventEmitter {
         this.polling = true;
         logger.info('Starting container state manager');
 
-        this.dockerStatus = 'connecting';
-        this.emit('docker-connecting', { timestamp: Date.now() });
+        const status = dockerStatusManager.getStatus();
 
-        this.dockerStatus = await this.checkDockerHealth();
-
-        if (this.dockerStatus === 'error' || this.dockerStatus === 'disconnected') {
-            logger.warn('Docker daemon not available, starting in polling-only mode');
-            this.dockerStatus = 'disconnected';
-            this.emit('docker-unavailable', {
-                message: 'Docker daemon is not reachable',
-                timestamp: Date.now(),
-            });
-        } else {
-            logger.info('Docker daemon is available');
-            this.emit('docker-available', {
-                message: 'Docker daemon is available',
-                timestamp: Date.now(),
+        if (status === 'connecting') {
+            await new Promise<void>((resolve) => {
+                dockerStatusManager.once(
+                    'status-changed',
+                    ({ status }: { status: DockerStatus }) => {
+                        if (status !== 'connecting') resolve();
+                    },
+                );
             });
         }
 
-        this.startDockerHealthCheck();
-
-        if (this.dockerStatus === 'connected') {
+        if (dockerStatusManager.isConnected()) {
             try {
                 await this.loadInitialState();
                 await this.startDockerEventsListener();
             } catch (err) {
                 logger.error({ err }, 'Failed to initialize with Docker, falling back to polling');
-                this.dockerStatus = 'error';
-                this.emit('docker-unavailable', {
-                    message: 'Failed to initialize Docker connection',
-                    error: err,
-                    timestamp: Date.now(),
-                });
             }
+        } else {
+            logger.warn(`Docker unavailable (status: ${status}) — using polling only`);
         }
 
         this.startFallbackPolling();
-    }
-
-    private startDockerHealthCheck() {
-        this.dockerHealthCheckInterval = setInterval(async () => {
-            if (!this.polling) return;
-
-            const now = Date.now();
-            this.lastDockerCheck = now;
-
-            const wasAvailable = this.dockerStatus === 'connected';
-            const previousStatus = this.dockerStatus;
-
-            if (!wasAvailable && this.dockerStatus !== 'connecting') {
-                this.dockerStatus = 'connecting';
-                this.emit('docker-connecting', { timestamp: now });
-            }
-
-            const newStatus = await this.checkDockerHealth();
-
-            if (this.dockerStatus !== newStatus) {
-                this.dockerStatus = newStatus;
-            }
-
-            if (!wasAvailable && this.dockerStatus === 'connected') {
-                logger.info('Docker daemon became available, reconnecting...');
-                this.emit('docker-available', { timestamp: now });
-
-                try {
-                    await this.loadInitialState();
-                    await this.startDockerEventsListener();
-                    this.reconnectAttempts = 0;
-                } catch (err) {
-                    logger.error({ err }, 'Failed to reconnect to Docker');
-                    this.dockerStatus = 'error';
-                }
-            } else if (wasAvailable && this.dockerStatus !== 'connected') {
-                logger.warn('Docker daemon became unavailable');
-                this.dockerStatus = this.dockerStatus === 'error' ? 'error' : 'disconnected';
-                this.emit('docker-unavailable', {
-                    message: 'Docker daemon is no longer reachable',
-                    timestamp: now,
-                });
-
-                if (this.dockerEventStream) {
-                    try {
-                        this.dockerEventStream.destroy();
-                    } catch (err) {
-                        logger.error({ err }, 'Error destroying Docker event stream');
-                    }
-                    this.dockerEventStream = null;
-                }
-            } else if (previousStatus === 'connecting' && this.dockerStatus === 'error') {
-                this.dockerStatus = 'disconnected';
-            }
-        }, this.DOCKER_HEALTH_CHECK_MS);
-
-        logger.info({ interval: this.DOCKER_HEALTH_CHECK_MS }, 'Docker health check started');
     }
 
     async stop() {
@@ -148,11 +106,6 @@ class ContainerStateManager extends EventEmitter {
             this.pollInterval = null;
         }
 
-        if (this.dockerHealthCheckInterval) {
-            clearInterval(this.dockerHealthCheckInterval);
-            this.dockerHealthCheckInterval = null;
-        }
-
         if (this.dockerEventStream) {
             try {
                 this.dockerEventStream.destroy();
@@ -162,12 +115,16 @@ class ContainerStateManager extends EventEmitter {
             this.dockerEventStream = null;
         }
 
-        this.dockerStatus = 'disconnected';
         this.containers.clear();
         this.removeAllListeners();
     }
 
     private async loadInitialState() {
+        if (!dockerStatusManager.isConnected()) {
+            logger.warn('Cannot load initial state: Docker is not connected');
+            return;
+        }
+
         try {
             const containers = await docker.listContainers({ all: true });
 
@@ -185,6 +142,11 @@ class ContainerStateManager extends EventEmitter {
     }
 
     private async startDockerEventsListener() {
+        if (!dockerStatusManager.isConnected()) {
+            logger.warn('Cannot start events listener: Docker is not connected');
+            return;
+        }
+
         try {
             const stream = await docker.getEvents({
                 filters: { type: ['container'] },
@@ -232,7 +194,6 @@ class ContainerStateManager extends EventEmitter {
 
         if (this.reconnectAttempts > this.MAX_RECONNECT_ATTEMPTS) {
             logger.error('Max reconnection attempts reached, relying on polling only');
-            this.dockerStatus = 'error';
             return;
         }
 
@@ -242,23 +203,28 @@ class ContainerStateManager extends EventEmitter {
             'Reconnecting to Docker events',
         );
 
-        this.dockerStatus = 'error';
-
         setTimeout(() => {
-            if (this.polling) {
+            if (this.polling && dockerStatusManager.isConnected()) {
                 this.startDockerEventsListener();
+            } else {
+                logger.warn('Skipping event listener reconnection: Docker not connected');
             }
         }, backoffDelay);
     }
 
     private async handleDockerEvent(event: any) {
+        if (!dockerStatusManager.isConnected()) {
+            logger.debug('Ignoring Docker event: Docker is not connected');
+            return;
+        }
+
         const containerId = event.Actor?.ID;
         if (!containerId) return;
 
         const action = event.Action;
         logger.debug({ containerId, action }, 'Docker event received');
 
-        const stateChangeEvents = [
+        const stateChangeEvents: ContainerStateEvents[] = [
             'start',
             'die',
             'stop',
@@ -276,18 +242,19 @@ class ContainerStateManager extends EventEmitter {
         }
     }
 
-    private async updateContainerState(containerId: string, action?: string) {
+    private async updateContainerState(containerId: string, action: ContainerStateEvents) {
+        if (!dockerStatusManager.isConnected()) {
+            logger.debug({ containerId }, 'Skipping container state update: Docker not connected');
+            return;
+        }
+
         try {
             if (action === 'destroy') {
                 const oldState = this.containers.get(containerId);
                 this.containers.delete(containerId);
 
                 if (oldState) {
-                    this.emit('container-removed', { id: containerId, oldState });
-                    this.emit('state-change', {
-                        type: 'removed',
-                        container: oldState,
-                    });
+                    this.emit('container-removed', { id: containerId, action, oldState });
                 }
                 return;
             }
@@ -300,15 +267,10 @@ class ContainerStateManager extends EventEmitter {
             this.containers.set(containerId, newState);
 
             if (!oldState) {
-                this.emit('container-added', newState);
-                this.emit('state-change', {
-                    type: 'added',
-                    container: newState,
-                });
+                this.emit('container-added', { action, newState });
             } else if (this.hasStateChanged(oldState, newState)) {
-                this.emit('container-updated', { oldState, newState });
-                this.emit('state-change', {
-                    type: 'updated',
+                this.emit('container-updated', {
+                    action,
                     container: newState,
                     changes: this.getStateChanges(oldState, newState),
                 });
@@ -319,11 +281,7 @@ class ContainerStateManager extends EventEmitter {
                 this.containers.delete(containerId);
 
                 if (oldState) {
-                    this.emit('container-removed', { id: containerId, oldState });
-                    this.emit('state-change', {
-                        type: 'removed',
-                        container: oldState,
-                    });
+                    this.emit('container-removed', { id: containerId, action, oldState });
                 }
             } else {
                 logger.error({ err, containerId }, 'Error updating container state');
@@ -333,7 +291,12 @@ class ContainerStateManager extends EventEmitter {
 
     private startFallbackPolling() {
         this.pollInterval = setInterval(async () => {
-            if (!this.polling || this.dockerStatus === 'disconnected') return;
+            if (!this.polling) return;
+
+            if (!dockerStatusManager.isConnected()) {
+                logger.debug('Skipping poll: Docker not connected');
+                return;
+            }
 
             try {
                 await this.fullStateSync();
@@ -342,28 +305,26 @@ class ContainerStateManager extends EventEmitter {
             }
         }, this.POLL_INTERVAL_MS);
 
-        logger.info({ interval: this.POLL_INTERVAL_MS }, 'Fallback polling started');
+        logger.info({ interval: this.POLL_INTERVAL_MS }, 'Fallback Containers polling started');
     }
 
     private async fullStateSync() {
+        if (!dockerStatusManager.isConnected()) {
+            logger.debug('Skipping full state sync: Docker not connected');
+            return;
+        }
+
         try {
             const containers = await docker.listContainers({ all: true });
-            const currentIds = new Set(containers.map((c) => c.Id));
 
             for (const container of containers) {
                 const newState = this.parseContainerInfo(container);
                 const oldState = this.containers.get(newState.id);
 
-                if (!oldState) {
+                if (!oldState) return;
+
+                if (this.hasStateChanged(oldState, newState)) {
                     this.containers.set(newState.id, newState);
-                    this.emit('container-added', newState);
-                    this.emit('state-change', {
-                        type: 'added',
-                        container: newState,
-                    });
-                } else if (this.hasStateChanged(oldState, newState)) {
-                    this.containers.set(newState.id, newState);
-                    this.emit('container-updated', { oldState, newState });
                     this.emit('state-change', {
                         type: 'updated',
                         container: newState,
@@ -371,28 +332,13 @@ class ContainerStateManager extends EventEmitter {
                     });
                 }
             }
-
-            for (const [id, state] of this.containers) {
-                if (!currentIds.has(id)) {
-                    this.containers.delete(id);
-                    this.emit('container-removed', { id, oldState: state });
-                    this.emit('state-change', {
-                        type: 'removed',
-                        container: state,
-                    });
-                }
-            }
         } catch (err) {
-            logger.error('Error in full state sync');
-            // Set status to error if sync fails
-            if (this.dockerStatus === 'connected') {
-                this.dockerStatus = 'error';
-            }
+            logger.error({ err }, 'Error in full state sync');
         }
     }
 
     private parseContainerInfo(container: ContainerInfo): Container {
-        const portsMap = new Map<string, Ports>();
+        const portsMap = new Map<string, ContainerPorts>();
 
         container.Ports?.forEach((port) => {
             const key = `${port.PrivatePort}-${port.PublicPort || 'none'}-${port.Type || 'tcp'}`;
@@ -425,7 +371,7 @@ class ContainerStateManager extends EventEmitter {
     }
 
     private parseContainerInspect(info: ContainerInspectInfo): Container {
-        const portsMap = new Map<string, Ports>();
+        const portsMap = new Map<string, ContainerPorts>();
         const networkPorts = info.NetworkSettings?.Ports || {};
 
         for (const [portKey, bindings] of Object.entries(networkPorts)) {
@@ -496,8 +442,8 @@ class ContainerStateManager extends EventEmitter {
         );
     }
 
-    private getStateChanges(oldState: Container, newState: Container) {
-        const changes: any = {};
+    private getStateChanges(oldState: Container, newState: Container): ContainerStateChanges {
+        const changes: ContainerStateChanges = {};
 
         if (oldState.state !== newState.state)
             changes.state = { from: oldState.state, to: newState.state };
@@ -518,26 +464,17 @@ class ContainerStateManager extends EventEmitter {
         return Array.from(this.containers.values());
     }
 
-    getState(containerId: string): Container | undefined {
+    getContainer(containerId: string): Container | undefined {
         return this.containers.get(containerId);
-    }
-
-    getDockerStatus(): DockerStatus {
-        return this.dockerStatus;
-    }
-
-    getLastDockerCheck(): number {
-        return this.lastDockerCheck;
     }
 
     getStats() {
         return {
-            dockerAvailable: this.dockerStatus,
-            lastDockerCheck: this.lastDockerCheck,
             containerCount: this.containers.size,
             eventStreamActive: this.dockerEventStream !== null,
             reconnectAttempts: this.reconnectAttempts,
             polling: this.polling,
+            dockerConnected: dockerStatusManager.isConnected(),
         };
     }
 }

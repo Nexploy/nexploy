@@ -1,6 +1,8 @@
 import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
+import { containerStateManager } from '@/services/containerStateManager';
+import { dockerStatusManager } from '@/services/dockerStatusManager';
 
 const app = new Hono();
 
@@ -283,5 +285,73 @@ app.get(
         };
     }),
 );
+
+/**
+ * @openapi
+ * /containers/events/container/{id}:
+ *   get:
+ *     summary: Get current state of specific container
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Container state
+ *       404:
+ *         description: Container not found
+ */
+app.get('/container/:id', (c) => {
+    const id = c.req.param('id');
+    const container = containerStateManager.getContainer(id);
+
+    if (!container) {
+        return c.json({ error: 'Container not found' }, 404);
+    }
+
+    return c.json({
+        container,
+        dockerStatus: dockerStatusManager.getStatus(),
+        timestamp: Date.now(),
+    });
+});
+
+/**
+ * @openapi
+ * /containers/events/status:
+ *   get:
+ *     summary: Get Docker daemon status
+ *     responses:
+ *       200:
+ *         description: Docker status information
+ */
+app.get('/status', (c) => {
+    const stats = containerStateManager.getStats();
+    return c.json({
+        ...stats,
+        timestamp: Date.now(),
+    });
+});
+
+/**
+ * @openapi
+ * /containers/events/current:
+ *   get:
+ *     summary: Get current state of all containers
+ *     responses:
+ *       200:
+ *         description: Current container states
+ */
+app.get('/current', (c) => {
+    const states = containerStateManager.getAllStates();
+    return c.json({
+        containers: states,
+        dockerStatus: dockerStatusManager.getStatus(),
+        count: states.length,
+        timestamp: Date.now(),
+    });
+});
 
 export default app;

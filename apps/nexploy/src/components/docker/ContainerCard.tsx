@@ -11,14 +11,14 @@ import {
     StatusLabel,
     StatusProps,
 } from '@workspace/ui/components/kibo-ui/status';
-import { Container, ContainerState } from '@workspace/typescript-interface/docker';
+import { Container, ContainerState } from '@workspace/typescript-interface/docker.container';
 import { ContainerDropdownActions } from '@/components/docker/ContainerDropdownActions';
 
 interface ContainerCardProps {
     container: Container;
 }
 
-const containerStatus: Record<ContainerState, StatusProps['status']> = {
+const containerDisplayState: Record<ContainerState, StatusProps['status']> = {
     created: 'offline',
     running: 'online',
     restarting: 'degraded',
@@ -33,8 +33,10 @@ export function ContainerCard({ container }: ContainerCardProps) {
     const containerName = container.name;
     const containerState = container.state;
 
+    const containerStatus = container.status;
+
     return (
-        <Card className="cursor-pointer rounded-xl border transition-all duration-300 hover:scale-[1.01] hover:shadow-xl">
+        <Card className="relative cursor-pointer rounded-xl border transition-all duration-300 hover:scale-[1.01] hover:shadow-xl">
             <CardHeader className="flex">
                 <div className="flex flex-1 items-center gap-3 truncate">
                     <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
@@ -58,36 +60,37 @@ export function ContainerCard({ container }: ContainerCardProps) {
                 </DropdownMenu>
             </CardHeader>
 
-            <CardContent className="flex flex-col space-y-3">
-                <div className="flex items-center justify-between">
-                    <span>État :</span>
-                    <Status
-                        className="text-sm"
-                        status={containerStatus[containerState] ?? 'offline'}
-                        variant="outline"
-                    >
-                        <StatusIndicator />
-                        <StatusLabel className="font-mono">{containerState}</StatusLabel>
-                    </Status>
+            <Status
+                className={'bg-card absolute -top-2 -right-2 truncate rounded-md'}
+                status={containerDisplayState[containerState] ?? 'offline'}
+                variant="outline"
+            >
+                <StatusIndicator />
+                <StatusLabel className="truncate font-mono">{containerStatus}</StatusLabel>
+            </Status>
+
+            <CardContent className="flex flex-col gap-4">
+                <div className="flex items-center justify-between gap-2 truncate">
+                    <span className="font-medium">Image :</span>
+                    <span className="bg-muted/50 truncate rounded-md px-3 py-1 font-mono text-sm">
+                        {container.image}
+                    </span>
                 </div>
 
                 <div>
-                    <span className="font-medium">Image :</span>{' '}
-                    <span className={'text-muted-foreground'}>{container.image}</span>
-                </div>
-
-                <div className={'flex flex-col gap-1'}>
-                    <p className="text-sm font-medium">Ports :</p>
+                    <p className="mb-2 font-medium">Ports exposés :</p>
                     {container.ports.length ? (
-                        <div className="flex flex-col items-start gap-2">
+                        <div className="grid grid-cols-1 gap-2">
                             {container.ports.map((p, idx) => (
-                                <span
+                                <div
                                     key={idx}
-                                    className="text-muted-foreground bg-muted rounded-md px-2 py-1 text-xs"
+                                    className="bg-muted/50 flex flex-wrap items-center gap-2 rounded-md px-3 py-2 text-xs"
                                 >
-                                    {p.publicPort ?? '—'} → {p.privatePort} ({p.type}) -{' '}
-                                    {p.hostIps.map((hostIp) => `${hostIp} `)}
-                                </span>
+                                    <span className="font-mono">
+                                        {p.publicPort ?? '—'} → {p.privatePort}
+                                    </span>
+                                    <span className="text-muted-foreground">({p.type})</span>
+                                </div>
                             ))}
                         </div>
                     ) : (

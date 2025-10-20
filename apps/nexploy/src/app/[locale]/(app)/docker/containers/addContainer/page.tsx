@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { ArrowLeft, Container, Loader2, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Container, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
@@ -34,7 +34,7 @@ import {
 } from '@workspace/ui/components/select';
 import { Switch } from '@workspace/ui/components/switch';
 import { drinoDocker } from '@/lib/api/drinoDocker';
-import { ScrollAreaWithShadow } from '@/components/docker/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 
 const containerFormSchema = z.object({
     name: z.string().min(1, 'Le nom est requis'),
@@ -159,10 +159,10 @@ export default function AddContainerPage() {
             <div className={'flex justify-between gap-4 px-6'}>
                 <div className="flex gap-3">
                     <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <Container className="text-primary" />
+                        <Container className="text-primary size-7" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-semibold leading-none tracking-tight">
+                        <h1 className="text-3xl leading-none font-semibold tracking-tight">
                             Nouveau conteneur
                         </h1>
                         <p className="text-muted-foreground text-sm">
@@ -181,17 +181,8 @@ export default function AddContainerPage() {
                         <ArrowLeft /> Retour
                     </Button>
                     <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Création en cours...
-                            </>
-                        ) : (
-                            <>
-                                <Plus className="mr-2 h-4 w-4" />
-                                Créer le conteneur
-                            </>
-                        )}
+                        <Plus />
+                        Créer le conteneur
                     </Button>
                 </div>
             </div>

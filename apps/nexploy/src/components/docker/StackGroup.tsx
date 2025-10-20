@@ -15,7 +15,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
-import { Container } from '@workspace/typescript-interface/docker';
+import { Container } from '@workspace/typescript-interface/docker.container';
 
 interface StackGroupProps {
     stackName: string;
@@ -135,7 +135,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                     </div>
                 </AccordionTrigger>
 
-                <AccordionContent className="bg-muted/40 border-t px-6 pb-6 pt-4">
+                <AccordionContent className="bg-muted/40 border-t p-5">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {containers.map((container) => (
                             <ContainerCard key={container.id} container={container} />

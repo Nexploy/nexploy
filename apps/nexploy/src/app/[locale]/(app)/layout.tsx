@@ -1,6 +1,7 @@
 import { AppSidebar } from '@/components/sidebar/AppSidebar';
 import { SidebarInset, SidebarProvider } from '@workspace/ui/components/sidebar';
 import { Header } from '@/components/Header';
+import { SSEProvider } from '@/providers/sse/SSEProviders';
 
 export default async function AccountLayout({
     children,
@@ -12,7 +13,9 @@ export default async function AccountLayout({
             <AppSidebar variant={'inset'} />
             <div className={'flex h-screen w-full flex-col'}>
                 <Header />
-                <SidebarInset className="!mt-0 !min-h-0 overflow-hidden">{children}</SidebarInset>
+                <SidebarInset className="!mt-0 !min-h-0 overflow-hidden">
+                    <SSEProvider>{children}</SSEProvider>
+                </SidebarInset>
             </div>
         </SidebarProvider>
     );

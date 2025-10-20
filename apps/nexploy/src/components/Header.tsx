@@ -29,7 +29,7 @@ export function Header() {
 
     return (
         <div
-            className={'peer ml-2 mr-2 flex h-14 items-center justify-between gap-3 md:ml-0'}
+            className={'peer mr-2 ml-2 flex h-14 items-center justify-between gap-3 md:ml-0'}
             data-variant={'inset'}
         >
             <div className={'flex h-full items-center gap-2'}>

@@ -1,22 +1,19 @@
 import { create } from 'zustand';
-import { Container, ContainerEvent, DockerStatus } from '@workspace/typescript-interface/docker';
+import { Container, ContainerEvent } from '@workspace/typescript-interface/docker.container';
 import { toast } from 'sonner';
 
 interface ContainerState {
     containers: Map<string, Container>;
-    dockerStatus: DockerStatus;
     error: Error | null;
-    lastUpdate: number;
+    lastUpdate: number | null;
     eventSource: EventSource | null;
     reconnectTimeout: NodeJS.Timeout | null;
-
     setContainers: (containers: Map<string, Container>) => void;
-    setDockerStatus: (status: DockerStatus) => void;
     setError: (error: Error | null) => void;
     setLastUpdate: (timestamp: number) => void;
     addContainer: (container: Container) => void;
-    removeContainer: (containerId: string) => void;
     updateContainer: (container: Container) => void;
+    removeContainer: (containerId: string) => void;
 
     getContainer: (id: string) => Container | undefined;
     getContainersByState: (state: Container['state']) => Container[];
@@ -25,20 +22,18 @@ interface ContainerState {
         standaloneContainers: Container[];
     };
 
-    connect: (apiUrl: string, containerIds?: string[]) => void;
+    connect: (containerIds?: string[]) => void;
     disconnect: () => void;
 }
 
 export const useContainerStore = create<ContainerState>((set, get) => ({
     containers: new Map(),
-    dockerStatus: 'connecting',
     error: null,
-    lastUpdate: 0,
+    lastUpdate: null,
     eventSource: null,
     reconnectTimeout: null,
 
     setContainers: (containers) => set({ containers }),
-    setDockerStatus: (dockerStatus) => set({ dockerStatus }),
     setError: (error) => set({ error }),
     setLastUpdate: (timestamp) => set({ lastUpdate: timestamp }),
 
@@ -90,7 +85,7 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
         return { stacks, standaloneContainers };
     },
 
-    connect: (apiUrl, containerIds) => {
+    connect: (containerIds) => {
         const state = get();
 
         if (state.eventSource) {
@@ -101,16 +96,15 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
         }
 
         try {
-            const url = new URL(`${apiUrl}/stream`, window.location.origin);
+            const url = new URL('/api/events/stream', window.location.origin);
 
-            if (containerIds && containerIds.length > 0) {
-                url.searchParams.set('containers', containerIds.join(','));
-            }
+            if (containerIds?.length) url.searchParams.set('containers', containerIds.join(','));
+            url.searchParams.set('endpoint', '/api/containers/events/stream');
 
             const eventSource = new EventSource(url.toString());
 
             eventSource.addEventListener('open', () => {
-                console.log('SSE connection established');
+                console.log('SSE Container connection established');
                 set({ error: null, eventSource });
             });
 
@@ -124,7 +118,6 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
 
                 set({
                     containers,
-                    dockerStatus: data.dockerStatus,
                     lastUpdate: data.timestamp,
                 });
             });
@@ -133,51 +126,49 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
                 const data: ContainerEvent = JSON.parse(e.data);
                 const containers = new Map(get().containers);
 
-                if (data.type === 'removed') {
-                    const id = data.containerId;
-                    if (id) containers.delete(id);
-                } else if (data.container) {
-                    containers.set(data.container.id, data.container);
-                }
+                if (data.container) containers.set(data.container.id, data.container);
 
                 set({
-                    containers: containers,
+                    containers,
                     lastUpdate: data.timestamp,
                 });
             });
 
             eventSource.addEventListener('container-added', (e) => {
                 const data: ContainerEvent = JSON.parse(e.data);
+                if (!data.container) return;
 
-                if (data.container) {
-                    get().addContainer(data.container);
-                    set({ lastUpdate: data.timestamp });
-                    console.log('Container added:', data.container.name);
+                get().addContainer(data.container);
+                toast.success(`Container ${data.container.name} added`);
+                set({ lastUpdate: data.timestamp });
+            });
+
+            eventSource.addEventListener('container-updated', (e) => {
+                const data: ContainerEvent = JSON.parse(e.data);
+                const container = data.container;
+                if (!container) return;
+
+                const { name } = container;
+                const { action, timestamp } = data;
+
+                get().updateContainer(container);
+
+                if (action === 'die') {
+                    toast.error(`Container ${name} die unexpectedly`);
+                } else if (action !== 'kill') {
+                    toast.success(`Container ${name} (action: ${action})`);
                 }
+
+                set({ lastUpdate: timestamp });
             });
 
             eventSource.addEventListener('container-removed', (e) => {
                 const data: ContainerEvent = JSON.parse(e.data);
+                if (!data.containerId) return;
 
-                if (data.containerId) {
-                    get().removeContainer(data.containerId);
-                    set({ lastUpdate: data.timestamp });
-                    console.log('Container removed:', data.containerId);
-                }
-            });
-
-            eventSource.addEventListener('heartbeat', (e) => {
-                const { dockerStatus }: ContainerEvent = JSON.parse(e.data);
-                console.log('Heartbeat received');
-
-                set({ dockerStatus });
-            });
-
-            eventSource.addEventListener('docker-status', (e) => {
-                const { dockerStatus, message }: ContainerEvent = JSON.parse(e.data);
-
-                toast.success(message);
-                set({ dockerStatus });
+                get().removeContainer(data.containerId);
+                toast.success(`Container ${data.container?.name} removed`);
+                set({ lastUpdate: data.timestamp });
             });
 
             eventSource.addEventListener('error', () => {
@@ -185,14 +176,14 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
 
                 if (currentEventSource) {
                     currentEventSource.close();
-                    set({ dockerStatus: 'error', eventSource: null });
+                    set({ eventSource: null });
                 }
 
-                set({ error: new Error('Connection lost, reconnecting...') });
+                set({ error: new Error('Error connecting to Container Docker') });
 
                 const timeout = setTimeout(() => {
                     console.log('Attempting to reconnect...');
-                    get().connect(apiUrl, containerIds);
+                    get().connect(containerIds);
                 }, 5000);
 
                 set({ reconnectTimeout: timeout });
@@ -200,10 +191,9 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
 
             set({ eventSource });
         } catch (err) {
-            console.error('Failed to connect:', err);
+            console.error('Containers - Failed to connect :', err);
             set({
                 error: err as Error,
-                dockerStatus: 'error',
             });
         }
     },
@@ -222,7 +212,6 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
         set({
             eventSource: null,
             reconnectTimeout: null,
-            dockerStatus: 'disconnected',
         });
     },
 }));

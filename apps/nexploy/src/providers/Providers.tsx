@@ -1,6 +1,6 @@
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { NextIntlClientProvider } from 'next-intl';
-import { GlobalSheet } from '@/providers/GlobalSheet';
+import { SheetProvider } from '@/providers/SheetProvider';
 import { Toaster } from '@/components/utils/toaster/Toaster';
 import { Suspense } from 'react';
 
@@ -9,7 +9,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <NextIntlClientProvider>
             <ThemeProvider>
                 {children}
-                <GlobalSheet />
+                <SheetProvider />
                 <Suspense>
                     <Toaster />
                 </Suspense>

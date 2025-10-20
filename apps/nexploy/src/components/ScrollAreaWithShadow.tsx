@@ -27,7 +27,7 @@ export function ScrollAreaWithShadow({ children, ...props }: PropsWithChildren<S
     return (
         <div className="relative flex-1 overflow-hidden">
             <div
-                className={`from-background via-background/50 pointer-events-none absolute left-0 right-0 top-0 z-10 h-5 bg-gradient-to-b to-transparent transition-opacity duration-200 ${
+                className={`from-background via-background/50 pointer-events-none absolute top-0 right-0 left-0 z-10 h-5 bg-gradient-to-b to-transparent transition-opacity duration-200 ${
                     showTopShadow ? 'opacity-100' : 'opacity-0'
                 }`}
             />

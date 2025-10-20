@@ -1,6 +1,14 @@
 import { Fragment } from 'react';
-import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, } from '@workspace/ui/components/dropdown-menu';
-import { ContainerState, ContainerTool, DockerAction, } from '@workspace/typescript-interface/docker';
+import {
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+} from '@workspace/ui/components/dropdown-menu';
+import {
+    ContainerAction,
+    ContainerState,
+    ContainerTool,
+} from '@workspace/typescript-interface/docker.container';
 import { toast } from 'sonner';
 import { Eye, Info, Pause, Play, RotateCw, Square } from 'lucide-react';
 import { onContainerAction } from '@/actions/docker/container.action';
@@ -11,7 +19,7 @@ interface ContainerDropdownActionsProps {
     containerState: ContainerState;
 }
 
-const messageAction: Record<DockerAction, string> = {
+const messageAction: Record<ContainerAction, string> = {
     start: 'démarre',
     stop: "s'arrête",
     pause: 'se met en pause',
@@ -28,13 +36,10 @@ export function ContainerDropdownActions({
 }: ContainerDropdownActionsProps) {
     // const { openSheet } = useSheetStore();
 
-    const handleAction = async (action: DockerAction) => {
-        toast.success(`Le conteneur ${containerName} ${messageAction[action]}`);
+    const handleAction = async (action: ContainerAction) => {
         const result = await onContainerAction({ containerId, action });
         if (result?.validationErrors) {
             const globalErrors = result.validationErrors._errors;
-
-            toast.dismiss();
             toast.error(globalErrors);
         }
     };

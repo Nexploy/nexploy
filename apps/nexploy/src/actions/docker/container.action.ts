@@ -10,7 +10,7 @@ export const onContainerAction = actionServer
     .inputSchema(ContainerActionsSchema)
     .action(async ({ parsedInput: { action, containerId } }) => {
         try {
-            await drinoDocker.post(`/containers/${containerId}/${action}`, null).consume();
+            await drinoDocker.post(`/container/${containerId}/${action}`, null).consume();
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
                 returnValidationErrors(ContainerActionsSchema, {

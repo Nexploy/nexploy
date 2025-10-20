@@ -1,7 +1,14 @@
 'use client';
 
 import { useContainerStore } from '@/stores/useContainerStore';
-import { AlertCircleIcon, Box, Container as IconContainer, Container, Layers, LayoutGrid, } from 'lucide-react';
+import {
+    AlertCircleIcon,
+    Box,
+    Container as IconContainer,
+    Container,
+    Layers,
+    LayoutGrid,
+} from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { Badge } from '@workspace/ui/components/badge';
 import {
@@ -12,14 +19,17 @@ import {
     EmptyMedia,
     EmptyTitle,
 } from '@workspace/ui/components/empty';
-import { ScrollAreaWithShadow } from '@/components/docker/ScrollAreaWithShadow';
 import { StatusDocker } from '@/components/docker/StatusDocker';
-import { ContainersStandalone } from '@/components/docker/ContainersStandalone';
-import { ContainersStack } from '@/components/docker/ContainersStack';
 import { Alert, AlertTitle } from '@workspace/ui/components/alert';
 import { AddContainer } from '@/components/docker/AddContainer';
+import { Skeleton } from '@workspace/ui/components/skeleton';
+import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ContainersStack } from '@/components/docker/ContainersStack';
+import { ContainersStandalone } from '@/components/docker/ContainersStandalone';
 
 export default function DockerContainersPage() {
+    const lastUpdate = useContainerStore((state) => state.lastUpdate);
+    const containers = useContainerStore((state) => state.containers);
     const stacksSize = useContainerStore().getOrganizedContainers().stacks.size;
     const standaloneContainersLenght =
         useContainerStore().getOrganizedContainers().standaloneContainers.length;
@@ -48,12 +58,15 @@ export default function DockerContainersPage() {
         },
     ];
 
+    const isLoading = !containers.size && !lastUpdate;
+    const isEmpty = !containers.size && !!lastUpdate;
+
     return (
-        <div className="flex h-full flex-col gap-6 pt-5">
+        <div className="flex h-full flex-1 flex-col gap-6 pt-5">
             <div className="flex justify-between gap-2 px-6">
                 <div className={'flex gap-3'}>
                     <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <Box className="text-primary" />
+                        <Box className="text-primary size-7" />
                     </div>
                     <div>
                         <div className={'flex items-start gap-3'}>
@@ -62,7 +75,9 @@ export default function DockerContainersPage() {
                             </h1>
                             <StatusDocker className={'my-1'} />
                         </div>
-                        {numberOfContainers > 0 && (
+                        {isLoading ? (
+                            <Skeleton className={'my-1 h-3 w-40'} />
+                        ) : (
                             <p className="text-muted-foreground text-sm">
                                 {numberOfContainers} conteneur
                                 {stacksSize > 0 && ` · ${stacksSize} stack`}
@@ -80,10 +95,18 @@ export default function DockerContainersPage() {
                 </Alert>
             )}
 
-            {numberOfContainers === 0 ? (
-                <Empty className={'mb-32'}>
+            {isLoading && (
+                <div className="mb-6 flex flex-1 flex-col gap-5">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                        <Skeleton key={i} className="mx-6 flex-1" />
+                    ))}
+                </div>
+            )}
+
+            {isEmpty && (
+                <Empty className="mb-32">
                     <EmptyHeader>
-                        <EmptyMedia variant="icon" className={'bg-primary/10'}>
+                        <EmptyMedia variant="icon" className="bg-primary/10">
                             <IconContainer className="text-primary" />
                         </EmptyMedia>
                         <EmptyTitle>Aucun conteneur</EmptyTitle>
@@ -95,28 +118,30 @@ export default function DockerContainersPage() {
                         <AddContainer />
                     </EmptyContent>
                 </Empty>
-            ) : (
+            )}
+
+            {!isLoading && !isEmpty && (
                 <Tabs className="flex flex-1 flex-col overflow-hidden" defaultValue="all">
-                    <TabsList className={'mx-6 mb-2'}>
-                        {tabs.map((tab, index) => (
-                            <TabsTrigger key={index} value={tab.id} className={'flex flex-1 gap-2'}>
-                                <div className={'flex items-center gap-2'}>
+                    <TabsList className="mx-6 mb-2">
+                        {tabs.map((tab) => (
+                            <TabsTrigger key={tab.id} value={tab.id} className="flex flex-1 gap-2">
+                                <div className="flex items-center gap-2">
                                     <tab.icon />
                                     <span>{tab.label}</span>
                                 </div>
-                                <Badge className={'rounded-full'} variant={'secondary'}>
+                                <Badge className="rounded-full" variant="secondary">
                                     {tab.count}
                                 </Badge>
                             </TabsTrigger>
                         ))}
                     </TabsList>
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
-                        <div className={'pb-6'}>
-                            <TabsContent value="all" className="flex flex-col gap-5">
+                        <div className="pb-5">
+                            <TabsContent value="all" className="flex flex-col space-y-4">
                                 <ContainersStack />
-                                <ContainersStandalone />
+                                <ContainersStandalone disableEmpty />
                             </TabsContent>
-                            <TabsContent className={'space-y-2'} value="stacks">
+                            <TabsContent value="stacks">
                                 <ContainersStack />
                             </TabsContent>
                             <TabsContent value="containers">

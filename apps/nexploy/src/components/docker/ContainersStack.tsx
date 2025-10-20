@@ -3,8 +3,8 @@ import { useContainerStore } from '@/stores/useContainerStore';
 import { StackGroup } from '@/components/docker/StackGroup';
 
 export function ContainersStack() {
-    const stacksMap = useContainerStore((state) => state.getOrganizedContainers);
-    const stacks = Array.from(stacksMap().stacks.entries());
+    const stacksMap = useContainerStore().getOrganizedContainers().stacks;
+    const stacks = Array.from(stacksMap.entries());
 
     return (
         <div className="space-y-2 px-6">

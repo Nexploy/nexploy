@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { DockerAction } from '@workspace/typescript-interface/docker';
+import { ContainerAction } from '@workspace/typescript-interface/docker.container';
 
-const dockerActions: [DockerAction, ...DockerAction[]] = [
+const dockerActions: [ContainerAction, ...ContainerAction[]] = [
     'start',
     'stop',
     'restart',

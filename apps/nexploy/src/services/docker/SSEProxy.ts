@@ -1,45 +1,49 @@
-const SSE_SERVER_URL = process.env.SSE_SERVER_URL || 'http://localhost:3300';
-const SSE_ENDPOINT = '/api/containers/events/stream';
+import { SSEProxyConfig } from '@workspace/typescript-interface/sse';
 
 export class SSEProxy {
     private controller: ReadableStreamDefaultController;
     private reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
     private encoder = new TextEncoder();
     private isClosed = false;
+    private config: SSEProxyConfig;
 
-    private constructor(controller: ReadableStreamDefaultController) {
+    private constructor(controller: ReadableStreamDefaultController, config: SSEProxyConfig) {
         this.controller = controller;
+        this.config = {
+            serverUrl: process.env.SSE_SERVER_URL,
+            ...config,
+        };
     }
 
-    static createResponse(containerIds: string | null): Response {
-        const stream = this.createStream(containerIds);
+    static createResponse(config: SSEProxyConfig): Response {
+        const stream = this.createStream(config);
         return new Response(stream, {
-            headers: this.getHeaders(),
+            headers: this.getDefaultHeaders(config.responseHeaders),
         });
     }
 
-    private static createStream(containerIds: string | null): ReadableStream {
+    private static createStream(config: SSEProxyConfig): ReadableStream {
         return new ReadableStream({
             async start(controller) {
-                const proxy = new SSEProxy(controller);
-                await proxy.connect(containerIds);
+                const proxy = new SSEProxy(controller, config);
+                await proxy.connect();
             },
         });
     }
 
-    private static getHeaders(): HeadersInit {
+    private static getDefaultHeaders(customHeaders?: Record<string, string>): HeadersInit {
         return {
             'Content-Type': 'text/event-stream',
             'Cache-Control': 'no-cache, no-transform',
             Connection: 'keep-alive',
             'X-Accel-Buffering': 'no',
+            ...customHeaders,
         };
     }
 
-    async connect(containerIds: string | null): Promise<void> {
+    async connect(): Promise<void> {
         try {
-            const backendUrl = this.buildBackendUrl(containerIds);
-
+            const backendUrl = this.buildBackendUrl();
             const response = await this.fetchBackendSSE(backendUrl);
             await this.pipeStreamToClient(response);
         } catch (error) {
@@ -51,22 +55,29 @@ export class SSEProxy {
         }
     }
 
-    private buildBackendUrl(containerIds: string | null): string {
-        const url = new URL(`${SSE_SERVER_URL}${SSE_ENDPOINT}`);
+    private buildBackendUrl(): string {
+        const url = new URL(`${this.config.serverUrl}${this.config.endpoint}`);
 
-        if (containerIds) {
-            url.searchParams.set('containers', containerIds);
+        if (this.config.queryParams) {
+            Object.entries(this.config.queryParams).forEach(([key, value]) => {
+                if (value !== null) url.searchParams.set(key, value);
+            });
         }
 
         return url.toString();
     }
 
     private async fetchBackendSSE(url: string): Promise<Response> {
+        const defaultHeaders = {
+            Accept: 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            Connection: 'keep-alive',
+        };
+
         const response = await fetch(url, {
             headers: {
-                Accept: 'text/event-stream',
-                'Cache-Control': 'no-cache',
-                Connection: 'keep-alive',
+                ...defaultHeaders,
+                ...this.config.requestHeaders,
             },
         });
 
@@ -93,8 +104,12 @@ export class SSEProxy {
 
                 if (!this.isClosed) {
                     try {
-                        this.controller.enqueue(value);
-                    } catch (error) {
+                        const dataToSend = this.config.transformData
+                            ? this.config.transformData(value)
+                            : value;
+
+                        this.controller.enqueue(dataToSend);
+                    } catch {
                         this.isClosed = true;
                         break;
                     }
@@ -109,15 +124,20 @@ export class SSEProxy {
 
     private handleError(error: unknown): void {
         if (!this.isClosed) {
-            const errorMessage = this.formatSSEError(error);
+            const err = error instanceof Error ? error : new Error('Unknown error');
+
+            if (this.config.onError) {
+                this.config.onError(err);
+            }
+
+            const errorMessage = this.formatSSEError(err);
             this.controller.enqueue(this.encoder.encode(errorMessage));
-            this.closeController(error);
+            this.closeController(err);
         }
     }
 
-    private formatSSEError(error: unknown): string {
-        const message = error instanceof Error ? error.message : 'Unknown error';
-        return `event: error\ndata: ${JSON.stringify({ error: message })}\n\n`;
+    private formatSSEError(error: Error): string {
+        return `event: error\ndata: ${JSON.stringify({ error: error.message })}\n\n`;
     }
 
     private closeController(error?: unknown): void {
@@ -131,14 +151,101 @@ export class SSEProxy {
             } else {
                 this.controller.close();
             }
-        } catch {}
+        } catch {
+            /* empty */
+        }
+
+        if (this.config.onClose) {
+            this.config.onClose();
+        }
     }
 
     private cleanup(): void {
         if (this.reader) {
             try {
                 this.reader.cancel();
-            } catch {}
+            } catch {
+                /* empty */
+            }
         }
     }
+}
+
+// Exemples d'utilisation
+
+/**
+ * Exemple 1: Utilisation basique
+ */
+export function createBasicSSEProxy(): Response {
+    return SSEProxy.createResponse({
+        serverUrl: 'http://localhost:3300',
+        endpoint: '/api/events',
+    });
+}
+
+/**
+ * Exemple 2: Avec query params et headers personnalisés
+ */
+export function createAdvancedSSEProxy(userId: string, filters: string[]): Response {
+    return SSEProxy.createResponse({
+        serverUrl: process.env.SSE_SERVER_URL || 'http://localhost:3300',
+        endpoint: '/api/stream',
+        queryParams: {
+            userId,
+            filters: filters.join(','),
+        },
+        requestHeaders: {
+            Authorization: `Bearer ${process.env.API_TOKEN}`,
+        },
+        responseHeaders: {
+            'X-Custom-Header': 'value',
+        },
+    });
+}
+
+/**
+ * Exemple 3: Avec transformation de données et callbacks
+ */
+export function createSSEProxyWithTransform(): Response {
+    return SSEProxy.createResponse({
+        serverUrl: 'http://localhost:3300',
+        endpoint: '/api/metrics',
+        transformData: (data) => {
+            // Exemple: Ajouter un timestamp à chaque chunk
+            const text = new TextDecoder().decode(data);
+            const enhanced = `data: ${JSON.stringify({ timestamp: Date.now(), original: text })}\n\n`;
+            return new TextEncoder().encode(enhanced);
+        },
+        onError: (error) => {
+            console.error('SSE Proxy Error:', error);
+        },
+        onClose: () => {
+            console.log('SSE Proxy closed');
+        },
+    });
+}
+
+/**
+ * Exemple 4: Utilisation dans un handler de route
+ */
+export async function handleSSERequest(
+    request: Request,
+    serverUrl: string,
+    endpoint: string,
+): Promise<Response> {
+    const url = new URL(request.url);
+    const queryParams: Record<string, string> = {};
+
+    url.searchParams.forEach((value, key) => {
+        queryParams[key] = value;
+    });
+
+    return SSEProxy.createResponse({
+        serverUrl,
+        endpoint,
+        queryParams,
+        requestHeaders: {
+            Authorization: request.headers.get('Authorization') || '',
+        },
+    });
 }

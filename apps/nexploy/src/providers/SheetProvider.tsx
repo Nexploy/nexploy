@@ -9,7 +9,7 @@ import {
 } from '@workspace/ui/components/sheet';
 import { useSheetStore } from '@/stores/useSheetStore';
 
-export function GlobalSheet() {
+export function SheetProvider() {
     const { isOpen, data, closeSheet } = useSheetStore();
 
     return (
