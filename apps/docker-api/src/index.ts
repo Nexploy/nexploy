@@ -3,8 +3,9 @@ import { logger } from './utils/logger';
 import { cors } from 'hono/cors';
 import containerRoutes from './routes/containersRoutes';
 import composeStackRoutes from './routes/composeStackRoutes';
-import containerEventsRoute from './routes/events/containerEventsRoute';
-import dockerStatusEventRoute from './routes/events/dockerStatusEventRoute';
+import containerEvents from './routes/events/containerEvents';
+import dockerStatusEvents from './routes/events/dockerStatusEvents';
+import imageEvents from './routes/events/imageEvents';
 import { serve } from '@hono/node-server';
 import { setupGracefulShutdown } from './utils/shutdown';
 import { dockerStatusManager } from '@/services/dockerStatusManager';
@@ -50,15 +51,15 @@ app.get('/health', (c) => {
     });
 });
 
-app.route('/api/docker/events', dockerStatusEventRoute);
+app.route('/api/docker/events', dockerStatusEvents);
 app.route('/api/docker', dockerStatusRoutes);
 
-app.route('/api/containers/events', containerEventsRoute);
+app.route('/api/containers/events', containerEvents);
 app.route('/api/container', containerRoutes);
 
 app.route('/api/composeStack', composeStackRoutes);
 
-// app.route('/api/images/events', imageEventsRoutes);
+app.route('/api/images/events', imageEvents);
 // app.route('/api/images', imageRoutes);
 
 app.onError((err, c) => {
@@ -81,8 +82,7 @@ const startServer = async () => {
         logger.info('Docker status manager started successfully');
 
         logger.info('Starting container and image state managers...');
-        // await Promise.all([containerStateManager.start(), imageStateManager.start()]);
-        await Promise.all([containerStateManager.start()]);
+        await Promise.all([containerStateManager.start(), imageStateManager.start()]);
         logger.info('Container and image state managers started successfully');
 
         const dockerStatus = dockerStatusManager.getStatus();

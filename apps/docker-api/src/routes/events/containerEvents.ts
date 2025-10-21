@@ -10,19 +10,11 @@ app.get('/stream', (c) => {
     const watchContainers = c.req.query('containers')?.split(',').filter(Boolean);
 
     return streamSSE(c, async (stream) => {
-        let isActive = true;
         const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 
-        logger.info({ clientId, watchContainers }, 'SSE client connected');
-
-        const initialState = containerStateManager.getAllStates();
-        const filteredInitial = watchContainers
-            ? initialState.filter((s) => watchContainers.includes(s.id))
-            : initialState;
+        logger.info({ clientId, watchContainers }, 'SSE Container client connected');
 
         const handleInitialState = async (containers: Container[]) => {
-            if (!isActive) return;
-
             const filteredInitial = watchContainers
                 ? containers.filter((s) => watchContainers.includes(s.id))
                 : containers;
@@ -45,10 +37,7 @@ app.get('/stream', (c) => {
             }
         };
 
-        await handleInitialState(filteredInitial);
-
         const handleStateChange = async (containerEvent: ContainerEvent) => {
-            if (!isActive) return;
             // if (watchContainers && !watchContainers.includes(event.container?.id)) return;
 
             try {
@@ -69,7 +58,6 @@ app.get('/stream', (c) => {
         };
 
         const handleContainerAdded = async (containerEvent: ContainerEvent) => {
-            if (!isActive) return;
             // if (watchContainers && !watchContainers.includes(container.id)) return;
 
             try {
@@ -91,7 +79,6 @@ app.get('/stream', (c) => {
         };
 
         const handleContainerUpdated = async (containerEvent: ContainerEvent) => {
-            if (!isActive) return;
             // if (watchContainers && !watchContainers.includes(container?.id)) return;
 
             try {
@@ -113,7 +100,6 @@ app.get('/stream', (c) => {
         };
 
         const handleContainerRemoved = async (containerEvent: ContainerEvent) => {
-            if (!isActive) return;
             // if (watchContainers && !watchContainers.includes(event.id)) return;
 
             try {
@@ -135,9 +121,6 @@ app.get('/stream', (c) => {
         };
 
         const cleanup = () => {
-            if (!isActive) return;
-            isActive = false;
-
             containerStateManager.off('state-change', handleStateChange);
             containerStateManager.off('initial-state', handleInitialState);
             containerStateManager.off('container-added', handleContainerAdded);
@@ -146,6 +129,9 @@ app.get('/stream', (c) => {
 
             logger.info({ clientId }, 'SSE Container client disconnected');
         };
+
+        const containers = containerStateManager.getAllStates();
+        await handleInitialState(containers);
 
         containerStateManager.on('state-change', handleStateChange);
         containerStateManager.on('initial-state', handleInitialState);

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ComposeStackAction } from '@workspace/typescript-interface/docker.stack';
+import { ComposeStackAction } from '@workspace/typescript-interface/docker.composeStack';
 
 const composeStackActions: [ComposeStackAction, ...ComposeStackAction[]] = [
     'start',

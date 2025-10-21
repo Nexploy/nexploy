@@ -1,7 +1,6 @@
 'use client';
 
-import { ContainerCard } from '@/components/docker/ContainerCard';
-import { useContainerStore } from '@/stores/useContainerStore';
+import { ContainerCard } from '@/components/docker/container/ContainerCard';
 import { Badge } from '@workspace/ui/components/badge';
 import {
     Empty,
@@ -12,7 +11,8 @@ import {
     EmptyTitle,
 } from '@workspace/ui/components/empty';
 import { Container as IconContainer } from 'lucide-react';
-import { AddContainer } from '@/components/docker/AddContainer';
+import { AddContainer } from '@/components/docker/container/AddContainer';
+import { useContainerStore } from '@/stores/useContainerStore';
 
 interface ContainersStandaloneProps {
     disableEmpty?: boolean;
@@ -29,7 +29,9 @@ export function ContainersStandalone({ disableEmpty = false }: ContainersStandal
                     <span className="text-lg font-semibold">Conteneurs</span>
                     <Badge variant={'secondary'}>{standaloneContainers.length}</Badge>
                 </div>
-                <div className={`grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3`}>
+                <div
+                    className={`grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`}
+                >
                     {standaloneContainers.map((container, index) => (
                         <ContainerCard key={index} container={container} />
                     ))}

@@ -6,34 +6,30 @@ import { logger } from '@/utils/logger';
 const app = new Hono();
 
 app.get('/stream', (c) => {
-    logger.info('Client connected to image events stream');
-
     return streamSSE(c, async (stream) => {
-        const initialImages = imageStateManager.getAllStates();
-        const initialStateData = {
-            type: 'initial',
-            images: initialImages,
-            timestamp: Date.now(),
-        };
-        await stream.writeSSE({
-            data: JSON.stringify(initialStateData),
-            event: 'initial-state',
-            id: `${Date.now()}`,
-        });
+        const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 
-        const heartbeatInterval = setInterval(async () => {
+        logger.info({ clientId }, 'SSE Image client connected');
+
+        const handleInitialState = async (images: any) => {
             try {
+                const initialStateData = {
+                    type: 'initial',
+                    images,
+                    timestamp: Date.now(),
+                };
                 await stream.writeSSE({
-                    data: 'heartbeat',
-                    event: 'ping',
+                    data: JSON.stringify(initialStateData),
+                    event: 'initial-state',
+                    id: `${Date.now()}`,
                 });
             } catch (err) {
-                logger.error({ err }, 'Error sending heartbeat');
-                clearInterval(heartbeatInterval);
+                logger.error({ err, clientId }, 'Error sending initial-state after reconnection');
+                cleanup();
             }
-        }, 15000);
+        };
 
-        const onImageAdded = async (image: any) => {
+        const handleImageAdded = async (image: any) => {
             const eventData = {
                 type: 'added',
                 image,
@@ -46,7 +42,7 @@ app.get('/stream', (c) => {
             });
         };
 
-        const onImageUpdated = async ({ oldState, newState }: any) => {
+        const handleImageUpdated = async ({ oldState, newState }: any) => {
             const eventData = {
                 type: 'updated',
                 image: newState,
@@ -60,7 +56,7 @@ app.get('/stream', (c) => {
             });
         };
 
-        const onImageRemoved = async ({ id, oldState }: any) => {
+        const handleImageRemoved = async ({ id, oldState }: any) => {
             const eventData = {
                 type: 'removed',
                 id,
@@ -74,7 +70,7 @@ app.get('/stream', (c) => {
             });
         };
 
-        const onStateChange = async (data: any) => {
+        const handleStateChange = async (data: any) => {
             const eventData = {
                 type: 'state-change',
                 changeType: data.type,
@@ -89,19 +85,30 @@ app.get('/stream', (c) => {
             });
         };
 
-        imageStateManager.on('image-added', onImageAdded);
-        imageStateManager.on('image-updated', onImageUpdated);
-        imageStateManager.on('image-removed', onImageRemoved);
-        imageStateManager.on('state-change', onStateChange);
-
-        stream.onAbort(() => {
+        const cleanup = () => {
             logger.info('Client disconnected from image events stream');
-            imageStateManager.off('image-added', onImageAdded);
-            imageStateManager.off('image-updated', onImageUpdated);
-            imageStateManager.off('image-removed', onImageRemoved);
-            imageStateManager.off('state-change', onStateChange);
-            clearInterval(heartbeatInterval);
-        });
+
+            imageStateManager.off('state-change', handleStateChange);
+            imageStateManager.off('initial-state', handleInitialState);
+            imageStateManager.off('image-added', handleImageAdded);
+            imageStateManager.off('image-updated', handleImageUpdated);
+            imageStateManager.off('image-removed', handleImageRemoved);
+
+            logger.info({ clientId }, 'SSE Image client disconnected');
+        };
+
+        const initialImages = imageStateManager.getAllStates();
+        await handleInitialState(initialImages);
+
+        imageStateManager.on('state-change', handleStateChange);
+        imageStateManager.on('initial-state', handleInitialState);
+        imageStateManager.on('image-added', handleImageAdded);
+        imageStateManager.on('image-updated', handleImageUpdated);
+        imageStateManager.on('image-removed', handleImageRemoved);
+
+        c.req.raw.signal.addEventListener('abort', cleanup);
+
+        await stream.sleep(2_147_483_647);
     });
 });
 

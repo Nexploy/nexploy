@@ -1,9 +1,9 @@
 import { AppSidebar } from '@/components/sidebar/AppSidebar';
 import { SidebarInset, SidebarProvider } from '@workspace/ui/components/sidebar';
 import { Header } from '@/components/Header';
-import { SSEProvider } from '@/providers/sse/SSEProviders';
+import { SSEProvider } from '@/providers/SSEProviders';
 
-export default async function AccountLayout({
+export default async function DockerLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;

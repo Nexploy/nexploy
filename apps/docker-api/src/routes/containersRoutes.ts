@@ -3,8 +3,175 @@ import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { containerStateManager } from '@/services/containerStateManager';
 import { dockerStatusManager } from '@/services/dockerStatusManager';
+import { ContainerCreateForm } from '@workspace/schemas-zod/containerCreate.schema';
+import { ContainerCreateOptions } from 'dockerode';
 
 const app = new Hono();
+
+/**
+ * @openapi
+ * /containers:
+ *   post:
+ *     summary: Create and optionally start a container
+ *     description: Creates a new container with the specified configuration
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - image
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Container name
+ *               image:
+ *                 type: string
+ *                 description: Docker image to use
+ *               restart:
+ *                 type: string
+ *                 enum: [no, always, on-failure, unless-stopped]
+ *                 default: unless-stopped
+ *               network:
+ *                 type: string
+ *                 description: Network to connect to
+ *               hostname:
+ *                 type: string
+ *                 description: Container hostname
+ *               autoRemove:
+ *                 type: boolean
+ *                 default: false
+ *               privileged:
+ *                 type: boolean
+ *                 default: false
+ *               ports:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     hostPort:
+ *                       type: string
+ *                     containerPort:
+ *                       type: string
+ *                     protocol:
+ *                       type: string
+ *                       enum: [tcp, udp]
+ *               envVars:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     key:
+ *                       type: string
+ *                     value:
+ *                       type: string
+ *               volumes:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     hostPath:
+ *                       type: string
+ *                     containerPath:
+ *                       type: string
+ *                     readOnly:
+ *                       type: boolean
+ *     responses:
+ *       201:
+ *         description: Container created successfully
+ *       400:
+ *         description: Invalid request body
+ *       409:
+ *         description: Container with this name already exists
+ */
+app.post(
+    '/create',
+    handleAsync(async (c) => {
+        const body: ContainerCreateForm = await c.req.json();
+
+        const createOptions: ContainerCreateOptions = {
+            name: body.name,
+            Image: body.image,
+            // Hostname: body.hostname,
+            // HostConfig: {
+            //     RestartPolicy: {
+            //         Name: body.restart,
+            //         MaximumRetryCount: body.restart === 'on-failure' ? 3 : 0,
+            //     },
+            //     AutoRemove: body.autoRemove,
+            //     Privileged: body.privileged,
+            // },
+        };
+
+        // if (body.network) {
+        //     createOptions.HostConfig.NetworkMode = body.network;
+        // }
+
+        // if (body.ports.length > 0) {
+        //     createOptions.ExposedPorts = {};
+        //     createOptions.HostConfig.PortBindings = {};
+        //
+        //     body.ports.forEach((port) => {
+        //         const containerPortKey = `${port.containerPort}/${port.protocol}`;
+        //         createOptions.ExposedPorts[containerPortKey] = {};
+        //         createOptions.HostConfig.PortBindings[containerPortKey] = [
+        //             {
+        //                 HostPort: port.hostPort,
+        //             },
+        //         ];
+        //     });
+        // }
+        //
+        // if (body.envVars.length > 0) {
+        //     createOptions.Env = body.envVars.map((env) => `${env.key}=${env.value}`);
+        // }
+        //
+        // if (body.volumes.length > 0) {
+        //     createOptions.HostConfig.Binds = body.volumes.map((vol) => {
+        //         const mode = vol.readOnly ? 'ro' : 'rw';
+        //         return `${vol.hostPath}:${vol.containerPath}:${mode}`;
+        //     });
+        // }
+
+        try {
+            const container = await docker.createContainer(createOptions);
+            const info = await container.inspect();
+
+            return c.json(
+                {
+                    id: container.id,
+                    name: body.name,
+                    status: 'created',
+                    message: 'Container created successfully',
+                    info,
+                },
+                201,
+            );
+        } catch (error: any) {
+            if (error.statusCode === 409) {
+                return c.json(
+                    {
+                        error: 'Conflict',
+                        message: `Container with name '${body.name}' already exists`,
+                    },
+                    409,
+                );
+            }
+            if (error.statusCode === 404) {
+                return c.json(
+                    {
+                        error: 'Not Found',
+                        message: `Image '${body.image}' not found. Pull the image first.`,
+                    },
+                    404,
+                );
+            }
+            throw error;
+        }
+    }),
+);
 
 /**
  * @openapi
@@ -233,7 +400,7 @@ app.delete(
         const id = c.req.param('id');
         const container = docker.getContainer(id);
 
-        container.remove();
+        await container.remove();
     }),
 );
 
@@ -345,13 +512,8 @@ app.get('/status', (c) => {
  *         description: Current container states
  */
 app.get('/current', (c) => {
-    const states = containerStateManager.getAllStates();
-    return c.json({
-        containers: states,
-        dockerStatus: dockerStatusManager.getStatus(),
-        count: states.length,
-        timestamp: Date.now(),
-    });
+    const containers = containerStateManager.getAllStates();
+    return c.json(containers);
 });
 
 export default app;

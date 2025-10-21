@@ -33,7 +33,7 @@ export const nextJsConfig = [
         },
         rules: {
             ...pluginNext.configs.recommended.rules,
-            ...pluginNext.configs['core-web-vitals'].rules,
+            ...pluginNext.configs['core-web-vitals'].rules
         },
     },
     {
@@ -46,6 +46,7 @@ export const nextJsConfig = [
             // React scope no longer necessary with new JSX transform.
             'react/react-in-jsx-scope': 'off',
             'react/prop-types': 'off',
+            'react-hooks/incompatible-library': 'off',
         },
     },
 ];

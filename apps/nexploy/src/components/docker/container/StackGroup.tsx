@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { MouseEvent, useTransition } from 'react';
-import { ContainerCard } from '@/components/docker/ContainerCard';
+import { ContainerCard } from '@/components/docker/container/ContainerCard';
 import { ChevronDownIcon, Layers, Loader2, Play, RotateCw, Square } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
@@ -136,7 +136,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                 </AccordionTrigger>
 
                 <AccordionContent className="bg-muted/40 border-t p-5">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {containers.map((container) => (
                             <ContainerCard key={container.id} container={container} />
                         ))}

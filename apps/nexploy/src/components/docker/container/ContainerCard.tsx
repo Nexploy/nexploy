@@ -12,7 +12,7 @@ import {
     StatusProps,
 } from '@workspace/ui/components/kibo-ui/status';
 import { Container, ContainerState } from '@workspace/typescript-interface/docker.container';
-import { ContainerDropdownActions } from '@/components/docker/ContainerDropdownActions';
+import { ContainerDropdownActions } from '@/components/docker/container/ContainerDropdownActions';
 
 interface ContainerCardProps {
     container: Container;
@@ -36,7 +36,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
     const containerStatus = container.status;
 
     return (
-        <Card className="relative cursor-pointer rounded-xl border transition-all duration-300 hover:scale-[1.01] hover:shadow-xl">
+        <Card className="relative cursor-pointer rounded-xl border transition-all duration-300 hover:scale-[1.03] hover:shadow-xl">
             <CardHeader className="flex">
                 <div className="flex flex-1 items-center gap-3 truncate">
                     <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
@@ -84,7 +84,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
                             {container.ports.map((p, idx) => (
                                 <div
                                     key={idx}
-                                    className="bg-muted/50 flex flex-wrap items-center gap-2 rounded-md px-3 py-2 text-xs"
+                                    className="bg-muted/50 flex gap-2 rounded-md px-3 py-2 text-start text-xs leading-none"
                                 >
                                     <span className="font-mono">
                                         {p.publicPort ?? '—'} → {p.privatePort}

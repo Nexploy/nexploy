@@ -5,7 +5,7 @@ import Link from 'next/link';
 export function AddContainer() {
     return (
         <Button asChild>
-            <Link className={'mt-1'} href={'/docker/containers/addContainer'}>
+            <Link href={'/docker/containers/add-container'}>
                 <Plus />
                 Ajouter un conteneur
             </Link>

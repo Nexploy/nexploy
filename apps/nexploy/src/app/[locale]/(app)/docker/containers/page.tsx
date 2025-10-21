@@ -1,6 +1,5 @@
 'use client';
 
-import { useContainerStore } from '@/stores/useContainerStore';
 import {
     AlertCircleIcon,
     Box,
@@ -19,20 +18,21 @@ import {
     EmptyMedia,
     EmptyTitle,
 } from '@workspace/ui/components/empty';
-import { StatusDocker } from '@/components/docker/StatusDocker';
+import { StatusDocker } from '@/components/docker/container/StatusDocker';
 import { Alert, AlertTitle } from '@workspace/ui/components/alert';
-import { AddContainer } from '@/components/docker/AddContainer';
+import { AddContainer } from '@/components/docker/container/AddContainer';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { ContainersStack } from '@/components/docker/ContainersStack';
-import { ContainersStandalone } from '@/components/docker/ContainersStandalone';
+import { ContainersStack } from '@/components/docker/container/ContainersStack';
+import { ContainersStandalone } from '@/components/docker/container/ContainersStandalone';
+import { useContainerStore } from '@/stores/useContainerStore';
 
 export default function DockerContainersPage() {
     const lastUpdate = useContainerStore((state) => state.lastUpdate);
     const containers = useContainerStore((state) => state.containers);
-    const stacksSize = useContainerStore().getOrganizedContainers().stacks.size;
-    const standaloneContainersLenght =
-        useContainerStore().getOrganizedContainers().standaloneContainers.length;
+    const stacksSize = useContainerStore((state) => state.getOrganizedContainers)().stacks.size;
+    const standaloneContainersLenght = useContainerStore((state) => state.getOrganizedContainers)()
+        .standaloneContainers.length;
     const error = useContainerStore((state) => state.error);
 
     const numberOfContainers = stacksSize + standaloneContainersLenght;
@@ -62,7 +62,7 @@ export default function DockerContainersPage() {
     const isEmpty = !containers.size && !!lastUpdate;
 
     return (
-        <div className="flex h-full flex-1 flex-col gap-6 pt-5">
+        <div className="flex h-full flex-1 flex-col gap-5 pt-6">
             <div className="flex justify-between gap-2 px-6">
                 <div className={'flex gap-3'}>
                     <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
@@ -136,7 +136,7 @@ export default function DockerContainersPage() {
                         ))}
                     </TabsList>
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
-                        <div className="pb-5">
+                        <div className="pb-6">
                             <TabsContent value="all" className="flex flex-col space-y-4">
                                 <ContainersStack />
                                 <ContainersStandalone disableEmpty />

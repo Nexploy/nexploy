@@ -1,0 +1,222 @@
+import { create } from 'zustand';
+import { Image, ImageEvent } from '@workspace/typescript-interface/docker.image';
+import { toast } from 'sonner';
+
+interface ImageState {
+    images: Map<string, Image>;
+    error: Error | null;
+    lastUpdate: number | null;
+    eventSource: EventSource | null;
+    reconnectTimeout: NodeJS.Timeout | null;
+    setImages: (images: Map<string, Image>) => void;
+    setError: (error: Error | null) => void;
+    setLastUpdate: (timestamp: number) => void;
+    addImage: (image: Image) => void;
+    updateImage: (image: Image) => void;
+    removeImage: (imageId: string) => void;
+
+    getImage: (id: string) => Image | undefined;
+    getImagesByTag: (tag: string) => Image[];
+    getOrganizedImages: () => {
+        tagged: Map<string, Image[]>;
+        untagged: Image[];
+    };
+
+    connect: (imageIds?: string[]) => void;
+    disconnect: () => void;
+}
+
+export const useImageStore = create<ImageState>((set, get) => ({
+    images: new Map(),
+    error: null,
+    lastUpdate: null,
+    eventSource: null,
+    reconnectTimeout: null,
+
+    setImages: (images) => set({ images }),
+    setError: (error) => set({ error }),
+    setLastUpdate: (timestamp) => set({ lastUpdate: timestamp }),
+
+    addImage: (image) =>
+        set((state) => {
+            const next = new Map(state.images);
+            next.set(image.id, image);
+            return { images: next };
+        }),
+
+    removeImage: (imageId) =>
+        set((state) => {
+            const next = new Map(state.images);
+            next.delete(imageId);
+            return { images: next };
+        }),
+
+    updateImage: (image) =>
+        set((state) => {
+            const next = new Map(state.images);
+            next.set(image.id, image);
+            return { images: next };
+        }),
+
+    getImage: (id) => {
+        return get().images.get(id);
+    },
+
+    getImagesByTag: (tag) => {
+        return Array.from(get().images.values()).filter((img) => img.repoTags?.includes(tag));
+    },
+
+    getOrganizedImages: () => {
+        const tagged = new Map<string, Image[]>();
+        const untagged: Image[] = [];
+
+        Array.from(get().images.values()).forEach((image) => {
+            if (
+                image.repoTags &&
+                image.repoTags.length > 0 &&
+                !image.repoTags.includes('<none>:<none>')
+            ) {
+                image.repoTags.forEach((tag) => {
+                    if (!tagged.has(tag)) {
+                        tagged.set(tag, []);
+                    }
+                    tagged.get(tag)!.push(image);
+                });
+            } else {
+                untagged.push(image);
+            }
+        });
+
+        return { tagged, untagged };
+    },
+
+    connect: (imageIds) => {
+        const state = get();
+
+        if (state.eventSource) {
+            state.eventSource.close();
+        }
+        if (state.reconnectTimeout) {
+            clearTimeout(state.reconnectTimeout);
+        }
+
+        try {
+            const url = new URL('/api/events/stream', window.location.origin);
+
+            if (imageIds?.length) url.searchParams.set('images', imageIds.join(','));
+            url.searchParams.set('endpoint', '/api/images/events/stream');
+
+            const eventSource = new EventSource(url.toString());
+
+            eventSource.addEventListener('open', () => {
+                console.log('SSE Image connection established');
+                set({ error: null, eventSource });
+            });
+
+            eventSource.addEventListener('initial-state', (e) => {
+                const data: ImageEvent = JSON.parse(e.data);
+                const images = new Map<string, Image>();
+
+                data.images?.forEach((image) => {
+                    images.set(image.id, image);
+                });
+
+                set({
+                    images,
+                    lastUpdate: data.timestamp,
+                });
+            });
+
+            eventSource.addEventListener('state-change', (e) => {
+                const data: ImageEvent = JSON.parse(e.data);
+                const images = new Map(get().images);
+
+                if (data.image) images.set(data.image.id, data.image);
+
+                set({
+                    images,
+                    lastUpdate: data.timestamp,
+                });
+            });
+
+            eventSource.addEventListener('image-added', (e) => {
+                const data: ImageEvent = JSON.parse(e.data);
+                if (!data.image) return;
+
+                get().addImage(data.image);
+                const imageName = data.image.repoTags?.[0] || data.image.id.substring(0, 12);
+                toast.success(`Image ${imageName} added`);
+                set({ lastUpdate: data.timestamp });
+            });
+
+            eventSource.addEventListener('image-updated', (e) => {
+                const data: ImageEvent = JSON.parse(e.data);
+                const image = data.image;
+                if (!image) return;
+
+                const imageName = image.repoTags?.[0] || image.id.substring(0, 12);
+                const { action, timestamp } = data;
+
+                get().updateImage(image);
+
+                if (action) {
+                    toast.success(`Image ${imageName} (action: ${action})`);
+                }
+
+                set({ lastUpdate: timestamp });
+            });
+
+            eventSource.addEventListener('image-removed', (e) => {
+                const data: ImageEvent = JSON.parse(e.data);
+                if (!data.imageId) return;
+
+                get().removeImage(data.imageId);
+                const imageName = data.image?.repoTags?.[0] || data.imageId.substring(0, 12);
+                toast.success(`Image ${imageName} removed`);
+                set({ lastUpdate: data.timestamp });
+            });
+
+            eventSource.addEventListener('error', () => {
+                const currentEventSource = get().eventSource;
+
+                if (currentEventSource) {
+                    currentEventSource.close();
+                    set({ eventSource: null });
+                }
+
+                set({ error: new Error('Error connecting to Image Docker') });
+
+                const timeout = setTimeout(() => {
+                    console.log('Attempting to reconnect...');
+                    get().connect(imageIds);
+                }, 5000);
+
+                set({ reconnectTimeout: timeout });
+            });
+
+            set({ eventSource });
+        } catch (err) {
+            console.error('Images - Failed to connect :', err);
+            set({
+                error: err as Error,
+            });
+        }
+    },
+
+    disconnect: () => {
+        const state = get();
+
+        if (state.reconnectTimeout) {
+            clearTimeout(state.reconnectTimeout);
+        }
+
+        if (state.eventSource) {
+            state.eventSource.close();
+        }
+
+        set({
+            eventSource: null,
+            reconnectTimeout: null,
+        });
+    },
+}));

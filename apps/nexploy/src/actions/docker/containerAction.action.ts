@@ -2,7 +2,7 @@
 
 import { actionServer } from '@/lib/api/safe-action';
 import { drinoDocker } from '@/lib/api/drinoDocker';
-import { ContainerActionsSchema } from '@/schemas/actions/container.schema';
+import { ContainerActionsSchema } from '@workspace/schemas-zod/containerAction.schema';
 import { returnValidationErrors } from 'next-safe-action';
 import { HttpErrorResponse } from 'drino';
 

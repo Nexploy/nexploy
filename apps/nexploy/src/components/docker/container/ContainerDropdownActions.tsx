@@ -11,7 +11,7 @@ import {
 } from '@workspace/typescript-interface/docker.container';
 import { toast } from 'sonner';
 import { Eye, Info, Pause, Play, RotateCw, Square } from 'lucide-react';
-import { onContainerAction } from '@/actions/docker/container.action';
+import { onContainerAction } from '@/actions/docker/containerAction.action';
 
 interface ContainerDropdownActionsProps {
     containerId: string;

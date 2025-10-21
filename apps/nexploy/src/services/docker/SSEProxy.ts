@@ -70,11 +70,13 @@ export class SSEProxy {
     private async fetchBackendSSE(url: string): Promise<Response> {
         const defaultHeaders = {
             Accept: 'text/event-stream',
-            'Cache-Control': 'no-cache',
+            'Cache-Control': 'no-cache, no-transform',
             Connection: 'keep-alive',
+            'X-Accel-Buffering': 'no',
         };
 
         const response = await fetch(url, {
+            keepalive: true,
             headers: {
                 ...defaultHeaders,
                 ...this.config.requestHeaders,
@@ -169,83 +171,4 @@ export class SSEProxy {
             }
         }
     }
-}
-
-// Exemples d'utilisation
-
-/**
- * Exemple 1: Utilisation basique
- */
-export function createBasicSSEProxy(): Response {
-    return SSEProxy.createResponse({
-        serverUrl: 'http://localhost:3300',
-        endpoint: '/api/events',
-    });
-}
-
-/**
- * Exemple 2: Avec query params et headers personnalisés
- */
-export function createAdvancedSSEProxy(userId: string, filters: string[]): Response {
-    return SSEProxy.createResponse({
-        serverUrl: process.env.SSE_SERVER_URL || 'http://localhost:3300',
-        endpoint: '/api/stream',
-        queryParams: {
-            userId,
-            filters: filters.join(','),
-        },
-        requestHeaders: {
-            Authorization: `Bearer ${process.env.API_TOKEN}`,
-        },
-        responseHeaders: {
-            'X-Custom-Header': 'value',
-        },
-    });
-}
-
-/**
- * Exemple 3: Avec transformation de données et callbacks
- */
-export function createSSEProxyWithTransform(): Response {
-    return SSEProxy.createResponse({
-        serverUrl: 'http://localhost:3300',
-        endpoint: '/api/metrics',
-        transformData: (data) => {
-            // Exemple: Ajouter un timestamp à chaque chunk
-            const text = new TextDecoder().decode(data);
-            const enhanced = `data: ${JSON.stringify({ timestamp: Date.now(), original: text })}\n\n`;
-            return new TextEncoder().encode(enhanced);
-        },
-        onError: (error) => {
-            console.error('SSE Proxy Error:', error);
-        },
-        onClose: () => {
-            console.log('SSE Proxy closed');
-        },
-    });
-}
-
-/**
- * Exemple 4: Utilisation dans un handler de route
- */
-export async function handleSSERequest(
-    request: Request,
-    serverUrl: string,
-    endpoint: string,
-): Promise<Response> {
-    const url = new URL(request.url);
-    const queryParams: Record<string, string> = {};
-
-    url.searchParams.forEach((value, key) => {
-        queryParams[key] = value;
-    });
-
-    return SSEProxy.createResponse({
-        serverUrl,
-        endpoint,
-        queryParams,
-        requestHeaders: {
-            Authorization: request.headers.get('Authorization') || '',
-        },
-    });
 }

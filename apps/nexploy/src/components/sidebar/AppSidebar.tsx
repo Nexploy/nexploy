@@ -1,10 +1,12 @@
 import {
     Activity,
     Box,
+    Bug,
     ChevronRight,
     ChevronUp,
     Container,
     Folder,
+    GitBranch,
     LayoutList,
     Network,
     Send,
@@ -37,11 +39,15 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@workspace/ui/components/collapsible';
-import * as React from 'react';
 import { ElementType } from 'react';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset';
+}
+
+interface Group {
+    title: string;
+    children: SidebarItem[];
 }
 
 interface SidebarItem {
@@ -51,20 +57,30 @@ interface SidebarItem {
     children?: { title: string; href: string; icon: ElementType }[];
 }
 
-const items: SidebarItem[] = [
-    { title: 'Projects', href: '/projects', icon: Folder },
-    { title: 'Monitoring', href: '/monitoring', icon: Activity },
+const groups: Group[] = [
     {
-        title: 'Docker',
-        href: '/docker/containers',
-        icon: Box,
+        title: 'Home',
         children: [
-            { title: 'Containers', icon: Container, href: './containers' },
-            { title: 'Images', icon: LayoutList, href: './images' },
+            { title: 'Projects', href: '/projects', icon: Folder },
+            { title: 'Monitoring', href: '/monitoring', icon: Activity },
+            {
+                title: 'Docker',
+                href: '/docker/containers',
+                icon: Box,
+                children: [
+                    { title: 'Containers', icon: Container, href: './containers' },
+                    { title: 'Images', icon: LayoutList, href: './images' },
+                    { title: 'Events', icon: Bug, href: './events' },
+                ],
+            },
+            { title: 'Swarm', href: '/swarm', icon: Network },
+            { title: 'Requests', href: '/requests', icon: Send },
         ],
     },
-    { title: 'Swarm', href: '/swarm', icon: Network },
-    { title: 'Requests', href: '/requests', icon: Send },
+    {
+        title: 'Settings',
+        children: [{ title: 'Git', href: '/settings', icon: GitBranch }],
+    },
 ];
 
 export function AppSidebar({ variant }: AppSidebarProps) {
@@ -76,46 +92,52 @@ export function AppSidebar({ variant }: AppSidebarProps) {
             </SidebarHeader>
 
             <SidebarContent>
-                <SidebarGroup>
-                    <SidebarGroupLabel>Home</SidebarGroupLabel>
-                    <SidebarGroupContent>
-                        <SidebarMenu>
-                            {items.map((item) => (
-                                <Collapsible key={item.title} className="group/collapsible">
-                                    <SidebarMenuItem>
-                                        <CollapsibleTrigger asChild>
-                                            <SidebarMenuButton tooltip={item.title} asChild>
-                                                <Link href={item.href}>
-                                                    <item.icon />
-                                                    <span>{item.title}</span>
-                                                    {item.children && (
-                                                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                                                    )}
-                                                </Link>
-                                            </SidebarMenuButton>
-                                        </CollapsibleTrigger>
-                                        {item.children && (
-                                            <CollapsibleContent>
-                                                <SidebarMenuSub>
-                                                    {item.children.map((child) => (
-                                                        <SidebarMenuSubItem key={child.title}>
-                                                            <SidebarMenuSubButton asChild>
-                                                                <Link href={child.href}>
-                                                                    <child.icon />
-                                                                    {child.title}
-                                                                </Link>
-                                                            </SidebarMenuSubButton>
-                                                        </SidebarMenuSubItem>
-                                                    ))}
-                                                </SidebarMenuSub>
-                                            </CollapsibleContent>
-                                        )}
-                                    </SidebarMenuItem>
-                                </Collapsible>
-                            ))}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
+                {groups.map((group) => (
+                    <SidebarGroup key={group.title}>
+                        <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                {group.children.map((item) => (
+                                    <Collapsible
+                                        defaultOpen
+                                        key={item.title}
+                                        className="group/collapsible"
+                                    >
+                                        <SidebarMenuItem>
+                                            <CollapsibleTrigger asChild>
+                                                <SidebarMenuButton tooltip={item.title} asChild>
+                                                    <Link href={item.href}>
+                                                        <item.icon />
+                                                        <span>{item.title}</span>
+                                                        {item.children && (
+                                                            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                                        )}
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            </CollapsibleTrigger>
+                                            {item.children && (
+                                                <CollapsibleContent>
+                                                    <SidebarMenuSub>
+                                                        {item.children.map((child) => (
+                                                            <SidebarMenuSubItem key={child.title}>
+                                                                <SidebarMenuSubButton asChild>
+                                                                    <Link href={child.href}>
+                                                                        <child.icon />
+                                                                        {child.title}
+                                                                    </Link>
+                                                                </SidebarMenuSubButton>
+                                                            </SidebarMenuSubItem>
+                                                        ))}
+                                                    </SidebarMenuSub>
+                                                </CollapsibleContent>
+                                            )}
+                                        </SidebarMenuItem>
+                                    </Collapsible>
+                                ))}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                ))}
             </SidebarContent>
 
             <SidebarFooter>

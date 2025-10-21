@@ -1,10 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import { useFieldArray } from 'react-hook-form';
 import { ArrowLeft, Container, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
@@ -33,130 +32,81 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Switch } from '@workspace/ui/components/switch';
-import { drinoDocker } from '@/lib/api/drinoDocker';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-
-const containerFormSchema = z.object({
-    name: z.string().min(1, 'Le nom est requis'),
-    image: z.string().min(1, "L'image est requise"),
-    restart: z.enum(['no', 'always', 'on-failure', 'unless-stopped']).default('unless-stopped'),
-    network: z.string().optional(),
-    hostname: z.string().optional(),
-    autoRemove: z.boolean().default(false),
-    privileged: z.boolean().default(false),
-});
-
-type ContainerFormValues = z.infer<typeof containerFormSchema>;
-
-interface PortMapping {
-    hostPort: string;
-    containerPort: string;
-    protocol: 'tcp' | 'udp';
-}
-
-interface EnvVar {
-    key: string;
-    value: string;
-}
-
-interface VolumeMount {
-    hostPath: string;
-    containerPath: string;
-    readOnly: boolean;
-}
+import { toast } from 'sonner';
+import { ContainerCreateFormSchema } from '@workspace/schemas-zod/containerCreate.schema';
+import { onContainerCreateAction } from '@/actions/docker/containerCreate.action';
 
 export default function AddContainerPage() {
     const router = useRouter();
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const [ports, setPorts] = useState<PortMapping[]>([]);
-    const [envVars, setEnvVars] = useState<EnvVar[]>([]);
-    const [volumes, setVolumes] = useState<VolumeMount[]>([]);
-
-    const form = useForm<ContainerFormValues>({
-        resolver: zodResolver(containerFormSchema),
-        defaultValues: {
-            name: '',
-            image: '',
-            restart: 'unless-stopped',
-            autoRemove: false,
-            privileged: false,
+    const { form, action, handleSubmitWithAction } = useHookFormAction(
+        onContainerCreateAction,
+        zodResolver(ContainerCreateFormSchema),
+        {
+            formProps: {
+                defaultValues: {
+                    name: '',
+                    image: '',
+                    // restart: 'unless-stopped',
+                    // network: '',
+                    // hostname: '',
+                    // autoRemove: false,
+                    // privileged: false,
+                    // ports: [],
+                    // envVars: [],
+                    // volumes: [],
+                },
+            },
+            actionProps: {
+                onSuccess: () => {
+                    toast.success('Conteneur créé avec succès');
+                    router.push('/docker/containers');
+                    router.refresh();
+                },
+                onError: ({ error }) => {
+                    if (error.serverError) {
+                        toast.error(error.serverError);
+                    } else {
+                        toast.error('Erreur lors de la création du conteneur');
+                    }
+                },
+            },
         },
+    );
+
+    const {
+        fields: portsFields,
+        append: appendPort,
+        remove: removePort,
+    } = useFieldArray({
+        control: form.control,
+        name: 'ports',
     });
 
-    const addPort = () => {
-        setPorts([...ports, { hostPort: '', containerPort: '', protocol: 'tcp' }]);
-    };
+    const {
+        fields: envVarsFields,
+        append: appendEnvVar,
+        remove: removeEnvVar,
+    } = useFieldArray({
+        control: form.control,
+        name: 'envVars',
+    });
 
-    const removePort = (index: number) => {
-        setPorts(ports.filter((_, i) => i !== index));
-    };
+    const {
+        fields: volumesFields,
+        append: appendVolume,
+        remove: removeVolume,
+    } = useFieldArray({
+        control: form.control,
+        name: 'volumes',
+    });
 
-    const updatePort = (index: number, field: keyof PortMapping, value: string) => {
-        const newPorts = [...ports];
-        newPorts[index] = { ...newPorts[index], [field]: value };
-        setPorts(newPorts);
-    };
-
-    const addEnvVar = () => {
-        setEnvVars([...envVars, { key: '', value: '' }]);
-    };
-
-    const removeEnvVar = (index: number) => {
-        setEnvVars(envVars.filter((_, i) => i !== index));
-    };
-
-    const updateEnvVar = (index: number, field: keyof EnvVar, value: string) => {
-        const newEnvVars = [...envVars];
-        newEnvVars[index] = { ...newEnvVars[index], [field]: value };
-        setEnvVars(newEnvVars);
-    };
-
-    const addVolume = () => {
-        setVolumes([...volumes, { hostPath: '', containerPath: '', readOnly: false }]);
-    };
-
-    const removeVolume = (index: number) => {
-        setVolumes(volumes.filter((_, i) => i !== index));
-    };
-
-    const updateVolume = (index: number, field: keyof VolumeMount, value: string | boolean) => {
-        const newVolumes = [...volumes];
-        newVolumes[index] = { ...newVolumes[index], [field]: value };
-        setVolumes(newVolumes);
-    };
-
-    const onSubmit = async (data: ContainerFormValues) => {
-        setIsSubmitting(true);
-        try {
-            const payload = {
-                ...data,
-                ports: ports.filter((p) => p.hostPort && p.containerPort),
-                env: envVars
-                    .filter((e) => e.key && e.value)
-                    .reduce(
-                        (acc, e) => {
-                            acc[e.key] = e.value;
-                            return acc;
-                        },
-                        {} as Record<string, string>,
-                    ),
-                volumes: volumes.filter((v) => v.hostPath && v.containerPath),
-            };
-
-            await drinoDocker.post('/containers', payload).consume();
-            router.push('/docker/containers');
-            router.refresh();
-        } catch (error) {
-            console.error('Erreur lors de la création du conteneur:', error);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+    const isSubmitting = action.status === 'executing';
 
     return (
-        <div className="flex flex-1 flex-col gap-6 overflow-hidden pt-5">
-            <div className={'flex justify-between gap-4 px-6'}>
+        <div className="flex flex-1 flex-col gap-5 overflow-hidden pt-5">
+            <div className="flex justify-between gap-4 px-6">
                 <div className="flex gap-3">
                     <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
                         <Container className="text-primary size-7" />
@@ -178,17 +128,20 @@ export default function AddContainerPage() {
                         onClick={() => router.back()}
                         disabled={isSubmitting}
                     >
-                        <ArrowLeft /> Retour
+                        <ArrowLeft />
+                        Retour
                     </Button>
-                    <Button type="submit" disabled={isSubmitting}>
+                    <Button type="submit" disabled={isSubmitting} onClick={handleSubmitWithAction}>
                         <Plus />
-                        Créer le conteneur
+                        {isSubmitting ? 'Création...' : 'Créer le conteneur'}
                     </Button>
                 </div>
             </div>
+
             <ScrollAreaWithShadow className="h-full overflow-hidden">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 px-6">
+                    <div className="space-y-6 px-6 pb-6">
+                        {/* Configuration de base */}
                         <Card>
                             <CardHeader>
                                 <CardTitle>Configuration de base</CardTitle>
@@ -304,7 +257,7 @@ export default function AddContainerPage() {
                                                         <span className="text-base">
                                                             Suppression automatique
                                                         </span>
-                                                        <FormDescription>
+                                                        <FormDescription className="m-0">
                                                             Supprimer le conteneur automatiquement
                                                             après arrêt
                                                         </FormDescription>
@@ -330,7 +283,7 @@ export default function AddContainerPage() {
                                                         <span className="text-base">
                                                             Mode privilégié
                                                         </span>
-                                                        <FormDescription>
+                                                        <FormDescription className="m-0">
                                                             Donner des privilèges étendus au
                                                             conteneur
                                                         </FormDescription>
@@ -349,6 +302,7 @@ export default function AddContainerPage() {
                             </CardContent>
                         </Card>
 
+                        {/* Ports */}
                         <Card>
                             <CardHeader>
                                 <div className="flex items-center justify-between">
@@ -360,7 +314,13 @@ export default function AddContainerPage() {
                                     </div>
                                     <Button
                                         type="button"
-                                        onClick={addPort}
+                                        onClick={() =>
+                                            appendPort({
+                                                hostPort: '',
+                                                containerPort: '',
+                                                protocol: 'tcp',
+                                            })
+                                        }
                                         size="sm"
                                         variant="outline"
                                     >
@@ -370,51 +330,71 @@ export default function AddContainerPage() {
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                {ports.length === 0 ? (
+                                {portsFields.length === 0 ? (
                                     <p className="text-muted-foreground py-8 text-center text-sm">
                                         Aucun port configuré
                                     </p>
                                 ) : (
                                     <div className="space-y-3">
-                                        {ports.map((port, index) => (
-                                            <div key={index} className="flex items-center gap-3">
-                                                <Input
-                                                    placeholder="Port hôte"
-                                                    value={port.hostPort}
-                                                    onChange={(e) =>
-                                                        updatePort(
-                                                            index,
-                                                            'hostPort',
-                                                            e.target.value,
-                                                        )
-                                                    }
+                                        {portsFields.map((field, index) => (
+                                            <div key={field.id} className="flex items-center gap-3">
+                                                <FormField
+                                                    control={form.control}
+                                                    name={`ports.${index}.hostPort`}
+                                                    render={({ field }) => (
+                                                        <FormItem className="flex-1">
+                                                            <FormControl>
+                                                                <Input
+                                                                    placeholder="Port hôte"
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
                                                 />
                                                 <span className="text-muted-foreground">→</span>
-                                                <Input
-                                                    placeholder="Port conteneur"
-                                                    value={port.containerPort}
-                                                    onChange={(e) =>
-                                                        updatePort(
-                                                            index,
-                                                            'containerPort',
-                                                            e.target.value,
-                                                        )
-                                                    }
+                                                <FormField
+                                                    control={form.control}
+                                                    name={`ports.${index}.containerPort`}
+                                                    render={({ field }) => (
+                                                        <FormItem className="flex-1">
+                                                            <FormControl>
+                                                                <Input
+                                                                    placeholder="Port conteneur"
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
                                                 />
-                                                <Select
-                                                    value={port.protocol}
-                                                    onValueChange={(value) =>
-                                                        updatePort(index, 'protocol', value)
-                                                    }
-                                                >
-                                                    <SelectTrigger className="w-24">
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="tcp">TCP</SelectItem>
-                                                        <SelectItem value="udp">UDP</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
+                                                <FormField
+                                                    control={form.control}
+                                                    name={`ports.${index}.protocol`}
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormControl>
+                                                                <Select
+                                                                    value={field.value}
+                                                                    onValueChange={field.onChange}
+                                                                >
+                                                                    <SelectTrigger className="w-24">
+                                                                        <SelectValue />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        <SelectItem value="tcp">
+                                                                            TCP
+                                                                        </SelectItem>
+                                                                        <SelectItem value="udp">
+                                                                            UDP
+                                                                        </SelectItem>
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
                                                 <Button
                                                     type="button"
                                                     variant="ghost"
@@ -430,6 +410,7 @@ export default function AddContainerPage() {
                             </CardContent>
                         </Card>
 
+                        {/* Variables d'environnement */}
                         <Card>
                             <CardHeader>
                                 <div className="flex items-center justify-between">
@@ -441,7 +422,7 @@ export default function AddContainerPage() {
                                     </div>
                                     <Button
                                         type="button"
-                                        onClick={addEnvVar}
+                                        onClick={() => appendEnvVar({ key: '', value: '' })}
                                         size="sm"
                                         variant="outline"
                                     >
@@ -451,28 +432,44 @@ export default function AddContainerPage() {
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                {envVars.length === 0 ? (
+                                {envVarsFields.length === 0 ? (
                                     <p className="text-muted-foreground py-8 text-center text-sm">
                                         Aucune variable d'environnement configurée
                                     </p>
                                 ) : (
                                     <div className="space-y-3">
-                                        {envVars.map((env, index) => (
-                                            <div key={index} className="flex items-center gap-3">
-                                                <Input
-                                                    placeholder="CLÉ"
-                                                    value={env.key}
-                                                    onChange={(e) =>
-                                                        updateEnvVar(index, 'key', e.target.value)
-                                                    }
+                                        {envVarsFields.map((field, index) => (
+                                            <div key={field.id} className="flex items-center gap-3">
+                                                <FormField
+                                                    control={form.control}
+                                                    name={`envVars.${index}.key`}
+                                                    render={({ field }) => (
+                                                        <FormItem className="flex-1">
+                                                            <FormControl>
+                                                                <Input
+                                                                    placeholder="CLÉ"
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
                                                 />
                                                 <span className="text-muted-foreground">=</span>
-                                                <Input
-                                                    placeholder="valeur"
-                                                    value={env.value}
-                                                    onChange={(e) =>
-                                                        updateEnvVar(index, 'value', e.target.value)
-                                                    }
+                                                <FormField
+                                                    control={form.control}
+                                                    name={`envVars.${index}.value`}
+                                                    render={({ field }) => (
+                                                        <FormItem className="flex-1">
+                                                            <FormControl>
+                                                                <Input
+                                                                    placeholder="valeur"
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
                                                 />
                                                 <Button
                                                     type="button"
@@ -489,6 +486,7 @@ export default function AddContainerPage() {
                             </CardContent>
                         </Card>
 
+                        {/* Volumes */}
                         <Card>
                             <CardHeader>
                                 <div className="flex items-center justify-between">
@@ -500,7 +498,13 @@ export default function AddContainerPage() {
                                     </div>
                                     <Button
                                         type="button"
-                                        onClick={addVolume}
+                                        onClick={() =>
+                                            appendVolume({
+                                                hostPath: '',
+                                                containerPath: '',
+                                                readOnly: false,
+                                            })
+                                        }
                                         size="sm"
                                         variant="outline"
                                     >
@@ -510,46 +514,66 @@ export default function AddContainerPage() {
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                {volumes.length === 0 ? (
+                                {volumesFields.length === 0 ? (
                                     <p className="text-muted-foreground py-8 text-center text-sm">
                                         Aucun volume configuré
                                     </p>
                                 ) : (
                                     <div className="space-y-3">
-                                        {volumes.map((volume, index) => (
-                                            <div key={index} className="flex items-center gap-3">
-                                                <Input
-                                                    placeholder="/chemin/hôte"
-                                                    value={volume.hostPath}
-                                                    onChange={(e) =>
-                                                        updateVolume(
-                                                            index,
-                                                            'hostPath',
-                                                            e.target.value,
-                                                        )
-                                                    }
+                                        {volumesFields.map((field, index) => (
+                                            <div key={field.id} className="flex items-center gap-3">
+                                                <FormField
+                                                    control={form.control}
+                                                    name={`volumes.${index}.hostPath`}
+                                                    render={({ field }) => (
+                                                        <FormItem className="flex-1">
+                                                            <FormControl>
+                                                                <Input
+                                                                    placeholder="/chemin/hôte"
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
                                                 />
                                                 <span className="text-muted-foreground">→</span>
-                                                <Input
-                                                    placeholder="/chemin/conteneur"
-                                                    value={volume.containerPath}
-                                                    onChange={(e) =>
-                                                        updateVolume(
-                                                            index,
-                                                            'containerPath',
-                                                            e.target.value,
-                                                        )
-                                                    }
+                                                <FormField
+                                                    control={form.control}
+                                                    name={`volumes.${index}.containerPath`}
+                                                    render={({ field }) => (
+                                                        <FormItem className="flex-1">
+                                                            <FormControl>
+                                                                <Input
+                                                                    placeholder="/chemin/conteneur"
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
                                                 />
-                                                <div className="flex items-center gap-2">
-                                                    <Switch
-                                                        checked={volume.readOnly}
-                                                        onCheckedChange={(checked) =>
-                                                            updateVolume(index, 'readOnly', checked)
-                                                        }
-                                                    />
-                                                    <Label className="text-xs">RO</Label>
-                                                </div>
+                                                <FormField
+                                                    control={form.control}
+                                                    name={`volumes.${index}.readOnly`}
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormControl>
+                                                                <div className="flex items-center gap-2">
+                                                                    <Switch
+                                                                        checked={field.value}
+                                                                        onCheckedChange={
+                                                                            field.onChange
+                                                                        }
+                                                                    />
+                                                                    <Label className="text-xs">
+                                                                        RO
+                                                                    </Label>
+                                                                </div>
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
                                                 <Button
                                                     type="button"
                                                     variant="ghost"
@@ -564,7 +588,7 @@ export default function AddContainerPage() {
                                 )}
                             </CardContent>
                         </Card>
-                    </form>
+                    </div>
                 </Form>
             </ScrollAreaWithShadow>
         </div>
