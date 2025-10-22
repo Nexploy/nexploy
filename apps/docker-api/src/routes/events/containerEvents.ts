@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
-import { Container, ContainerEvent } from '@workspace/typescript-interface/docker.container';
+import { ContainerEvent } from '@workspace/typescript-interface/docker.container';
 import { containerStateManager } from '@/services/containerStateManager';
 
 const app = new Hono();
@@ -14,20 +14,14 @@ app.get('/stream', (c) => {
 
         logger.info({ clientId, watchContainers }, 'SSE Container client connected');
 
-        const handleInitialState = async (containers: Container[]) => {
+        const handleInitialState = async (containerEvent: ContainerEvent) => {
             const filteredInitial = watchContainers
                 ? containers.filter((s) => watchContainers.includes(s.id))
                 : containers;
 
             try {
-                const initialStateData: ContainerEvent = {
-                    type: 'initial',
-                    containers: filteredInitial,
-                    timestamp: Date.now(),
-                };
-
                 await stream.writeSSE({
-                    data: JSON.stringify(initialStateData),
+                    data: JSON.stringify({ ...containerEvent, containers: filteredInitial }),
                     event: 'initial-state',
                     id: `${Date.now()}`,
                 });
@@ -41,13 +35,8 @@ app.get('/stream', (c) => {
             // if (watchContainers && !watchContainers.includes(event.container?.id)) return;
 
             try {
-                const stateChangeData: ContainerEvent = {
-                    ...containerEvent,
-                    timestamp: Date.now(),
-                };
-
                 await stream.writeSSE({
-                    data: JSON.stringify(stateChangeData),
+                    data: JSON.stringify(containerEvent),
                     event: 'state-change',
                     id: `${Date.now()}`,
                 });
@@ -61,14 +50,8 @@ app.get('/stream', (c) => {
             // if (watchContainers && !watchContainers.includes(container.id)) return;
 
             try {
-                const containerAddedData: ContainerEvent = {
-                    ...containerEvent,
-                    type: 'added',
-                    timestamp: Date.now(),
-                };
-
                 await stream.writeSSE({
-                    data: JSON.stringify(containerAddedData),
+                    data: JSON.stringify(containerEvent),
                     event: 'container-added',
                     id: `${Date.now()}`,
                 });
@@ -82,14 +65,8 @@ app.get('/stream', (c) => {
             // if (watchContainers && !watchContainers.includes(container?.id)) return;
 
             try {
-                const containerUpdatedData: ContainerEvent = {
-                    ...containerEvent,
-                    type: 'updated',
-                    timestamp: Date.now(),
-                };
-
                 await stream.writeSSE({
-                    data: JSON.stringify(containerUpdatedData),
+                    data: JSON.stringify(containerEvent),
                     event: 'container-updated',
                     id: `${Date.now()}`,
                 });
@@ -103,14 +80,8 @@ app.get('/stream', (c) => {
             // if (watchContainers && !watchContainers.includes(event.id)) return;
 
             try {
-                const containerRemovedData: ContainerEvent = {
-                    ...containerEvent,
-                    type: 'removed',
-                    timestamp: Date.now(),
-                };
-
                 await stream.writeSSE({
-                    data: JSON.stringify(containerRemovedData),
+                    data: JSON.stringify(containerEvent),
                     event: 'container-removed',
                     id: `${Date.now()}`,
                 });
@@ -119,6 +90,24 @@ app.get('/stream', (c) => {
                 cleanup();
             }
         };
+
+        const heartbeat = setInterval(async () => {
+            try {
+                const heartbeatData: ContainerEvent = {
+                    type: 'heartbeat',
+                    timestamp: Date.now(),
+                };
+
+                await stream.writeSSE({
+                    data: JSON.stringify(heartbeatData),
+                    event: 'heartbeat',
+                    id: `${Date.now()}`,
+                });
+            } catch (err) {
+                logger.error({ err }, 'Error sending heartbeat');
+                clearInterval(heartbeat);
+            }
+        }, 15000);
 
         const cleanup = () => {
             containerStateManager.off('state-change', handleStateChange);
@@ -131,7 +120,7 @@ app.get('/stream', (c) => {
         };
 
         const containers = containerStateManager.getAllStates();
-        await handleInitialState(containers);
+        await handleInitialState({ type: 'initial', containers, timestamp: Date.now() });
 
         containerStateManager.on('state-change', handleStateChange);
         containerStateManager.on('initial-state', handleInitialState);

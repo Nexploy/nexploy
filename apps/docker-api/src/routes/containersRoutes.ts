@@ -3,7 +3,7 @@ import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { containerStateManager } from '@/services/containerStateManager';
 import { dockerStatusManager } from '@/services/dockerStatusManager';
-import { ContainerCreateForm } from '@workspace/schemas-zod/containerCreate.schema';
+import { ContainerCreateForm } from '@workspace/schemas-zod/container/containerCreate.schema';
 import { ContainerCreateOptions } from 'dockerode';
 
 const app = new Hono();
@@ -92,7 +92,7 @@ app.post(
         const body: ContainerCreateForm = await c.req.json();
 
         const createOptions: ContainerCreateOptions = {
-            name: body.name,
+            imageId: body.name,
             Image: body.image,
             // Hostname: body.hostname,
             // HostConfig: {

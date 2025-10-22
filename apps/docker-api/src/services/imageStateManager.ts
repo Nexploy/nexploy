@@ -1,9 +1,14 @@
 import { docker } from '@/utils/dockerClient';
 import { EventEmitter } from 'events';
 import { logger } from '@/utils/logger';
-import { ImageInfo } from 'dockerode';
+import { ImageInfo, ImageInspectInfo } from 'dockerode';
 import byline from 'byline';
-import { Image, ImageStateChanges } from '@workspace/typescript-interface/docker.image';
+import {
+    Image,
+    ImageAction,
+    ImageEvent,
+    ImageStateChanges,
+} from '@workspace/typescript-interface/docker.image';
 import { DockerStatus } from '@workspace/typescript-interface/docker.status';
 import { dockerStatusManager } from '@/services/dockerStatusManager';
 
@@ -36,7 +41,12 @@ class ImageStateManager extends EventEmitter {
                         { count: images.length },
                         'Sending images after Docker reconnection',
                     );
-                    this.emit('initial-state', images);
+                    const initialState: ImageEvent = {
+                        type: 'initial',
+                        images,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('initial-state', initialState);
                 } catch (err) {
                     logger.error({ err }, 'Failed to reinitialize after Docker reconnection');
                 }
@@ -120,11 +130,18 @@ class ImageStateManager extends EventEmitter {
 
             for (const image of images) {
                 const state = this.parseImageInfo(image);
+                console.log(state.id);
                 this.images.set(state.id, state);
             }
 
             logger.info({ count: this.images.size }, 'Initial image state loaded');
-            this.emit('initial-state', Array.from(this.images.values()));
+
+            const initialState: ImageEvent = {
+                type: 'initial',
+                images: Array.from(this.images.values()),
+                timestamp: Date.now(),
+            };
+            this.emit('initial-state', initialState);
         } catch (err) {
             logger.error({ err }, 'Error loading initial image state');
             throw err;
@@ -198,13 +215,13 @@ class ImageStateManager extends EventEmitter {
     }
 
     private async handleDockerEvent(event: any) {
-        const imageId = event.Actor?.ID;
+        const imageId = event.id;
         if (!imageId) return;
 
         const action = event.Action;
         logger.debug({ imageId, action }, 'Docker Image event received');
 
-        const stateChangeEvents = [
+        const stateChangeEvents: ImageAction[] = [
             'pull',
             'push',
             'tag',
@@ -220,45 +237,66 @@ class ImageStateManager extends EventEmitter {
         }
     }
 
-    private async updateImageState(imageId: string, action?: string) {
-        try {
-            if (action === 'delete' || action === 'untag') {
-                try {
-                    const image = docker.getImage(imageId);
-                    await image.inspect();
-                    await this.refreshImageState(imageId);
-                } catch (err: any) {
-                    if (err.statusCode === 404) {
-                        const oldState = this.images.get(imageId);
-                        this.images.delete(imageId);
+    private async updateImageState(imageId: string, action?: ImageAction) {
+        const imageIdSplited = imageId.split(':')[1];
 
-                        if (oldState) {
-                            this.emit('image-removed', { id: imageId, oldState });
-                            this.emit('state-change', {
-                                type: 'removed',
-                                image: oldState,
-                            });
-                        }
-                    }
+        try {
+            if (action === 'delete') {
+                const oldState = this.images.get(imageIdSplited);
+                if (oldState) {
+                    this.images.delete(imageIdSplited);
+                    const imageRemovedData: ImageEvent = {
+                        type: 'removed',
+                        imageId: oldState.id,
+                        oldState,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('image-removed', imageRemovedData);
+                    logger.debug({ imageIdSplited }, 'Image deleted');
                 }
                 return;
             }
 
+            if (action === 'untag') {
+                try {
+                    await this.refreshImageState(imageIdSplited);
+                } catch (err: any) {
+                    if (err.statusCode === 404) {
+                        const oldState = this.images.get(imageIdSplited);
+                        if (oldState) {
+                            this.images.delete(imageIdSplited);
+                            const imageRemovedData: ImageEvent = {
+                                type: 'removed',
+                                imageId: oldState.id,
+                                oldState,
+                                timestamp: Date.now(),
+                            };
+                            this.emit('image-removed', imageRemovedData);
+                            logger.debug({ imageId }, 'Image removed after untag');
+                        }
+                    } else {
+                        throw err;
+                    }
+                }
+                return;
+            }
             await this.refreshImageState(imageId);
         } catch (err: any) {
             if (err.statusCode === 404) {
-                const oldState = this.images.get(imageId);
-                this.images.delete(imageId);
+                const oldState = this.images.get(imageIdSplited);
+                this.images.delete(imageIdSplited);
 
                 if (oldState) {
-                    this.emit('image-removed', { id: imageId, oldState });
-                    this.emit('state-change', {
+                    const imageRemovedData: ImageEvent = {
                         type: 'removed',
-                        image: oldState,
-                    });
+                        imageId: oldState.id,
+                        oldState,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('image-removed', imageRemovedData);
                 }
             } else {
-                logger.error({ err, imageId }, 'Error updating image state');
+                logger.error({ err, imageId: imageIdSplited }, 'Error updating image state');
             }
         }
     }
@@ -266,24 +304,26 @@ class ImageStateManager extends EventEmitter {
     private async refreshImageState(imageId: string) {
         const image = docker.getImage(imageId);
         const info = await image.inspect();
-        const newState = this.parseImageInspect(info);
+        const newState = this.parseImageInfo(info);
 
         const oldState = this.images.get(imageId);
-        this.images.set(imageId, newState);
+        this.images.set(newState.id, newState);
 
         if (!oldState) {
-            this.emit('image-added', newState);
-            this.emit('state-change', {
+            const imageAdded: ImageEvent = {
                 type: 'added',
                 image: newState,
-            });
+                timestamp: Date.now(),
+            };
+            this.emit('image-added', imageAdded);
         } else if (this.hasStateChanged(oldState, newState)) {
-            this.emit('image-updated', { oldState, newState });
-            this.emit('state-change', {
+            const imageUpdated: ImageEvent = {
                 type: 'updated',
+                oldState,
                 image: newState,
-                changes: this.getStateChanges(oldState, newState),
-            });
+                timestamp: Date.now(),
+            };
+            this.emit('image-updated', imageUpdated);
         }
     }
 
@@ -318,11 +358,15 @@ class ImageStateManager extends EventEmitter {
 
                 if (this.hasStateChanged(oldState, newState)) {
                     this.images.set(newState.id, newState);
-                    this.emit('state-change', {
-                        type: 'updated',
+
+                    const stateChangeDate: ImageEvent = {
+                        type: 'state-change',
+                        imageId: newState.id,
                         image: newState,
                         changes: this.getStateChanges(oldState, newState),
-                    });
+                        timestamp: Date.now(),
+                    };
+                    this.emit('state-change', stateChangeDate);
                 }
             }
         } catch (err) {
@@ -330,35 +374,36 @@ class ImageStateManager extends EventEmitter {
         }
     }
 
-    private parseImageInfo(image: ImageInfo): Image {
-        return {
-            id: image.Id,
-            repoTags: image.RepoTags || [],
-            repoDigests: image.RepoDigests || [],
-            created: image.Created,
-            size: image.Size,
-            virtualSize: image.VirtualSize,
-            sharedSize: image.SharedSize || 0,
-            labels: image.Labels || {},
-            containers: image.Containers || 0,
-            timestamp: Date.now(),
-        };
+    private isImageInspectInfo(image: ImageInfo | ImageInspectInfo): image is ImageInspectInfo {
+        return 'Config' in image || 'Architecture' in image;
     }
 
-    private parseImageInspect(info: any): Image {
+    private parseImageInfo(image: ImageInfo | ImageInspectInfo): Image {
+        const isInspect = this.isImageInspectInfo(image);
+
+        const name = image.RepoTags?.map((tag) => tag.split(':')[0]);
+        const tag = image.RepoTags?.map((tag) => tag.split(':')[1]);
+
+        const id = image.Id.split(':')[1];
+
         return {
-            id: info.Id,
-            repoTags: info.RepoTags || [],
-            repoDigests: info.RepoDigests || [],
-            created: new Date(info.Created).getTime() / 1000,
-            size: info.Size,
-            virtualSize: info.VirtualSize,
-            sharedSize: info.SharedSize || 0,
-            labels: info.Config?.Labels || {},
-            containers: info.Containers || 0,
-            parent: info.Parent,
-            architecture: info.Architecture,
-            os: info.Os,
+            id,
+            fullId: image.Id,
+            name: name || [],
+            tag: tag || [],
+            repoTags: image.RepoTags || [],
+            repoDigests: image.RepoDigests || [],
+            created: isInspect ? new Date(image.Created).getTime() / 1000 : image.Created,
+            size: image.Size,
+            virtualSize: image.VirtualSize,
+            sharedSize: isInspect ? 0 : (image as ImageInfo).SharedSize || 0,
+            labels: isInspect ? image.Config?.Labels || {} : (image as ImageInfo).Labels || {},
+            containersUsed: (image as ImageInfo).Containers || 0,
+            ...(isInspect && {
+                parent: image.Parent,
+                architecture: image.Architecture,
+                os: image.Os,
+            }),
             timestamp: Date.now(),
         };
     }
@@ -367,7 +412,7 @@ class ImageStateManager extends EventEmitter {
         return (
             JSON.stringify(oldState.repoTags) !== JSON.stringify(newState.repoTags) ||
             oldState.size !== newState.size ||
-            oldState.containers !== newState.containers
+            oldState.containersUsed !== newState.containersUsed
         );
     }
 
@@ -378,10 +423,10 @@ class ImageStateManager extends EventEmitter {
             changes.repoTags = { from: oldState.repoTags, to: newState.repoTags };
         if (oldState.size !== newState.size)
             changes.size = { from: oldState.size, to: newState.size };
-        if (oldState.containers !== newState.containers)
+        if (oldState.containersUsed !== newState.containersUsed)
             changes.containers = {
-                from: oldState.containers,
-                to: newState.containers,
+                from: oldState.containersUsed,
+                to: newState.containersUsed,
             };
 
         return changes;

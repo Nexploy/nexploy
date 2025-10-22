@@ -13,7 +13,7 @@ import {
 } from '@workspace/ui/components/breadcrumb';
 import { Link } from '@/i18n/navigation';
 import { usePathname } from 'next/navigation';
-import { addSpaceBeforeUppercase, capitalizeFirstLetter } from '@/utils/capitalize';
+import { addSpaceBeforeUppercase, capitalizeWords } from '@/utils/capitalize';
 import { Fragment } from 'react';
 
 export function Header() {
@@ -22,7 +22,7 @@ export function Header() {
     const segments = pathname.split('/').filter(Boolean);
 
     const paths = segments.map((segment, index) => ({
-        name: capitalizeFirstLetter(addSpaceBeforeUppercase(segment)),
+        name: capitalizeWords(addSpaceBeforeUppercase(segment)),
         href: '/' + segments.slice(0, index + 1).join('/'),
         isLast: index === segments.length - 1,
     }));

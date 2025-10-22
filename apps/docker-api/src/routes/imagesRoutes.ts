@@ -1,6 +1,5 @@
 import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
-import { safeAction } from '@/helpers/safeAction';
 import { parseQuery } from '@/helpers/parseQuery';
 import { Hono } from 'hono';
 
@@ -48,9 +47,9 @@ app.get(
  */
 app.post(
     '/pull',
-    safeAction(async (c) => {
+    handleAsync(async (c) => {
         const { image } = await c.req.json();
-        await new Promise((resolve, reject) => {
+        return await new Promise((resolve, reject) => {
             docker.pull(image, (err: any, stream: NodeJS.ReadableStream) => {
                 if (err) return reject(err);
                 docker.modem.followProgress(stream, (err2) =>
@@ -89,10 +88,10 @@ app.post(
  */
 app.post(
     '/:id/tag',
-    safeAction(async (c) => {
+    handleAsync(async (c) => {
         const { repo, tag } = await c.req.json();
-        const image = docker.getImage(c.req.param('id'));
-        await image.tag({ repo, tag });
+        const image = docker.getImage(c.req.param('imageId'));
+        return await image.tag({ repo, tag });
     }),
 );
 
@@ -116,11 +115,12 @@ app.post(
  *         description: Image removed
  */
 app.delete(
-    '/:id',
-    safeAction(async (c) => {
-        const image = docker.getImage(c.req.param('id'));
+    '/:imageId/delete',
+    handleAsync(async (c) => {
+        const imageId = c.req.param('imageId');
+        const image = docker.getImage(imageId);
         const force = parseQuery(c.req.query('force'));
-        await image.remove({ force });
+        return await image.remove({ force });
     }),
 );
 

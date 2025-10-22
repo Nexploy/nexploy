@@ -78,21 +78,21 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                         </div>
 
                         <div
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-3"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <Status className={'mr-2'} status={allRunning ? 'online' : 'offline'}>
+                            <Status status={allRunning ? 'online' : 'offline'}>
                                 <StatusIndicator />
                                 <StatusLabel>{allRunning ? 'Up' : 'Down'}</StatusLabel>
                             </Status>
 
                             <Separator orientation="vertical" className="!h-6" />
 
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-2">
                                 <Button
                                     onClick={(e) => handleAction('start', e)}
                                     disabled={isPending || allRunning}
-                                    variant="green"
+                                    variant={'outline'}
                                     size="icon"
                                 >
                                     {isPending ? (
@@ -106,7 +106,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                                 <Button
                                     onClick={(e) => handleAction('stop', e)}
                                     disabled={isPending || !hasRunning}
-                                    variant="red"
+                                    variant={'outline'}
                                     size="icon"
                                 >
                                     {isPending ? (
@@ -120,7 +120,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                                 <Button
                                     onClick={(e) => handleAction('restart', e)}
                                     disabled={isPending || !hasRunning}
-                                    variant="blue"
+                                    variant={'outline'}
                                     size="icon"
                                 >
                                     {isPending ? (

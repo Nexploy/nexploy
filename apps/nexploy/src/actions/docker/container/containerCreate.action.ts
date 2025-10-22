@@ -2,18 +2,18 @@
 
 import { actionServer } from '@/lib/api/safe-action';
 import { drinoDocker } from '@/lib/api/drinoDocker';
-import { ContainerActionsSchema } from '@workspace/schemas-zod/containerAction.schema';
 import { returnValidationErrors } from 'next-safe-action';
 import { HttpErrorResponse } from 'drino';
+import { ContainerCreateFormSchema } from '@workspace/schemas-zod/container/containerCreate.schema';
 
-export const onContainerAction = actionServer
-    .inputSchema(ContainerActionsSchema)
-    .action(async ({ parsedInput: { action, containerId } }) => {
+export const onContainerCreateAction = actionServer
+    .inputSchema(ContainerCreateFormSchema)
+    .action(async ({ parsedInput }) => {
         try {
-            await drinoDocker.post(`/container/${containerId}/${action}`, null).consume();
+            await drinoDocker.post(`/container/create`, parsedInput).consume();
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
-                returnValidationErrors(ContainerActionsSchema, {
+                returnValidationErrors(ContainerCreateFormSchema, {
                     _errors: [err.error.message],
                 });
             }

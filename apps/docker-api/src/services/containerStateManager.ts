@@ -5,6 +5,7 @@ import { ContainerInfo, ContainerInspectInfo } from 'dockerode';
 import byline from 'byline';
 import {
     Container,
+    ContainerEvent,
     ContainerPorts,
     ContainerStateChanges,
     ContainerStateEvents,
@@ -41,7 +42,12 @@ class ContainerStateManager extends EventEmitter {
                         { count: containers.length },
                         'Sending containers after Docker reconnection',
                     );
-                    this.emit('initial-state', containers);
+                    const initialStateData: ContainerEvent = {
+                        type: 'initial',
+                        containers,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('initial-state', initialStateData);
                 } catch (err) {
                     logger.error({ err }, 'Failed to reinitialize after Docker reconnection');
                 }
@@ -222,7 +228,7 @@ class ContainerStateManager extends EventEmitter {
         if (!containerId) return;
 
         const action = event.Action;
-        logger.debug({ containerId, action }, 'Docker event received');
+        logger.debug({ containerId, action }, 'Docker Container event received');
 
         const stateChangeEvents: ContainerStateEvents[] = [
             'start',
@@ -267,13 +273,22 @@ class ContainerStateManager extends EventEmitter {
             this.containers.set(containerId, newState);
 
             if (!oldState) {
-                this.emit('container-added', { action, newState });
+                const containerAddedData: ContainerEvent = {
+                    type: 'added',
+                    action,
+                    container: newState,
+                    timestamp: Date.now(),
+                };
+                this.emit('container-added', containerAddedData);
             } else if (this.hasStateChanged(oldState, newState)) {
-                this.emit('container-updated', {
+                const containerUpdatedData: ContainerEvent = {
+                    type: 'updated',
                     action,
                     container: newState,
                     changes: this.getStateChanges(oldState, newState),
-                });
+                    timestamp: Date.now(),
+                };
+                this.emit('container-updated', containerUpdatedData);
             }
         } catch (err: any) {
             if (err.statusCode === 404) {
@@ -281,7 +296,13 @@ class ContainerStateManager extends EventEmitter {
                 this.containers.delete(containerId);
 
                 if (oldState) {
-                    this.emit('container-removed', { id: containerId, action, oldState });
+                    const containerRemovedData: ContainerEvent = {
+                        type: 'removed',
+                        containerId,
+                        oldState,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('container-removed', containerRemovedData);
                 }
             } else {
                 logger.error({ err, containerId }, 'Error updating container state');
@@ -329,6 +350,7 @@ class ContainerStateManager extends EventEmitter {
                         type: 'updated',
                         container: newState,
                         changes: this.getStateChanges(oldState, newState),
+                        timestamp: Date.now(),
                     });
                 }
             }

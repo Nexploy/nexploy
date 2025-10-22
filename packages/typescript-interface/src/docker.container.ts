@@ -1,3 +1,5 @@
+import { DropdownActionTool } from './commun';
+
 export type ContainerAction =
     | 'start'
     | 'stop'
@@ -19,7 +21,7 @@ export type ContainerStateEvents =
     | 'destroy'
     | 'health_status';
 
-export type ContainerType = 'initial' | 'added' | 'updated' | 'removed';
+export type ContainerType = 'initial' | 'added' | 'updated' | 'removed' | 'heartbeat';
 
 export type Event =
     | 'state-change'
@@ -30,12 +32,8 @@ export type Event =
 
 export type ContainerState = 'created' | 'running' | 'restarting' | 'paused' | 'exited' | 'dead';
 
-export interface ContainerTool {
-    icon: any;
-    label: string;
+export interface ContainerTool extends DropdownActionTool {
     disabledStates: ContainerState[];
-    action?: () => Promise<void> | void;
-    separator?: boolean;
 }
 
 export type ContainerPorts = {
@@ -70,8 +68,8 @@ export interface ContainerEvent {
     container?: Container;
     containers?: Container[];
     containerId?: string;
-    oldState?: ContainerState;
-    changes?: any;
+    oldState?: Container;
+    changes?: ContainerStateChanges;
     timestamp: number;
 }
 

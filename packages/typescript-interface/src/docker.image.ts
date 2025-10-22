@@ -1,5 +1,10 @@
+import { DropdownActionTool } from './commun';
+
 export interface Image {
     id: string;
+    fullId: string;
+    name: string[];
+    tag: string[];
     repoTags: string[];
     repoDigests: string[];
     created: number;
@@ -7,17 +12,27 @@ export interface Image {
     virtualSize: number;
     sharedSize: number;
     labels: Record<string, string>;
-    containers: number;
+    containersUsed: number;
     parent?: string;
     architecture?: string;
     os?: string;
     timestamp: number;
 }
 
+export type ImageType = 'initial' | 'state-change' | 'updated' | 'added' | 'removed' | 'heartbeat';
+export type ImageAction = 'pull' | 'push' | 'tag' | 'untag' | 'delete' | 'import' | 'load' | 'save';
+
+export interface ImageTool extends DropdownActionTool {
+    disabled?: boolean;
+}
+
 export interface ImageEvent {
+    type: ImageType;
     timestamp: number;
-    action?: 'pull' | 'push' | 'tag' | 'untag' | 'delete' | 'import' | 'load' | 'save';
+    action?: ImageAction;
     image?: Image;
+    oldState?: Image;
+    changes?: ImageStateChanges;
     imageId?: string;
     images?: Image[];
 }
@@ -34,5 +49,5 @@ export interface ImageStateChanges {
     containers?: {
         from: number;
         to: number;
-    }
+    };
 }

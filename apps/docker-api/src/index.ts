@@ -3,6 +3,7 @@ import { logger } from './utils/logger';
 import { cors } from 'hono/cors';
 import containerRoutes from './routes/containersRoutes';
 import composeStackRoutes from './routes/composeStackRoutes';
+import imagesRoutes from './routes/imagesRoutes';
 import containerEvents from './routes/events/containerEvents';
 import dockerStatusEvents from './routes/events/dockerStatusEvents';
 import imageEvents from './routes/events/imageEvents';
@@ -60,7 +61,7 @@ app.route('/api/container', containerRoutes);
 app.route('/api/composeStack', composeStackRoutes);
 
 app.route('/api/images/events', imageEvents);
-// app.route('/api/images', imageRoutes);
+app.route('/api/images', imagesRoutes);
 
 app.onError((err, c) => {
     logger.error({ err }, 'Application error');

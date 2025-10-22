@@ -122,6 +122,11 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
                 });
             });
 
+            eventSource.addEventListener('heartbeat', (e) => {
+                const { timestamp }: ContainerEvent = JSON.parse(e.data);
+                set({ lastUpdate: timestamp });
+            });
+
             eventSource.addEventListener('state-change', (e) => {
                 const data: ContainerEvent = JSON.parse(e.data);
                 const containers = new Map(get().containers);

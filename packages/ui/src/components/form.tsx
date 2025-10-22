@@ -5,12 +5,12 @@ import * as LabelPrimitive from '@radix-ui/react-label';
 import { Slot } from '@radix-ui/react-slot';
 import {
     Controller,
-    FormProvider,
-    useFormContext,
-    useFormState,
     type ControllerProps,
     type FieldPath,
     type FieldValues,
+    FormProvider,
+    useFormContext,
+    useFormState,
 } from 'react-hook-form';
 
 import { cn } from '@workspace/ui/lib/utils';
@@ -44,7 +44,7 @@ const useFormField = () => {
     const fieldContext = React.useContext(FormFieldContext);
     const itemContext = React.useContext(FormItemContext);
     const { getFieldState } = useFormContext();
-    const formState = useFormState({ name: fieldContext.name });
+    const formState = useFormState({ imageId: fieldContext.name });
     const fieldState = getFieldState(fieldContext.name, formState);
 
     if (!fieldContext) {

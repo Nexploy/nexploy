@@ -72,9 +72,9 @@ export function ContainerCard({ container }: ContainerCardProps) {
             <CardContent className="flex flex-col gap-4">
                 <div className="flex items-center justify-between gap-2 truncate">
                     <span className="font-medium">Image :</span>
-                    <span className="bg-muted/50 truncate rounded-md px-3 py-1 font-mono text-sm">
+                    <code className="bg-muted/50 truncate rounded-md px-3 py-1 text-sm">
                         {container.image}
-                    </span>
+                    </code>
                 </div>
 
                 <div>
@@ -82,15 +82,13 @@ export function ContainerCard({ container }: ContainerCardProps) {
                     {container.ports.length ? (
                         <div className="grid grid-cols-1 gap-2">
                             {container.ports.map((p, idx) => (
-                                <div
+                                <code
                                     key={idx}
                                     className="bg-muted/50 flex gap-2 rounded-md px-3 py-2 text-start text-xs leading-none"
                                 >
-                                    <span className="font-mono">
-                                        {p.publicPort ?? '—'} → {p.privatePort}
-                                    </span>
+                                    {p.publicPort ?? '—'} → {p.privatePort}
                                     <span className="text-muted-foreground">({p.type})</span>
-                                </div>
+                                </code>
                             ))}
                         </div>
                     ) : (

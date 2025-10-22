@@ -44,11 +44,8 @@ app.get('/stream', (c) =>
 
         const heartbeat = setInterval(async () => {
             try {
-                const status = dockerStatusManager.getStatus();
-
                 const heartbeatData: DockerStatusEvent = {
                     type: 'heartbeat',
-                    status,
                     timestamp: Date.now(),
                 };
 

@@ -1,14 +1,15 @@
 import { create } from 'zustand';
 import { Image, ImageEvent } from '@workspace/typescript-interface/docker.image';
 import { toast } from 'sonner';
+import { DockerStatusEvent } from '@workspace/typescript-interface/docker.status';
 
 interface ImageState {
-    images: Map<string, Image>;
+    images: Image[];
     error: Error | null;
     lastUpdate: number | null;
     eventSource: EventSource | null;
     reconnectTimeout: NodeJS.Timeout | null;
-    setImages: (images: Map<string, Image>) => void;
+    setImages: (images: Image[]) => void;
     setError: (error: Error | null) => void;
     setLastUpdate: (timestamp: number) => void;
     addImage: (image: Image) => void;
@@ -27,50 +28,45 @@ interface ImageState {
 }
 
 export const useImageStore = create<ImageState>((set, get) => ({
-    images: new Map(),
+    images: [],
     error: null,
     lastUpdate: null,
     eventSource: null,
     reconnectTimeout: null,
 
     setImages: (images) => set({ images }),
+
     setError: (error) => set({ error }),
     setLastUpdate: (timestamp) => set({ lastUpdate: timestamp }),
 
     addImage: (image) =>
-        set((state) => {
-            const next = new Map(state.images);
-            next.set(image.id, image);
-            return { images: next };
-        }),
+        set((state) => ({
+            images: [...state.images, image],
+        })),
 
     removeImage: (imageId) =>
-        set((state) => {
-            const next = new Map(state.images);
-            next.delete(imageId);
-            return { images: next };
-        }),
+        set((state) => ({
+            images: state.images.filter((img) => img.id !== imageId),
+        })),
 
     updateImage: (image) =>
-        set((state) => {
-            const next = new Map(state.images);
-            next.set(image.id, image);
-            return { images: next };
-        }),
+        set((state) => ({
+            images: state.images.map((img) => (img.id === image.id ? image : img)),
+        })),
 
     getImage: (id) => {
-        return get().images.get(id);
+        return get().images.find((img) => img.id === id);
     },
 
     getImagesByTag: (tag) => {
-        return Array.from(get().images.values()).filter((img) => img.repoTags?.includes(tag));
+        return get().images.filter((img) => img.repoTags?.includes(tag));
     },
 
     getOrganizedImages: () => {
         const tagged = new Map<string, Image[]>();
         const untagged: Image[] = [];
 
-        Array.from(get().images.values()).forEach((image) => {
+        get().images.forEach((image) => {
             if (
                 image.repoTags &&
                 image.repoTags.length > 0 &&
@@ -115,28 +111,35 @@ export const useImageStore = create<ImageState>((set, get) => ({
 
             eventSource.addEventListener('initial-state', (e) => {
                 const data: ImageEvent = JSON.parse(e.data);
-                const images = new Map<string, Image>();
-
-                data.images?.forEach((image) => {
-                    images.set(image.id, image);
-                });
-
                 set({
-                    images,
+                    images: data.images || [],
                     lastUpdate: data.timestamp,
                 });
             });
 
+            eventSource.addEventListener('heartbeat', (e) => {
+                const { timestamp }: DockerStatusEvent = JSON.parse(e.data);
+                set({ lastUpdate: timestamp });
+            });
+
             eventSource.addEventListener('state-change', (e) => {
                 const data: ImageEvent = JSON.parse(e.data);
-                const images = new Map(get().images);
 
-                if (data.image) images.set(data.image.id, data.image);
+                if (data.image) {
+                    const images = [...get().images];
+                    const index = images.findIndex((img) => img.id === data.image!.id);
 
-                set({
-                    images,
-                    lastUpdate: data.timestamp,
-                });
+                    if (index !== -1) {
+                        images[index] = data.image;
+                    } else {
+                        images.push(data.image);
+                    }
+
+                    set({
+                        images,
+                        lastUpdate: data.timestamp,
+                    });
+                }
             });
 
             eventSource.addEventListener('image-added', (e) => {

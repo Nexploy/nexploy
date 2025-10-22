@@ -4,5 +4,12 @@ export function capitalizeFirstLetter(val: string) {
 
 export function addSpaceBeforeUppercase(val: string) {
     if (!val) return '';
-    return val.replace(/([a-z])([A-Z])/g, '$1 $2');
+    return val.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/-/g, ' ');
+}
+
+export function capitalizeWords(val: string) {
+    return String(val)
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
 }

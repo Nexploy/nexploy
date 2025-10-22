@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
 import { imageStateManager } from '@/services/imageStateManager';
 import { logger } from '@/utils/logger';
+import { ImageEvent } from '@workspace/typescript-interface/docker.image';
 
 const app = new Hono();
 
@@ -11,15 +12,10 @@ app.get('/stream', (c) => {
 
         logger.info({ clientId }, 'SSE Image client connected');
 
-        const handleInitialState = async (images: any) => {
+        const handleInitialState = async (imageEvent: ImageEvent) => {
             try {
-                const initialStateData = {
-                    type: 'initial',
-                    images,
-                    timestamp: Date.now(),
-                };
                 await stream.writeSSE({
-                    data: JSON.stringify(initialStateData),
+                    data: JSON.stringify(imageEvent),
                     event: 'initial-state',
                     id: `${Date.now()}`,
                 });
@@ -29,61 +25,55 @@ app.get('/stream', (c) => {
             }
         };
 
-        const handleImageAdded = async (image: any) => {
-            const eventData = {
-                type: 'added',
-                image,
-                timestamp: Date.now(),
-            };
+        const handleImageAdded = async (imageEvent: ImageEvent) => {
             await stream.writeSSE({
-                data: JSON.stringify(eventData),
+                data: JSON.stringify(imageEvent),
                 event: 'image-added',
                 id: `${Date.now()}`,
             });
         };
 
-        const handleImageUpdated = async ({ oldState, newState }: any) => {
-            const eventData = {
-                type: 'updated',
-                image: newState,
-                oldImage: oldState,
-                timestamp: Date.now(),
-            };
+        const handleImageUpdated = async (imageEvent: ImageEvent) => {
             await stream.writeSSE({
-                data: JSON.stringify(eventData),
+                data: JSON.stringify(imageEvent),
                 event: 'image-updated',
                 id: `${Date.now()}`,
             });
         };
 
-        const handleImageRemoved = async ({ id, oldState }: any) => {
-            const eventData = {
-                type: 'removed',
-                id,
-                image: oldState,
-                timestamp: Date.now(),
-            };
+        const handleImageRemoved = async (imageEvent: ImageEvent) => {
             await stream.writeSSE({
-                data: JSON.stringify(eventData),
+                data: JSON.stringify(imageEvent),
                 event: 'image-removed',
                 id: `${Date.now()}`,
             });
         };
 
-        const handleStateChange = async (data: any) => {
-            const eventData = {
-                type: 'state-change',
-                changeType: data.type,
-                image: data.image,
-                changes: data.changes,
-                timestamp: Date.now(),
-            };
+        const handleStateChange = async (imageEvent: ImageEvent) => {
             await stream.writeSSE({
-                data: JSON.stringify(eventData),
+                data: JSON.stringify(imageEvent),
                 event: 'state-change',
                 id: `${Date.now()}`,
             });
         };
+
+        const heartbeat = setInterval(async () => {
+            try {
+                const heartbeatData: ImageEvent = {
+                    type: 'heartbeat',
+                    timestamp: Date.now(),
+                };
+
+                await stream.writeSSE({
+                    data: JSON.stringify(heartbeatData),
+                    event: 'heartbeat',
+                    id: `${Date.now()}`,
+                });
+            } catch (err) {
+                logger.error({ err }, 'Error sending heartbeat');
+                clearInterval(heartbeat);
+            }
+        }, 15000);
 
         const cleanup = () => {
             logger.info('Client disconnected from image events stream');
@@ -98,7 +88,11 @@ app.get('/stream', (c) => {
         };
 
         const initialImages = imageStateManager.getAllStates();
-        await handleInitialState(initialImages);
+        await handleInitialState({
+            type: 'initial',
+            images: initialImages,
+            timestamp: Date.now(),
+        });
 
         imageStateManager.on('state-change', handleStateChange);
         imageStateManager.on('initial-state', handleInitialState);
