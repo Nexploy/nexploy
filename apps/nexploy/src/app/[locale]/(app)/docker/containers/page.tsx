@@ -26,14 +26,14 @@ export default function DockerContainersPage() {
     const standaloneContainersLenght = useContainerStore((state) => state.getOrganizedContainers)()
         .standaloneContainers.length;
 
-    const numberOfContainers = stacksSize + standaloneContainersLenght;
+    const numberOfStackAndStandaloneContainer = stacksSize + standaloneContainersLenght;
 
     const tabs = [
         {
             id: 'all',
             label: 'Tout',
             icon: LayoutGrid,
-            count: numberOfContainers,
+            count: numberOfStackAndStandaloneContainer,
         },
         {
             id: 'stacks',
@@ -70,7 +70,7 @@ export default function DockerContainersPage() {
                             <Skeleton className={'my-1 h-3 w-40'} />
                         ) : (
                             <p className="text-muted-foreground text-sm">
-                                {numberOfContainers} conteneur
+                                {standaloneContainersLenght} conteneur
                                 {stacksSize > 0 && ` · ${stacksSize} stack`}
                             </p>
                         )}
@@ -123,13 +123,13 @@ export default function DockerContainersPage() {
                         <div className="pb-6">
                             <TabsContent value="all" className="flex flex-col space-y-4">
                                 <ContainersStack />
-                                <ContainersStandalone disableEmpty />
+                                <ContainersStandalone />
                             </TabsContent>
                             <TabsContent value="stacks">
                                 <ContainersStack />
                             </TabsContent>
                             <TabsContent value="containers">
-                                <ContainersStandalone />
+                                <ContainersStandalone keepEmpty />
                             </TabsContent>
                         </div>
                     </ScrollAreaWithShadow>

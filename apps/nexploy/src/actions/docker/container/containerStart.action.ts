@@ -6,11 +6,11 @@ import { ContainerActionsSchema } from '@workspace/schemas-zod/container/contain
 import { HttpErrorResponse } from 'drino';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 
-export const onContainerAction = actionServer
+export const onContainerStartAction = actionServer
     .inputSchema(ContainerActionsSchema)
-    .action(async ({ parsedInput: { action, containerId } }) => {
+    .action(async ({ parsedInput: { containerId } }) => {
         try {
-            await drinoDocker.post(`/containers/${containerId}/${action}`, null).consume();
+            await drinoDocker.post(`/containers/${containerId}/start`, null).consume();
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
                 await setToastServer({

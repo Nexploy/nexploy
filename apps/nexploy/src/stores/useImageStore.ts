@@ -40,9 +40,17 @@ export const useImageStore = create<ImageState>((set, get) => ({
     setLastUpdate: (timestamp) => set({ lastUpdate: timestamp }),
 
     addImage: (image) =>
-        set((state) => ({
-            images: [...state.images, image],
-        })),
+        set((state) => {
+            const newImages = [...state.images, image];
+
+            newImages.sort((a, b) => {
+                const nameA = a.name?.[0]?.toLowerCase() || '';
+                const nameB = b.name?.[0]?.toLowerCase() || '';
+                return nameA.localeCompare(nameB);
+            });
+
+            return { images: newImages };
+        }),
 
     removeImage: (imageId) =>
         set((state) => ({
@@ -171,7 +179,6 @@ export const useImageStore = create<ImageState>((set, get) => ({
 
             eventSource.addEventListener('image-removed', (e) => {
                 const data: ImageEvent = JSON.parse(e.data);
-                if (!data.imageId) return;
 
                 get().removeImage(data.imageId);
                 const imageName = data.image?.repoTags?.[0] || data.imageId.substring(0, 12);

@@ -9,7 +9,7 @@ import { onDockerRefreshAction } from '@/actions/docker/dockerRefresh.action';
 export function RefreshDocker() {
     const [isLoading, setIsloading] = useState(false);
 
-    const onRefreshDocker = async (e: MouseEvent) => {
+    const onRefreshDocker = async (e: any) => {
         e.preventDefault();
 
         setIsloading(true);

@@ -2,12 +2,12 @@ import Docker from 'dockerode';
 import { Hono } from 'hono';
 import { handleAsync } from '@/helpers/handleAsync';
 import { logger } from '@/utils/logger';
-import { ComposeStackAction } from '@workspace/typescript-interface/docker.composeStack';
+import { ComposesAction } from '@workspace/typescript-interface/docker.composeStack';
 
 const docker = new Docker();
 const app = new Hono();
 
-async function controlComposeStack(projectName: string, action: ComposeStackAction) {
+async function controlComposeStack(projectName: string, action: ComposesAction) {
     const containers = await docker.listContainers({ all: true });
     const composeContainers = containers.filter(
         (c) => c.Labels['com.docker.compose.project'] === projectName,

@@ -402,9 +402,10 @@ app.get(
  *         description: Container not found
  */
 app.delete(
-    '/:id',
+    '/:id/remove',
     handleAsync(async (c) => {
         const id = c.req.param('id');
+        console.log(id);
         const container = docker.getContainer(id);
 
         await container.remove();

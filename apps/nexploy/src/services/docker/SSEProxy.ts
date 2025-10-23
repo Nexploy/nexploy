@@ -130,7 +130,7 @@ export class SSEProxy {
 
                         this.controller.enqueue(dataToSend);
                     } catch {
-                        this.isClosed = true;
+                        this.closeController();
                         break;
                     }
                 }
@@ -146,26 +146,28 @@ export class SSEProxy {
 
     private startPingInterval(): void {
         this.pingInterval = setInterval(() => {
-            if (!this.isClosed) {
-                try {
-                    const ping = this.encoder.encode(': ping\n\n');
-                    this.controller.enqueue(ping);
-
-                    const timeSinceLastActivity = Date.now() - this.lastActivityTime;
-                    if (timeSinceLastActivity > this.CONNECTION_TIMEOUT) {
-                        console.warn(
-                            'SSE connection timeout detected - no activity for',
-                            timeSinceLastActivity,
-                            'ms',
-                        );
-                        this.closeController(new Error('Connection timeout'));
-                    }
-                } catch (error) {
-                    console.error('Error during ping interval:', error);
-                    this.stopPingInterval();
-                }
-            } else {
+            if (this.isClosed) {
                 this.stopPingInterval();
+                return;
+            }
+
+            try {
+                const ping = this.encoder.encode(': ping\n\n');
+                this.controller.enqueue(ping);
+
+                const timeSinceLastActivity = Date.now() - this.lastActivityTime;
+                if (timeSinceLastActivity > this.CONNECTION_TIMEOUT) {
+                    console.warn(
+                        'SSE connection timeout detected - no activity for',
+                        timeSinceLastActivity,
+                        'ms',
+                    );
+                    this.closeController(new Error('Connection timeout'));
+                }
+            } catch (error) {
+                console.error('Error during ping interval:', error);
+                this.stopPingInterval();
+                this.isClosed = true;
             }
         }, this.PING_INTERVAL);
     }
@@ -199,6 +201,8 @@ export class SSEProxy {
         if (this.isClosed) return;
 
         this.isClosed = true;
+
+        this.stopPingInterval();
 
         try {
             if (error) {

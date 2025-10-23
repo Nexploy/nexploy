@@ -1,9 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { MouseEvent, useTransition } from 'react';
+import { MouseEvent, useState } from 'react';
 import { ContainerCard } from '@/components/docker/container/ContainerCard';
-import { ChevronDownIcon, Layers, Loader2, Play, RotateCw, Square } from 'lucide-react';
+import { ChevronDownIcon, Layers, Play, RotateCw, Square } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
 import {
@@ -12,10 +12,10 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from '@workspace/ui/components/accordion';
-import { useRouter } from 'next/navigation';
-import { drinoDocker } from '@/lib/api/drinoDocker';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { Container } from '@workspace/typescript-interface/docker.container';
+import { onComposesAction } from '@/actions/docker/composes/composeAction';
+import { ComposesAction } from '@workspace/typescript-interface/docker.composeStack';
 
 interface StackGroupProps {
     stackName: string;
@@ -23,24 +23,19 @@ interface StackGroupProps {
 }
 
 export function StackGroup({ stackName, containers }: StackGroupProps) {
-    const [isPending, startTransition] = useTransition();
-    const router = useRouter();
+    const [isLoading, setIsloading] = useState(false);
 
     const runningCount = containers.filter((c) => c.state === 'running').length;
     const stoppedCount = containers.filter((c) => c.state === 'exited').length;
     const hasRunning = runningCount > 0;
     const allRunning = runningCount === containers.length;
 
-    const handleAction = async (action: 'start' | 'stop' | 'restart', event: MouseEvent) => {
+    const handleAction = async (action: ComposesAction, event: MouseEvent) => {
         event.stopPropagation();
-        try {
-            await drinoDocker.post(`/composes/${stackName}/${action}`, {}).consume();
-            startTransition(() => {
-                router.refresh();
-            });
-        } catch (error) {
-            console.error(`Erreur lors de l'action ${action}:`, error);
-        }
+
+        setIsloading(true);
+        await onComposesAction({ stackName, action });
+        setIsloading(false);
     };
 
     return (
@@ -91,43 +86,34 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                             <div className="flex items-center gap-2">
                                 <Button
                                     onClick={(e) => handleAction('start', e)}
-                                    disabled={isPending || allRunning}
+                                    disabled={isLoading || allRunning}
+                                    isLoading={isLoading}
                                     variant={'outline'}
+                                    icon={Play}
                                     size="icon"
                                 >
-                                    {isPending ? (
-                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                    ) : (
-                                        <Play />
-                                    )}
                                     <span className="sr-only">Démarrer</span>
                                 </Button>
 
                                 <Button
                                     onClick={(e) => handleAction('stop', e)}
-                                    disabled={isPending || !hasRunning}
+                                    disabled={isLoading || !hasRunning}
+                                    isLoading={isLoading}
                                     variant={'outline'}
+                                    icon={Square}
                                     size="icon"
                                 >
-                                    {isPending ? (
-                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                    ) : (
-                                        <Square className="h-4 w-4" />
-                                    )}
                                     <span className="sr-only">Arrêter</span>
                                 </Button>
 
                                 <Button
                                     onClick={(e) => handleAction('restart', e)}
-                                    disabled={isPending || !hasRunning}
+                                    disabled={isLoading || !hasRunning}
+                                    isLoading={isLoading}
                                     variant={'outline'}
+                                    icon={RotateCw}
                                     size="icon"
                                 >
-                                    {isPending ? (
-                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                    ) : (
-                                        <RotateCw className="h-4 w-4" />
-                                    )}
                                     <span className="sr-only">Redémarrer</span>
                                 </Button>
                             </div>

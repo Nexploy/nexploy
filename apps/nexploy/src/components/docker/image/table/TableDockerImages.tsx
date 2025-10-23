@@ -5,6 +5,7 @@ import {
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
+    getPaginationRowModel,
     getSortedRowModel,
     SortingState,
     useReactTable,
@@ -23,12 +24,22 @@ import { useImageStore } from '@/stores/useImageStore';
 import { Image } from '@workspace/typescript-interface/docker.image';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
-import { Plus, Trash } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Trash } from 'lucide-react';
 import { formatBytes } from '@/utils/formatBytes';
 import { Badge } from '@workspace/ui/components/badge';
 import Link from 'next/link';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { onImageAction } from '@/actions/docker/image/imageAction.action';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@workspace/ui/components/select';
+import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 
 const globalFilterFn: FilterFn<Image> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -56,9 +67,11 @@ export function TableDockerImages() {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [rowSelection, setRowSelection] = useState({});
+    const [pageSize, setPageSize] = useState<number | 'all'>(10);
 
     const images = useImageStore((state) => state.images);
     const lastUpdate = useImageStore((state) => state.lastUpdate);
+    const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
     const isLoading = !images.length && !lastUpdate;
     const isEmpty = !images.length && !!lastUpdate;
@@ -73,6 +86,7 @@ export function TableDockerImages() {
         globalFilterFn,
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
         onRowSelectionChange: setRowSelection,
         state: {
             sorting,
@@ -83,11 +97,21 @@ export function TableDockerImages() {
 
     const numberOfSelectedRows = Object.keys(rowSelection).length;
 
-    const handleDeleteAction = async () => {
+    const handleDeleteAction = () => {
         const imageIds = Object.keys(rowSelection);
-        await onImageAction({ imageIds, action: 'delete' });
-        table.resetRowSelection();
+        openAlertDialog({
+            title: 'Remove Images',
+            description: `Are you sure you want to remove ${imageIds.length} image?`,
+            cancelLabel: 'Cancel',
+            actionLabel: 'Remove',
+            onAction: async () => {
+                await onImageAction({ imageIds, action: 'delete' });
+                table.resetRowSelection();
+            },
+        });
     };
+
+    const isShowingAll = pageSize === 'all';
 
     return (
         <div className={'mx-6 space-y-3'}>
@@ -149,21 +173,98 @@ export function TableDockerImages() {
                                     ))}
                                 </TableRow>
                             ))}
-                        {table.getRowModel().rows.map((row) => (
-                            <TableRow
-                                key={row.id}
-                                className={'h-12'}
-                                data-state={row.getIsSelected() && 'selected'}
-                            >
-                                {row.getVisibleCells().map((cell) => (
-                                    <TableCell key={cell.id}>
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </TableCell>
-                                ))}
+
+                        {!isLoading && isEmpty ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={table.getAllColumns().length}
+                                    className="py-6 text-center"
+                                >
+                                    No images found.
+                                </TableCell>
                             </TableRow>
-                        ))}
+                        ) : (
+                            table.getRowModel().rows.map((row) => (
+                                <TableRow
+                                    key={row.id}
+                                    className={'h-12'}
+                                    data-state={row.getIsSelected() && 'selected'}
+                                >
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext(),
+                                            )}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))
+                        )}
                     </TableBody>
                 </Table>
+            </div>
+            <div className={'flex items-center justify-between'}>
+                <div className={'flex items-center gap-2'}>
+                    <span className="text-muted-foreground text-sm">Images per page:</span>
+                    <Select
+                        value={pageSize === 'all' ? 'all' : String(pageSize)}
+                        onValueChange={(value) => {
+                            if (value === 'all') {
+                                setPageSize('all');
+                                table.setPageSize(table.getRowModel().rows.length);
+                            } else {
+                                const size = Number(value);
+                                setPageSize(size);
+                                table.setPageSize(size);
+                            }
+                        }}
+                    >
+                        <SelectTrigger size={'sm'} className="w-24">
+                            <SelectValue placeholder="Images per page" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Size</SelectLabel>
+                                {[10, 25, 50, 100].map((size) => (
+                                    <SelectItem key={size} value={`${size}`}>
+                                        {size}
+                                    </SelectItem>
+                                ))}
+                                <SelectItem value="all">All</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {!isShowingAll && (
+                    <div className={'flex items-center gap-2'}>
+                        <span className="text-muted-foreground text-sm">
+                            Page {table.getState().pagination.pageIndex + 1} of{' '}
+                            {table.getPageCount()}
+                        </span>
+                        <div className={'flex gap-1'}>
+                            <Button
+                                variant={'outline'}
+                                size={'sm'}
+                                onClick={() => table.previousPage()}
+                                disabled={!table.getCanPreviousPage()}
+                            >
+                                <ChevronLeft className={'h-4 w-4'} />
+                                Previous
+                            </Button>
+                            <Button
+                                variant={'outline'}
+                                size={'sm'}
+                                onClick={() => table.nextPage()}
+                                disabled={!table.getCanNextPage()}
+                            >
+                                Next
+                                <ChevronRight className={'h-4 w-4'} />
+                            </Button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

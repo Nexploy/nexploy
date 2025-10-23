@@ -3,6 +3,8 @@ import { NextIntlClientProvider } from 'next-intl';
 import { SheetProvider } from '@/providers/SheetProvider';
 import { Toaster } from '@/components/utils/toaster/Toaster';
 import { Suspense } from 'react';
+import { AlertConfirmationDialog } from '@/components/dialog/AlertConfirmationDialog';
+import { ConfirmationDialog } from '@/components/dialog/ConfirmationDialog';
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
@@ -13,6 +15,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 <Suspense>
                     <Toaster />
                 </Suspense>
+                <AlertConfirmationDialog />
+                <ConfirmationDialog />
             </ThemeProvider>
         </NextIntlClientProvider>
     );

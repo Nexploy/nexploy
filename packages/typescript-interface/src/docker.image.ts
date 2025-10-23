@@ -34,7 +34,7 @@ export interface ImageEvent {
     image?: Image;
     oldState?: Image;
     changes?: ImageStateChanges;
-    imageId?: string;
+    imageId: string;
     images?: Image[];
 }
 

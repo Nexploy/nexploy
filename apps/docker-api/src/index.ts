@@ -58,7 +58,7 @@ app.route('/api/docker', dockerStatusRoutes);
 app.route('/api/containers/events', containerEvents);
 app.route('/api/containers', containerRoutes);
 
-app.route('/api/composeStack', composeStackRoutes);
+app.route('/api/composes', composeStackRoutes);
 
 app.route('/api/images/events', imageEvents);
 app.route('/api/images', imagesRoutes);

@@ -34,6 +34,7 @@ export type ContainerState = 'created' | 'running' | 'restarting' | 'paused' | '
 
 export interface ContainerTool extends DropdownActionTool {
     disabledStates: ContainerState[];
+    variant?: 'default' | 'destructive';
 }
 
 export type ContainerPorts = {

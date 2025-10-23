@@ -138,6 +138,7 @@ export const columnsTableImages: ColumnDef<Image>[] = [
         id: 'actions',
         cell: ({ row }) => {
             const imageId = row.original.id;
+            const imageName = row.original.name;
 
             return (
                 <DropdownMenu>
@@ -146,7 +147,7 @@ export const columnsTableImages: ColumnDef<Image>[] = [
                             <MoreVertical />
                         </Button>
                     </DropdownMenuTrigger>
-                    <ImageDropdownActions imageId={imageId} />
+                    <ImageDropdownActions imageId={imageId} imageName={imageName.length ? imageName : ['<none>']} />
                 </DropdownMenu>
             );
         },

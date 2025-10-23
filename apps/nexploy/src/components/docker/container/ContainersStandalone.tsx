@@ -4,21 +4,19 @@ import { ContainerCard } from '@/components/docker/container/ContainerCard';
 import { Badge } from '@workspace/ui/components/badge';
 import {
     Empty,
-    EmptyContent,
     EmptyDescription,
     EmptyHeader,
     EmptyMedia,
     EmptyTitle,
 } from '@workspace/ui/components/empty';
 import { Container as IconContainer } from 'lucide-react';
-import { AddContainer } from '@/components/docker/container/AddContainer';
 import { useContainerStore } from '@/stores/useContainerStore';
 
 interface ContainersStandaloneProps {
-    disableEmpty?: boolean;
+    keepEmpty?: boolean;
 }
 
-export function ContainersStandalone({ disableEmpty = false }: ContainersStandaloneProps) {
+export function ContainersStandalone({ keepEmpty = false }: ContainersStandaloneProps) {
     const standaloneContainers = useContainerStore((state) => state.getOrganizedContainers)()
         .standaloneContainers;
 
@@ -41,8 +39,8 @@ export function ContainersStandalone({ disableEmpty = false }: ContainersStandal
     }
 
     return (
-        !disableEmpty && (
-            <Empty>
+        keepEmpty && (
+            <Empty className={'mt-24'}>
                 <EmptyHeader>
                     <EmptyMedia variant="icon" className={'bg-primary/10'}>
                         <IconContainer className="text-primary" />
@@ -50,9 +48,6 @@ export function ContainersStandalone({ disableEmpty = false }: ContainersStandal
                     <EmptyTitle>Aucun conteneur</EmptyTitle>
                     <EmptyDescription>Vous n’avez encore créé aucun conteneur.</EmptyDescription>
                 </EmptyHeader>
-                <EmptyContent>
-                    <AddContainer />
-                </EmptyContent>
             </Empty>
         )
     );
