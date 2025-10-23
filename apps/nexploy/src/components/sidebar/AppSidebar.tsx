@@ -2,7 +2,6 @@ import {
     Activity,
     Box,
     Bug,
-    ChevronRight,
     ChevronUp,
     Container,
     Folder,
@@ -34,12 +33,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from '@workspace/ui/components/collapsible';
-import { ElementType } from 'react';
+import { ElementType, ReactElement } from 'react';
+import { RefreshDocker } from '@/components/sidebar/RefreshDocker';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset';
@@ -54,6 +49,7 @@ interface SidebarItem {
     title: string;
     icon: ElementType;
     href: string;
+    actionIcon?: ReactElement;
     children?: { title: string; href: string; icon: ElementType }[];
 }
 
@@ -67,10 +63,11 @@ const groups: Group[] = [
                 title: 'Docker',
                 href: '/docker/containers',
                 icon: Box,
+                actionIcon: <RefreshDocker />,
                 children: [
-                    { title: 'Containers', icon: Container, href: './containers' },
-                    { title: 'Images', icon: LayoutList, href: './images' },
-                    { title: 'Events', icon: Bug, href: './events' },
+                    { title: 'Containers', icon: Container, href: '/docker/containers' },
+                    { title: 'Images', icon: LayoutList, href: '/docker/images' },
+                    { title: 'Events', icon: Bug, href: '/docker/events' },
                 ],
             },
             { title: 'Swarm', href: '/swarm', icon: Network },
@@ -98,41 +95,29 @@ export function AppSidebar({ variant }: AppSidebarProps) {
                         <SidebarGroupContent>
                             <SidebarMenu>
                                 {group.children.map((item) => (
-                                    <Collapsible
-                                        defaultOpen
-                                        key={item.title}
-                                        className="group/collapsible"
-                                    >
-                                        <SidebarMenuItem>
-                                            <CollapsibleTrigger asChild>
-                                                <SidebarMenuButton tooltip={item.title} asChild>
-                                                    <Link href={item.href}>
-                                                        <item.icon />
-                                                        <span>{item.title}</span>
-                                                        {item.children && (
-                                                            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                                                        )}
-                                                    </Link>
-                                                </SidebarMenuButton>
-                                            </CollapsibleTrigger>
-                                            {item.children && (
-                                                <CollapsibleContent>
-                                                    <SidebarMenuSub>
-                                                        {item.children.map((child) => (
-                                                            <SidebarMenuSubItem key={child.title}>
-                                                                <SidebarMenuSubButton asChild>
-                                                                    <Link href={child.href}>
-                                                                        <child.icon />
-                                                                        {child.title}
-                                                                    </Link>
-                                                                </SidebarMenuSubButton>
-                                                            </SidebarMenuSubItem>
-                                                        ))}
-                                                    </SidebarMenuSub>
-                                                </CollapsibleContent>
-                                            )}
-                                        </SidebarMenuItem>
-                                    </Collapsible>
+                                    <SidebarMenuItem key={item.title}>
+                                        <SidebarMenuButton tooltip={item.title} asChild>
+                                            <Link href={item.href}>
+                                                <item.icon />
+                                                <span>{item.title}</span>
+                                                {item.actionIcon}
+                                            </Link>
+                                        </SidebarMenuButton>
+                                        {item.children && (
+                                            <SidebarMenuSub>
+                                                {item.children.map((child) => (
+                                                    <SidebarMenuSubItem key={child.title}>
+                                                        <SidebarMenuSubButton asChild>
+                                                            <Link href={child.href}>
+                                                                <child.icon />
+                                                                {child.title}
+                                                            </Link>
+                                                        </SidebarMenuSubButton>
+                                                    </SidebarMenuSubItem>
+                                                ))}
+                                            </SidebarMenuSub>
+                                        )}
+                                    </SidebarMenuItem>
                                 ))}
                             </SidebarMenu>
                         </SidebarGroupContent>

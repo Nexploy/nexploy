@@ -2,9 +2,9 @@
 
 import { actionServer } from '@/lib/api/safe-action';
 import { drinoDocker } from '@/lib/api/drinoDocker';
-import { returnValidationErrors } from 'next-safe-action';
 import { HttpErrorResponse } from 'drino';
 import { ComposeStackActionsSchema } from '@workspace/schemas-zod/composeStack.schema';
+import { setToastServer } from '@/components/utils/toaster/toastServer';
 
 export const onComposeStackAction = actionServer
     .inputSchema(ComposeStackActionsSchema)
@@ -13,8 +13,9 @@ export const onComposeStackAction = actionServer
             await drinoDocker.post(`/composeStack/${stackId}/${action}`, null).consume();
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
-                returnValidationErrors(ComposeStackActionsSchema, {
-                    _errors: [err.error.message],
+                await setToastServer({
+                    type: 'error',
+                    message: err.error.message as string,
                 });
             }
         }

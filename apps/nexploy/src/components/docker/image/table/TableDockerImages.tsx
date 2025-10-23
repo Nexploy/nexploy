@@ -27,6 +27,8 @@ import { Plus, Trash } from 'lucide-react';
 import { formatBytes } from '@/utils/formatBytes';
 import { Badge } from '@workspace/ui/components/badge';
 import Link from 'next/link';
+import { Skeleton } from '@workspace/ui/components/skeleton';
+import { onImageAction } from '@/actions/docker/image/imageAction.action';
 
 const globalFilterFn: FilterFn<Image> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -56,6 +58,10 @@ export function TableDockerImages() {
     const [rowSelection, setRowSelection] = useState({});
 
     const images = useImageStore((state) => state.images);
+    const lastUpdate = useImageStore((state) => state.lastUpdate);
+
+    const isLoading = !images.length && !lastUpdate;
+    const isEmpty = !images.length && !!lastUpdate;
 
     const table = useReactTable({
         data: images,
@@ -77,6 +83,12 @@ export function TableDockerImages() {
 
     const numberOfSelectedRows = Object.keys(rowSelection).length;
 
+    const handleDeleteAction = async () => {
+        const imageIds = Object.keys(rowSelection);
+        await onImageAction({ imageIds, action: 'delete' });
+        table.resetRowSelection();
+    };
+
     return (
         <div className={'mx-6 space-y-3'}>
             <div className={'flex justify-between'}>
@@ -87,7 +99,11 @@ export function TableDockerImages() {
                     onChange={(e) => setGlobalFilter(e.target.value)}
                 />
                 <div className={'flex gap-3'}>
-                    <Button variant={'destructive'} disabled={!numberOfSelectedRows}>
+                    <Button
+                        variant={'destructive'}
+                        onClick={handleDeleteAction}
+                        disabled={!numberOfSelectedRows}
+                    >
                         <Trash />
                         Remove{' '}
                         {!!numberOfSelectedRows && (
@@ -123,6 +139,16 @@ export function TableDockerImages() {
                         ))}
                     </TableHeader>
                     <TableBody>
+                        {isLoading &&
+                            Array.from({ length: 10 }).map((_, rowIndex) => (
+                                <TableRow key={rowIndex} className="h-12">
+                                    {table.getAllColumns().map((column) => (
+                                        <TableCell key={column.id}>
+                                            <Skeleton className="h-6 w-full" />
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))}
                         {table.getRowModel().rows.map((row) => (
                             <TableRow
                                 key={row.id}

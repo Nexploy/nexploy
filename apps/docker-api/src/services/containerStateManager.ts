@@ -10,7 +10,7 @@ import {
     ContainerStateChanges,
     ContainerStateEvents,
 } from '@workspace/typescript-interface/docker.container';
-import { DockerStatus } from '@workspace/typescript-interface/docker.status';
+import { DockerStatus, DockerStatusEvent } from '@workspace/typescript-interface/docker.status';
 import { dockerStatusManager } from '@/services/dockerStatusManager';
 
 class ContainerStateManager extends EventEmitter {
@@ -29,25 +29,15 @@ class ContainerStateManager extends EventEmitter {
     }
 
     private setupDockerStatusListeners() {
-        dockerStatusManager.on('docker-reconnected', async () => {
-            if (this.polling) {
+        dockerStatusManager.on('status-changed', async (event: DockerStatusEvent) => {
+            if (this.polling && event.status === 'connected') {
                 logger.info('Docker reconnected, reinitializing container manager');
                 try {
+                    logger.info('Sending containers after Docker reconnection');
+
                     await this.loadInitialState();
                     await this.startDockerEventsListener();
                     this.reconnectAttempts = 0;
-
-                    const containers = Array.from(this.containers.values());
-                    logger.info(
-                        { count: containers.length },
-                        'Sending containers after Docker reconnection',
-                    );
-                    const initialStateData: ContainerEvent = {
-                        type: 'initial',
-                        containers,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('initial-state', initialStateData);
                 } catch (err) {
                     logger.error({ err }, 'Failed to reinitialize after Docker reconnection');
                 }
@@ -140,7 +130,13 @@ class ContainerStateManager extends EventEmitter {
             }
 
             logger.info({ count: this.containers.size }, 'Initial container state loaded');
-            this.emit('initial-state', Array.from(this.containers.values()));
+
+            const initialStateData: ContainerEvent = {
+                type: 'initial',
+                containers: Array.from(this.containers.values()),
+                timestamp: Date.now(),
+            };
+            this.emit('initial-state', initialStateData);
         } catch (err) {
             logger.error({ err }, 'Error loading initial container state');
             throw err;
@@ -260,7 +256,7 @@ class ContainerStateManager extends EventEmitter {
                 this.containers.delete(containerId);
 
                 if (oldState) {
-                    this.emit('container-removed', { id: containerId, action, oldState });
+                    this.emit('container-removed', { containerId, action, oldState });
                 }
                 return;
             }
@@ -315,7 +311,7 @@ class ContainerStateManager extends EventEmitter {
             if (!this.polling) return;
 
             if (!dockerStatusManager.isConnected()) {
-                logger.debug('Skipping poll: Docker not connected');
+                logger.debug('Skipping Container poll: Docker not connected');
                 return;
             }
 
@@ -498,6 +494,69 @@ class ContainerStateManager extends EventEmitter {
             polling: this.polling,
             dockerConnected: dockerStatusManager.isConnected(),
         };
+    }
+
+    async hardRefresh(): Promise<void> {
+        if (!dockerStatusManager.isConnected()) {
+            logger.warn('Cannot hard refresh: Docker is not connected');
+            throw new Error('Docker is not connected');
+        }
+
+        logger.info('Starting hard refresh of container states');
+
+        try {
+            const containers = await docker.listContainers({ all: true });
+            const currentIds = new Set(containers.map((c) => c.Id));
+            const oldIds = new Set(this.containers.keys());
+
+            for (const oldId of oldIds) {
+                if (!currentIds.has(oldId)) {
+                    const oldState = this.containers.get(oldId);
+                    this.containers.delete(oldId);
+
+                    if (oldState) {
+                        const containerRemovedData: ContainerEvent = {
+                            type: 'removed',
+                            containerId: oldId,
+                            oldState,
+                            timestamp: Date.now(),
+                        };
+                        this.emit('container-removed', containerRemovedData);
+                    }
+                }
+            }
+
+            for (const container of containers) {
+                const newState = this.parseContainerInfo(container);
+                const oldState = this.containers.get(newState.id);
+
+                if (!oldState) {
+                    this.containers.set(newState.id, newState);
+                    const containerAddedData: ContainerEvent = {
+                        type: 'added',
+                        container: newState,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('container-added', containerAddedData);
+                } else if (this.hasStateChanged(oldState, newState)) {
+                    this.containers.set(newState.id, newState);
+                    const containerUpdatedData: ContainerEvent = {
+                        type: 'updated',
+                        container: newState,
+                        changes: this.getStateChanges(oldState, newState),
+                        timestamp: Date.now(),
+                    };
+                    this.emit('container-updated', containerUpdatedData);
+                } else {
+                    this.containers.set(newState.id, newState);
+                }
+            }
+
+            logger.info({ count: this.containers.size }, 'Hard refresh completed');
+        } catch (err) {
+            logger.error({ err }, 'Error during hard refresh');
+            throw err;
+        }
     }
 }
 

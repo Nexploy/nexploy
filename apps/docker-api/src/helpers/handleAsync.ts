@@ -18,7 +18,7 @@ export const handleAsync = (fn: Handler, opts?: { status?: ContentfulStatusCode 
                 ),
             ]);
             logger.debug({ path: c.req.url });
-            return c.json(result, status);
+            return c.json(result ?? { ok: true }, status);
         } catch (err: any) {
             logger.error({ err, path: c.req.url, method: c.req.method }, 'handler error');
 

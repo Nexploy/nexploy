@@ -6,6 +6,10 @@ export class SSEProxy {
     private encoder = new TextEncoder();
     private isClosed = false;
     private config: SSEProxyConfig;
+    private pingInterval: NodeJS.Timeout | null = null;
+    private lastActivityTime: number = Date.now();
+    private readonly PING_INTERVAL = 30000;
+    private readonly CONNECTION_TIMEOUT = 120000;
 
     private constructor(controller: ReadableStreamDefaultController, config: SSEProxyConfig) {
         this.controller = controller;
@@ -75,25 +79,37 @@ export class SSEProxy {
             'X-Accel-Buffering': 'no',
         };
 
-        const response = await fetch(url, {
-            keepalive: true,
-            headers: {
-                ...defaultHeaders,
-                ...this.config.requestHeaders,
-            },
-        });
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 300000);
 
-        if (!response.ok || !response.body) {
-            throw new Error(`Failed to connect to SSE server: ${response.statusText}`);
+        try {
+            const response = await fetch(url, {
+                keepalive: true,
+                signal: controller.signal,
+                headers: {
+                    ...defaultHeaders,
+                    ...this.config.requestHeaders,
+                },
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok || !response.body) {
+                throw new Error(`Failed to connect to SSE server: ${response.statusText}`);
+            }
+
+            return response;
+        } catch (error) {
+            clearTimeout(timeoutId);
+            throw error;
         }
-
-        return response;
     }
 
     private async pipeStreamToClient(response: Response): Promise<void> {
         if (!response.body) return;
 
         this.reader = response.body.getReader();
+        this.startPingInterval();
 
         try {
             while (true) {
@@ -103,6 +119,8 @@ export class SSEProxy {
                     this.closeController();
                     break;
                 }
+
+                this.lastActivityTime = Date.now();
 
                 if (!this.isClosed) {
                     try {
@@ -121,6 +139,41 @@ export class SSEProxy {
             if (!this.isClosed) {
                 throw error;
             }
+        } finally {
+            this.stopPingInterval();
+        }
+    }
+
+    private startPingInterval(): void {
+        this.pingInterval = setInterval(() => {
+            if (!this.isClosed) {
+                try {
+                    const ping = this.encoder.encode(': ping\n\n');
+                    this.controller.enqueue(ping);
+
+                    const timeSinceLastActivity = Date.now() - this.lastActivityTime;
+                    if (timeSinceLastActivity > this.CONNECTION_TIMEOUT) {
+                        console.warn(
+                            'SSE connection timeout detected - no activity for',
+                            timeSinceLastActivity,
+                            'ms',
+                        );
+                        this.closeController(new Error('Connection timeout'));
+                    }
+                } catch (error) {
+                    console.error('Error during ping interval:', error);
+                    this.stopPingInterval();
+                }
+            } else {
+                this.stopPingInterval();
+            }
+        }, this.PING_INTERVAL);
+    }
+
+    private stopPingInterval(): void {
+        if (this.pingInterval) {
+            clearInterval(this.pingInterval);
+            this.pingInterval = null;
         }
     }
 
@@ -163,6 +216,8 @@ export class SSEProxy {
     }
 
     private cleanup(): void {
+        this.stopPingInterval();
+
         if (this.reader) {
             try {
                 this.reader.cancel();

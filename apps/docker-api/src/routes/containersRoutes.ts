@@ -8,6 +8,13 @@ import { ContainerCreateOptions } from 'dockerode';
 
 const app = new Hono();
 
+app.post(
+    '/hardRefresh',
+    handleAsync(async () => {
+        return await containerStateManager.hardRefresh();
+    }),
+);
+
 /**
  * @openapi
  * /containers:
@@ -92,7 +99,7 @@ app.post(
         const body: ContainerCreateForm = await c.req.json();
 
         const createOptions: ContainerCreateOptions = {
-            imageId: body.name,
+            name: body.name,
             Image: body.image,
             // Hostname: body.hostname,
             // HostConfig: {

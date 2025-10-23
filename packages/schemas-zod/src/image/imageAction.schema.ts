@@ -15,5 +15,5 @@ const imageActions: [ImageAction, ...ImageAction[]] = [
 export const ImageActionsSchema = z.object({
     action: z.enum(imageActions),
     force: z.boolean().optional(),
-    imageId: z.string(),
+    imageIds: z.array(z.string()),
 });

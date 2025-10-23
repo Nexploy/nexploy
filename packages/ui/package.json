@@ -9,5 +9,8 @@
     "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",
     "./hooks/*": "./src/hooks/*.ts"
+  },
+  "dependencies": {
+    "@radix-ui/react-tooltip": "^1.2.8"
   }
 }

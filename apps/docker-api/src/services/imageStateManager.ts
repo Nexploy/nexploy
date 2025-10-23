@@ -32,21 +32,11 @@ class ImageStateManager extends EventEmitter {
             if (this.polling) {
                 logger.info('Docker reconnected, reinitializing container manager');
                 try {
+                    logger.info('Sending images after Docker reconnection');
+
                     await this.loadInitialState();
                     await this.startDockerEventsListener();
                     this.reconnectAttempts = 0;
-
-                    const images = Array.from(this.images.values());
-                    logger.info(
-                        { count: images.length },
-                        'Sending images after Docker reconnection',
-                    );
-                    const initialState: ImageEvent = {
-                        type: 'initial',
-                        images,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('initial-state', initialState);
                 } catch (err) {
                     logger.error({ err }, 'Failed to reinitialize after Docker reconnection');
                 }
@@ -130,7 +120,6 @@ class ImageStateManager extends EventEmitter {
 
             for (const image of images) {
                 const state = this.parseImageInfo(image);
-                console.log(state.id);
                 this.images.set(state.id, state);
             }
 
@@ -306,7 +295,7 @@ class ImageStateManager extends EventEmitter {
         const info = await image.inspect();
         const newState = this.parseImageInfo(info);
 
-        const oldState = this.images.get(imageId);
+        const oldState = this.images.get(newState.id);
         this.images.set(newState.id, newState);
 
         if (!oldState) {
@@ -447,6 +436,79 @@ class ImageStateManager extends EventEmitter {
             reconnectAttempts: this.reconnectAttempts,
             polling: this.polling,
         };
+    }
+
+    getByName(fullName: string): Image | undefined {
+        for (const image of this.images.values()) {
+            if (image.repoTags.includes(fullName)) {
+                return image;
+            }
+        }
+        return undefined;
+    }
+
+    async hardRefresh(): Promise<void> {
+        logger.info('Starting hard refresh of image state');
+
+        try {
+            const images = await docker.listImages({ all: true });
+            const newImageMap = new Map<string, Image>();
+
+            for (const image of images) {
+                const state = this.parseImageInfo(image);
+                newImageMap.set(state.id, state);
+            }
+
+            for (const [imageId, oldState] of this.images.entries()) {
+                if (!newImageMap.has(imageId)) {
+                    const imageRemovedData: ImageEvent = {
+                        type: 'removed',
+                        imageId: oldState.id,
+                        oldState,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('image-removed', imageRemovedData);
+                    logger.debug({ imageId }, 'Image detected as removed during hard refresh');
+                }
+            }
+
+            for (const [imageId, newState] of newImageMap.entries()) {
+                const oldState = this.images.get(imageId);
+
+                if (!oldState) {
+                    const imageAdded: ImageEvent = {
+                        type: 'added',
+                        image: newState,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('image-added', imageAdded);
+                    logger.debug({ imageId }, 'Image detected as added during hard refresh');
+                } else if (this.hasStateChanged(oldState, newState)) {
+                    const imageUpdated: ImageEvent = {
+                        type: 'updated',
+                        oldState,
+                        image: newState,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('image-updated', imageUpdated);
+                    logger.debug({ imageId }, 'Image detected as updated during hard refresh');
+                }
+            }
+
+            this.images = newImageMap;
+
+            logger.info({ count: this.images.size }, 'Hard refresh completed successfully');
+
+            const refreshedState: ImageEvent = {
+                type: 'initial',
+                images: Array.from(this.images.values()),
+                timestamp: Date.now(),
+            };
+            this.emit('initial-state', refreshedState);
+        } catch (err) {
+            logger.error({ err }, 'Error during hard refresh of image state');
+            throw err;
+        }
     }
 }
 

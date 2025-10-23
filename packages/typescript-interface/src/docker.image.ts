@@ -24,6 +24,7 @@ export type ImageAction = 'pull' | 'push' | 'tag' | 'untag' | 'delete' | 'import
 
 export interface ImageTool extends DropdownActionTool {
     disabled?: boolean;
+    variant?: 'default' | 'destructive';
 }
 
 export interface ImageEvent {

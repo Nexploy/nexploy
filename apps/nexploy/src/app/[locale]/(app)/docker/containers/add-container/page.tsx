@@ -64,13 +64,6 @@ export default function AddContainerPage() {
                     router.push('/docker/containers');
                     router.refresh();
                 },
-                onError: ({ error }) => {
-                    if (error.serverError) {
-                        toast.error(error.serverError);
-                    } else {
-                        toast.error('Erreur lors de la création du conteneur');
-                    }
-                },
             },
         },
     );

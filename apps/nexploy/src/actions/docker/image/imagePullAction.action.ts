@@ -3,14 +3,14 @@
 import { actionServer } from '@/lib/api/safe-action';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { HttpErrorResponse } from 'drino';
-import { ImageActionsSchema } from '@workspace/schemas-zod/image/imageAction.schema';
+import { ImagePullSchema } from '@workspace/schemas-zod/image/imagePullAction.schema';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 
-export const onImageAction = actionServer
-    .inputSchema(ImageActionsSchema)
-    .action(async ({ parsedInput: { action, imageIds } }) => {
+export const onImagePullAction = actionServer
+    .inputSchema(ImagePullSchema)
+    .action(async ({ parsedInput: { imageName } }) => {
         try {
-            await drinoDocker.post(`/images/${action}`, { imageIds }).consume();
+            await drinoDocker.post(`/images/pull`, { imageName }).consume();
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
                 await setToastServer({

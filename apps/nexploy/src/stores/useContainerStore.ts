@@ -172,7 +172,7 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
                 if (!data.containerId) return;
 
                 get().removeContainer(data.containerId);
-                toast.success(`Container ${data.container?.name} removed`);
+                toast.success(`Container ${data.oldState?.name} removed`);
                 set({ lastUpdate: data.timestamp });
             });
 

@@ -7,21 +7,15 @@ import { containerStateManager } from '@/services/containerStateManager';
 const app = new Hono();
 
 app.get('/stream', (c) => {
-    const watchContainers = c.req.query('containers')?.split(',').filter(Boolean);
-
     return streamSSE(c, async (stream) => {
         const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 
-        logger.info({ clientId, watchContainers }, 'SSE Container client connected');
+        logger.info({ clientId }, 'SSE Container client connected');
 
         const handleInitialState = async (containerEvent: ContainerEvent) => {
-            const filteredInitial = watchContainers
-                ? containers.filter((s) => watchContainers.includes(s.id))
-                : containers;
-
             try {
                 await stream.writeSSE({
-                    data: JSON.stringify({ ...containerEvent, containers: filteredInitial }),
+                    data: JSON.stringify(containerEvent),
                     event: 'initial-state',
                     id: `${Date.now()}`,
                 });
@@ -32,8 +26,6 @@ app.get('/stream', (c) => {
         };
 
         const handleStateChange = async (containerEvent: ContainerEvent) => {
-            // if (watchContainers && !watchContainers.includes(event.container?.id)) return;
-
             try {
                 await stream.writeSSE({
                     data: JSON.stringify(containerEvent),
@@ -47,8 +39,6 @@ app.get('/stream', (c) => {
         };
 
         const handleContainerAdded = async (containerEvent: ContainerEvent) => {
-            // if (watchContainers && !watchContainers.includes(container.id)) return;
-
             try {
                 await stream.writeSSE({
                     data: JSON.stringify(containerEvent),
@@ -62,8 +52,6 @@ app.get('/stream', (c) => {
         };
 
         const handleContainerUpdated = async (containerEvent: ContainerEvent) => {
-            // if (watchContainers && !watchContainers.includes(container?.id)) return;
-
             try {
                 await stream.writeSSE({
                     data: JSON.stringify(containerEvent),
@@ -77,8 +65,6 @@ app.get('/stream', (c) => {
         };
 
         const handleContainerRemoved = async (containerEvent: ContainerEvent) => {
-            // if (watchContainers && !watchContainers.includes(event.id)) return;
-
             try {
                 await stream.writeSSE({
                     data: JSON.stringify(containerEvent),

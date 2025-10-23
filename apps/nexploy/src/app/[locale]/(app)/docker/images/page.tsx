@@ -2,6 +2,7 @@ import { LayoutList } from 'lucide-react';
 import { TableDockerImages } from '@/components/docker/image/table/TableDockerImages';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { CardInfoImages } from '@/components/docker/image/CardInfoImages';
+import { StatusDocker } from '@/components/docker/container/StatusDocker';
 
 export default function ImagesPage() {
     return (
@@ -12,9 +13,12 @@ export default function ImagesPage() {
                         <LayoutList className="text-primary size-7" />
                     </div>
                     <div className={'flex flex-col'}>
-                        <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                            Docker Images
-                        </h1>
+                        <div className={'flex items-center gap-3'}>
+                            <h1 className="text-3xl leading-none font-semibold tracking-tight">
+                                Docker Images
+                            </h1>
+                            <StatusDocker className={'my-1'} />
+                        </div>
                         <p className="text-muted-foreground text-sm">
                             Gérez et visualisez toutes vos images Docker
                         </p>

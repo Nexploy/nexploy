@@ -1,13 +1,6 @@
 'use client';
 
-import {
-    AlertCircleIcon,
-    Box,
-    Container as IconContainer,
-    Container,
-    Layers,
-    LayoutGrid,
-} from 'lucide-react';
+import { Box, Container as IconContainer, Container, Layers, LayoutGrid } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { Badge } from '@workspace/ui/components/badge';
 import {
@@ -19,7 +12,6 @@ import {
     EmptyTitle,
 } from '@workspace/ui/components/empty';
 import { StatusDocker } from '@/components/docker/container/StatusDocker';
-import { Alert, AlertTitle } from '@workspace/ui/components/alert';
 import { AddContainer } from '@/components/docker/container/AddContainer';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
@@ -33,7 +25,6 @@ export default function DockerContainersPage() {
     const stacksSize = useContainerStore((state) => state.getOrganizedContainers)().stacks.size;
     const standaloneContainersLenght = useContainerStore((state) => state.getOrganizedContainers)()
         .standaloneContainers.length;
-    const error = useContainerStore((state) => state.error);
 
     const numberOfContainers = stacksSize + standaloneContainersLenght;
 
@@ -69,11 +60,11 @@ export default function DockerContainersPage() {
                         <Box className="text-primary size-7" />
                     </div>
                     <div>
-                        <div className={'flex items-start gap-3'}>
+                        <div className={'flex items-center gap-3'}>
                             <h1 className="text-3xl leading-none font-semibold tracking-tight">
                                 Docker Containers
                             </h1>
-                            <StatusDocker className={'my-1'} />
+                            <StatusDocker />
                         </div>
                         {isLoading ? (
                             <Skeleton className={'my-1 h-3 w-40'} />
@@ -87,13 +78,6 @@ export default function DockerContainersPage() {
                 </div>
                 <AddContainer />
             </div>
-
-            {error && (
-                <Alert className={'mx-6 w-auto'} variant="destructive">
-                    <AlertCircleIcon />
-                    <AlertTitle>{error.message}</AlertTitle>
-                </Alert>
-            )}
 
             {isLoading && (
                 <div className="mb-6 flex flex-1 flex-col gap-5">
