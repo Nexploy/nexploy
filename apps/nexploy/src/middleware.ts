@@ -1,6 +1,9 @@
 import createMiddleware from 'next-intl/middleware';
 import { routing } from '@/i18n/routing';
 import { NextRequest, NextResponse } from 'next/server';
+import { getSessionCookie } from 'better-auth/cookies';
+import { isAdminExist } from '@/services/auth/auth.service';
+import { RedirectRule } from '@workspace/typescript-interface/middleware';
 
 const handleI18nRouting = createMiddleware(routing);
 
@@ -9,23 +12,60 @@ const redirects: Record<string, string> = {
     '/docker': '/docker/containers',
 };
 
-export default async function middleware(request: NextRequest) {
-    const response = handleI18nRouting(request);
-    const { pathname } = request.nextUrl;
-
+function getRedirectUrl(pathname: string, baseUrl: string): URL | null {
     const redirectTarget = redirects[pathname];
-    if (redirectTarget) {
-        const url = request.nextUrl.clone();
-        url.pathname = redirectTarget;
-        return NextResponse.redirect(url);
+    if (!redirectTarget) return null;
+
+    const url = new URL(baseUrl);
+    url.pathname = redirectTarget;
+    return url;
+}
+
+async function checkRedirectRules(
+    pathname: string,
+    sessionCookie: string | null,
+    requestUrl: string,
+): Promise<NextResponse | null> {
+    const hasAdmin = await isAdminExist();
+
+    const rules: RedirectRule[] = [
+        {
+            condition: !hasAdmin,
+            targetPath: '/setup',
+            shouldSkip: (path) => path.startsWith('/setup'),
+        },
+        {
+            condition: !sessionCookie,
+            targetPath: '/signin',
+            shouldSkip: (path) => path.startsWith('/signin'),
+        },
+    ];
+
+    for (const rule of rules) {
+        if (rule.condition && !rule.shouldSkip(pathname)) {
+            return NextResponse.redirect(new URL(rule.targetPath, requestUrl));
+        }
     }
 
-    return response;
+    return null;
+}
+
+export default async function middleware(request: NextRequest) {
+    const { pathname } = request.nextUrl;
+    const sessionCookie = getSessionCookie(request);
+
+    const redirectRule = await checkRedirectRules(pathname, sessionCookie, request.url);
+    if (redirectRule) return redirectRule;
+
+    const redirectUrl = getRedirectUrl(pathname, request.url);
+    if (redirectUrl) {
+        return NextResponse.redirect(redirectUrl);
+    }
+
+    return handleI18nRouting(request);
 }
 
 export const config = {
-    // Match all pathnames except for
-    // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
-    // - … the ones containing a dot (e.g. `favicon.ico`)
+    runtime: 'nodejs',
     matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)',
 };

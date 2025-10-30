@@ -41,18 +41,16 @@ class ContainerStateManager extends EventEmitter {
                 } catch (err) {
                     logger.error({ err }, 'Failed to reinitialize after Docker reconnection');
                 }
-            }
-        });
-
-        dockerStatusManager.on('docker-disconnected', () => {
-            logger.warn('Docker disconnected, stopping event stream');
-            if (this.dockerEventStream) {
-                try {
-                    this.dockerEventStream.destroy();
-                } catch (err) {
-                    logger.error({ err }, 'Error destroying Docker event stream');
+            } else if (this.polling && event.status === 'disconnected') {
+                logger.warn('Docker disconnected, stopping container event stream');
+                if (this.dockerEventStream) {
+                    try {
+                        this.dockerEventStream.destroy();
+                    } catch (err) {
+                        logger.error({ err }, 'Error destroying Docker container event stream');
+                    }
+                    this.dockerEventStream = null;
                 }
-                this.dockerEventStream = null;
             }
         });
     }

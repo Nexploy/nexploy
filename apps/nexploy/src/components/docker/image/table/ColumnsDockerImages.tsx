@@ -12,6 +12,8 @@ import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';
 import { ImageDropdownActions } from '@/components/docker/image/ImageDropdownActions';
 import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
+import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 export const columnsTableImages: ColumnDef<Image>[] = [
     {
@@ -54,8 +56,24 @@ export const columnsTableImages: ColumnDef<Image>[] = [
 
             return (
                 <div className="flex items-center gap-2">
-                    <span className="font-medium">{nameJoin}</span>
-                    {!containersUsed && <Badge>Unused</Badge>}
+                    <Status
+                        className={'text- truncate border-0 text-sm'}
+                        status={containersUsed ? 'online' : 'offline'}
+                        variant="outline"
+                    >
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <StatusIndicator />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                {containersUsed ? <p>Image Used</p> : <p>Image Unused</p>}
+                            </TooltipContent>
+                        </Tooltip>
+
+                        <StatusLabel className="truncate font-medium text-current">
+                            {nameJoin}
+                        </StatusLabel>
+                    </Status>
                 </div>
             );
         },
@@ -147,7 +165,10 @@ export const columnsTableImages: ColumnDef<Image>[] = [
                             <MoreVertical />
                         </Button>
                     </DropdownMenuTrigger>
-                    <ImageDropdownActions imageId={imageId} imageName={imageName.length ? imageName : ['<none>']} />
+                    <ImageDropdownActions
+                        imageId={imageId}
+                        imageName={imageName.length ? imageName : ['<none>']}
+                    />
                 </DropdownMenu>
             );
         },

@@ -10,14 +10,7 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
 import React, { useState } from 'react';
 import { columnsTableImages } from '@/components/docker/image/table/ColumnsDockerImages';
 import { useImageStore } from '@/stores/useImageStore';
@@ -57,8 +50,6 @@ const globalFilterFn: FilterFn<Image> = (row, _, value) => {
     ) {
         return true;
     }
-
-    if ('unused'.toLowerCase().includes(search) && !containersUsed) return true;
 
     return false;
 };

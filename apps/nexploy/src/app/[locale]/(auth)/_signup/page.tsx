@@ -15,7 +15,6 @@ import {
     CardTitle,
 } from '@workspace/ui/components/card';
 import { Label } from '@workspace/ui/components/label';
-import { GithubIcon } from 'lucide-react';
 import Link from 'next/link';
 
 type SignupFormValues = {
@@ -59,17 +58,6 @@ export default function SignupPage() {
             }
         } catch (err) {
             setError("Une erreur est survenue lors de l'inscription");
-        }
-    };
-
-    const handleGithubSignup = async () => {
-        try {
-            await authClient.signIn.social({
-                provider: 'github',
-                callbackURL: '/projects',
-            });
-        } catch (err) {
-            setError("Une erreur est survenue lors de l'inscription avec GitHub");
         }
     };
 
@@ -163,28 +151,6 @@ export default function SignupPage() {
                             {isSubmitting ? 'Inscription...' : "S'inscrire"}
                         </Button>
                     </form>
-
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-card text-muted-foreground px-2">
-                                Ou continuer avec
-                            </span>
-                        </div>
-                    </div>
-
-                    <Button
-                        variant="outline"
-                        type="button"
-                        className="w-full"
-                        onClick={handleGithubSignup}
-                        disabled={isSubmitting}
-                    >
-                        <GithubIcon className="h-4 w-4" />
-                        GitHub
-                    </Button>
                 </CardContent>
 
                 <CardFooter className="flex justify-center">

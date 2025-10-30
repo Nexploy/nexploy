@@ -170,15 +170,16 @@ export const useImageStore = create<ImageState>((set, get) => ({
 
                 get().updateImage(image);
 
-                if (action) {
-                    toast.success(`Image ${imageName} (action: ${action})`);
-                }
+                // if (action) {
+                //     toast.success(`Image ${imageName} (action: ${action})`);
+                // }
 
                 set({ lastUpdate: timestamp });
             });
 
             eventSource.addEventListener('image-removed', (e) => {
                 const data: ImageEvent = JSON.parse(e.data);
+                if (!data.imageId) return;
 
                 get().removeImage(data.imageId);
                 const imageName = data.image?.repoTags?.[0] || data.imageId.substring(0, 12);

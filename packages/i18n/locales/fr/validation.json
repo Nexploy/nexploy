@@ -1,0 +1,15 @@
+{
+  "required": "Ce champ est requis",
+  "invalidEmail": "Adresse e-mail invalide",
+  "invalidFormat": "Format invalide",
+  "passwordsMustMatch": "Les mots de passe doivent correspondre",
+  "passwordMin": "Le mot de passe doit contenir au moins {min} caractères",
+  "passwordMax": "Le mot de passe ne peut pas dépasser {max} caractères",
+  "nameMin": "Le nom doit contenir au moins {min} caractères",
+  "nameMax": "Le nom ne peut pas dépasser {max} caractères",
+  "minLength": "Doit contenir au moins {min} caractères",
+  "maxLength": "Ne peut pas dépasser {max} caractères",
+  "invalidNumber": "Valeur numérique invalide",
+  "tooShort": "Trop court",
+  "tooLong": "Trop long"
+}

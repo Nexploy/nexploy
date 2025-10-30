@@ -165,7 +165,6 @@ export class SSEProxy {
                     this.closeController(new Error('Connection timeout'));
                 }
             } catch (error) {
-                console.error('Error during ping interval:', error);
                 this.stopPingInterval();
                 this.isClosed = true;
             }

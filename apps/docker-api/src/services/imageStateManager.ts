@@ -3,13 +3,8 @@ import { EventEmitter } from 'events';
 import { logger } from '@/utils/logger';
 import { ImageInfo, ImageInspectInfo } from 'dockerode';
 import byline from 'byline';
-import {
-    Image,
-    ImageAction,
-    ImageEvent,
-    ImageStateChanges,
-} from '@workspace/typescript-interface/docker.image';
-import { DockerStatus } from '@workspace/typescript-interface/docker.status';
+import { Image, ImageAction, ImageEvent, ImageStateChanges, } from '@workspace/typescript-interface/docker.image';
+import { DockerStatus, DockerStatusEvent } from '@workspace/typescript-interface/docker.status';
 import { dockerStatusManager } from '@/services/dockerStatusManager';
 
 class ImageStateManager extends EventEmitter {
@@ -28,9 +23,9 @@ class ImageStateManager extends EventEmitter {
     }
 
     private setupDockerStatusListeners() {
-        dockerStatusManager.on('docker-reconnected', async () => {
-            if (this.polling) {
-                logger.info('Docker reconnected, reinitializing container manager');
+        dockerStatusManager.on('status-changed', async (event: DockerStatusEvent) => {
+            if (this.polling && event.status === 'connected') {
+                logger.info('Docker reconnected, reinitializing image manager');
                 try {
                     logger.info('Sending images after Docker reconnection');
 
@@ -40,18 +35,16 @@ class ImageStateManager extends EventEmitter {
                 } catch (err) {
                     logger.error({ err }, 'Failed to reinitialize after Docker reconnection');
                 }
-            }
-        });
-
-        dockerStatusManager.on('docker-disconnected', () => {
-            logger.warn('Docker disconnected, stopping event stream');
-            if (this.dockerEventStream) {
-                try {
-                    this.dockerEventStream.destroy();
-                } catch (err) {
-                    logger.error({ err }, 'Error destroying Docker event stream');
+            } else if (this.polling && event.status === 'disconnected') {
+                logger.warn('Docker disconnected, stopping image event stream');
+                if (this.dockerEventStream) {
+                    try {
+                        this.dockerEventStream.destroy();
+                    } catch (err) {
+                        logger.error({ err }, 'Error destroying Docker image event stream');
+                    }
+                    this.dockerEventStream = null;
                 }
-                this.dockerEventStream = null;
             }
         });
     }
@@ -115,6 +108,11 @@ class ImageStateManager extends EventEmitter {
     }
 
     private async loadInitialState() {
+        if (!dockerStatusManager.isConnected()) {
+            logger.warn('Cannot load initial state: Docker is not connected');
+            return;
+        }
+
         try {
             const images = await docker.listImages({ all: true });
 
@@ -498,13 +496,6 @@ class ImageStateManager extends EventEmitter {
             this.images = newImageMap;
 
             logger.info({ count: this.images.size }, 'Hard refresh completed successfully');
-
-            const refreshedState: ImageEvent = {
-                type: 'initial',
-                images: Array.from(this.images.values()),
-                timestamp: Date.now(),
-            };
-            this.emit('initial-state', refreshedState);
         } catch (err) {
             logger.error({ err }, 'Error during hard refresh of image state');
             throw err;
