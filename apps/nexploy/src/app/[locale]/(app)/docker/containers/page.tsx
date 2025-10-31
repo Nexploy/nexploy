@@ -17,7 +17,7 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { ContainersStack } from '@/components/docker/container/ContainersStack';
 import { ContainersStandalone } from '@/components/docker/container/ContainersStandalone';
-import { useContainerStore } from '@/stores/useContainerStore';
+import { useContainerStore } from '@/stores/docker/useContainerStore';
 
 export default function DockerContainersPage() {
     const lastUpdate = useContainerStore((state) => state.lastUpdate);

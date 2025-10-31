@@ -9,9 +9,12 @@ import {
     ContainerPorts,
     ContainerStateChanges,
     ContainerStateEvents,
-} from '@workspace/typescript-interface/docker.container';
-import { DockerStatus, DockerStatusEvent } from '@workspace/typescript-interface/docker.status';
-import { dockerStatusManager } from '@/services/dockerStatusManager';
+} from '@workspace/typescript-interface/docker/docker.container';
+import {
+    DockerStatus,
+    DockerStatusEvent,
+} from '@workspace/typescript-interface/docker/docker.status';
+import { dockerStatusManager } from '@/managers/dockerStatusManager';
 
 class ContainerStateManager extends EventEmitter {
     private containers: Map<string, Container> = new Map();

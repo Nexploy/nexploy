@@ -1,22 +1,10 @@
 import { create } from 'zustand';
 import { toast } from 'sonner';
-import { DockerStatus, DockerStatusEvent } from '@workspace/typescript-interface/docker.status';
+import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
 import { isToastT } from '@/utils/isToastT';
+import { DockerState } from '@workspace/typescript-interface/stores/dockerStore';
 
-interface ContainerState {
-    status: DockerStatus;
-    error: Error | null;
-    lastUpdate: number;
-    eventSource: EventSource | null;
-    reconnectTimeout: NodeJS.Timeout | null;
-
-    setStatus: (status: DockerStatus) => void;
-
-    connect: () => void;
-    disconnect: () => void;
-}
-
-export const useDockerStore = create<ContainerState>((set, get) => ({
+export const useDockerStore = create<DockerState>((set, get) => ({
     status: 'connecting',
     error: null,
     lastUpdate: 0,

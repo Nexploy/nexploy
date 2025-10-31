@@ -10,7 +10,7 @@ import {
     EmptyTitle,
 } from '@workspace/ui/components/empty';
 import { Container as IconContainer } from 'lucide-react';
-import { useContainerStore } from '@/stores/useContainerStore';
+import { useContainerStore } from '@/stores/docker/useContainerStore';
 
 interface ContainersStandaloneProps {
     keepEmpty?: boolean;

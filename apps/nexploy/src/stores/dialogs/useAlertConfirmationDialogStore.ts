@@ -3,15 +3,15 @@ import { ReactElement } from 'react';
 
 export interface AlertConfirmationDialogState {
     open: boolean;
-    title?: string
-    description?: ReactElement | string
+    title?: string;
+    description?: ReactElement | string;
     cancelLabel?: string | null;
     actionLabel?: string | null;
     isPending: boolean;
     disableCancelButton?: boolean;
     disableActionButton?: boolean;
-    onAction?: () => Promise<any> | void;
-    onCancel?: () => Promise<any> | void;
+    onAction?: () => Promise<any>;
+    onCancel?: () => Promise<any>;
 }
 
 export interface AlertConfirmationDialogActions {
@@ -19,7 +19,8 @@ export interface AlertConfirmationDialogActions {
     closeAlertDialog: () => void;
 }
 
-export type AlertConfirmationDialogStore = AlertConfirmationDialogState & AlertConfirmationDialogActions;
+export type AlertConfirmationDialogStore = AlertConfirmationDialogState &
+    AlertConfirmationDialogActions;
 
 const defaultAlertState: AlertConfirmationDialogState = {
     open: false,
@@ -30,8 +31,7 @@ const defaultAlertState: AlertConfirmationDialogState = {
     disableCancelButton: false,
     disableActionButton: false,
     isPending: false,
-    onAction: async () => {
-    },
+    onAction: async () => {},
     onCancel: undefined,
 };
 

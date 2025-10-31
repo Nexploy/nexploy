@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
-import { dockerStatusManager } from '@/services/dockerStatusManager';
-import { containerStateManager } from '@/services/containerStateManager';
-import { imageStateManager } from '@/services/imageStateManager';
+import { dockerStatusManager } from '@/managers/dockerStatusManager';
+import { containerStateManager } from '@/managers/containerStateManager';
+import { imageStateManager } from '@/managers/imageStateManager';
 
 const app = new Hono();
 

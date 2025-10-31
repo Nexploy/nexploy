@@ -1,4 +1,4 @@
-import { DropdownActionTool } from './commun';
+import { DropdownActionTool } from '../commun';
 
 export interface Image {
     id: string;

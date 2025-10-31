@@ -6,7 +6,7 @@ import {
 } from '@workspace/ui/components/dropdown-menu';
 import { Trash } from 'lucide-react';
 import { onImageAction } from '@/actions/docker/image/imageAction.action';
-import { ImageAction, ImageTool } from '@workspace/typescript-interface/docker.image';
+import { ImageAction, ImageTool } from '@workspace/typescript-interface/docker/docker.image';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 
 interface ImageDropdownActionsProps {

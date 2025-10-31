@@ -2,7 +2,7 @@ import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { parseQuery } from '@/helpers/parseQuery';
 import { Hono } from 'hono';
-import { imageStateManager } from '@/services/imageStateManager';
+import { imageStateManager } from '@/managers/imageStateManager';
 
 const app = new Hono();
 

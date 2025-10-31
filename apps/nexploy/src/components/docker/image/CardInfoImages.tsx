@@ -1,6 +1,6 @@
 'use client';
 
-import { useImageStore } from '@/stores/useImageStore';
+import { useImageStore } from '@/stores/docker/useImageStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { HardDrive, LayoutList, Tag } from 'lucide-react';
 import { formatBytes } from '@/utils/formatBytes';

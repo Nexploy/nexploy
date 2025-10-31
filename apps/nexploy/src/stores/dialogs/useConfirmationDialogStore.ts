@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { ReactElement } from 'react';
-import { DialogContentProps } from '@/components/ui/dialog';
+import { DialogContentProps } from '@radix-ui/react-dialog';
 
 export interface ConfirmationDialogState {
     open: boolean;

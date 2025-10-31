@@ -1,10 +1,6 @@
 import { Fragment } from 'react';
-import {
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-} from '@workspace/ui/components/dropdown-menu';
-import { ContainerState, ContainerTool } from '@workspace/typescript-interface/docker.container';
+import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, } from '@workspace/ui/components/dropdown-menu';
+import { ContainerState, ContainerTool, } from '@workspace/typescript-interface/docker/docker.container';
 import { Eye, Pause, Play, RotateCw, Square, Trash2 } from 'lucide-react';
 import { onContainerPauseAction } from '@/actions/docker/container/containerPause.action';
 import { onContainerUnpauseAction } from '@/actions/docker/container/containerUnpause.action';

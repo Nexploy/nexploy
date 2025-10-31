@@ -3,9 +3,17 @@ import { EventEmitter } from 'events';
 import { logger } from '@/utils/logger';
 import { ImageInfo, ImageInspectInfo } from 'dockerode';
 import byline from 'byline';
-import { Image, ImageAction, ImageEvent, ImageStateChanges, } from '@workspace/typescript-interface/docker.image';
-import { DockerStatus, DockerStatusEvent } from '@workspace/typescript-interface/docker.status';
-import { dockerStatusManager } from '@/services/dockerStatusManager';
+import {
+    Image,
+    ImageAction,
+    ImageEvent,
+    ImageStateChanges,
+} from '@workspace/typescript-interface/docker/docker.image';
+import {
+    DockerStatus,
+    DockerStatusEvent,
+} from '@workspace/typescript-interface/docker/docker.status';
+import { dockerStatusManager } from '@/managers/dockerStatusManager';
 
 class ImageStateManager extends EventEmitter {
     private images: Map<string, Image> = new Map();

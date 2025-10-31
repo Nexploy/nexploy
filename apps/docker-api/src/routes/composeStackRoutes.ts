@@ -2,7 +2,7 @@ import Docker from 'dockerode';
 import { Hono } from 'hono';
 import { handleAsync } from '@/helpers/handleAsync';
 import { logger } from '@/utils/logger';
-import { ComposesAction } from '@workspace/typescript-interface/docker.composeStack';
+import { ComposesAction } from '@workspace/typescript-interface/docker/docker.composeStack';
 
 const docker = new Docker();
 const app = new Hono();

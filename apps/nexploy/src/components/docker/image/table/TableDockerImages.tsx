@@ -10,11 +10,18 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@workspace/ui/components/table';
 import React, { useState } from 'react';
 import { columnsTableImages } from '@/components/docker/image/table/ColumnsDockerImages';
-import { useImageStore } from '@/stores/useImageStore';
-import { Image } from '@workspace/typescript-interface/docker.image';
+import { useImageStore } from '@/stores/docker/useImageStore';
+import { Image } from '@workspace/typescript-interface/docker/docker.image';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { ChevronLeft, ChevronRight, Plus, Trash } from 'lucide-react';

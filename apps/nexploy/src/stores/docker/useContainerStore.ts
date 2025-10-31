@@ -1,30 +1,7 @@
 import { create } from 'zustand';
-import { Container, ContainerEvent } from '@workspace/typescript-interface/docker.container';
+import { Container, ContainerEvent } from '@workspace/typescript-interface/docker/docker.container';
 import { toast } from 'sonner';
-
-interface ContainerState {
-    containers: Map<string, Container>;
-    error: Error | null;
-    lastUpdate: number | null;
-    eventSource: EventSource | null;
-    reconnectTimeout: NodeJS.Timeout | null;
-    setContainers: (containers: Map<string, Container>) => void;
-    setError: (error: Error | null) => void;
-    setLastUpdate: (timestamp: number) => void;
-    addContainer: (container: Container) => void;
-    updateContainer: (container: Container) => void;
-    removeContainer: (containerId: string) => void;
-
-    getContainer: (id: string) => Container | undefined;
-    getContainersByState: (state: Container['state']) => Container[];
-    getOrganizedContainers: () => {
-        stacks: Map<string, Container[]>;
-        standaloneContainers: Container[];
-    };
-
-    connect: (containerIds?: string[]) => void;
-    disconnect: () => void;
-}
+import { ContainerState } from '@workspace/typescript-interface/stores/containersStore';
 
 export const useContainerStore = create<ContainerState>((set, get) => ({
     containers: new Map(),

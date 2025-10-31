@@ -1,8 +1,8 @@
 import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
-import { containerStateManager } from '@/services/containerStateManager';
-import { dockerStatusManager } from '@/services/dockerStatusManager';
+import { containerStateManager } from '@/managers/containerStateManager';
+import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { ContainerCreateForm } from '@workspace/schemas-zod/container/containerCreate.schema';
 import { ContainerCreateOptions } from 'dockerode';
 
@@ -405,7 +405,6 @@ app.delete(
     '/:id/remove',
     handleAsync(async (c) => {
         const id = c.req.param('id');
-        console.log(id);
         const container = docker.getContainer(id);
 
         await container.remove();

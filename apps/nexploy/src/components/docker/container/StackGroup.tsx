@@ -13,9 +13,9 @@ import {
     AccordionTrigger,
 } from '@workspace/ui/components/accordion';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
-import { Container } from '@workspace/typescript-interface/docker.container';
+import { Container } from '@workspace/typescript-interface/docker/docker.container';
 import { onComposesAction } from '@/actions/docker/composes/composeAction';
-import { ComposesAction } from '@workspace/typescript-interface/docker.composeStack';
+import { ComposesAction } from '@workspace/typescript-interface/docker/docker.composeStack';
 
 interface StackGroupProps {
     stackName: string;

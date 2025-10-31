@@ -1,7 +1,10 @@
 import { docker } from '@/utils/dockerClient';
 import { EventEmitter } from 'events';
 import { logger } from '@/utils/logger';
-import { DockerStatus, DockerStatusEvent } from '@workspace/typescript-interface/docker.status';
+import {
+    DockerStatus,
+    DockerStatusEvent,
+} from '@workspace/typescript-interface/docker/docker.status';
 
 class DockerStatusManager extends EventEmitter {
     private status: DockerStatus = 'disconnected';

@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
-import { imageStateManager } from '@/services/imageStateManager';
+import { imageStateManager } from '@/managers/imageStateManager';
 import { logger } from '@/utils/logger';
-import { ImageEvent } from '@workspace/typescript-interface/docker.image';
+import { ImageEvent } from '@workspace/typescript-interface/docker/docker.image';
 
 const app = new Hono();
 

@@ -11,7 +11,7 @@ import {
     StatusLabel,
     StatusProps,
 } from '@workspace/ui/components/kibo-ui/status';
-import { Container, ContainerState } from '@workspace/typescript-interface/docker.container';
+import { Container, ContainerState } from '@workspace/typescript-interface/docker/docker.container';
 import { ContainerDropdownActions } from '@/components/docker/container/ContainerDropdownActions';
 
 interface ContainerCardProps {

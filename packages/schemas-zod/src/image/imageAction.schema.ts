@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ImageAction } from '@workspace/typescript-interface/docker.image';
+import { ImageAction } from '@workspace/typescript-interface/docker/docker.image';
 
 const imageActions: [ImageAction, ...ImageAction[]] = [
     'pull',

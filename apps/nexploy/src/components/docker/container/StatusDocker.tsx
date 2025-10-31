@@ -9,8 +9,8 @@ import {
 import { Badge } from '@workspace/ui/components/badge';
 import type { ComponentProps } from 'react';
 import { cn } from '@workspace/ui/lib/utils';
-import { DockerStatus } from '@workspace/typescript-interface/docker.status';
-import { useDockerStore } from '@/stores/useDockerStore';
+import { DockerStatus } from '@workspace/typescript-interface/docker/docker.status';
+import { useDockerStore } from '@/stores/docker/useDockerStore';
 
 export function StatusDocker(props: ComponentProps<typeof Badge>) {
     const status = useDockerStore((state) => state.status);

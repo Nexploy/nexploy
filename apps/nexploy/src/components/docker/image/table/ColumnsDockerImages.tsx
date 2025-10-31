@@ -6,7 +6,7 @@ import { ArrowUpDown, MoreVertical } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Badge } from '@workspace/ui/components/badge';
-import { Image } from '@workspace/typescript-interface/docker.image';
+import { Image } from '@workspace/typescript-interface/docker/docker.image';
 import CopyButton from '@/components/utils/CopyButton';
 import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';

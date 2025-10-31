@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
-import { dockerStatusManager } from '@/services/dockerStatusManager';
+import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { logger } from '@/utils/logger';
-import { DockerStatusEvent, Event } from '@workspace/typescript-interface/docker.status';
+import { DockerStatusEvent, Event } from '@workspace/typescript-interface/docker/docker.status';
 
 const app = new Hono();
 

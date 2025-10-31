@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
-import { ContainerEvent } from '@workspace/typescript-interface/docker.container';
-import { containerStateManager } from '@/services/containerStateManager';
+import { ContainerEvent } from '@workspace/typescript-interface/docker/docker.container';
+import { containerStateManager } from '@/managers/containerStateManager';
 
 const app = new Hono();
 
