@@ -55,7 +55,7 @@ app.get('/stream', (c) => {
         const initialStats = {
             type: 'initial',
             stats: eventsStateManager.getStats(),
-            event: eventsStateManager.getStats(),
+            events: eventsStateManager.getAllEvents(),
             timestamp: Date.now(),
         };
 

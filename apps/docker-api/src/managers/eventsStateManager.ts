@@ -20,6 +20,8 @@ class EventsStateManager extends EventEmitter {
     private readonly MAX_RECONNECT_ATTEMPTS = 5;
     private eventsReceived = 0;
     private lastEventTime: number | null = null;
+    private events: DockerEventData[] = [];
+    private readonly MAX_EVENTS = 1000;
 
     constructor() {
         super();
@@ -98,6 +100,7 @@ class EventsStateManager extends EventEmitter {
         }
 
         this.removeAllListeners();
+        this.events = [];
         this.eventsReceived = 0;
         this.lastEventTime = null;
     }
@@ -185,14 +188,23 @@ class EventsStateManager extends EventEmitter {
         this.eventsReceived++;
         this.lastEventTime = Date.now();
 
+        this.events.unshift(event);
+
+        if (this.events.length > this.MAX_EVENTS) {
+            this.events = this.events.slice(0, this.MAX_EVENTS);
+        }
+
+        if (this.eventsReceived > this.MAX_EVENTS) this.eventsReceived = this.MAX_EVENTS;
+
         logger.debug(
             {
                 type: event.Type,
                 action: event.Action,
                 id: event.Actor.ID,
                 // attributes: event.Actor.Attributes,
+                eventsInMemory: this.events.length,
             },
-            'Docker event received 📈',
+            'Docker event received',
         );
 
         const eventData: EventsStateEvent = {
@@ -202,7 +214,6 @@ class EventsStateManager extends EventEmitter {
         };
 
         this.emit('docker-event', eventData);
-
         this.emit(`docker-event:${event.Type}`, eventData);
         this.emit(`docker-event:${event.Type}:${event.Action}`, eventData);
     }
@@ -225,6 +236,21 @@ class EventsStateManager extends EventEmitter {
         this.eventsReceived = 0;
         this.lastEventTime = null;
         logger.info('Events stats reset');
+    }
+
+    getAllEvents(): DockerEventData[] {
+        return [...this.events];
+    }
+
+    getRecentEvents(count: number): DockerEventData[] {
+        return this.events.slice(0, count);
+    }
+
+    clearEvents(): void {
+        this.events = [];
+        this.eventsReceived = 0;
+        this.lastEventTime = null;
+        logger.info('Events cleared from memory');
     }
 }
 

@@ -132,7 +132,7 @@ export default function EventsPage() {
                         <div className={'mx-6 flex justify-between gap-3'}>
                             <Input
                                 className={'w-1/4 shadow-xs'}
-                                placeholder="Rechercher..."
+                                placeholder="Rechercher par nom, action..."
                                 value={searchQuery}
                                 onChange={(e) => handleSearchChange(e.target.value)}
                             />

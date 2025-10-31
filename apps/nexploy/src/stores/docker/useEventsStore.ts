@@ -49,7 +49,7 @@ export const useEventsStore = create<EventsState>((set, get) => ({
 
             const newState = {
                 events: newEvents,
-                eventsReceived: state.eventsReceived + 1,
+                eventsReceived: Math.min(state.eventsReceived + 1, state.maxEvents),
                 lastEventTime: Date.now(),
             };
 
@@ -168,9 +168,8 @@ export const useEventsStore = create<EventsState>((set, get) => ({
 
             eventSource.addEventListener('initial-state', (e) => {
                 const data = JSON.parse(e.data);
-                console.log('Events - Initial state received:', data);
 
-                get().setEvents(event);
+                get().setEvents(data.events);
 
                 set({
                     lastUpdate: data.timestamp,
