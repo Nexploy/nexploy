@@ -7,7 +7,7 @@ export function ContainersStack() {
     const stacks = Array.from(stacksMap.entries());
 
     return (
-        <div className="space-y-2 px-6">
+        <div className="space-y-2 px-5">
             <div className="flex items-center gap-2 px-1">
                 <span className="text-lg font-semibold">Stacks</span>
                 <Badge variant={'secondary'}>{stacks.length}</Badge>

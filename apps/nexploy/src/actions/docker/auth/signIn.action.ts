@@ -9,7 +9,7 @@ import { redirect, RedirectType } from 'next/navigation';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 
 async function GetSignInFormSchema() {
-    const t = await getTranslations();
+    const t = await getTranslations('validation');
     return SignInFormSchema(t);
 }
 

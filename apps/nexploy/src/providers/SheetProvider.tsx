@@ -8,9 +8,20 @@ import {
     SheetTitle,
 } from '@workspace/ui/components/sheet';
 import { useSheetStore } from '@/stores/useSheetStore';
+import { AddVolumeSheet } from '@/components/dialog/AddVolumeSheet';
 
 export function SheetProvider() {
     const { isOpen, data, closeSheet } = useSheetStore();
+
+    const renderContent = () => {
+        if (!data) return null;
+
+        if (data.content === 'ADD_VOLUME') {
+            return <AddVolumeSheet />;
+        }
+
+        return data.content;
+    };
 
     return (
         <Sheet open={isOpen} onOpenChange={(open) => !open && closeSheet()}>
@@ -23,7 +34,7 @@ export function SheetProvider() {
                                 <SheetDescription>{data.description}</SheetDescription>
                             )}
                         </SheetHeader>
-                        <div className="mt-4">{data.content}</div>
+                        <div className="mt-4">{renderContent()}</div>
                     </>
                 )}
             </SheetContent>

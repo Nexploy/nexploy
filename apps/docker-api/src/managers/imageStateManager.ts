@@ -427,7 +427,7 @@ class ImageStateManager extends EventEmitter {
         return changes;
     }
 
-    getAllStates(): Image[] {
+    getAllImages(): Image[] {
         return Array.from(this.images.values());
     }
 

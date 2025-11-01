@@ -60,7 +60,7 @@ export function CardInfoImages() {
     ];
 
     return (
-        <div className="grid grid-cols-1 gap-5 px-6 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-5 px-5 md:grid-cols-4">
             {imageInfos.map((info, index) =>
                 isLoading ? (
                     <Skeleton key={index} className="rounded-xl py-19" />

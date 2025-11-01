@@ -24,7 +24,7 @@ import { useImageStore } from '@/stores/docker/useImageStore';
 import { Image } from '@workspace/typescript-interface/docker/docker.image';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
-import { ChevronLeft, ChevronRight, Plus, Trash } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Plus, Trash } from 'lucide-react';
 import { formatBytes } from '@/utils/formatBytes';
 import { Badge } from '@workspace/ui/components/badge';
 import Link from 'next/link';
@@ -39,7 +39,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@workspace/ui/components/tooltip';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useRouter } from '@/i18n/navigation';
 
 const globalFilterFn: FilterFn<Image> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -67,6 +74,8 @@ export function TableDockerImages() {
     const [rowSelection, setRowSelection] = useState({});
     const [pageSize, setPageSize] = useState<number | 'all'>(10);
 
+    const router = useRouter();
+
     const images = useImageStore((state) => state.images);
     const lastUpdate = useImageStore((state) => state.lastUpdate);
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
@@ -93,6 +102,10 @@ export function TableDockerImages() {
         },
     });
 
+    const selectedRows = table.getSelectedRowModel().rows;
+    const selectedRow = selectedRows[0];
+    const selectedImage = selectedRow?.original;
+
     const numberOfSelectedRows = Object.keys(rowSelection).length;
 
     const handleDeleteAction = () => {
@@ -109,10 +122,28 @@ export function TableDockerImages() {
         });
     };
 
+    const handleUseAction = () => {
+        router.push(`/docker/containers/add-container?image=${selectedImage?.repoTags[0]}`);
+    };
+
     const isShowingAll = pageSize === 'all';
+    const isUseDisabled = numberOfSelectedRows !== 1 || !selectedImage?.repoTags.length;
+
+    const getUseTooltipContent = () => {
+        if (numberOfSelectedRows === 0) {
+            return 'Please select an image to use';
+        }
+        if (numberOfSelectedRows > 1) {
+            return 'Please select only one image';
+        }
+        if (!selectedImage?.repoTags.length) {
+            return 'This image has no repository tags';
+        }
+        return;
+    };
 
     return (
-        <div className={'mx-6 space-y-3'}>
+        <div className={'mx-5 space-y-3'}>
             <div className={'flex justify-between'}>
                 <Input
                     className={'w-1/5 shadow-xs'}
@@ -134,6 +165,23 @@ export function TableDockerImages() {
                             </Badge>
                         )}
                     </Button>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <div>
+                                    <Button onClick={handleUseAction} disabled={isUseDisabled}>
+                                        <Play />
+                                        Use
+                                    </Button>
+                                </div>
+                            </TooltipTrigger>
+                            {getUseTooltipContent() && (
+                                <TooltipContent>
+                                    <p>{getUseTooltipContent()}</p>
+                                </TooltipContent>
+                            )}
+                        </Tooltip>
+                    </TooltipProvider>
                     <Button asChild>
                         <Link href={'/docker/images/add-image'}>
                             <Plus />
@@ -162,7 +210,7 @@ export function TableDockerImages() {
                     </TableHeader>
                     <TableBody>
                         {isLoading &&
-                            Array.from({ length: 10 }).map((_, rowIndex) => (
+                            Array.from({ length: 5 }).map((_, rowIndex) => (
                                 <TableRow key={rowIndex} className="h-12">
                                     {table.getAllColumns().map((column) => (
                                         <TableCell key={column.id}>
@@ -179,6 +227,15 @@ export function TableDockerImages() {
                                     className="py-6 text-center"
                                 >
                                     No images found.
+                                </TableCell>
+                            </TableRow>
+                        ) : !isLoading && table.getRowModel().rows.length === 0 ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={table.getAllColumns().length}
+                                    className="py-6 text-center"
+                                >
+                                    No images match your search.
                                 </TableCell>
                             </TableRow>
                         ) : (

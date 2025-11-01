@@ -1,6 +1,6 @@
 import { AppSidebar } from '@/components/sidebar/AppSidebar';
 import { SidebarInset, SidebarProvider } from '@workspace/ui/components/sidebar';
-import { Header } from '@/components/Header';
+import { Header } from '@/components/header/Header';
 import { SSEProvider } from '@/providers/SSEProviders';
 import { cookies } from 'next/headers';
 

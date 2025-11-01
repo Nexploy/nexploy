@@ -1,10 +1,12 @@
 import { ReactNode } from 'react';
 import { create } from 'zustand/react';
 
+type SheetContentType = 'ADD_VOLUME' | ReactNode;
+
 interface SheetData {
     title: string;
     description?: string;
-    content: ReactNode;
+    content: SheetContentType;
     side?: 'top' | 'right' | 'bottom' | 'left';
     onAction?: (data: any) => void;
     contextData?: any;

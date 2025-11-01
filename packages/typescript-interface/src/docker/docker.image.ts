@@ -25,17 +25,18 @@ export type ImageAction = 'pull' | 'push' | 'tag' | 'untag' | 'delete' | 'import
 export interface ImageTool extends DropdownActionTool {
     disabled?: boolean;
     variant?: 'default' | 'destructive';
+    tooltipContent?: string;
 }
 
 export interface ImageEvent {
     type: ImageType;
     timestamp: number;
     action?: ImageAction;
+    images?: Image[];
     image?: Image;
     oldState?: Image;
     changes?: ImageStateChanges;
     imageId?: string;
-    images?: Image[];
 }
 
 export interface ImageStateChanges {

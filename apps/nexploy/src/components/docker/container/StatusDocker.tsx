@@ -12,7 +12,11 @@ import { cn } from '@workspace/ui/lib/utils';
 import { DockerStatus } from '@workspace/typescript-interface/docker/docker.status';
 import { useDockerStore } from '@/stores/docker/useDockerStore';
 
-export function StatusDocker(props: ComponentProps<typeof Badge>) {
+interface StatusDockerProps extends ComponentProps<typeof Badge> {
+    disabledLabel?: boolean;
+}
+
+export function StatusDocker(props: StatusDockerProps) {
     const status = useDockerStore((state) => state.status);
 
     const statusMap: Record<DockerStatus, { status: StatusProps['status']; label: string }> = {

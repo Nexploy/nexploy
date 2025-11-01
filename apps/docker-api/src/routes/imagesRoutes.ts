@@ -1,6 +1,5 @@
 import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
-import { parseQuery } from '@/helpers/parseQuery';
 import { Hono } from 'hono';
 import { imageStateManager } from '@/managers/imageStateManager';
 
@@ -29,9 +28,8 @@ app.post(
  */
 app.get(
     '/',
-    handleAsync(async (c) => {
-        const all = parseQuery(c.req.query('all'));
-        return docker.listImages({ all });
+    handleAsync(async () => {
+        return imageStateManager.getAllImages();
     }),
 );
 

@@ -176,9 +176,6 @@ export default function AddImagePage() {
                 onExecute: ({ input }) => {
                     toast.loading(`Téléchargement de l'image ${input.imageName} en cours...`);
                 },
-                onError: ({ error }) => {
-                    toast.error(error.validationErrors?._errors);
-                },
                 onSettled: () => {
                     toast.dismiss();
                 },
@@ -199,7 +196,7 @@ export default function AddImagePage() {
                     className={'flex flex-1 flex-col overflow-hidden'}
                     onSubmit={handleSubmitWithAction}
                 >
-                    <div className="flex justify-between gap-4 px-6">
+                    <div className="flex justify-between gap-4 px-5">
                         <div className="flex gap-3">
                             <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
                                 <LayoutList className="text-primary size-7" />
@@ -230,7 +227,7 @@ export default function AddImagePage() {
                         </div>
                     </div>
 
-                    <Alert variant={'info'} className={'mx-6 mt-5 mb-4 w-auto'}>
+                    <Alert variant={'info'} className={'mx-5 mt-5 mb-4 w-auto'}>
                         <Info />
                         <AlertTitle>
                             Jusqu'à 100 pulls par période de 6 heures en anonyme via Docker Hub
@@ -238,7 +235,7 @@ export default function AddImagePage() {
                     </Alert>
 
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
-                        <div className="space-y-4 overflow-hidden px-6 pb-6">
+                        <div className="space-y-4 overflow-hidden px-5 pb-6">
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Configuration</CardTitle>
@@ -282,8 +279,8 @@ export default function AddImagePage() {
                                             return (
                                                 <Card
                                                     className={cn(
-                                                        'hover:border-primary hover:bg-accent/50 flex cursor-pointer flex-col gap-3 rounded-lg border p-4 transition-all disabled:cursor-not-allowed disabled:opacity-50',
-                                                        isSelected && 'border-primary bg-accent/20',
+                                                        'hover:border-primary flex cursor-pointer flex-col gap-3 rounded-lg border p-4 transition-all disabled:cursor-not-allowed disabled:opacity-50',
+                                                        isSelected && 'border-primary/70',
                                                     )}
                                                     onClick={() => handleSelectImage(image.name)}
                                                     key={image.title}

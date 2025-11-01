@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Container as IconContainer, Container, Layers, LayoutGrid } from 'lucide-react';
+import { Container as IconContainer, Container, Layers, LayoutGrid } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { Badge } from '@workspace/ui/components/badge';
 import {
@@ -54,10 +54,10 @@ export default function DockerContainersPage() {
 
     return (
         <div className="flex h-full flex-1 flex-col gap-5 pt-5">
-            <div className="flex justify-between gap-2 px-6">
+            <div className="flex justify-between gap-2 px-5">
                 <div className={'flex gap-3'}>
                     <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <Box className="text-primary size-7" />
+                        <Container className="text-primary size-7" />
                     </div>
                     <div>
                         <div className={'flex items-center gap-3'}>
@@ -106,7 +106,7 @@ export default function DockerContainersPage() {
 
             {!isLoading && !isEmpty && (
                 <Tabs className="flex flex-1 flex-col overflow-hidden" defaultValue="all">
-                    <TabsList className="mx-6 mb-2">
+                    <TabsList className="mx-5 mb-2">
                         {tabs.map((tab) => (
                             <TabsTrigger key={tab.id} value={tab.id} className="flex flex-1 gap-2">
                                 <div className="flex items-center gap-2">
@@ -120,7 +120,7 @@ export default function DockerContainersPage() {
                         ))}
                     </TabsList>
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
-                        <div className="pb-6">
+                        <div className="pb-5">
                             <TabsContent value="all" className="flex flex-col space-y-4">
                                 <ContainersStack />
                                 <ContainersStandalone />

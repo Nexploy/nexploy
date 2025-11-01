@@ -87,7 +87,7 @@ app.get('/stream', (c) => {
             logger.info({ clientId }, 'SSE Image client disconnected');
         };
 
-        const initialImages = imageStateManager.getAllStates();
+        const initialImages = imageStateManager.getAllImages();
         await handleInitialState({
             type: 'initial',
             images: initialImages,

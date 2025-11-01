@@ -4,8 +4,10 @@ import { cors } from 'hono/cors';
 import containerRoutes from './routes/containersRoutes';
 import composeStackRoutes from './routes/composeStackRoutes';
 import imagesRoutes from './routes/imagesRoutes';
+import eventsRoutes from './routes/eventsRoutes';
 import containerEvents from './routes/events/containerEvents';
 import dockerStatusEvents from './routes/events/dockerStatusEvents';
+import volumeEvents from './routes/events/volumeEvents';
 import eventsEvents from './routes/events/eventsEvents';
 import imageEvents from './routes/events/imageEvents';
 import { serve } from '@hono/node-server';
@@ -15,6 +17,9 @@ import { imageStateManager } from '@/managers/imageStateManager';
 import { containerStateManager } from '@/managers/containerStateManager';
 import dockerStatusRoutes from '@/routes/dockerStatusRoutes';
 import { eventsStateManager } from '@/managers/eventsStateManager';
+import { volumeStateManager } from '@/managers/volumeStateManager';
+import networkEvents from '@/routes/events/networkEvents';
+import { networkStateManager } from '@/managers/networkStateManager';
 
 const app = new Hono();
 
@@ -70,7 +75,12 @@ app.route('/api/composes', composeStackRoutes);
 app.route('/api/images/events', imageEvents);
 app.route('/api/images', imagesRoutes);
 
+app.route('/api/volumes/events', volumeEvents);
+
+app.route('/api/networks/events', networkEvents);
+
 app.route('/api/events/events', eventsEvents);
+app.route('/api/events', eventsRoutes);
 
 app.onError((err, c) => {
     logger.error({ err }, 'Application error');
@@ -90,6 +100,8 @@ const startServer = async () => {
             dockerStatusManager.start(),
             containerStateManager.start(),
             imageStateManager.start(),
+            volumeStateManager.start(),
+            networkStateManager.start(),
             eventsStateManager.start(),
         ]);
 

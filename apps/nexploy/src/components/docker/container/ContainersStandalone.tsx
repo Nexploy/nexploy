@@ -22,7 +22,7 @@ export function ContainersStandalone({ keepEmpty = false }: ContainersStandalone
 
     if (standaloneContainers.length) {
         return (
-            <div className={'space-y-3 px-6'}>
+            <div className={'space-y-3 px-5'}>
                 <div className="flex items-center gap-2 px-1">
                     <span className="text-lg font-semibold">Conteneurs</span>
                     <Badge variant={'secondary'}>{standaloneContainers.length}</Badge>

@@ -1,10 +1,19 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray } from 'react-hook-form';
-import { ArrowLeft, Container, Plus, Trash2 } from 'lucide-react';
+import {
+    ArrowLeft,
+    Circle,
+    Container,
+    Database,
+    Database as MySQL,
+    Leaf,
+    Plus,
+    Trash2,
+} from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
@@ -33,12 +42,104 @@ import {
 } from '@workspace/ui/components/select';
 import { Switch } from '@workspace/ui/components/switch';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { toast } from 'sonner';
 import { ContainerCreateFormSchema } from '@workspace/schemas-zod/container/containerCreate.schema';
 import { onContainerCreateAction } from '@/actions/docker/container/containerCreate.action';
+import {
+    InputAutoComplete,
+    InputAutoCompleteOption,
+} from '@workspace/ui/components/search-command';
+import useSWR from 'swr';
+import { fetcherApi } from '@/lib/api/fetcherApi';
+import { Optional } from '@workspace/ui/components/utils/Optional';
+import { cn } from '@workspace/ui/lib/utils';
+
+const CONTAINER_TEMPLATES = [
+    {
+        name: 'PostgreSQL',
+        icon: Database,
+        description: 'Base de données relationnelle',
+        category: 'Database',
+        config: {
+            name: 'postgres',
+            image: 'postgres:16',
+            restart: 'unless-stopped',
+            ports: [{ hostPort: '5432', containerPort: '5432', protocol: 'tcp' }],
+            envVars: [
+                { key: 'POSTGRES_USER', value: 'postgres' },
+                { key: 'POSTGRES_PASSWORD', value: 'password' },
+                { key: 'POSTGRES_DB', value: 'mydb' },
+            ],
+            volumes: [
+                {
+                    hostPath: 'postgres-data',
+                    containerPath: '/var/lib/postgresql/data',
+                    readOnly: false,
+                },
+            ],
+        },
+    },
+    {
+        name: 'Redis',
+        icon: Circle,
+        description: 'Cache et base de données en mémoire',
+        category: 'Cache',
+        config: {
+            name: 'redis',
+            image: 'redis:7-alpine',
+            restart: 'unless-stopped',
+            ports: [{ hostPort: '6379', containerPort: '6379', protocol: 'tcp' }],
+            envVars: [],
+            volumes: [{ hostPath: 'redis-data', containerPath: '/data', readOnly: false }],
+        },
+    },
+    {
+        name: 'MySQL',
+        icon: MySQL,
+        description: 'Base de données relationnelle',
+        category: 'Database',
+        config: {
+            name: 'mysql',
+            image: 'mysql:8',
+            restart: 'unless-stopped',
+            ports: [{ hostPort: '3306', containerPort: '3306', protocol: 'tcp' }],
+            envVars: [
+                { key: 'MYSQL_ROOT_PASSWORD', value: 'rootpassword' },
+                { key: 'MYSQL_DATABASE', value: 'mydb' },
+                { key: 'MYSQL_USER', value: 'user' },
+                { key: 'MYSQL_PASSWORD', value: 'password' },
+            ],
+            volumes: [{ hostPath: 'mysql-data', containerPath: '/var/lib/mysql', readOnly: false }],
+        },
+    },
+    {
+        name: 'MongoDB',
+        icon: Leaf,
+        description: 'Base de données NoSQL',
+        category: 'Database',
+        config: {
+            name: 'mongodb',
+            image: 'mongo:7',
+            restart: 'unless-stopped',
+            ports: [{ hostPort: '27017', containerPort: '27017', protocol: 'tcp' }],
+            envVars: [
+                { key: 'MONGO_INITDB_ROOT_USERNAME', value: 'admin' },
+                { key: 'MONGO_INITDB_ROOT_PASSWORD', value: 'password' },
+            ],
+            volumes: [{ hostPath: 'mongo-data', containerPath: '/data/db', readOnly: false }],
+        },
+    },
+] as const;
 
 export default function AddContainerPage() {
+    const { data: listImages, isLoading } = useSWR<InputAutoCompleteOption[]>(
+        `/api/docker/images`,
+        fetcherApi,
+    );
+
     const router = useRouter();
+
+    const searchParams = useSearchParams();
+    const imageFromUrl = searchParams.get('image') || '';
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onContainerCreateAction,
@@ -47,22 +148,15 @@ export default function AddContainerPage() {
             formProps: {
                 defaultValues: {
                     name: '',
-                    image: '',
-                    // restart: 'unless-stopped',
-                    // network: '',
-                    // hostname: '',
-                    // autoRemove: false,
-                    // privileged: false,
-                    // ports: [],
-                    // envVars: [],
-                    // volumes: [],
-                },
-            },
-            actionProps: {
-                onSuccess: () => {
-                    toast.success('Conteneur créé avec succès');
-                    router.push('/docker/containers');
-                    router.refresh();
+                    image: imageFromUrl,
+                    restart: 'unless-stopped',
+                    network: '',
+                    hostname: '',
+                    autoRemove: false,
+                    privileged: false,
+                    ports: [],
+                    envVars: [],
+                    volumes: [],
                 },
             },
         },
@@ -74,7 +168,7 @@ export default function AddContainerPage() {
         remove: removePort,
     } = useFieldArray({
         control: form.control,
-        imageId: 'ports',
+        name: 'ports',
     });
 
     const {
@@ -83,7 +177,7 @@ export default function AddContainerPage() {
         remove: removeEnvVar,
     } = useFieldArray({
         control: form.control,
-        imageId: 'envVars',
+        name: 'envVars',
     });
 
     const {
@@ -92,14 +186,14 @@ export default function AddContainerPage() {
         remove: removeVolume,
     } = useFieldArray({
         control: form.control,
-        imageId: 'volumes',
+        name: 'volumes',
     });
 
     const isSubmitting = action.status === 'executing';
 
     return (
         <div className="flex flex-1 flex-col gap-5 overflow-hidden pt-5">
-            <div className="flex justify-between gap-4 px-6">
+            <div className="flex justify-between gap-4 px-5">
                 <div className="flex gap-3">
                     <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
                         <Container className="text-primary size-7" />
@@ -118,22 +212,84 @@ export default function AddContainerPage() {
                     <Button
                         type="button"
                         variant="outline"
+                        icon={ArrowLeft}
                         onClick={() => router.back()}
                         disabled={isSubmitting}
                     >
-                        <ArrowLeft />
                         Retour
                     </Button>
-                    <Button type="submit" disabled={isSubmitting} onClick={handleSubmitWithAction}>
-                        <Plus />
-                        {isSubmitting ? 'Création...' : 'Créer le conteneur'}
+                    <Button
+                        type="submit"
+                        icon={Plus}
+                        isLoading={isSubmitting}
+                        disabled={isSubmitting}
+                        onClick={handleSubmitWithAction}
+                    >
+                        {isSubmitting ? 'Création en cours...' : 'Créer le conteneur'}
                     </Button>
                 </div>
             </div>
 
             <ScrollAreaWithShadow className="h-full overflow-hidden">
                 <Form {...form}>
-                    <div className="space-y-6 px-6 pb-6">
+                    <div className="space-y-5 px-5 pb-5">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Templates</CardTitle>
+                                <CardDescription>
+                                    Cliquez sur une template pour pré-remplir le formulaire
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                                {CONTAINER_TEMPLATES.map((template) => (
+                                    <Card
+                                        key={template.name}
+                                        onClick={() =>
+                                            form.reset({
+                                                ...template.config,
+                                                ports: template.config.ports.map((port) => ({
+                                                    ...port,
+                                                })),
+                                                envVars: template.config.envVars.map((env) => ({
+                                                    ...env,
+                                                })),
+                                                volumes: template.config.volumes.map((volume) => ({
+                                                    ...volume,
+                                                })),
+                                            })
+                                        }
+                                        className={cn(
+                                            'hover:border-primary flex cursor-pointer flex-col gap-3 rounded-lg border p-4 transition-all disabled:cursor-not-allowed disabled:opacity-50',
+                                            form.watch('image') === template.config.image &&
+                                                'border-primary/70',
+                                        )}
+                                    >
+                                        <CardHeader className={'px-0'}>
+                                            <div className="flex items-start justify-between gap-2">
+                                                <div className="bg-primary/10 flex size-10 shrink-0 items-center justify-center rounded-md">
+                                                    <template.icon className="text-primary size-5" />
+                                                </div>
+                                                <span className="text-muted-foreground bg-muted rounded px-2 py-1 text-xs">
+                                                    {template.category}
+                                                </span>
+                                            </div>
+                                        </CardHeader>
+
+                                        <CardContent className="flex flex-col gap-2 px-0">
+                                            <div className="space-y-1">
+                                                <h3 className="text-sm font-semibold">
+                                                    {template.name}
+                                                </h3>
+                                                <p className="text-muted-foreground line-clamp-1 text-xs">
+                                                    {template.description}
+                                                </p>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </CardContent>
+                        </Card>
+
                         {/* Configuration de base */}
                         <Card>
                             <CardHeader>
@@ -167,11 +323,17 @@ export default function AddContainerPage() {
                                         <FormItem>
                                             <FormLabel>Image Docker</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="nginx:latest" {...field} />
+                                                <InputAutoComplete
+                                                    isLoading={isLoading}
+                                                    options={listImages}
+                                                    heading={'Available images'}
+                                                    autoComplete="off"
+                                                    placeholder="postgres:latest"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                             <FormDescription>
-                                                L'image Docker à utiliser (ex: nginx:latest,
-                                                postgres:15)
+                                                L'image Docker à utiliser (ex: postgres:15)
                                             </FormDescription>
                                             <FormMessage />
                                         </FormItem>
@@ -184,7 +346,9 @@ export default function AddContainerPage() {
                                         name="hostname"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Hostname (optionnel)</FormLabel>
+                                                <FormLabel>
+                                                    Hostname <Optional />
+                                                </FormLabel>
                                                 <FormControl>
                                                     <Input placeholder="mon-app" {...field} />
                                                 </FormControl>
@@ -198,7 +362,9 @@ export default function AddContainerPage() {
                                         name="network"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Réseau (optionnel)</FormLabel>
+                                                <FormLabel>
+                                                    Réseau <Optional />
+                                                </FormLabel>
                                                 <FormControl>
                                                     <Input placeholder="bridge" {...field} />
                                                 </FormControl>
@@ -390,11 +556,11 @@ export default function AddContainerPage() {
                                                 />
                                                 <Button
                                                     type="button"
-                                                    variant="ghost"
+                                                    variant="destructiveGhost"
                                                     size="icon"
                                                     onClick={() => removePort(index)}
                                                 >
-                                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                                    <Trash2 />
                                                 </Button>
                                             </div>
                                         ))}
@@ -466,11 +632,11 @@ export default function AddContainerPage() {
                                                 />
                                                 <Button
                                                     type="button"
-                                                    variant="ghost"
+                                                    variant="destructiveGhost"
                                                     size="icon"
                                                     onClick={() => removeEnvVar(index)}
                                                 >
-                                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                                    <Trash2 />
                                                 </Button>
                                             </div>
                                         ))}
@@ -569,11 +735,11 @@ export default function AddContainerPage() {
                                                 />
                                                 <Button
                                                     type="button"
-                                                    variant="ghost"
+                                                    variant="destructiveGhost"
                                                     size="icon"
                                                     onClick={() => removeVolume(index)}
                                                 >
-                                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                                    <Trash2 />
                                                 </Button>
                                             </div>
                                         ))}

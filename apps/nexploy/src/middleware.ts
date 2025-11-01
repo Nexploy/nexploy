@@ -1,9 +1,9 @@
 import createMiddleware from 'next-intl/middleware';
 import { routing } from '@/i18n/routing';
 import { NextRequest, NextResponse } from 'next/server';
-import { getSessionCookie } from 'better-auth/cookies';
 import { isAdminExist } from '@/services/auth/auth.service';
 import { RedirectRule } from '@workspace/typescript-interface/middleware';
+import { auth } from '@/lib/auth/auth';
 
 const handleI18nRouting = createMiddleware(routing);
 
@@ -23,10 +23,12 @@ function getRedirectUrl(pathname: string, baseUrl: string): URL | null {
 
 async function checkRedirectRules(
     pathname: string,
-    sessionCookie: string | null,
+    request: NextRequest,
     requestUrl: string,
 ): Promise<NextResponse | null> {
     const hasAdmin = await isAdminExist();
+
+    const session = await auth.api.getSession({ headers: request.headers });
 
     const rules: RedirectRule[] = [
         {
@@ -35,7 +37,7 @@ async function checkRedirectRules(
             shouldSkip: (path) => path.startsWith('/setup'),
         },
         {
-            condition: !sessionCookie,
+            condition: !session,
             targetPath: '/signin',
             shouldSkip: (path) => path.startsWith('/signin'),
         },
@@ -52,9 +54,8 @@ async function checkRedirectRules(
 
 export default async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
-    const sessionCookie = getSessionCookie(request);
 
-    const redirectRule = await checkRedirectRules(pathname, sessionCookie, request.url);
+    const redirectRule = await checkRedirectRules(pathname, request, request.url);
     if (redirectRule) return redirectRule;
 
     const redirectUrl = getRedirectUrl(pathname, request.url);

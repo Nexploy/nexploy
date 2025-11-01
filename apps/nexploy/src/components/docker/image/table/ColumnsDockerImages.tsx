@@ -55,9 +55,9 @@ export const columnsTableImages: ColumnDef<Image>[] = [
             const nameJoin = nameTags?.join(', ') || '<none>';
 
             return (
-                <div className="flex items-center gap-2">
+                <div className="flex items-start gap-2">
                     <Status
-                        className={'text- truncate border-0 text-sm'}
+                        className={'max-w-60 truncate border-0 text-sm'}
                         status={containersUsed ? 'online' : 'offline'}
                         variant="outline"
                     >
@@ -102,10 +102,10 @@ export const columnsTableImages: ColumnDef<Image>[] = [
         accessorKey: 'id',
         header: 'Image ID',
         cell: ({ row }) => {
-            const imageId = row.original.id.substring(0, 16);
+            const imageId = row.original.id;
             return (
-                <div className="flex items-center gap-2">
-                    <code className="text-muted-foreground text-sm">{imageId}...</code>
+                <div className="flex max-w-60 items-center gap-2">
+                    <code className="text-muted-foreground truncate text-sm">{imageId}</code>
                     <CopyButton
                         textToCopy={row.original.id}
                         className="size-7 !text-xs"
@@ -154,23 +154,15 @@ export const columnsTableImages: ColumnDef<Image>[] = [
     },
     {
         id: 'actions',
-        cell: ({ row }) => {
-            const imageId = row.original.id;
-            const imageName = row.original.name;
-
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm">
-                            <MoreVertical />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <ImageDropdownActions
-                        imageId={imageId}
-                        imageName={imageName.length ? imageName : ['<none>']}
-                    />
-                </DropdownMenu>
-            );
-        },
+        cell: ({ row }) => (
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                        <MoreVertical />
+                    </Button>
+                </DropdownMenuTrigger>
+                <ImageDropdownActions image={row.original} />
+            </DropdownMenu>
+        ),
     },
 ];
