@@ -8,7 +8,7 @@ import { useEventsStore } from '@/stores/docker/useEventsStore';
 import { useVolumeStore } from '@/stores/docker/useVolumeStore';
 import { useNetworkStore } from '@/stores/docker/useNetworkStore';
 
-type SSEConnection = 'container' | 'image' | 'docker' | 'events' | 'volumes' | 'networks';
+type SSEConnection = 'docker' | 'containers' | 'images' | 'volumes' | 'networks' | 'events';
 
 interface SSEProviderProps extends PropsWithChildren {
     connections?: SSEConnection[];
@@ -16,7 +16,7 @@ interface SSEProviderProps extends PropsWithChildren {
 
 export function SSEProvider({
     children,
-    connections = ['container', 'docker', 'image', 'volumes', 'networks'],
+    connections = ['docker', 'containers', 'images', 'volumes', 'networks', 'events'],
 }: SSEProviderProps) {
     const containerConnect = useContainerStore((state) => state.connect);
     const containerDisconnect = useContainerStore((state) => state.disconnect);
@@ -38,8 +38,8 @@ export function SSEProvider({
 
     useEffect(() => {
         const connectFns: Record<SSEConnection, () => void> = {
-            container: containerConnect,
-            image: imageConnect,
+            containers: containerConnect,
+            images: imageConnect,
             docker: dockerConnect,
             events: eventsConnect,
             volumes: volumesConnect,
@@ -47,8 +47,8 @@ export function SSEProvider({
         };
 
         const disconnectFns: Record<SSEConnection, () => void> = {
-            container: containerDisconnect,
-            image: imageDisconnect,
+            containers: containerDisconnect,
+            images: imageDisconnect,
             docker: dockerDisconnect,
             events: eventsDisconnect,
             volumes: volumesDisconnect,
@@ -77,7 +77,6 @@ export function SSEProvider({
         networksDisconnect,
         volumesConnect,
         volumesDisconnect,
-        connections,
     ]);
 
     return children;

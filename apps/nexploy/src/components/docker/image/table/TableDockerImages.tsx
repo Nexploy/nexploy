@@ -39,12 +39,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@workspace/ui/components/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useRouter } from '@/i18n/navigation';
 
@@ -165,23 +160,21 @@ export function TableDockerImages() {
                             </Badge>
                         )}
                     </Button>
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <div>
-                                    <Button onClick={handleUseAction} disabled={isUseDisabled}>
-                                        <Play />
-                                        Use
-                                    </Button>
-                                </div>
-                            </TooltipTrigger>
-                            {getUseTooltipContent() && (
-                                <TooltipContent>
-                                    <p>{getUseTooltipContent()}</p>
-                                </TooltipContent>
-                            )}
-                        </Tooltip>
-                    </TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div>
+                                <Button onClick={handleUseAction} disabled={isUseDisabled}>
+                                    <Play />
+                                    Use
+                                </Button>
+                            </div>
+                        </TooltipTrigger>
+                        {getUseTooltipContent() && (
+                            <TooltipContent>
+                                <p>{getUseTooltipContent()}</p>
+                            </TooltipContent>
+                        )}
+                    </Tooltip>
                     <Button asChild>
                         <Link href={'/docker/images/add-image'}>
                             <Plus />

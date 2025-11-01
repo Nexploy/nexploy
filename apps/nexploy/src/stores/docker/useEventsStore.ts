@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import { EventsStateEvent } from '@workspace/typescript-interface/docker/docker.events';
 import { EventsState } from '@workspace/typescript-interface/stores/eventsStore';
+import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
 
 export const useEventsStore = create<EventsState>((set, get) => ({
     events: [],
@@ -139,106 +140,82 @@ export const useEventsStore = create<EventsState>((set, get) => ({
             set({ filter });
         }
 
-        if (state.eventSource) {
-            state.eventSource.close();
-        }
         if (state.reconnectTimeout) {
             clearTimeout(state.reconnectTimeout);
         }
 
         try {
-            const url = new URL('/api/events/stream', window.location.origin);
+            const unsubscribers: (() => void)[] = [];
 
-            if (filter?.types && filter.types.length === 1) {
-                url.href = `/api/events/events/stream/${filter.types[0]}`;
+            unsubscribers.push(
+                sseMultiplexer.subscribe('events', 'initial-state', (e) => {
+                    const data = JSON.parse(e.data);
 
-                if (filter.actions && filter.actions.length === 1) {
-                    url.href = `/api/events/events/stream/${filter.types[0]}/${filter.actions[0]}`;
-                }
-            }
+                    get().setEvents(data.events);
 
-            url.searchParams.set('endpoint', '/api/events/events/stream');
+                    set({
+                        lastUpdate: data.timestamp,
+                        eventsReceived: data.stats?.eventsReceived || 0,
+                        lastEventTime: data.stats?.lastEventTime || null,
+                        error: null,
+                    });
+                }),
+            );
 
-            const eventSource = new EventSource(url.toString());
+            unsubscribers.push(
+                sseMultiplexer.subscribe('events', 'heartbeat', (e) => {
+                    const data = JSON.parse(e.data);
+                    set({
+                        lastUpdate: data.timestamp,
+                        eventsReceived: data.stats?.eventsReceived || get().eventsReceived,
+                        lastEventTime: data.stats?.lastEventTime || get().lastEventTime,
+                    });
+                }),
+            );
 
-            eventSource.addEventListener('open', () => {
-                console.log('SSE Events connection established');
-                set({ error: null, eventSource });
+            unsubscribers.push(
+                sseMultiplexer.subscribe('events', 'docker-event', (e) => {
+                    const data: EventsStateEvent = JSON.parse(e.data);
+                    get().addEvent(data.event);
+                    set({ lastUpdate: data.timestamp });
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('events', 'docker-event-container', (e) => {
+                    const data: EventsStateEvent = JSON.parse(e.data);
+                    get().addEvent(data.event);
+                    set({ lastUpdate: data.timestamp });
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('events', 'docker-event-image', (e) => {
+                    const data: EventsStateEvent = JSON.parse(e.data);
+                    get().addEvent(data.event);
+                    set({ lastUpdate: data.timestamp });
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('events', 'docker-event-network', (e) => {
+                    const data: EventsStateEvent = JSON.parse(e.data);
+                    get().addEvent(data.event);
+                    set({ lastUpdate: data.timestamp });
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('events', 'docker-event-volume', (e) => {
+                    const data: EventsStateEvent = JSON.parse(e.data);
+                    get().addEvent(data.event);
+                    set({ lastUpdate: data.timestamp });
+                }),
+            );
+
+            set({
+                eventSource: { close: () => unsubscribers.forEach((fn) => fn()) } as EventSource,
             });
-
-            eventSource.addEventListener('initial-state', (e) => {
-                const data = JSON.parse(e.data);
-
-                get().setEvents(data.events);
-
-                set({
-                    lastUpdate: data.timestamp,
-                    eventsReceived: data.stats?.eventsReceived || 0,
-                    lastEventTime: data.stats?.lastEventTime || null,
-                });
-            });
-
-            eventSource.addEventListener('heartbeat', (e) => {
-                const data = JSON.parse(e.data);
-                set({
-                    lastUpdate: data.timestamp,
-                    eventsReceived: data.stats?.eventsReceived || get().eventsReceived,
-                    lastEventTime: data.stats?.lastEventTime || get().lastEventTime,
-                });
-            });
-
-            eventSource.addEventListener('docker-event', (e) => {
-                const data: EventsStateEvent = JSON.parse(e.data);
-                const event = data.event;
-
-                get().addEvent(event);
-
-                set({ lastUpdate: data.timestamp });
-            });
-
-            eventSource.addEventListener('docker-event-container', (e) => {
-                const data: EventsStateEvent = JSON.parse(e.data);
-                get().addEvent(data.event);
-                set({ lastUpdate: data.timestamp });
-            });
-
-            eventSource.addEventListener('docker-event-image', (e) => {
-                const data: EventsStateEvent = JSON.parse(e.data);
-                get().addEvent(data.event);
-                set({ lastUpdate: data.timestamp });
-            });
-
-            eventSource.addEventListener('docker-event-network', (e) => {
-                const data: EventsStateEvent = JSON.parse(e.data);
-                get().addEvent(data.event);
-                set({ lastUpdate: data.timestamp });
-            });
-
-            eventSource.addEventListener('docker-event-volume', (e) => {
-                const data: EventsStateEvent = JSON.parse(e.data);
-                get().addEvent(data.event);
-                set({ lastUpdate: data.timestamp });
-            });
-
-            eventSource.addEventListener('error', () => {
-                const currentEventSource = get().eventSource;
-
-                if (currentEventSource) {
-                    currentEventSource.close();
-                    set({ eventSource: null });
-                }
-
-                set({ error: new Error('Error connecting to Docker Events') });
-
-                const timeout = setTimeout(() => {
-                    console.log('Attempting to reconnect to Events...');
-                    get().connect(filter);
-                }, 5000);
-
-                set({ reconnectTimeout: timeout });
-            });
-
-            set({ eventSource });
         } catch (err) {
             console.error('Events - Failed to connect:', err);
             set({

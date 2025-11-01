@@ -8,3 +8,18 @@ export interface SSEProxyConfig {
     onClose?: () => void;
     transformData?: (data: Uint8Array) => Uint8Array;
 }
+
+export type SSEChannel = 'containers' | 'images' | 'docker' | 'events' | 'volumes' | 'networks';
+
+export interface SSEMultiplexedMessage {
+    channel: SSEChannel;
+    event: string;
+    data: string;
+}
+
+export type SSEEventHandler = (event: MessageEvent) => void;
+
+export interface SSEChannelSubscription {
+    channel: SSEChannel;
+    eventHandlers: Map<string, SSEEventHandler[]>;
+}

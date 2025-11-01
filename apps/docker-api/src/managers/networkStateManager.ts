@@ -124,7 +124,9 @@ class NetworkStateManager extends EventEmitter {
         try {
             const networks = await docker.listNetworks();
 
-            for (const network of networks) {
+            for (const { Id } of networks) {
+                const network = await docker.getNetwork(Id).inspect();
+
                 const state = this.parseNetworkInfo(network);
                 this.networks.set(state.id, state);
             }
@@ -317,7 +319,9 @@ class NetworkStateManager extends EventEmitter {
         try {
             const networks = await docker.listNetworks();
 
-            for (const network of networks) {
+            for (const { Id } of networks) {
+                const network = await docker.getNetwork(Id).inspect();
+
                 const newState = this.parseNetworkInfo(network);
                 const oldState = this.networks.get(newState.id);
 
@@ -422,7 +426,9 @@ class NetworkStateManager extends EventEmitter {
             const networks = await docker.listNetworks();
             const newNetworkMap = new Map<string, Network>();
 
-            for (const network of networks) {
+            for (const { Id } of networks) {
+                const network = await docker.getNetwork(Id).inspect();
+
                 const state = this.parseNetworkInfo(network);
                 newNetworkMap.set(state.id, state);
             }

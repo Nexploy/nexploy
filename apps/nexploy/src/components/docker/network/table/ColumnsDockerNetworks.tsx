@@ -110,7 +110,7 @@ export const columnsTableNetworks: ColumnDef<Network>[] = [
         cell: ({ row }) => {
             const networkId = row.original.id;
             return (
-                <div className="flex max-w-60 items-center gap-2">
+                <div className="flex max-w-50 items-center gap-2">
                     <code className="text-muted-foreground truncate text-sm">{networkId}</code>
                     <CopyButton
                         textToCopy={row.original.id}
@@ -135,6 +135,7 @@ export const columnsTableNetworks: ColumnDef<Network>[] = [
         ),
         cell: ({ row }) => {
             const containers = row.original.containers;
+
             const count = containers?.length || 0;
             return (
                 <div className="flex items-center gap-2">

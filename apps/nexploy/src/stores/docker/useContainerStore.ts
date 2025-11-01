@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { Container, ContainerEvent } from '@workspace/typescript-interface/docker/docker.container';
 import { toast } from 'sonner';
 import { ContainerState } from '@workspace/typescript-interface/stores/containersStore';
+import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
 
 export const useContainerStore = create<ContainerState>((set, get) => ({
     containers: new Map(),
@@ -62,116 +63,100 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
         return { stacks, standaloneContainers };
     },
 
-    connect: (containerIds) => {
+    connect: () => {
         const state = get();
 
-        if (state.eventSource) {
-            state.eventSource.close();
-        }
         if (state.reconnectTimeout) {
             clearTimeout(state.reconnectTimeout);
         }
 
         try {
-            const url = new URL('/api/events/stream', window.location.origin);
+            const unsubscribers: (() => void)[] = [];
 
-            if (containerIds?.length) url.searchParams.set('containers', containerIds.join(','));
-            url.searchParams.set('endpoint', '/api/containers/events/stream');
+            unsubscribers.push(
+                sseMultiplexer.subscribe('containers', 'initial-state', (e) => {
+                    const data: ContainerEvent = JSON.parse(e.data);
+                    const containers = new Map<string, Container>();
 
-            const eventSource = new EventSource(url.toString());
+                    data.containers?.forEach((container) => {
+                        containers.set(container.id, container);
+                    });
 
-            eventSource.addEventListener('open', () => {
-                console.log('SSE Container connection established');
-                set({ error: null, eventSource });
+                    set({
+                        containers,
+                        lastUpdate: data.timestamp,
+                        error: null,
+                    });
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('containers', 'heartbeat', (e) => {
+                    const { timestamp }: ContainerEvent = JSON.parse(e.data);
+                    set({ lastUpdate: timestamp });
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('containers', 'state-change', (e) => {
+                    const data: ContainerEvent = JSON.parse(e.data);
+                    const containers = new Map(get().containers);
+
+                    if (data.container) containers.set(data.container.id, data.container);
+
+                    set({
+                        containers,
+                        lastUpdate: data.timestamp,
+                    });
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('containers', 'container-added', (e) => {
+                    const data: ContainerEvent = JSON.parse(e.data);
+                    if (!data.container) return;
+
+                    get().addContainer(data.container);
+                    toast.success(`Container ${data.container.name} added`);
+                    set({ lastUpdate: data.timestamp });
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('containers', 'container-updated', (e) => {
+                    const data: ContainerEvent = JSON.parse(e.data);
+                    const container = data.container;
+                    if (!container) return;
+
+                    const { name } = container;
+                    const { action, timestamp } = data;
+
+                    get().updateContainer(container);
+
+                    if (action === 'die') {
+                        toast.error(`Container ${name} die unexpectedly`);
+                    } else if (action !== 'kill') {
+                        toast.success(`Container ${name} (action: ${action})`);
+                    }
+
+                    set({ lastUpdate: timestamp });
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('containers', 'container-removed', (e) => {
+                    const data: ContainerEvent = JSON.parse(e.data);
+                    if (!data.containerId) return;
+
+                    get().removeContainer(data.containerId);
+                    toast.success(`Container ${data.oldState?.name} removed`);
+                    set({ lastUpdate: data.timestamp });
+                }),
+            );
+
+            set({
+                eventSource: { close: () => unsubscribers.forEach((fn) => fn()) } as EventSource,
             });
-
-            eventSource.addEventListener('initial-state', (e) => {
-                const data: ContainerEvent = JSON.parse(e.data);
-                const containers = new Map<string, Container>();
-
-                data.containers?.forEach((container) => {
-                    containers.set(container.id, container);
-                });
-
-                set({
-                    containers,
-                    lastUpdate: data.timestamp,
-                });
-            });
-
-            eventSource.addEventListener('heartbeat', (e) => {
-                const { timestamp }: ContainerEvent = JSON.parse(e.data);
-                set({ lastUpdate: timestamp });
-            });
-
-            eventSource.addEventListener('state-change', (e) => {
-                const data: ContainerEvent = JSON.parse(e.data);
-                const containers = new Map(get().containers);
-
-                if (data.container) containers.set(data.container.id, data.container);
-
-                set({
-                    containers,
-                    lastUpdate: data.timestamp,
-                });
-            });
-
-            eventSource.addEventListener('container-added', (e) => {
-                const data: ContainerEvent = JSON.parse(e.data);
-                if (!data.container) return;
-
-                get().addContainer(data.container);
-                toast.success(`Container ${data.container.name} added`);
-                set({ lastUpdate: data.timestamp });
-            });
-
-            eventSource.addEventListener('container-updated', (e) => {
-                const data: ContainerEvent = JSON.parse(e.data);
-                const container = data.container;
-                if (!container) return;
-
-                const { name } = container;
-                const { action, timestamp } = data;
-
-                get().updateContainer(container);
-
-                if (action === 'die') {
-                    toast.error(`Container ${name} die unexpectedly`);
-                } else if (action !== 'kill') {
-                    toast.success(`Container ${name} (action: ${action})`);
-                }
-
-                set({ lastUpdate: timestamp });
-            });
-
-            eventSource.addEventListener('container-removed', (e) => {
-                const data: ContainerEvent = JSON.parse(e.data);
-                if (!data.containerId) return;
-
-                get().removeContainer(data.containerId);
-                toast.success(`Container ${data.oldState?.name} removed`);
-                set({ lastUpdate: data.timestamp });
-            });
-
-            eventSource.addEventListener('error', () => {
-                const currentEventSource = get().eventSource;
-
-                if (currentEventSource) {
-                    currentEventSource.close();
-                    set({ eventSource: null });
-                }
-
-                set({ error: new Error('Error connecting to Container Docker') });
-
-                const timeout = setTimeout(() => {
-                    console.log('Attempting to reconnect...');
-                    get().connect(containerIds);
-                }, 5000);
-
-                set({ reconnectTimeout: timeout });
-            });
-
-            set({ eventSource });
         } catch (err) {
             console.error('Containers - Failed to connect :', err);
             set({

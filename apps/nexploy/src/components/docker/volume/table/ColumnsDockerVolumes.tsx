@@ -12,6 +12,8 @@ import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';
 import { VolumeDropdownActions } from '@/components/docker/volume/VolumeDropdownActions';
 import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
+import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 export const columnsTableVolumes: ColumnDef<Volume>[] = [
     {
@@ -49,10 +51,30 @@ export const columnsTableVolumes: ColumnDef<Volume>[] = [
         ),
         cell: ({ row }) => {
             const name = row.original.name;
+            const usageData = row.original.usageData;
+
+            const volumeUsed = usageData?.RefCount;
 
             return (
-                <div className="flex max-w-60 items-center gap-2">
-                    <span className="truncate font-medium">{name}</span>
+                <div className="flex items-start gap-2">
+                    <Status
+                        className={'max-w-60 truncate border-0 text-sm'}
+                        status={volumeUsed ? 'online' : 'offline'}
+                        variant="outline"
+                    >
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <StatusIndicator />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                {volumeUsed ? <p>Volume Used</p> : <p>Volume Unused</p>}
+                            </TooltipContent>
+                        </Tooltip>
+
+                        <StatusLabel className="truncate font-medium text-current">
+                            {name}
+                        </StatusLabel>
+                    </Status>
                 </div>
             );
         },

@@ -5,6 +5,7 @@ import { containerStateManager } from '@/managers/containerStateManager';
 import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { ContainerCreateForm } from '@workspace/schemas-zod/container/containerCreate.schema';
 import { ContainerCreateOptions } from 'dockerode';
+import { logger } from '@/utils/logger';
 
 const app = new Hono();
 
@@ -23,7 +24,7 @@ app.post(
         try {
             await docker.getImage(body.image).inspect();
         } catch (error) {
-            console.log(`Image ${body.image} not found locally, pulling...`);
+            logger.info(`Image ${body.image} not found locally, pulling...`);
             await new Promise((resolve, reject) => {
                 docker.pull(body.image, (err: any, stream: NodeJS.ReadableStream) => {
                     if (err) return reject(err);

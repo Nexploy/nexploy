@@ -38,6 +38,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 const globalFilterFn: FilterFn<Network> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -91,6 +92,9 @@ export function TableDockerNetworks() {
     });
 
     const selectedRows = table.getSelectedRowModel().rows;
+    const selectedRow = selectedRows[0];
+    const selectedNetwork = selectedRow?.original;
+
     const numberOfSelectedRows = Object.keys(rowSelection).length;
 
     const hasBuiltinSelected = selectedRows.some((row) =>
@@ -117,6 +121,16 @@ export function TableDockerNetworks() {
     const isShowingAll = pageSize === 'all';
     const isDeleteDisabled = !numberOfSelectedRows || hasBuiltinSelected || hasConnectedNetworks;
 
+    const getUseTooltipContent = () => {
+        if (hasBuiltinSelected) {
+            return 'Cannot remove built-in network';
+        }
+        if ((selectedNetwork?.containers?.length || 0) > 0) {
+            return 'Disconnect all containers first';
+        }
+        return;
+    };
+
     return (
         <div className={'mx-5 space-y-3'}>
             <div className={'flex justify-between'}>
@@ -127,19 +141,30 @@ export function TableDockerNetworks() {
                     onChange={(e) => setGlobalFilter(e.target.value)}
                 />
                 <div className={'flex gap-3'}>
-                    <Button
-                        variant={'destructive'}
-                        onClick={handleDeleteAction}
-                        disabled={isDeleteDisabled}
-                    >
-                        <Trash />
-                        Remove{' '}
-                        {!!numberOfSelectedRows && (
-                            <Badge variant={'secondary'} className={'rounded-full'}>
-                                {numberOfSelectedRows}
-                            </Badge>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div>
+                                <Button
+                                    variant={'destructive'}
+                                    onClick={handleDeleteAction}
+                                    disabled={isDeleteDisabled}
+                                >
+                                    <Trash />
+                                    Remove{' '}
+                                    {!!numberOfSelectedRows && (
+                                        <Badge variant={'secondary'} className={'rounded-full'}>
+                                            {numberOfSelectedRows}
+                                        </Badge>
+                                    )}
+                                </Button>
+                            </div>
+                        </TooltipTrigger>
+                        {getUseTooltipContent() && (
+                            <TooltipContent>
+                                <p>{getUseTooltipContent()}</p>
+                            </TooltipContent>
                         )}
-                    </Button>
+                    </Tooltip>
                     <Button disabled>
                         <Plus />
                         Create Network

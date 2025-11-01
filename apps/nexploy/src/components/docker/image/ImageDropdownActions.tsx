@@ -4,12 +4,7 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
 } from '@workspace/ui/components/dropdown-menu';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@workspace/ui/components/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Play, Trash } from 'lucide-react';
 import { onImageAction } from '@/actions/docker/image/imageAction.action';
 import { Image, ImageAction, ImageTool } from '@workspace/typescript-interface/docker/docker.image';
@@ -59,43 +54,41 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
 
     return (
         <DropdownMenuContent align="end">
-            <TooltipProvider>
-                {containerTools.map((tool, index) => (
-                    <Fragment key={index}>
-                        {tool.separator && <DropdownMenuSeparator />}
-                        {tool.tooltipContent ? (
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <div>
-                                        <DropdownMenuItem
-                                            variant={tool.variant}
-                                            onClick={tool.action}
-                                            disabled={tool.disabled}
-                                        >
-                                            <tool.icon />
-                                            {tool.label}
-                                        </DropdownMenuItem>
-                                    </div>
-                                </TooltipTrigger>
-                                {tool.tooltipContent && (
-                                    <TooltipContent>
-                                        <p>{tool.tooltipContent}</p>
-                                    </TooltipContent>
-                                )}
-                            </Tooltip>
-                        ) : (
-                            <DropdownMenuItem
-                                variant={tool.variant}
-                                onClick={tool.action}
-                                disabled={tool.disabled}
-                            >
-                                <tool.icon />
-                                {tool.label}
-                            </DropdownMenuItem>
-                        )}
-                    </Fragment>
-                ))}
-            </TooltipProvider>
+            {containerTools.map((tool, index) => (
+                <Fragment key={index}>
+                    {tool.separator && <DropdownMenuSeparator />}
+                    {tool.tooltipContent ? (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <div>
+                                    <DropdownMenuItem
+                                        variant={tool.variant}
+                                        onClick={tool.action}
+                                        disabled={tool.disabled}
+                                    >
+                                        <tool.icon />
+                                        {tool.label}
+                                    </DropdownMenuItem>
+                                </div>
+                            </TooltipTrigger>
+                            {tool.tooltipContent && (
+                                <TooltipContent>
+                                    <p>{tool.tooltipContent}</p>
+                                </TooltipContent>
+                            )}
+                        </Tooltip>
+                    ) : (
+                        <DropdownMenuItem
+                            variant={tool.variant}
+                            onClick={tool.action}
+                            disabled={tool.disabled}
+                        >
+                            <tool.icon />
+                            {tool.label}
+                        </DropdownMenuItem>
+                    )}
+                </Fragment>
+            ))}
         </DropdownMenuContent>
     );
 }

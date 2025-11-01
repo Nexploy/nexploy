@@ -3,6 +3,7 @@ import { Network, NetworkEvent } from '@workspace/typescript-interface/docker/do
 import { toast } from 'sonner';
 import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
 import { NetworkState } from '@workspace/typescript-interface/stores/networksStore';
+import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
 
 export const useNetworkStore = create<NetworkState>((set, get) => ({
     networks: [],
@@ -74,117 +75,93 @@ export const useNetworkStore = create<NetworkState>((set, get) => ({
         return { byDriver, builtin, custom };
     },
 
-    connect: (networkIds) => {
+    connect: () => {
         const state = get();
 
-        if (state.eventSource) {
-            state.eventSource.close();
-        }
         if (state.reconnectTimeout) {
             clearTimeout(state.reconnectTimeout);
         }
 
         try {
-            const url = new URL('/api/events/stream', window.location.origin);
+            const unsubscribers: (() => void)[] = [];
 
-            if (networkIds?.length) url.searchParams.set('networks', networkIds.join(','));
-            url.searchParams.set('endpoint', '/api/networks/events/stream');
-
-            const eventSource = new EventSource(url.toString());
-
-            eventSource.addEventListener('open', () => {
-                console.log('SSE Network connection established');
-                set({ error: null, eventSource });
-            });
-
-            eventSource.addEventListener('initial-state', (e) => {
-                const data: NetworkEvent = JSON.parse(e.data);
-                set({
-                    networks: data.networks || [],
-                    lastUpdate: data.timestamp,
-                });
-            });
-
-            eventSource.addEventListener('heartbeat', (e) => {
-                const { timestamp }: DockerStatusEvent = JSON.parse(e.data);
-                set({ lastUpdate: timestamp });
-            });
-
-            eventSource.addEventListener('state-change', (e) => {
-                const data: NetworkEvent = JSON.parse(e.data);
-
-                if (data.network) {
-                    const networks = [...get().networks];
-                    const index = networks.findIndex((net) => net.id === data.network!.id);
-
-                    if (index !== -1) {
-                        networks[index] = data.network;
-                    } else {
-                        networks.push(data.network);
-                    }
-
+            unsubscribers.push(
+                sseMultiplexer.subscribe('networks', 'initial-state', (e) => {
+                    const data: NetworkEvent = JSON.parse(e.data);
                     set({
-                        networks,
+                        networks: data.networks || [],
                         lastUpdate: data.timestamp,
+                        error: null,
                     });
-                }
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('networks', 'heartbeat', (e) => {
+                    const { timestamp }: DockerStatusEvent = JSON.parse(e.data);
+                    set({ lastUpdate: timestamp });
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('networks', 'state-change', (e) => {
+                    const data: NetworkEvent = JSON.parse(e.data);
+
+                    if (data.network) {
+                        const networks = [...get().networks];
+                        const index = networks.findIndex((net) => net.id === data.network!.id);
+
+                        if (index !== -1) {
+                            networks[index] = data.network;
+                        } else {
+                            networks.push(data.network);
+                        }
+
+                        set({
+                            networks,
+                            lastUpdate: data.timestamp,
+                        });
+                    }
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('networks', 'network-added', (e) => {
+                    const data: NetworkEvent = JSON.parse(e.data);
+                    if (!data.network) return;
+
+                    get().addNetwork(data.network);
+                    toast.success(`Network ${data.network.name} added`);
+                    set({ lastUpdate: data.timestamp });
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('networks', 'network-updated', (e) => {
+                    const data: NetworkEvent = JSON.parse(e.data);
+                    const network = data.network;
+                    if (!network) return;
+
+                    get().updateNetwork(network);
+                    set({ lastUpdate: data.timestamp });
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('networks', 'network-removed', (e) => {
+                    const data: NetworkEvent = JSON.parse(e.data);
+                    if (!data.networkId) return;
+
+                    get().removeNetwork(data.networkId);
+                    const networkName = data.oldState?.name || data.networkId.substring(0, 12);
+                    toast.success(`Network ${networkName} removed`);
+                    set({ lastUpdate: data.timestamp });
+                }),
+            );
+
+            set({
+                eventSource: { close: () => unsubscribers.forEach((fn) => fn()) } as EventSource,
             });
-
-            eventSource.addEventListener('network-added', (e) => {
-                const data: NetworkEvent = JSON.parse(e.data);
-                if (!data.network) return;
-
-                get().addNetwork(data.network);
-                toast.success(`Network ${data.network.name} added`);
-                set({ lastUpdate: data.timestamp });
-            });
-
-            eventSource.addEventListener('network-updated', (e) => {
-                const data: NetworkEvent = JSON.parse(e.data);
-                const network = data.network;
-                if (!network) return;
-
-                const { timestamp } = data;
-
-                get().updateNetwork(network);
-
-                // Optionnel : afficher une notification pour les changements majeurs
-                // if (data.changes?.containers) {
-                //     toast.info(`Network ${network.name} updated`);
-                // }
-
-                set({ lastUpdate: timestamp });
-            });
-
-            eventSource.addEventListener('network-removed', (e) => {
-                const data: NetworkEvent = JSON.parse(e.data);
-                if (!data.networkId) return;
-
-                get().removeNetwork(data.networkId);
-                const networkName = data.oldState?.name || data.networkId.substring(0, 12);
-                toast.success(`Network ${networkName} removed`);
-                set({ lastUpdate: data.timestamp });
-            });
-
-            eventSource.addEventListener('error', () => {
-                const currentEventSource = get().eventSource;
-
-                if (currentEventSource) {
-                    currentEventSource.close();
-                    set({ eventSource: null });
-                }
-
-                set({ error: new Error('Error connecting to Network Docker') });
-
-                const timeout = setTimeout(() => {
-                    console.log('Attempting to reconnect to networks...');
-                    get().connect(networkIds);
-                }, 5000);
-
-                set({ reconnectTimeout: timeout });
-            });
-
-            set({ eventSource });
         } catch (err) {
             console.error('Networks - Failed to connect :', err);
             set({

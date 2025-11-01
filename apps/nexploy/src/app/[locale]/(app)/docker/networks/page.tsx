@@ -1,6 +1,6 @@
 'use client';
 
-import { Network } from 'lucide-react';
+import { EthernetPort } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { StatusDocker } from '@/components/docker/container/StatusDocker';
 import { CardInfoNetworks } from '@/components/docker/network/CardInfoNetworks';
@@ -22,7 +22,7 @@ export default function NetworksPage() {
             <div className="flex flex-col gap-5 overflow-hidden">
                 <div className={'flex gap-3 px-5'}>
                     <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <Network className="text-primary size-7" />
+                        <EthernetPort className="text-primary size-7" />
                     </div>
                     <div className={'flex flex-col'}>
                         <div className={'flex items-center gap-3'}>

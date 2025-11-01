@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
 import { isToastT } from '@/utils/isToastT';
 import { DockerState } from '@workspace/typescript-interface/stores/dockerStore';
+import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
 
 export const useDockerStore = create<DockerState>((set, get) => ({
     status: 'connecting',
@@ -16,79 +17,85 @@ export const useDockerStore = create<DockerState>((set, get) => ({
     connect: () => {
         const state = get();
 
-        if (state.eventSource) {
-            state.eventSource.close();
-        }
         if (state.reconnectTimeout) {
             clearTimeout(state.reconnectTimeout);
         }
 
         try {
-            const url = new URL('/api/events/stream', window.location.origin);
+            const unsubscribers: (() => void)[] = [];
 
-            url.searchParams.set('endpoint', '/api/docker/events/stream');
+            unsubscribers.push(
+                sseMultiplexer.subscribe('docker', 'initial-state', (e) => {
+                    const data: DockerStatusEvent = JSON.parse(e.data);
 
-            const eventSource = new EventSource(url.toString());
+                    set({
+                        status: data.status,
+                        lastUpdate: data.timestamp,
+                        error: null,
+                    });
+                }),
+            );
 
-            eventSource.addEventListener('open', () => {
-                console.log('SSE Docker connection established');
-                set({ error: null, eventSource });
+            unsubscribers.push(
+                sseMultiplexer.subscribe('docker', 'heartbeat', (e) => {
+                    const { timestamp }: DockerStatusEvent = JSON.parse(e.data);
+                    set({ lastUpdate: timestamp });
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('docker', 'status-changed', (e) => {
+                    const { status, message, timestamp }: DockerStatusEvent = JSON.parse(e.data);
+
+                    if (message?.level) {
+                        const toasts = toast.getToasts();
+                        const loadingToast = toasts.find(isToastT)?.type === 'loading';
+
+                        if (loadingToast && message?.level === 'loading') return;
+                        if (loadingToast) toast.dismiss();
+
+                        toast[message?.level](message.text);
+                    }
+                    set({ status, lastUpdate: timestamp });
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('docker', 'reconnecting', async (e) => {
+                    const reconnectInfo = JSON.parse(e.data);
+
+                    toast.warning(
+                        `Reconnecting to Docker service... (Attempt ${reconnectInfo.attempt}/${reconnectInfo.maxAttempts}), ${reconnectInfo.delay}ms`,
+                    );
+
+                    set({
+                        status: 'connecting',
+                        lastUpdate: Date.now(),
+                    });
+                }),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe('docker', 'error', () => {
+                    set({
+                        status: 'disconnected',
+                        lastUpdate: Date.now(),
+                    });
+                }),
+            );
+
+            set({
+                eventSource: { close: () => unsubscribers.forEach((fn) => fn()) } as EventSource,
+                error: null,
             });
-
-            eventSource.addEventListener('initial-state', (e) => {
-                const data: DockerStatusEvent = JSON.parse(e.data);
-
-                set({
-                    status: data.status,
-                    lastUpdate: data.timestamp,
-                });
-            });
-
-            eventSource.addEventListener('heartbeat', (e) => {
-                const { timestamp }: DockerStatusEvent = JSON.parse(e.data);
-                set({ lastUpdate: timestamp });
-            });
-
-            eventSource.addEventListener('status-changed', (e) => {
-                const { status, message, timestamp }: DockerStatusEvent = JSON.parse(e.data);
-
-                if (message?.level) {
-                    const toasts = toast.getToasts();
-                    const loadingToast = toasts.find(isToastT)?.type === 'loading';
-
-                    if (loadingToast && message?.level === 'loading') return;
-                    if (loadingToast) toast.dismiss();
-
-                    toast[message?.level](message.text);
-                }
-                set({ status, lastUpdate: timestamp });
-            });
-
-            eventSource.addEventListener('error', () => {
-                const currentEventSource = get().eventSource;
-
-                if (currentEventSource) {
-                    currentEventSource.close();
-                    set({ status: 'error', eventSource: null });
-                }
-
-                set({ error: new Error('Connection lost, reconnecting...') });
-
-                const timeout = setTimeout(() => {
-                    console.log('Attempting to reconnect...');
-                    get().connect();
-                }, 5000);
-
-                set({ reconnectTimeout: timeout });
-            });
-
-            set({ eventSource });
         } catch (err) {
-            console.error('Failed to connect:', err);
             set({
                 error: err as Error,
                 status: 'error',
+                lastUpdate: Date.now(),
             });
+
+            toast.error('Failed to connect to Docker service');
         }
     },
 
