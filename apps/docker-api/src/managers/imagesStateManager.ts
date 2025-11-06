@@ -1,121 +1,28 @@
 import { docker } from '@/utils/dockerClient';
-import { EventEmitter } from 'events';
 import { logger } from '@/utils/logger';
 import { ImageInfo, ImageInspectInfo } from 'dockerode';
-import byline from 'byline';
 import {
     Image,
     ImageAction,
     ImageEvent,
     ImageStateChanges,
 } from '@workspace/typescript-interface/docker/docker.image';
-import {
-    DockerStatus,
-    DockerStatusEvent,
-} from '@workspace/typescript-interface/docker/docker.status';
 import { dockerStatusManager } from '@/managers/dockerStatusManager';
+import { BaseStateManager } from '@/lib/BaseStateManager';
 
-class ImageStateManager extends EventEmitter {
+class ImagesStateManager extends BaseStateManager {
     private images: Map<string, Image> = new Map();
-    private polling: boolean = false;
-    private pollInterval: NodeJS.Timeout | null = null;
-    private readonly POLL_INTERVAL_MS = 10000;
-    private dockerEventStream: any = null;
-    private reconnectAttempts = 0;
-    private readonly MAX_RECONNECT_ATTEMPTS = 5;
 
     constructor() {
-        super();
-        this.setMaxListeners(100);
-        this.setupDockerStatusListeners();
-    }
-
-    private setupDockerStatusListeners() {
-        dockerStatusManager.on('status-changed', async (event: DockerStatusEvent) => {
-            if (this.polling && event.status === 'connected') {
-                logger.info('Docker reconnected, reinitializing image manager');
-                try {
-                    logger.info('Sending images after Docker reconnection');
-
-                    await this.loadInitialState();
-                    await this.startDockerEventsListener();
-                    this.reconnectAttempts = 0;
-                } catch (err) {
-                    logger.error({ err }, 'Failed to reinitialize after Docker reconnection');
-                }
-            } else if (this.polling && event.status === 'disconnected') {
-                logger.warn('Docker disconnected, stopping image event stream');
-                if (this.dockerEventStream) {
-                    try {
-                        this.dockerEventStream.destroy();
-                    } catch (err) {
-                        logger.error({ err }, 'Error destroying Docker image event stream');
-                    }
-                    this.dockerEventStream = null;
-                }
-            }
+        super({
+            managerName: 'Image State Manager',
+            pollIntervalMs: 10000,
+            maxReconnectAttempts: 5,
+            maxListeners: 100,
         });
     }
 
-    async start() {
-        if (this.polling) {
-            logger.warn('Image state manager already running');
-            return;
-        }
-
-        this.polling = true;
-        logger.info('Starting image state manager');
-
-        const status = dockerStatusManager.getStatus();
-
-        if (status === 'connecting') {
-            await new Promise<void>((resolve) => {
-                dockerStatusManager.once(
-                    'status-changed',
-                    ({ status }: { status: DockerStatus }) => {
-                        if (status !== 'connecting') resolve();
-                    },
-                );
-            });
-        }
-
-        if (dockerStatusManager.isConnected()) {
-            try {
-                await this.loadInitialState();
-                await this.startDockerEventsListener();
-            } catch (err) {
-                logger.error({ err }, 'Failed to initialize with Docker, falling back to polling');
-            }
-        } else {
-            logger.warn(`Docker unavailable (status: ${status}) — using polling only`);
-        }
-
-        this.startFallbackPolling();
-    }
-
-    async stop() {
-        this.polling = false;
-        logger.info('Stopping image state manager');
-
-        if (this.pollInterval) {
-            clearInterval(this.pollInterval);
-            this.pollInterval = null;
-        }
-
-        if (this.dockerEventStream) {
-            try {
-                this.dockerEventStream.destroy();
-            } catch (err) {
-                logger.error({ err }, 'Error destroying Docker event stream');
-            }
-            this.dockerEventStream = null;
-        }
-
-        this.images.clear();
-        this.removeAllListeners();
-    }
-
-    private async loadInitialState() {
+    async loadInitialState(): Promise<void> {
         if (!dockerStatusManager.isConnected()) {
             logger.warn('Cannot load initial state: Docker is not connected');
             return;
@@ -143,73 +50,7 @@ class ImageStateManager extends EventEmitter {
         }
     }
 
-    private async startDockerEventsListener() {
-        try {
-            const stream = await docker.getEvents({
-                filters: { type: ['image'] },
-            });
-
-            this.dockerEventStream = stream;
-            this.reconnectAttempts = 0;
-
-            const lineStream = byline.createStream(stream);
-
-            lineStream.on('data', async (line: Buffer) => {
-                const str = line.toString().trim();
-                if (!str) return;
-
-                try {
-                    const event = JSON.parse(str);
-                    await this.handleDockerEvent(event);
-                } catch (err) {
-                    logger.error({ err, raw: str }, 'Error parsing Docker event');
-                }
-            });
-
-            lineStream.on('error', (err: Error) => {
-                logger.error({ err }, 'Docker events stream error');
-                this.handleStreamError();
-            });
-
-            lineStream.on('end', () => {
-                logger.warn('Docker events stream ended');
-                this.handleStreamError();
-            });
-
-            logger.info('Docker events listener started');
-        } catch (err) {
-            logger.error({ err }, 'Error starting Docker events listener');
-            await this.handleStreamError();
-        }
-    }
-
-    private async handleStreamError() {
-        if (!this.polling) return;
-
-        this.dockerEventStream = null;
-        this.reconnectAttempts++;
-
-        if (this.reconnectAttempts > this.MAX_RECONNECT_ATTEMPTS) {
-            logger.error('Max reconnection attempts reached, relying on polling only');
-            return;
-        }
-
-        const backoffDelay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
-        logger.info(
-            { backoffDelay, attempt: this.reconnectAttempts },
-            'Reconnecting to Docker events',
-        );
-
-        setTimeout(() => {
-            if (this.polling && dockerStatusManager.isConnected()) {
-                this.startDockerEventsListener();
-            } else {
-                logger.warn('Skipping event listener reconnection: Docker not connected');
-            }
-        }, backoffDelay);
-    }
-
-    private async handleDockerEvent(event: any) {
+    async handleDockerEvent(event: any): Promise<void> {
         const imageId = event.id;
         if (!imageId) return;
 
@@ -232,7 +73,49 @@ class ImageStateManager extends EventEmitter {
         }
     }
 
-    private async updateImageState(imageId: string, action?: ImageAction) {
+    async fullStateSync(): Promise<void> {
+        try {
+            const images = await docker.listImages({ all: true });
+
+            for (const image of images) {
+                const newState = this.parseImageInfo(image);
+                const oldState = this.images.get(newState.id);
+
+                if (!oldState) return;
+
+                if (this.hasStateChanged(oldState, newState)) {
+                    this.images.set(newState.id, newState);
+
+                    const stateChangeDate: ImageEvent = {
+                        type: 'state-change',
+                        imageId: newState.id,
+                        image: newState,
+                        changes: this.getStateChanges(oldState, newState),
+                        timestamp: Date.now(),
+                    };
+                    this.emit('state-change', stateChangeDate);
+                }
+            }
+        } catch (err) {
+            logger.error({ err }, 'Error in full state sync');
+        }
+    }
+
+    getEventFilters(): Record<string, string[]> {
+        return { type: ['image'] };
+    }
+
+    protected onStop(): void {
+        this.images.clear();
+    }
+
+    protected getCustomStats(): Record<string, any> {
+        return {
+            imageCount: this.images.size,
+        };
+    }
+
+    private async updateImageState(imageId: string, action?: ImageAction): Promise<void> {
         const imageIdSplited = imageId.split(':')[1];
 
         try {
@@ -296,7 +179,7 @@ class ImageStateManager extends EventEmitter {
         }
     }
 
-    private async refreshImageState(imageId: string) {
+    private async refreshImageState(imageId: string): Promise<void> {
         const image = docker.getImage(imageId);
         const info = await image.inspect();
         const newState = this.parseImageInfo(info);
@@ -319,53 +202,6 @@ class ImageStateManager extends EventEmitter {
                 timestamp: Date.now(),
             };
             this.emit('image-updated', imageUpdated);
-        }
-    }
-
-    private startFallbackPolling() {
-        this.pollInterval = setInterval(async () => {
-            if (!this.polling) return;
-
-            if (!dockerStatusManager.isConnected()) {
-                logger.debug('Skipping poll: Docker not connected');
-                return;
-            }
-
-            try {
-                await this.fullStateSync();
-            } catch (err) {
-                logger.error({ err }, 'Error in fallback polling');
-            }
-        }, this.POLL_INTERVAL_MS);
-
-        logger.info({ interval: this.POLL_INTERVAL_MS }, 'Fallback Images polling started');
-    }
-
-    private async fullStateSync() {
-        try {
-            const images = await docker.listImages({ all: true });
-
-            for (const image of images) {
-                const newState = this.parseImageInfo(image);
-                const oldState = this.images.get(newState.id);
-
-                if (!oldState) return;
-
-                if (this.hasStateChanged(oldState, newState)) {
-                    this.images.set(newState.id, newState);
-
-                    const stateChangeDate: ImageEvent = {
-                        type: 'state-change',
-                        imageId: newState.id,
-                        image: newState,
-                        changes: this.getStateChanges(oldState, newState),
-                        timestamp: Date.now(),
-                    };
-                    this.emit('state-change', stateChangeDate);
-                }
-            }
-        } catch (err) {
-            logger.error({ err }, 'Error in full state sync');
         }
     }
 
@@ -411,7 +247,7 @@ class ImageStateManager extends EventEmitter {
         );
     }
 
-    private getStateChanges(oldState: Image, newState: Image) {
+    private getStateChanges(oldState: Image, newState: Image): ImageStateChanges {
         const changes: ImageStateChanges = {};
 
         if (JSON.stringify(oldState.repoTags) !== JSON.stringify(newState.repoTags))
@@ -433,15 +269,6 @@ class ImageStateManager extends EventEmitter {
 
     getState(imageId: string): Image | undefined {
         return this.images.get(imageId);
-    }
-
-    getStats() {
-        return {
-            imageCount: this.images.size,
-            eventStreamActive: this.dockerEventStream !== null,
-            reconnectAttempts: this.reconnectAttempts,
-            polling: this.polling,
-        };
     }
 
     getByName(fullName: string): Image | undefined {
@@ -511,4 +338,4 @@ class ImageStateManager extends EventEmitter {
     }
 }
 
-export const imageStateManager = new ImageStateManager();
+export const imagesStateManager = new ImagesStateManager();

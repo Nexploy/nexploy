@@ -1,14 +1,14 @@
 import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
-import { imageStateManager } from '@/managers/imageStateManager';
+import { imagesStateManager } from '@/managers/imagesStateManager';
 
 const app = new Hono();
 
 app.post(
     '/hardRefresh',
     handleAsync(async () => {
-        return await imageStateManager.hardRefresh();
+        return await imagesStateManager.hardRefresh();
     }),
 );
 
@@ -29,7 +29,7 @@ app.post(
 app.get(
     '/',
     handleAsync(async () => {
-        return imageStateManager.getAllImages();
+        return imagesStateManager.getAllImages();
     }),
 );
 
@@ -56,7 +56,7 @@ app.post(
     handleAsync(async (c) => {
         const { imageName } = await c.req.json();
 
-        const imageExists = imageStateManager.getByName(imageName);
+        const imageExists = imagesStateManager.getByName(imageName);
         if (imageExists) {
             throw new Error(`L'image ${imageName} existe déjà localement.`);
         }

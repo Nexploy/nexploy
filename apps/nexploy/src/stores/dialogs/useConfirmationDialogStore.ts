@@ -3,7 +3,7 @@ import { ReactElement } from 'react';
 import { DialogContentProps } from '@radix-ui/react-dialog';
 
 export interface ConfirmationDialogState {
-    open: boolean;
+    isOpen: boolean;
     title?: ReactElement | string;
     props?: DialogContentProps;
     closeOnBackground?: boolean;
@@ -15,7 +15,7 @@ export interface ConfirmationDialogState {
 
 export interface ConfirmationDialogActions {
     openDialog: (
-        data: Omit<ConfirmationDialogState, 'open'> | null,
+        data: Omit<ConfirmationDialogState, 'isOpen'> | null,
         keepPrevData?: boolean,
     ) => void;
     closeDialog: () => void;
@@ -24,7 +24,7 @@ export interface ConfirmationDialogActions {
 export type ConfirmationDialogStore = ConfirmationDialogState & ConfirmationDialogActions;
 
 const defaultState: ConfirmationDialogState = {
-    open: false,
+    isOpen: false,
     title: undefined,
     props: undefined,
     closeOnBackground: true,
@@ -35,16 +35,16 @@ const defaultState: ConfirmationDialogState = {
 };
 
 export const useConfirmationDialogStore = create<ConfirmationDialogStore>((set, get) => ({
-    open: false,
+    isOpen: false,
     closeOnBackground: true,
     openDialog: (data, keepPrevData) =>
         set(() => {
             const prevState = get();
             return {
                 ...(keepPrevData ? prevState : defaultState),
-                open: true,
+                isOpen: true,
                 ...data,
             };
         }),
-    closeDialog: () => set({ open: false }),
+    closeDialog: () => set({ isOpen: false }),
 }));

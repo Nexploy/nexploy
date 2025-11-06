@@ -1,25 +1,26 @@
 import { Hono } from 'hono';
 import { logger } from './utils/logger';
 import { cors } from 'hono/cors';
-import containerRoutes from './routes/containersRoutes';
+import containerRoutes from './routes/containerRoutes';
 import composeStackRoutes from './routes/composeStackRoutes';
 import imagesRoutes from './routes/imagesRoutes';
 import eventsRoutes from './routes/eventsRoutes';
+import containersEvents from './routes/events/containersEvents';
 import containerEvents from './routes/events/containerEvents';
 import dockerStatusEvents from './routes/events/dockerStatusEvents';
-import volumeEvents from './routes/events/volumeEvents';
+import volumesEvents from './routes/events/volumesEvents';
 import eventsEvents from './routes/events/eventsEvents';
-import imageEvents from './routes/events/imageEvents';
+import imagesEvents from './routes/events/imagesEvents';
 import { serve } from '@hono/node-server';
 import { setupGracefulShutdown } from './utils/shutdown';
 import { dockerStatusManager } from '@/managers/dockerStatusManager';
-import { imageStateManager } from '@/managers/imageStateManager';
-import { containerStateManager } from '@/managers/containerStateManager';
+import { imagesStateManager } from '@/managers/imagesStateManager';
+import { containersStateManager } from '@/managers/containersStateManager';
 import dockerStatusRoutes from '@/routes/dockerStatusRoutes';
 import { eventsStateManager } from '@/managers/eventsStateManager';
-import { volumeStateManager } from '@/managers/volumeStateManager';
-import networkEvents from '@/routes/events/networkEvents';
-import { networkStateManager } from '@/managers/networkStateManager';
+import { volumesStateManager } from '@/managers/volumesStateManager';
+import networksEvents from '@/routes/events/networksEvents';
+import { networksStateManager } from '@/managers/networksStateManager';
 
 const app = new Hono();
 
@@ -33,51 +34,22 @@ app.use(
     }),
 );
 
-app.get('/health', (c) => {
-    const dockerStatus = dockerStatusManager.getStatus();
-    const containerStats = containerStateManager.getStats();
-    const imageStats = imageStateManager.getStats();
-    const eventsStats = eventsStateManager.getStats();
-
-    return c.json({
-        status: 'ok',
-        timestamp: Date.now(),
-        docker: {
-            status: dockerStatus,
-            isConnected: dockerStatusManager.isConnected(),
-            lastCheck: dockerStatusManager.getLastCheck(),
-        },
-        containers: {
-            count: containerStats.containerCount,
-            eventStreamActive: containerStats.eventStreamActive,
-            polling: containerStats.polling,
-        },
-        events: {
-            count: eventsStats.eventsReceived,
-            eventStreamActive: eventsStats.eventStreamActive,
-        },
-        images: {
-            count: imageStats.imageCount,
-            eventStreamActive: imageStats.eventStreamActive,
-            polling: imageStats.polling,
-        },
-    });
-});
-
 app.route('/api/docker/events', dockerStatusEvents);
 app.route('/api/docker', dockerStatusRoutes);
 
-app.route('/api/containers/events', containerEvents);
-app.route('/api/containers', containerRoutes);
+app.route('/api/containers/events', containersEvents);
+
+app.route('/api/container/events', containerEvents);
+app.route('/api/container', containerRoutes);
 
 app.route('/api/composes', composeStackRoutes);
 
-app.route('/api/images/events', imageEvents);
+app.route('/api/images/events', imagesEvents);
 app.route('/api/images', imagesRoutes);
 
-app.route('/api/volumes/events', volumeEvents);
+app.route('/api/volumes/events', volumesEvents);
 
-app.route('/api/networks/events', networkEvents);
+app.route('/api/networks/events', networksEvents);
 
 app.route('/api/events/events', eventsEvents);
 app.route('/api/events', eventsRoutes);
@@ -98,10 +70,10 @@ const startServer = async () => {
         logger.info('Starting all state managers...');
         await Promise.all([
             dockerStatusManager.start(),
-            containerStateManager.start(),
-            imageStateManager.start(),
-            volumeStateManager.start(),
-            networkStateManager.start(),
+            containersStateManager.start(),
+            imagesStateManager.start(),
+            volumesStateManager.start(),
+            networksStateManager.start(),
             eventsStateManager.start(),
         ]);
 
@@ -124,9 +96,14 @@ const startServer = async () => {
 setupGracefulShutdown(async () => {
     logger.info('Shutting down Docker management services...');
 
-    await Promise.all([containerStateManager.stop(), imageStateManager.stop()]);
-
-    dockerStatusManager.stop();
+    await Promise.all([
+        dockerStatusManager.stop(),
+        containersStateManager.stop(),
+        imagesStateManager.stop(),
+        volumesStateManager.stop(),
+        networksStateManager.stop(),
+        eventsStateManager.stop(),
+    ]);
 
     logger.info('Docker management services stopped');
 });

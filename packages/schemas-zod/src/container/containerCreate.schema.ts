@@ -1,19 +1,16 @@
 import { z } from 'zod';
 
-// Schema pour les ports (permissif pour permettre les champs vides)
 const portMappingSchema = z.object({
     hostPort: z.string(),
     containerPort: z.string(),
     protocol: z.enum(['tcp', 'udp']).default('tcp'),
 });
 
-// Schema pour les variables d'environnement (permissif)
 const envVarSchema = z.object({
     key: z.string(),
     value: z.string(),
 });
 
-// Schema pour les volumes (permissif)
 const volumeMountSchema = z.object({
     hostPath: z.string(),
     containerPath: z.string(),
@@ -38,7 +35,6 @@ export const ContainerCreateFormSchema = z
         name: data.name?.trim() || undefined,
         network: data.network?.trim() || undefined,
         hostname: data.hostname?.trim() || undefined,
-        // Filtrer les entrées invalides dans les tableaux
         ports: data.ports.filter((p) => p.hostPort && p.containerPort),
         envVars: data.envVars.filter((e) => e.key && e.value),
         volumes: data.volumes.filter((v) => v.hostPath && v.containerPath),

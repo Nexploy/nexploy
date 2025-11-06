@@ -7,6 +7,7 @@ export const runtime = 'nodejs';
 
 const CHANNEL_ENDPOINTS: Record<SSEChannel, string> = {
     containers: '/api/containers/events/stream',
+    container: `/api/container/events/stream/:containerId`,
     images: '/api/images/events/stream',
     docker: '/api/docker/events/stream',
     events: '/api/events/events/stream',
@@ -27,6 +28,40 @@ interface ChannelState {
     retryTimeout: NodeJS.Timeout | null;
 }
 
+interface ChannelConfig {
+    channel: SSEChannel;
+    params?: Record<string, string>;
+}
+
+const parseChannelConfig = (channelStr: string): ChannelConfig => {
+    const [channel, paramsStr] = channelStr.split(':');
+
+    if (!paramsStr) {
+        return { channel: channel as SSEChannel };
+    }
+
+    const params: Record<string, string> = {};
+    paramsStr.split(',').forEach((pair) => {
+        const [key, value] = pair.split('=');
+        if (key && value) {
+            params[key.trim()] = value.trim();
+        }
+    });
+
+    return { channel: channel as SSEChannel, params };
+};
+
+const buildEndpointUrl = (template: string, params?: Record<string, string>): string => {
+    if (!params) return template;
+
+    let url = template;
+    Object.entries(params).forEach(([key, value]) => {
+        url = url.replace(`:${key}`, encodeURIComponent(value));
+    });
+
+    return url;
+};
+
 export const GET = route.handler(async (request: Request) => {
     const { searchParams } = new URL(request.url);
     const channelsParam = searchParams.get('channels');
@@ -35,41 +70,49 @@ export const GET = route.handler(async (request: Request) => {
         return NextResponse.json({ error: 'Missing "channels" query parameter' }, { status: 400 });
     }
 
-    const channels = channelsParam.split(',').filter(Boolean) as SSEChannel[];
+    const channelConfigs = channelsParam.split(',').filter(Boolean).map(parseChannelConfig);
 
-    if (channels.length === 0) {
+    if (channelConfigs.length === 0) {
         return NextResponse.json(
             { error: 'At least one valid channel is required' },
             { status: 400 },
         );
     }
 
-    const invalidChannels = channels.filter((ch) => !CHANNEL_ENDPOINTS[ch]);
+    const invalidChannels = channelConfigs.filter((config) => !CHANNEL_ENDPOINTS[config.channel]);
     if (invalidChannels.length > 0) {
         return NextResponse.json(
-            { error: `Invalid channels: ${invalidChannels.join(', ')}` },
+            { error: `Invalid channels: ${invalidChannels.map((c) => c.channel).join(', ')}` },
             { status: 400 },
         );
     }
 
     const serverUrl = process.env.SSE_SERVER_URL;
     if (!serverUrl) {
-        console.error('[SSE] Missing SSE_SERVER_URL environment variable');
         return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }
 
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
     const abortController = new AbortController();
-    const channelStates = new Map<SSEChannel, ChannelState>();
+    const channelStates = new Map<string, ChannelState>();
     let keepAliveInterval: NodeJS.Timeout | null = null;
     let isShuttingDown = false;
+
+    const getChannelKey = (config: ChannelConfig): string => {
+        if (!config.params || Object.keys(config.params).length === 0) {
+            return config.channel;
+        }
+        const paramsStr = Object.entries(config.params)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([k, v]) => `${k}=${v}`)
+            .join(',');
+        return `${config.channel}:${paramsStr}`;
+    };
 
     const cleanup = () => {
         if (isShuttingDown) return;
         isShuttingDown = true;
-
-        console.log('[SSE] Starting cleanup...');
 
         if (keepAliveInterval) {
             clearInterval(keepAliveInterval);
@@ -78,7 +121,7 @@ export const GET = route.handler(async (request: Request) => {
 
         abortController.abort();
 
-        for (const [channel, state] of channelStates.entries()) {
+        for (const [, state] of channelStates.entries()) {
             if (state.retryTimeout) {
                 clearTimeout(state.retryTimeout);
                 state.retryTimeout = null;
@@ -88,12 +131,9 @@ export const GET = route.handler(async (request: Request) => {
                 state.reader.cancel().catch(() => {});
                 state.reader = null;
             }
-
-            console.log(`[SSE] Cleaned up channel: ${channel}`);
         }
 
         channelStates.clear();
-        console.log('[SSE] Cleanup complete');
     };
 
     const calculateRetryDelay = (retryCount: number): number => {
@@ -110,30 +150,28 @@ export const GET = route.handler(async (request: Request) => {
                 try {
                     controller.enqueue(encoder.encode(':keepalive\n\n'));
                 } catch (err) {
-                    console.error('[SSE] Keepalive failed:', err);
                     cleanup();
                 }
             }, CONFIG.KEEPALIVE_INTERVAL);
 
-            const connectChannel = async (channel: SSEChannel): Promise<void> => {
+            const connectChannel = async (config: ChannelConfig): Promise<void> => {
                 if (isShuttingDown || abortController.signal.aborted) return;
 
-                const state = channelStates.get(channel) ?? {
+                const channelKey = getChannelKey(config);
+                const state = channelStates.get(channelKey) ?? {
                     reader: null,
                     retryCount: 0,
                     retryTimeout: null,
                 };
-                channelStates.set(channel, state);
+                channelStates.set(channelKey, state);
 
                 if (state.retryCount >= CONFIG.MAX_RETRY_ATTEMPTS) {
-                    console.error(
-                        `[SSE] Channel ${channel} exceeded max retry attempts (${CONFIG.MAX_RETRY_ATTEMPTS})`,
-                    );
                     try {
                         controller.enqueue(
                             encoder.encode(
                                 `data: ${JSON.stringify({
-                                    channel,
+                                    channel: config.channel,
+                                    params: config.params,
                                     event: 'error',
                                     data: 'Max retry attempts exceeded',
                                 })}\n\n`,
@@ -145,12 +183,11 @@ export const GET = route.handler(async (request: Request) => {
                     return;
                 }
 
-                const endpoint = CHANNEL_ENDPOINTS[channel];
+                const endpointTemplate = CHANNEL_ENDPOINTS[config.channel];
+                const endpoint = buildEndpointUrl(endpointTemplate, config.params);
                 const url = `${serverUrl}${endpoint}`;
 
                 try {
-                    console.log(`[SSE] Connecting to ${channel} (attempt ${state.retryCount + 1})`);
-
                     const response = await fetch(url, {
                         headers: {
                             Accept: 'text/event-stream',
@@ -172,20 +209,19 @@ export const GET = route.handler(async (request: Request) => {
                     state.reader = reader;
                     state.retryCount = 0;
 
-                    console.log(`[SSE] ✓ Connected to ${channel}`);
-
                     try {
                         controller.enqueue(
                             encoder.encode(
                                 `data: ${JSON.stringify({
-                                    channel,
+                                    channel: config.channel,
+                                    params: config.params,
                                     event: 'connected',
                                     data: new Date().toISOString(),
                                 })}\n\n`,
                             ),
                         );
-                    } catch (err) {
-                        console.error(`[SSE] Failed to send connected event:`, err);
+                    } catch {
+                        /* empty */
                     }
 
                     let buffer = '';
@@ -194,7 +230,6 @@ export const GET = route.handler(async (request: Request) => {
                         const { done, value } = await reader.read();
 
                         if (done) {
-                            console.warn(`[SSE] Channel ${channel} stream ended`);
                             break;
                         }
 
@@ -209,7 +244,6 @@ export const GET = route.handler(async (request: Request) => {
                             const dataMatch = raw.match(/^data:\s*(.+)$/m);
 
                             if (!eventMatch || !dataMatch) {
-                                console.warn(`[SSE] Malformed message on ${channel}:`, raw);
                                 continue;
                             }
 
@@ -221,11 +255,15 @@ export const GET = route.handler(async (request: Request) => {
                             try {
                                 controller.enqueue(
                                     encoder.encode(
-                                        `data: ${JSON.stringify({ channel, event, data })}\n\n`,
+                                        `data: ${JSON.stringify({
+                                            channel: config.channel,
+                                            params: config.params,
+                                            event,
+                                            data,
+                                        })}\n\n`,
                                     ),
                                 );
                             } catch (err) {
-                                console.error(`[SSE] Failed to enqueue message:`, err);
                                 cleanup();
                                 return;
                             }
@@ -235,24 +273,21 @@ export const GET = route.handler(async (request: Request) => {
                     state.reader = null;
 
                     if (!isShuttingDown && !abortController.signal.aborted) {
-                        console.warn(`[SSE] Channel ${channel} disconnected. Scheduling retry...`);
-                        scheduleRetry(channel);
+                        scheduleRetry(config);
                     }
                 } catch (err) {
                     state.reader = null;
 
                     if (abortController.signal.aborted || isShuttingDown) {
-                        console.log(`[SSE] Channel ${channel} aborted (expected during shutdown)`);
                         return;
                     }
-
-                    console.error(`[SSE] Channel ${channel} error:`, err);
 
                     try {
                         controller.enqueue(
                             encoder.encode(
                                 `data: ${JSON.stringify({
-                                    channel,
+                                    channel: config.channel,
+                                    params: config.params,
                                     event: 'error',
                                     data: err instanceof Error ? err.message : String(err),
                                 })}\n\n`,
@@ -262,28 +297,26 @@ export const GET = route.handler(async (request: Request) => {
                         /* empty */
                     }
 
-                    scheduleRetry(channel);
+                    scheduleRetry(config);
                 }
             };
 
-            const scheduleRetry = (channel: SSEChannel) => {
+            const scheduleRetry = (config: ChannelConfig) => {
                 if (isShuttingDown || abortController.signal.aborted) return;
 
-                const state = channelStates.get(channel);
+                const channelKey = getChannelKey(config);
+                const state = channelStates.get(channelKey);
                 if (!state) return;
 
                 state.retryCount++;
                 const delay = calculateRetryDelay(state.retryCount);
 
-                console.log(
-                    `[SSE] Retrying ${channel} in ${delay}ms (attempt ${state.retryCount}/${CONFIG.MAX_RETRY_ATTEMPTS})`,
-                );
-
                 try {
                     controller.enqueue(
                         encoder.encode(
                             `data: ${JSON.stringify({
-                                channel,
+                                channel: config.channel,
+                                params: config.params,
                                 event: 'reconnecting',
                                 data: JSON.stringify({
                                     attempt: state.retryCount,
@@ -293,25 +326,20 @@ export const GET = route.handler(async (request: Request) => {
                             })}\n\n`,
                         ),
                     );
-                } catch (err) {
-                    console.error(`[SSE] Failed to send reconnecting event:`, err);
+                } catch {
+                    /* empty */
                 }
 
                 state.retryTimeout = setTimeout(() => {
                     state.retryTimeout = null;
-                    connectChannel(channel);
+                    connectChannel(config);
                 }, delay);
             };
 
-            await Promise.allSettled(channels.map((ch) => connectChannel(ch)));
-
-            console.log(`[SSE] All channels initialized for: ${channels.join(', ')}`);
+            await Promise.allSettled(channelConfigs.map((config) => connectChannel(config)));
         },
 
-        cancel() {
-            console.log('[SSE] Client disconnected, cleaning up...');
-            cleanup();
-        },
+        cancel() {},
     });
 
     return new Response(stream, {

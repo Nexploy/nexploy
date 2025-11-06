@@ -2,7 +2,7 @@
 
 import { Bug, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { StatusDocker } from '@/components/docker/container/StatusDocker';
+import { StatusDocker } from '@/components/docker/StatusDocker';
 import { useEventsStore } from '@/stores/docker/useEventsStore';
 import { useState } from 'react';
 import { Badge } from '@workspace/ui/components/badge';

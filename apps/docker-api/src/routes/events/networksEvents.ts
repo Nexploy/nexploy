@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
-import { networkStateManager } from '@/managers/networkStateManager';
+import { networksStateManager } from '@/managers/networksStateManager';
 import { logger } from '@/utils/logger';
 import { NetworkEvent } from '@workspace/typescript-interface/docker/docker.network';
 
@@ -78,27 +78,27 @@ app.get('/stream', (c) => {
         const cleanup = () => {
             clearInterval(heartbeat);
 
-            networkStateManager.off('state-change', handleStateChange);
-            networkStateManager.off('initial-state', handleInitialState);
-            networkStateManager.off('network-added', handleNetworkAdded);
-            networkStateManager.off('network-updated', handleNetworkUpdated);
-            networkStateManager.off('network-removed', handleNetworkRemoved);
+            networksStateManager.off('state-change', handleStateChange);
+            networksStateManager.off('initial-state', handleInitialState);
+            networksStateManager.off('network-added', handleNetworkAdded);
+            networksStateManager.off('network-updated', handleNetworkUpdated);
+            networksStateManager.off('network-removed', handleNetworkRemoved);
 
             logger.info({ clientId }, 'SSE Network client disconnected');
         };
 
-        const initialNetworks = networkStateManager.getAllNetworks();
+        const initialNetworks = networksStateManager.getAllNetworks();
         await handleInitialState({
             type: 'initial',
             networks: initialNetworks,
             timestamp: Date.now(),
         });
 
-        networkStateManager.on('state-change', handleStateChange);
-        networkStateManager.on('initial-state', handleInitialState);
-        networkStateManager.on('network-added', handleNetworkAdded);
-        networkStateManager.on('network-updated', handleNetworkUpdated);
-        networkStateManager.on('network-removed', handleNetworkRemoved);
+        networksStateManager.on('state-change', handleStateChange);
+        networksStateManager.on('initial-state', handleInitialState);
+        networksStateManager.on('network-added', handleNetworkAdded);
+        networksStateManager.on('network-updated', handleNetworkUpdated);
+        networksStateManager.on('network-removed', handleNetworkRemoved);
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 

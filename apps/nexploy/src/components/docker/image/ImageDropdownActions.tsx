@@ -29,7 +29,7 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
         {
             icon: Play,
             label: 'Use',
-            action: () =>
+            onClick: () =>
                 router.push(`/docker/containers/add-container?image=${image.repoTags[0]}`),
             disabled: !image.repoTags.length,
             tooltipContent: !image.repoTags.length
@@ -39,7 +39,7 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
         {
             icon: Trash,
             label: 'Remove',
-            action: () =>
+            onClick: () =>
                 openAlertDialog({
                     title: 'Remove Images',
                     description: `Are you sure you want to remove ${imageName.join(',')} image?`,
@@ -63,7 +63,7 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
                                 <div>
                                     <DropdownMenuItem
                                         variant={tool.variant}
-                                        onClick={tool.action}
+                                        onClick={tool.onClick}
                                         disabled={tool.disabled}
                                     >
                                         <tool.icon />
@@ -80,7 +80,7 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
                     ) : (
                         <DropdownMenuItem
                             variant={tool.variant}
-                            onClick={tool.action}
+                            onClick={tool.onClick}
                             disabled={tool.disabled}
                         >
                             <tool.icon />

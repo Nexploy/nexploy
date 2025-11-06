@@ -10,7 +10,7 @@ export const onContainerRemoveAction = actionServer
     .inputSchema(ContainerActionsSchema)
     .action(async ({ parsedInput: { containerId } }) => {
         try {
-            await drinoDocker.delete(`/containers/${containerId}/remove`).consume();
+            return await drinoDocker.delete(`/container/${containerId}/remove`).consume();
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
                 await setToastServer({

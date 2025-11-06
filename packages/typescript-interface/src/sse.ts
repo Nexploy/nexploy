@@ -9,17 +9,13 @@ export interface SSEProxyConfig {
     transformData?: (data: Uint8Array) => Uint8Array;
 }
 
-export type SSEChannel = 'containers' | 'images' | 'docker' | 'events' | 'volumes' | 'networks';
-
-export interface SSEMultiplexedMessage {
-    channel: SSEChannel;
-    event: string;
-    data: string;
-}
+export type SSEChannel =
+    | 'container'
+    | 'containers'
+    | 'images'
+    | 'docker'
+    | 'events'
+    | 'volumes'
+    | 'networks';
 
 export type SSEEventHandler = (event: MessageEvent) => void;
-
-export interface SSEChannelSubscription {
-    channel: SSEChannel;
-    eventHandlers: Map<string, SSEEventHandler[]>;
-}

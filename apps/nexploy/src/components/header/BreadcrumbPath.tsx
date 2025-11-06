@@ -1,3 +1,5 @@
+'use client';
+
 import {
     Breadcrumb,
     BreadcrumbEllipsis,
@@ -13,43 +15,64 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
+import { Skeleton } from '@workspace/ui/components/skeleton';
 import { Fragment } from 'react';
 import { Link } from '@/i18n/navigation';
 import { usePathname } from 'next/navigation';
 import { addSpaceBeforeUppercase, capitalizeWords } from '@/utils/capitalize';
+import { useContainerStore } from '@/stores/docker/useContainerStore';
 
-const ITEMS_TO_DISPLAY = 2; // Nombre d'items à afficher au début
-const MAX_ITEMS_BEFORE_COLLAPSE = 3; // Nombre total d'items avant d'activer la dropdown
+const ITEMS_TO_DISPLAY = 2;
+const MAX_ITEMS_BEFORE_COLLAPSE = 3;
 
 export function BreadcrumbPath() {
     const pathname = usePathname();
+    const container = useContainerStore((state) => state.container);
 
     const segments = pathname.split('/').filter(Boolean);
 
-    const paths = segments.map((segment, index) => ({
-        name: capitalizeWords(addSpaceBeforeUppercase(segment)),
-        href: '/' + segments.slice(0, index + 1).join('/'),
-        isLast: index === segments.length - 1,
-    }));
+    const paths = segments.map((segment, index) => {
+        let displayName = capitalizeWords(addSpaceBeforeUppercase(segment));
+        let isLoading = false;
 
-    // Si pas de paths, ne rien afficher
-    if (paths.length === 0) {
-        return null;
-    }
+        const isContainerId = segments[index - 1] === 'containers' && segment.length > 20;
 
-    // Si le nombre de paths est inférieur ou égal à MAX_ITEMS_BEFORE_COLLAPSE, afficher normalement
+        if (isContainerId) {
+            if (container?.name) {
+                displayName = container.name;
+            } else {
+                isLoading = true;
+            }
+        }
+
+        return {
+            name: displayName,
+            href: '/' + segments.slice(0, index + 1).join('/'),
+            isLast: index === segments.length - 1,
+            isLoading,
+        };
+    });
+
+    const SkeletonStyled = () => <Skeleton className="h-4 w-24 rounded-sm" />;
+
+    if (paths.length === 0) return null;
+
     if (paths.length <= MAX_ITEMS_BEFORE_COLLAPSE) {
         return (
-            <Breadcrumb className="cursor-pointer pl-1">
+            <Breadcrumb className="hidden cursor-pointer pl-1 md:flex">
                 <BreadcrumbList>
-                    {paths.map(({ name, href, isLast }) => (
+                    {paths.map(({ name, href, isLast, isLoading }) => (
                         <Fragment key={href}>
                             <BreadcrumbItem>
                                 {isLast ? (
-                                    <BreadcrumbPage>{name}</BreadcrumbPage>
+                                    <BreadcrumbPage>
+                                        {isLoading ? <SkeletonStyled /> : name}
+                                    </BreadcrumbPage>
                                 ) : (
                                     <BreadcrumbLink asChild>
-                                        <Link href={href}>{name}</Link>
+                                        <Link href={href}>
+                                            {isLoading ? <SkeletonStyled /> : name}
+                                        </Link>
                                     </BreadcrumbLink>
                                 )}
                             </BreadcrumbItem>
@@ -61,27 +84,23 @@ export function BreadcrumbPath() {
         );
     }
 
-    // Sinon, afficher les premiers items, le dropdown avec les items du milieu, et le dernier item
     const firstItems = paths.slice(0, ITEMS_TO_DISPLAY);
     const lastItem = paths[paths.length - 1]!;
     const middleItems = paths.slice(ITEMS_TO_DISPLAY, -1);
 
     return (
-        <Breadcrumb className="cursor-pointer pl-1">
+        <Breadcrumb className="hidden cursor-pointer pl-1 md:flex">
             <BreadcrumbList>
-                {/* Premiers items */}
-                {firstItems.map(({ name, href }) => (
+                {firstItems.map(({ name, href, isLoading }) => (
                     <Fragment key={href}>
                         <BreadcrumbItem>
                             <BreadcrumbLink asChild>
-                                <Link href={href}>{name}</Link>
+                                <Link href={href}>{isLoading ? <SkeletonStyled /> : name}</Link>
                             </BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                     </Fragment>
                 ))}
-
-                {/* Dropdown avec les items du milieu */}
                 <BreadcrumbItem>
                     <DropdownMenu>
                         <DropdownMenuTrigger className="flex items-center gap-1">
@@ -89,19 +108,19 @@ export function BreadcrumbPath() {
                             <span className="sr-only">Toggle menu</span>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">
-                            {middleItems.map(({ name, href }) => (
+                            {middleItems.map(({ name, href, isLoading }) => (
                                 <DropdownMenuItem key={href} asChild>
-                                    <Link href={href}>{name}</Link>
+                                    <Link href={href}>{isLoading ? <SkeletonStyled /> : name}</Link>
                                 </DropdownMenuItem>
                             ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
-
-                {/* Dernier item */}
                 <BreadcrumbItem>
-                    <BreadcrumbPage>{lastItem.name}</BreadcrumbPage>
+                    <BreadcrumbPage>
+                        {lastItem.isLoading ? <SkeletonStyled /> : lastItem.name}
+                    </BreadcrumbPage>
                 </BreadcrumbItem>
             </BreadcrumbList>
         </Breadcrumb>

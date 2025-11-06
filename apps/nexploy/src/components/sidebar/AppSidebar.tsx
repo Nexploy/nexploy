@@ -2,7 +2,6 @@ import {
     Activity,
     Box,
     Bug,
-    ChevronUp,
     Container,
     EthernetPort,
     Folder,
@@ -11,7 +10,6 @@ import {
     LayoutList,
     Network,
     Send,
-    User2,
 } from 'lucide-react';
 import {
     Sidebar,
@@ -29,14 +27,11 @@ import {
     SidebarMenuSubItem,
 } from '@workspace/ui/components/sidebar';
 import Link from 'next/link';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu';
 import { ElementType, ReactElement } from 'react';
 import { RefreshDocker } from '@/components/sidebar/RefreshDocker';
+import getConfig from 'next/config';
+import { NexployLogo } from '@/components/sidebar/NexployLogo';
+import { AccountMenu } from '@/components/sidebar/AccountMenu';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset';
@@ -85,11 +80,22 @@ const groups: Group[] = [
 ];
 
 export function AppSidebar({ variant }: AppSidebarProps) {
+    const { publicRuntimeConfig } = getConfig();
+
     return (
         <Sidebar className="whitespace-nowrap" collapsible="icon" variant={variant}>
-            <SidebarHeader className="flex flex-col gap-0 truncate">
-                <span>Nexploy</span>
-                <span className="text-muted-foreground text-xs">v1.0.0</span>
+            <SidebarHeader>
+                <Link href="/" className={'flex items-center gap-2'}>
+                    <div className="flex aspect-square size-7 items-center justify-center rounded-none">
+                        <NexployLogo className="size-7" />
+                    </div>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                        <span className="truncate font-bold">Nexploy</span>
+                        <span className="text-muted-foreground truncate text-xs">
+                            v{publicRuntimeConfig.version}
+                        </span>
+                    </div>
+                </Link>
             </SidebarHeader>
 
             <SidebarContent>
@@ -130,23 +136,7 @@ export function AppSidebar({ variant }: AppSidebarProps) {
             </SidebarContent>
 
             <SidebarFooter>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <SidebarMenuButton>
-                                    <User2 /> Username
-                                    <ChevronUp className="ml-auto" />
-                                </SidebarMenuButton>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
-                                <DropdownMenuItem>Account</DropdownMenuItem>
-                                <DropdownMenuItem>Billing</DropdownMenuItem>
-                                <DropdownMenuItem>Sign out</DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </SidebarMenuItem>
-                </SidebarMenu>
+                <AccountMenu />
             </SidebarFooter>
         </Sidebar>
     );

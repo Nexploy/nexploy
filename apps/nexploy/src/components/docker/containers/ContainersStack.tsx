@@ -1,9 +1,9 @@
 import { Badge } from '@workspace/ui/components/badge';
-import { StackGroup } from '@/components/docker/container/StackGroup';
-import { useContainerStore } from '@/stores/docker/useContainerStore';
+import { StackGroup } from '@/components/docker/containers/StackGroup';
+import { useContainersStore } from '@/stores/docker/useContainersStore';
 
 export function ContainersStack() {
-    const stacksMap = useContainerStore((state) => state.getOrganizedContainers)().stacks;
+    const stacksMap = useContainersStore((state) => state.getOrganizedContainers)().stacks;
     const stacks = Array.from(stacksMap.entries());
 
     return (

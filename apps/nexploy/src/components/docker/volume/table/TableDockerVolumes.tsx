@@ -40,6 +40,7 @@ import {
 } from '@workspace/ui/components/select';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useSheetStore } from '@/stores/useSheetStore';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 const globalFilterFn: FilterFn<Volume> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -92,6 +93,12 @@ export function TableDockerVolumes() {
         },
     });
 
+    const selectedRows = table.getSelectedRowModel().rows;
+    const selectedRow = selectedRows[0];
+    const selectedVolume = selectedRow?.original;
+
+    const volumeUsed = selectedVolume?.usageData?.RefCount;
+
     const numberOfSelectedRows = Object.keys(rowSelection).length;
 
     const handleDeleteAction = () => {
@@ -117,6 +124,18 @@ export function TableDockerVolumes() {
 
     const isShowingAll = pageSize === 'all';
 
+    const isUseDisabled = numberOfSelectedRows !== 1 || volumeUsed;
+
+    const getUseTooltipContent = () => {
+        if (numberOfSelectedRows === 0) {
+            return 'Please select volumes to delete';
+        }
+        if (volumeUsed) {
+            return 'Déconnectez tous les conteneurs utilisant ce volume d’abord';
+        }
+        return;
+    };
+
     return (
         <div className={'mx-5 space-y-3'}>
             <div className={'flex justify-between'}>
@@ -127,19 +146,30 @@ export function TableDockerVolumes() {
                     onChange={(e) => setGlobalFilter(e.target.value)}
                 />
                 <div className={'flex gap-3'}>
-                    <Button
-                        variant={'destructive'}
-                        onClick={handleDeleteAction}
-                        disabled={!numberOfSelectedRows}
-                    >
-                        <Trash />
-                        Supprimer{' '}
-                        {!!numberOfSelectedRows && (
-                            <Badge variant={'secondary'} className={'rounded-full'}>
-                                {numberOfSelectedRows}
-                            </Badge>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div>
+                                <Button
+                                    variant={'destructive'}
+                                    onClick={handleDeleteAction}
+                                    disabled={!!isUseDisabled}
+                                >
+                                    <Trash />
+                                    Supprimer{' '}
+                                    {!!numberOfSelectedRows && (
+                                        <Badge variant={'secondary'} className={'rounded-full'}>
+                                            {numberOfSelectedRows}
+                                        </Badge>
+                                    )}
+                                </Button>
+                            </div>
+                        </TooltipTrigger>
+                        {getUseTooltipContent() && (
+                            <TooltipContent>
+                                <p>{getUseTooltipContent()}</p>
+                            </TooltipContent>
                         )}
-                    </Button>
+                    </Tooltip>
                     <Button onClick={handleAddVolume}>
                         <Plus />
                         Créer un volume

@@ -13,7 +13,7 @@ import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfir
 
 export function AlertConfirmationDialog() {
     const {
-        open,
+        isOpen,
         title,
         description,
         cancelLabel,
@@ -27,7 +27,7 @@ export function AlertConfirmationDialog() {
     } = useAlertConfirmationDialogStore();
 
     return (
-        <AlertDialog open={open} onOpenChange={closeAlertDialog}>
+        <AlertDialog open={isOpen} onOpenChange={closeAlertDialog}>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>{title}</AlertDialogTitle>

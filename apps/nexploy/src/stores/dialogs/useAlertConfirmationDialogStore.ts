@@ -1,9 +1,11 @@
 import { create } from 'zustand';
 import { ReactElement } from 'react';
+import { AlertDialogContentProps } from '@radix-ui/react-alert-dialog';
 
 export interface AlertConfirmationDialogState {
-    open: boolean;
+    isOpen: boolean;
     title?: string;
+    props?: AlertDialogContentProps;
     description?: ReactElement | string;
     cancelLabel?: string | null;
     actionLabel?: string | null;
@@ -15,7 +17,7 @@ export interface AlertConfirmationDialogState {
 }
 
 export interface AlertConfirmationDialogActions {
-    openAlertDialog: (data: Omit<AlertConfirmationDialogState, 'open' | 'isPending'>) => void;
+    openAlertDialog: (data: Omit<AlertConfirmationDialogState, 'isOpen' | 'isPending'>) => void;
     closeAlertDialog: () => void;
 }
 
@@ -23,9 +25,10 @@ export type AlertConfirmationDialogStore = AlertConfirmationDialogState &
     AlertConfirmationDialogActions;
 
 const defaultAlertState: AlertConfirmationDialogState = {
-    open: false,
+    isOpen: false,
     title: undefined,
     description: undefined,
+    props: undefined,
     cancelLabel: null,
     actionLabel: null,
     disableCancelButton: false,
@@ -40,8 +43,8 @@ export const useAlertConfirmationDialogStore = create<AlertConfirmationDialogSto
     openAlertDialog: (data) =>
         set({
             ...defaultAlertState,
-            open: true,
+            isOpen: true,
             ...data,
         }),
-    closeAlertDialog: () => set({ open: false }),
+    closeAlertDialog: () => set({ isOpen: false }),
 }));

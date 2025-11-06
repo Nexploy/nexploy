@@ -1,0 +1,27 @@
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { Activity } from 'lucide-react';
+import { useContainerStore } from '@/stores/docker/useContainerStore';
+
+export function CardError() {
+    const container = useContainerStore((state) => state.container);
+
+    if (!container?.error) return null;
+
+    return (
+        <Card className="border-destructive">
+            <CardHeader>
+                <div className="flex items-center gap-3">
+                    <div className="bg-destructive/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
+                        <Activity className="text-destructive size-4" />
+                    </div>
+                    <CardTitle className="text-destructive">Erreur</CardTitle>
+                </div>
+            </CardHeader>
+            <CardContent>
+                <code className="bg-destructive/10 block rounded-md p-3 text-sm">
+                    {container.error}
+                </code>
+            </CardContent>
+        </Card>
+    );
+}

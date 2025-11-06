@@ -2,7 +2,13 @@ import { LayoutList } from 'lucide-react';
 import { TableDockerImages } from '@/components/docker/image/table/TableDockerImages';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { CardInfoImages } from '@/components/docker/image/CardInfoImages';
-import { StatusDocker } from '@/components/docker/container/StatusDocker';
+import { StatusDocker } from '@/components/docker/StatusDocker';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Docker Images',
+    description: 'Gérez et visualisez toutes vos images Docker avec Nexploy',
+};
 
 export default function ImagesPage() {
     return (

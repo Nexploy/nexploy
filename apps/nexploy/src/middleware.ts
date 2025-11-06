@@ -2,8 +2,8 @@ import createMiddleware from 'next-intl/middleware';
 import { routing } from '@/i18n/routing';
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdminExist } from '@/services/auth/auth.service';
-import { RedirectRule } from '@workspace/typescript-interface/middleware';
 import { auth } from '@/lib/auth/auth';
+import { RedirectRule } from '@workspace/typescript-interface/middleware';
 
 const handleI18nRouting = createMiddleware(routing);
 
@@ -12,56 +12,55 @@ const redirects: Record<string, string> = {
     '/docker': '/docker/containers',
 };
 
-function getRedirectUrl(pathname: string, baseUrl: string): URL | null {
-    const redirectTarget = redirects[pathname];
-    if (!redirectTarget) return null;
+async function checkRedirectRules(request: NextRequest): Promise<NextResponse | null> {
+    const [hasAdmin, session] = await Promise.all([
+        isAdminExist(),
+        auth.api.getSession({ headers: request.headers }),
+    ]);
 
-    const url = new URL(baseUrl);
-    url.pathname = redirectTarget;
-    return url;
-}
-
-async function checkRedirectRules(
-    pathname: string,
-    request: NextRequest,
-    requestUrl: string,
-): Promise<NextResponse | null> {
-    const hasAdmin = await isAdminExist();
-
-    const session = await auth.api.getSession({ headers: request.headers });
+    const path = request.nextUrl.pathname;
 
     const rules: RedirectRule[] = [
         {
             condition: !hasAdmin,
+            shouldSkip: (path) => !path.startsWith('/setup'),
             targetPath: '/setup',
+        },
+        {
+            condition: hasAdmin,
             shouldSkip: (path) => path.startsWith('/setup'),
+            targetPath: '/',
         },
         {
             condition: !session,
+            shouldSkip: (path) => !path.startsWith('/signin'),
             targetPath: '/signin',
+        },
+        {
+            condition: !!session,
             shouldSkip: (path) => path.startsWith('/signin'),
+            targetPath: '/',
         },
     ];
 
     for (const rule of rules) {
-        if (rule.condition && !rule.shouldSkip(pathname)) {
-            return NextResponse.redirect(new URL(rule.targetPath, requestUrl));
+        if (rule.condition && rule.shouldSkip(path)) {
+            return NextResponse.redirect(new URL(rule.targetPath, request.url));
         }
+    }
+
+    const redirectTarget = redirects[path];
+    if (redirectTarget) {
+        const url = new URL(redirectTarget, request.url);
+        return NextResponse.redirect(url);
     }
 
     return null;
 }
 
 export default async function middleware(request: NextRequest) {
-    const { pathname } = request.nextUrl;
-
-    const redirectRule = await checkRedirectRules(pathname, request, request.url);
-    if (redirectRule) return redirectRule;
-
-    const redirectUrl = getRedirectUrl(pathname, request.url);
-    if (redirectUrl) {
-        return NextResponse.redirect(redirectUrl);
-    }
+    const redirectResponse = await checkRedirectRules(request);
+    if (redirectResponse) return redirectResponse;
 
     return handleI18nRouting(request);
 }

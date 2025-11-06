@@ -1,13 +1,5 @@
 import { DropdownActionTool } from '../commun';
-
-export type ContainerAction =
-    | 'start'
-    | 'stop'
-    | 'restart'
-    | 'pause'
-    | 'unpause'
-    | 'kill'
-    | 'remove';
+import { ContainerPorts } from './docker.port';
 
 export type ContainerStateEvents =
     | 'start'
@@ -21,7 +13,13 @@ export type ContainerStateEvents =
     | 'destroy'
     | 'health_status';
 
-export type ContainerType = 'initial' | 'added' | 'updated' | 'removed' | 'heartbeat';
+export type ContainerType =
+    | 'initial'
+    | 'added'
+    | 'updated'
+    | 'removed'
+    | 'heartbeat'
+    | 'state-change';
 
 export type Event =
     | 'state-change'
@@ -34,31 +32,100 @@ export type ContainerState = 'created' | 'running' | 'restarting' | 'paused' | '
 
 export interface ContainerTool extends DropdownActionTool {
     disabledStates: ContainerState[];
-    variant?: 'default' | 'destructive';
+    id: ContainerStateEvents;
+    variant?: 'default' | 'destructive' | 'outline';
 }
-
-export type ContainerPorts = {
-    privatePort: number;
-    publicPort: number;
-    hostIps: string[];
-    type: string;
-};
-
-export type Labels = {
-    [key: string]: string;
-};
 
 export interface Container {
     id: string;
     name: string;
-    labels: Labels;
-    status: string;
-    ports: ContainerPorts[];
-    state: ContainerState;
     image: string;
-    health?: string;
-    exitCode?: number;
-    error?: string;
+    platform: string;
+    driver: string;
+    createdAt: string;
+
+    status: string;
+    state: ContainerState;
+    running: boolean;
+    paused: boolean;
+    restarting: boolean;
+    dead: boolean;
+    exitCode: number;
+    error: string;
+    startedAt: string;
+    finishedAt: string;
+    restartCount: number;
+
+    health?: {
+        status: string;
+        failingStreak: number;
+        logs: Array<{
+            start: string;
+            end: string;
+            exitCode: number;
+            output: string;
+        }>;
+    };
+
+    path: string;
+    args: string[];
+    cmd: string[];
+    entrypoint?: string | string[];
+    workingDir: string;
+    user: string;
+    env: string[];
+
+    labels: Record<string, string>;
+    appArmorProfile?: string;
+    mountLabel?: string;
+    processLabel?: string;
+
+    network: {
+        mode?: string;
+        ipAddress?: string;
+        gateway?: string;
+        macAddress?: string;
+        bridge?: string;
+        sandboxId?: string;
+        endpointId?: string;
+        ports: ContainerPorts[];
+        networks: Record<
+            string,
+            {
+                networkId: string;
+                endpointId: string;
+                gateway: string;
+                ipAddress: string;
+                ipPrefixLen: number;
+                ipv6Gateway: string;
+                globalIPv6Address: string;
+                globalIPv6PrefixLen: number;
+                macAddress: string;
+            }
+        >;
+    };
+
+    mounts: Array<{
+        type: string;
+        name?: string;
+        source: string;
+        destination: string;
+        driver?: string;
+        mode: string;
+        rw: boolean;
+        propagation: string;
+    }>;
+
+    graphDriver: {
+        name: string;
+        data: {
+            deviceId?: string;
+            deviceName?: string;
+            deviceSize?: string;
+        };
+    };
+
+    execIds?: string[];
     timestamp: number;
 }
 
@@ -67,7 +134,6 @@ export interface ContainerEvent {
     message?: string;
     action?: ContainerStateEvents;
     container?: Container;
-    containers?: Container[];
     containerId?: string;
     oldState?: Container;
     changes?: ContainerStateChanges;

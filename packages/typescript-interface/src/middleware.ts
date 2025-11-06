@@ -1,5 +1,5 @@
 export type RedirectRule = {
-    condition: boolean;
+    condition?: boolean;
     targetPath: string;
     shouldSkip: (pathname: string) => boolean;
 };

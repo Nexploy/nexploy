@@ -1,23 +1,23 @@
-import { Container } from '../docker/docker.container';
+import { Containers } from '../docker/docker.containers';
 
 export interface ContainerState {
-    containers: Map<string, Container>;
+    containers: Containers[];
     error: Error | null;
     lastUpdate: number | null;
     eventSource: EventSource | null;
     reconnectTimeout: NodeJS.Timeout | null;
-    setContainers: (containers: Map<string, Container>) => void;
+    setContainers: (containers: Containers[]) => void;
     setError: (error: Error | null) => void;
     setLastUpdate: (timestamp: number) => void;
-    addContainer: (container: Container) => void;
-    updateContainer: (container: Container) => void;
+    addContainer: (container: Containers) => void;
+    updateContainer: (container: Containers) => void;
     removeContainer: (containerId: string) => void;
 
-    getContainer: (id: string) => Container | undefined;
-    getContainersByState: (state: Container['state']) => Container[];
+    getContainer: (id: string) => Containers | undefined;
+    getContainersByState: (state: Containers['state']) => Containers[];
     getOrganizedContainers: () => {
-        stacks: Map<string, Container[]>;
-        standaloneContainers: Container[];
+        stacks: Map<string, Containers[]>;
+        standaloneContainers: Containers[];
     };
 
     connect: (containerIds?: string[]) => void;

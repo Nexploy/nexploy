@@ -1,6 +1,9 @@
+import { ForwardRefExoticComponent, RefAttributes } from 'react';
+import { LucideProps } from 'lucide-react';
+
 export interface DropdownActionTool {
-    icon: any;
+    icon: ForwardRefExoticComponent<Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>>;
     label: string;
-    action?: () => Promise<any> | void;
+    onClick?: () => Promise<any> | void;
     separator?: boolean;
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { ContainerCard } from '@/components/docker/container/ContainerCard';
+import { ContainerCard } from '@/components/docker/containers/ContainerCard';
 import { Badge } from '@workspace/ui/components/badge';
 import {
     Empty,
@@ -10,14 +10,14 @@ import {
     EmptyTitle,
 } from '@workspace/ui/components/empty';
 import { Container as IconContainer } from 'lucide-react';
-import { useContainerStore } from '@/stores/docker/useContainerStore';
+import { useContainersStore } from '@/stores/docker/useContainersStore';
 
 interface ContainersStandaloneProps {
     keepEmpty?: boolean;
 }
 
 export function ContainersStandalone({ keepEmpty = false }: ContainersStandaloneProps) {
-    const standaloneContainers = useContainerStore((state) => state.getOrganizedContainers)()
+    const standaloneContainers = useContainersStore((state) => state.getOrganizedContainers)()
         .standaloneContainers;
 
     if (standaloneContainers.length) {

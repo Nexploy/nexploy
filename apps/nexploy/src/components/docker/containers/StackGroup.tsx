@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { MouseEvent, useState } from 'react';
-import { ContainerCard } from '@/components/docker/container/ContainerCard';
+import { ContainerCard } from '@/components/docker/containers/ContainerCard';
 import { ChevronDownIcon, Layers, Play, RotateCw, Square } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
@@ -13,13 +13,13 @@ import {
     AccordionTrigger,
 } from '@workspace/ui/components/accordion';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
-import { Container } from '@workspace/typescript-interface/docker/docker.container';
 import { onComposesAction } from '@/actions/docker/composes/composeAction';
 import { ComposesAction } from '@workspace/typescript-interface/docker/docker.composeStack';
+import { Containers } from '@workspace/typescript-interface/docker/docker.containers';
 
 interface StackGroupProps {
     stackName: string;
-    containers: Container[];
+    containers: Containers[];
 }
 
 export function StackGroup({ stackName, containers }: StackGroupProps) {

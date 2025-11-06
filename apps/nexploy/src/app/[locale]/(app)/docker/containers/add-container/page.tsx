@@ -159,6 +159,11 @@ export default function AddContainerPage() {
                     volumes: [],
                 },
             },
+            actionProps: {
+                onSuccess: ({ data }) => {
+                    if (data) router.push(`/docker/containers/${data.id}`);
+                },
+            },
         },
     );
 
@@ -213,7 +218,7 @@ export default function AddContainerPage() {
                         type="button"
                         variant="outline"
                         icon={ArrowLeft}
-                        onClick={() => router.back()}
+                        onClick={router.back}
                         disabled={isSubmitting}
                     >
                         Retour

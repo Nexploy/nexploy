@@ -7,14 +7,14 @@ import { Button } from '@workspace/ui/components/button';
 import { cn } from '@workspace/ui/lib/utils';
 
 export function ToggleTheme(props: HTMLAttributes<HTMLButtonElement>) {
-    const { setTheme, theme } = useTheme();
+    const { setTheme } = useTheme();
 
     return (
         <Button
             {...props}
             variant="ghost"
             className={cn('size-8', props.className)}
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            onClick={() => setTheme((theme) => (theme === 'dark' ? 'light' : 'dark'))}
             size="icon"
         >
             <Sun className="size-[1.2rem] scale-0 dark:scale-100" />

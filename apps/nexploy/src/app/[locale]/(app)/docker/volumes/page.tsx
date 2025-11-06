@@ -1,8 +1,14 @@
 import { HardDrive } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { StatusDocker } from '@/components/docker/container/StatusDocker';
+import { StatusDocker } from '@/components/docker/StatusDocker';
 import { CardInfoVolumes } from '@/components/docker/volume/CardInfoVolumes';
 import { TableDockerVolumes } from '@/components/docker/volume/table/TableDockerVolumes';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Docker Volumes',
+    description: 'Gérez et visualisez tous vos volumes Docker avec Nexploy',
+};
 
 export default function VolumesPage() {
     return (

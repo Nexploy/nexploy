@@ -1,22 +1,10 @@
-'use client';
-
 import { EthernetPort } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { StatusDocker } from '@/components/docker/container/StatusDocker';
+import { StatusDocker } from '@/components/docker/StatusDocker';
 import { CardInfoNetworks } from '@/components/docker/network/CardInfoNetworks';
 import { TableDockerNetworks } from '@/components/docker/network/table/TableDockerNetworks';
-import { useNetworkStore } from '@/stores/docker/useNetworkStore';
-import { useEffect } from 'react';
 
 export default function NetworksPage() {
-    const connect = useNetworkStore((state) => state.connect);
-    const disconnect = useNetworkStore((state) => state.disconnect);
-
-    useEffect(() => {
-        connect();
-        return () => disconnect();
-    }, [connect, disconnect]);
-
     return (
         <div className="flex h-full flex-1 flex-col pt-5">
             <div className="flex flex-col gap-5 overflow-hidden">

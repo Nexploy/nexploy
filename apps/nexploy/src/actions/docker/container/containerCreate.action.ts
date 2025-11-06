@@ -10,7 +10,9 @@ export const onContainerCreateAction = actionServer
     .inputSchema(ContainerCreateFormSchema)
     .action(async ({ parsedInput }) => {
         try {
-            await drinoDocker.post(`/containers/create`, parsedInput).consume();
+            return await drinoDocker
+                .post<{ id: string }>(`/container/create`, parsedInput)
+                .consume();
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
                 await setToastServer({

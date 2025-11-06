@@ -1,44 +1,60 @@
 'use client';
 
 import { PropsWithChildren, useEffect } from 'react';
-import { useContainerStore } from '@/stores/docker/useContainerStore';
+import { useContainersStore } from '@/stores/docker/useContainersStore';
 import { useImageStore } from '@/stores/docker/useImageStore';
 import { useDockerStore } from '@/stores/docker/useDockerStore';
 import { useEventsStore } from '@/stores/docker/useEventsStore';
 import { useVolumeStore } from '@/stores/docker/useVolumeStore';
 import { useNetworkStore } from '@/stores/docker/useNetworkStore';
+import { useContainerStore } from '@/stores/docker/useContainerStore';
 
-type SSEConnection = 'docker' | 'containers' | 'images' | 'volumes' | 'networks' | 'events';
+type SSEConnection =
+    | 'docker'
+    | 'containers'
+    | 'container'
+    | 'images'
+    | 'volumes'
+    | 'networks'
+    | 'events';
+
+type SSEParams = Record<SSEConnection, any>;
 
 interface SSEProviderProps extends PropsWithChildren {
     connections?: SSEConnection[];
+    params?: Partial<SSEParams>;
 }
 
 export function SSEProvider({
     children,
     connections = ['docker', 'containers', 'images', 'volumes', 'networks', 'events'],
+    params = {},
 }: SSEProviderProps) {
-    const containerConnect = useContainerStore((state) => state.connect);
-    const containerDisconnect = useContainerStore((state) => state.disconnect);
+    const containersConnect = useContainersStore((s) => s.connect);
+    const containersDisconnect = useContainersStore((s) => s.disconnect);
 
-    const imageConnect = useImageStore((state) => state.connect);
-    const imageDisconnect = useImageStore((state) => state.disconnect);
+    const imageConnect = useImageStore((s) => s.connect);
+    const imageDisconnect = useImageStore((s) => s.disconnect);
 
-    const dockerConnect = useDockerStore((state) => state.connect);
-    const dockerDisconnect = useDockerStore((state) => state.disconnect);
+    const dockerConnect = useDockerStore((s) => s.connect);
+    const dockerDisconnect = useDockerStore((s) => s.disconnect);
 
-    const eventsConnect = useEventsStore((state) => state.connect);
-    const eventsDisconnect = useEventsStore((state) => state.disconnect);
+    const eventsConnect = useEventsStore((s) => s.connect);
+    const eventsDisconnect = useEventsStore((s) => s.disconnect);
 
-    const volumesConnect = useVolumeStore((state) => state.connect);
-    const volumesDisconnect = useVolumeStore((state) => state.disconnect);
+    const volumesConnect = useVolumeStore((s) => s.connect);
+    const volumesDisconnect = useVolumeStore((s) => s.disconnect);
 
-    const networksConnect = useNetworkStore((state) => state.connect);
-    const networksDisconnect = useNetworkStore((state) => state.disconnect);
+    const networksConnect = useNetworkStore((s) => s.connect);
+    const networksDisconnect = useNetworkStore((s) => s.disconnect);
+
+    const containerConnect = useContainerStore((s) => s.connect);
+    const containerDisconnect = useContainerStore((s) => s.disconnect);
 
     useEffect(() => {
-        const connectFns: Record<SSEConnection, () => void> = {
-            containers: containerConnect,
+        const connectFns: Record<SSEConnection, (...args: any[]) => void> = {
+            containers: containersConnect,
+            container: containerConnect,
             images: imageConnect,
             docker: dockerConnect,
             events: eventsConnect,
@@ -46,8 +62,9 @@ export function SSEProvider({
             networks: networksConnect,
         };
 
-        const disconnectFns: Record<SSEConnection, () => void> = {
-            containers: containerDisconnect,
+        const disconnectFns: Record<SSEConnection, (...args: any[]) => void> = {
+            containers: containersDisconnect,
+            container: containerDisconnect,
             images: imageDisconnect,
             docker: dockerDisconnect,
             events: eventsDisconnect,
@@ -56,17 +73,23 @@ export function SSEProvider({
         };
 
         connections.forEach((conn) => {
-            connectFns[conn]?.();
+            const param = params[conn];
+            if (param !== undefined) connectFns[conn]?.(param);
+            else connectFns[conn]?.();
         });
 
         return () => {
             connections.forEach((conn) => {
-                disconnectFns[conn]?.();
+                const param = params[conn];
+                if (param !== undefined) disconnectFns[conn]?.(param);
+                else disconnectFns[conn]?.();
             });
         };
     }, [
         containerConnect,
         containerDisconnect,
+        containersConnect,
+        containersDisconnect,
         dockerConnect,
         dockerDisconnect,
         eventsConnect,

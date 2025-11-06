@@ -10,7 +10,7 @@ export const onContainerRestartAction = actionServer
     .inputSchema(ContainerActionsSchema)
     .action(async ({ parsedInput: { containerId } }) => {
         try {
-            await drinoDocker.post(`/containers/${containerId}/restart`, null).consume();
+            await drinoDocker.post(`/container/${containerId}/restart`, null).consume();
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
                 await setToastServer({

@@ -10,7 +10,7 @@ export const onContainerPauseAction = actionServer
     .inputSchema(ContainerActionsSchema)
     .action(async ({ parsedInput: { containerId } }) => {
         try {
-            await drinoDocker.post(`/containers/${containerId}/pause`, null).consume();
+            await drinoDocker.post(`/container/${containerId}/pause`, null).consume();
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
                 await setToastServer({

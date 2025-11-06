@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { dockerStatusManager } from '@/managers/dockerStatusManager';
-import { containerStateManager } from '@/managers/containerStateManager';
-import { imageStateManager } from '@/managers/imageStateManager';
+import { containersStateManager } from '@/managers/containersStateManager';
+import { imagesStateManager } from '@/managers/imagesStateManager';
 
 const app = new Hono();
 
@@ -20,8 +20,8 @@ app.get('/status', (c) => {
 
 app.get('/stats', (c) => {
     const dockerStats = dockerStatusManager.getStats();
-    const containerStats = containerStateManager.getStats();
-    const imageStats = imageStateManager.getStats();
+    const containerStats = containersStateManager.getStats();
+    const imageStats = imagesStateManager.getStats();
 
     return c.json({
         docker: dockerStats,

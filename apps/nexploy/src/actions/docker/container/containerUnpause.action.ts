@@ -10,7 +10,7 @@ export const onContainerUnpauseAction = actionServer
     .inputSchema(ContainerActionsSchema)
     .action(async ({ parsedInput: { containerId } }) => {
         try {
-            await drinoDocker.post(`/containers/${containerId}/unpause`, null).consume();
+            await drinoDocker.post(`/container/${containerId}/unpause`, null).consume();
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
                 await setToastServer({

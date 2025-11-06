@@ -2,26 +2,41 @@ import { SSEChannel, SSEEventHandler } from '@workspace/typescript-interface/sse
 
 type ChannelHandlers = Map<string, SSEEventHandler[]>;
 
+interface ChannelConfig {
+    channel: SSEChannel;
+    params?: Record<string, string>;
+}
+
 class SSEMultiplexerService {
     private eventSource: EventSource | null = null;
-    private subscriptions: Map<SSEChannel, ChannelHandlers> = new Map();
+    private subscriptions: Map<string, { config: ChannelConfig; handlers: ChannelHandlers }> =
+        new Map();
     private reconnectTimeout: NodeJS.Timeout | null = null;
     private readonly RECONNECT_DELAY = 5000;
-    private activeChannels: Set<SSEChannel> = new Set();
+    private activeChannelKeys: Set<string> = new Set();
 
-    subscribe(channel: SSEChannel, event: string, handler: SSEEventHandler): () => void {
-        const isNewChannel = !this.subscriptions.has(channel);
+    subscribe(
+        channel: SSEChannel,
+        event: string,
+        handler: SSEEventHandler,
+        params?: Record<string, string>,
+    ): () => void {
+        const channelKey = this.getChannelKey({ channel, params });
+        const isNewChannel = !this.subscriptions.has(channelKey);
 
-        if (!this.subscriptions.has(channel)) {
-            this.subscriptions.set(channel, new Map());
+        if (!this.subscriptions.has(channelKey)) {
+            this.subscriptions.set(channelKey, {
+                config: { channel, params },
+                handlers: new Map(),
+            });
         }
 
-        const channelHandlers = this.subscriptions.get(channel)!;
-        if (!channelHandlers.has(event)) {
-            channelHandlers.set(event, []);
+        const subscription = this.subscriptions.get(channelKey)!;
+        if (!subscription.handlers.has(event)) {
+            subscription.handlers.set(event, []);
         }
 
-        channelHandlers.get(event)!.push(handler);
+        subscription.handlers.get(event)!.push(handler);
 
         if (!this.eventSource) {
             this.connect();
@@ -29,14 +44,20 @@ class SSEMultiplexerService {
             this.reconnect();
         }
 
-        return () => this.unsubscribe(channel, event, handler);
+        return () => this.unsubscribe(channel, event, handler, params);
     }
 
-    private unsubscribe(channel: SSEChannel, event: string, handler: SSEEventHandler): void {
-        const channelHandlers = this.subscriptions.get(channel);
-        if (!channelHandlers) return;
+    private unsubscribe(
+        channel: SSEChannel,
+        event: string,
+        handler: SSEEventHandler,
+        params?: Record<string, string>,
+    ): void {
+        const channelKey = this.getChannelKey({ channel, params });
+        const subscription = this.subscriptions.get(channelKey);
+        if (!subscription) return;
 
-        const handlers = channelHandlers.get(event);
+        const handlers = subscription.handlers.get(event);
         if (!handlers) return;
 
         const index = handlers.indexOf(handler);
@@ -45,19 +66,36 @@ class SSEMultiplexerService {
         }
 
         if (handlers.length === 0) {
-            channelHandlers.delete(event);
+            subscription.handlers.delete(event);
         }
 
-        const hadChannel = this.subscriptions.has(channel);
-        if (channelHandlers.size === 0) {
-            this.subscriptions.delete(channel);
+        const hadChannel = this.subscriptions.has(channelKey);
+        if (subscription.handlers.size === 0) {
+            this.subscriptions.delete(channelKey);
         }
 
         if (this.subscriptions.size === 0) {
             this.disconnect();
-        } else if (hadChannel && !this.subscriptions.has(channel)) {
+        } else if (hadChannel && !this.subscriptions.has(channelKey)) {
             this.reconnect();
         }
+    }
+
+    private getChannelKey(config: ChannelConfig): string {
+        if (!config.params || Object.keys(config.params).length === 0) {
+            return config.channel;
+        }
+        const paramsStr = Object.entries(config.params)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([k, v]) => `${k}=${v}`)
+            .join(',');
+        return `${config.channel}:${paramsStr}`;
+    }
+
+    private buildChannelsParam(): string {
+        return Array.from(this.subscriptions.values())
+            .map(({ config }) => this.getChannelKey(config))
+            .join(',');
     }
 
     private connect(): void {
@@ -66,35 +104,49 @@ class SSEMultiplexerService {
         }
 
         try {
-            const channels = Array.from(this.subscriptions.keys()).join(',');
+            const channelsParam = this.buildChannelsParam();
             const url = new URL('/api/events/multiplexed', window.location.origin);
-            url.searchParams.set('channels', channels);
+            url.searchParams.set('channels', channelsParam);
 
             this.eventSource = new EventSource(url.toString());
-            this.activeChannels = new Set(this.subscriptions.keys());
+            this.activeChannelKeys = new Set(this.subscriptions.keys());
 
             this.eventSource.addEventListener('open', () => {
-                console.log('[SSE] Multiplexed connection established:', channels);
+                console.log('[SSE] Multiplexed connection established');
 
-                this.activeChannels.forEach((channel) => {
-                    this.dispatch(channel, 'connected', new Date().toISOString());
+                this.activeChannelKeys.forEach((channelKey) => {
+                    const subscription = this.subscriptions.get(channelKey);
+                    if (subscription) {
+                        this.dispatch(
+                            subscription.config.channel,
+                            'connected',
+                            new Date().toISOString(),
+                            subscription.config.params,
+                        );
+                    }
                 });
             });
 
             this.eventSource.addEventListener('message', (e) => {
                 try {
-                    const { channel, event, data } = JSON.parse(e.data);
-                    this.dispatch(channel, event, data);
+                    const { channel, event, data, params } = JSON.parse(e.data);
+                    this.dispatch(channel, event, data, params);
                 } catch (error) {
                     console.error('[SSE] Error parsing message:', error);
                 }
             });
 
             this.eventSource.addEventListener('error', () => {
-                console.error('[SSE] EventSource connection error');
-
-                this.activeChannels.forEach((channel) => {
-                    this.dispatch(channel, 'error', 'Connection lost');
+                this.activeChannelKeys.forEach((channelKey) => {
+                    const subscription = this.subscriptions.get(channelKey);
+                    if (subscription) {
+                        this.dispatch(
+                            subscription.config.channel,
+                            'error',
+                            'Connection lost',
+                            subscription.config.params,
+                        );
+                    }
                 });
 
                 this.handleError();
@@ -106,21 +158,27 @@ class SSEMultiplexerService {
     }
 
     private reconnect(): void {
-        console.log('[SSE] Reconnecting with updated channels...');
         this.disconnect();
         this.connect();
     }
 
-    private dispatch(channel: SSEChannel, event: string, data: string): void {
-        const channelHandlers = this.subscriptions.get(channel);
-        if (!channelHandlers) {
-            console.warn(`[SSE] No handlers for channel: ${channel}`);
+    private dispatch(
+        channel: SSEChannel,
+        event: string,
+        data: string,
+        params?: Record<string, string>,
+    ): void {
+        const channelKey = this.getChannelKey({ channel, params });
+        const subscription = this.subscriptions.get(channelKey);
+
+        if (!subscription) {
+            console.warn(`[SSE] No handlers for channel: ${channelKey}`);
             return;
         }
 
-        const handlers = channelHandlers.get(event);
+        const handlers = subscription.handlers.get(event);
         if (!handlers || handlers.length === 0) {
-            console.debug(`[SSE] No handlers for ${channel}/${event}`);
+            console.debug(`[SSE] No handlers for ${channelKey}/${event}`);
             return;
         }
 
@@ -130,7 +188,7 @@ class SSEMultiplexerService {
             try {
                 handler(messageEvent);
             } catch (error) {
-                console.error(`[SSE] Error in handler for ${channel}/${event}:`, error);
+                console.error(`[SSE] Error in handler for ${channelKey}/${event}:`, error);
             }
         });
     }
@@ -159,11 +217,11 @@ class SSEMultiplexerService {
             this.eventSource = null;
         }
 
-        this.activeChannels.clear();
+        this.activeChannelKeys.clear();
     }
 
-    getActiveChannels(): SSEChannel[] {
-        return Array.from(this.subscriptions.keys());
+    getActiveChannels(): Array<{ channel: SSEChannel; params?: Record<string, string> }> {
+        return Array.from(this.subscriptions.values()).map(({ config }) => config);
     }
 }
 

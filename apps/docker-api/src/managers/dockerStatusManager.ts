@@ -1,32 +1,86 @@
 import { docker } from '@/utils/dockerClient';
-import { EventEmitter } from 'events';
 import { logger } from '@/utils/logger';
 import {
     DockerStatus,
     DockerStatusEvent,
 } from '@workspace/typescript-interface/docker/docker.status';
+import { BaseMonitor } from '@/lib/BaseMonitor';
 
-class DockerStatusManager extends EventEmitter {
+class DockerStatusManager extends BaseMonitor {
     private status: DockerStatus = 'disconnected';
-    private lastDockerCheck: number = 0;
-    private healthCheckInterval: NodeJS.Timeout | null = null;
-    private readonly HEALTH_CHECK_MS = 5000;
-    private isRunning: boolean = false;
 
     constructor() {
-        super();
-        this.setMaxListeners(100);
+        super({
+            monitorName: 'Docker Status Manager',
+            checkIntervalMs: 5000,
+            maxListeners: 100,
+        });
     }
 
-    async start() {
-        if (this.isRunning) {
-            logger.warn('Docker status manager already running');
-            return;
+    protected async performCheck(): Promise<DockerStatus> {
+        try {
+            await docker.ping();
+            return 'connected';
+        } catch (err) {
+            logger.error('Docker daemon not available');
+            return 'error';
         }
+    }
 
-        this.isRunning = true;
-        logger.info('Starting Docker status manager');
+    protected getCurrentStatus(): DockerStatus {
+        return this.status;
+    }
 
+    protected isStatusOk(status: DockerStatus): boolean {
+        return status === 'connected';
+    }
+
+    protected isStatusConnecting(status: DockerStatus): boolean {
+        return status === 'connecting';
+    }
+
+    protected hasStatusChanged(oldStatus: DockerStatus, newStatus: DockerStatus): boolean {
+        return oldStatus !== newStatus;
+    }
+
+    protected async handleStatusChange(status: DockerStatus, isInitial: boolean): Promise<void> {
+        this.status = status;
+
+        if (status === 'error' || status === 'disconnected') {
+            logger.warn('Docker daemon not available');
+            this.status = 'disconnected';
+
+            const statusChangedData: DockerStatusEvent = {
+                status: 'disconnected',
+                message: {
+                    text: isInitial
+                        ? 'Docker daemon is not reachable'
+                        : 'Docker daemon is no longer reachable',
+                    level: 'error',
+                },
+                timestamp: Date.now(),
+            };
+            this.emit('status-changed', statusChangedData);
+        } else if (status === 'connected') {
+            logger.info(
+                isInitial ? 'Docker daemon is available' : 'Docker daemon became available',
+            );
+
+            const statusChangedData: DockerStatusEvent = {
+                status: 'connected',
+                message: {
+                    text: isInitial
+                        ? 'Docker daemon is available'
+                        : 'Docker daemon is now available',
+                    level: 'success',
+                },
+                timestamp: Date.now(),
+            };
+            this.emit('status-changed', statusChangedData);
+        }
+    }
+
+    protected async emitConnecting(): Promise<void> {
         this.status = 'connecting';
 
         const statusChangedData: DockerStatusEvent = {
@@ -38,127 +92,34 @@ class DockerStatusManager extends EventEmitter {
             timestamp: Date.now(),
         };
         this.emit('status-changed', statusChangedData);
-
-        this.status = await this.checkDockerHealth();
-
-        if (this.status === 'error' || this.status === 'disconnected') {
-            logger.warn('Docker daemon not available');
-            this.status = 'disconnected';
-
-            const statusChangedData: DockerStatusEvent = {
-                status: 'disconnected',
-                message: {
-                    text: 'Docker daemon is not reachable',
-                    level: 'error',
-                },
-                timestamp: Date.now(),
-            };
-            this.emit('status-changed', statusChangedData);
-        } else {
-            logger.info('Docker daemon is available');
-
-            const statusChangedData: DockerStatusEvent = {
-                status: 'connected',
-                message: {
-                    text: 'Docker daemon is available',
-                    level: 'success',
-                },
-                timestamp: Date.now(),
-            };
-            this.emit('status-changed', statusChangedData);
-        }
-
-        this.startHealthCheck();
     }
 
-    stop() {
-        if (!this.isRunning) return;
+    protected async emitReconnecting(): Promise<void> {
+        this.status = 'connecting';
 
-        this.isRunning = false;
-        logger.info('Stopping Docker status manager');
+        const statusChangedData: DockerStatusEvent = {
+            status: 'connecting',
+            message: {
+                text: 'Docker daemon try to reconnecting...',
+                level: 'loading',
+            },
+            timestamp: Date.now(),
+        };
+        this.emit('status-changed', statusChangedData);
+    }
 
-        if (this.healthCheckInterval) {
-            clearInterval(this.healthCheckInterval);
-            this.healthCheckInterval = null;
-        }
-
+    protected onStop(): void {
         this.status = 'disconnected';
-        this.removeAllListeners();
     }
 
-    private async checkDockerHealth(): Promise<DockerStatus> {
-        try {
-            await docker.ping();
-            return 'connected';
-        } catch (err) {
-            logger.error('Docker daemon not available');
-            return 'error';
-        }
+    protected getCustomStats(): Record<string, any> {
+        return {
+            status: this.status,
+        };
     }
 
-    private startHealthCheck() {
-        this.healthCheckInterval = setInterval(async () => {
-            if (!this.isRunning) return;
-
-            const now = Date.now();
-            this.lastDockerCheck = now;
-
-            const wasAvailable = this.status === 'connected';
-
-            if (!wasAvailable && this.status !== 'connecting') {
-                this.status = 'connecting';
-
-                const statusChangedData: DockerStatusEvent = {
-                    status: 'connecting',
-                    message: {
-                        text: 'Docker daemon try to reconnecting...',
-                        level: 'loading',
-                    },
-                    timestamp: now,
-                };
-                this.emit('status-changed', statusChangedData);
-            }
-
-            const newStatus = await this.checkDockerHealth();
-
-            if (this.status === newStatus) return;
-            this.status = newStatus;
-
-            if (this.status === 'connected') {
-                logger.info('Docker daemon became available');
-
-                const statusChangedData: DockerStatusEvent = {
-                    status: 'connected',
-                    message: {
-                        text: 'Docker daemon is now available',
-                        level: 'success',
-                    },
-                    timestamp: now,
-                };
-                this.emit('status-changed', statusChangedData);
-            } else if (this.status === 'error' || this.status === 'disconnected') {
-                logger.warn('Docker daemon became unavailable or error occurred');
-
-                const statusChanged: DockerStatusEvent = {
-                    status: this.status,
-                    message: {
-                        level: 'error',
-                        text: 'Docker daemon is no longer reachable',
-                    },
-                    timestamp: now,
-                };
-                this.emit('status-changed', statusChanged);
-            }
-        }, this.HEALTH_CHECK_MS);
-
-        logger.info({ interval: this.HEALTH_CHECK_MS }, 'Docker health check started');
-    }
     getStatus(): DockerStatus {
         return this.status;
-    }
-
-    getLastCheck(): number {
-        return this.lastDockerCheck;
     }
 
     isConnected(): boolean {
@@ -167,14 +128,6 @@ class DockerStatusManager extends EventEmitter {
 
     isDisconnected(): boolean {
         return this.status === 'disconnected';
-    }
-
-    getStats() {
-        return {
-            status: this.status,
-            lastCheck: this.lastDockerCheck,
-            isRunning: this.isRunning,
-        };
     }
 }
 

@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
-import { volumeStateManager } from '@/managers/volumeStateManager';
+import { volumesStateManager } from '@/managers/volumesStateManager';
 import { logger } from '@/utils/logger';
 import { VolumeEvent } from '@workspace/typescript-interface/docker/docker.volume';
 
@@ -78,18 +78,18 @@ app.get('/stream', (c) => {
         const cleanup = () => {
             logger.info('Client disconnected from volume events stream');
 
-            volumeStateManager.off('state-change', handleStateChange);
-            volumeStateManager.off('initial-state', handleInitialState);
-            volumeStateManager.off('volume-added', handleVolumeAdded);
-            volumeStateManager.off('volume-updated', handleVolumeUpdated);
-            volumeStateManager.off('volume-removed', handleVolumeRemoved);
+            volumesStateManager.off('state-change', handleStateChange);
+            volumesStateManager.off('initial-state', handleInitialState);
+            volumesStateManager.off('volume-added', handleVolumeAdded);
+            volumesStateManager.off('volume-updated', handleVolumeUpdated);
+            volumesStateManager.off('volume-removed', handleVolumeRemoved);
 
             clearInterval(heartbeat);
 
             logger.info({ clientId }, 'SSE Volume client disconnected');
         };
 
-        const initialVolumes = volumeStateManager.getAllVolumes();
+        const initialVolumes = volumesStateManager.getAllVolumes();
 
         await handleInitialState({
             type: 'initial',
@@ -97,11 +97,11 @@ app.get('/stream', (c) => {
             timestamp: Date.now(),
         });
 
-        volumeStateManager.on('state-change', handleStateChange);
-        volumeStateManager.on('initial-state', handleInitialState);
-        volumeStateManager.on('volume-added', handleVolumeAdded);
-        volumeStateManager.on('volume-updated', handleVolumeUpdated);
-        volumeStateManager.on('volume-removed', handleVolumeRemoved);
+        volumesStateManager.on('state-change', handleStateChange);
+        volumesStateManager.on('initial-state', handleInitialState);
+        volumesStateManager.on('volume-added', handleVolumeAdded);
+        volumesStateManager.on('volume-updated', handleVolumeUpdated);
+        volumesStateManager.on('volume-removed', handleVolumeRemoved);
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 

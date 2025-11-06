@@ -65,9 +65,11 @@ export function CardInfoImages() {
                 isLoading ? (
                     <Skeleton key={index} className="rounded-xl py-19" />
                 ) : (
-                    <Card key={index} className="flex flex-col justify-between py-6">
+                    <Card key={index} className="flex flex-col justify-between gap-0 py-6">
                         <CardHeader className="flex flex-row justify-between space-y-0">
-                            <CardTitle className="text-sm font-medium">{info.title}</CardTitle>
+                            <CardTitle className="flex h-14 text-sm font-medium">
+                                {info.title}
+                            </CardTitle>
                             <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
                                 <info.icon className="text-primary size-4" />
                             </div>

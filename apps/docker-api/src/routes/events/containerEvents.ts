@@ -1,78 +1,68 @@
 import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
+import { ContainerStateManager } from '@/managers/containerStateManager';
 import { ContainerEvent } from '@workspace/typescript-interface/docker/docker.container';
-import { containerStateManager } from '@/managers/containerStateManager';
 
 const app = new Hono();
 
-app.get('/stream', (c) => {
+app.get('/stream/:containerId', (c) => {
+    const containerId = c.req.param('containerId');
+
     return streamSSE(c, async (stream) => {
         const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 
-        logger.info({ clientId }, 'SSE Container client connected');
+        logger.info({ clientId, containerId }, 'SSE Container client connected');
 
-        const handleInitialState = async (containerEvent: ContainerEvent) => {
+        const manager = new ContainerStateManager(containerId);
+
+        try {
+            await manager.start();
+        } catch (err) {
+            logger.error({ err, clientId, containerId }, 'Failed to start container monitor');
+            await stream.writeSSE({
+                data: JSON.stringify({ error: 'Failed to start monitoring' }),
+                event: 'error',
+                id: `${Date.now()}`,
+            });
+            return;
+        }
+
+        const handleInitialState = async (event: ContainerEvent) => {
             try {
                 await stream.writeSSE({
-                    data: JSON.stringify(containerEvent),
+                    data: JSON.stringify(event),
                     event: 'initial-state',
                     id: `${Date.now()}`,
                 });
             } catch (err) {
-                logger.error({ err, clientId }, 'Error sending initial-state after reconnection');
+                logger.error({ err, clientId, containerId }, 'Error sending initial-state');
                 cleanup();
             }
         };
 
-        const handleStateChange = async (containerEvent: ContainerEvent) => {
+        const handleStateChange = async (event: ContainerEvent) => {
             try {
                 await stream.writeSSE({
-                    data: JSON.stringify(containerEvent),
+                    data: JSON.stringify(event),
                     event: 'state-change',
                     id: `${Date.now()}`,
                 });
             } catch (err) {
-                logger.error({ err, clientId }, 'Error sending state-change');
+                logger.error({ err, clientId, containerId }, 'Error sending state-change');
                 cleanup();
             }
         };
 
-        const handleContainerAdded = async (containerEvent: ContainerEvent) => {
+        const handleRemoved = async (event: ContainerEvent) => {
             try {
                 await stream.writeSSE({
-                    data: JSON.stringify(containerEvent),
-                    event: 'container-added',
+                    data: JSON.stringify(event),
+                    event: 'removed',
                     id: `${Date.now()}`,
                 });
             } catch (err) {
-                logger.error({ err, clientId }, 'Error sending container-added');
-                cleanup();
-            }
-        };
-
-        const handleContainerUpdated = async (containerEvent: ContainerEvent) => {
-            try {
-                await stream.writeSSE({
-                    data: JSON.stringify(containerEvent),
-                    event: 'container-updated',
-                    id: `${Date.now()}`,
-                });
-            } catch (err) {
-                logger.error({ err, clientId }, 'Error sending container-updated');
-                cleanup();
-            }
-        };
-
-        const handleContainerRemoved = async (containerEvent: ContainerEvent) => {
-            try {
-                await stream.writeSSE({
-                    data: JSON.stringify(containerEvent),
-                    event: 'container-removed',
-                    id: `${Date.now()}`,
-                });
-            } catch (err) {
-                logger.error({ err, clientId }, 'Error sending container-removed');
+                logger.error({ err, clientId, containerId }, 'Error sending removed');
                 cleanup();
             }
         };
@@ -81,38 +71,44 @@ app.get('/stream', (c) => {
             try {
                 const heartbeatData: ContainerEvent = {
                     type: 'heartbeat',
+                    containerId,
                     timestamp: Date.now(),
                 };
-
                 await stream.writeSSE({
                     data: JSON.stringify(heartbeatData),
                     event: 'heartbeat',
                     id: `${Date.now()}`,
                 });
             } catch (err) {
-                logger.error({ err }, 'Error sending heartbeat');
+                logger.error({ err, clientId, containerId }, 'Error sending heartbeat');
                 clearInterval(heartbeat);
+                cleanup();
             }
         }, 15000);
 
         const cleanup = () => {
-            containerStateManager.off('state-change', handleStateChange);
-            containerStateManager.off('initial-state', handleInitialState);
-            containerStateManager.off('container-added', handleContainerAdded);
-            containerStateManager.off('container-updated', handleContainerUpdated);
-            containerStateManager.off('container-removed', handleContainerRemoved);
+            clearInterval(heartbeat);
 
-            logger.info({ clientId }, 'SSE Container client disconnected');
+            manager.off('initial-state', handleInitialState);
+            manager.off('state-change', handleStateChange);
+            manager.off('removed', handleRemoved);
+
+            logger.info({ clientId, containerId }, 'SSE Container monitor client disconnected');
         };
 
-        const containers = containerStateManager.getAllStates();
-        await handleInitialState({ type: 'initial', containers, timestamp: Date.now() });
+        const currentState = manager.getCurrentState();
+        if (currentState) {
+            await handleInitialState({
+                type: 'initial',
+                containerId,
+                container: currentState,
+                timestamp: Date.now(),
+            });
+        }
 
-        containerStateManager.on('state-change', handleStateChange);
-        containerStateManager.on('initial-state', handleInitialState);
-        containerStateManager.on('container-added', handleContainerAdded);
-        containerStateManager.on('container-updated', handleContainerUpdated);
-        containerStateManager.on('container-removed', handleContainerRemoved);
+        manager.on('initial-state', handleInitialState);
+        manager.on('state-change', handleStateChange);
+        manager.on('removed', handleRemoved);
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 
