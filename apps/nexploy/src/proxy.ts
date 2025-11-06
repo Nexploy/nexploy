@@ -58,7 +58,7 @@ async function checkRedirectRules(request: NextRequest): Promise<NextResponse | 
     return null;
 }
 
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
     const redirectResponse = await checkRedirectRules(request);
     if (redirectResponse) return redirectResponse;
 
@@ -66,6 +66,5 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    runtime: 'nodejs',
     matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)',
 };

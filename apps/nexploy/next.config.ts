@@ -6,9 +6,10 @@ import fs from 'fs';
 const rootPackage = JSON.parse(fs.readFileSync(path.resolve(__dirname, './package.json'), 'utf-8'));
 
 const nextConfig: NextConfig = {
-    publicRuntimeConfig: {
-        version: rootPackage.version,
+    env: {
+        appVersion: rootPackage.version,
     },
+    reactStrictMode: true,
     transpilePackages: ['@workspace/ui', '@workspace/i18n'],
 };
 

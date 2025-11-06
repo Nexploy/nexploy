@@ -139,7 +139,7 @@ export function CardExposedPorts() {
                                             <TooltipTrigger asChild>
                                                 <Button
                                                     size="icon"
-                                                    variant="ghost"
+                                                    variant="destructiveGhost"
                                                     className="h-6 w-6"
                                                     onClick={() => handleDeletePort(port)}
                                                 >

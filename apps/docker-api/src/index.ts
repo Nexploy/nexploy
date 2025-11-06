@@ -4,7 +4,6 @@ import { cors } from 'hono/cors';
 import containerRoutes from './routes/containerRoutes';
 import composeStackRoutes from './routes/composeStackRoutes';
 import imagesRoutes from './routes/imagesRoutes';
-import eventsRoutes from './routes/eventsRoutes';
 import containersEvents from './routes/events/containersEvents';
 import containerEvents from './routes/events/containerEvents';
 import dockerStatusEvents from './routes/events/dockerStatusEvents';
@@ -21,8 +20,12 @@ import { eventsStateManager } from '@/managers/eventsStateManager';
 import { volumesStateManager } from '@/managers/volumesStateManager';
 import networksEvents from '@/routes/events/networksEvents';
 import { networksStateManager } from '@/managers/networksStateManager';
+import { createNodeWebSocket } from '@hono/node-ws';
+import { createTerminalRoutes } from '@/routes/terminalRoutes';
 
 const app = new Hono();
+
+const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });
 
 app.use(
     '/api/*/events/*',
@@ -52,7 +55,8 @@ app.route('/api/volumes/events', volumesEvents);
 app.route('/api/networks/events', networksEvents);
 
 app.route('/api/events/events', eventsEvents);
-app.route('/api/events', eventsRoutes);
+
+app.route('/ws/docker', createTerminalRoutes(upgradeWebSocket));
 
 app.onError((err, c) => {
     logger.error({ err }, 'Application error');
@@ -109,7 +113,15 @@ setupGracefulShutdown(async () => {
 });
 
 startServer().then((app) => {
-    serve({ fetch: app.fetch, port: 3300 }, (info) =>
-        logger.info(`🚀 Server running on http://localhost:${info.port}`),
-    );
+    const port = 3300;
+
+    const server = serve({
+        fetch: app.fetch,
+        port,
+    });
+
+    injectWebSocket(server);
+
+    logger.info(`🚀 Server running on http://localhost:${port}`);
+    logger.info(`🔌 WebSocket available`);
 });

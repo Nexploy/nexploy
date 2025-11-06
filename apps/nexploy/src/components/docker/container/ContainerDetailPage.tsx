@@ -19,6 +19,7 @@ import { CardExecuteId } from '@/components/docker/container/cards/CardExecuteId
 import { CardError } from '@/components/docker/container/cards/CardError';
 import { CardInfoContainer } from '@/components/docker/container/cards/CardInfoContainer';
 import { ContainerActionButtons } from '@/components/docker/container/actions/ContainerActionButtons';
+import { ContainerViewButtons } from '@/components/docker/container/actions/ContainerViewButtons';
 
 export function ContainerDetailPage() {
     const container = useContainerStore((state) => state.container);
@@ -47,8 +48,8 @@ export function ContainerDetailPage() {
                     <div className="flex flex-col gap-8 pb-5">
                         <CardInfoContainer />
                         <div className="space-y-5 px-5">
-                            <div className={'flex justify-between'}>
-                                {/*<ContainerActionButtons />*/}
+                            <div className={'flex justify-between gap-2'}>
+                                <ContainerViewButtons />
                                 <ContainerActionButtons />
                             </div>
                             <CardError />

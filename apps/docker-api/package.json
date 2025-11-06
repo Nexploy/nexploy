@@ -6,5 +6,8 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@hono/node-ws": "^1.2.0"
   }
 }

@@ -29,7 +29,6 @@ import {
 import Link from 'next/link';
 import { ElementType, ReactElement } from 'react';
 import { RefreshDocker } from '@/components/sidebar/RefreshDocker';
-import getConfig from 'next/config';
 import { NexployLogo } from '@/components/sidebar/NexployLogo';
 import { AccountMenu } from '@/components/sidebar/AccountMenu';
 
@@ -80,10 +79,8 @@ const groups: Group[] = [
 ];
 
 export function AppSidebar({ variant }: AppSidebarProps) {
-    const { publicRuntimeConfig } = getConfig();
-
     return (
-        <Sidebar className="whitespace-nowrap" collapsible="icon" variant={variant}>
+        <Sidebar className="z-50 whitespace-nowrap" collapsible="icon" variant={variant}>
             <SidebarHeader>
                 <Link href="/" className={'flex items-center gap-2'}>
                     <div className="flex aspect-square size-7 items-center justify-center rounded-none">
@@ -92,7 +89,7 @@ export function AppSidebar({ variant }: AppSidebarProps) {
                     <div className="grid flex-1 text-left text-sm leading-tight">
                         <span className="truncate font-bold">Nexploy</span>
                         <span className="text-muted-foreground truncate text-xs">
-                            v{publicRuntimeConfig.version}
+                            v{process.env.appVersion}
                         </span>
                     </div>
                 </Link>
