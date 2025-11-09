@@ -2,20 +2,11 @@ import { ButtonGroup } from '@workspace/ui/components/button-group';
 import { Button } from '@workspace/ui/components/button';
 import { Activity, FileText, Terminal } from 'lucide-react';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { ContainerConsole } from '@/components/docker/container/actions/ContainerConsole';
+import { ContainerTerminal } from '@/components/docker/container/actions/ContainerTerminal';
+import { ContainerAttach } from '@/components/docker/container/actions/ContainerAttach';
 
 export function ContainerViewButtons() {
     const { openDialog } = useConfirmationDialogStore();
-
-    const handleOpenConsole = () =>
-        openDialog({
-            closeOnBackground: false,
-            title: 'Console',
-            props: {
-                className: 'sm:max-w-[1425px]',
-            },
-            content: <ContainerConsole />,
-        });
 
     return (
         <ButtonGroup>
@@ -27,10 +18,22 @@ export function ContainerViewButtons() {
                 <Activity className="hidden lg:block" />
                 Stats
             </Button>
-            <Button variant="outline" onClick={handleOpenConsole}>
-                <Terminal className="hidden lg:block" />
-                Console
-            </Button>
+            <ContainerTerminal>
+                {({ openConsole }) => (
+                    <Button variant="outline" onClick={openConsole}>
+                        <Terminal className="hidden lg:block" />
+                        Console
+                    </Button>
+                )}
+            </ContainerTerminal>
+            <ContainerAttach>
+                {({ openAttach }) => (
+                    <Button variant="outline" onClick={openAttach}>
+                        <Terminal className="hidden lg:block" />
+                        Attach
+                    </Button>
+                )}
+            </ContainerAttach>
         </ButtonGroup>
     );
 }

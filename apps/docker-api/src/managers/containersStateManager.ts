@@ -94,7 +94,16 @@ class ContainersStateManager extends BaseStateManager {
                 const newState = this.parseContainerInfo(container);
                 const oldState = this.containers.get(newState.id);
 
-                if (!oldState) return;
+                if (!oldState) {
+                    this.containers.set(newState.id, newState);
+                    const containerAddedData: ContainersEvent = {
+                        type: 'added',
+                        container: newState,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('container-added', containerAddedData);
+                    continue;
+                }
 
                 if (this.hasStateChanged(oldState, newState)) {
                     this.containers.set(newState.id, newState);

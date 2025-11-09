@@ -4,6 +4,7 @@ import { cors } from 'hono/cors';
 import containerRoutes from './routes/containerRoutes';
 import composeStackRoutes from './routes/composeStackRoutes';
 import imagesRoutes from './routes/imagesRoutes';
+import containersRoutes from './routes/containersRoutes';
 import containersEvents from './routes/events/containersEvents';
 import containerEvents from './routes/events/containerEvents';
 import dockerStatusEvents from './routes/events/dockerStatusEvents';
@@ -41,6 +42,7 @@ app.route('/api/docker/events', dockerStatusEvents);
 app.route('/api/docker', dockerStatusRoutes);
 
 app.route('/api/containers/events', containersEvents);
+app.route('/api/containers', containersRoutes);
 
 app.route('/api/container/events', containerEvents);
 app.route('/api/container', containerRoutes);

@@ -10,13 +10,6 @@ import { logger } from '@/utils/logger';
 const app = new Hono();
 
 app.post(
-    '/hardRefresh',
-    handleAsync(async () => {
-        return await containersStateManager.hardRefresh();
-    }),
-);
-
-app.post(
     '/create',
     handleAsync(async (c) => {
         const body: ContainerCreateForm = await c.req.json();

@@ -12,11 +12,12 @@ export type InputAutoCompleteOption = Record<'value' | 'label', string> & Record
 
 type InputAutoCompleteProps = {
     options?: InputAutoCompleteOption[];
-    value?: string;
-    onChange?: (value: string) => void;
+    value: string;
+    onChange: (value: string) => void;
     isLoading?: boolean;
     placeholder?: string;
     heading?: string;
+    alwaysShowOptions?: boolean;
 };
 
 export const InputAutoComplete = ({
@@ -26,8 +27,9 @@ export const InputAutoComplete = ({
     isLoading = false,
     placeholder,
     heading,
+    alwaysShowOptions = false,
     ...props
-}: InputAutoCompleteProps & React.ComponentProps<'input'>) => {
+}: InputAutoCompleteProps & Omit<React.ComponentProps<'input'>, 'onChange'>) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const [isOpen, setOpen] = useState(false);
 
@@ -39,12 +41,14 @@ export const InputAutoComplete = ({
             if (event.key === 'Enter' && input.value !== '') {
                 const optionToSelect = options.find((option) => option.label === input.value);
                 if (optionToSelect) {
-                    onChange?.(optionToSelect.value);
+                    onChange(optionToSelect.value);
+                    setOpen(false);
                 }
             }
 
             if (event.key === 'Escape') {
                 input.blur();
+                setOpen(false);
             }
         },
         [options, onChange],
@@ -56,7 +60,8 @@ export const InputAutoComplete = ({
 
     const handleSelectOption = useCallback(
         (selectedOption: InputAutoCompleteOption) => {
-            onChange?.(selectedOption.value);
+            onChange(selectedOption.value);
+            setOpen(false);
             setTimeout(() => inputRef?.current?.blur(), 0);
         },
         [onChange],
@@ -64,29 +69,32 @@ export const InputAutoComplete = ({
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (isLoading) return;
-        onChange?.(e.target.value);
+        onChange(e.target.value);
     };
 
     const filteredOptions = useMemo(() => {
+        if (alwaysShowOptions) return options;
         const query = value.toLowerCase().trim();
         if (!query) return options;
         return options.filter((opt) => opt.label.toLowerCase().includes(query));
-    }, [options, value]);
+    }, [options, value, alwaysShowOptions]);
 
-    const shouldShowList = isOpen && (isLoading || filteredOptions.length > 0);
+    const shouldShowList =
+        alwaysShowOptions || (isOpen && (isLoading || filteredOptions.length > 0));
 
     return (
         <CommandPrimitive onKeyDown={handleKeyDown}>
             <Input
                 {...props}
                 ref={inputRef}
+                type="text"
                 value={value}
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 onFocus={() => setOpen(true)}
                 placeholder={placeholder}
                 readOnly={isLoading}
-                className="text-base"
+                className={cn('text-base', props.className)}
             />
 
             {shouldShowList && (

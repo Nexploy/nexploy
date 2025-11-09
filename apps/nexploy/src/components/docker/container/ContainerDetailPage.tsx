@@ -13,9 +13,6 @@ import { CardEnv } from '@/components/docker/container/cards/CardEnv';
 import { CardLabels } from '@/components/docker/container/cards/CardLabels';
 import { CardHealthDetails } from '@/components/docker/container/cards/CardHealthDetails';
 import { CardNetworkDetails } from '@/components/docker/container/cards/CardNetworkDetails';
-import { CardDriverGraph } from '@/components/docker/container/cards/CardDriverGraph';
-import { CardSecurity } from '@/components/docker/container/cards/CardSecurity';
-import { CardExecuteId } from '@/components/docker/container/cards/CardExecuteId';
 import { CardError } from '@/components/docker/container/cards/CardError';
 import { CardInfoContainer } from '@/components/docker/container/cards/CardInfoContainer';
 import { ContainerActionButtons } from '@/components/docker/container/actions/ContainerActionButtons';
@@ -57,16 +54,14 @@ export function ContainerDetailPage() {
                                 <CardInfoDetail />
                                 <CardExposedPorts />
                             </div>
-                            <CardProcessExecution />
-                            <CardNetworkConfig />
-                            <CardVolumes />
                             <CardEnv />
+                            <CardVolumes />
+                            <CardNetworkDetails />
+                            <CardNetworkConfig />
+                            <CardProcessExecution />
                             <CardLabels />
                             <CardHealthDetails />
-                            <CardNetworkDetails />
-                            <CardDriverGraph />
-                            <CardSecurity />
-                            <CardExecuteId />
+                            {/*<CardExecuteId />*/}
                         </div>
                     </div>
                 </ScrollAreaWithShadow>

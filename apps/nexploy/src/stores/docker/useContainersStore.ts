@@ -131,7 +131,7 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
 
                     if (action === 'die') {
                         toast.error(`Container ${name} die unexpectedly`);
-                    } else if (action !== 'kill') {
+                    } else {
                         toast.success(`Container ${name} (action: ${action})`);
                     }
 

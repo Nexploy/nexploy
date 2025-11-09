@@ -29,7 +29,7 @@ export function CardVolumes() {
                 >
                     <div className="space-y-3">
                         {container.mounts.map((mount, idx) => (
-                            <div key={idx} className="bg-muted space-y-2 rounded-lg p-3">
+                            <div key={idx} className="bg-muted/30 space-y-2 rounded-lg p-3">
                                 <div className="flex items-center gap-2">
                                     <span className="bg-primary/20 text-primary rounded px-2 py-1 text-xs font-medium">
                                         {mount.type}

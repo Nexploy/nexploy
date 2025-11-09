@@ -3,12 +3,12 @@ import { ContainerInspectInfo } from 'dockerode';
 import {
     Container,
     ContainerEvent,
-    ContainerPorts,
     ContainerState,
     ContainerStateChanges,
     ContainerStateEvents,
 } from '@workspace/typescript-interface/docker/docker.container';
 import { BaseSingleResourceStateManager } from '@/lib/BaseSingleResourceStateManager';
+import { ContainerPorts } from '@workspace/typescript-interface/docker/docker.port';
 
 export class ContainerStateManager extends BaseSingleResourceStateManager<Container> {
     constructor(containerId: string) {
