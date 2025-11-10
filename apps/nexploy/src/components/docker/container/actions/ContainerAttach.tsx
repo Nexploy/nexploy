@@ -7,6 +7,8 @@ import { useContainerStore } from '@/stores/docker/useContainerStore';
 import '@xterm/xterm/css/xterm.css';
 import { Button } from '@workspace/ui/components/button';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
+import { Terminal } from 'lucide-react';
+import { statusMap } from '@/utils/statusMap';
 
 interface ContainerAttachProps {
     children: (props: { openAttach: () => void }) => React.ReactNode;
@@ -96,7 +98,6 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
 
                 try {
                     const data = JSON.parse(event.data);
-                    console.log(data);
 
                     if (data && typeof data === 'object' && data.type === 'error') {
                         setConnectionState('error');
@@ -161,16 +162,6 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
         setTimeout(() => setIsTerminalMounted(true), 100);
     };
 
-    const statusMap: Record<
-        typeof connectionState,
-        { label: string; status: 'online' | 'offline' | 'maintenance' | 'degraded' }
-    > = {
-        connecting: { label: 'Connecting...', status: 'maintenance' },
-        connected: { label: 'Online', status: 'online' },
-        error: { label: 'Error', status: 'degraded' },
-        disconnected: { label: 'Offline', status: 'offline' },
-    };
-
     const currentStatus = statusMap[connectionState];
 
     return (
@@ -181,14 +172,19 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
                     showCloseButton={false}
                     className="gap-0 overflow-hidden border border-neutral-800 bg-black p-0 sm:max-w-5/6"
                 >
-                    <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 py-2 pr-2 pl-4">
+                    <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 p-2 pl-3">
                         <div className="flex flex-row items-center gap-2">
-                            <DialogTitle className="text-sm text-white">
-                                Attach — {container?.name}
+                            <DialogTitle className="flex items-center gap-2 text-sm text-white">
+                                <Terminal className={'size-4'} /> Attach — {container?.name}
                             </DialogTitle>
-                            <Status className="rounded-none bg-black" status={currentStatus.status}>
+                            <Status
+                                className="rounded-none bg-transparent"
+                                status={currentStatus.status}
+                            >
                                 <StatusIndicator />
-                                <StatusLabel>{currentStatus.label}</StatusLabel>
+                                <StatusLabel className={currentStatus.text}>
+                                    {currentStatus.label}
+                                </StatusLabel>
                             </Status>
                         </div>
                         <div className="flex flex-row items-center gap-2">

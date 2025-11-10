@@ -1,6 +1,6 @@
 'use client';
 
-import { Container as IconContainer } from 'lucide-react';
+import { Activity, Container as IconContainer, FileText, Terminal } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { StatusDocker } from '@/components/docker/StatusDocker';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
@@ -16,7 +16,12 @@ import { CardNetworkDetails } from '@/components/docker/container/cards/CardNetw
 import { CardError } from '@/components/docker/container/cards/CardError';
 import { CardInfoContainer } from '@/components/docker/container/cards/CardInfoContainer';
 import { ContainerActionButtons } from '@/components/docker/container/actions/ContainerActionButtons';
-import { ContainerViewButtons } from '@/components/docker/container/actions/ContainerViewButtons';
+import { Button } from '@workspace/ui/components/button';
+import { ContainerTerminal } from '@/components/docker/container/actions/ContainerTerminal';
+import { ContainerAttach } from '@/components/docker/container/actions/ContainerAttach';
+import { ButtonGroup } from '@workspace/ui/components/button-group';
+import { ContainerLogs } from '@/components/docker/container/actions/logs/ContainerLogs';
+import { Skeleton } from '@workspace/ui/components/skeleton';
 
 export function ContainerDetailPage() {
     const container = useContainerStore((state) => state.container);
@@ -30,9 +35,13 @@ export function ContainerDetailPage() {
                     </div>
                     <div className="flex flex-1 flex-col">
                         <div className="flex items-center gap-3">
-                            <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                                {container?.name}
-                            </h1>
+                            {!container ? (
+                                <Skeleton className="h-6 w-40" />
+                            ) : (
+                                <h1 className="text-3xl leading-none font-semibold tracking-tight">
+                                    {container.name}
+                                </h1>
+                            )}
                             <StatusDocker className="my-1" />
                         </div>
                         <p className="text-muted-foreground text-sm">
@@ -45,10 +54,43 @@ export function ContainerDetailPage() {
                     <div className="flex flex-col gap-8 pb-5">
                         <CardInfoContainer />
                         <div className="space-y-5 px-5">
-                            <div className={'flex justify-between gap-2'}>
-                                <ContainerViewButtons />
-                                <ContainerActionButtons />
-                            </div>
+                            {!container ? (
+                                <Skeleton className="h-9 flex-1" />
+                            ) : (
+                                <div className={'flex justify-between gap-2'}>
+                                    <ButtonGroup>
+                                        <ContainerLogs>
+                                            {({ openLogs }) => (
+                                                <Button variant="outline" onClick={openLogs}>
+                                                    <FileText className="hidden lg:block" />
+                                                    Logs
+                                                </Button>
+                                            )}
+                                        </ContainerLogs>
+                                        <Button variant="outline">
+                                            <Activity className="hidden lg:block" />
+                                            Stats
+                                        </Button>
+                                        <ContainerTerminal>
+                                            {({ openConsole }) => (
+                                                <Button variant="outline" onClick={openConsole}>
+                                                    <Terminal className="hidden lg:block" />
+                                                    Console
+                                                </Button>
+                                            )}
+                                        </ContainerTerminal>
+                                        <ContainerAttach>
+                                            {({ openAttach }) => (
+                                                <Button variant="outline" onClick={openAttach}>
+                                                    <Terminal className="hidden lg:block" />
+                                                    Attach
+                                                </Button>
+                                            )}
+                                        </ContainerAttach>
+                                    </ButtonGroup>
+                                    <ContainerActionButtons />
+                                </div>
+                            )}
                             <CardError />
                             <div className={'flex gap-5'}>
                                 <CardInfoDetail />

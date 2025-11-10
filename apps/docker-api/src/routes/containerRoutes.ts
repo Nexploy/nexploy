@@ -383,27 +383,6 @@ app.delete(
 );
 
 app.get(
-    '/:id/logs',
-    handleAsync(async (c) => {
-        const id = c.req.param('id');
-
-        const container = docker.getContainer(id);
-        const tail = c.req.query('tail') ? parseInt(c.req.query('tail')!) : 100;
-
-        const logs = await container.logs({
-            stdout: true,
-            stderr: true,
-            tail,
-        });
-
-        return {
-            logs: logs.toString('utf-8'),
-            tail,
-        };
-    }),
-);
-
-app.get(
     '/:id',
     handleAsync(async (c) => {
         const id = c.req.param('id');

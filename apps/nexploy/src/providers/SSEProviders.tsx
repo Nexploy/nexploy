@@ -8,20 +8,13 @@ import { useEventsStore } from '@/stores/docker/useEventsStore';
 import { useVolumeStore } from '@/stores/docker/useVolumeStore';
 import { useNetworkStore } from '@/stores/docker/useNetworkStore';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
+import { useContainerLogsStore } from '@/stores/docker/useContainerLogsStore';
+import { SSEChannel } from '@workspace/typescript-interface/sse';
 
-type SSEConnection =
-    | 'docker'
-    | 'containers'
-    | 'container'
-    | 'images'
-    | 'volumes'
-    | 'networks'
-    | 'events';
-
-type SSEParams = Record<SSEConnection, any>;
+type SSEParams = Record<SSEChannel, any>;
 
 interface SSEProviderProps extends PropsWithChildren {
-    connections?: SSEConnection[];
+    connections?: SSEChannel[];
     params?: Partial<SSEParams>;
 }
 
@@ -51,10 +44,14 @@ export function SSEProvider({
     const containerConnect = useContainerStore((s) => s.connect);
     const containerDisconnect = useContainerStore((s) => s.disconnect);
 
+    const containerLogsConnect = useContainerLogsStore((s) => s.connect);
+    const containerLogsDisconnect = useContainerLogsStore((s) => s.disconnect);
+
     useEffect(() => {
-        const connectFns: Record<SSEConnection, (...args: any[]) => void> = {
+        const connectFns: Record<SSEChannel, (...args: any[]) => void> = {
             containers: containersConnect,
             container: containerConnect,
+            logs: containerLogsConnect,
             images: imageConnect,
             docker: dockerConnect,
             events: eventsConnect,
@@ -62,9 +59,10 @@ export function SSEProvider({
             networks: networksConnect,
         };
 
-        const disconnectFns: Record<SSEConnection, (...args: any[]) => void> = {
+        const disconnectFns: Record<SSEChannel, (...args: any[]) => void> = {
             containers: containersDisconnect,
             container: containerDisconnect,
+            logs: containerLogsDisconnect,
             images: imageDisconnect,
             docker: dockerDisconnect,
             events: eventsDisconnect,

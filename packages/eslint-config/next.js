@@ -33,7 +33,7 @@ export const nextJsConfig = [
         },
         rules: {
             ...pluginNext.configs.recommended.rules,
-            ...pluginNext.configs['core-web-vitals'].rules
+            ...pluginNext.configs['core-web-vitals'].rules,
         },
     },
     {
@@ -47,6 +47,7 @@ export const nextJsConfig = [
             'react/react-in-jsx-scope': 'off',
             'react/prop-types': 'off',
             'react-hooks/incompatible-library': 'off',
+            'react-hooks/exhaustive-deps': 'off',
         },
     },
 ];

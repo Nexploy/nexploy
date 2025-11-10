@@ -3,6 +3,8 @@ import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
 import { ContainerStateManager } from '@/managers/containerStateManager';
 import { ContainerEvent } from '@workspace/typescript-interface/docker/docker.container';
+import { ContainerLogsStateManager } from '@/managers/containerLogsStateManager';
+import { ContainerLogsEvent } from '@workspace/typescript-interface/stores/containerLogsStore';
 
 const app = new Hono();
 
@@ -109,6 +111,73 @@ app.get('/stream/:containerId', (c) => {
         manager.on('initial-state', handleInitialState);
         manager.on('state-change', handleStateChange);
         manager.on('removed', handleRemoved);
+
+        c.req.raw.signal.addEventListener('abort', cleanup);
+
+        await stream.sleep(2_147_483_647);
+    });
+});
+
+app.get('/stream/:containerId/logs/:follow/:tail', (c) => {
+    const containerId = c.req.param('containerId');
+
+    const follow = true;
+    const tail = parseInt(c.req.param('tail') || '500', 10);
+
+    return streamSSE(c, async (stream) => {
+        const clientId = `logs-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+        logger.info({ clientId, containerId, follow, tail }, 'SSE Container logs client connected');
+
+        const logsManager = new ContainerLogsStateManager(containerId);
+
+        try {
+            await logsManager.start({ follow, tail });
+        } catch (err) {
+            logger.error({ err, clientId, containerId }, 'Failed to start logs stream');
+            await stream.writeSSE({
+                data: JSON.stringify({ error: 'Failed to start logs stream' }),
+                event: 'error',
+                id: `${Date.now()}`,
+            });
+            return;
+        }
+
+        const handleLog = async (event: ContainerLogsEvent) => {
+            try {
+                await stream.writeSSE({
+                    data: JSON.stringify(event),
+                    event: event.type,
+                    id: `${Date.now()}`,
+                });
+            } catch (err) {
+                logger.error({ err, clientId, containerId }, 'Error sending log');
+                cleanup();
+            }
+        };
+
+        const heartbeat = setInterval(async () => {
+            try {
+                await stream.writeSSE({
+                    data: JSON.stringify({ timestamp: Date.now() }),
+                    event: 'heartbeat',
+                    id: `${Date.now()}`,
+                });
+            } catch (err) {
+                logger.error({ err, clientId, containerId }, 'Error sending heartbeat');
+                clearInterval(heartbeat);
+                cleanup();
+            }
+        }, 15000);
+
+        const cleanup = () => {
+            clearInterval(heartbeat);
+            logsManager.off('log', handleLog);
+            logsManager.stop();
+
+            logger.info({ clientId, containerId }, 'SSE Container logs client disconnected');
+        };
+
+        logsManager.on('log', handleLog);
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 

@@ -1,14 +1,15 @@
 import type { NextConfig } from 'next';
+
 const isProd = process.env.NODE_ENV === 'production';
 
 const nextConfig: NextConfig = {
     /* config options here */
-    output: 'export', // important → génère les fichiers statiques dans "out/"
+    output: 'export',
     reactStrictMode: true,
     images: {
-        unoptimized: true, // évite l’erreur avec le composant <Image> de Next
+        unoptimized: true,
     },
-    trailingSlash: true, // assure que toutes les routes ont un "/" final (utile pour file://)
+    trailingSlash: true,
     assetPrefix: isProd ? './' : '',
 };
 

@@ -8,6 +8,7 @@ export const runtime = 'nodejs';
 const CHANNEL_ENDPOINTS: Record<SSEChannel, string> = {
     containers: '/api/containers/events/stream',
     container: `/api/container/events/stream/:containerId`,
+    logs: `/api/container/events/stream/:containerId/logs/:follow/:tail`,
     images: '/api/images/events/stream',
     docker: '/api/docker/events/stream',
     events: '/api/events/events/stream',
@@ -44,7 +45,7 @@ const parseChannelConfig = (channelStr: string): ChannelConfig => {
     paramsStr.split(',').forEach((pair) => {
         const [key, value] = pair.split('=');
         if (key && value) {
-            params[key.trim()] = value.trim();
+            params[key.trim()] = decodeURIComponent(value.trim());
         }
     });
 
@@ -70,7 +71,8 @@ export const GET = route.handler(async (request: Request) => {
         return NextResponse.json({ error: 'Missing "channels" query parameter' }, { status: 400 });
     }
 
-    const channelConfigs = channelsParam.split(',').filter(Boolean).map(parseChannelConfig);
+    const channelKeys = channelsParam.split(',').map(decodeURIComponent);
+    const channelConfigs = channelKeys.map(parseChannelConfig);
 
     if (channelConfigs.length === 0) {
         return NextResponse.json(
@@ -105,7 +107,7 @@ export const GET = route.handler(async (request: Request) => {
         }
         const paramsStr = Object.entries(config.params)
             .sort(([a], [b]) => a.localeCompare(b))
-            .map(([k, v]) => `${k}=${v}`)
+            .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
             .join(',');
         return `${config.channel}:${paramsStr}`;
     };

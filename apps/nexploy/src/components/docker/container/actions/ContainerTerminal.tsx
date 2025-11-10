@@ -1,25 +1,31 @@
 'use client';
 
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import * as React from 'react';
+import { ReactNode, useRef, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Button } from '@workspace/ui/components/button';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
-import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { Separator } from '@workspace/ui/components/separator';
 import '@xterm/xterm/css/xterm.css';
 import { useContainerTerminal } from '@/hooks/useWebsocketTerminal';
-import { useForm } from 'react-hook-form';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@workspace/ui/components/select';
+import { statusMap } from '@/utils/statusMap';
+import { Terminal } from 'lucide-react';
 
 interface ContainerTerminalProps {
     children: (props: { openConsole: () => void }) => ReactNode;
 }
 
-interface FormData {
-    shellCommand: string;
-}
-
-const SHELL_OPTIONS = [
+const shellOptions = [
     { value: 'auto', label: 'Auto (bash > ash > dash > sh)' },
     { value: 'bash', label: 'Bash' },
     { value: 'sh', label: 'Shell (sh)' },
@@ -27,15 +33,9 @@ const SHELL_OPTIONS = [
     { value: 'dash', label: 'Dash (Debian)' },
 ];
 
-const STATUS_MAP = {
-    connecting: { label: 'Connecting...', status: 'maintenance' as const },
-    connected: { label: 'Online', status: 'online' as const },
-    error: { label: 'Error', status: 'degraded' as const },
-    disconnected: { label: 'Offline', status: 'offline' as const },
-};
-
 export function ContainerTerminal({ children }: ContainerTerminalProps) {
     const [open, setOpen] = useState(false);
+    const [selectedShell, setSelectedShell] = useState('auto');
 
     const termRef = useRef<HTMLDivElement>(null);
     const container = useContainerStore((state) => state.container);
@@ -44,29 +44,28 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
         terminalRef: termRef,
     });
 
-    useEffect(() => {
-        if (open) {
-            openConnection('auto');
-        }
-    }, [open]);
-
-    const { handleSubmit, watch, setValue } = useForm<FormData>();
-
-    const shellCommand = watch('shellCommand');
-
-    const handleOpen = () => setOpen(true);
+    const handleOpen = () => {
+        setOpen(true);
+        openConnection(selectedShell);
+    };
 
     const handleClose = () => {
         cleanup();
         setOpen(false);
     };
 
-    const onSubmit = (data: FormData) => {
-        openConnection(data.shellCommand);
+    const handleReconnection = () => {
+        cleanup();
+        openConnection(selectedShell);
     };
 
-    const currentStatus = STATUS_MAP[connectionState];
-    const isConnecting = connectionState === 'connecting';
+    const onValueChange = (shellCommand: string) => {
+        setSelectedShell(shellCommand);
+        openConnection(shellCommand);
+    };
+
+    const currentStatus = statusMap[connectionState];
+    const isConnected = connectionState === 'connected';
 
     return (
         <>
@@ -77,38 +76,43 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                     onOpenAutoFocus={(e) => e.preventDefault()}
                     className="gap-0 overflow-hidden border border-neutral-800 bg-black p-0 sm:max-w-5/6"
                 >
-                    <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 py-2 pr-2 pl-4">
+                    <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 p-2 pl-3">
                         <div className="flex flex-row items-center gap-2">
-                            <DialogTitle className="text-sm text-white">
-                                Console — {container?.name}
+                            <DialogTitle className="flex items-center gap-2 text-sm text-white">
+                                <Terminal className={'size-4'} /> Console — {container?.name}
                             </DialogTitle>
                             <Status className="rounded-none bg-black" status={currentStatus.status}>
                                 <StatusIndicator />
-                                <StatusLabel>{currentStatus.label}</StatusLabel>
+                                <StatusLabel className={currentStatus.text}>
+                                    {currentStatus.label}
+                                </StatusLabel>
                             </Status>
                         </div>
                         <div className="flex flex-row items-center gap-2">
-                            <form onSubmit={handleSubmit(onSubmit)} className="flex items-center">
-                                <InputAutoComplete
-                                    className="h-7 rounded-r-none"
-                                    heading="Cmd"
-                                    autoComplete="off"
-                                    placeholder="auto, sh, bash, ash..."
-                                    value={shellCommand}
-                                    alwaysShowOptions
-                                    onChange={(e) => setValue('shellCommand', e)}
-                                    options={SHELL_OPTIONS}
-                                />
-                                <Button
-                                    type="submit"
-                                    disabled={isConnecting}
-                                    className="h-7 rounded-l-none text-xs"
-                                    variant="white"
-                                    size="sm"
-                                >
-                                    Connect
-                                </Button>
-                            </form>
+                            <Select value={selectedShell} onValueChange={onValueChange}>
+                                <SelectTrigger className="!h-7 text-white">
+                                    <SelectValue placeholder="auto, sh, bash, ash..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Shell cmd</SelectLabel>
+                                        {shellOptions.map((option, index) => (
+                                            <SelectItem key={index} value={option.value}>
+                                                {option.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            <Button
+                                onClick={handleReconnection}
+                                className="h-7 text-xs"
+                                disabled={isConnected}
+                                variant="white"
+                                size="sm"
+                            >
+                                Reconnect
+                            </Button>
                             <Separator
                                 orientation="vertical"
                                 className="!h-5 border-white bg-white/50"

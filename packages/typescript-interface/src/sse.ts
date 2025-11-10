@@ -16,6 +16,7 @@ export type SSEChannel =
     | 'docker'
     | 'events'
     | 'volumes'
-    | 'networks';
+    | 'networks'
+    | 'logs';
 
 export type SSEEventHandler = (event: MessageEvent) => void;

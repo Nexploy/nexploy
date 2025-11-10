@@ -16,14 +16,12 @@ function getShellCommand(shell: string): string[] {
             return ['/bin/ash'];
         case 'dash':
             return ['/bin/dash'];
-        case 'auto':
+        default:
             return [
                 '/bin/sh',
                 '-c',
                 'command -v bash >/dev/null && exec bash || command -v ash >/dev/null && exec ash || command -v dash >/dev/null && exec dash || exec sh',
             ];
-        default:
-            return [shell];
     }
 }
 

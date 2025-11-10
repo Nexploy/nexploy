@@ -87,7 +87,7 @@ class SSEMultiplexerService {
         }
         const paramsStr = Object.entries(config.params)
             .sort(([a], [b]) => a.localeCompare(b))
-            .map(([k, v]) => `${k}=${v}`)
+            .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
             .join(',');
         return `${config.channel}:${paramsStr}`;
     }
@@ -104,7 +104,9 @@ class SSEMultiplexerService {
         }
 
         try {
-            const channelsParam = this.buildChannelsParam();
+            const channelsParam = Array.from(this.subscriptions.keys())
+                .map((channelKey) => encodeURIComponent(channelKey))
+                .join(',');
             const url = new URL('/api/events/multiplexed', window.location.origin);
             url.searchParams.set('channels', channelsParam);
 

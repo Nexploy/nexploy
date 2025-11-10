@@ -4,7 +4,6 @@ import { ButtonGroup } from '@workspace/ui/components/button-group';
 import { Button } from '@workspace/ui/components/button';
 import { useContainerActions } from '@/hooks/useContainerActions';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
-import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -17,8 +16,6 @@ export function ContainerActionButtons() {
         containerName: container?.name ?? '',
         isPaused: container?.state === 'paused',
     });
-
-    if (!container) return <Skeleton className="h-9 flex-1" />;
 
     const handleActionClick = async (action: (typeof containerActions)[0]) => {
         if (!action.onClick) return;
@@ -45,7 +42,7 @@ export function ContainerActionButtons() {
                 <ButtonGroup key={`sep-${index}`}>
                     <Button
                         onClick={() => handleActionClick(action)}
-                        disabled={action.disabledStates.includes(container.state)}
+                        disabled={action.disabledStates.includes(container!.state)}
                         variant={action.variant}
                     >
                         <action.icon className={'hidden lg:block'} />
@@ -58,7 +55,7 @@ export function ContainerActionButtons() {
                 <Button
                     key={index}
                     onClick={() => handleActionClick(action)}
-                    disabled={action.disabledStates.includes(container.state)}
+                    disabled={action.disabledStates.includes(container!.state)}
                     variant={action.variant}
                 >
                     <action.icon className={'hidden lg:block'} />

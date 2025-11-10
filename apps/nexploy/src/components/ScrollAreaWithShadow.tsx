@@ -1,7 +1,15 @@
 'use client';
 
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
-import { ComponentPropsWithoutRef, PropsWithChildren, useEffect, useRef, useState } from 'react';
+import {
+    ComponentPropsWithoutRef,
+    forwardRef,
+    PropsWithChildren,
+    useEffect,
+    useImperativeHandle,
+    useRef,
+    useState,
+} from 'react';
 import { cn } from '@workspace/ui/lib/utils';
 
 type ScrollAreaProps = ComponentPropsWithoutRef<typeof ScrollArea>;
@@ -11,22 +19,28 @@ interface ScrollAreaWithShadowProps extends ScrollAreaProps {
     colorShadow?: string;
 }
 
-export function ScrollAreaWithShadow({
-    children,
-    bottomShadow = false,
-    colorShadow = 'background',
-    ...props
-}: PropsWithChildren<ScrollAreaWithShadowProps>) {
+export const ScrollAreaWithShadow = forwardRef<
+    HTMLDivElement,
+    PropsWithChildren<ScrollAreaWithShadowProps>
+>(function ScrollAreaWithShadow(
+    { children, bottomShadow = false, colorShadow = 'background', ...props },
+    forwardedRef,
+) {
     const [showTopShadow, setShowTopShadow] = useState(false);
     const [showBottomShadow, setShowBottomShadow] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const viewportRef = useRef<HTMLDivElement | null>(null);
+
+    useImperativeHandle(forwardedRef, () => viewportRef.current as HTMLDivElement, []);
 
     useEffect(() => {
         const scrollContainer = scrollRef.current?.querySelector(
             '[data-radix-scroll-area-viewport]',
-        );
+        ) as HTMLDivElement;
 
         if (!scrollContainer) return;
+
+        viewportRef.current = scrollContainer;
 
         const handleScroll = () => {
             const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
@@ -64,4 +78,4 @@ export function ScrollAreaWithShadow({
             </ScrollArea>
         </div>
     );
-}
+});
