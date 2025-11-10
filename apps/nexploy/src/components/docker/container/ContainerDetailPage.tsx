@@ -22,6 +22,7 @@ import { ContainerAttach } from '@/components/docker/container/actions/Container
 import { ButtonGroup } from '@workspace/ui/components/button-group';
 import { ContainerLogs } from '@/components/docker/container/actions/logs/ContainerLogs';
 import { Skeleton } from '@workspace/ui/components/skeleton';
+import { ContainerStats } from '@/components/docker/container/actions/ContainerStats';
 
 export function ContainerDetailPage() {
     const container = useContainerStore((state) => state.container);
@@ -67,10 +68,14 @@ export function ContainerDetailPage() {
                                                 </Button>
                                             )}
                                         </ContainerLogs>
-                                        <Button variant="outline">
-                                            <Activity className="hidden lg:block" />
-                                            Stats
-                                        </Button>
+                                        <ContainerStats>
+                                            {({ openStats }) => (
+                                                <Button variant="outline" onClick={openStats}>
+                                                    <Activity className="hidden lg:block" />
+                                                    Stats
+                                                </Button>
+                                            )}
+                                        </ContainerStats>
                                         <ContainerTerminal>
                                             {({ openConsole }) => (
                                                 <Button variant="outline" onClick={openConsole}>

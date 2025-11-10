@@ -5,7 +5,7 @@ import { Readable } from 'stream';
 import {
     ContainerLogsEvent,
     LogEntry,
-} from '@workspace/typescript-interface/stores/containerLogsStore';
+} from '@workspace/typescript-interface/docker/docker.container.logs';
 
 export class ContainerLogsStateManager extends EventEmitter {
     private containerId: string;

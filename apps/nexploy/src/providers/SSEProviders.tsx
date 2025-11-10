@@ -1,6 +1,6 @@
 'use client';
 
-import { PropsWithChildren, useEffect } from 'react';
+import { PropsWithChildren, useEffect, useMemo } from 'react';
 import { useContainersStore } from '@/stores/docker/useContainersStore';
 import { useImageStore } from '@/stores/docker/useImageStore';
 import { useDockerStore } from '@/stores/docker/useDockerStore';
@@ -10,6 +10,7 @@ import { useNetworkStore } from '@/stores/docker/useNetworkStore';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { useContainerLogsStore } from '@/stores/docker/useContainerLogsStore';
 import { SSEChannel } from '@workspace/typescript-interface/sse';
+import { useContainerStatsStore } from '@/stores/docker/useContainerStatsStore';
 
 type SSEParams = Record<SSEChannel, any>;
 
@@ -23,6 +24,9 @@ export function SSEProvider({
     connections = ['docker', 'containers', 'images', 'volumes', 'networks', 'events'],
     params = {},
 }: SSEProviderProps) {
+    const memoizedConnections = useMemo(() => connections, [JSON.stringify(connections)]);
+    const memoizedParams = useMemo(() => params, [JSON.stringify(params)]);
+
     const containersConnect = useContainersStore((s) => s.connect);
     const containersDisconnect = useContainersStore((s) => s.disconnect);
 
@@ -47,10 +51,14 @@ export function SSEProvider({
     const containerLogsConnect = useContainerLogsStore((s) => s.connect);
     const containerLogsDisconnect = useContainerLogsStore((s) => s.disconnect);
 
+    const containerStatsConnect = useContainerStatsStore((s) => s.connect);
+    const containerStatsDisconnect = useContainerStatsStore((s) => s.disconnect);
+
     useEffect(() => {
         const connectFns: Record<SSEChannel, (...args: any[]) => void> = {
             containers: containersConnect,
             container: containerConnect,
+            stats: containerStatsConnect,
             logs: containerLogsConnect,
             images: imageConnect,
             docker: dockerConnect,
@@ -63,6 +71,7 @@ export function SSEProvider({
             containers: containersDisconnect,
             container: containerDisconnect,
             logs: containerLogsDisconnect,
+            stats: containerStatsDisconnect,
             images: imageDisconnect,
             docker: dockerDisconnect,
             events: eventsDisconnect,
@@ -84,6 +93,8 @@ export function SSEProvider({
             });
         };
     }, [
+        memoizedParams,
+        memoizedConnections,
         containerConnect,
         containerDisconnect,
         containersConnect,

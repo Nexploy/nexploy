@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "node server.js",
+    "dev": "tsx server.ts",
     "build": "next build --turbopack",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",

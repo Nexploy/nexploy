@@ -2,14 +2,14 @@
 
 import * as React from 'react';
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
-
 import { cn } from '@workspace/ui/lib/utils';
 
-function ScrollArea({
-    className,
-    children,
-    ...props
-}: React.ComponentProps<typeof ScrollAreaPrimitive.Root>) {
+interface ScrollAreaProps extends React.ComponentProps<typeof ScrollAreaPrimitive.Root> {
+    thumbColor?: string;
+    trackColor?: string;
+}
+
+function ScrollArea({ className, children, thumbColor, trackColor, ...props }: ScrollAreaProps) {
     return (
         <ScrollAreaPrimitive.Root
             data-slot="scroll-area"
@@ -22,17 +22,26 @@ function ScrollArea({
             >
                 {children}
             </ScrollAreaPrimitive.Viewport>
-            <ScrollBar />
+            <ScrollBar thumbColor={thumbColor} trackColor={trackColor} />
             <ScrollAreaPrimitive.Corner />
         </ScrollAreaPrimitive.Root>
     );
 }
 
+interface ScrollBarProps
+    extends React.ComponentProps<typeof ScrollAreaPrimitive.ScrollAreaScrollbar> {
+    thumbColor?: string;
+    trackColor?: string;
+    thumbHoverColor?: string;
+}
+
 function ScrollBar({
     className,
     orientation = 'vertical',
+    thumbColor,
+    trackColor,
     ...props
-}: React.ComponentProps<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>) {
+}: ScrollBarProps) {
     return (
         <ScrollAreaPrimitive.ScrollAreaScrollbar
             data-slot="scroll-area-scrollbar"
@@ -41,13 +50,14 @@ function ScrollBar({
                 'flex touch-none p-px transition-colors select-none',
                 orientation === 'vertical' && 'h-full w-2.5 border-l border-l-transparent',
                 orientation === 'horizontal' && 'h-2.5 flex-col border-t border-t-transparent',
+                trackColor,
                 className,
             )}
             {...props}
         >
             <ScrollAreaPrimitive.ScrollAreaThumb
                 data-slot="scroll-area-thumb"
-                className="bg-border relative flex-1 rounded-full"
+                className={cn('bg-border hover:bg-accent relative flex-1 rounded-full', thumbColor)}
             />
         </ScrollAreaPrimitive.ScrollAreaScrollbar>
     );

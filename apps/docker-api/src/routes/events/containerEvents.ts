@@ -4,7 +4,9 @@ import { logger } from '@/utils/logger';
 import { ContainerStateManager } from '@/managers/containerStateManager';
 import { ContainerEvent } from '@workspace/typescript-interface/docker/docker.container';
 import { ContainerLogsStateManager } from '@/managers/containerLogsStateManager';
-import { ContainerLogsEvent } from '@workspace/typescript-interface/stores/containerLogsStore';
+import { ContainerLogsEvent } from '@workspace/typescript-interface/docker/docker.container.logs';
+import { ContainerStatsStateManager } from '@/managers/containerStatsStateManager';
+import { ContainerStatsEvent } from '@workspace/typescript-interface/docker/docker.container.stats';
 
 const app = new Hono();
 
@@ -86,7 +88,7 @@ app.get('/stream/:containerId', (c) => {
                 clearInterval(heartbeat);
                 cleanup();
             }
-        }, 15000);
+        }, 30000);
 
         const cleanup = () => {
             clearInterval(heartbeat);
@@ -167,7 +169,7 @@ app.get('/stream/:containerId/logs/:follow/:tail', (c) => {
                 clearInterval(heartbeat);
                 cleanup();
             }
-        }, 15000);
+        }, 30000);
 
         const cleanup = () => {
             clearInterval(heartbeat);
@@ -178,6 +180,112 @@ app.get('/stream/:containerId/logs/:follow/:tail', (c) => {
         };
 
         logsManager.on('log', handleLog);
+
+        c.req.raw.signal.addEventListener('abort', cleanup);
+
+        await stream.sleep(2_147_483_647);
+    });
+});
+
+app.get('/stream/:containerId/stats/:refreshRate', (c) => {
+    const containerId = c.req.param('containerId');
+    const refreshRate = parseInt(c.req.param('refreshRate'), 10);
+
+    return streamSSE(c, async (stream) => {
+        const clientId = `stats-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+        logger.info({ clientId, containerId }, 'SSE Container stats client connected');
+
+        const statsManager = new ContainerStatsStateManager(containerId, refreshRate);
+
+        try {
+            await statsManager.start();
+        } catch (err) {
+            logger.error({ err, clientId, containerId }, 'Failed to start stats stream');
+            await stream.writeSSE({
+                data: JSON.stringify({ error: 'Failed to start stats stream' }),
+                event: 'error',
+                id: `${Date.now()}`,
+            });
+            return;
+        }
+
+        const handleInitialState = async (event: ContainerStatsEvent) => {
+            try {
+                await stream.writeSSE({
+                    data: JSON.stringify(event),
+                    event: 'initial-state',
+                    id: `${Date.now()}`,
+                });
+            } catch (err) {
+                logger.error({ err, clientId, containerId }, 'Error sending initial stats');
+                cleanup();
+            }
+        };
+
+        const handleStatsUpdate = async (event: ContainerStatsEvent) => {
+            try {
+                await stream.writeSSE({
+                    data: JSON.stringify(event),
+                    event: 'stats-update',
+                    id: `${Date.now()}`,
+                });
+            } catch (err) {
+                logger.error({ err, clientId, containerId }, 'Error sending stats update');
+                cleanup();
+            }
+        };
+
+        const handleRemoved = async (event: ContainerStatsEvent) => {
+            try {
+                await stream.writeSSE({
+                    data: JSON.stringify(event),
+                    event: 'removed',
+                    id: `${Date.now()}`,
+                });
+            } catch (err) {
+                logger.error({ err, clientId, containerId }, 'Error sending removed');
+                cleanup();
+            }
+        };
+
+        const heartbeat = setInterval(async () => {
+            try {
+                await stream.writeSSE({
+                    data: JSON.stringify({ timestamp: Date.now() }),
+                    event: 'heartbeat',
+                    id: `${Date.now()}`,
+                });
+            } catch (err) {
+                logger.error({ err, clientId, containerId }, 'Error sending heartbeat');
+                clearInterval(heartbeat);
+                cleanup();
+            }
+        }, 30000);
+
+        const cleanup = () => {
+            clearInterval(heartbeat);
+
+            statsManager.off('initial-state', handleInitialState);
+            statsManager.off('stats-update', handleStatsUpdate);
+            statsManager.off('removed', handleRemoved);
+            statsManager.stop();
+
+            logger.info({ clientId, containerId }, 'SSE Container stats client disconnected');
+        };
+
+        const currentStats = statsManager.getCurrentState();
+        if (currentStats) {
+            await handleInitialState({
+                type: 'initial-state',
+                containerId,
+                stats: currentStats,
+                timestamp: Date.now(),
+            });
+        }
+
+        statsManager.on('initial-state', handleInitialState);
+        statsManager.on('stats-update', handleStatsUpdate);
+        statsManager.on('removed', handleRemoved);
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 

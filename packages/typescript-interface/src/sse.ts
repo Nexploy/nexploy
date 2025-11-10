@@ -17,6 +17,7 @@ export type SSEChannel =
     | 'events'
     | 'volumes'
     | 'networks'
-    | 'logs';
+    | 'logs'
+    | 'stats';
 
 export type SSEEventHandler = (event: MessageEvent) => void;

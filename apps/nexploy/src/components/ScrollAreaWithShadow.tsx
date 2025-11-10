@@ -17,6 +17,8 @@ type ScrollAreaProps = ComponentPropsWithoutRef<typeof ScrollArea>;
 interface ScrollAreaWithShadowProps extends ScrollAreaProps {
     bottomShadow?: boolean;
     colorShadow?: string;
+    thumbColor?: string;
+    trackColor?: string;
 }
 
 export const ScrollAreaWithShadow = forwardRef<

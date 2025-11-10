@@ -2,9 +2,9 @@ import { create } from 'zustand';
 import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
 import {
     ContainerLogsEvent,
-    ContainerLogsState,
     LogEntry,
-} from '@workspace/typescript-interface/stores/containerLogsStore';
+} from '@workspace/typescript-interface/docker/docker.container.logs';
+import { ContainerLogsState } from '@workspace/typescript-interface/stores/containerLogsStore';
 
 const defaultValue = {
     containerId: null,

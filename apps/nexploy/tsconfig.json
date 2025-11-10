@@ -3,10 +3,18 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@workspace/ui/*": ["../../packages/ui/src/*"],
-      "@workspace/i18n/*": ["../../packages/i18n/src/*"],
-      "@workspace/typescript-interface/*": ["../../packages/typescript-interface/src/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@workspace/ui/*": [
+        "../../packages/ui/src/*"
+      ],
+      "@workspace/i18n/*": [
+        "../../packages/i18n/src/*"
+      ],
+      "@workspace/typescript-interface/*": [
+        "../../packages/typescript-interface/src/*"
+      ]
     },
     "plugins": [
       {
@@ -21,5 +29,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

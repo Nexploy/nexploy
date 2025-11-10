@@ -1,7 +1,7 @@
 import { RefObject, useCallback, useRef, useState } from 'react';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 
-const DELAY_TIME = 60000;
+const INACTIVITY_TIMEOUT = 60000;
 
 type ConnectionState = 'connecting' | 'connected' | 'error' | 'disconnected';
 
@@ -44,23 +44,20 @@ export function useContainerTerminal({ terminalRef }: UseContainerTerminalProps)
 
     const resetInactivityTimer = useCallback(() => {
         lastActivityRef.current = Date.now();
-
-        if (inactivityTimerRef.current) {
-            clearTimeout(inactivityTimerRef.current);
-        }
+        if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
 
         inactivityTimerRef.current = setTimeout(() => {
             const elapsed = Date.now() - lastActivityRef.current;
-            if (elapsed >= DELAY_TIME) {
+            if (elapsed >= INACTIVITY_TIMEOUT) {
                 closeConnection();
                 if (terminalRef_internal.current) {
                     terminalRef_internal.current.writeln(
-                        `\r\n\n\x1b[31m*** Disconnected (inactive ${DELAY_TIME / 1000}s) ***\x1b[0m\r\n\n`,
+                        `\r\n\n\x1b[31m*** Disconnected (inactive ${INACTIVITY_TIMEOUT / 1000}s) ***\x1b[0m\r\n\n`,
                     );
                 }
                 setConnectionState('disconnected');
             }
-        }, DELAY_TIME);
+        }, INACTIVITY_TIMEOUT);
     }, [closeConnection]);
 
     const buildSocketUrl = useCallback(

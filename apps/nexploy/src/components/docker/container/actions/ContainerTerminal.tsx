@@ -1,14 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import { ReactNode, useRef, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Button } from '@workspace/ui/components/button';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { Separator } from '@workspace/ui/components/separator';
 import '@xterm/xterm/css/xterm.css';
-import { useContainerTerminal } from '@/hooks/useWebsocketTerminal';
 import {
     Select,
     SelectContent,
@@ -20,6 +19,8 @@ import {
 } from '@workspace/ui/components/select';
 import { statusMap } from '@/utils/statusMap';
 import { Terminal } from 'lucide-react';
+import { useTerminalStore } from '@/stores/useTerminalStore';
+import { useLocalStorage } from 'usehooks-ts';
 
 interface ContainerTerminalProps {
     children: (props: { openConsole: () => void }) => ReactNode;
@@ -35,18 +36,17 @@ const shellOptions = [
 
 export function ContainerTerminal({ children }: ContainerTerminalProps) {
     const [open, setOpen] = useState(false);
-    const [selectedShell, setSelectedShell] = useState('auto');
+    const [selectedShell, setSelectedShell] = useLocalStorage('terminal-selectedShell', 'auto');
 
-    const termRef = useRef<HTMLDivElement>(null);
     const container = useContainerStore((state) => state.container);
 
-    const { connectionState, openConnection, cleanup } = useContainerTerminal({
-        terminalRef: termRef,
-    });
+    const { connectionState, openConnection, cleanup, terminalRef } = useTerminalStore();
 
-    const handleOpen = () => {
+    const socketUrl = `ws://${window.location.host}/api/ws/docker/terminal/${container?.id}/${selectedShell}`;
+
+    const handleOpen = async () => {
         setOpen(true);
-        openConnection(selectedShell);
+        await openConnection(socketUrl);
     };
 
     const handleClose = () => {
@@ -54,14 +54,17 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
         setOpen(false);
     };
 
-    const handleReconnection = () => {
+    const handleReconnection = async () => {
         cleanup();
-        openConnection(selectedShell);
+        await openConnection(socketUrl);
     };
 
-    const onValueChange = (shellCommand: string) => {
+    const onValueChange = async (shellCommand: string) => {
         setSelectedShell(shellCommand);
-        openConnection(shellCommand);
+        cleanup();
+        await openConnection(
+            `ws://${window.location.host}/api/ws/docker/terminal/${container?.id}/${shellCommand}`,
+        );
     };
 
     const currentStatus = statusMap[connectionState];
@@ -79,18 +82,24 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                     <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 p-2 pl-3">
                         <div className="flex flex-row items-center gap-2">
                             <DialogTitle className="flex items-center gap-2 text-sm text-white">
-                                <Terminal className={'size-4'} /> Console — {container?.name}
+                                <div className="flex size-4 items-center">
+                                    <Terminal />
+                                </div>
+                                Console — {container?.name}
+                                <Status
+                                    className="rounded-none bg-transparent"
+                                    status={currentStatus.status}
+                                >
+                                    <StatusIndicator />
+                                    <StatusLabel className={currentStatus.text}>
+                                        {currentStatus.label}
+                                    </StatusLabel>
+                                </Status>
                             </DialogTitle>
-                            <Status className="rounded-none bg-black" status={currentStatus.status}>
-                                <StatusIndicator />
-                                <StatusLabel className={currentStatus.text}>
-                                    {currentStatus.label}
-                                </StatusLabel>
-                            </Status>
                         </div>
                         <div className="flex flex-row items-center gap-2">
                             <Select value={selectedShell} onValueChange={onValueChange}>
-                                <SelectTrigger className="!h-7 text-white">
+                                <SelectTrigger className="!h-7 bg-white/10 text-white/90">
                                     <SelectValue placeholder="auto, sh, bash, ash..." />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -128,7 +137,7 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                         </div>
                     </DialogHeader>
 
-                    <div ref={termRef} className="m-2 h-[400px]" />
+                    <div ref={terminalRef} className="m-2 h-[400px]" />
                 </DialogContent>
             </Dialog>
         </>

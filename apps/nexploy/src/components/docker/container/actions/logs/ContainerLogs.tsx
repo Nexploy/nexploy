@@ -63,9 +63,9 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
             const distanceFromBottom = scrollHeight - (currentScrollTop + clientHeight);
             const scrollDiff = lastScrollTop.current - currentScrollTop;
 
-            if (distanceFromBottom <= 15 && !autoScroll) {
+            if (distanceFromBottom <= 20 && !autoScroll) {
                 setAutoScroll(true);
-            } else if (scrollDiff > 15 && autoScroll) {
+            } else if (scrollDiff > 20 && autoScroll) {
                 setAutoScroll(false);
             }
 
@@ -83,7 +83,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
         if (!autoScroll || !logsEndRef.current || !open) return;
 
         const rafId = requestAnimationFrame(() => {
-            logsEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            logsEndRef.current?.scrollIntoView({ behavior: 'instant', block: 'end' });
         });
 
         return () => cancelAnimationFrame(rafId);
@@ -100,7 +100,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                 <DialogContent
                     showCloseButton={false}
                     onOpenAutoFocus={(e) => e.preventDefault()}
-                    className="gap-0 overflow-hidden border border-neutral-800 bg-black p-0 sm:max-w-5xl"
+                    className="gap-0 overflow-hidden border border-neutral-800 bg-black p-0 sm:max-w-5/6"
                 >
                     <SSEProvider
                         connections={['logs']}
@@ -109,7 +109,10 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                         <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 p-2 pl-3">
                             <div className={'flex items-center gap-2'}>
                                 <DialogTitle className="flex items-center gap-2 text-sm text-white">
-                                    <FileText className={'size-4'} /> Logs — {container?.name}
+                                    <div className="flex size-4 items-center">
+                                        <FileText />
+                                    </div>
+                                    Logs — {container?.name}
                                 </DialogTitle>
                                 <Status
                                     className="rounded-none bg-transparent"
@@ -124,7 +127,10 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="flex items-center space-x-2">
-                                    <Label htmlFor="log-showTimestamp" className={'text-xs'}>
+                                    <Label
+                                        htmlFor="log-showTimestamp"
+                                        className={'text-xs text-white'}
+                                    >
                                         Show Timestamp
                                     </Label>
                                     <Switch
@@ -171,10 +177,12 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                         </DialogHeader>
                         <ScrollAreaWithShadow
                             ref={logsContainerRef}
+                            colorShadow={'from-black via-black/50'}
                             bottomShadow
-                            className="h-[600px] overflow-hidden font-mono text-xs"
+                            thumbColor={'bg-[#282828] hover:bg-[#404040]'}
+                            className="mr-1.5 h-[600px] overflow-hidden font-mono text-xs"
                         >
-                            <div className={'p-2'}>
+                            <div className={'p-2 pr-2.5'}>
                                 {isLoading && logs.length === 0 ? (
                                     <div className="text-secondary-foreground flex items-center gap-2">
                                         <Spinner />

@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import '@xterm/xterm/css/xterm.css';
@@ -9,188 +9,69 @@ import { Button } from '@workspace/ui/components/button';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { Terminal } from 'lucide-react';
 import { statusMap } from '@/utils/statusMap';
+import { useTerminalStore } from '@/stores/useTerminalStore';
 
 interface ContainerAttachProps {
     children: (props: { openAttach: () => void }) => React.ReactNode;
 }
 
-const INACTIVITY_TIMEOUT = 60000;
-
 export function ContainerAttach({ children }: ContainerAttachProps) {
     const [open, setOpen] = useState(false);
-    const [isTerminalMounted, setIsTerminalMounted] = useState(false);
-    const termRef = useRef<HTMLDivElement>(null);
     const container = useContainerStore((state) => state.container);
 
-    const [connectionState, setConnectionState] = useState<
-        'connecting' | 'connected' | 'error' | 'disconnected'
-    >('disconnected');
+    const { connectionState, openConnection, cleanup, terminalRef } = useTerminalStore();
 
-    const socketRef = useRef<WebSocket | null>(null);
-    const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
-    const lastActivityRef = useRef<number>(Date.now());
+    const socketUrl = `ws://${window.location.host}/api/ws/docker/attach/${container?.id}`;
 
-    const resetInactivityTimer = (term: any) => {
-        lastActivityRef.current = Date.now();
-        if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
-        inactivityTimerRef.current = setTimeout(() => {
-            const now = Date.now();
-            if (now - lastActivityRef.current >= INACTIVITY_TIMEOUT) {
-                socketRef.current?.close();
-                socketRef.current = null;
-                term.writeln(
-                    `\r\n\n\x1b[31m*** Disconnected (inactive ${INACTIVITY_TIMEOUT / 1000}s) ***\x1b[0m\r\n\n`,
-                );
-                setConnectionState('disconnected');
-            }
-        }, INACTIVITY_TIMEOUT);
+    const handleOpen = async () => {
+        setOpen(true);
+        await openConnection(socketUrl);
     };
 
-    const setupTerminal = useCallback(() => {
-        if (!isTerminalMounted || !container?.id) return;
+    const handleClose = () => {
+        cleanup();
+        setOpen(false);
+    };
 
-        let term: any;
-        let fitAddon: any;
-        let socket: WebSocket | null = null;
-        let disposable: any;
-        let observer: ResizeObserver | null = null;
-
-        (async () => {
-            const { Terminal } = await import('@xterm/xterm');
-            const { FitAddon } = await import('@xterm/addon-fit');
-
-            term = new Terminal({
-                cursorBlink: true,
-                fontSize: 14,
-                allowTransparency: true,
-                fontFamily: 'Menlo, Monaco, "Courier New", monospace',
-                theme: {
-                    background: '#000000',
-                    foreground: '#ffffff',
-                    cursor: '#ffffff',
-                },
-            });
-
-            fitAddon = new FitAddon();
-            term.loadAddon(fitAddon);
-            term.open(termRef.current!);
-            fitAddon.fit();
-            term.focus();
-
-            const socketUrl = `ws://${window.location.host}/api/ws/docker/attach/${container.id}`;
-            socketRef.current = socket = new WebSocket(socketUrl);
-            socket.binaryType = 'arraybuffer';
-
-            disposable = term.onData((data: string) => {
-                resetInactivityTimer(term);
-                if (socketRef.current === null) handleReconnect();
-                if (socket && socket.readyState === WebSocket.OPEN) socket.send(data);
-            });
-
-            socket.onopen = () => {
-                resetInactivityTimer(term);
-                setConnectionState('connected');
-                fitAddon.fit();
-            };
-
-            socket.onmessage = (event) => {
-                resetInactivityTimer(term);
-
-                try {
-                    const data = JSON.parse(event.data);
-
-                    if (data && typeof data === 'object' && data.type === 'error') {
-                        setConnectionState('error');
-                        term.writeln(`\r\x1b[31m*** ${data.error} ***\x1b[0m\r\n`);
-                        return;
-                    }
-                    if (typeof data === 'object') return;
-                } catch {
-                    /* empty */
-                }
-
-                if (typeof event.data === 'string') term.write(event.data);
-                else term.write(new Uint8Array(event.data));
-            };
-
-            socket.onerror = () => {
-                setConnectionState('error');
-            };
-
-            socket.onclose = () => {
-                setConnectionState('disconnected');
-            };
-
-            const handleResize = () => fitAddon.fit();
-            window.addEventListener('resize', handleResize);
-            observer = new ResizeObserver(() => fitAddon.fit());
-            observer.observe(termRef.current!);
-
-            return () => {
-                window.removeEventListener('resize', handleResize);
-            };
-        })();
-
-        return () => {
-            socketRef.current?.close?.();
-            socketRef.current = null;
-            disposable?.dispose?.();
-            observer?.disconnect?.();
-            term?.dispose?.();
-            if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
-        };
-    }, [isTerminalMounted, container?.id]);
-
-    useEffect(() => {
-        if (!open) {
-            setIsTerminalMounted(false);
-            setConnectionState('disconnected');
-            return;
-        }
-        const cleanup = setupTerminal();
-
-        setIsTerminalMounted(true);
-        setConnectionState('connecting');
-        return () => cleanup?.();
-    }, [open, setupTerminal]);
-
-    const openAttach = () => setOpen(true);
-
-    const handleReconnect = () => {
-        setConnectionState('connecting');
-        setIsTerminalMounted(false);
-        setTimeout(() => setIsTerminalMounted(true), 100);
+    const handleReconnect = async () => {
+        cleanup();
+        await openConnection(socketUrl);
     };
 
     const currentStatus = statusMap[connectionState];
+    const isConnected = connectionState === 'connected';
 
     return (
         <>
-            {children({ openAttach })}
-            <Dialog modal open={open} onOpenChange={setOpen}>
+            {children({ openAttach: handleOpen })}
+            <Dialog modal open={open} onOpenChange={handleClose}>
                 <DialogContent
                     showCloseButton={false}
+                    onOpenAutoFocus={(e) => e.preventDefault()}
                     className="gap-0 overflow-hidden border border-neutral-800 bg-black p-0 sm:max-w-5/6"
                 >
                     <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 p-2 pl-3">
                         <div className="flex flex-row items-center gap-2">
                             <DialogTitle className="flex items-center gap-2 text-sm text-white">
-                                <Terminal className={'size-4'} /> Attach — {container?.name}
+                                <div className="flex size-4 items-center">
+                                    <Terminal />
+                                </div>
+                                Attach — {container?.name}
+                                <Status
+                                    className="rounded-none bg-transparent"
+                                    status={currentStatus.status}
+                                >
+                                    <StatusIndicator />
+                                    <StatusLabel className={currentStatus.text}>
+                                        {currentStatus.label}
+                                    </StatusLabel>
+                                </Status>
                             </DialogTitle>
-                            <Status
-                                className="rounded-none bg-transparent"
-                                status={currentStatus.status}
-                            >
-                                <StatusIndicator />
-                                <StatusLabel className={currentStatus.text}>
-                                    {currentStatus.label}
-                                </StatusLabel>
-                            </Status>
                         </div>
                         <div className="flex flex-row items-center gap-2">
                             <Button
                                 onClick={handleReconnect}
-                                disabled={connectionState === 'connected'}
+                                disabled={isConnected}
                                 className="h-7 text-xs"
                                 variant="white"
                                 size="sm"
@@ -198,7 +79,7 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
                                 Reconnect
                             </Button>
                             <Button
-                                onClick={() => setOpen(false)}
+                                onClick={handleClose}
                                 className="h-7 text-xs"
                                 variant="white"
                                 size="sm"
@@ -208,7 +89,7 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
                         </div>
                     </DialogHeader>
 
-                    {isTerminalMounted && <div ref={termRef} className="m-2" />}
+                    <div ref={terminalRef} className="m-2 h-[400px]" />
                 </DialogContent>
             </Dialog>
         </>
