@@ -43,8 +43,8 @@ interface TerminalState {
 
     closeConnection: () => void;
     resetInactivityTimer: () => void;
-    cleanup: () => void;
-    openConnection: (url?: string) => Promise<void>;
+    disconnect: () => void;
+    connect: (url?: string) => Promise<void>;
     initializeSocket: (
         socketUrl: string,
         term: TerminalInstance,
@@ -111,7 +111,7 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
         set({ inactivityTimer: timer });
     },
 
-    cleanup: () => {
+    disconnect: () => {
         const state = get();
 
         if (state.cleanupFunction) {
@@ -135,7 +135,7 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
         set(defaultValue);
     },
 
-    openConnection: async (url) => {
+    connect: async (url) => {
         try {
             const { Terminal } = await import('@xterm/xterm');
             const { FitAddon } = await import('@xterm/addon-fit');

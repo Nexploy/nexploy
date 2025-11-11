@@ -21,6 +21,7 @@ import { statusMap } from '@/utils/statusMap';
 import { Terminal } from 'lucide-react';
 import { useTerminalStore } from '@/stores/useTerminalStore';
 import { useLocalStorage } from 'usehooks-ts';
+import { WebsocketProvider } from '@/providers/WebsocketProviders';
 
 interface ContainerTerminalProps {
     children: (props: { openConsole: () => void }) => ReactNode;
@@ -40,29 +41,27 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
 
     const container = useContainerStore((state) => state.container);
 
-    const { connectionState, openConnection, cleanup, terminalRef } = useTerminalStore();
+    const { connectionState, connect, disconnect, terminalRef } = useTerminalStore();
 
     const socketUrl = `ws://${window.location.host}/api/ws/docker/terminal/${container?.id}/${selectedShell}`;
 
     const handleOpen = async () => {
         setOpen(true);
-        await openConnection(socketUrl);
     };
 
     const handleClose = () => {
-        cleanup();
         setOpen(false);
     };
 
     const handleReconnection = async () => {
-        cleanup();
-        await openConnection(socketUrl);
+        disconnect();
+        await connect(socketUrl);
     };
 
     const onValueChange = async (shellCommand: string) => {
         setSelectedShell(shellCommand);
-        cleanup();
-        await openConnection(
+        disconnect();
+        await connect(
             `ws://${window.location.host}/api/ws/docker/terminal/${container?.id}/${shellCommand}`,
         );
     };
@@ -79,65 +78,67 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                     onOpenAutoFocus={(e) => e.preventDefault()}
                     className="gap-0 overflow-hidden border border-neutral-800 bg-black p-0 sm:max-w-5/6"
                 >
-                    <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 p-2 pl-3">
-                        <div className="flex flex-row items-center gap-2">
-                            <DialogTitle className="flex items-center gap-2 text-sm text-white">
-                                <div className="flex size-4 items-center">
-                                    <Terminal />
-                                </div>
-                                Console — {container?.name}
-                                <Status
-                                    className="rounded-none bg-transparent"
-                                    status={currentStatus.status}
+                    <WebsocketProvider connections={['terminal']} params={{ terminal: socketUrl }}>
+                        <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 p-2 pl-3">
+                            <div className="flex flex-row items-center gap-2">
+                                <DialogTitle className="flex items-center gap-2 text-sm text-white">
+                                    <div className="flex size-4 items-center">
+                                        <Terminal />
+                                    </div>
+                                    Console — {container?.name}
+                                    <Status
+                                        className="rounded-none bg-transparent"
+                                        status={currentStatus.status}
+                                    >
+                                        <StatusIndicator />
+                                        <StatusLabel className={currentStatus.text}>
+                                            {currentStatus.label}
+                                        </StatusLabel>
+                                    </Status>
+                                </DialogTitle>
+                            </div>
+                            <div className="flex flex-row items-center gap-2">
+                                <Select value={selectedShell} onValueChange={onValueChange}>
+                                    <SelectTrigger className="!h-7 bg-white/10 text-white/90">
+                                        <SelectValue placeholder="auto, sh, bash, ash..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>Shell cmd</SelectLabel>
+                                            {shellOptions.map((option, index) => (
+                                                <SelectItem key={index} value={option.value}>
+                                                    {option.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                                <Button
+                                    onClick={handleReconnection}
+                                    className="h-7 text-xs"
+                                    disabled={isConnected}
+                                    variant="white"
+                                    size="sm"
                                 >
-                                    <StatusIndicator />
-                                    <StatusLabel className={currentStatus.text}>
-                                        {currentStatus.label}
-                                    </StatusLabel>
-                                </Status>
-                            </DialogTitle>
-                        </div>
-                        <div className="flex flex-row items-center gap-2">
-                            <Select value={selectedShell} onValueChange={onValueChange}>
-                                <SelectTrigger className="!h-7 bg-white/10 text-white/90">
-                                    <SelectValue placeholder="auto, sh, bash, ash..." />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Shell cmd</SelectLabel>
-                                        {shellOptions.map((option, index) => (
-                                            <SelectItem key={index} value={option.value}>
-                                                {option.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                            <Button
-                                onClick={handleReconnection}
-                                className="h-7 text-xs"
-                                disabled={isConnected}
-                                variant="white"
-                                size="sm"
-                            >
-                                Reconnect
-                            </Button>
-                            <Separator
-                                orientation="vertical"
-                                className="!h-5 border-white bg-white/50"
-                            />
-                            <Button
-                                onClick={handleClose}
-                                className="h-7 text-xs"
-                                variant="white"
-                                size="sm"
-                            >
-                                Close
-                            </Button>
-                        </div>
-                    </DialogHeader>
+                                    Reconnect
+                                </Button>
+                                <Separator
+                                    orientation="vertical"
+                                    className="!h-5 border-white bg-white/50"
+                                />
+                                <Button
+                                    onClick={handleClose}
+                                    className="h-7 text-xs"
+                                    variant="white"
+                                    size="sm"
+                                >
+                                    Close
+                                </Button>
+                            </div>
+                        </DialogHeader>
 
-                    <div ref={terminalRef} className="m-2 h-[400px]" />
+                        <div ref={terminalRef} className="m-2 h-[400px]" />
+                    </WebsocketProvider>
                 </DialogContent>
             </Dialog>
         </>

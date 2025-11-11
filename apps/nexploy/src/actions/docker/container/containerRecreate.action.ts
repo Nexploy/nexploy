@@ -4,16 +4,14 @@ import { actionServer } from '@/lib/api/safe-action';
 import { HttpErrorResponse } from 'drino';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { drinoDocker } from '@/lib/api/drinoDocker';
-import { containerPortSchema } from '@workspace/schemas-zod/container/containerPort.schema';
+import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/container/containerRecreate.schema';
 
-export const onContainerDeletePortAction = actionServer
-    .inputSchema(containerPortSchema)
-    .action(async ({ parsedInput: { containerId, containerPort, hostPort, protocol } }) => {
+export const onContainerRecreateAction = actionServer
+    .inputSchema(ContainerRecreateFormSchema)
+    .action(async ({ parsedInput }) => {
         try {
             return await drinoDocker
-                .delete<{
-                    id: string;
-                }>(`/container/${containerId}/port/${containerPort}/${protocol}/${hostPort}`)
+                .post<{ id: string }>(`/container/recreate`, parsedInput)
                 .consume();
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
@@ -22,5 +20,7 @@ export const onContainerDeletePortAction = actionServer
                     message: err.error.message as string,
                 });
             }
+            console.log('azzaeeza');
+            return null;
         }
     });

@@ -28,7 +28,6 @@ import {
 } from '@workspace/ui/components/sidebar';
 import Link from 'next/link';
 import { ElementType, ReactElement } from 'react';
-import { RefreshDocker } from '@/components/sidebar/RefreshDocker';
 import { NexployLogo } from '@/components/sidebar/NexployLogo';
 import { AccountMenu } from '@/components/sidebar/AccountMenu';
 
@@ -59,7 +58,7 @@ const groups: Group[] = [
                 title: 'Docker',
                 href: '/docker/containers',
                 icon: Box,
-                actionIcon: <RefreshDocker />,
+                // actionIcon: <RefreshDocker />,
                 children: [
                     { title: 'Containers', icon: Container, href: '/docker/containers' },
                     { title: 'Images', icon: LayoutList, href: '/docker/images' },

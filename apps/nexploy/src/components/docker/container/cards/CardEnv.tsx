@@ -3,6 +3,7 @@ import { Key } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
+import { Badge } from '@workspace/ui/components/badge';
 
 export function CardEnv() {
     const container = useContainerStore((state) => state.container);
@@ -18,14 +19,17 @@ export function CardEnv() {
                     <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
                         <Key className="text-primary size-4" />
                     </div>
-                    <CardTitle>Variables d'environnement ({container.env.length})</CardTitle>
+                    <CardTitle>
+                        Variables d'environnement{' '}
+                        <Badge variant={'secondary'}>{container.env.length}</Badge>
+                    </CardTitle>
                 </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className={'px-0'}>
                 <ScrollAreaWithShadow
                     colorShadow={'from-card via-card/50'}
                     bottomShadow
-                    className="h-72 overflow-hidden"
+                    className="h-72 overflow-hidden px-6"
                 >
                     <div className="space-y-2">
                         {container.env.map((envVar, idx) => {

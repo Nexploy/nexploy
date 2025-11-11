@@ -1,5 +1,10 @@
 import { ContainerStats } from '../docker/docker.container.stats';
 
+export interface ContainerStatsParams {
+    containerId: string;
+    refreshRate: string;
+}
+
 export interface ContainerStatsState {
     containerId: string | null;
     stats: ContainerStats | null;
@@ -13,7 +18,7 @@ export interface ContainerStatsState {
     history: ContainerStats[];
     maxHistorySize: number;
 
-    connect: (params: { containerId: string; refreshRate: string }) => void;
+    connect: (params: ContainerStatsParams) => void;
     disconnect: () => void;
     reconnect: () => void;
     setError: (error: Error | null) => void;

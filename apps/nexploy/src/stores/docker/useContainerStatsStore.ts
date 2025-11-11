@@ -1,11 +1,21 @@
 import { create } from 'zustand';
 import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
-import { ContainerStatsState } from '@workspace/typescript-interface/stores/containerStatsStore';
+import {
+    ContainerStatsParams,
+    ContainerStatsState,
+} from '@workspace/typescript-interface/stores/containerStatsStore';
 import { ContainerStatsEvent } from '@workspace/typescript-interface/docker/docker.container.stats';
+import { formatBytes } from '@/utils/formatBytes';
 
 const defaultValue: Omit<
     ContainerStatsState,
-    'connect' | 'disconnect' | 'reconnect' | 'setError' | 'clearStats' | 'exportStats'
+    | 'connect'
+    | 'disconnect'
+    | 'reconnect'
+    | 'setError'
+    | 'clearStats'
+    | 'exportStats'
+    | 'reconnectPreservingData'
 > = {
     containerId: null,
     stats: null,
@@ -20,16 +30,16 @@ const defaultValue: Omit<
     maxHistorySize: 60,
 };
 
-let lastConnectionParams: { containerId: string; refreshRate: string } | null = null;
+let lastConnectionParams: ContainerStatsParams | null = null;
 
 export const useContainerStatsStore = create<ContainerStatsState>((set, get) => ({
     ...defaultValue,
 
     connect: ({ containerId, refreshRate }) => {
         const state = get();
+        const isSameContainerId = state.containerId === containerId;
 
-        if (state.isConnected && state.containerId === containerId) {
-            console.log(`[ContainerStats] Already monitoring stats for container ${containerId}`);
+        if (state.isConnected && isSameContainerId) {
             return;
         }
 
@@ -195,6 +205,16 @@ export const useContainerStatsStore = create<ContainerStatsState>((set, get) => 
         }, 100);
     },
 
+    reconnectPreservingData: () => {
+        if (!lastConnectionParams) {
+            console.warn('[ContainerStats] No previous connection params to reconnect');
+            return;
+        }
+
+        const { containerId, refreshRate } = lastConnectionParams;
+        get().connect({ containerId, refreshRate });
+    },
+
     disconnect: () => {
         const state = get();
 
@@ -243,14 +263,14 @@ export const useContainerStatsStore = create<ContainerStatsState>((set, get) => 
 
         const rows = history.map((stat) => [
             new Date(stat.timestamp).toISOString(),
-            stat.cpuPercent.toFixed(2),
-            stat.memoryUsage,
+            `${stat.cpuPercent.toFixed(3)}%`,
+            formatBytes(stat.memoryUsage),
             stat.memoryLimit,
-            stat.memoryPercent.toFixed(2),
-            stat.networkRx,
-            stat.networkTx,
-            stat.blockRead,
-            stat.blockWrite,
+            `${stat.memoryPercent.toFixed(3)}%`,
+            formatBytes(stat.networkRx),
+            formatBytes(stat.networkTx),
+            formatBytes(stat.blockRead),
+            formatBytes(stat.blockWrite),
             stat.pidsCount,
         ]);
 

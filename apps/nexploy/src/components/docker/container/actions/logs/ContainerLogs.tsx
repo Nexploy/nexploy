@@ -57,19 +57,18 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
         if (!logsContainer || !open) return;
 
         const handleScroll = () => {
-            const currentScrollTop = logsContainer.scrollTop;
             const scrollHeight = logsContainer.scrollHeight;
+            const scrollTop = logsContainer.scrollTop;
             const clientHeight = logsContainer.clientHeight;
-            const distanceFromBottom = scrollHeight - (currentScrollTop + clientHeight);
-            const scrollDiff = lastScrollTop.current - currentScrollTop;
+            const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
 
-            if (distanceFromBottom <= 20 && !autoScroll) {
+            if (distanceFromBottom <= 5) {
                 setAutoScroll(true);
-            } else if (scrollDiff > 20 && autoScroll) {
+            } else if (scrollTop < lastScrollTop.current) {
                 setAutoScroll(false);
             }
 
-            lastScrollTop.current = currentScrollTop;
+            lastScrollTop.current = scrollTop;
         };
 
         logsContainer.addEventListener('scroll', handleScroll, { passive: true });
@@ -77,7 +76,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
         return () => {
             logsContainer.removeEventListener('scroll', handleScroll);
         };
-    }, [logsContainerRef.current, autoScroll]);
+    }, [logsContainerRef.current, autoScroll, open]);
 
     useEffect(() => {
         if (!autoScroll || !logsEndRef.current || !open) return;
@@ -104,7 +103,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                 >
                     <SSEProvider
                         connections={['logs']}
-                        params={{ logs: { containerId: container?.id, tail: 50 } }}
+                        params={{ logs: { containerId: container!.id, tail: 50 } }}
                     >
                         <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 p-2 pl-3">
                             <div className={'flex items-center gap-2'}>

@@ -1,0 +1,46 @@
+import { Button } from '@workspace/ui/components/button';
+import { Save } from 'lucide-react';
+import { useState } from 'react';
+import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
+import { useContainerStore } from '@/stores/docker/useContainerStore';
+import { onContainerRecreateAction } from '@/actions/docker/container/containerRecreate.action';
+import { useRouter } from 'next/navigation';
+
+export function ApplyChangesButtonForm() {
+    const { portChanges, envVarChanges, hasChanges, resetAllChanges } = useContainerChangesStore();
+    const containerId = useContainerStore((state) => state.container?.id);
+    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
+
+    const handleApplyChanges = async () => {
+        if (!containerId) return;
+        setIsLoading(true);
+
+        const { data } = await onContainerRecreateAction({
+            containerId,
+            ports: portChanges,
+        });
+
+        setIsLoading(false);
+        resetAllChanges();
+
+        if (data) {
+            router.replace(`/docker/containers/${data.id}`);
+        }
+    };
+
+    return (
+        <Button
+            icon={Save}
+            isLoading={isLoading}
+            onClick={handleApplyChanges}
+            className={`transition-all duration-500 ease-in-out ${
+                hasChanges()
+                    ? 'pointer-events-auto scale-100 opacity-100'
+                    : 'pointer-events-none scale-95 opacity-0'
+            } `}
+        >
+            Appliquer les changements
+        </Button>
+    );
+}

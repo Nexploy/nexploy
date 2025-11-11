@@ -262,7 +262,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
 
     private startPolling(): void {
         this.pollResourceState().catch((err) => {
-            logger.error({ err }, 'Error in initial poll');
+            logger.error({ err }, `Error in ${this.resourceType} polling`);
         });
 
         this.pollInterval = setInterval(async () => {

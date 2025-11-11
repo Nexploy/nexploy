@@ -12,11 +12,23 @@ import { useContainerLogsStore } from '@/stores/docker/useContainerLogsStore';
 import { SSEChannel } from '@workspace/typescript-interface/sse';
 import { useContainerStatsStore } from '@/stores/docker/useContainerStatsStore';
 
-type SSEParams = Record<SSEChannel, any>;
+type ExtractConnectParams<T> = T extends (params: infer P) => void ? P : never;
+
+type SSEParams = {
+    docker?: ExtractConnectParams<ReturnType<typeof useDockerStore.getState>['connect']>;
+    containers?: ExtractConnectParams<ReturnType<typeof useContainersStore.getState>['connect']>;
+    images?: ExtractConnectParams<ReturnType<typeof useImageStore.getState>['connect']>;
+    volumes?: ExtractConnectParams<ReturnType<typeof useVolumeStore.getState>['connect']>;
+    networks?: ExtractConnectParams<ReturnType<typeof useNetworkStore.getState>['connect']>;
+    events?: ExtractConnectParams<ReturnType<typeof useEventsStore.getState>['connect']>;
+    container?: ExtractConnectParams<ReturnType<typeof useContainerStore.getState>['connect']>;
+    logs?: ExtractConnectParams<ReturnType<typeof useContainerLogsStore.getState>['connect']>;
+    stats?: ExtractConnectParams<ReturnType<typeof useContainerStatsStore.getState>['connect']>;
+};
 
 interface SSEProviderProps extends PropsWithChildren {
     connections?: SSEChannel[];
-    params?: Partial<SSEParams>;
+    params?: SSEParams;
 }
 
 export function SSEProvider({
@@ -79,15 +91,15 @@ export function SSEProvider({
             networks: networksDisconnect,
         };
 
-        connections.forEach((conn) => {
-            const param = params[conn];
+        memoizedConnections.forEach((conn) => {
+            const param = memoizedParams[conn as keyof SSEParams];
             if (param !== undefined) connectFns[conn]?.(param);
             else connectFns[conn]?.();
         });
 
         return () => {
-            connections.forEach((conn) => {
-                const param = params[conn];
+            memoizedConnections.forEach((conn) => {
+                const param = memoizedParams[conn as keyof SSEParams];
                 if (param !== undefined) disconnectFns[conn]?.(param);
                 else disconnectFns[conn]?.();
             });
@@ -109,6 +121,10 @@ export function SSEProvider({
         networksDisconnect,
         volumesConnect,
         volumesDisconnect,
+        containerLogsConnect,
+        containerLogsDisconnect,
+        containerStatsConnect,
+        containerStatsDisconnect,
     ]);
 
     return children;

@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     env: {
         appVersion: rootPackage.version,
     },
-    reactStrictMode: true,
+    reactStrictMode: false,
     transpilePackages: ['@workspace/ui', '@workspace/i18n'],
 };
 

@@ -6,6 +6,10 @@ import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { ContainerCreateForm } from '@workspace/schemas-zod/container/containerCreate.schema';
 import { ContainerCreateOptions } from 'dockerode';
 import { logger } from '@/utils/logger';
+import {
+    ContainerRecreateFormSchema,
+    Port,
+} from '@workspace/schemas-zod/container/containerRecreate.schema';
 
 const app = new Hono();
 
@@ -89,117 +93,53 @@ app.post(
     }),
 );
 
-app.put(
-    '/:id/port',
+app.post(
+    '/recreate',
     handleAsync(async (c) => {
-        const id = c.req.param('id');
         const body = await c.req.json();
 
-        const { containerPort, hostPort, protocol = 'tcp' } = body;
+        const parsed = ContainerRecreateFormSchema.parse(body);
 
-        if (!containerPort || !hostPort) {
-            const err = new Error('containerPort and hostPort are required');
-            (err as any).status = 400;
-            throw err;
-        }
-
-        const container = docker.getContainer(id);
-
+        const container = docker.getContainer(parsed.containerId);
         const containerInfo = await container.inspect();
 
         if (containerInfo.State.Running) await container.stop();
 
-        const currentExposedPorts = containerInfo.Config.ExposedPorts || {};
-        const currentPortBindings = containerInfo.HostConfig.PortBindings || {};
-
-        const containerPortKey = `${containerPort}/${protocol}`;
-        currentExposedPorts[containerPortKey] = {};
-        currentPortBindings[containerPortKey] = [
-            ...(currentPortBindings[containerPortKey] || []),
-            {
-                HostPort: hostPort.toString(),
-            },
-        ];
-
-        await container.remove();
-
-        const createOptions: ContainerCreateOptions = {
-            name: containerInfo.Name.replace('/', ''),
-            Image: containerInfo.Config.Image,
-            Hostname: containerInfo.Config.Hostname,
-            Env: containerInfo.Config.Env,
-            ExposedPorts: currentExposedPorts,
-            HostConfig: {
-                ...containerInfo.HostConfig,
-                PortBindings: currentPortBindings,
-            },
+        const exposedPorts: { [key: string]: {} } = { ...containerInfo.Config.ExposedPorts };
+        const portBindings: { [key: string]: { HostPort: string }[] } = {
+            ...containerInfo.HostConfig.PortBindings,
         };
 
-        const newContainer = await docker.createContainer(createOptions);
-        await newContainer.start();
-
-        return {
-            id: newContainer.id,
+        const changePort = (port: Port) => {
+            const currKey = `${port.currentPrivatePort}/${port.currentType}`;
+            delete exposedPorts[currKey];
+            if (portBindings[currKey]) {
+                portBindings[currKey] = portBindings[currKey].filter(
+                    (b) => b.HostPort !== String(port.currentPublicPort),
+                );
+                if (portBindings[currKey].length === 0) {
+                    delete portBindings[currKey];
+                }
+            }
         };
-    }),
-);
 
-app.patch(
-    '/:id/port',
-    handleAsync(async (c) => {
-        const id = c.req.param('id');
-        const body = await c.req.json();
+        parsed.ports.forEach((port) => {
+            if (port.typeAction === 'add') {
+                const key = `${port.privatePort}/${port.type}`;
+                exposedPorts[key] = {};
+                if (!portBindings[key]) portBindings[key] = [];
+                portBindings[key].push({ HostPort: String(port.publicPort) });
+            } else if (port.typeAction === 'edit') {
+                changePort(port);
 
-        const {
-            containerPort,
-            hostPort,
-            protocol,
-            currentContainerPort,
-            currentHostPort,
-            currentProtocol,
-        } = body;
-
-        const container = docker.getContainer(id);
-        const containerInfo = await container.inspect();
-
-        if (containerInfo.State.Running) await container.stop();
-
-        const currentExposedPorts = containerInfo.Config.ExposedPorts || {};
-        const currentPortBindings = containerInfo.HostConfig.PortBindings || {};
-
-        const currentPortKey = `${currentContainerPort}/${currentProtocol}`;
-
-        if (!currentPortBindings[currentPortKey]) {
-            const err = new Error(`Port ${currentPortKey} not found`);
-            (err as any).status = 404;
-            throw err;
-        }
-
-        const existingHostPort = parseInt(currentPortBindings[currentPortKey][0].HostPort, 10);
-        if (existingHostPort !== currentHostPort) {
-            const err = new Error(
-                `Port mismatch: expected host port ${currentHostPort}, found ${existingHostPort}`,
-            );
-            (err as any).status = 400;
-            throw err;
-        }
-
-        const finalContainerPort = containerPort ?? currentContainerPort;
-        const finalHostPort = hostPort ?? currentHostPort;
-        const finalProtocol = protocol ?? currentProtocol;
-
-        const newPortKey = `${finalContainerPort}/${finalProtocol}`;
-        if (currentPortKey !== newPortKey) {
-            delete currentExposedPorts[currentPortKey];
-            delete currentPortBindings[currentPortKey];
-        }
-
-        currentExposedPorts[newPortKey] = {};
-        currentPortBindings[newPortKey] = [
-            {
-                HostPort: finalHostPort.toString(),
-            },
-        ];
+                const newKey = `${port.privatePort}/${port.type}`;
+                exposedPorts[newKey] = {};
+                if (!portBindings[newKey]) portBindings[newKey] = [];
+                portBindings[newKey].push({ HostPort: String(port.publicPort) });
+            } else if (port.typeAction === 'delete') {
+                changePort(port);
+            }
+        });
 
         await container.remove();
 
@@ -210,92 +150,24 @@ app.patch(
             Env: containerInfo.Config.Env,
             Cmd: containerInfo.Config.Cmd,
             Entrypoint: containerInfo.Config.Entrypoint,
+            Volumes: containerInfo.Config.Volumes,
             WorkingDir: containerInfo.Config.WorkingDir,
             User: containerInfo.Config.User,
             Labels: containerInfo.Config.Labels,
-            ExposedPorts: currentExposedPorts,
+            ExposedPorts: exposedPorts,
             HostConfig: {
                 ...containerInfo.HostConfig,
-                PortBindings: currentPortBindings,
+                PortBindings: portBindings,
             },
         };
 
         const newContainer = await docker.createContainer(createOptions);
-        await newContainer.start();
 
-        return {
-            id: newContainer.id,
-        };
-    }),
-);
-
-app.delete(
-    '/:id/port/:containerPort/:protocol/:hostPort',
-    handleAsync(async (c) => {
-        const id = c.req.param('id');
-        const containerPort = c.req.param('containerPort');
-        const protocol = c.req.param('protocol');
-        const hostPort = c.req.param('hostPort');
-
-        const container = docker.getContainer(id);
-        const containerInfo = await container.inspect();
-
-        if (containerInfo.State.Running) await container.stop();
-
-        const currentExposedPorts = containerInfo.Config.ExposedPorts || {};
-        const currentPortBindings = containerInfo.HostConfig.PortBindings || {};
-
-        const portKey = `${containerPort}/${protocol}`;
-
-        if (!currentPortBindings[portKey]) {
-            const err = new Error(`Port ${portKey} not found`);
-            (err as any).status = 404;
-            throw err;
+        try {
+            await newContainer.start();
+        } finally {
+            return { id: newContainer.id };
         }
-
-        const existingHostPort = currentPortBindings[portKey][0]?.HostPort;
-        if (existingHostPort !== hostPort) {
-            const err = new Error(
-                `Port mismatch: expected host port ${hostPort}, found ${existingHostPort}`,
-            );
-            (err as any).status = 400;
-            throw err;
-        }
-
-        delete currentExposedPorts[portKey];
-        delete currentPortBindings[portKey];
-
-        await container.remove();
-
-        const createOptions: ContainerCreateOptions = {
-            name: containerInfo.Name.replace('/', ''),
-            Image: containerInfo.Config.Image,
-            Hostname: containerInfo.Config.Hostname,
-            Env: containerInfo.Config.Env,
-            Cmd: containerInfo.Config.Cmd,
-            Entrypoint: containerInfo.Config.Entrypoint,
-            WorkingDir: containerInfo.Config.WorkingDir,
-            User: containerInfo.Config.User,
-            Labels: containerInfo.Config.Labels,
-            ExposedPorts: currentExposedPorts,
-            HostConfig: {
-                ...containerInfo.HostConfig,
-                PortBindings: currentPortBindings,
-            },
-        };
-
-        const newContainer = await docker.createContainer(createOptions);
-        await newContainer.start();
-
-        return {
-            id: newContainer.id,
-            message: `Port ${portKey}:${hostPort} deleted successfully`,
-            deletedPort: {
-                containerPort: parseInt(containerPort, 10),
-                hostPort: parseInt(hostPort, 10),
-                protocol,
-            },
-        };
     }),
 );
 

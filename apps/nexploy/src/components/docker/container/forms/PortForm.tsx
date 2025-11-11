@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'sonner';
+import { useForm } from 'react-hook-form';
 import {
     Form,
     FormControl,
@@ -23,97 +23,72 @@ import {
     containerPortSchema,
 } from '@workspace/schemas-zod/container/containerPort.schema';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
-import { onContainerAddPortAction } from '@/actions/docker/container/port/containerAddPort.action';
-import { onContainerEditPortAction } from '@/actions/docker/container/port/containerEditPortAction';
-import { useRouter } from 'next/navigation';
 import { DialogFooter } from '@workspace/ui/components/dialog';
-import { Plus, Save } from 'lucide-react';
+import { Plus, Save, Trash } from 'lucide-react';
 import { PortFormProps } from '@workspace/typescript-interface/docker/docker.port';
+import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 
-export function PortForm({ mode, defaultPort }: PortFormProps) {
+export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
     const container = useContainerStore((state) => state.container);
     const { closeDialog } = useConfirmationDialogStore();
-    const router = useRouter();
+    const { onPortChange } = useContainerChangesStore();
 
-    const createActionConfig = {
-        add: {
-            action: onContainerAddPortAction,
-            buttonLabel: 'Ajouter',
-            pendingLabel: 'Ajout en cours...',
-            icon: Plus,
-            onSuccess: ({
-                data,
-                input,
-            }: {
-                data: Awaited<ReturnType<typeof onContainerAddPortAction>>['data'];
-                input: ContainerPortForm;
-            }) => {
-                if (!data) return;
-                router.replace(`/docker/containers/${data.id}`);
-                toast.dismiss();
-                toast.success(
-                    `Le port (${input.hostPort} → ${input.containerPort}) a bien été ajouté`,
-                );
-                closeDialog();
-            },
-        },
-        edit: {
-            action: onContainerEditPortAction.bind(null, {
-                currentContainerPort: defaultPort?.privatePort ?? 0,
-                currentHostPort: defaultPort?.publicPort ?? 0,
-                currentProtocol: defaultPort?.type ?? 'tcp',
-            }),
-            buttonLabel: 'Modifier',
-            pendingLabel: 'Modification en cours...',
-            icon: Save,
-            onSuccess: ({
-                data,
-                input,
-            }: {
-                data: Awaited<ReturnType<typeof onContainerEditPortAction>>['data'];
-                input: ContainerPortForm;
-            }) => {
-                if (!data) return;
-                toast.dismiss();
-                toast.success(
-                    `Le port (${input.hostPort} → ${input.containerPort}) a bien été modifié`,
-                );
-
-                router.replace(`/docker/containers/${data.id}`);
-                closeDialog();
-            },
-        },
-    };
-
-    const config = createActionConfig[mode];
-
-    const {
-        form,
-        action: formAction,
-        handleSubmitWithAction,
-    } = useHookFormAction(config.action, zodResolver(containerPortSchema), {
-        formProps: {
-            defaultValues: {
-                containerId: container?.id ?? '',
-                containerPort: defaultPort?.privatePort ?? 0,
-                hostPort: defaultPort?.publicPort ?? 0,
-                protocol: defaultPort?.type ?? 'tcp',
-            },
-        },
-        actionProps: {
-            onSuccess: config.onSuccess,
+    const form = useForm<ContainerPortForm>({
+        resolver: zodResolver(containerPortSchema),
+        defaultValues: {
+            containerId: container?.id ?? '',
+            privatePort: defaultPort?.privatePort ?? 0,
+            publicPort: defaultPort?.publicPort ?? 0,
+            type: defaultPort?.type ?? 'tcp',
         },
     });
 
-    const Icon = config.icon;
+    const onSubmit = (data: ContainerPortForm) => {
+        if (mode === 'add') {
+            onPortChange({
+                typeAction: 'add',
+                publicPort: data.publicPort,
+                privatePort: data.privatePort,
+                type: data.type,
+            });
+        } else if (mode === 'edit') {
+            const referencePort = originalPort ?? defaultPort;
+
+            onPortChange({
+                typeAction: 'edit',
+                publicPort: data.publicPort,
+                privatePort: data.privatePort,
+                type: data.type,
+                currentPublicPort: referencePort?.publicPort,
+                currentPrivatePort: referencePort?.privatePort,
+                currentType: referencePort?.type,
+            });
+        }
+
+        closeDialog();
+    };
+
+    const handleDelete = () => {
+        if (!defaultPort) return;
+
+        const referencePort = originalPort ?? defaultPort;
+
+        onPortChange({
+            typeAction: 'delete',
+            currentPublicPort: referencePort.publicPort,
+            currentPrivatePort: referencePort.privatePort,
+            currentType: referencePort.type,
+        });
+
+        closeDialog();
+    };
 
     return (
         <Form {...form}>
-            <form onSubmit={handleSubmitWithAction} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                     control={form.control}
-                    name="hostPort"
+                    name="publicPort"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Port hôte</FormLabel>
@@ -135,7 +110,7 @@ export function PortForm({ mode, defaultPort }: PortFormProps) {
 
                 <FormField
                     control={form.control}
-                    name="containerPort"
+                    name="privatePort"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Port conteneur</FormLabel>
@@ -157,7 +132,7 @@ export function PortForm({ mode, defaultPort }: PortFormProps) {
 
                 <FormField
                     control={form.control}
-                    name="protocol"
+                    name="type"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Protocole</FormLabel>
@@ -178,23 +153,27 @@ export function PortForm({ mode, defaultPort }: PortFormProps) {
                     )}
                 />
 
-                <DialogFooter>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={closeDialog}
-                        disabled={formAction.isPending}
-                    >
-                        Annuler
-                    </Button>
-                    <Button
-                        type="submit"
-                        icon={Icon}
-                        isLoading={formAction.isPending}
-                        disabled={formAction.isPending}
-                    >
-                        {formAction.isPending ? config.pendingLabel : config.buttonLabel}
-                    </Button>
+                <DialogFooter className={'flex !justify-between pt-4'}>
+                    {mode === 'edit' && (
+                        <Button
+                            type="button"
+                            variant="destructive"
+                            icon={Trash}
+                            onClick={handleDelete}
+                        >
+                            Supprimer
+                        </Button>
+                    )}
+                    <div className={'flex flex-1 flex-row justify-end gap-2'}>
+                        <Button
+                            className={'flex-1 sm:flex-0'}
+                            type="submit"
+                            disabled={!form.formState.isDirty}
+                            icon={mode === 'add' ? Plus : Save}
+                        >
+                            {mode === 'add' ? 'Ajouter' : 'Modifier'}
+                        </Button>
+                    </div>
                 </DialogFooter>
             </form>
         </Form>

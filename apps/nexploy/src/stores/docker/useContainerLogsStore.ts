@@ -32,7 +32,6 @@ export const useContainerLogsStore = create<ContainerLogsState>((set, get) => ({
         const state = get();
 
         if (state.isConnected && state.containerId === containerId) {
-            console.log(`[ContainerLogs] Already monitoring logs for container ${containerId}`);
             return;
         }
 

@@ -24,7 +24,6 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
         const state = get();
 
         if (state.isMonitoring && state.containerId === containerId) {
-            console.log(`[Container] Already monitoring container ${containerId}`);
             return;
         }
 

@@ -3,7 +3,7 @@ import { z } from 'zod';
 const portMappingSchema = z.object({
     hostPort: z.string(),
     containerPort: z.string(),
-    protocol: z.enum(['tcp', 'udp']).default('tcp'),
+    protocol: z.enum(['tcp', 'udp', 'sctp']).default('tcp'),
 });
 
 const envVarSchema = z.object({

@@ -23,12 +23,14 @@ import { ButtonGroup } from '@workspace/ui/components/button-group';
 import { ContainerLogs } from '@/components/docker/container/actions/logs/ContainerLogs';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ContainerStats } from '@/components/docker/container/actions/ContainerStats';
+import { CardExecuteId } from '@/components/docker/container/cards/CardExecuteId';
+import { ApplyChangesButtonForm } from '@/components/docker/container/forms/ApplyChangesButtonForm';
 
 export function ContainerDetailPage() {
     const container = useContainerStore((state) => state.container);
 
     return (
-        <div className="flex h-full flex-1 flex-col pt-5">
+        <div className="relative flex h-full flex-1 flex-col pt-5">
             <div className="flex flex-col gap-5 overflow-hidden">
                 <div className="flex gap-3 px-5">
                     <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
@@ -49,8 +51,8 @@ export function ContainerDetailPage() {
                             Détails et informations du conteneur Docker
                         </p>
                     </div>
+                    <ApplyChangesButtonForm />
                 </div>
-
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="flex flex-col gap-8 pb-5">
                         <CardInfoContainer />
@@ -108,7 +110,7 @@ export function ContainerDetailPage() {
                             <CardProcessExecution />
                             <CardLabels />
                             <CardHealthDetails />
-                            {/*<CardExecuteId />*/}
+                            <CardExecuteId />
                         </div>
                     </div>
                 </ScrollAreaWithShadow>

@@ -8,7 +8,7 @@ import {
     ContainerStateEvents,
 } from '@workspace/typescript-interface/docker/docker.container';
 import { BaseSingleResourceStateManager } from '@/lib/BaseSingleResourceStateManager';
-import { ContainerPorts } from '@workspace/typescript-interface/docker/docker.port';
+import { ContainerPorts, PortType } from '@workspace/typescript-interface/docker/docker.port';
 
 export class ContainerStateManager extends BaseSingleResourceStateManager<Container> {
     constructor(containerId: string) {
@@ -119,42 +119,23 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
     }
 
     private parseContainerInspect(container: ContainerInspectInfo): Container {
-        const portsMap = new Map<string, ContainerPorts>();
+        const portsMap: ContainerPorts[] = [];
         const ports = container.HostConfig.PortBindings || {};
 
         for (const [portAndProtocol, bindings] of Object.entries(ports)) {
             const [privatePortStr, type = 'tcp'] = portAndProtocol.split('/');
             const privatePort = parseInt(privatePortStr, 10);
 
-            if (!bindings || !Array.isArray(bindings)) {
-                const key = `${privatePort}-none-${type}`;
-                portsMap.set(key, {
-                    privatePort,
-                    publicPort: 0,
-                    hostIps: [],
-                    type,
-                });
-                continue;
-            }
-
-            for (const binding of bindings) {
+            for (const binding of bindings as any) {
                 const publicPort = parseInt(binding.HostPort, 10);
                 const hostIp = binding.HostIp || '0.0.0.0';
-                const key = `${privatePort}-${publicPort}-${type}`;
 
-                if (portsMap.has(key)) {
-                    const existing = portsMap.get(key)!;
-                    if (!existing.hostIps.includes(hostIp)) {
-                        existing.hostIps.push(hostIp);
-                    }
-                } else {
-                    portsMap.set(key, {
-                        privatePort,
-                        publicPort,
-                        hostIps: [hostIp],
-                        type,
-                    });
-                }
+                portsMap.push({
+                    privatePort,
+                    publicPort,
+                    hostIps: [hostIp],
+                    type: type as PortType,
+                });
             }
         }
 

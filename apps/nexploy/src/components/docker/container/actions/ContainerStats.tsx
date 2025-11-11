@@ -56,7 +56,9 @@ export function ContainerStats({ children }: ContainerStatsProps) {
     const [refreshRate, setRefreshRate] = useLocalStorage('stats-refreshRate', '5000');
 
     const container = useContainerStore((state) => state.container);
-    const { connectionState, history, exportStats, stats } = useContainerStatsStore();
+    const { connectionState, history, exportStats, stats } = useContainerStatsStore(
+        (state) => state,
+    );
 
     const currentStatus = statusMap[connectionState];
 
@@ -67,8 +69,6 @@ export function ContainerStats({ children }: ContainerStatsProps) {
     const handleClose = () => {
         setOpen(false);
     };
-
-    const handleChangeSpeed = (speed: number) => {};
 
     const chartData = history.map((stat) => ({
         timestamp: new Date(stat.timestamp).toLocaleTimeString(),
@@ -200,9 +200,9 @@ export function ContainerStats({ children }: ContainerStatsProps) {
             value: stats?.pidsCount || 0,
         },
         {
-            title: 'Memory (%)',
+            title: 'Memory',
             description: 'Current memory usage percentage',
-            value: stats?.memoryPercent?.toFixed(2) || 0,
+            value: `${stats?.memoryPercent?.toFixed(3) || 0}%`,
         },
     ];
 
@@ -217,7 +217,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                 >
                     <SSEProvider
                         connections={['stats']}
-                        params={{ stats: { containerId: container?.id, refreshRate } }}
+                        params={{ stats: { containerId: container!.id, refreshRate } }}
                     >
                         <DialogHeader className="flex flex-row items-center justify-between border-b p-2 pl-3">
                             <div className="flex flex-row items-center gap-2">
@@ -239,7 +239,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                             </div>
                             <div className="flex flex-row items-center gap-2">
                                 <Select value={refreshRate} onValueChange={setRefreshRate}>
-                                    <SelectTrigger className="!h-7 bg-white/10 text-white/90">
+                                    <SelectTrigger className="!h-7">
                                         <SelectValue placeholder="refresh rate..." />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -263,10 +263,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                                 >
                                     Download
                                 </Button>
-                                <Separator
-                                    orientation="vertical"
-                                    className="!h-5 border-white bg-white/50"
-                                />
+                                <Separator orientation="vertical" className="!h-5" />
                                 <Button onClick={handleClose} className="h-7 text-xs" size="sm">
                                     Close
                                 </Button>
