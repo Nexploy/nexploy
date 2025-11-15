@@ -20,7 +20,6 @@ export const onContainerRecreateAction = actionServer
                     message: err.error.message as string,
                 });
             }
-            console.log('azzaeeza');
             return null;
         }
     });

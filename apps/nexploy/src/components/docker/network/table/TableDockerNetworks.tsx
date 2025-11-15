@@ -39,6 +39,7 @@ import {
 } from '@workspace/ui/components/select';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import Link from 'next/link';
 
 const globalFilterFn: FilterFn<Network> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -165,9 +166,11 @@ export function TableDockerNetworks() {
                             </TooltipContent>
                         )}
                     </Tooltip>
-                    <Button disabled>
-                        <Plus />
-                        Create Network
+                    <Button asChild>
+                        <Link href={'/docker/networks/create-network'}>
+                            <Plus />
+                            Create Network
+                        </Link>
                     </Button>
                 </div>
             </div>

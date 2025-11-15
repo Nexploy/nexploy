@@ -3,11 +3,11 @@
 import { actionServer } from '@/lib/api/safe-action';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { HttpErrorResponse } from 'drino';
-import { VolumeCreateSchema } from '@workspace/schemas-zod/volume/volumeAction.schema';
+import { volumeCreateSchema } from '@workspace/schemas-zod/volume/volumeAction.schema';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 
-export const onVolumeCreate = actionServer
-    .inputSchema(VolumeCreateSchema)
+export const onVolumeCreateAction = actionServer
+    .inputSchema(volumeCreateSchema)
     .action(async ({ parsedInput }) => {
         try {
             const response = await drinoDocker.post('/volumes/create', parsedInput).consume();

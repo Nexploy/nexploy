@@ -3,9 +3,22 @@
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { onSignInAction } from '@/actions/docker/auth/signIn.action';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SignInFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import { signInFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@workspace/ui/components/card';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
@@ -15,7 +28,7 @@ export function SignInForm() {
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onSignInAction,
-        zodResolver(SignInFormSchema(t)),
+        zodResolver(signInFormSchema(t)),
         {
             formProps: {
                 defaultValues: {

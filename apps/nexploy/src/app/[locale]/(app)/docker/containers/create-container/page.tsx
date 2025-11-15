@@ -42,7 +42,7 @@ import {
 } from '@workspace/ui/components/select';
 import { Switch } from '@workspace/ui/components/switch';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { ContainerCreateFormSchema } from '@workspace/schemas-zod/container/containerCreate.schema';
+import { containerCreateFormSchema } from '@workspace/schemas-zod/container/containerCreate.schema';
 import { onContainerCreateAction } from '@/actions/docker/container/containerCreate.action';
 import {
     InputAutoComplete,
@@ -143,7 +143,7 @@ export default function AddContainerPage() {
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onContainerCreateAction,
-        zodResolver(ContainerCreateFormSchema),
+        zodResolver(containerCreateFormSchema),
         {
             formProps: {
                 defaultValues: {
@@ -295,7 +295,6 @@ export default function AddContainerPage() {
                             </CardContent>
                         </Card>
 
-                        {/* Configuration de base */}
                         <Card>
                             <CardHeader>
                                 <CardTitle>Configuration de base</CardTitle>
@@ -466,7 +465,6 @@ export default function AddContainerPage() {
                             </CardContent>
                         </Card>
 
-                        {/* Ports */}
                         <Card>
                             <CardHeader>
                                 <div className="flex items-center justify-between">
@@ -574,7 +572,6 @@ export default function AddContainerPage() {
                             </CardContent>
                         </Card>
 
-                        {/* Variables d'environnement */}
                         <Card>
                             <CardHeader>
                                 <div className="flex items-center justify-between">
@@ -650,7 +647,6 @@ export default function AddContainerPage() {
                             </CardContent>
                         </Card>
 
-                        {/* Volumes */}
                         <Card>
                             <CardHeader>
                                 <div className="flex items-center justify-between">

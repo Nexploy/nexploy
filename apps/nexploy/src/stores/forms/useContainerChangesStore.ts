@@ -23,13 +23,36 @@ export type EnvVarChange = {
     currentValue?: string;
 };
 
+export type VolumeChange = {
+    typeAction: 'add' | 'delete';
+
+    hostPath?: string;
+    containerPath?: string;
+    readOnly?: boolean;
+
+    currentHostPath?: string;
+    currentContainerPath?: string;
+    currentReadOnly?: boolean;
+};
+
+export type NetworkChange = {
+    typeAction: 'add' | 'edit' | 'delete';
+
+    name?: string;
+
+    currentName?: string;
+};
+
 type ContainerChangesStore = {
     portChanges: PortChange[];
     envVarChanges: EnvVarChange[];
+    volumeChanges: VolumeChange[];
+    networkChanges: NetworkChange[];
 
     onPortChange: (change: PortChange) => void;
-
     onEnvVarChange: (change: EnvVarChange) => void;
+    onVolumeChange: (change: VolumeChange) => void;
+    onNetworkChange: (change: NetworkChange) => void;
 
     resetAllChanges: () => void;
     hasChanges: () => boolean;
@@ -38,6 +61,8 @@ type ContainerChangesStore = {
 export const useContainerChangesStore = create<ContainerChangesStore>((set, get) => ({
     portChanges: [],
     envVarChanges: [],
+    volumeChanges: [],
+    networkChanges: [],
 
     onPortChange: (change) =>
         set((state) => {
@@ -199,14 +224,131 @@ export const useContainerChangesStore = create<ContainerChangesStore>((set, get)
             return { envVarChanges };
         }),
 
+    onVolumeChange: (change) =>
+        set((state) => {
+            const volumeChanges = [...state.volumeChanges];
+
+            const volumeIdentifier = {
+                currentHostPath: change.currentHostPath,
+                currentContainerPath: change.currentContainerPath,
+            };
+
+            const existingIndex = volumeChanges.findIndex((c) => {
+                if (c.typeAction === 'add') {
+                    return (
+                        c.hostPath === volumeIdentifier.currentHostPath &&
+                        c.containerPath === volumeIdentifier.currentContainerPath
+                    );
+                }
+                return (
+                    c.currentHostPath === volumeIdentifier.currentHostPath &&
+                    c.currentContainerPath === volumeIdentifier.currentContainerPath
+                );
+            });
+
+            if (existingIndex !== -1) {
+                const existing = volumeChanges[existingIndex];
+
+                if (existing?.typeAction === 'add' && change.typeAction === 'delete') {
+                    volumeChanges.splice(existingIndex, 1);
+                    return { volumeChanges };
+                }
+
+                if (existing?.typeAction === 'delete' && change.typeAction === 'add') {
+                    volumeChanges.splice(existingIndex, 1);
+                    return { volumeChanges };
+                }
+
+                if (existing?.typeAction === 'delete' && change.typeAction === 'delete') {
+                    return { volumeChanges };
+                }
+            }
+
+            volumeChanges.push(change);
+            return { volumeChanges };
+        }),
+
+    onNetworkChange: (change) =>
+        set((state) => {
+            const networkChanges = [...state.networkChanges];
+
+            const networkIdentifier = {
+                currentName: change.currentName,
+            };
+
+            const existingIndex = networkChanges.findIndex((c) => {
+                if (c.typeAction === 'add') {
+                    return c.name === networkIdentifier.currentName;
+                }
+                return c.currentName === networkIdentifier.currentName;
+            });
+
+            if (existingIndex !== -1) {
+                const existing = networkChanges[existingIndex];
+
+                if (existing?.typeAction === 'add' && change.typeAction === 'edit') {
+                    networkChanges[existingIndex] = {
+                        typeAction: 'add',
+                        name: change.name,
+                    };
+                    return { networkChanges };
+                }
+
+                if (existing?.typeAction === 'add' && change.typeAction === 'delete') {
+                    networkChanges.splice(existingIndex, 1);
+                    return { networkChanges };
+                }
+
+                if (existing?.typeAction === 'edit' && change.typeAction === 'delete') {
+                    networkChanges[existingIndex] = {
+                        typeAction: 'delete',
+                        currentName: existing?.currentName,
+                    };
+                    return { networkChanges };
+                }
+
+                if (existing?.typeAction === 'edit' && change.typeAction === 'edit') {
+                    networkChanges[existingIndex] = {
+                        typeAction: 'edit',
+                        name: change.name,
+                        currentName: existing?.currentName,
+                    };
+                    return { networkChanges };
+                }
+
+                if (existing?.typeAction === 'delete' && change.typeAction === 'edit') {
+                    networkChanges[existingIndex] = {
+                        typeAction: 'edit',
+                        name: change.name,
+                        currentName: existing?.currentName,
+                    };
+                    return { networkChanges };
+                }
+
+                if (existing?.typeAction === 'delete' && change.typeAction === 'delete') {
+                    return { networkChanges };
+                }
+            }
+
+            networkChanges.push(change);
+            return { networkChanges };
+        }),
+
     resetAllChanges: () =>
         set({
             portChanges: [],
             envVarChanges: [],
+            volumeChanges: [],
+            networkChanges: [],
         }),
 
     hasChanges: () => {
         const state = get();
-        return state.portChanges.length > 0 || state.envVarChanges.length > 0;
+        return (
+            state.portChanges.length > 0 ||
+            state.envVarChanges.length > 0 ||
+            state.volumeChanges.length > 0 ||
+            state.networkChanges.length > 0
+        );
     },
 }));

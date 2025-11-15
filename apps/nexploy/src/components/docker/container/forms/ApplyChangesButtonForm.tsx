@@ -7,7 +7,14 @@ import { onContainerRecreateAction } from '@/actions/docker/container/containerR
 import { useRouter } from 'next/navigation';
 
 export function ApplyChangesButtonForm() {
-    const { portChanges, envVarChanges, hasChanges, resetAllChanges } = useContainerChangesStore();
+    const {
+        portChanges,
+        envVarChanges,
+        networkChanges,
+        volumeChanges,
+        hasChanges,
+        resetAllChanges,
+    } = useContainerChangesStore();
     const containerId = useContainerStore((state) => state.container?.id);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
@@ -19,6 +26,9 @@ export function ApplyChangesButtonForm() {
         const { data } = await onContainerRecreateAction({
             containerId,
             ports: portChanges,
+            envVars: envVarChanges,
+            volumes: volumeChanges,
+            networks: networkChanges,
         });
 
         setIsLoading(false);

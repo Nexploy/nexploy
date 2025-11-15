@@ -30,7 +30,7 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
             icon: Play,
             label: 'Use',
             onClick: () =>
-                router.push(`/docker/containers/add-container?image=${image.repoTags[0]}`),
+                router.push(`/docker/containers/create-container?image=${image.repoTags[0]}`),
             disabled: !image.repoTags.length,
             tooltipContent: !image.repoTags.length
                 ? 'This image has no repository tags'

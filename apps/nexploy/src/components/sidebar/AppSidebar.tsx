@@ -2,6 +2,7 @@ import {
     Activity,
     Box,
     Bug,
+    ChevronRight,
     Container,
     EthernetPort,
     Folder,
@@ -26,6 +27,11 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
 } from '@workspace/ui/components/sidebar';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@workspace/ui/components/collapsible';
 import Link from 'next/link';
 import { ElementType, ReactElement } from 'react';
 import { NexployLogo } from '@/components/sidebar/NexployLogo';
@@ -45,20 +51,29 @@ interface SidebarItem {
     icon: ElementType;
     href: string;
     actionIcon?: ReactElement;
-    children?: { title: string; href: string; icon: ElementType }[];
+    enableCollapsible?: boolean;
+    children?: SidebarItem[];
 }
 
 const groups: Group[] = [
     {
         title: 'Home',
         children: [
-            { title: 'Projects', href: '/projects', icon: Folder },
-            { title: 'Monitoring', href: '/monitoring', icon: Activity },
+            {
+                title: 'Projects',
+                href: '/projects',
+                enableCollapsible: true,
+                icon: Folder,
+            },
+            {
+                title: 'Monitoring',
+                href: '/monitoring',
+                icon: Activity,
+            },
             {
                 title: 'Docker',
                 href: '/docker/containers',
                 icon: Box,
-                // actionIcon: <RefreshDocker />,
                 children: [
                     { title: 'Containers', icon: Container, href: '/docker/containers' },
                     { title: 'Images', icon: LayoutList, href: '/docker/images' },
@@ -73,7 +88,10 @@ const groups: Group[] = [
     },
     {
         title: 'Settings',
-        children: [{ title: 'Git', href: '/settings', icon: GitBranch }],
+        children: [
+            { title: 'Git', href: '/settings/git', icon: GitBranch },
+            { title: 'Preferences', href: '/settings/preferences', icon: LayoutList },
+        ],
     },
 ];
 
@@ -81,7 +99,7 @@ export function AppSidebar({ variant }: AppSidebarProps) {
     return (
         <Sidebar className="z-50 whitespace-nowrap" collapsible="icon" variant={variant}>
             <SidebarHeader>
-                <Link href="/" className={'flex items-center gap-2'}>
+                <Link href="/" className="flex items-center gap-2">
                     <div className="flex aspect-square size-7 items-center justify-center rounded-none">
                         <NexployLogo className="size-7" />
                     </div>
@@ -100,37 +118,77 @@ export function AppSidebar({ variant }: AppSidebarProps) {
                         <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
-                                {group.children.map((item) => (
-                                    <SidebarMenuItem key={item.title}>
-                                        <SidebarMenuButton tooltip={item.title} asChild>
-                                            <Link href={item.href}>
-                                                <item.icon />
-                                                <span>{item.title}</span>
-                                                {item.actionIcon}
-                                            </Link>
-                                        </SidebarMenuButton>
-                                        {item.children && (
-                                            <SidebarMenuSub>
-                                                {item.children.map((child) => (
-                                                    <SidebarMenuSubItem key={child.title}>
-                                                        <SidebarMenuSubButton asChild>
-                                                            <Link href={child.href}>
-                                                                <child.icon />
-                                                                {child.title}
-                                                            </Link>
-                                                        </SidebarMenuSubButton>
-                                                    </SidebarMenuSubItem>
-                                                ))}
-                                            </SidebarMenuSub>
-                                        )}
-                                    </SidebarMenuItem>
-                                ))}
+                                {group.children.map((item) => {
+                                    if (!item.enableCollapsible || !item.children) {
+                                        return (
+                                            <SidebarMenuItem key={item.title}>
+                                                <SidebarMenuButton tooltip={item.title} asChild>
+                                                    <Link href={item.href}>
+                                                        <item.icon />
+                                                        <span>{item.title}</span>
+                                                        {item.actionIcon}
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                                {item.children && (
+                                                    <SidebarMenuSub>
+                                                        {item.children.map((child) => (
+                                                            <SidebarMenuSubItem key={child.title}>
+                                                                <SidebarMenuSubButton asChild>
+                                                                    <Link href={child.href}>
+                                                                        <child.icon />
+                                                                        {child.title}
+                                                                    </Link>
+                                                                </SidebarMenuSubButton>
+                                                            </SidebarMenuSubItem>
+                                                        ))}
+                                                    </SidebarMenuSub>
+                                                )}
+                                            </SidebarMenuItem>
+                                        );
+                                    }
+
+                                    return (
+                                        <Collapsible
+                                            key={item.title}
+                                            defaultOpen
+                                            className="group/collapsible"
+                                        >
+                                            <SidebarMenuItem>
+                                                <CollapsibleTrigger asChild>
+                                                    <SidebarMenuButton tooltip={item.title} asChild>
+                                                        <Link href={item.href}>
+                                                            <item.icon />
+                                                            <span>{item.title}</span>
+                                                            <ChevronRight
+                                                                className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90"
+                                                                size={16}
+                                                            />
+                                                        </Link>
+                                                    </SidebarMenuButton>
+                                                </CollapsibleTrigger>
+                                                <CollapsibleContent>
+                                                    <SidebarMenuSub>
+                                                        {item.children.map((child) => (
+                                                            <SidebarMenuSubItem key={child.title}>
+                                                                <SidebarMenuSubButton asChild>
+                                                                    <Link href={child.href}>
+                                                                        <child.icon />
+                                                                        {child.title}
+                                                                    </Link>
+                                                                </SidebarMenuSubButton>
+                                                            </SidebarMenuSubItem>
+                                                        ))}
+                                                    </SidebarMenuSub>
+                                                </CollapsibleContent>
+                                            </SidebarMenuItem>
+                                        </Collapsible>
+                                    );
+                                })}
                             </SidebarMenu>
                         </SidebarGroupContent>
                     </SidebarGroup>
                 ))}
             </SidebarContent>
-
             <SidebarFooter>
                 <AccountMenu />
             </SidebarFooter>

@@ -77,7 +77,7 @@ export function CardInfoDetail() {
                                 <span className="text-muted-foreground shrink-0 text-sm">
                                     {field.label}
                                 </span>
-                                <code className="bg-muted/50 truncate rounded-md px-2 py-1 text-xs">
+                                <code className="bg-muted/60 truncate rounded-md px-2 py-1 text-xs">
                                     {field.value}
                                 </code>
                             </div>

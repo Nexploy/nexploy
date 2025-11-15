@@ -4,10 +4,10 @@ import { actionServer } from '@/lib/api/safe-action';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { HttpErrorResponse } from 'drino';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
-import { ComposesActionsSchema } from '@workspace/schemas-zod/composes/composesAction.schema';
+import { composesActionsSchema } from '@workspace/schemas-zod/composes/composesAction.schema';
 
 export const onComposesAction = actionServer
-    .inputSchema(ComposesActionsSchema)
+    .inputSchema(composesActionsSchema)
     .action(async ({ parsedInput: { stackName, action } }) => {
         try {
             await drinoDocker.post(`/composes/${stackName}/${action}`, null).consume();

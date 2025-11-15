@@ -1,5 +1,5 @@
 import { z } from 'zod';
 
-export const ContainerActionsSchema = z.object({
+export const containerActionsSchema = z.object({
     containerId: z.string(),
 });

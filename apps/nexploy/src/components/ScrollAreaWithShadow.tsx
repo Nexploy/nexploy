@@ -33,12 +33,7 @@ export const ScrollAreaWithShadow = forwardRef<
     const scrollRef = useRef<HTMLDivElement>(null);
     const viewportRef = useRef<HTMLDivElement | null>(null);
 
-    // Utilise useImperativeHandle avec un callback pour notifier le parent
-    useImperativeHandle(
-        forwardedRef,
-        () => viewportRef.current as HTMLDivElement,
-        [], // Dépendances vides car viewportRef.current est défini dans useEffect
-    );
+    useImperativeHandle(forwardedRef, () => viewportRef.current as HTMLDivElement, []);
 
     useEffect(() => {
         const scrollContainer = scrollRef.current?.querySelector(
@@ -49,7 +44,6 @@ export const ScrollAreaWithShadow = forwardRef<
 
         viewportRef.current = scrollContainer;
 
-        // Force une mise à jour de la ref forwardée si elle existe
         if (typeof forwardedRef === 'function') {
             forwardedRef(scrollContainer);
         } else if (forwardedRef) {

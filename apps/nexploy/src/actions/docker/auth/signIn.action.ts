@@ -3,14 +3,14 @@
 import { actionServer } from '@/lib/api/safe-action';
 import { returnValidationErrors } from 'next-safe-action';
 import { signInUser } from '@/services/auth/auth.service';
-import { SignInFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
+import { signInFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 import { getTranslations } from 'next-intl/server';
 import { redirect, RedirectType } from 'next/navigation';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 
 async function GetSignInFormSchema() {
     const t = await getTranslations('validation');
-    return SignInFormSchema(t);
+    return signInFormSchema(t);
 }
 
 export const onSignInAction = actionServer

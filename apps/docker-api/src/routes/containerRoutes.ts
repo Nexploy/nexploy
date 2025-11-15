@@ -6,10 +6,8 @@ import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { ContainerCreateForm } from '@workspace/schemas-zod/container/containerCreate.schema';
 import { ContainerCreateOptions } from 'dockerode';
 import { logger } from '@/utils/logger';
-import {
-    ContainerRecreateFormSchema,
-    Port,
-} from '@workspace/schemas-zod/container/containerRecreate.schema';
+import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/container/containerRecreate.schema';
+import { PortType } from '@workspace/typescript-interface/docker/docker.port';
 
 const app = new Hono();
 
@@ -97,60 +95,147 @@ app.post(
     '/recreate',
     handleAsync(async (c) => {
         const body = await c.req.json();
+        const { ports, envVars, volumes, networks, containerId } =
+            ContainerRecreateFormSchema.parse(body);
 
-        const parsed = ContainerRecreateFormSchema.parse(body);
-
-        const container = docker.getContainer(parsed.containerId);
+        const container = docker.getContainer(containerId);
         const containerInfo = await container.inspect();
 
         if (containerInfo.State.Running) await container.stop();
 
-        const exposedPorts: { [key: string]: {} } = { ...containerInfo.Config.ExposedPorts };
-        const portBindings: { [key: string]: { HostPort: string }[] } = {
-            ...containerInfo.HostConfig.PortBindings,
+        const exposedPorts = { ...containerInfo.Config.ExposedPorts };
+        const portBindings = { ...containerInfo.HostConfig.PortBindings };
+
+        const removePort = (privatePort: number, type: PortType, publicPort: number) => {
+            const key = `${privatePort}/${type}`;
+            delete exposedPorts[key];
+            if (portBindings[key]) {
+                portBindings[key] = portBindings[key].filter(
+                    (b: any) => b.HostPort !== String(publicPort),
+                );
+                if (portBindings[key].length === 0) delete portBindings[key];
+            }
         };
 
-        const changePort = (port: Port) => {
-            const currKey = `${port.currentPrivatePort}/${port.currentType}`;
-            delete exposedPorts[currKey];
-            if (portBindings[currKey]) {
-                portBindings[currKey] = portBindings[currKey].filter(
-                    (b) => b.HostPort !== String(port.currentPublicPort),
-                );
-                if (portBindings[currKey].length === 0) {
-                    delete portBindings[currKey];
+        const addPort = (privatePort: number, type: PortType, publicPort: number) => {
+            const key = `${privatePort}/${type}`;
+            exposedPorts[key] = {};
+            portBindings[key] = portBindings[key] || [];
+            portBindings[key].push({ HostPort: String(publicPort) });
+        };
+
+        for (const port of ports) {
+            if (port.typeAction === 'delete' || port.typeAction === 'edit') {
+                if (port.currentPrivatePort && port.currentType && port.currentPublicPort) {
+                    removePort(port.currentPrivatePort, port.currentType, port.currentPublicPort);
                 }
             }
-        };
-
-        parsed.ports.forEach((port) => {
-            if (port.typeAction === 'add') {
-                const key = `${port.privatePort}/${port.type}`;
-                exposedPorts[key] = {};
-                if (!portBindings[key]) portBindings[key] = [];
-                portBindings[key].push({ HostPort: String(port.publicPort) });
-            } else if (port.typeAction === 'edit') {
-                changePort(port);
-
-                const newKey = `${port.privatePort}/${port.type}`;
-                exposedPorts[newKey] = {};
-                if (!portBindings[newKey]) portBindings[newKey] = [];
-                portBindings[newKey].push({ HostPort: String(port.publicPort) });
-            } else if (port.typeAction === 'delete') {
-                changePort(port);
+            if (port.typeAction === 'add' || port.typeAction === 'edit') {
+                if (port.privatePort && port.type && port.publicPort) {
+                    addPort(port.privatePort, port.type, port.publicPort);
+                }
             }
-        });
+        }
+
+        const envMap = new Map(
+            (containerInfo.Config.Env || []).map((e) => {
+                const [key, ...valueParts] = e.split('=');
+                return [key, valueParts.join('=')];
+            }),
+        );
+
+        for (const envVar of envVars) {
+            if (envVar.typeAction === 'delete' && envVar.currentKey) {
+                envMap.delete(envVar.currentKey);
+            } else if (envVar.typeAction === 'edit') {
+                if (envVar.currentKey) envMap.delete(envVar.currentKey);
+                if (envVar.key && envVar.value !== undefined) {
+                    envMap.set(envVar.key, envVar.value);
+                }
+            } else if (envVar.typeAction === 'add' && envVar.key && envVar.value !== undefined) {
+                envMap.set(envVar.key, envVar.value);
+            }
+        }
+
+        const env = Array.from(envMap.entries()).map(([k, v]) => `${k}=${v}`);
+
+        const bindsSet = new Set(containerInfo.HostConfig.Binds || []);
+        const volumesConfig = { ...(containerInfo.Config.Volumes || {}) };
+
+        const getBindString = (hostPath: string, containerPath: string, readOnly: boolean) =>
+            `${hostPath}:${containerPath}${readOnly ? ':ro' : ''}`;
+
+        for (const volume of volumes) {
+            if (volume.typeAction === 'delete') {
+                if (volume.currentHostPath && volume.currentContainerPath) {
+                    let hostPath = volume.currentHostPath;
+                    const namedVolumeMatch = hostPath.match(
+                        /\/var\/lib\/docker\/volumes\/([^/]+)\/_data/,
+                    );
+                    if (namedVolumeMatch) {
+                        hostPath = namedVolumeMatch[1];
+                    }
+
+                    const bindWithSuffix = getBindString(
+                        hostPath,
+                        volume.currentContainerPath,
+                        volume.currentReadOnly || false,
+                    );
+                    const bindWithoutSuffix = `${hostPath}:${volume.currentContainerPath}`;
+                    const bindWithRW = `${hostPath}:${volume.currentContainerPath}:rw`;
+                    const bindWithRO = `${hostPath}:${volume.currentContainerPath}:ro`;
+
+                    bindsSet.delete(bindWithSuffix) ||
+                        bindsSet.delete(bindWithoutSuffix) ||
+                        bindsSet.delete(bindWithRW) ||
+                        bindsSet.delete(bindWithRO);
+
+                    delete volumesConfig[volume.currentContainerPath];
+                }
+            }
+            if (volume.typeAction === 'add') {
+                if (volume.hostPath && volume.containerPath) {
+                    let hostPath = volume.hostPath;
+                    const namedVolumeMatch = hostPath.match(
+                        /\/var\/lib\/docker\/volumes\/([^/]+)\/_data/,
+                    );
+                    if (namedVolumeMatch) {
+                        hostPath = namedVolumeMatch[1];
+                    }
+
+                    bindsSet.add(
+                        getBindString(hostPath, volume.containerPath, volume.readOnly || false),
+                    );
+                    volumesConfig[volume.containerPath] = {};
+                }
+            }
+        }
+
+        const networksSet = new Set(Object.keys(containerInfo.NetworkSettings.Networks || {}));
+
+        for (const network of networks) {
+            if (network.typeAction === 'delete') {
+                if (network.currentName) networksSet.delete(network.currentName);
+            }
+            if (network.typeAction === 'add') {
+                if (network.name) networksSet.add(network.name);
+            }
+        }
+
+        const networksConfig = Object.fromEntries(
+            Array.from(networksSet).map((name) => [name, {}]),
+        );
 
         await container.remove();
 
-        const createOptions: ContainerCreateOptions = {
+        const newContainer = await docker.createContainer({
             name: containerInfo.Name.replace('/', ''),
             Image: containerInfo.Config.Image,
             Hostname: containerInfo.Config.Hostname,
-            Env: containerInfo.Config.Env,
+            Env: env,
             Cmd: containerInfo.Config.Cmd,
             Entrypoint: containerInfo.Config.Entrypoint,
-            Volumes: containerInfo.Config.Volumes,
+            Volumes: volumesConfig,
             WorkingDir: containerInfo.Config.WorkingDir,
             User: containerInfo.Config.User,
             Labels: containerInfo.Config.Labels,
@@ -158,16 +243,15 @@ app.post(
             HostConfig: {
                 ...containerInfo.HostConfig,
                 PortBindings: portBindings,
+                Binds: Array.from(bindsSet),
             },
-        };
+            NetworkingConfig: {
+                EndpointsConfig: networksConfig,
+            },
+        });
 
-        const newContainer = await docker.createContainer(createOptions);
-
-        try {
-            await newContainer.start();
-        } finally {
-            return { id: newContainer.id };
-        }
+        await newContainer.start();
+        return { id: newContainer.id };
     }),
 );
 

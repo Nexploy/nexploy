@@ -12,7 +12,7 @@ const imageActions: [ImageAction, ...ImageAction[]] = [
     'save',
 ];
 
-export const ImageActionsSchema = z.object({
+export const imageActionsSchema = z.object({
     action: z.enum(imageActions),
     force: z.boolean().optional(),
     imageIds: z.array(z.string()),

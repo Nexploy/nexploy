@@ -3,7 +3,7 @@
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { onSetupAction } from '@/actions/docker/auth/setup.action';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SetupFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
+import { setupFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 import {
     Card,
     CardContent,
@@ -31,7 +31,7 @@ export function SetupForm() {
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onSetupAction,
-        zodResolver(SetupFormSchema(tValidation)),
+        zodResolver(setupFormSchema(tValidation)),
         {
             formProps: {
                 defaultValues: {

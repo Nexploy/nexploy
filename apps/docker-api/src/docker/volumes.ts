@@ -5,15 +5,6 @@ import { Hono } from 'hono';
 
 const app = new Hono();
 
-/**
- * @openapi
- * /volumes:
- *   get:
- *     summary: List volumes
- *     responses:
- *       200:
- *         description: Array of volumes
- */
 app.get(
     '/',
     handleAsync(async () => {
@@ -22,21 +13,6 @@ app.get(
     }),
 );
 
-/**
- * @openapi
- * /volumes/create:
- *   post:
- *     summary: Create a volume
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       200:
- *         description: Volume created
- */
 app.post(
     '/create',
     handleAsync(async (c) => {
@@ -45,21 +21,6 @@ app.post(
     }),
 );
 
-/**
- * @openapi
- * /volumes/{name}:
- *   delete:
- *     summary: Remove a volume
- *     parameters:
- *       - in: path
- *         name: name
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Volume removed
- */
 app.delete(
     '/:name',
     safeAction(async (c) => {

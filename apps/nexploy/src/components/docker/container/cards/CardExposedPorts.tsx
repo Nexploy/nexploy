@@ -142,23 +142,21 @@ export function CardExposedPorts() {
                                                     <span className="text-destructive">-</span>
                                                 )}
                                             </code>
-                                            <div className="flex gap-1">
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <Button
-                                                            size="icon"
-                                                            variant="ghost"
-                                                            className="h-6 w-6"
-                                                            onClick={() =>
-                                                                handleEditPort(displayPort, port)
-                                                            }
-                                                        >
-                                                            <Pencil />
-                                                        </Button>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent>Modifier</TooltipContent>
-                                                </Tooltip>
-                                            </div>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button
+                                                        size="icon"
+                                                        variant="ghost"
+                                                        className="h-6 w-6"
+                                                        onClick={() =>
+                                                            handleEditPort(displayPort, port)
+                                                        }
+                                                    >
+                                                        <Pencil />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>Modifier</TooltipContent>
+                                            </Tooltip>
                                         </div>
                                     );
                                 })}

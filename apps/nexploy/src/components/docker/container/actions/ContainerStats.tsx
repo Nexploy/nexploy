@@ -102,7 +102,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
             ],
             formatValue: (value: ValueType) => {
                 const numValue = typeof value === 'number' ? value : parseFloat(String(value));
-                return `CPU ${numValue.toFixed(3)}%`;
+                return `${numValue.toFixed(3)}%`;
             },
         },
         {

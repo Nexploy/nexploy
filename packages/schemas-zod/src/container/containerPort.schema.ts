@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 export const containerPortSchema = z.object({
-    containerId: z.string(),
     publicPort: z.number().int().positive().min(1).max(65535, 'Port must be between 1 and 65535'),
     privatePort: z.number().int().positive().min(1).max(65535, 'Port must be between 1 and 65535'),
     type: z.enum(['tcp', 'udp', 'sctp']).default('tcp').optional(),

@@ -23,6 +23,8 @@ import networksEvents from '@/routes/events/networksEvents';
 import { networksStateManager } from '@/managers/networksStateManager';
 import { createNodeWebSocket } from '@hono/node-ws';
 import { createTerminalRoutes } from '@/routes/terminalRoutes';
+import volumesRoutes from '@/routes/volumesRoutes';
+import networksRoutes from '@/routes/networksRoutes';
 
 const app = new Hono();
 
@@ -53,8 +55,10 @@ app.route('/api/images/events', imagesEvents);
 app.route('/api/images', imagesRoutes);
 
 app.route('/api/volumes/events', volumesEvents);
+app.route('/api/volumes', volumesRoutes);
 
 app.route('/api/networks/events', networksEvents);
+app.route('/api/networks', networksRoutes);
 
 app.route('/api/events/events', eventsEvents);
 

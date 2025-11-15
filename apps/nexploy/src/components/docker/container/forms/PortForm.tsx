@@ -17,26 +17,23 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Button } from '@workspace/ui/components/button';
-import { useContainerStore } from '@/stores/docker/useContainerStore';
 import {
     ContainerPortForm,
     containerPortSchema,
 } from '@workspace/schemas-zod/container/containerPort.schema';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { DialogFooter } from '@workspace/ui/components/dialog';
+import { DialogClose, DialogFooter } from '@workspace/ui/components/dialog';
 import { Plus, Save, Trash } from 'lucide-react';
 import { PortFormProps } from '@workspace/typescript-interface/docker/docker.port';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 
 export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
-    const container = useContainerStore((state) => state.container);
     const { closeDialog } = useConfirmationDialogStore();
     const { onPortChange } = useContainerChangesStore();
 
     const form = useForm<ContainerPortForm>({
         resolver: zodResolver(containerPortSchema),
         defaultValues: {
-            containerId: container?.id ?? '',
             privatePort: defaultPort?.privatePort ?? 0,
             publicPort: defaultPort?.publicPort ?? 0,
             type: defaultPort?.type ?? 'tcp',
@@ -156,15 +153,17 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                 <DialogFooter className={'flex !justify-between pt-4'}>
                     {mode === 'edit' && (
                         <Button
+                            size={'icon'}
                             type="button"
                             variant="destructive"
                             icon={Trash}
                             onClick={handleDelete}
-                        >
-                            Supprimer
-                        </Button>
+                        />
                     )}
                     <div className={'flex flex-1 flex-row justify-end gap-2'}>
+                        <DialogClose asChild>
+                            <Button variant={'outline'}>Annuler</Button>
+                        </DialogClose>
                         <Button
                             className={'flex-1 sm:flex-0'}
                             type="submit"

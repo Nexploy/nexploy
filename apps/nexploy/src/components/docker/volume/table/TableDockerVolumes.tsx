@@ -28,7 +28,6 @@ import { ChevronLeft, ChevronRight, Plus, Trash } from 'lucide-react';
 import { formatBytes } from '@/utils/formatBytes';
 import { Badge } from '@workspace/ui/components/badge';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import { onVolumeAction } from '@/actions/docker/volume/volumeAction.action';
 import {
     Select,
     SelectContent,
@@ -39,8 +38,9 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
-import { useSheetStore } from '@/stores/useSheetStore';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import { onVolumeAction } from '@/actions/docker/volume/volumeAction.action';
+import Link from 'next/link';
 
 const globalFilterFn: FilterFn<Volume> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -69,7 +69,6 @@ export function TableDockerVolumes() {
     const volumes = useVolumeStore((state) => state.volumes);
     const lastUpdate = useVolumeStore((state) => state.lastUpdate);
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
-    const openSheet = useSheetStore((state) => state.openSheet);
 
     const isLoading = !volumes.length && !lastUpdate;
     const isEmpty = !volumes.length && !!lastUpdate;
@@ -109,22 +108,15 @@ export function TableDockerVolumes() {
             cancelLabel: 'Annuler',
             actionLabel: 'Supprimer',
             onAction: async () => {
-                await onVolumeAction({ volumeNames, action: 'remove' });
+                await onVolumeAction({ volumeNames, action: 'delete' });
                 table.resetRowSelection();
             },
         });
     };
 
-    const handleAddVolume = () => {
-        openSheet({
-            title: 'Créer un volume',
-            content: 'ADD_VOLUME',
-        });
-    };
-
     const isShowingAll = pageSize === 'all';
 
-    const isUseDisabled = numberOfSelectedRows !== 1 || volumeUsed;
+    const isUseDisabled = !numberOfSelectedRows || volumeUsed;
 
     const getUseTooltipContent = () => {
         if (numberOfSelectedRows === 0) {
@@ -170,9 +162,11 @@ export function TableDockerVolumes() {
                             </TooltipContent>
                         )}
                     </Tooltip>
-                    <Button onClick={handleAddVolume}>
-                        <Plus />
-                        Créer un volume
+                    <Button asChild>
+                        <Link href={'/docker/volumes/create-volume'}>
+                            <Plus />
+                            Créer un volume
+                        </Link>
                     </Button>
                 </div>
             </div>
@@ -244,7 +238,7 @@ export function TableDockerVolumes() {
                         onValueChange={(value) => {
                             if (value === 'all') {
                                 setPageSize('all');
-                                table.setPageSize(table.getRowModel().rows.length);
+                                table.setPageSize(volumes.length);
                             } else {
                                 const size = Number(value);
                                 setPageSize(size);

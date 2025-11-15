@@ -12,20 +12,6 @@ app.post(
     }),
 );
 
-/**
- * @openapi
- * /images:
- *   get:
- *     summary: List images
- *     parameters:
- *       - in: query
- *         name: all
- *         schema:
- *           type: boolean
- *     responses:
- *       200:
- *         description: Array of images
- */
 app.get(
     '/',
     handleAsync(async () => {
@@ -33,24 +19,6 @@ app.get(
     }),
 );
 
-/**
- * @openapi
- * /images/pull:
- *   post:
- *     summary: Pull an image
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               image:
- *                 type: string
- *     responses:
- *       200:
- *         description: Image pulled
- */
 app.post(
     '/pull',
     handleAsync(async (c) => {
@@ -112,25 +80,6 @@ app.post(
     }),
 );
 
-/**
- * @openapi
- * /images/{id}:
- *   delete:
- *     summary: Remove an image
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *       - in: query
- *         name: force
- *         schema:
- *           type: boolean
- *     responses:
- *       200:
- *         description: Image removed
- */
 app.post(
     '/delete',
     handleAsync(async (c) => {

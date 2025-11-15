@@ -107,7 +107,7 @@ export function AICommand() {
                             <CommandItem
                                 onSelect={() =>
                                     runCommand(() =>
-                                        router.push('/docker/containers/add-container'),
+                                        router.push('/docker/containers/create-container'),
                                     )
                                 }
                             >
@@ -116,7 +116,7 @@ export function AICommand() {
                             </CommandItem>
                             <CommandItem
                                 onSelect={() =>
-                                    runCommand(() => router.push('/docker/images/add-image'))
+                                    runCommand(() => router.push('/docker/images/pull-image'))
                                 }
                             >
                                 <FileIcon />

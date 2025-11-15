@@ -118,7 +118,7 @@ export function TableDockerImages() {
     };
 
     const handleUseAction = () => {
-        router.push(`/docker/containers/add-container?image=${selectedImage?.repoTags[0]}`);
+        router.push(`/docker/containers/create-container?image=${selectedImage?.repoTags[0]}`);
     };
 
     const isShowingAll = pageSize === 'all';
@@ -176,7 +176,7 @@ export function TableDockerImages() {
                         )}
                     </Tooltip>
                     <Button asChild>
-                        <Link href={'/docker/images/add-image'}>
+                        <Link href={'/docker/images/pull-image'}>
                             <Plus />
                             Pull Image
                         </Link>
@@ -260,7 +260,7 @@ export function TableDockerImages() {
                         onValueChange={(value) => {
                             if (value === 'all') {
                                 setPageSize('all');
-                                table.setPageSize(table.getRowModel().rows.length);
+                                table.setPageSize(images.length);
                             } else {
                                 const size = Number(value);
                                 setPageSize(size);
@@ -279,7 +279,7 @@ export function TableDockerImages() {
                                         {size}
                                     </SelectItem>
                                 ))}
-                                <SelectItem value="all">All</SelectItem>
+                                <SelectItem value="all">Tout</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>

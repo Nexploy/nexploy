@@ -47,3 +47,12 @@ export interface VolumeEvent {
     volumeName?: string;
     changes?: VolumeStateChanges;
 }
+
+export type Mount = {
+    type: string;
+    source: string;
+    destination: string;
+    rw: boolean;
+    name?: string;
+    driver?: string;
+};

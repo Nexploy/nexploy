@@ -2,12 +2,12 @@
 
 import { actionServer } from '@/lib/api/safe-action';
 import { drinoDocker } from '@/lib/api/drinoDocker';
-import { ContainerActionsSchema } from '@workspace/schemas-zod/container/containerAction.schema';
+import { containerActionsSchema } from '@workspace/schemas-zod/container/containerAction.schema';
 import { HttpErrorResponse } from 'drino';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 
 export const onContainerRemoveAction = actionServer
-    .inputSchema(ContainerActionsSchema)
+    .inputSchema(containerActionsSchema)
     .action(async ({ parsedInput: { containerId } }) => {
         try {
             return await drinoDocker.delete(`/container/${containerId}/remove`).consume();

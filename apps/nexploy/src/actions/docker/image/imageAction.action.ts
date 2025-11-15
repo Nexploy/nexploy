@@ -3,11 +3,11 @@
 import { actionServer } from '@/lib/api/safe-action';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { HttpErrorResponse } from 'drino';
-import { ImageActionsSchema } from '@workspace/schemas-zod/image/imageAction.schema';
+import { imageActionsSchema } from '@workspace/schemas-zod/image/imageAction.schema';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 
 export const onImageAction = actionServer
-    .inputSchema(ImageActionsSchema)
+    .inputSchema(imageActionsSchema)
     .action(async ({ parsedInput: { action, imageIds } }) => {
         try {
             await drinoDocker.post(`/images/${action}`, { imageIds }).consume();

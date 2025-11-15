@@ -17,7 +17,7 @@ const volumeMountSchema = z.object({
     readOnly: z.boolean().default(false),
 });
 
-export const ContainerCreateFormSchema = z
+export const containerCreateFormSchema = z
     .object({
         name: z.string().optional(),
         image: z.string().min(1, "L'image est requise"),
@@ -40,4 +40,4 @@ export const ContainerCreateFormSchema = z
         volumes: data.volumes.filter((v) => v.hostPath && v.containerPath),
     }));
 
-export type ContainerCreateForm = z.infer<typeof ContainerCreateFormSchema>;
+export type ContainerCreateForm = z.infer<typeof containerCreateFormSchema>;

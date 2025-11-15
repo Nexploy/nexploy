@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const Password = (t: any) =>
+const password = (t: any) =>
     z
         .string({
             error: t('required'),
@@ -8,9 +8,9 @@ const Password = (t: any) =>
         .min(8, { message: t('passwordMin', { min: 8 }) })
         .max(30, { message: t('passwordMax', { max: 30 }) });
 
-const Email = (t: any) => z.email({ message: t('invalidEmail') });
+const email = (t: any) => z.email({ message: t('invalidEmail') });
 
-const Name = (t: any) =>
+const name = (t: any) =>
     z
         .string({
             error: t('required'),
@@ -18,18 +18,18 @@ const Name = (t: any) =>
         .min(2, { message: t('nameMin', { min: 2 }) })
         .max(50, { message: t('nameMax', { max: 50 }) });
 
-export const SignInFormSchema = (t: any) =>
+export const signInFormSchema = (t: any) =>
     z.object({
-        email: Email(t),
-        password: Password(t),
+        email: email(t),
+        password: password(t),
     });
 
-export const SetupFormSchema = (t: any) =>
+export const setupFormSchema = (t: any) =>
     z
         .object({
-            name: Name(t),
-            email: Email(t),
-            password: Password(t),
+            name: name(t),
+            email: email(t),
+            password: password(t),
             confirmPassword: z
                 .string({
                     error: t('required'),
@@ -41,4 +41,4 @@ export const SetupFormSchema = (t: any) =>
             path: ['confirmPassword'],
         });
 
-export type TypeSetupFormSchema = z.infer<ReturnType<typeof SetupFormSchema>>;
+export type TypeSetupFormSchema = z.infer<ReturnType<typeof setupFormSchema>>;

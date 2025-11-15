@@ -10,7 +10,7 @@ const composesActions: [ComposesAction, ...ComposesAction[]] = [
     'remove',
 ];
 
-export const ComposesActionsSchema = z.object({
+export const composesActionsSchema = z.object({
     action: z.enum(composesActions),
     stackName: z.string(),
 });
