@@ -62,10 +62,10 @@ export function AICommand() {
             <Button
                 variant="outline"
                 onClick={openCloseDialog}
-                className="hover:bg-muted hover:text-foreground text-muted-foreground flex h-8 flex-1 justify-between !pr-2 text-sm font-normal shadow-none md:w-1/4 md:flex-none"
+                className="hover:bg-muted hover:text-foreground text-muted-foreground md:w-1/é flex h-8 flex-1 justify-between !pr-2 text-sm font-normal shadow-none md:flex-none"
             >
                 <span className={'truncate'}>Tapez une commande ou recherchez...</span>
-                <Kbd>⌘ K</Kbd>
+                <Kbd className={'px-1'}>⌘K</Kbd>
             </Button>
             <CommandDialog
                 open={open}

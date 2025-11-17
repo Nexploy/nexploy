@@ -3,25 +3,35 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
-import { ChevronUp, User2 } from 'lucide-react';
+import { ChevronUp } from 'lucide-react';
+import { getUserSession } from '@/services/auth/auth.service';
+import { AvatarDisplay } from '@/components/user/AvatarDisplay';
+import { ChangeTheme } from '@/components/sidebar/ChangeTheme';
+import Link from 'next/link';
 
-export function AccountMenu() {
+export async function AccountMenu() {
+    const session = await getUserSession();
+
     return (
         <SidebarMenu>
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton>
-                            <User2 /> Username
+                            <AvatarDisplay seed={session?.user.name ?? ''} />{' '}
+                            <span className={'truncate'}>{session?.user.name}</span>
                             <ChevronUp className="ml-auto" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
-                        <DropdownMenuItem>Account</DropdownMenuItem>
-                        <DropdownMenuItem>Billing</DropdownMenuItem>
-                        <DropdownMenuItem>Sign out</DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <Link href={'/account'}>Account</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <ChangeTheme />
                     </DropdownMenuContent>
                 </DropdownMenu>
             </SidebarMenuItem>

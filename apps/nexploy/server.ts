@@ -94,7 +94,6 @@ function matchAndTransformWsUrl(pathname: string): MatchResult {
                 } else if (spec?.optional && spec?.default !== undefined) {
                     paramsObj[paramName] = spec.default;
                 } else {
-                    console.warn(`⚠️ Paramètre requis ${paramName} manquant pour ${pathname}`);
                     return { matched: false };
                 }
             }
@@ -158,17 +157,8 @@ app.prepare().then(() => {
 
     server.listen(port, hostname, () => {
         console.log(`🚀 Next.js:  http://${hostname}:${port}`);
-        console.log(`🔌 WS Proxy configured routes:`);
-        WS_ROUTE_CONFIGS.forEach((config) => {
-            const routeDesc =
-                config.params.length > 0
-                    ? `${config.prefix}/:${config.params.join('/:')} (avec validation Zod)`
-                    : `${config.prefix}/*`;
-            console.log(
-                `   ws://${hostname}:${port}${routeDesc} → ws://localhost:3300${config.transform({})}`,
-            );
-        });
-        console.log(`⚡ Mode: ${dev ? 'Development (Turbopack)' : 'Production'}\n`);
+        console.log(`🔌 WS Proxy configured routes`);
+        console.log(`⚡ Mode: ${dev ? 'Development (Turbopack)' : 'Production'}`);
     });
 
     const shutdown = (signal: string) => {

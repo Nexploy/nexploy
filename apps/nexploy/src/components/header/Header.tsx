@@ -1,5 +1,4 @@
 import { SidebarTrigger } from '@workspace/ui/components/sidebar';
-import { ToggleTheme } from '@workspace/ui/components/utils/ToggleTheme';
 import { Separator } from '@workspace/ui/components/separator';
 import { AICommand } from '@/components/ai/AICommand';
 import { BreadcrumbPath } from '@/components/header/BreadcrumbPath';
@@ -16,7 +15,6 @@ export function Header() {
                 <BreadcrumbPath />
             </div>
             <AICommand />
-            <ToggleTheme />
         </div>
     );
 }

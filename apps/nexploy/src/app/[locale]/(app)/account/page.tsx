@@ -1,29 +1,34 @@
-import { EthernetPort } from 'lucide-react';
+import { User } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { CardInfoNetworks } from '@/components/docker/network/CardInfoNetworks';
-import { TableDockerNetworks } from '@/components/docker/network/table/TableDockerNetworks';
+import { AccountDetailsSection } from '@/components/account/AccountDetailsSection';
+import type { Metadata } from 'next';
 
-export default function NetworksPage() {
+export const metadata: Metadata = {
+    title: 'Account',
+    description: 'Gérez votre profil utilisateur et préférences avec Nexploy',
+};
+
+export default function AccountPage() {
     return (
         <div className="flex h-full flex-1 flex-col pt-5">
             <div className="flex flex-col gap-5 overflow-hidden">
                 <div className={'flex gap-3 px-5'}>
                     <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <EthernetPort className="text-primary size-7" />
+                        <User className="text-primary size-7" />
                     </div>
                     <div className={'flex flex-col'}>
                         <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                            Docker Networks
+                            Account
                         </h1>
                         <p className="text-muted-foreground text-sm">
-                            Gérez et visualisez tous vos réseaux Docker
+                            Gérez votre profil utilisateur et préférences
                         </p>
                     </div>
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className={'space-y-8 pb-6'}>
-                        <CardInfoNetworks />
-                        <TableDockerNetworks />
+                        {/*<CardInfoAccount />*/}
+                        <AccountDetailsSection />
                     </div>
                 </ScrollAreaWithShadow>
             </div>

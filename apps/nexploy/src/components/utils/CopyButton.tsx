@@ -21,7 +21,7 @@ export default function CopyButton({
                 setCopied(false);
             }, 2000);
         } catch (err) {
-            console.error('Erro clipboard: ', err);
+            console.error('Error clipboard: ', err);
         }
     };
 

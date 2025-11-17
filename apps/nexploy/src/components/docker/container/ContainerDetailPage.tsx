@@ -2,7 +2,6 @@
 
 import { Activity, Container as IconContainer, FileText, Terminal } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { StatusDocker } from '@/components/docker/StatusDocker';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { CardInfoDetail } from '@/components/docker/container/cards/CardInfoDetail';
 import { CardExposedPorts } from '@/components/docker/container/cards/CardExposedPorts';
@@ -37,16 +36,13 @@ export function ContainerDetailPage() {
                         <IconContainer className="text-primary size-7" />
                     </div>
                     <div className="flex flex-1 flex-col">
-                        <div className="flex items-center gap-3">
-                            {!container ? (
-                                <Skeleton className="h-6 w-40" />
-                            ) : (
-                                <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                                    {container.name}
-                                </h1>
-                            )}
-                            <StatusDocker className="my-1" />
-                        </div>
+                        {!container ? (
+                            <Skeleton className="h-6 w-40" />
+                        ) : (
+                            <h1 className="text-3xl leading-none font-semibold tracking-tight">
+                                {container.name}
+                            </h1>
+                        )}
                         <p className="text-muted-foreground text-sm">
                             Détails et informations du conteneur Docker
                         </p>

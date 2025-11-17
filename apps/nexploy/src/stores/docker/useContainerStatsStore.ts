@@ -126,8 +126,6 @@ export const useContainerStatsStore = create<ContainerStatsState>((set, get) => 
                     'removed',
                     (e) => {
                         try {
-                            const event: ContainerStatsEvent = JSON.parse(e.data);
-
                             set({
                                 error: new Error('Container has been removed'),
                                 isLoading: false,

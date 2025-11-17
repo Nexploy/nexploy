@@ -1,5 +1,5 @@
-import { auth } from '@/lib/auth/auth';
-import { Session, User } from 'better-auth';
+import { auth, Session } from '@/lib/auth/auth';
+import { User } from 'better-auth';
 import { headers } from 'next/headers';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { prisma } from '../../../prisma/prisma';

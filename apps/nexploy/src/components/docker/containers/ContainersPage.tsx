@@ -11,7 +11,6 @@ import {
     EmptyMedia,
     EmptyTitle,
 } from '@workspace/ui/components/empty';
-import { StatusDocker } from '@/components/docker/StatusDocker';
 import { AddContainer } from '@/components/docker/containers/AddContainer';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
@@ -60,12 +59,9 @@ export default function ContainersPage() {
                         <Container className="text-primary size-7" />
                     </div>
                     <div>
-                        <div className={'flex items-center gap-3'}>
-                            <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                                Docker Containers
-                            </h1>
-                            <StatusDocker />
-                        </div>
+                        <h1 className="text-3xl leading-none font-semibold tracking-tight">
+                            Docker Containers
+                        </h1>
                         {isLoading ? (
                             <Skeleton className={'my-1 h-3 w-40'} />
                         ) : (
