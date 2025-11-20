@@ -1,10 +1,10 @@
-import { route } from '@/lib/api/nextRoute';
+import { authRouteServer, route } from '@/lib/api/nextRoute';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { NextResponse } from 'next/server';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { Image } from '@workspace/typescript-interface/docker/docker.image';
 
-export const GET = route.handler(async () => {
+export const GET = route.use(authRouteServer).handler(async () => {
     try {
         const listImages = await drinoDocker.get<Image[]>('/images').consume();
 

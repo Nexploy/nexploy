@@ -1,11 +1,11 @@
 'use server';
 
-import { actionServer } from '@/lib/api/safe-action';
+import { authActionServer } from '@/lib/api/safe-action';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { HttpErrorResponse } from 'drino';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 
-export const onDockerRefreshAction = actionServer.action(async () => {
+export const onDockerRefreshAction = authActionServer.action(async () => {
     try {
         await drinoDocker.post(`/containers/hardRefresh`, null).consume();
         await drinoDocker.post(`/images/hardRefresh`, null).consume();

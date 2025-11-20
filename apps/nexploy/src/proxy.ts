@@ -3,64 +3,50 @@ import { routing } from '@/i18n/routing';
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdminExist } from '@/services/auth/auth.service';
 import { auth } from '@/lib/auth/auth';
-import { RedirectRule } from '@workspace/typescript-interface/middleware';
 
 const handleI18nRouting = createMiddleware(routing);
 
-const redirects: Record<string, string> = {
+const PUBLIC_ROUTES = ['/signin', '/2fa', '/2fa/backup-codes', '/setup'];
+
+const SIMPLE_REDIRECTS: Record<string, string> = {
     '/': '/projects',
     '/docker': '/docker/containers',
 };
 
-async function checkRedirectRules(request: NextRequest): Promise<NextResponse | null> {
-    const [hasAdmin, session] = await Promise.all([
-        isAdminExist(),
-        auth.api.getSession({ headers: request.headers }),
-    ]);
-
+async function getRedirectUrl(request: NextRequest): Promise<string | null> {
     const path = request.nextUrl.pathname;
 
-    const rules: RedirectRule[] = [
-        {
-            condition: !hasAdmin,
-            shouldSkip: (path) => !path.startsWith('/setup'),
-            targetPath: '/setup',
-        },
-        {
-            condition: hasAdmin,
-            shouldSkip: (path) => path.startsWith('/setup'),
-            targetPath: '/',
-        },
-        {
-            condition: !session,
-            shouldSkip: (path) => !path.startsWith('/signin'),
-            targetPath: '/signin',
-        },
-        {
-            condition: !!session,
-            shouldSkip: (path) => path.startsWith('/signin'),
-            targetPath: '/',
-        },
-    ];
-
-    for (const rule of rules) {
-        if (rule.condition && rule.shouldSkip(path)) {
-            return NextResponse.redirect(new URL(rule.targetPath, request.url));
-        }
+    if (SIMPLE_REDIRECTS[path]) {
+        return SIMPLE_REDIRECTS[path];
     }
 
-    const redirectTarget = redirects[path];
-    if (redirectTarget) {
-        const url = new URL(redirectTarget, request.url);
-        return NextResponse.redirect(url);
+    const hasAdmin = await isAdminExist();
+    const session = await auth.api.getSession({ headers: request.headers });
+    const isPublicRoute = PUBLIC_ROUTES.some((route) => path.startsWith(route));
+
+    console.log(path);
+
+    if (!hasAdmin) {
+        return path.startsWith('/setup') ? null : '/setup';
+    }
+
+    if (!session) {
+        return isPublicRoute ? null : '/signin';
+    }
+
+    if (isPublicRoute) {
+        return '/';
     }
 
     return null;
 }
 
-export default async function proxy(request: NextRequest) {
-    const redirectResponse = await checkRedirectRules(request);
-    if (redirectResponse) return redirectResponse;
+export default async function middleware(request: NextRequest) {
+    const redirectUrl = await getRedirectUrl(request);
+
+    if (redirectUrl) {
+        return NextResponse.redirect(new URL(redirectUrl, request.url));
+    }
 
     return handleI18nRouting(request);
 }

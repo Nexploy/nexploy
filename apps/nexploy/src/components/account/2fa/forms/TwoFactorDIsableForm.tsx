@@ -1,0 +1,72 @@
+'use client';
+
+import { Input } from '@workspace/ui/components/input';
+import { Button } from '@workspace/ui/components/button';
+import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
+import { twoFactorAuthSchema } from '@workspace/schemas-zod/auth/twoFactorAuth.schema';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import { onTwoFactorAuthDisableAction } from '@/actions/docker/auth/twoFactorAuthDisable.action';
+import { DialogFooter } from '@workspace/ui/components/dialog';
+import { useRouter } from 'next/navigation';
+
+export function TwoFactorDisableForm() {
+    const tValidation = useTranslations('validation');
+    const { onSuccess } = useConfirmationDialogStore();
+    const router = useRouter();
+
+    const { form, action, handleSubmitWithAction } = useHookFormAction(
+        onTwoFactorAuthDisableAction,
+        zodResolver(twoFactorAuthSchema(tValidation)),
+        {
+            formProps: {
+                defaultValues: {
+                    password: '',
+                },
+            },
+            actionProps: {
+                onSuccess: () => {
+                    if (onSuccess) onSuccess();
+                    router.refresh();
+                },
+            },
+        },
+    );
+
+    return (
+        <Form {...form}>
+            <form onSubmit={handleSubmitWithAction} className="space-y-4">
+                <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <Input
+                                    id="enable-password"
+                                    type="password"
+                                    placeholder="Enter your password"
+                                    className="w-full"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <DialogFooter>
+                    <Button
+                        type="submit"
+                        variant={'destructive'}
+                        isLoading={action.isPending}
+                        disabled={action.isPending || !form.formState.isDirty}
+                    >
+                        Disable 2FA
+                    </Button>
+                </DialogFooter>
+            </form>
+        </Form>
+    );
+}

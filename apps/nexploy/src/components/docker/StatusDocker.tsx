@@ -14,6 +14,7 @@ import { useDockerStore } from '@/stores/docker/useDockerStore';
 
 interface StatusDockerProps extends ComponentProps<typeof Badge> {
     disabledLabel?: boolean;
+    mode?: 'icon' | 'full';
 }
 
 export function StatusDocker(props: StatusDockerProps) {
@@ -41,11 +42,11 @@ export function StatusDocker(props: StatusDockerProps) {
     return (
         <Status
             {...props}
-            className={cn('mr-2', props.className)}
+            className={cn('mr-2', props.mode === 'icon' && 'bg-transparent p-1', props.className)}
             status={statusMap[status].status}
         >
             <StatusIndicator />
-            <StatusLabel>{statusMap[status].label}</StatusLabel>
+            {props.mode !== 'icon' && <StatusLabel>{statusMap[status].label}</StatusLabel>}
         </Status>
     );
 }

@@ -1,12 +1,12 @@
 'use server';
 
-import { actionServer } from '@/lib/api/safe-action';
+import { authActionServer } from '@/lib/api/safe-action';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { HttpErrorResponse } from 'drino';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { networkCreateSchema } from '@workspace/schemas-zod/network/networkAction.schema';
 
-export const onNetworkCreateAction = actionServer
+export const onNetworkCreateAction = authActionServer
     .inputSchema(networkCreateSchema)
     .action(async ({ parsedInput }) => {
         try {

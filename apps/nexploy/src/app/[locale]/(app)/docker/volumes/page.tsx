@@ -1,6 +1,5 @@
 import { HardDrive } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { StatusDocker } from '@/components/docker/StatusDocker';
 import { CardInfoVolumes } from '@/components/docker/volume/CardInfoVolumes';
 import { TableDockerVolumes } from '@/components/docker/volume/table/TableDockerVolumes';
 import type { Metadata } from 'next';
@@ -19,12 +18,9 @@ export default function VolumesPage() {
                         <HardDrive className="text-primary size-7" />
                     </div>
                     <div className={'flex flex-col'}>
-                        <div className={'flex items-center gap-3'}>
-                            <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                                Docker Volumes
-                            </h1>
-                            <StatusDocker className={'my-1'} />
-                        </div>
+                        <h1 className="text-3xl leading-none font-semibold tracking-tight">
+                            Docker Volumes
+                        </h1>
                         <p className="text-muted-foreground text-sm">
                             Gérez et visualisez tous vos volumes Docker
                         </p>

@@ -25,9 +25,8 @@ export default function AccountPage() {
                         </p>
                     </div>
                 </div>
-                <ScrollAreaWithShadow className="h-full overflow-hidden">
+                <ScrollAreaWithShadow className="h-full overflow-hidden px-5">
                     <div className={'space-y-8 pb-6'}>
-                        {/*<CardInfoAccount />*/}
                         <AccountDetailsSection />
                     </div>
                 </ScrollAreaWithShadow>

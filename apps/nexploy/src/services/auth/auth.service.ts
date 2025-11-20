@@ -4,6 +4,8 @@ import { headers } from 'next/headers';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { prisma } from '../../../prisma/prisma';
 import { getTranslations } from 'next-intl/server';
+import { redirect, RedirectType } from 'next/navigation';
+import { TypeChangeUsernameFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 
 export async function getUserSession(): Promise<Session | null> {
     try {
@@ -33,6 +35,8 @@ export async function signInUser(email: string, password: string): Promise<User>
 
     const parseRes = await resSignIn.json();
 
+    if (parseRes.twoFactorRedirect) redirect('/2fa', RedirectType.push);
+
     if (parseRes.code) {
         throw new Error(`${parseRes.message} - ${t('errorContactAdmin')}`);
     }
@@ -58,4 +62,24 @@ export async function isAdminExist() {
             message: 'Errored while checking if admin exists.',
         });
     }
+}
+
+export async function changeUsername({ newName }: TypeChangeUsernameFormSchema) {
+    const t = await getTranslations('auth');
+
+    const resSignIn = await auth.api.updateUser({
+        body: {
+            name: newName,
+        },
+        headers: await headers(),
+        asResponse: true,
+    });
+
+    const parseRes = await resSignIn.json();
+
+    if (parseRes.code) {
+        throw new Error(`${parseRes.message} - ${t('errorContactAdmin')}`);
+    }
+
+    return parseRes.user;
 }

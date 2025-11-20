@@ -1,5 +1,7 @@
-import { createZodRoute } from 'next-zod-route';
+import { createZodRoute, MiddlewareFunction } from 'next-zod-route';
 import { NextResponse } from 'next/server';
+import { getUserSession } from '@/services/auth/auth.service';
+import { setToastServer } from '@/components/utils/toaster/toastServer';
 
 export const route = createZodRoute({
     handleServerError: (error: Error) => {
@@ -7,3 +9,17 @@ export const route = createZodRoute({
         return NextResponse.json({ message: error.message });
     },
 });
+
+export const authRouteServer: MiddlewareFunction = async ({ next }) => {
+    const session = await getUserSession();
+
+    if (!session) {
+        await setToastServer({
+            type: 'error',
+            message: 'Unauthorized action attempt',
+        });
+        return NextResponse.json({ message: 'Unauthorized action attempt' }, { status: 403 });
+    }
+
+    return next({ ctx: session });
+};

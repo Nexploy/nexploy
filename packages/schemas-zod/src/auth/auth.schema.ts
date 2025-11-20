@@ -1,22 +1,5 @@
 import { z } from 'zod';
-
-const password = (t: any) =>
-    z
-        .string({
-            error: t('required'),
-        })
-        .min(8, { message: t('passwordMin', { min: 8 }) })
-        .max(30, { message: t('passwordMax', { max: 30 }) });
-
-const email = (t: any) => z.email({ message: t('invalidEmail') });
-
-const name = (t: any) =>
-    z
-        .string({
-            error: t('required'),
-        })
-        .min(2, { message: t('nameMin', { min: 2 }) })
-        .max(50, { message: t('nameMax', { max: 50 }) });
+import { email, name, password } from './common.schema';
 
 export const signInFormSchema = (t: any) =>
     z.object({
@@ -42,3 +25,10 @@ export const setupFormSchema = (t: any) =>
         });
 
 export type TypeSetupFormSchema = z.infer<ReturnType<typeof setupFormSchema>>;
+
+export const changeUsernameFormSchema = (t: any) =>
+    z.object({
+        newName: name(t),
+    });
+
+export type TypeChangeUsernameFormSchema = z.infer<ReturnType<typeof changeUsernameFormSchema>>;

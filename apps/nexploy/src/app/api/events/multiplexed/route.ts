@@ -1,4 +1,4 @@
-import { route } from '@/lib/api/nextRoute';
+import { authRouteServer, route } from '@/lib/api/nextRoute';
 import { NextResponse } from 'next/server';
 import { SSEChannel } from '@workspace/typescript-interface/sse';
 
@@ -64,7 +64,7 @@ const buildEndpointUrl = (template: string, params?: Record<string, string>): st
     return url;
 };
 
-export const GET = route.handler(async (request: Request) => {
+export const GET = route.use(authRouteServer).handler(async (request: Request) => {
     const { searchParams } = new URL(request.url);
     const channelsParam = searchParams.get('channels');
 

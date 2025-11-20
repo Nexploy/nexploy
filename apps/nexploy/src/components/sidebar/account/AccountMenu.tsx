@@ -6,11 +6,12 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
-import { ChevronUp } from 'lucide-react';
+import { ChevronUp, User } from 'lucide-react';
 import { getUserSession } from '@/services/auth/auth.service';
 import { AvatarDisplay } from '@/components/user/AvatarDisplay';
 import { ChangeTheme } from '@/components/sidebar/ChangeTheme';
 import Link from 'next/link';
+import { SignOutButton } from '@/components/sidebar/account/SignOutButton';
 
 export async function AccountMenu() {
     const session = await getUserSession();
@@ -20,16 +21,20 @@ export async function AccountMenu() {
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton>
+                        <SidebarMenuButton className={'py-5'}>
                             <AvatarDisplay seed={session?.user.name ?? ''} />{' '}
                             <span className={'truncate'}>{session?.user.name}</span>
                             <ChevronUp className="ml-auto" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
-                        <DropdownMenuItem>
-                            <Link href={'/account'}>Account</Link>
+                        <DropdownMenuItem asChild>
+                            <Link className={'cursor-pointer'} href={'/account'}>
+                                <User />
+                                Account
+                            </Link>
                         </DropdownMenuItem>
+                        <SignOutButton as={DropdownMenuItem} />
                         <DropdownMenuSeparator />
                         <ChangeTheme />
                     </DropdownMenuContent>

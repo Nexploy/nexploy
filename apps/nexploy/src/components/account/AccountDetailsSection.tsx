@@ -1,5 +1,3 @@
-'use client';
-
 import {
     Card,
     CardContent,
@@ -9,45 +7,18 @@ import {
 } from '@workspace/ui/components/card';
 import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
-import { Bell, Globe, Shield, User } from 'lucide-react';
+import { Bell, Globe, Shield } from 'lucide-react';
+import { TwoFactorAuth } from '@/components/account/2fa/TwoFactorAuth';
+import { ProfileInfoForm } from '@/components/account/2fa/forms/ProfileInfoForm';
+import { getUserSession } from '@/services/auth/auth.service';
 
-export function AccountDetailsSection() {
+export async function AccountDetailsSection() {
+    const session = await getUserSession();
+
     return (
-        <div className="space-y-6 px-5">
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <User className="size-5" />
-                        Profile Information
-                    </CardTitle>
-                    <CardDescription>
-                        Manage your personal information and account details
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Username</label>
-                            <div className="flex items-center justify-between rounded-md border px-3 py-2">
-                                <span>user_nexploy</span>
-                                <Badge variant="secondary">Verified</Badge>
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Email</label>
-                            <div className="flex items-center justify-between rounded-md border px-3 py-2">
-                                <span>user@nexploy.com</span>
-                                <Badge variant="outline">Primary</Badge>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex justify-end">
-                        <Button variant="outline">Edit Profile</Button>
-                    </div>
-                </CardContent>
-            </Card>
-
-            <Card>
+        <div className="flex flex-col gap-6">
+            <ProfileInfoForm user={session?.user} />
+            <Card id="security">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Shield className="size-5" />
@@ -57,23 +28,13 @@ export function AccountDetailsSection() {
                         Manage your account security and authentication preferences
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <TwoFactorAuth user={session?.user} />
                         <div className="flex items-center justify-between rounded-md border p-3">
                             <div>
-                                <p className="font-medium">Two-Factor Authentication</p>
-                                <p className="text-muted-foreground text-sm">
-                                    Add an extra layer of security
-                                </p>
-                            </div>
-                            <Button variant="outline" size="sm">
-                                Enable
-                            </Button>
-                        </div>
-                        <div className="flex items-center justify-between rounded-md border p-3">
-                            <div>
-                                <p className="font-medium">Password</p>
-                                <p className="text-muted-foreground text-sm">
+                                <p>Password</p>
+                                <p className="text-muted-foreground text-xs">
                                     Last changed 30 days ago
                                 </p>
                             </div>
@@ -85,7 +46,7 @@ export function AccountDetailsSection() {
                 </CardContent>
             </Card>
 
-            <Card>
+            <Card id="notifications">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Bell className="size-5" />
@@ -110,7 +71,7 @@ export function AccountDetailsSection() {
                 </CardContent>
             </Card>
 
-            <Card>
+            <Card id="regional">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Globe className="size-5" />

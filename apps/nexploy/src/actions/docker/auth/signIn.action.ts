@@ -8,13 +8,13 @@ import { getTranslations } from 'next-intl/server';
 import { redirect, RedirectType } from 'next/navigation';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 
-async function GetSignInFormSchema() {
+async function getSignInFormSchema() {
     const t = await getTranslations('validation');
     return signInFormSchema(t);
 }
 
 export const onSignInAction = actionServer
-    .inputSchema(GetSignInFormSchema)
+    .inputSchema(getSignInFormSchema)
     .action(async ({ parsedInput: { email, password } }) => {
         try {
             await signInUser(email, password);
@@ -22,7 +22,7 @@ export const onSignInAction = actionServer
         } catch (error: any) {
             if (isRedirectError(error)) throw error;
             if (error instanceof Error) {
-                return returnValidationErrors(GetSignInFormSchema, {
+                return returnValidationErrors(getSignInFormSchema, {
                     _errors: [error.message],
                 });
             }

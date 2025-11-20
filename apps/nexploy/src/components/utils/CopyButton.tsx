@@ -1,3 +1,5 @@
+'use client';
+
 import React, { ComponentProps, useState } from 'react';
 import { Check, Copy } from 'lucide-react';
 import { Button, buttonVariants } from '@workspace/ui/components/button';

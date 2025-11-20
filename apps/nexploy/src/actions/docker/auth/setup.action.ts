@@ -8,13 +8,13 @@ import { setupAdminAccount } from '@/services/auth/setup.auth.service';
 import { redirect, RedirectType } from 'next/navigation';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 
-async function GetSetupFormSchema() {
+async function getSetupFormSchema() {
     const t = await getTranslations('validation');
     return setupFormSchema(t);
 }
 
 export const onSetupAction = actionServer
-    .inputSchema(GetSetupFormSchema)
+    .inputSchema(getSetupFormSchema)
     .action(async ({ parsedInput }) => {
         try {
             await setupAdminAccount(parsedInput);
@@ -22,7 +22,7 @@ export const onSetupAction = actionServer
         } catch (error: any) {
             if (isRedirectError(error)) throw error;
             if (error instanceof Error) {
-                return returnValidationErrors(GetSetupFormSchema, {
+                return returnValidationErrors(getSetupFormSchema, {
                     _errors: [error.message],
                 });
             }

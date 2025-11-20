@@ -25,7 +25,7 @@ export function ConfirmationDialog() {
                         <DialogDescription>{description}</DialogDescription>
                     </DialogHeader>
                 )}
-                {content}
+                {typeof content === 'function' ? content() : content}
             </DialogContent>
         </Dialog>
     );

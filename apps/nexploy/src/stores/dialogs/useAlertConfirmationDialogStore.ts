@@ -12,7 +12,7 @@ export interface AlertConfirmationDialogState {
     isPending: boolean;
     disableCancelButton?: boolean;
     disableActionButton?: boolean;
-    onAction?: () => Promise<any>;
+    onAction?: (args?: any) => Promise<any>;
     onCancel?: () => Promise<any>;
 }
 

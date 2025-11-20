@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { volumeActionsSchema } from '../volume/volumeAction.schema';
 
 const IPAMSchema = z
     .object({
@@ -43,3 +42,8 @@ export const networkCreateSchema = z.object({
 });
 
 export type NetworkCreateForm = z.infer<typeof networkCreateSchema>;
+
+export const networkActionsSchema = z.object({
+    networkIds: z.array(z.string()),
+    action: z.enum(['delete', 'prune']),
+});

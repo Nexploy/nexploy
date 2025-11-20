@@ -8,8 +8,8 @@ export interface ConfirmationDialogState {
     props?: DialogContentProps;
     closeOnBackground?: boolean;
     description?: string | ReactElement;
-    content?: ReactElement | string;
-    onSuccess?: (args: any) => void;
+    content?: any;
+    onSuccess?: (args?: any) => void;
     onError?: () => void;
 }
 

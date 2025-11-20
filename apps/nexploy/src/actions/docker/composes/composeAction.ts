@@ -1,12 +1,12 @@
 'use server';
 
-import { actionServer } from '@/lib/api/safe-action';
+import { authActionServer } from '@/lib/api/safe-action';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { HttpErrorResponse } from 'drino';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { composesActionsSchema } from '@workspace/schemas-zod/composes/composesAction.schema';
 
-export const onComposesAction = actionServer
+export const onComposesAction = authActionServer
     .inputSchema(composesActionsSchema)
     .action(async ({ parsedInput: { stackName, action } }) => {
         try {

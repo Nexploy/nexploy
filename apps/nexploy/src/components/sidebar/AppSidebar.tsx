@@ -35,7 +35,7 @@ import {
 import Link from 'next/link';
 import { ElementType, ReactElement } from 'react';
 import { NexployLogo } from '@/components/sidebar/NexployLogo';
-import { AccountMenu } from '@/components/sidebar/AccountMenu';
+import { AccountMenu } from '@/components/sidebar/account/AccountMenu';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset';
@@ -50,6 +50,7 @@ interface SidebarItem {
     title: string;
     icon: ElementType;
     href: string;
+    className?: string;
     actionIcon?: ReactElement;
     enableCollapsible?: boolean;
     children?: SidebarItem[];
@@ -123,7 +124,10 @@ export function AppSidebar({ variant }: AppSidebarProps) {
                                         return (
                                             <SidebarMenuItem key={item.title}>
                                                 <SidebarMenuButton tooltip={item.title} asChild>
-                                                    <Link href={item.href}>
+                                                    <Link
+                                                        className={item.className}
+                                                        href={item.href}
+                                                    >
                                                         <item.icon />
                                                         <span>{item.title}</span>
                                                         {item.actionIcon}
@@ -134,7 +138,10 @@ export function AppSidebar({ variant }: AppSidebarProps) {
                                                         {item.children.map((child) => (
                                                             <SidebarMenuSubItem key={child.title}>
                                                                 <SidebarMenuSubButton asChild>
-                                                                    <Link href={child.href}>
+                                                                    <Link
+                                                                        className={child.className}
+                                                                        href={child.href}
+                                                                    >
                                                                         <child.icon />
                                                                         {child.title}
                                                                     </Link>

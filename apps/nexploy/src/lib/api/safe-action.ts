@@ -1,5 +1,8 @@
 import { createSafeActionClient } from 'next-safe-action';
 import { HttpErrorResponse } from 'drino';
+import { getUserSession } from '@/services/auth/auth.service';
+import { redirect } from 'next/navigation';
+import { setToastServer } from '@/components/utils/toaster/toastServer';
 
 export const actionServer = createSafeActionClient({
     handleServerError(error) {
@@ -13,17 +16,16 @@ export const actionServer = createSafeActionClient({
     },
 });
 
-// export const authActionServer = actionServer
-//     .use(async ({ next }) => {
-//         const session = await getUserSession();
-//
-//         if (!session) {
-//             console.warn('[AUTH ACTION] Unauthorized action attempt');
-//             redirect('/');
-//         }
-//
-//         console.info(`[AUTH ACTION] Session: ${session?.user?.id}`);
-//
-//         return next({ ctx: { session } });
-//     });
-//
+export const authActionServer = actionServer.use(async ({ next }) => {
+    const session = await getUserSession();
+
+    if (!session) {
+        await setToastServer({
+            type: 'error',
+            message: 'Unauthorized action attempt',
+        });
+        redirect('/');
+    }
+
+    return next({ ctx: { session } });
+});

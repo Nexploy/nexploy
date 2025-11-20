@@ -1,12 +1,12 @@
 'use server';
 
-import { actionServer } from '@/lib/api/safe-action';
+import { authActionServer } from '@/lib/api/safe-action';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { HttpErrorResponse } from 'drino';
 import { imageActionsSchema } from '@workspace/schemas-zod/image/imageAction.schema';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 
-export const onImageAction = actionServer
+export const onImageAction = authActionServer
     .inputSchema(imageActionsSchema)
     .action(async ({ parsedInput: { action, imageIds } }) => {
         try {
