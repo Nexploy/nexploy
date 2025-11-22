@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "tsx server.ts",
+    "worker": "tsx src/workers/build.worker.ts",
     "build": "next build --turbopack",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",

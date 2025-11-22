@@ -24,8 +24,6 @@ async function getRedirectUrl(request: NextRequest): Promise<string | null> {
     const session = await auth.api.getSession({ headers: request.headers });
     const isPublicRoute = PUBLIC_ROUTES.some((route) => path.startsWith(route));
 
-    console.log(path);
-
     if (!hasAdmin) {
         return path.startsWith('/setup') ? null : '/setup';
     }

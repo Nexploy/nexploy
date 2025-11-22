@@ -113,7 +113,9 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
                     if (!data.container) return;
 
                     get().addContainer(data.container);
-                    toast.success(`Container ${data.container.name} added`);
+                    toast.success(`Container ${data.container.name} added`, {
+                        className: 'container-toast',
+                    });
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -130,9 +132,13 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
                     get().updateContainer(container);
 
                     if (action === 'die') {
-                        toast.error(`Container ${name} die unexpectedly`);
+                        toast.error(`Container ${name} die unexpectedly`, {
+                            className: 'container-toast',
+                        });
                     } else {
-                        toast.success(`Container ${name} (action: ${action})`);
+                        toast.success(`Container ${name} (action: ${action})`, {
+                            className: 'container-toast',
+                        });
                     }
 
                     set({ lastUpdate: timestamp });
@@ -145,7 +151,9 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
                     if (!data.containerId) return;
 
                     get().removeContainer(data.containerId);
-                    toast.success(`Container ${data.oldState?.name} removed`);
+                    toast.success(`Container ${data.oldState?.name} removed`, {
+                        className: 'container-toast',
+                    });
                     set({ lastUpdate: data.timestamp });
                 }),
             );

@@ -15,22 +15,27 @@ export const metadata: Metadata = {
     description: 'Gérez vos projets Docker avec Nexploy',
 };
 
+import { AddProject } from '@/components/projects/AddProject';
+
 export default function ProjectsPage() {
     return (
         <div className="flex h-full flex-1 flex-col pt-5">
             <div className="flex flex-col gap-5 overflow-hidden">
-                <div className={'flex gap-3 px-5'}>
-                    <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <Folder className="text-primary size-7" />
+                <div className="flex justify-between gap-2 px-5">
+                    <div className={'flex gap-3'}>
+                        <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+                            <Folder className="text-primary size-7" />
+                        </div>
+                        <div className={'flex flex-col'}>
+                            <h1 className="text-3xl leading-none font-semibold tracking-tight">
+                                Projects
+                            </h1>
+                            <p className="text-muted-foreground text-sm">
+                                Gérez et organisez vos projets Nexploy
+                            </p>
+                        </div>
                     </div>
-                    <div className={'flex flex-col'}>
-                        <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                            Projects
-                        </h1>
-                        <p className="text-muted-foreground text-sm">
-                            Gérez et organisez vos projets Nexploy
-                        </p>
-                    </div>
+                    <AddProject />
                 </div>
 
                 <ScrollAreaWithShadow className="h-full overflow-hidden">

@@ -5,18 +5,20 @@ import {
     CardHeader,
     CardTitle,
 } from '@workspace/ui/components/card';
-import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
 import { Bell, Globe, Shield } from 'lucide-react';
 import { TwoFactorAuth } from '@/components/account/2fa/TwoFactorAuth';
 import { ProfileInfoForm } from '@/components/account/2fa/forms/ProfileInfoForm';
+import { LanguageSwitcher } from '@/components/account/LanguageSwitcher';
+import { NotificationSwitch } from '@/components/account/NotificationSwitch';
 import { getUserSession } from '@/services/auth/auth.service';
+import { Label } from '@workspace/ui/components/label';
 
 export async function AccountDetailsSection() {
     const session = await getUserSession();
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-5">
             <ProfileInfoForm user={session?.user} />
             <Card id="security">
                 <CardHeader>
@@ -57,17 +59,10 @@ export async function AccountDetailsSection() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="font-medium">Docker Alerts</p>
-                                <p className="text-muted-foreground text-sm">
-                                    Container status changes
-                                </p>
-                            </div>
-                            <Badge variant="default">Enabled</Badge>
-                        </div>
-                    </div>
+                    <NotificationSwitch
+                        label="Docker Alerts"
+                        description="Container status changes"
+                    />
                 </CardContent>
             </Card>
 
@@ -84,10 +79,8 @@ export async function AccountDetailsSection() {
                 <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Language</label>
-                            <div className="rounded-md border px-3 py-2">
-                                <span>English (US)</span>
-                            </div>
+                            <Label className="text-sm font-medium">Language</Label>
+                            <LanguageSwitcher />
                         </div>
                     </div>
                 </CardContent>
