@@ -1,35 +1,22 @@
 {
-  "extends": "@workspace/typescript-config/nextjs.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@workspace/ui/*": [
-        "../../packages/ui/src/*"
-      ],
-      "@workspace/i18n/*": [
-        "../../packages/i18n/src/*"
-      ],
-      "@workspace/typescript-interface/*": [
-        "../../packages/typescript-interface/src/*"
-      ]
+    "extends": "@workspace/typescript-config/nextjs.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"],
+            "@workspace/ui/*": ["../../packages/ui/src/*"],
+            "@workspace/i18n/*": ["../../packages/i18n/src/*"],
+            "@workspace/typescript-interface/*": ["../../packages/typescript-interface/src/*"]
+        },
+        "plugins": [
+            {
+                "name": "next"
+            },
+            {
+                "name": "workflow"
+            }
+        ]
     },
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
-  },
-  "include": [
-    "next-env.d.ts",
-    "next.config.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+    "include": ["next-env.d.ts", "next.config.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+    "exclude": ["node_modules"]
 }

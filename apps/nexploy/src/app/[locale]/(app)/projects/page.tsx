@@ -3,19 +3,17 @@ import { Folder } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import {
     Empty,
-    EmptyContent,
     EmptyDescription,
     EmptyHeader,
     EmptyMedia,
     EmptyTitle,
 } from '@workspace/ui/components/empty';
+import { AddProject } from '@/components/projects/AddProject';
 
 export const metadata: Metadata = {
     title: 'Projects',
     description: 'Gérez vos projets Docker avec Nexploy',
 };
-
-import { AddProject } from '@/components/projects/AddProject';
 
 export default function ProjectsPage() {
     return (
@@ -40,7 +38,7 @@ export default function ProjectsPage() {
 
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className={'pb-6'}>
-                        <Empty className="mx-5 mt-8">
+                        <Empty className={'mt-24'}>
                             <EmptyHeader>
                                 <EmptyMedia variant="icon" className="bg-primary/10">
                                     <Folder className="text-primary" />
@@ -50,9 +48,6 @@ export default function ProjectsPage() {
                                     Créez votre premier projet pour commencer.
                                 </EmptyDescription>
                             </EmptyHeader>
-                            <EmptyContent>
-                                {/* Actions à venir (créer un projet, importer, etc.) */}
-                            </EmptyContent>
                         </Empty>
                     </div>
                 </ScrollAreaWithShadow>

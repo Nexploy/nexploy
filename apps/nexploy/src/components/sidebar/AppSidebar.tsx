@@ -90,7 +90,7 @@ const groups: Group[] = [
     {
         title: 'Settings',
         children: [
-            { title: 'Git', href: '/settings/git', icon: GitBranch },
+            { title: 'Git', href: '/git', icon: GitBranch },
             { title: 'Preferences', href: '/settings/preferences', icon: LayoutList },
         ],
     },
