@@ -9,7 +9,6 @@ import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { projectCreateFormSchema } from '@workspace/schemas-zod/project/projectCreate.schema';
 import { onProjectCreateAction } from '@/actions/project/projectCreate.action';
-import { GeneralInfoStep } from '@/components/projects/create/steps/GeneralInfoStep';
 import { GitSourceStep } from '@/components/projects/create/steps/source/GitSourceStep';
 import { BuildConfigurationStep } from '@/components/projects/create/steps/BuildConfigurationStep';
 import { DeploymentStep } from '@/components/projects/create/steps/DeploymentStep';
@@ -24,7 +23,6 @@ export default function AddProjectPage() {
             formProps: {
                 defaultValues: {
                     name: '',
-                    description: '',
                     branch: 'main',
                     gitToken: '',
                     gitProvider: 'github',
@@ -87,7 +85,7 @@ export default function AddProjectPage() {
             <ScrollAreaWithShadow className="h-full overflow-hidden">
                 <Form {...form}>
                     <div className="space-y-5 px-5 pb-5">
-                        <GeneralInfoStep />
+                        {/*<GeneralInfoStep />*/}
                         <GitSourceStep />
                         <BuildConfigurationStep />
                         <DeploymentStep />

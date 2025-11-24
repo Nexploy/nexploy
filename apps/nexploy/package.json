@@ -19,6 +19,7 @@
         "db:studio": "prisma studio"
     },
     "dependencies": {
+        "@ai-sdk/openai": "^2.0.71",
         "execa": "^9.6.0"
     }
 }

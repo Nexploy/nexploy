@@ -75,6 +75,7 @@ export function ProviderSource({ accounts }: ProviderSourceProps) {
                                 const repo = repos?.find((r) => r.id === value);
                                 if (repo) {
                                     field.onChange(repo);
+                                    setValue('name', repo.fullName);
                                     setValue('branch', repo.defaultBranch);
                                 }
                             }}
