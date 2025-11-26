@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Folder, FolderOpen, GitBranch, Github } from 'lucide-react';
+import { Folder, GitBranch, Github, Gitlab } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import {
     Empty,
@@ -13,15 +13,42 @@ import { getProjectService } from '@/services/project/getProjectService';
 import { Link } from '@/i18n/navigation';
 import {
     Card,
-    CardContent,
     CardDescription,
+    CardFooter,
     CardHeader,
     CardTitle,
 } from '@workspace/ui/components/card';
+import { Badge } from '@workspace/ui/components/badge';
 
 export const metadata: Metadata = {
     title: 'Projects',
     description: 'Gérez vos projets Docker avec Nexploy',
+};
+
+const getStatusBadge = (status?: string) => {
+    switch (status) {
+        case 'SUCCESS':
+            return <Badge variant="default">Deployed</Badge>;
+        case 'FAILED':
+            return <Badge variant="destructive">Failed</Badge>;
+        case 'BUILDING':
+            return (
+                <Badge variant="warning" className="animate-pulse">
+                    Building
+                </Badge>
+            );
+        case 'QUEUED':
+            return <Badge variant="secondary">Queued</Badge>;
+        default:
+            return <Badge variant="outline">No deploys</Badge>;
+    }
+};
+
+const getGitIcon = (provider: string) => {
+    const p = provider.toLowerCase();
+    if (p.includes('github')) return Github;
+    if (p.includes('gitlab')) return Gitlab;
+    return GitBranch;
 };
 
 export default async function ProjectsPage() {
@@ -29,7 +56,7 @@ export default async function ProjectsPage() {
 
     return (
         <div className="flex h-full flex-1 flex-col pt-5">
-            <div className="flex flex-col gap-5 overflow-hidden">
+            <div className="flex flex-col gap-4 overflow-hidden">
                 <div className="flex justify-between gap-2 px-5">
                     <div className={'flex gap-3'}>
                         <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
@@ -48,7 +75,7 @@ export default async function ProjectsPage() {
                 </div>
 
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
-                    <div className={'px-5 pb-6'}>
+                    <div className={'px-5 pt-1 pb-5'}>
                         {projects.length === 0 ? (
                             <Empty className={'mt-24'}>
                                 <EmptyHeader>
@@ -62,40 +89,49 @@ export default async function ProjectsPage() {
                                 </EmptyHeader>
                             </Empty>
                         ) : (
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                {projects.map((project) => (
-                                    <Link href={`/projects/${project.id}`} key={project.id}>
-                                        <Card className="hover:bg-accent/50 transition-colors">
-                                            <CardHeader>
-                                                <div className="flex items-center justify-between">
-                                                    <div className="bg-primary/10 flex size-10 items-center justify-center rounded-lg">
-                                                        <FolderOpen className="text-primary size-5" />
+                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+                                {projects.map((project) => {
+                                    const lastDeployment = project.deployments?.[0];
+                                    const Icon = getGitIcon(project.gitProvider);
+
+                                    return (
+                                        <Link href={`/projects/${project.id}`} key={project.id}>
+                                            <Card className="group border-muted-foreground/20 bg-background relative flex flex-col overflow-hidden p-4 px-0 !pb-0 transition-all duration-300 hover:scale-[1.03] hover:shadow-xl">
+                                                <CardHeader className="flex flex-row items-start justify-between px-4">
+                                                    <div className="flex w-full items-center gap-3">
+                                                        <div className="bg-secondary/50 text-secondary-foreground ring-border group-hover:bg-primary/10 group-hover:text-primary flex size-10 items-center justify-center rounded-full ring-1 transition-colors">
+                                                            <Icon className="size-5" />
+                                                        </div>
+                                                        <div className="flex min-w-0 flex-1 flex-col gap-1">
+                                                            <CardTitle className="text-base leading-none font-semibold">
+                                                                {project.name}
+                                                            </CardTitle>
+                                                            <CardDescription className="text-muted-foreground/80 truncate font-mono text-xs">
+                                                                {project.repositoryUrl.replace(
+                                                                    'https://',
+                                                                    '',
+                                                                )}
+                                                                zaddaz
+                                                            </CardDescription>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <CardTitle className="mt-4">
-                                                    {project.name}
-                                                </CardTitle>
-                                                <CardDescription className="line-clamp-1">
-                                                    {project.repositoryUrl}
-                                                </CardDescription>
-                                            </CardHeader>
-                                            <CardContent>
-                                                <div className="text-muted-foreground flex items-center gap-4 text-sm">
-                                                    <div className="flex items-center gap-1">
-                                                        <Github className="size-4" />
-                                                        <span className="capitalize">
-                                                            {project.gitProvider.toLowerCase()}
+                                                </CardHeader>
+                                                <CardFooter className="bg-muted/40 text-muted-foreground flex justify-between border-t !p-4 text-xs">
+                                                    <div className="flex items-center gap-2">
+                                                        <GitBranch className="size-3.5" />
+                                                        <span className="font-mono font-medium">
+                                                            {project.branch}
                                                         </span>
                                                     </div>
-                                                    <div className="flex items-center gap-1">
-                                                        <GitBranch className="size-4" />
-                                                        <span>{project.branch}</span>
+
+                                                    <div>
+                                                        {getStatusBadge(lastDeployment?.status)}
                                                     </div>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    </Link>
-                                ))}
+                                                </CardFooter>
+                                            </Card>
+                                        </Link>
+                                    );
+                                })}
                             </div>
                         )}
                     </div>

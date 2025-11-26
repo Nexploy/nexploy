@@ -1,67 +1,109 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
 import { z } from 'zod';
-import { prisma } from '../../../prisma/prisma';
-import { start } from 'workflow/api';
-import { buildWorkflow } from '@/workflows/build.workflow';
-import { revalidatePath } from 'next/cache';
+import { authActionServer } from '@/lib/api/safe-action';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { drinoDocker } from '@/lib/api/drinoDocker';
+import { HttpErrorResponse } from 'drino';
+import { prisma } from '../../../prisma/prisma';
 
-const deploySchema = z.object({
+const deployInputSchema = z.object({
     projectId: z.string(),
 });
 
+interface BuildStartResponse {
+    jobId: string;
+    status: string;
+    message: string;
+}
+
 export const onDeployAction = authActionServer
-    .inputSchema(deploySchema)
+    .inputSchema(deployInputSchema)
     .action(async ({ parsedInput, ctx }) => {
         const { projectId } = parsedInput;
-        const userId = ctx.session.user.id;
 
         const project = await prisma.project.findUnique({
-            where: { id: projectId },
+            where: { id: projectId, userId: ctx.session.user.id },
+            include: {
+                envVariables: true,
+            },
         });
 
         if (!project) {
+            await setToastServer({
+                type: 'error',
+                message: 'Project not found',
+            });
             throw new Error('Project not found');
         }
 
-        if (project.userId !== userId) {
-            throw new Error('Unauthorized');
-        }
+        const account = await prisma.account.findFirst({
+            where: {
+                userId: ctx.session.user.id,
+                providerId: project.gitProvider,
+            },
+            select: { accessToken: true },
+        });
 
-        // Create Deployment
         const deployment = await prisma.deployment.create({
             data: {
-                projectId,
+                projectId: project.id,
                 status: 'QUEUED',
             },
         });
 
-        try {
-            // Start Workflow
-            await start(buildWorkflow, [deployment.id]);
+        const imageName = `nexploy-${project.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
-            revalidatePath('/projects');
-            revalidatePath(`/projects/${projectId}`);
+        const envVariables: Record<string, string> = {};
+        for (const env of project.envVariables) {
+            envVariables[env.key] = env.value;
+        }
+
+        const buildConfig = {
+            projectId: project.id,
+            projectPath: project.contextPath || '.',
+            gitUrl: project.repositoryUrl,
+            gitBranch: project.branch,
+            gitToken: account!.accessToken,
+            envVariables,
+            dockerfilePath: project.dockerfilePath || undefined,
+            imageName,
+            imageTag: deployment.id.slice(-8),
+            autoDeploy: project.autoDeploy,
+        };
+
+        try {
+            const result = await drinoDocker
+                .post<BuildStartResponse>('/build/start', buildConfig)
+                .consume();
+
+            await prisma.deployment.update({
+                where: { id: deployment.id },
+                data: { status: 'BUILDING' },
+            });
 
             await setToastServer({
                 type: 'success',
-                message: 'Déploiement démarré avec succès (Workflow)',
+                message: 'Build started successfully',
             });
 
-            return deployment;
-        } catch (error) {
-            console.error('Failed to start workflow:', error);
+            return {
+                deploymentId: deployment.id,
+                jobId: result.jobId,
+                status: result.status,
+            };
+        } catch (err: unknown) {
             await prisma.deployment.update({
                 where: { id: deployment.id },
-                data: { status: 'FAILED', buildLogs: 'Failed to start workflow.' },
+                data: { status: 'FAILED' },
             });
 
-            await setToastServer({
-                type: 'error',
-                message: 'Erreur lors du démarrage du déploiement',
-            });
-            throw error;
+            if (err instanceof HttpErrorResponse) {
+                await setToastServer({
+                    type: 'error',
+                    message: err.error.message || 'Failed to start build',
+                });
+            }
+            throw err;
         }
     });

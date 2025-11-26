@@ -25,6 +25,9 @@ import { createNodeWebSocket } from '@hono/node-ws';
 import { createTerminalRoutes } from '@/routes/terminalRoutes';
 import volumesRoutes from '@/routes/volumesRoutes';
 import networksRoutes from '@/routes/networksRoutes';
+import buildRoutes from '@/routes/buildRoutes';
+import buildLogsEvents from '@/routes/events/buildLogsEvents';
+import { closeBuildQueue, initBuildQueue } from '@/deployer/jobs/queue';
 
 const app = new Hono();
 
@@ -60,6 +63,9 @@ app.route('/api/volumes', volumesRoutes);
 app.route('/api/networks/events', networksEvents);
 app.route('/api/networks', networksRoutes);
 
+app.route('/api/build/events', buildLogsEvents);
+app.route('/api/build', buildRoutes);
+
 app.route('/api/events/events', eventsEvents);
 
 app.route('/ws/docker', createTerminalRoutes(upgradeWebSocket));
@@ -87,6 +93,9 @@ const startServer = async () => {
             eventsStateManager.start(),
         ]);
 
+        await initBuildQueue();
+        logger.info('✓ Build queue initialized');
+
         const dockerStatus = dockerStatusManager.getStatus();
         if (dockerStatus === 'connected') {
             logger.info('✓ Docker daemon is available');
@@ -113,6 +122,7 @@ setupGracefulShutdown(async () => {
         volumesStateManager.stop(),
         networksStateManager.stop(),
         eventsStateManager.stop(),
+        closeBuildQueue(),
     ]);
 
     logger.info('Docker management services stopped');

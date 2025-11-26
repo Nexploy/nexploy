@@ -60,6 +60,13 @@ class ContainersStateManager extends BaseStateManager {
         const containerId = event.Actor?.ID;
         if (!containerId) return;
 
+        // Skip build containers (intermediate containers created during docker build)
+        const containerName = event.Actor?.Attributes?.name;
+        const image = event.Actor?.Attributes?.image;
+        if (!containerName || image?.includes('buildkit') || containerName?.startsWith('buildx_buildkit')) {
+            return;
+        }
+
         const action = event.Action;
         logger.debug({ containerId, action }, 'Docker Container event received');
 

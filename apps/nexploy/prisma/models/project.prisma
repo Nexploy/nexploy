@@ -4,8 +4,7 @@ model Project {
 
   // Git Configuration
   repositoryUrl String
-  branch        String  @default("main")
-  gitToken      String? // Optional: for private repositories
+  branch        String @default("main")
   gitProvider   String
 
   // Build Configuration
@@ -21,11 +20,27 @@ model Project {
   updatedAt DateTime @updatedAt
 
   // Relations
-  userId      String
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  deployments Deployment[]
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deployments  Deployment[]
+  envVariables EnvVariable[]
 
   @@map("project")
+}
+
+model EnvVariable {
+  id    String @id @default(cuid())
+  key   String
+  value String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, key])
+  @@map("env_variable")
 }
 
 model Deployment {

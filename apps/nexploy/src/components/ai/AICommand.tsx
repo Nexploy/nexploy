@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import {
-    CommandDialog,
+    Command,
     CommandEmpty,
     CommandGroup,
     CommandInput,
@@ -19,6 +19,7 @@ import {
     LayoutList,
     Play,
     Settings,
+    Sparkles,
     Square,
     Terminal,
     Trash2,
@@ -27,9 +28,13 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@workspace/ui/components/button';
 import { Kbd } from '@workspace/ui/components/kbd';
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
+import { Dialog, DialogContent } from '@workspace/ui/components/dialog';
+import { AICommandChat } from '@/components/ai/AICommandChat';
 
 export function AICommand() {
     const [open, setOpen] = React.useState(false);
+    const [view, setView] = React.useState<'command' | 'chat'>('command');
+    const [inputValue, setInputValue] = React.useState('');
     const router = useRouter();
 
     React.useEffect(() => {
@@ -37,6 +42,8 @@ export function AICommand() {
             if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
                 e.preventDefault();
                 setOpen((open) => !open);
+                setView('command');
+                setInputValue('');
             }
         };
 
@@ -54,7 +61,13 @@ export function AICommand() {
             setOpen(false);
         } else {
             setOpen(true);
+            setView('command');
+            setInputValue('');
         }
+    };
+
+    const handleChatSelect = () => {
+        setView('chat');
     };
 
     return (
@@ -62,123 +75,181 @@ export function AICommand() {
             <Button
                 variant="outline"
                 onClick={openCloseDialog}
-                className="hover:bg-muted hover:text-foreground text-muted-foreground md:w-1/é flex h-8 flex-1 justify-between !pr-2 text-sm font-normal shadow-none md:flex-none"
+                className="hover:bg-muted hover:text-foreground text-muted-foreground flex h-8 flex-1 justify-between !pr-2 text-sm font-normal shadow-none md:flex-none"
             >
                 <span className={'truncate'}>Tapez une commande ou recherchez...</span>
                 <Kbd className={'px-1'}>⌘K</Kbd>
             </Button>
-            <CommandDialog
-                open={open}
-                onOpenChange={setOpen}
-                title="Command Menu"
-                description="Tapez une commande ou recherchez..."
-            >
-                <CommandInput placeholder="Tapez une commande ou recherchez..." />
-                <CommandList>
-                    <CommandEmpty>Aucun résultat trouvé.</CommandEmpty>
-                    <ScrollArea className="flex max-h-72 flex-col overflow-y-auto">
-                        <CommandGroup heading="Navigation">
-                            <CommandItem
-                                onSelect={() => runCommand(() => router.push('/docker/containers'))}
-                            >
-                                <Container />
-                                <span>Containers</span>
-                                <CommandShortcut>⌘C</CommandShortcut>
-                            </CommandItem>
-                            <CommandItem
-                                onSelect={() => runCommand(() => router.push('/docker/images'))}
-                            >
-                                <LayoutList />
-                                <span>Images</span>
-                                <CommandShortcut>⌘I</CommandShortcut>
-                            </CommandItem>
-                            <CommandItem
-                                onSelect={() => runCommand(() => router.push('/docker/volumes'))}
-                            >
-                                <Database />
-                                <span>Volumes</span>
-                                <CommandShortcut>⌘V</CommandShortcut>
-                            </CommandItem>
-                        </CommandGroup>
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent className="overflow-hidden p-0 shadow-lg sm:max-w-[600px]">
+                    {view === 'command' ? (
+                        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
+                            <CommandInput
+                                placeholder="Tapez une commande ou recherchez..."
+                                value={inputValue}
+                                onValueChange={setInputValue}
+                            />
+                            <CommandList>
+                                <CommandEmpty>
+                                    <Button
+                                        variant="ghost"
+                                        className="w-full justify-start"
+                                        onClick={handleChatSelect}
+                                    >
+                                        <Sparkles className="mr-2 h-4 w-4" />
+                                        Ask AI: {inputValue}
+                                    </Button>
+                                </CommandEmpty>
+                                <ScrollArea className="flex max-h-72 flex-col overflow-y-auto">
+                                    {inputValue && (
+                                        <CommandGroup heading="AI Assistant">
+                                            <CommandItem onSelect={handleChatSelect}>
+                                                <Sparkles className="mr-2 h-4 w-4" />
+                                                <span>Ask AI: {inputValue}</span>
+                                            </CommandItem>
+                                        </CommandGroup>
+                                    )}
 
-                        <CommandSeparator />
+                                    <CommandGroup heading="Navigation">
+                                        <CommandItem
+                                            onSelect={() =>
+                                                runCommand(() => router.push('/docker/containers'))
+                                            }
+                                        >
+                                            <Container className="mr-2 h-4 w-4" />
+                                            <span>Containers</span>
+                                            <CommandShortcut>⌘C</CommandShortcut>
+                                        </CommandItem>
+                                        <CommandItem
+                                            onSelect={() =>
+                                                runCommand(() => router.push('/docker/images'))
+                                            }
+                                        >
+                                            <LayoutList className="mr-2 h-4 w-4" />
+                                            <span>Images</span>
+                                            <CommandShortcut>⌘I</CommandShortcut>
+                                        </CommandItem>
+                                        <CommandItem
+                                            onSelect={() =>
+                                                runCommand(() => router.push('/docker/volumes'))
+                                            }
+                                        >
+                                            <Database className="mr-2 h-4 w-4" />
+                                            <span>Volumes</span>
+                                            <CommandShortcut>⌘V</CommandShortcut>
+                                        </CommandItem>
+                                    </CommandGroup>
 
-                        <CommandGroup heading="Actions rapides">
-                            <CommandItem
-                                onSelect={() =>
-                                    runCommand(() =>
-                                        router.push('/docker/containers/create-container'),
-                                    )
-                                }
-                            >
-                                <Container />
-                                <span>Créer un conteneur</span>
-                            </CommandItem>
-                            <CommandItem
-                                onSelect={() =>
-                                    runCommand(() => router.push('/docker/images/pull-image'))
-                                }
-                            >
-                                <FileIcon />
-                                <span>Pull une image</span>
-                            </CommandItem>
-                            <CommandItem
-                                onSelect={() => runCommand(() => console.log('Create volume'))}
-                            >
-                                <Database />
-                                <span>Créer un volume</span>
-                            </CommandItem>
-                        </CommandGroup>
+                                    <CommandSeparator />
 
-                        <CommandSeparator />
+                                    <CommandGroup heading="Actions rapides">
+                                        <CommandItem
+                                            onSelect={() =>
+                                                runCommand(() =>
+                                                    router.push(
+                                                        '/docker/containers/create-container',
+                                                    ),
+                                                )
+                                            }
+                                        >
+                                            <Container className="mr-2 h-4 w-4" />
+                                            <span>Créer un conteneur</span>
+                                        </CommandItem>
+                                        <CommandItem
+                                            onSelect={() =>
+                                                runCommand(() =>
+                                                    router.push('/docker/images/pull-image'),
+                                                )
+                                            }
+                                        >
+                                            <FileIcon className="mr-2 h-4 w-4" />
+                                            <span>Pull une image</span>
+                                        </CommandItem>
+                                        <CommandItem
+                                            onSelect={() =>
+                                                runCommand(() => console.log('Create volume'))
+                                            }
+                                        >
+                                            <Database className="mr-2 h-4 w-4" />
+                                            <span>Créer un volume</span>
+                                        </CommandItem>
+                                    </CommandGroup>
 
-                        <CommandGroup heading="Conteneurs">
-                            <CommandItem
-                                onSelect={() => runCommand(() => console.log('Start all'))}
-                            >
-                                <Play />
-                                <span>Démarrer tous les conteneurs</span>
-                            </CommandItem>
-                            <CommandItem onSelect={() => runCommand(() => console.log('Stop all'))}>
-                                <Square />
-                                <span>Arrêter tous les conteneurs</span>
-                            </CommandItem>
-                            <CommandItem
-                                onSelect={() => runCommand(() => console.log('Remove stopped'))}
-                            >
-                                <Trash2 />
-                                <span>Supprimer les conteneurs arrêtés</span>
-                            </CommandItem>
-                        </CommandGroup>
+                                    <CommandSeparator />
 
-                        <CommandSeparator />
+                                    <CommandGroup heading="Conteneurs">
+                                        <CommandItem
+                                            onSelect={() =>
+                                                runCommand(() => console.log('Start all'))
+                                            }
+                                        >
+                                            <Play className="mr-2 h-4 w-4" />
+                                            <span>Démarrer tous les conteneurs</span>
+                                        </CommandItem>
+                                        <CommandItem
+                                            onSelect={() =>
+                                                runCommand(() => console.log('Stop all'))
+                                            }
+                                        >
+                                            <Square className="mr-2 h-4 w-4" />
+                                            <span>Arrêter tous les conteneurs</span>
+                                        </CommandItem>
+                                        <CommandItem
+                                            onSelect={() =>
+                                                runCommand(() => console.log('Remove stopped'))
+                                            }
+                                        >
+                                            <Trash2 className="mr-2 h-4 w-4" />
+                                            <span>Supprimer les conteneurs arrêtés</span>
+                                        </CommandItem>
+                                    </CommandGroup>
 
-                        <CommandGroup heading="Stacks">
-                            <CommandItem
-                                onSelect={() => runCommand(() => console.log('View stacks'))}
-                            >
-                                <Layers />
-                                <span>Voir les stacks</span>
-                            </CommandItem>
-                        </CommandGroup>
+                                    <CommandSeparator />
 
-                        <CommandSeparator />
+                                    <CommandGroup heading="Stacks">
+                                        <CommandItem
+                                            onSelect={() =>
+                                                runCommand(() => console.log('View stacks'))
+                                            }
+                                        >
+                                            <Layers className="mr-2 h-4 w-4" />
+                                            <span>Voir les stacks</span>
+                                        </CommandItem>
+                                    </CommandGroup>
 
-                        <CommandGroup heading="Système">
-                            <CommandItem onSelect={() => runCommand(() => console.log('Settings'))}>
-                                <Settings />
-                                <span>Paramètres</span>
-                                <CommandShortcut>⌘,</CommandShortcut>
-                            </CommandItem>
-                            <CommandItem onSelect={() => runCommand(() => console.log('Terminal'))}>
-                                <Terminal />
-                                <span>Ouvrir le terminal</span>
-                                <CommandShortcut>⌘T</CommandShortcut>
-                            </CommandItem>
-                        </CommandGroup>
-                    </ScrollArea>
-                </CommandList>
-            </CommandDialog>
+                                    <CommandSeparator />
+
+                                    <CommandGroup heading="Système">
+                                        <CommandItem
+                                            onSelect={() =>
+                                                runCommand(() => console.log('Settings'))
+                                            }
+                                        >
+                                            <Settings className="mr-2 h-4 w-4" />
+                                            <span>Paramètres</span>
+                                            <CommandShortcut>⌘,</CommandShortcut>
+                                        </CommandItem>
+                                        <CommandItem
+                                            onSelect={() =>
+                                                runCommand(() => console.log('Terminal'))
+                                            }
+                                        >
+                                            <Terminal className="mr-2 h-4 w-4" />
+                                            <span>Ouvrir le terminal</span>
+                                            <CommandShortcut>⌘T</CommandShortcut>
+                                        </CommandItem>
+                                    </CommandGroup>
+                                </ScrollArea>
+                            </CommandList>
+                        </Command>
+                    ) : (
+                        <AICommandChat
+                            initialInput={inputValue}
+                            onBack={() => setView('command')}
+                        />
+                    )}
+                </DialogContent>
+            </Dialog>
         </>
     );
 }

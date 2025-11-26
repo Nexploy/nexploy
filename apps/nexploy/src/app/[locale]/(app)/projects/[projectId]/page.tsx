@@ -1,0 +1,83 @@
+import { getProjectByIdService } from '@/services/project/getProjectByIdService';
+import { notFound } from 'next/navigation';
+import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { DeployButton } from '@/components/projects/DeployButton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
+import { ProjectOverviewTab } from '@/components/projects/tabs/ProjectOverviewTab';
+import { ProjectEnvTab } from '@/components/projects/tabs/ProjectEnvTab';
+import { GitBranch, Github, Gitlab, LayoutDashboard, Key } from 'lucide-react';
+
+interface ProjectIdPageProps {
+    params: Promise<{
+        projectId: string;
+    }>;
+}
+
+const getGitIcon = (provider: string) => {
+    const p = provider.toLowerCase();
+    if (p.includes('github')) return Github;
+    if (p.includes('gitlab')) return Gitlab;
+    return GitBranch;
+};
+
+export default async function ProjectIdPage({ params }: ProjectIdPageProps) {
+    const { projectId } = await params;
+    const project = await getProjectByIdService(projectId);
+    if (!project) notFound();
+
+    const GitIcon = getGitIcon(project.gitProvider);
+
+    return (
+        <div className="flex h-full flex-1 flex-col pt-5">
+            <div className="flex flex-col gap-4 overflow-hidden">
+                <div className="flex items-start justify-between gap-2 px-5">
+                    <div className="flex gap-3">
+                        <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+                            <GitIcon className="text-primary size-7" />
+                        </div>
+                        <div className="flex flex-col">
+                            <h1 className="text-3xl leading-none font-semibold tracking-tight">
+                                {project.name}
+                            </h1>
+                            <p className="text-muted-foreground flex items-center gap-1 text-sm">
+                                <GitBranch className="size-3" />
+                                <span className="font-mono">{project.branch}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex gap-2">
+                        <DeployButton projectId={project.id} />
+                    </div>
+                </div>
+
+                <Tabs defaultValue="overview" className="flex flex-1 flex-col overflow-hidden px-5">
+                    <TabsList className="w-fit">
+                        <TabsTrigger value="overview">
+                            <LayoutDashboard className="mr-2 size-4" />
+                            Overview
+                        </TabsTrigger>
+                        <TabsTrigger value="env">
+                            <Key className="mr-2 size-4" />
+                            Environment
+                        </TabsTrigger>
+                    </TabsList>
+
+                    <ScrollAreaWithShadow className="mt-4 h-full flex-1 overflow-hidden">
+                        <div className="pb-5">
+                            <TabsContent value="overview" className="mt-0">
+                                <ProjectOverviewTab project={project} />
+                            </TabsContent>
+
+                            <TabsContent value="env" className="mt-0">
+                                <ProjectEnvTab
+                                    projectId={project.id}
+                                    envVariables={project.envVariables}
+                                />
+                            </TabsContent>
+                        </div>
+                    </ScrollAreaWithShadow>
+                </Tabs>
+            </div>
+        </div>
+    );
+}

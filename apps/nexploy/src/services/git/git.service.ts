@@ -1,6 +1,7 @@
 import { prisma } from '@/../prisma/prisma';
 import { getUserSession } from '@/services/auth/auth.service';
 import { GitBranch, GitRepository, ProvidersGit } from '@workspace/typescript-interface/git';
+import { GithubRepo } from '@workspace/typescript-interface/repository';
 
 export async function getGitProviderToken(provider: ProvidersGit) {
     const session = await getUserSession();
@@ -26,47 +27,51 @@ export async function getGitProviderToken(provider: ProvidersGit) {
 export async function getRepositories(provider: ProvidersGit): Promise<GitRepository[]> {
     const token = await getGitProviderToken(provider);
 
-    if (provider === 'github') {
-        const res = await fetch('https://api.github.com/user/repos', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                Accept: 'application/vnd.github+json',
-            },
-        });
-
-        if (!res.ok) throw new Error('Failed to fetch GitHub repositories');
-
-        const data = await res.json();
-        return data.map((repo: any) => ({
-            id: String(repo.id),
-            name: repo.name,
-            fullName: repo.full_name,
-            url: repo.clone_url,
-            private: repo.private,
-            defaultBranch: repo.default_branch,
-        }));
-    } else {
-        // GitLab
-        const res = await fetch(
-            'https://gitlab.com/api/v4/projects?membership=true&order_by=updated_at&per_page=100',
-            {
+    switch (provider) {
+        case 'github': {
+            const res = await fetch('https://api.github.com/user/repos', {
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    Accept: 'application/vnd.github+json',
                 },
-            },
-        );
+            });
 
-        if (!res.ok) throw new Error('Failed to fetch GitLab repositories');
+            if (!res.ok) throw new Error('Failed to fetch GitHub repositories');
 
-        const data = await res.json();
-        return data.map((repo: any) => ({
-            id: String(repo.id),
-            name: repo.name,
-            fullName: repo.path_with_namespace,
-            url: repo.http_url_to_repo,
-            private: repo.visibility === 'private',
-            defaultBranch: repo.default_branch,
-        }));
+            const data = await res.json();
+            return data.map((repo: GithubRepo) => ({
+                id: String(repo.id),
+                name: repo.name,
+                fullName: repo.full_name,
+                url: repo.clone_url,
+                private: repo.private,
+                visibility: repo.visibility,
+                defaultBranch: repo.default_branch,
+            }));
+        }
+        case 'gitlab': {
+            const res = await fetch(
+                'https://gitlab.com/api/v4/projects?membership=true&order_by=updated_at&per_page=100',
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            );
+            if (!res.ok) throw new Error('Failed to fetch GitLab repositories');
+
+            const data = await res.json();
+            return data.map((repo: any) => ({
+                id: String(repo.id),
+                name: repo.name,
+                fullName: repo.path_with_namespace,
+                url: repo.http_url_to_repo,
+                private: repo.visibility === 'private',
+                defaultBranch: repo.default_branch,
+            }));
+        }
+        default:
+            throw new Error(`Unsupported provider: ${provider}`);
     }
 }
 

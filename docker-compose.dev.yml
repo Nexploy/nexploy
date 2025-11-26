@@ -1,0 +1,49 @@
+name: nexploy_dev
+services:
+  postgres:
+    image: postgres:18.0
+    container_name: nexploy_postgres_dev
+    ports:
+      - "5433:5432"
+    networks:
+      - nexploy_network
+    environment:
+      - POSTGRES_DB=nexploy
+      - POSTGRES_USER=nexploy
+      - POSTGRES_PASSWORD=nexploy
+    volumes:
+      - nexploy_db:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $POSTGRES_USER" ]
+      interval: 60s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7.4
+    container_name: nexploy_redis_dev
+    command:
+      - /bin/sh
+      - -c
+      - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
+    ports:
+      - "6380:6379"
+    networks:
+      - nexploy_network
+    environment:
+      - REDIS_PASSWORD=redis
+    volumes:
+      - nexploy_redis:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "$REDIS_PASSWORD", "ping" ]
+      interval: 60s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  nexploy_db:
+  nexploy_redis:
+
+networks:
+  nexploy_network:
+
