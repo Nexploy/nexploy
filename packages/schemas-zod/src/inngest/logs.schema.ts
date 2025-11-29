@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const postCreateLogs = z.object({
+export const createLogSchema = z.object({
     logs: z.array(
         z.object({
             createdAt: z.date(),
@@ -9,5 +9,5 @@ export const postCreateLogs = z.object({
             message: z.string(),
         }),
     ),
-    deploymentId: z.cuid(),
+    buildId: z.cuid(),
 });

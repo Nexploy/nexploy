@@ -8,10 +8,10 @@ import { useInngestSubscription } from '@inngest/realtime/hooks';
 import { BuildStatus } from 'generated/client';
 import dayjs from 'dayjs';
 import { BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
-import { onGetTokenDeploymenIdAction } from '@/actions/inngest/tokenDeploymenId';
+import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 
 interface BuildLogsViewerProps {
-    deploymentId: string;
+    buildId: string;
     initialStatus: BuildStatus;
     createdAt: Date;
 }
@@ -54,7 +54,7 @@ const getStatusBadge = (status: BuildStatus) => {
     }
 };
 
-export function BuildLogsViewer({ deploymentId, initialStatus, createdAt }: BuildLogsViewerProps) {
+export function BuildLogsViewer({ buildId, initialStatus, createdAt }: BuildLogsViewerProps) {
     const [logs, setLogs] = useState<BuildLogEntry[]>([]);
     const [status, setStatus] = useState<BuildStatus>(initialStatus);
     const [autoScroll, setAutoScroll] = useState(true);
@@ -68,8 +68,8 @@ export function BuildLogsViewer({ deploymentId, initialStatus, createdAt }: Buil
     const { latestData } = useInngestSubscription({
         enabled: isActive && !isLoading,
         refreshToken: async () => {
-            const result = await onGetTokenDeploymenIdAction({
-                deploymentId,
+            const result = await onGetTokenBuildIdAction({
+                buildId,
                 topics: ['status', 'logs'],
             });
             return result?.data ?? null;
@@ -122,7 +122,7 @@ export function BuildLogsViewer({ deploymentId, initialStatus, createdAt }: Buil
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `build-${deploymentId.slice(-6)}-logs.txt`;
+        a.download = `build-${buildId.slice(-6)}-logs.txt`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

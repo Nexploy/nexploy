@@ -3,7 +3,7 @@
 import { authActionServer } from '@/lib/api/safe-action';
 import { projectCreateFormSchema } from '@workspace/schemas-zod/project/projectCreate.schema';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
-import { createProjectService } from '@/services/project/project.service';
+import { createProjectService } from '@/services/project.service';
 
 export const onProjectCreateAction = authActionServer
     .inputSchema(projectCreateFormSchema)

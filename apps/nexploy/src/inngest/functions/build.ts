@@ -1,18 +1,18 @@
 import { channel, topic } from '@inngest/realtime';
 import { BuildLogEntry, BuildStatus } from '@workspace/typescript-interface/inngest/build';
 import { inngest } from '@/inngest/client';
-import { updateStatusBuild } from '@/services/deployment.service';
+import { updateStatusBuild } from '@/services/inngest/build.service';
 
-const createBuildChannel = (deploymentId: string) => {
-    const channelDef = channel(`build:${deploymentId}`)
+const createBuildChannel = (buildId: string) => {
+    const channelDef = channel(`build:${buildId}`)
         .addTopic(topic('log').type<{ log: BuildLogEntry }>())
         .addTopic(topic('status').type<{ status: string }>());
     return channelDef();
 };
 
-const saveLogs = async (deploymentId: string, logs: BuildLogEntry[]): Promise<void> => {
+const saveLogs = async (buildId: string, logs: BuildLogEntry[]): Promise<void> => {
     try {
-        // await drinoNext.post(`/builds/logs`, { deploymentId, logs }).consume();
+        // await drinoNext.post(`/builds/logs`, { buildId, logs }).consume();
     } catch (error) {
         console.error('Failed to persist logs:', error);
     }
@@ -28,9 +28,9 @@ export const buildFunction = inngest.createFunction(
     },
     { event: 'build/start' },
     async ({ event, step, publish }) => {
-        const { deploymentId, config } = event.data;
+        const { buildId, config } = event.data;
 
-        const buildChannel = createBuildChannel(deploymentId);
+        const buildChannel = createBuildChannel(buildId);
 
         const publishLog = async (
             stepName: string,
@@ -39,19 +39,19 @@ export const buildFunction = inngest.createFunction(
         ) => {
             const log: BuildLogEntry = {
                 level,
-                deploymentId,
+                buildId,
                 createdAt: new Date(),
                 step: stepName,
                 message,
             };
 
-            await Promise.all([publish(buildChannel.log({ log })), saveLogs(deploymentId, [log])]);
+            await Promise.all([publish(buildChannel.log({ log })), saveLogs(buildId, [log])]);
         };
 
         const publishStatus = async (status: BuildStatus) => {
             await Promise.all([
                 publish(buildChannel.status({ status })),
-                await updateStatusBuild(deploymentId, status),
+                await updateStatusBuild(buildId, status),
             ]);
         };
 

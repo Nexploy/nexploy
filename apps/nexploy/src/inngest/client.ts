@@ -5,7 +5,7 @@ import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 type Events = {
     'build/start': {
         data: {
-            deploymentId: string;
+            buildId: string;
             config: BuildConfig;
         };
     };

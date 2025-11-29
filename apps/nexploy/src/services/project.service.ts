@@ -1,7 +1,7 @@
 import { ProjectCreateForm } from '@workspace/schemas-zod/project/projectCreate.schema';
 import { Session } from '@/lib/auth/auth';
 import { getUserSession } from '@/services/auth/auth.service';
-import { prisma } from '../../../prisma/prisma';
+import { prisma } from '../../prisma/prisma';
 
 export async function createProjectService(
     { repo, ...restProjectCreate }: ProjectCreateForm,

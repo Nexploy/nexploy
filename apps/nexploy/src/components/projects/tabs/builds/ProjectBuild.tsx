@@ -1,7 +1,7 @@
 'use client';
 
 import { useInngestSubscription } from '@inngest/realtime/hooks';
-import { onGetTokenDeploymenIdAction } from '@/actions/inngest/tokenDeploymenId';
+import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import Link from 'next/link';
 import { CheckCircle2, Clock, Loader2, XCircle } from 'lucide-react';
 import dayjs from 'dayjs';
@@ -50,8 +50,8 @@ export function ProjectBuild({ projectId, build }: BuildLogsProps) {
     const { latestData } = useInngestSubscription({
         enabled: build.status !== 'COMPLETED',
         refreshToken: async () => {
-            const result = await onGetTokenDeploymenIdAction({
-                deploymentId: build.id,
+            const result = await onGetTokenBuildIdAction({
+                buildId: build.id,
                 topics: ['status'],
             });
             return result?.data ?? null;

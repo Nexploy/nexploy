@@ -19,7 +19,7 @@ import {
 } from '@workspace/ui/components/card';
 import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
-import { getProjectService } from '@/services/project/project.service';
+import { getProjectService } from '@/services/project.service';
 
 export const metadata: Metadata = {
     title: 'Projects',

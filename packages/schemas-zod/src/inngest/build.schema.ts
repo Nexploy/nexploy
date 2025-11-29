@@ -15,7 +15,7 @@ export const buildSchema = z.object({
         port: z.number().optional(),
         autoDeploy: z.boolean().default(true),
     }),
-    deploymentId: z.cuid(),
+    buildId: z.cuid(),
 });
 
 export const startBuildSchema = z.object({

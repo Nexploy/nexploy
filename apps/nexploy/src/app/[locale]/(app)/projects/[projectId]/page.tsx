@@ -4,8 +4,8 @@ import { RunBuildButton } from '@/components/projects/RunBuildButton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { ProjectEnvTab } from '@/components/projects/tabs/ProjectEnvTab';
 import { GitBranch, Github, Gitlab, Key, LayoutDashboard, Link2 } from 'lucide-react';
-import { getProjectByIdService } from '@/services/project/project.service';
 import { ProjectBuildsTab } from '@/components/projects/tabs/builds/ProjectBuildsTab';
+import { getProjectByIdService } from '@/services/project.service';
 
 interface ProjectIdPageProps {
     params: Promise<{

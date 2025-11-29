@@ -3,7 +3,7 @@ import { BuildLogsViewer } from '@/components/projects/BuildLogsViewer';
 import { ArrowLeft, GitBranch, GitCommit } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@workspace/ui/components/button';
-import { getProjectByIdService } from '@/services/project/project.service';
+import { getProjectByIdService } from '@/services/project.service';
 
 interface BuildPageProps {
     params: Promise<{
@@ -17,8 +17,8 @@ export default async function BuildPage({ params }: BuildPageProps) {
     const project = await getProjectByIdService(projectId);
     if (!project) notFound();
 
-    const deployment = project.build.find((d) => d.id === buildId);
-    if (!deployment) notFound();
+    const build = project.build.find((d) => d.id === buildId);
+    if (!build) notFound();
 
     return (
         <div className="flex h-full flex-1 flex-col">
@@ -40,16 +40,14 @@ export default async function BuildPage({ params }: BuildPageProps) {
                                 <GitBranch className="size-3" />
                                 {project.branch}
                             </span>
-                            {deployment.commitHash && (
+                            {build.commitHash && (
                                 <span className="flex items-center gap-1 font-mono">
                                     <GitCommit className="size-3" />
-                                    {deployment.commitHash.slice(0, 7)}
+                                    {build.commitHash.slice(0, 7)}
                                 </span>
                             )}
-                            {deployment.commitMessage && (
-                                <span className="max-w-md truncate">
-                                    {deployment.commitMessage}
-                                </span>
+                            {build.commitMessage && (
+                                <span className="max-w-md truncate">{build.commitMessage}</span>
                             )}
                         </div>
                     </div>
@@ -57,9 +55,9 @@ export default async function BuildPage({ params }: BuildPageProps) {
             </div>
 
             <BuildLogsViewer
-                deploymentId={buildId}
-                initialStatus={deployment.status}
-                createdAt={deployment.createdAt}
+                buildId={buildId}
+                initialStatus={build.status}
+                createdAt={build.createdAt}
             />
         </div>
     );

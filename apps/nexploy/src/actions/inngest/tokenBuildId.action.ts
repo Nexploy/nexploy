@@ -4,20 +4,15 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { HttpErrorResponse } from 'drino';
 import { getSubscriptionToken } from '@inngest/realtime';
-import { z } from 'zod';
 import { inngest } from '@/inngest/client';
+import { tokenBuildIdSchema } from '@workspace/schemas-zod/inngest/token.schema';
 
-const schema = z.object({
-    deploymentId: z.string(),
-    topics: z.array(z.string()),
-});
-
-export const onGetTokenDeploymenIdAction = authActionServer
-    .inputSchema(schema)
-    .action(async ({ parsedInput: { deploymentId, topics } }) => {
+export const onGetTokenBuildIdAction = authActionServer
+    .inputSchema(tokenBuildIdSchema)
+    .action(async ({ parsedInput: { buildId, topics } }) => {
         try {
             return await getSubscriptionToken(inngest, {
-                channel: `build:${deploymentId}`,
+                channel: `build:${buildId}`,
                 topics,
             });
         } catch (err: unknown) {

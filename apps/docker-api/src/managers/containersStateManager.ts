@@ -413,7 +413,7 @@ class ContainersStateManager extends BaseStateManager {
             envVars?: Record<string, string>;
         } = {},
     ): Promise<{
-        deploymentId: string;
+        buildId: string;
         containerId: string;
         port: number;
     }> {
@@ -461,7 +461,7 @@ class ContainersStateManager extends BaseStateManager {
         logger.info({ containerId: container.id, port }, 'Deployment started');
 
         return {
-            deploymentId: containerName,
+            buildId: containerName,
             containerId: container.id,
             port,
         };

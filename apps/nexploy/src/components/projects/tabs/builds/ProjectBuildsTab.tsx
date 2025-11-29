@@ -19,12 +19,8 @@ export function ProjectBuildsTab({ builds, projectId }: ProjectOverviewTabProps)
                     </div>
                 ) : (
                     <div className="divide-y">
-                        {builds.map((deployment) => (
-                            <ProjectBuild
-                                key={deployment.id}
-                                projectId={projectId}
-                                build={deployment}
-                            />
+                        {builds.map((build) => (
+                            <ProjectBuild key={build.id} projectId={projectId} build={build} />
                         ))}
                     </div>
                 )}

@@ -4,9 +4,9 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { HttpErrorResponse } from 'drino';
 import { startBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
-import { startBuildProject } from '@/services/project/build.service';
-import { getProjectWithEnv } from '@/services/project/project.service';
+import { startBuildProject } from '@/services/inngest/build.service';
 import { revalidatePath } from 'next/cache';
+import { getProjectWithEnv } from '@/services/project.service';
 
 export const onStartBuildProject = authActionServer
     .inputSchema(startBuildSchema)

@@ -5,7 +5,7 @@ export interface BuildLogEntry {
     level: 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
     step: string;
     message: string;
-    deploymentId: string;
+    buildId: string;
 }
 
 export interface BuildConfig {
