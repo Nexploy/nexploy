@@ -5,8 +5,14 @@ import { useAction } from 'next-safe-action/hooks';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
-import { Plus, Trash2, Save, Loader2, Eye, EyeOff } from 'lucide-react';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@workspace/ui/components/card';
+import { Eye, EyeOff, Loader2, Plus, Save, Trash2 } from 'lucide-react';
 import { onEnvVariableAction } from '@/actions/project/envVariable.action';
 import { useRouter } from 'next/navigation';
 
@@ -21,7 +27,10 @@ interface ProjectEnvTabProps {
     envVariables: EnvVariable[];
 }
 
-export function ProjectEnvTab({ projectId, envVariables: initialEnvVariables }: ProjectEnvTabProps) {
+export function ProjectEnvTab({
+    projectId,
+    envVariables: initialEnvVariables,
+}: ProjectEnvTabProps) {
     const router = useRouter();
     const [envVariables, setEnvVariables] = useState<EnvVariable[]>(initialEnvVariables);
     const [newEnvs, setNewEnvs] = useState<{ key: string; value: string }[]>([]);
@@ -53,7 +62,9 @@ export function ProjectEnvTab({ projectId, envVariables: initialEnvVariables }: 
     };
 
     const handleUpdateExisting = (id: string, field: 'key' | 'value', value: string) => {
-        setEnvVariables(envVariables.map((env) => (env.id === id ? { ...env, [field]: value } : env)));
+        setEnvVariables(
+            envVariables.map((env) => (env.id === id ? { ...env, [field]: value } : env)),
+        );
     };
 
     const handleDeleteExisting = (id: string) => {
@@ -105,35 +116,29 @@ export function ProjectEnvTab({ projectId, envVariables: initialEnvVariables }: 
     const deletedEnvs = envVariables.filter((env) => deletedIds.includes(env.id));
 
     return (
-        <Card>
+        <Card className={'mx-5'}>
             <CardHeader>
                 <div className="flex items-center justify-between">
                     <div>
                         <CardTitle>Environment Variables</CardTitle>
-                        <CardDescription>
-                            Configure environment variables for your deployments
-                        </CardDescription>
+                        <CardDescription>Configure environment variables</CardDescription>
                     </div>
                     <div className="flex gap-2">
-                        <Button variant="outline" size="sm" onClick={handleAddNew}>
-                            <Plus className="mr-2 size-4" />
-                            Add Variable
-                        </Button>
                         {hasChanges() && (
                             <Button size="sm" onClick={handleSave} disabled={isPending}>
-                                {isPending ? (
-                                    <Loader2 className="mr-2 size-4 animate-spin" />
-                                ) : (
-                                    <Save className="mr-2 size-4" />
-                                )}
+                                {isPending ? <Loader2 className="animate-spin" /> : <Save />}
                                 Save Changes
                             </Button>
                         )}
+                        <Button variant="outline" size="sm" onClick={handleAddNew}>
+                            <Plus />
+                            Add Variable
+                        </Button>
                     </div>
                 </div>
             </CardHeader>
             <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-2">
                     {activeEnvs.length === 0 && newEnvs.length === 0 ? (
                         <div className="text-muted-foreground py-8 text-center">
                             No environment variables configured.
@@ -141,25 +146,33 @@ export function ProjectEnvTab({ projectId, envVariables: initialEnvVariables }: 
                     ) : (
                         <>
                             {activeEnvs.map((env) => (
-                                <div key={env.id} className="flex items-end gap-4">
+                                <div key={env.id} className="flex items-end gap-2">
                                     <div className="flex-1">
-                                        <Label htmlFor={`key-${env.id}`}>Key</Label>
                                         <Input
                                             id={`key-${env.id}`}
                                             value={env.key}
-                                            onChange={(e) => handleUpdateExisting(env.id, 'key', e.target.value)}
+                                            onChange={(e) =>
+                                                handleUpdateExisting(env.id, 'key', e.target.value)
+                                            }
                                             placeholder="VARIABLE_NAME"
                                             className="font-mono"
                                         />
                                     </div>
                                     <div className="flex-1">
-                                        <Label htmlFor={`value-${env.id}`}>Value</Label>
                                         <div className="relative">
                                             <Input
                                                 id={`value-${env.id}`}
                                                 type={showValues[env.id] ? 'text' : 'password'}
-                                                value={env.value}
-                                                onChange={(e) => handleUpdateExisting(env.id, 'value', e.target.value)}
+                                                value={
+                                                    showValues[env.id] ? env.value : '************'
+                                                }
+                                                onChange={(e) =>
+                                                    handleUpdateExisting(
+                                                        env.id,
+                                                        'value',
+                                                        e.target.value,
+                                                    )
+                                                }
                                                 placeholder="value"
                                                 className="pr-10 font-mono"
                                             />
@@ -167,14 +180,10 @@ export function ProjectEnvTab({ projectId, envVariables: initialEnvVariables }: 
                                                 type="button"
                                                 variant="ghost"
                                                 size="sm"
-                                                className="absolute right-1 top-1/2 -translate-y-1/2"
+                                                className="absolute top-1/2 right-1 -translate-y-1/2"
                                                 onClick={() => toggleShowValue(env.id)}
                                             >
-                                                {showValues[env.id] ? (
-                                                    <EyeOff className="size-4" />
-                                                ) : (
-                                                    <Eye className="size-4" />
-                                                )}
+                                                {showValues[env.id] ? <Eye /> : <EyeOff />}
                                             </Button>
                                         </div>
                                     </div>
@@ -183,7 +192,7 @@ export function ProjectEnvTab({ projectId, envVariables: initialEnvVariables }: 
                                         size="icon"
                                         onClick={() => handleDeleteExisting(env.id)}
                                     >
-                                        <Trash2 className="size-4 text-destructive" />
+                                        <Trash2 className="text-destructive size-4" />
                                     </Button>
                                 </div>
                             ))}
@@ -195,7 +204,9 @@ export function ProjectEnvTab({ projectId, envVariables: initialEnvVariables }: 
                                         <Input
                                             id={`new-key-${index}`}
                                             value={env.key}
-                                            onChange={(e) => handleUpdateNew(index, 'key', e.target.value)}
+                                            onChange={(e) =>
+                                                handleUpdateNew(index, 'key', e.target.value)
+                                            }
                                             placeholder="VARIABLE_NAME"
                                             className="font-mono"
                                         />
@@ -205,13 +216,19 @@ export function ProjectEnvTab({ projectId, envVariables: initialEnvVariables }: 
                                         <Input
                                             id={`new-value-${index}`}
                                             value={env.value}
-                                            onChange={(e) => handleUpdateNew(index, 'value', e.target.value)}
+                                            onChange={(e) =>
+                                                handleUpdateNew(index, 'value', e.target.value)
+                                            }
                                             placeholder="value"
                                             className="font-mono"
                                         />
                                     </div>
-                                    <Button variant="ghost" size="icon" onClick={() => handleRemoveNew(index)}>
-                                        <Trash2 className="size-4 text-destructive" />
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => handleRemoveNew(index)}
+                                    >
+                                        <Trash2 className="text-destructive size-4" />
                                     </Button>
                                 </div>
                             ))}
@@ -228,8 +245,14 @@ export function ProjectEnvTab({ projectId, envVariables: initialEnvVariables }: 
                                     key={env.id}
                                     className="bg-destructive/10 flex items-center justify-between rounded-md p-2"
                                 >
-                                    <span className="font-mono text-sm line-through">{env.key}</span>
-                                    <Button variant="ghost" size="sm" onClick={() => handleUndoDelete(env.id)}>
+                                    <span className="font-mono text-sm line-through">
+                                        {env.key}
+                                    </span>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleUndoDelete(env.id)}
+                                    >
                                         Undo
                                     </Button>
                                 </div>

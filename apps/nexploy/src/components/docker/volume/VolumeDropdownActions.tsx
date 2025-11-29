@@ -32,7 +32,7 @@ export function VolumeDropdownActions({ volume }: VolumeDropdownActionsProps) {
     const volumeName = volume.name || '<none>';
     const isBuiltin = volumeName.startsWith('docker_');
 
-    const handleAction = async (action: 'remove' | 'prune') => {
+    const handleAction = async (action: 'delete' | 'prune') => {
         await onVolumeAction({ volumeNames: [volumeName], action });
     };
 
@@ -46,7 +46,7 @@ export function VolumeDropdownActions({ volume }: VolumeDropdownActionsProps) {
                     description: `Êtes-vous sûr de vouloir supprimer le volume "${volumeName}" ?`,
                     cancelLabel: 'Annuler',
                     actionLabel: 'Supprimer',
-                    onAction: () => handleAction('remove'),
+                    onAction: () => handleAction('delete'),
                 }),
             disabled: isBuiltin || (volume.usageData?.RefCount || 0) > 0,
             variant: 'destructive',

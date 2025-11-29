@@ -1,11 +1,11 @@
-import { getProjectByIdService } from '@/services/project/getProjectByIdService';
 import { notFound } from 'next/navigation';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { DeployButton } from '@/components/projects/DeployButton';
+import { RunBuildButton } from '@/components/projects/RunBuildButton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
-import { ProjectOverviewTab } from '@/components/projects/tabs/ProjectOverviewTab';
 import { ProjectEnvTab } from '@/components/projects/tabs/ProjectEnvTab';
-import { GitBranch, Github, Gitlab, LayoutDashboard, Key } from 'lucide-react';
+import { GitBranch, Github, Gitlab, Key, LayoutDashboard, Link2 } from 'lucide-react';
+import { getProjectByIdService } from '@/services/project/project.service';
+import { ProjectBuildsTab } from '@/components/projects/tabs/builds/ProjectBuildsTab';
 
 interface ProjectIdPageProps {
     params: Promise<{
@@ -17,7 +17,7 @@ const getGitIcon = (provider: string) => {
     const p = provider.toLowerCase();
     if (p.includes('github')) return Github;
     if (p.includes('gitlab')) return Gitlab;
-    return GitBranch;
+    return Link2;
 };
 
 export default async function ProjectIdPage({ params }: ProjectIdPageProps) {
@@ -45,29 +45,25 @@ export default async function ProjectIdPage({ params }: ProjectIdPageProps) {
                             </p>
                         </div>
                     </div>
-                    <div className="flex gap-2">
-                        <DeployButton projectId={project.id} />
-                    </div>
+                    <RunBuildButton projectId={project.id} />
                 </div>
 
-                <Tabs defaultValue="overview" className="flex flex-1 flex-col overflow-hidden px-5">
-                    <TabsList className="w-fit">
+                <Tabs defaultValue="overview" className="flex flex-1 flex-col overflow-hidden">
+                    <TabsList className="mx-5 mb-2">
                         <TabsTrigger value="overview">
-                            <LayoutDashboard className="mr-2 size-4" />
-                            Overview
+                            <LayoutDashboard />
+                            Builds
                         </TabsTrigger>
                         <TabsTrigger value="env">
-                            <Key className="mr-2 size-4" />
+                            <Key />
                             Environment
                         </TabsTrigger>
                     </TabsList>
-
-                    <ScrollAreaWithShadow className="mt-4 h-full flex-1 overflow-hidden">
+                    <ScrollAreaWithShadow className="h-full overflow-hidden">
                         <div className="pb-5">
                             <TabsContent value="overview" className="mt-0">
-                                <ProjectOverviewTab project={project} />
+                                <ProjectBuildsTab projectId={project.id} builds={project.build} />
                             </TabsContent>
-
                             <TabsContent value="env" className="mt-0">
                                 <ProjectEnvTab
                                     projectId={project.id}

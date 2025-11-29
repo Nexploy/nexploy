@@ -2,27 +2,23 @@ model Project {
   id   String @id @default(cuid())
   name String
 
-  // Git Configuration
   repositoryUrl String
   branch        String @default("main")
   gitProvider   String
 
-  // Build Configuration
-  buildType      String  @default("DOCKERFILE") // DOCKERFILE, NIXPACKS, BUILDPACKS
+  buildType      String  @default("DOCKERFILE")
   dockerfilePath String? @default("Dockerfile")
   contextPath    String? @default(".")
-  buildArgs      String? // JSON string
+  buildArgs      String?
 
-  // Settings
   autoDeploy Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relations
   userId       String
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  deployments  Deployment[]
+  build        Build[]
   envVariables EnvVariable[]
 
   @@map("project")
@@ -43,16 +39,14 @@ model EnvVariable {
   @@map("env_variable")
 }
 
-model Deployment {
-  id     String @id @default(cuid())
-  status String @default("QUEUED") // QUEUED, BUILDING, SUCCESS, FAILED
+model Build {
+  id     String      @id @default(cuid())
+  status BuildStatus @default(QUEUED)
 
-  // Git Info
   commitHash    String?
   commitMessage String?
 
-  // Logs
-  buildLogs String? @db.Text
+  log Log[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -60,5 +54,33 @@ model Deployment {
   projectId String
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  @@map("deployment")
+  @@map("build")
+}
+
+model Log {
+  id      String    @id @default(cuid())
+  level   LogLevel @default(INFO)
+  step    String
+  message String    @db.Text
+
+  createdAt DateTime @default(now())
+
+  buildId String
+  build   Build @relation(fields: [buildId], references: [id], onDelete: Cascade)
+
+  @@map("log")
+}
+
+enum LogLevel {
+  INFO
+  WARN
+  ERROR
+  DEBUG
+}
+
+enum BuildStatus {
+  QUEUED
+  BUILDING
+  COMPLETED
+  FAILED
 }

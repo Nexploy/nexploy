@@ -19,26 +19,40 @@ services:
       timeout: 5s
       retries: 5
 
-  redis:
-    image: redis:7.4
-    container_name: nexploy_redis_dev
-    command:
-      - /bin/sh
-      - -c
-      - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
+  #  redis:
+  #    image: redis:7.4
+  #    container_name: nexploy_redis_dev
+  #    command:
+  #      - /bin/sh
+  #      - -c
+  #      - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
+  #    ports:
+  #      - "6380:6379"
+  #    networks:
+  #      - nexploy_network
+  #    environment:
+  #      - REDIS_PASSWORD=redis
+  #    volumes:
+  #      - nexploy_redis:/data
+  #    healthcheck:
+  #      test: [ "CMD", "redis-cli", "-a", "$REDIS_PASSWORD", "ping" ]
+  #      interval: 60s
+  #      timeout: 5s
+  #      retries: 5
+
+  inngest:
+    image: inngest/inngest:latest
+    container_name: nexploy_inngest_dev
     ports:
-      - "6380:6379"
+      - "8288:8288"
     networks:
       - nexploy_network
     environment:
-      - REDIS_PASSWORD=redis
-    volumes:
-      - nexploy_redis:/data
-    healthcheck:
-      test: [ "CMD", "redis-cli", "-a", "$REDIS_PASSWORD", "ping" ]
-      interval: 60s
-      timeout: 5s
-      retries: 5
+      - INNGEST_EVENT_KEY=local-dev-key
+      - INNGEST_SIGNING_KEY=signkey-test-12345678
+    command: inngest dev -u http://host.docker.internal:3000/api/inngest
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
   nexploy_db:

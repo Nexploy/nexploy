@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Folder, GitBranch, Github, Gitlab } from 'lucide-react';
+import { Folder, GitBranch, Github, Gitlab, Rocket } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import {
     Empty,
@@ -9,7 +9,6 @@ import {
     EmptyTitle,
 } from '@workspace/ui/components/empty';
 import { AddProject } from '@/components/projects/AddProject';
-import { getProjectService } from '@/services/project/getProjectService';
 import { Link } from '@/i18n/navigation';
 import {
     Card,
@@ -19,6 +18,8 @@ import {
     CardTitle,
 } from '@workspace/ui/components/card';
 import { Badge } from '@workspace/ui/components/badge';
+import { Button } from '@workspace/ui/components/button';
+import { getProjectService } from '@/services/project/project.service';
 
 export const metadata: Metadata = {
     title: 'Projects',
@@ -91,7 +92,7 @@ export default async function ProjectsPage() {
                         ) : (
                             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
                                 {projects.map((project) => {
-                                    const lastDeployment = project.deployments?.[0];
+                                    const lastDeployment = project.build?.[0];
                                     const Icon = getGitIcon(project.gitProvider);
 
                                     return (
@@ -106,27 +107,20 @@ export default async function ProjectsPage() {
                                                             <CardTitle className="text-base leading-none font-semibold">
                                                                 {project.name}
                                                             </CardTitle>
-                                                            <CardDescription className="text-muted-foreground/80 truncate font-mono text-xs">
-                                                                {project.repositoryUrl.replace(
-                                                                    'https://',
-                                                                    '',
-                                                                )}
-                                                                zaddaz
+                                                            <CardDescription className="text-muted-foreground/80 flex items-center gap-1 truncate font-mono text-xs">
+                                                                <GitBranch className="size-3" />
+                                                                <span className="font-mono">
+                                                                    {project.branch}
+                                                                </span>
                                                             </CardDescription>
                                                         </div>
                                                     </div>
                                                 </CardHeader>
-                                                <CardFooter className="bg-muted/40 text-muted-foreground flex justify-between border-t !p-4 text-xs">
-                                                    <div className="flex items-center gap-2">
-                                                        <GitBranch className="size-3.5" />
-                                                        <span className="font-mono font-medium">
-                                                            {project.branch}
-                                                        </span>
-                                                    </div>
-
-                                                    <div>
-                                                        {getStatusBadge(lastDeployment?.status)}
-                                                    </div>
+                                                <CardFooter className="bg-muted/40 text-muted-foreground flex h-14 justify-between border-t !p-4 text-xs">
+                                                    {getStatusBadge(lastDeployment?.status)}
+                                                    <Button size={'icon'} variant={'secondary'}>
+                                                        <Rocket />
+                                                    </Button>
                                                 </CardFooter>
                                             </Card>
                                         </Link>

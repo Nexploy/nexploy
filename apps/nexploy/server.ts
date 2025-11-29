@@ -7,7 +7,8 @@ import { Socket } from 'net';
 import { attachSchema } from '@workspace/schemas-zod/websocket/attach.schema';
 
 const dev = process.env.NODE_ENV !== 'production';
-const hostname = 'localhost';
+
+const hostname = '0.0.0.0';
 const port = 3000;
 
 const app = next({
@@ -29,6 +30,7 @@ const proxy = httpProxy.createProxyServer({
 proxy.on('error', (err) => {
     console.error('❌ Proxy error:', err.message);
 });
+
 proxy.on('proxyReq', (_, req) => {
     console.log('📡 Proxying HTTP:', req.method, req.url);
 });

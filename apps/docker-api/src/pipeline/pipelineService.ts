@@ -1,9 +1,8 @@
 import { spawn } from 'child_process';
 import { access, copyFile, mkdir, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
-import { deployerConfig } from '@/deployer/config';
 import { logger } from '@/utils/logger';
-import type { BuildConfig } from '@/deployer/types';
+import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 
 class PipelineService {
     private async exec(
@@ -59,7 +58,11 @@ class PipelineService {
     }
 
     async cloneRepository(buildConfig: BuildConfig): Promise<string> {
-        const workDir = join(deployerConfig.workDir, buildConfig.projectId, Date.now().toString());
+        const workDir = join(
+            process.env.DEPLOYER_WORK_DIR || '/tmp/deployer',
+            buildConfig.projectId,
+            Date.now().toString(),
+        );
 
         await mkdir(workDir, { recursive: true });
 
@@ -68,14 +71,10 @@ class PipelineService {
             'Cloning repository',
         );
 
-        console.log({ buildConfig });
-
         const authenticatedUrl = this.getAuthenticatedGitUrl(
             buildConfig.gitUrl,
             buildConfig.gitToken,
         );
-
-        console.log({ authenticatedUrl });
 
         await this.exec('git', [
             'clone',

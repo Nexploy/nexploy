@@ -9,6 +9,8 @@ import {
 } from '@workspace/typescript-interface/docker/docker.image';
 import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { BaseStateManager } from '@/lib/BaseStateManager';
+import * as tar from 'tar-fs';
+import { BuildConfig } from '@workspace/typescript-interface/inngest';
 
 class ImagesStateManager extends BaseStateManager {
     private images: Map<string, Image> = new Map();
@@ -280,6 +282,10 @@ class ImagesStateManager extends BaseStateManager {
         return undefined;
     }
 
+    getLocalImageName(config: BuildConfig): string {
+        return `${config.imageName}:${config.imageTag}`;
+    }
+
     async hardRefresh(): Promise<void> {
         logger.info('Starting hard refresh of image state');
 
@@ -335,6 +341,60 @@ class ImagesStateManager extends BaseStateManager {
             logger.error({ err }, 'Error during hard refresh of image state');
             throw err;
         }
+    }
+
+    async buildImage(
+        workDir: string,
+        imageName: string,
+        onLog?: (log: string) => void,
+    ): Promise<{ imageId?: string }> {
+        logger.info({ workDir, imageName }, 'Starting Docker build');
+
+        return new Promise((resolve, reject) => {
+            const tarStream = tar.pack(workDir);
+
+            (docker.buildImage as any)(
+                tarStream,
+                { t: imageName, dockerfile: 'Dockerfile' },
+                (err: any, stream: NodeJS.ReadableStream) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+
+                    let imageId: string | undefined;
+
+                    docker.modem.followProgress(
+                        stream,
+                        (progressErr: any, output: any) => {
+                            if (progressErr) {
+                                reject(progressErr);
+                                return;
+                            }
+
+                            const lastOutput = output[output.length - 1];
+                            if (lastOutput?.aux?.ID) {
+                                imageId = lastOutput.aux.ID;
+                            }
+
+                            logger.info({ imageName, imageId }, 'Docker build completed');
+                            resolve({ imageId });
+                        },
+                        (event: any) => {
+                            if (event.stream) {
+                                const line = event.stream.trim();
+                                if (line && onLog) {
+                                    onLog(line);
+                                }
+                            }
+                            if (event.error && onLog) {
+                                onLog(`ERROR: ${event.error}`);
+                            }
+                        },
+                    );
+                },
+            );
+        });
     }
 }
 

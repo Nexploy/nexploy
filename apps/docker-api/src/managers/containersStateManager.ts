@@ -63,7 +63,11 @@ class ContainersStateManager extends BaseStateManager {
         // Skip build containers (intermediate containers created during docker build)
         const containerName = event.Actor?.Attributes?.name;
         const image = event.Actor?.Attributes?.image;
-        if (!containerName || image?.includes('buildkit') || containerName?.startsWith('buildx_buildkit')) {
+        if (
+            !containerName ||
+            image?.includes('buildkit') ||
+            containerName?.startsWith('buildx_buildkit')
+        ) {
             return;
         }
 
@@ -398,6 +402,69 @@ class ContainersStateManager extends BaseStateManager {
             logger.error({ err }, 'Error during hard refresh');
             throw err;
         }
+    }
+
+    async deploy(
+        projectId: string,
+        imageName: string,
+        options: {
+            containerName?: string;
+            port?: number;
+            envVars?: Record<string, string>;
+        } = {},
+    ): Promise<{
+        deploymentId: string;
+        containerId: string;
+        port: number;
+    }> {
+        const port = options.port || 3000;
+        const containerName = options.containerName || `deploy-${projectId}-${Date.now()}`;
+
+        logger.info({ projectId, imageName, containerName, port }, 'Starting deployment');
+
+        try {
+            const existing = docker.getContainer(containerName);
+            const info = await existing.inspect();
+            if (info.State.Running) {
+                await existing.stop();
+            }
+            await existing.remove();
+            logger.info({ containerName }, 'Removed existing container');
+        } catch {}
+
+        const envArray = options.envVars
+            ? Object.entries(options.envVars).map(([key, value]) => `${key}=${value}`)
+            : [];
+
+        const container = await docker.createContainer({
+            name: containerName,
+            Image: imageName,
+            Env: envArray,
+            ExposedPorts: {
+                '3000/tcp': {},
+            },
+            HostConfig: {
+                PortBindings: {
+                    '3000/tcp': [{ HostPort: String(port) }],
+                },
+                RestartPolicy: {
+                    Name: 'unless-stopped',
+                },
+            },
+            Labels: {
+                'deployer.project': projectId,
+            },
+        });
+
+        await container.start();
+
+        logger.info({ containerId: container.id, port }, 'Deployment started');
+
+        return {
+            deploymentId: containerName,
+            containerId: container.id,
+            port,
+        };
     }
 }
 

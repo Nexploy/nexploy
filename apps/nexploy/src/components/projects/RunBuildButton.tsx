@@ -3,21 +3,14 @@
 import { useAction } from 'next-safe-action/hooks';
 import { Button } from '@workspace/ui/components/button';
 import { Loader2, Rocket } from 'lucide-react';
-import { onDeployAction } from '@/actions/project/deploy.action';
-import { useRouter } from 'next/navigation';
+import { onStartBuildProject } from '@/actions/project/startBuildProject.action';
 
 interface DeployButtonProps {
     projectId: string;
 }
 
-export function DeployButton({ projectId }: DeployButtonProps) {
-    const router = useRouter();
-
-    const { execute, isPending } = useAction(onDeployAction, {
-        onSuccess: () => {
-            router.refresh();
-        },
-    });
+export function RunBuildButton({ projectId }: DeployButtonProps) {
+    const { execute, isPending } = useAction(onStartBuildProject);
 
     const handleDeploy = () => {
         execute({ projectId });
@@ -26,7 +19,7 @@ export function DeployButton({ projectId }: DeployButtonProps) {
     return (
         <Button onClick={handleDeploy} disabled={isPending}>
             {isPending ? <Loader2 className="animate-spin" /> : <Rocket />}
-            {isPending ? 'Deploying...' : 'Deploy Now'}
+            {isPending ? 'Building...' : 'Run build'}
         </Button>
     );
 }
