@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { Hono } from 'hono';
 import { logger } from './utils/logger';
 import { cors } from 'hono/cors';
@@ -25,6 +26,8 @@ import { createNodeWebSocket } from '@hono/node-ws';
 import { createTerminalRoutes } from '@/routes/terminalRoutes';
 import volumesRoutes from '@/routes/volumesRoutes';
 import networksRoutes from '@/routes/networksRoutes';
+import pipelineRoutes from '@/routes/pipelineRoutes';
+import { env } from '../env';
 
 const app = new Hono();
 
@@ -59,6 +62,8 @@ app.route('/api/volumes', volumesRoutes);
 
 app.route('/api/networks/events', networksEvents);
 app.route('/api/networks', networksRoutes);
+
+app.route('/api/pipeline', pipelineRoutes);
 
 // app.route('/api/build/events', buildLogsEvents);
 // app.route('/api/build', buildRoutes);
@@ -122,15 +127,13 @@ setupGracefulShutdown(async () => {
 });
 
 startServer().then((app) => {
-    const port = 3300;
-
     const server = serve({
         fetch: app.fetch,
-        port,
+        port: env.PORT,
     });
 
     injectWebSocket(server);
 
-    logger.info(`🚀 Server running on http://localhost:${port}`);
+    logger.info(`🚀 Server running on http://localhost:${env.PORT}`);
     logger.info(`🔌 WebSocket available`);
 });

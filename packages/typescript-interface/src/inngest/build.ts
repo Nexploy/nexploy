@@ -1,3 +1,5 @@
+import { GetGitProviderToken } from '../git';
+
 export type BuildStatus = 'QUEUED' | 'BUILDING' | 'COMPLETED' | 'FAILED';
 
 export interface BuildLogEntry {
@@ -8,12 +10,13 @@ export interface BuildLogEntry {
     buildId: string;
 }
 
-export interface BuildConfig {
+export interface BuildConfig extends GetGitProviderToken {
+    userId: string;
     projectId: string;
     projectPath: string;
+    gitProvider: string;
     gitUrl: string;
     gitBranch: string;
-    gitToken?: string;
     envVariables: Record<string, string>;
     dockerfile?: string;
     dockerfilePath?: string;

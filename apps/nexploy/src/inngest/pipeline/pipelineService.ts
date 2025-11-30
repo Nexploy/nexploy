@@ -1,8 +1,9 @@
 import { spawn } from 'child_process';
 import { access, copyFile, mkdir, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
-import { logger } from '@/utils/logger';
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
+import { tokenRefreshService } from '@/lib/auth/token-refresh.service';
+import { env } from '../../../env';
 
 class PipelineService {
     private async exec(
@@ -39,51 +40,59 @@ class PipelineService {
         });
     }
 
-    private getAuthenticatedGitUrl(gitUrl: string, gitToken?: string): string {
+    private getAuthenticatedGitUrl(gitUrl: string, gitToken: string | null): string {
         if (!gitToken) {
             return gitUrl;
         }
 
         try {
             const url = new URL(gitUrl);
-
             url.username = 'oauth2';
             url.password = gitToken;
-
             return url.toString();
         } catch (error) {
-            logger.warn({ gitUrl, error }, 'Failed to parse Git URL, using original URL');
+            console.error('Failed to parse git URL:', error);
             return gitUrl;
         }
     }
 
     async cloneRepository(buildConfig: BuildConfig): Promise<string> {
-        const workDir = join(
-            process.env.DEPLOYER_WORK_DIR || '/tmp/deployer',
-            buildConfig.projectId,
-            Date.now().toString(),
-        );
+        const workDir = join(env.DEPLOYER_WORK_DIR, buildConfig.projectId, Date.now().toString());
 
         await mkdir(workDir, { recursive: true });
 
-        logger.info(
-            { gitUrl: buildConfig.gitUrl, branch: buildConfig.gitBranch, workDir },
-            'Cloning repository',
-        );
+        let gitToken = buildConfig.accessToken;
+        if (buildConfig.gitProvider) {
+            const accessToken = await tokenRefreshService.getValidToken(
+                {
+                    accessToken: buildConfig.accessToken,
+                    accessTokenExpiresAt: buildConfig.accessTokenExpiresAt,
+                    refreshToken: buildConfig.refreshToken,
+                },
+                buildConfig.gitProvider,
+                buildConfig.userId,
+            );
+            if (accessToken) gitToken = accessToken;
+        }
 
-        const authenticatedUrl = this.getAuthenticatedGitUrl(
-            buildConfig.gitUrl,
-            buildConfig.gitToken,
-        );
+        const authenticatedUrl = this.getAuthenticatedGitUrl(buildConfig.gitUrl, gitToken);
 
-        await this.exec('git', [
-            'clone',
-            '--depth=1',
-            '--single-branch',
-            `--branch=${buildConfig.gitBranch}`,
-            authenticatedUrl,
-            workDir,
-        ]);
+        try {
+            await this.exec('git', [
+                'clone',
+                '--depth=1',
+                '--single-branch',
+                `--branch=${buildConfig.gitBranch}`,
+                authenticatedUrl,
+                workDir,
+            ]);
+        } catch (error) {
+            await rm(workDir, { recursive: true, force: true }).catch(() => {});
+
+            throw new Error(
+                `Failed to clone repository from ${buildConfig.gitUrl} (branch: ${buildConfig.gitBranch})`,
+            );
+        }
 
         if (buildConfig.projectPath && buildConfig.projectPath !== '.') {
             return join(workDir, buildConfig.projectPath);
@@ -97,18 +106,17 @@ class PipelineService {
 
         try {
             await access(dockerfilePath);
-            logger.info('Using existing Dockerfile');
             return;
-        } catch {}
+        } catch {
+            /* empty */
+        }
 
         if (buildConfig.dockerfile) {
-            logger.info('Using provided Dockerfile content');
             await writeFile(dockerfilePath, buildConfig.dockerfile);
             return;
         }
 
         if (buildConfig.dockerfilePath) {
-            logger.info({ path: buildConfig.dockerfilePath }, 'Copying Dockerfile from path');
             await copyFile(buildConfig.dockerfilePath, dockerfilePath);
         }
     }
@@ -124,19 +132,13 @@ class PipelineService {
 
         const envPath = join(workDir, '.env.production');
         await writeFile(envPath, envContent);
-
-        logger.info(
-            { path: envPath, count: Object.keys(envVariables).length },
-            'Environment file written',
-        );
     }
 
     async cleanup(workDir: string): Promise<void> {
         try {
             await rm(workDir, { recursive: true, force: true });
-            logger.info({ workDir }, 'Cleaned up work directory');
-        } catch (error) {
-            logger.warn({ workDir, error }, 'Failed to cleanup work directory');
+        } catch (error: unknown) {
+            /* empty */
         }
     }
 }

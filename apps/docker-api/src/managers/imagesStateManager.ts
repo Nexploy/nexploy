@@ -10,7 +10,7 @@ import {
 import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { BaseStateManager } from '@/lib/BaseStateManager';
 import * as tar from 'tar-fs';
-import { BuildConfig } from '@workspace/typescript-interface/inngest';
+import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 
 class ImagesStateManager extends BaseStateManager {
     private images: Map<string, Image> = new Map();

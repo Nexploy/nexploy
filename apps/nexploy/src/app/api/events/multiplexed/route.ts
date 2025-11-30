@@ -1,6 +1,7 @@
 import { authRouteServer, route } from '@/lib/api/nextRoute';
 import { NextResponse } from 'next/server';
 import { SSEChannel } from '@workspace/typescript-interface/sse';
+import { env } from '../../../../../env';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -90,7 +91,7 @@ export const GET = route.use(authRouteServer).handler(async (request: Request) =
         );
     }
 
-    const serverUrl = process.env.SSE_SERVER_URL;
+    const serverUrl = env.SSE_SERVER_URL;
     if (!serverUrl) {
         return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }

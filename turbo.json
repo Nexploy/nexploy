@@ -1,12 +1,18 @@
 {
     "$schema": "https://turbo.build/schema.json",
     "ui": "tui",
-    "globalEnv": ["SSE_SERVER_URL"],
     "tasks": {
         "build": {
             "dependsOn": ["^build"],
             "inputs": ["$TURBO_DEFAULT$", ".env*"],
-            "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+            "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+            "env": [
+                "GITHUB_CLIENT_ID",
+                "GITHUB_CLIENT_SECRET",
+                "GITLAB_CLIENT_ID",
+                "GITLAB_CLIENT_SECRET",
+                "SSE_SERVER_URL"
+            ]
         },
         "lint": {
             "dependsOn": ["^lint"]

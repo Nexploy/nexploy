@@ -12,4 +12,8 @@ export interface GitBranch {
     protected: boolean;
 }
 
-export type ProvidersGit = 'github' | 'gitlab';
+export interface GetGitProviderToken {
+    accessToken: string | null;
+    refreshToken: string | null;
+    accessTokenExpiresAt: Date | null;
+}

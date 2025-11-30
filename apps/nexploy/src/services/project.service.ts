@@ -33,7 +33,6 @@ export async function getProjectByIdService(projectId: string) {
                     orderBy: {
                         createdAt: 'desc',
                     },
-                    take: 10,
                 },
                 envVariables: {
                     orderBy: {

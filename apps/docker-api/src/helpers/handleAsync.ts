@@ -11,10 +11,7 @@ export const handleAsync = (fn: Handler, opts?: { status?: ContentfulStatusCode 
             const result = await Promise.race([
                 fn(c),
                 new Promise((_, rej) =>
-                    setTimeout(
-                        () => rej(new Error('request timeout')),
-                        Number(process.env.REQUEST_TIMEOUT_MS || 30_000),
-                    ),
+                    setTimeout(() => rej(new Error('request timeout')), Number(30_000)),
                 ),
             ]);
             logger.debug({ path: c.req.url });

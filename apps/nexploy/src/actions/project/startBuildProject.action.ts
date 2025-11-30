@@ -4,13 +4,13 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { HttpErrorResponse } from 'drino';
 import { startBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
-import { startBuildProject } from '@/services/inngest/build.service';
+import { startBuildProjectInngest } from '@/services/inngest/build.inngest.service';
 import { revalidatePath } from 'next/cache';
 import { getProjectWithEnv } from '@/services/project.service';
 
 export const onStartBuildProject = authActionServer
     .inputSchema(startBuildSchema)
-    .action(async ({ parsedInput }) => {
+    .action(async ({ parsedInput, ctx }) => {
         try {
             const { projectId } = parsedInput;
             const project = await getProjectWithEnv(projectId);
@@ -23,7 +23,7 @@ export const onStartBuildProject = authActionServer
                 throw new Error('Project not found');
             }
 
-            await startBuildProject(project);
+            await startBuildProjectInngest(project, ctx.session.user.id);
 
             await setToastServer({
                 type: 'success',

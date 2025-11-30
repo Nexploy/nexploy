@@ -1,17 +1,17 @@
 import { addBuildJob } from '@/inngest/jobs/queue';
-import { getUserAccessTokenProvider } from '@/services/account.service';
 import { Prisma } from 'generated/client';
 import { prisma } from '../../../prisma/prisma';
-import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
+import { BuildConfig, BuildStatus } from '@workspace/typescript-interface/inngest/build';
 import { getProjectWithEnv } from '@/services/project.service';
+import { getGitProviderToken } from '@/services/git/git.service';
 
 type ProjectWithEnv = Exclude<Prisma.PromiseReturnType<typeof getProjectWithEnv>, null>;
 
-export async function startBuildProject(project: ProjectWithEnv) {
-    const accessToken = await getUserAccessTokenProvider(project.gitProvider);
-    if (!accessToken) throw new Error('No access token provider found');
+export async function startBuildProjectInngest(project: ProjectWithEnv, userId: string) {
+    const token = await getGitProviderToken(project.gitProvider);
+    if (!token) throw new Error('No access token provider found');
 
-    const build = await createBuild(project.id);
+    const build = await createBuildInngest(project.id);
 
     const imageName = `nexploy-${project.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
@@ -20,12 +20,14 @@ export async function startBuildProject(project: ProjectWithEnv) {
         envVariables[env.key] = env.value;
     }
 
-    const config = {
+    const config: BuildConfig = {
+        ...token,
+        userId,
         projectId: project.id,
         projectPath: project.contextPath || '.',
+        gitProvider: project.gitProvider,
         gitUrl: project.repositoryUrl,
         gitBranch: project.branch,
-        gitToken: accessToken,
         envVariables,
         dockerfilePath: project.dockerfilePath || undefined,
         imageName,
@@ -34,10 +36,9 @@ export async function startBuildProject(project: ProjectWithEnv) {
     };
 
     await addBuildJob(build.id, config);
-    // await updateStatusDeployment(build.id, 'BUILDING');
 }
 
-export async function createBuild(projectId: string) {
+export async function createBuildInngest(projectId: string) {
     try {
         return await prisma.build.create({
             data: {
@@ -49,7 +50,7 @@ export async function createBuild(projectId: string) {
     }
 }
 
-export async function updateStatusBuild(buildId: string, status: BuildStatus) {
+export async function updateStatusBuildInngest(buildId: string, status: BuildStatus) {
     try {
         return await prisma.build.update({
             where: { id: buildId },
