@@ -48,7 +48,6 @@ export async function getProjectByIdService(projectId: string) {
 
         return project;
     } catch (error: unknown) {
-        console.error('Error getting project by id:', error);
         throw new Error('Failed to get project');
     }
 }
@@ -85,5 +84,29 @@ export async function getProjectWithEnv(projectId: string) {
         });
     } catch (error: unknown) {
         throw new Error('Failed to get project with env');
+    }
+}
+
+export async function getProjectBuildLogs(projectId: string, buildId: string) {
+    try {
+        const build = await prisma.build.findFirst({
+            where: {
+                id: buildId,
+                projectId,
+            },
+            include: {
+                log: {
+                    orderBy: {
+                        createdAt: 'asc',
+                    },
+                },
+            },
+        });
+
+        if (!build) return null;
+
+        return build;
+    } catch (error: unknown) {
+        throw new Error('Failed to get project build logs');
     }
 }

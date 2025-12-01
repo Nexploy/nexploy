@@ -2,14 +2,17 @@ import { spawn } from 'child_process';
 import { access, copyFile, mkdir, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
-import { tokenRefreshService } from '@/lib/auth/token-refresh.service';
 import { env } from '../../../env';
+import { gitProviderService } from '@/services/api/gitProvider.service';
+
+type ProgressCallback = (progress: number, message: string) => void;
 
 class PipelineService {
     private async exec(
         command: string,
         args: string[],
         options?: { cwd?: string },
+        onProgress?: ProgressCallback,
     ): Promise<string> {
         return new Promise((resolve, reject) => {
             const proc = spawn(command, args, {
@@ -25,7 +28,21 @@ class PipelineService {
             });
 
             proc.stderr.on('data', (data) => {
-                stderr += data.toString();
+                const output = data.toString();
+                stderr += output;
+
+                if (onProgress) {
+                    const receivingMatch = output.match(/Receiving objects:\s+(\d+)%/);
+                    const resolvingMatch = output.match(/Resolving deltas:\s+(\d+)%/);
+
+                    if (receivingMatch) {
+                        const percent = parseInt(receivingMatch[1], 10);
+                        onProgress(percent * 0.8, `Receiving objects: ${percent}%`);
+                    } else if (resolvingMatch) {
+                        const percent = parseInt(resolvingMatch[1], 10);
+                        onProgress(80 + percent * 0.2, `Resolving deltas: ${percent}%`);
+                    }
+                }
             });
 
             proc.on('close', (code) => {
@@ -56,14 +73,17 @@ class PipelineService {
         }
     }
 
-    async cloneRepository(buildConfig: BuildConfig): Promise<string> {
+    async cloneRepository(
+        buildConfig: BuildConfig,
+        onProgress?: ProgressCallback,
+    ): Promise<string> {
         const workDir = join(env.DEPLOYER_WORK_DIR, buildConfig.projectId, Date.now().toString());
 
         await mkdir(workDir, { recursive: true });
 
         let gitToken = buildConfig.accessToken;
         if (buildConfig.gitProvider) {
-            const accessToken = await tokenRefreshService.getValidToken(
+            const accessToken = await gitProviderService.getValidToken(
                 {
                     accessToken: buildConfig.accessToken,
                     accessTokenExpiresAt: buildConfig.accessTokenExpiresAt,
@@ -78,14 +98,20 @@ class PipelineService {
         const authenticatedUrl = this.getAuthenticatedGitUrl(buildConfig.gitUrl, gitToken);
 
         try {
-            await this.exec('git', [
-                'clone',
-                '--depth=1',
-                '--single-branch',
-                `--branch=${buildConfig.gitBranch}`,
-                authenticatedUrl,
-                workDir,
-            ]);
+            await this.exec(
+                'git',
+                [
+                    'clone',
+                    '--depth=1',
+                    '--single-branch',
+                    `--branch=${buildConfig.gitBranch}`,
+                    '--progress',
+                    authenticatedUrl,
+                    workDir,
+                ],
+                {},
+                onProgress,
+            );
         } catch (error) {
             await rm(workDir, { recursive: true, force: true }).catch(() => {});
 

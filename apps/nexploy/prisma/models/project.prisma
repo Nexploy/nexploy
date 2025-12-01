@@ -43,6 +43,7 @@ model Build {
   id     String      @id @default(cuid())
   status BuildStatus @default(QUEUED)
 
+  branch        String
   commitHash    String?
   commitMessage String?
 
@@ -58,15 +59,15 @@ model Build {
 }
 
 model Log {
-  id      String    @id @default(cuid())
+  id      String   @id @default(cuid())
   level   LogLevel @default(INFO)
   step    String
-  message String    @db.Text
+  message String   @db.Text
 
   createdAt DateTime @default(now())
 
   buildId String
-  build   Build @relation(fields: [buildId], references: [id], onDelete: Cascade)
+  build   Build  @relation(fields: [buildId], references: [id], onDelete: Cascade)
 
   @@map("log")
 }
@@ -83,4 +84,5 @@ enum BuildStatus {
   BUILDING
   COMPLETED
   FAILED
+  DEPLOYING
 }

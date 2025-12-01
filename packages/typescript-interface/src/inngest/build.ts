@@ -1,6 +1,6 @@
 import { GetGitProviderToken } from '../git';
 
-export type BuildStatus = 'QUEUED' | 'BUILDING' | 'COMPLETED' | 'FAILED';
+export type BuildStatus = 'QUEUED' | 'BUILDING' | 'COMPLETED' | 'FAILED' | 'DEPLOYING';
 
 export interface BuildLogEntry {
     createdAt: Date;

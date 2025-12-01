@@ -89,7 +89,7 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
                             </div>
                         </DialogHeader>
 
-                        <div ref={terminalRef} className="m-2 h-[400px]" />
+                        <div ref={terminalRef} className="m-1 h-[400px]" />
                     </WebsocketProvider>
                 </DialogContent>
             </Dialog>

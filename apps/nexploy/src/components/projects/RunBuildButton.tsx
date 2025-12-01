@@ -4,22 +4,30 @@ import { useAction } from 'next-safe-action/hooks';
 import { Button } from '@workspace/ui/components/button';
 import { Loader2, Rocket } from 'lucide-react';
 import { onStartBuildProject } from '@/actions/project/startBuildProject.action';
+import { ComponentProps, MouseEvent } from 'react';
+import { toast } from 'sonner';
 
-interface DeployButtonProps {
+interface DeployButtonProps extends ComponentProps<typeof Button> {
     projectId: string;
+    showText?: boolean;
 }
 
-export function RunBuildButton({ projectId }: DeployButtonProps) {
-    const { execute, isPending } = useAction(onStartBuildProject);
+export function RunBuildButton({ projectId, showText = true, ...props }: DeployButtonProps) {
+    const { execute, isPending } = useAction(onStartBuildProject, {
+        onSuccess: () => {
+            toast.success('Build started successfully');
+        },
+    });
 
-    const handleDeploy = () => {
+    const handleDeploy = (e: MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
         execute({ projectId });
     };
 
     return (
-        <Button onClick={handleDeploy} disabled={isPending}>
+        <Button {...props} onClick={handleDeploy} disabled={isPending}>
             {isPending ? <Loader2 className="animate-spin" /> : <Rocket />}
-            {isPending ? 'Building...' : 'Run build'}
+            {showText && (isPending ? 'Building...' : 'Run build')}
         </Button>
     );
 }

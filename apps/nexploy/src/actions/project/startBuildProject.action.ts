@@ -5,8 +5,8 @@ import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { HttpErrorResponse } from 'drino';
 import { startBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { startBuildProjectInngest } from '@/services/inngest/build.inngest.service';
-import { revalidatePath } from 'next/cache';
 import { getProjectWithEnv } from '@/services/project.service';
+import { revalidatePath } from 'next/cache';
 
 export const onStartBuildProject = authActionServer
     .inputSchema(startBuildSchema)
@@ -25,11 +25,7 @@ export const onStartBuildProject = authActionServer
 
             await startBuildProjectInngest(project, ctx.session.user.id);
 
-            await setToastServer({
-                type: 'success',
-                message: 'Build started successfully',
-            });
-            revalidatePath('/[locale]/projects/[projectId]', 'page');
+            revalidatePath('/[locale]/projects', 'page');
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
                 await setToastServer({

@@ -26,8 +26,9 @@ import { createNodeWebSocket } from '@hono/node-ws';
 import { createTerminalRoutes } from '@/routes/terminalRoutes';
 import volumesRoutes from '@/routes/volumesRoutes';
 import networksRoutes from '@/routes/networksRoutes';
-import pipelineRoutes from '@/routes/pipelineRoutes';
+import pipelineEvents from '@/routes/events/pipelineEvents';
 import { env } from '../env';
+import pipelineRoutes from '@/routes/pipelineRoutes';
 
 const app = new Hono();
 
@@ -63,6 +64,7 @@ app.route('/api/volumes', volumesRoutes);
 app.route('/api/networks/events', networksEvents);
 app.route('/api/networks', networksRoutes);
 
+app.route('/api/pipeline/events', pipelineEvents);
 app.route('/api/pipeline', pipelineRoutes);
 
 // app.route('/api/build/events', buildLogsEvents);

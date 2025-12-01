@@ -91,7 +91,7 @@ export const GET = route.use(authRouteServer).handler(async (request: Request) =
         );
     }
 
-    const serverUrl = env.SSE_SERVER_URL;
+    const serverUrl = env.DOCKER_API_URL;
     if (!serverUrl) {
         return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }

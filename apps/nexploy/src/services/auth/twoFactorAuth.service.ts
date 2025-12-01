@@ -19,7 +19,6 @@ export async function enable2FA({ password }: TypeTwoFactorAuthSchema): Promise<
     });
 
     const parseRes = await resEnable2FA.json();
-    console.log(parseRes);
     if (parseRes.code) {
         throw new Error(`${parseRes.message} - ${t('errorContactAdmin')}`);
     }

@@ -1,114 +1,87 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
-import { CheckCircle2, Clock, Download, Loader2, RotateCcw, XCircle } from 'lucide-react';
+import { ArrowDown, ArrowUp, Download } from 'lucide-react';
 import { useInngestSubscription } from '@inngest/realtime/hooks';
 import { BuildStatus } from 'generated/client';
 import dayjs from 'dayjs';
 import { BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
+import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { getStatusBadge } from '@/components/utils/StatusBadge';
 
 interface BuildLogsViewerProps {
     buildId: string;
     initialStatus: BuildStatus;
+    initialLogs: BuildLogEntry[];
     createdAt: Date;
 }
 
-const isActiveStatus = (status: BuildStatus) =>
-    ['QUEUED', 'BUILDING', 'pending', 'cloning', 'building', 'deploying'].includes(status);
-
-const getStatusBadge = (status: BuildStatus) => {
-    switch (status) {
-        case 'COMPLETED':
-            return (
-                <Badge variant="default" className="gap-1">
-                    <CheckCircle2 className="size-3" />
-                    Completed
-                </Badge>
-            );
-        case 'FAILED':
-            return (
-                <Badge variant="destructive" className="gap-1">
-                    <XCircle className="size-3" />
-                    Failed
-                </Badge>
-            );
-        case 'BUILDING':
-            return (
-                <Badge variant="warning" className="animate-pulse gap-1">
-                    <Loader2 className="size-3 animate-spin" />
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                </Badge>
-            );
-        case 'QUEUED':
-            return (
-                <Badge variant="secondary" className="gap-1">
-                    <Clock className="size-3" />
-                    Queued
-                </Badge>
-            );
-        default:
-            return <Badge variant="outline">{status}</Badge>;
-    }
-};
-
-export function BuildLogsViewer({ buildId, initialStatus, createdAt }: BuildLogsViewerProps) {
-    const [logs, setLogs] = useState<BuildLogEntry[]>([]);
-    const [status, setStatus] = useState<BuildStatus>(initialStatus);
+export function BuildLogsViewer({
+    buildId,
+    initialStatus,
+    initialLogs,
+    createdAt,
+}: BuildLogsViewerProps) {
     const [autoScroll, setAutoScroll] = useState(true);
-    const [isLoading, setIsLoading] = useState(true);
     const logsEndRef = useRef<HTMLDivElement>(null);
     const logsContainerRef = useRef<HTMLDivElement>(null);
-    const lastLogTimestampRef = useRef<number>(0);
+    const lastScrollTop = useRef<number>(0);
 
-    const isActive = isActiveStatus(status);
-
-    const { latestData } = useInngestSubscription({
-        enabled: isActive && !isLoading,
+    const { latestData, data } = useInngestSubscription({
+        enabled: initialStatus !== 'COMPLETED',
         refreshToken: async () => {
             const result = await onGetTokenBuildIdAction({
                 buildId,
-                topics: ['status', 'logs'],
+                topics: ['status', 'log'],
             });
             return result?.data ?? null;
         },
     });
 
-    useEffect(() => {
-        if (latestData?.data) {
-            const data = latestData.data as { log?: BuildLogEntry; status?: BuildStatus };
-            if (data.log) {
-                const logTimestamp = new Date(data.log.createdAt).getTime();
-                if (logTimestamp > lastLogTimestampRef.current) {
-                    lastLogTimestampRef.current = logTimestamp;
-                    setLogs((prev) => [...prev, data.log!]);
-                }
-            }
-            if (data.status) {
-                setStatus(data.status);
-            }
-        }
-    }, [latestData]);
+    const liveLogs = data
+        .filter((evt) => evt.topic === 'log' && evt.data?.log)
+        .map((evt) => evt.data.log);
+
+    const logs = [...initialLogs, ...liveLogs];
+    const status = latestData?.data.status ?? initialStatus;
 
     useEffect(() => {
-        if (autoScroll && logsEndRef.current) {
-            logsEndRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-    }, [logs, autoScroll]);
+        const logsContainer = logsContainerRef.current;
+        if (!logsContainer) return;
 
-    const handleScroll = () => {
-        if (!logsContainerRef.current) return;
-        const { scrollTop, scrollHeight, clientHeight } = logsContainerRef.current;
-        const isAtBottom = scrollHeight - scrollTop - clientHeight < 50;
-        setAutoScroll(isAtBottom);
-    };
+        const handleScroll = () => {
+            const scrollHeight = logsContainer.scrollHeight;
+            const scrollTop = logsContainer.scrollTop;
+            const clientHeight = logsContainer.clientHeight;
+            const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
 
-    const scrollToBottom = () => {
-        logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-        setAutoScroll(true);
-    };
+            if (distanceFromBottom <= 5) {
+                setAutoScroll(true);
+            } else if (scrollTop < lastScrollTop.current) {
+                setAutoScroll(false);
+            }
+
+            lastScrollTop.current = scrollTop;
+        };
+
+        logsContainer.addEventListener('scroll', handleScroll, { passive: true });
+
+        return () => {
+            logsContainer.removeEventListener('scroll', handleScroll);
+        };
+    }, [logsContainerRef.current, autoScroll]);
+
+    useEffect(() => {
+        if (!autoScroll || !logsEndRef.current) return;
+
+        const rafId = requestAnimationFrame(() => {
+            logsEndRef.current?.scrollIntoView({ behavior: 'instant', block: 'end' });
+        });
+
+        return () => cancelAnimationFrame(rafId);
+    }, [logs.length, autoScroll]);
 
     const downloadLogs = () => {
         const logsText = logs
@@ -144,81 +117,60 @@ export function BuildLogsViewer({ buildId, initialStatus, createdAt }: BuildLogs
 
     return (
         <div className="flex flex-1 flex-col overflow-hidden">
-            <div className="flex items-center justify-between border-b px-5 py-3">
+            <div className="flex items-center justify-between border-b px-3 py-3">
                 <div className="flex items-center gap-4">
                     {getStatusBadge(status)}
                     <span className="text-muted-foreground text-sm">
-                        Started {new Date(createdAt).toLocaleString()}
+                        Started {dayjs(createdAt).format('DD/MM/YYYY HH:mm:ss')}
                     </span>
-                    {isActive && (
-                        <span className="text-muted-foreground flex items-center gap-1 text-xs">
-                            <span className="relative flex size-2">
-                                <span className="absolute inline-flex size-full animate-ping rounded-full bg-green-400 opacity-75" />
-                                <span className="relative inline-flex size-2 rounded-full bg-green-500" />
-                            </span>
-                            Live
-                        </span>
-                    )}
                 </div>
                 <div className="flex items-center gap-2">
                     {logs.length > 0 && (
-                        <Button variant="outline" size="sm" onClick={downloadLogs}>
-                            <Download className="mr-1.5 size-3.5" />
+                        <Button size="sm" onClick={downloadLogs}>
+                            <Download />
                             Download
                         </Button>
                     )}
-                    {!autoScroll && (
-                        <Button variant="outline" size="sm" onClick={scrollToBottom}>
-                            <RotateCcw className="mr-1.5 size-3.5" />
-                            Scroll to bottom
-                        </Button>
-                    )}
+                    <Button
+                        size="sm"
+                        icon={autoScroll ? ArrowDown : ArrowUp}
+                        variant={autoScroll ? 'default' : 'white'}
+                        onClick={() => setAutoScroll((prevState) => !prevState)}
+                    >
+                        {autoScroll ? 'Auto' : 'Manual'}
+                    </Button>
                 </div>
             </div>
-
-            <div
-                ref={logsContainerRef}
-                onScroll={handleScroll}
-                className="bg-muted/30 flex-1 overflow-y-auto p-4 font-mono text-sm"
-            >
-                {isLoading ? (
-                    <div className="text-muted-foreground flex h-full items-center justify-center">
-                        <div className="flex flex-col items-center gap-2">
-                            <Loader2 className="size-6 animate-spin" />
-                            <span>Loading logs...</span>
-                        </div>
-                    </div>
-                ) : logs.length === 0 ? (
-                    <div className="text-muted-foreground flex h-full items-center justify-center">
-                        {isActive ? (
-                            <div className="flex flex-col items-center gap-2">
-                                <Loader2 className="size-6 animate-spin" />
-                                <span>Waiting for logs...</span>
-                            </div>
-                        ) : (
-                            <span>No logs available</span>
-                        )}
-                    </div>
-                ) : (
-                    <div className="space-y-0.5">
+            {logs.length === 0 ? (
+                <div className="bg-muted/30 text-muted-foreground flex flex-1 items-center justify-center pb-12 font-mono text-sm">
+                    <span>No logs available</span>
+                </div>
+            ) : (
+                <ScrollAreaWithShadow
+                    ref={logsContainerRef}
+                    className="bg-muted/30 flex h-full font-mono text-sm"
+                >
+                    <div className="space-y-0.5 p-1 px-2">
                         {logs.map((log, index) => (
                             <div
                                 key={index}
                                 className={`flex gap-2 ${getLogLevelColor(log.level)}`}
                             >
-                                <span className="text-muted-foreground/50 shrink-0 select-none">
-                                    {dayjs(log.createdAt).format('DD/MM/YYYY HH:mm:ss')}
-                                </span>
-                                <span className="text-muted-foreground shrink-0 select-none">
-                                    [{log.step}]
-                                </span>
+                                <div className={'flex gap-1'}>
+                                    <span className="text-muted-foreground shrink-0 select-none">
+                                        [{dayjs(log.createdAt).format('DD/MM/YYYY HH:mm:ss')}]
+                                    </span>
+                                    <span className="text-muted-foreground shrink-0 select-none">
+                                        [{log.step}]
+                                    </span>
+                                </div>
                                 <span className="break-all">{log.message}</span>
                             </div>
                         ))}
                         <div ref={logsEndRef} />
                     </div>
-                )}
-            </div>
+                </ScrollAreaWithShadow>
+            )}
         </div>
     );
 }

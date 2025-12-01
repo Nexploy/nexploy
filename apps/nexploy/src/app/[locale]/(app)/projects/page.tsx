@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Folder, GitBranch, Github, Gitlab, Rocket } from 'lucide-react';
+import { Folder, GitBranch, Github, Gitlab } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import {
     Empty,
@@ -17,32 +17,15 @@ import {
     CardHeader,
     CardTitle,
 } from '@workspace/ui/components/card';
-import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
 import { getProjectService } from '@/services/project.service';
+import { getStatusBadge } from '@/components/utils/StatusBadge';
+import { RunBuildButton } from '@/components/projects/RunBuildButton';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import React from 'react';
 
 export const metadata: Metadata = {
     title: 'Projects',
     description: 'Gérez vos projets Docker avec Nexploy',
-};
-
-const getStatusBadge = (status?: string) => {
-    switch (status) {
-        case 'SUCCESS':
-            return <Badge variant="default">Deployed</Badge>;
-        case 'FAILED':
-            return <Badge variant="destructive">Failed</Badge>;
-        case 'BUILDING':
-            return (
-                <Badge variant="warning" className="animate-pulse">
-                    Building
-                </Badge>
-            );
-        case 'QUEUED':
-            return <Badge variant="secondary">Queued</Badge>;
-        default:
-            return <Badge variant="outline">No deploys</Badge>;
-    }
 };
 
 const getGitIcon = (provider: string) => {
@@ -97,10 +80,10 @@ export default async function ProjectsPage() {
 
                                     return (
                                         <Link href={`/projects/${project.id}`} key={project.id}>
-                                            <Card className="group border-muted-foreground/20 bg-background relative flex flex-col overflow-hidden p-4 px-0 !pb-0 transition-all duration-300 hover:scale-[1.03] hover:shadow-xl">
+                                            <Card className="group border-muted-foreground/20 bg-background relative flex flex-col overflow-hidden p-4 px-0 !pb-0 transition-all duration-300 hover:scale-[1.03] hover:shadow-xl has-[button:hover]:scale-100 has-[button:hover]:shadow-none">
                                                 <CardHeader className="flex flex-row items-start justify-between px-4">
                                                     <div className="flex w-full items-center gap-3">
-                                                        <div className="bg-secondary/50 text-secondary-foreground ring-border group-hover:bg-primary/10 group-hover:text-primary flex size-10 items-center justify-center rounded-full ring-1 transition-colors">
+                                                        <div className="bg-secondary/50 text-secondary-foreground ring-border group-hover:bg-primary/10 group-hover:text-primary group-has-[button:hover]:bg-secondary/50 group-has-[button:hover]:text-secondary-foreground flex size-10 items-center justify-center rounded-full ring-1 transition-colors">
                                                             <Icon className="size-5" />
                                                         </div>
                                                         <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -118,9 +101,17 @@ export default async function ProjectsPage() {
                                                 </CardHeader>
                                                 <CardFooter className="bg-muted/40 text-muted-foreground flex h-14 justify-between border-t !p-4 text-xs">
                                                     {getStatusBadge(lastDeployment?.status)}
-                                                    <Button size={'icon'} variant={'secondary'}>
-                                                        <Rocket />
-                                                    </Button>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <RunBuildButton
+                                                                size={'icon'}
+                                                                showText={false}
+                                                                variant={'secondary'}
+                                                                projectId={project.id}
+                                                            />
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>Run build</TooltipContent>
+                                                    </Tooltip>
                                                 </CardFooter>
                                             </Card>
                                         </Link>

@@ -17,3 +17,13 @@ export interface GetGitProviderToken {
     refreshToken: string | null;
     accessTokenExpiresAt: Date | null;
 }
+
+export interface GitLabCommit {
+    id: string;
+    short_id: string;
+    message: string;
+    author_name: string;
+    author_email: string;
+    created_at: string;
+    web_url: string;
+}

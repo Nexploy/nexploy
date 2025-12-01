@@ -3,48 +3,16 @@
 import { useInngestSubscription } from '@inngest/realtime/hooks';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import Link from 'next/link';
-import { CheckCircle2, Clock, Loader2, XCircle } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import dayjs from 'dayjs';
-import { Badge } from '@workspace/ui/components/badge';
-import { Build, BuildStatus } from 'generated/client';
+import { Build } from 'generated/client';
+import { Separator } from '@workspace/ui/components/separator';
+import { getStatusBadge } from '@/components/utils/StatusBadge';
 
 interface BuildLogsProps {
     projectId: string;
     build: Build;
 }
-
-const getStatusBadge = (status: BuildStatus) => {
-    switch (status) {
-        case 'COMPLETED':
-            return (
-                <Badge variant="default" className="gap-1">
-                    <CheckCircle2 className="size-3" />
-                    Success
-                </Badge>
-            );
-        case 'FAILED':
-            return (
-                <Badge variant="destructive" className="gap-1">
-                    <XCircle className="size-3" />
-                    Failed
-                </Badge>
-            );
-        case 'BUILDING':
-            return (
-                <Badge variant="warning" className="gap-1">
-                    <Loader2 className="size-3 animate-spin" />
-                    Building
-                </Badge>
-            );
-        case 'QUEUED':
-            return (
-                <Badge variant="secondary" className="gap-1">
-                    <Clock className="size-3" />
-                    Queued
-                </Badge>
-            );
-    }
-};
 
 export function ProjectBuild({ projectId, build }: BuildLogsProps) {
     const { latestData } = useInngestSubscription({
@@ -66,11 +34,17 @@ export function ProjectBuild({ projectId, build }: BuildLogsProps) {
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
                     {getStatusBadge(latestData?.data.status ?? build.status)}
-                    <span className="text-sm font-medium">#{build.commitHash || build.id}</span>
+                    <span className="line-clamp-1 text-sm font-medium">
+                        {build.commitMessage ?? `#${build.id}`}
+                    </span>
                 </div>
-                <div className="text-muted-foreground flex items-center gap-1 text-xs">
-                    <Clock className="size-3" />
-                    {dayjs(build.createdAt).format('DD/MM/YYYY HH:mm:ss')}
+                <div className={'text-muted-foreground flex items-center gap-2 text-xs'}>
+                    <span className="flex items-center gap-1">
+                        <Clock className="size-3" />
+                        {dayjs(build.createdAt).format('DD/MM/YYYY HH:mm:ss')}
+                    </span>
+                    <Separator orientation={'vertical'} className={'!h-4 w-1'} />
+                    <span>#{build.commitHash}</span>
                 </div>
             </div>
         </Link>

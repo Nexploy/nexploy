@@ -8,7 +8,7 @@ const envSchema = z.object({
     GITHUB_CLIENT_SECRET: z.string(),
     GITLAB_CLIENT_ID: z.string(),
     GITLAB_CLIENT_SECRET: z.string(),
-    SSE_SERVER_URL: z.url(),
+    DOCKER_API_URL: z.url(),
     AI_KEY: z.string(),
     DEPLOYER_WORK_DIR: z.string(),
 });

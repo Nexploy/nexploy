@@ -179,9 +179,9 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                             colorShadow={'from-black via-black/50'}
                             bottomShadow
                             thumbColor={'bg-[#282828] hover:bg-[#404040]'}
-                            className="mr-1.5 h-[600px] overflow-hidden font-mono text-xs"
+                            className="h-[600px] overflow-hidden font-mono text-xs"
                         >
-                            <div className={'p-2 pr-2.5'}>
+                            <div className={'mr-1 p-2 py-1'}>
                                 {isLoading && logs.length === 0 ? (
                                     <div className="text-secondary-foreground flex items-center gap-2">
                                         <Spinner />

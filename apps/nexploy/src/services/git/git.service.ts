@@ -152,7 +152,6 @@ export async function updateGitProviderToken(
             },
         });
     } catch (error: unknown) {
-        console.log(error);
         throw new Error('Failed to update git provider token');
     }
 }

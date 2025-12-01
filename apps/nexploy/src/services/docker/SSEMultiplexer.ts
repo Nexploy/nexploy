@@ -107,6 +107,7 @@ class SSEMultiplexerService {
             const channelsParam = Array.from(this.subscriptions.keys())
                 .map((channelKey) => encodeURIComponent(channelKey))
                 .join(',');
+
             const url = new URL('/api/events/multiplexed', window.location.origin);
             url.searchParams.set('channels', channelsParam);
 

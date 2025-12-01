@@ -1,9 +1,10 @@
-import { addBuildJob } from '@/inngest/jobs/queue';
 import { Prisma } from 'generated/client';
 import { prisma } from '../../../prisma/prisma';
 import { BuildConfig, BuildStatus } from '@workspace/typescript-interface/inngest/build';
 import { getProjectWithEnv } from '@/services/project.service';
 import { getGitProviderToken } from '@/services/git/git.service';
+import { gitProviderService } from '@/services/api/gitProvider.service';
+import { addBuildJob } from '@/inngest/jobs/queue';
 
 type ProjectWithEnv = Exclude<Prisma.PromiseReturnType<typeof getProjectWithEnv>, null>;
 
@@ -11,7 +12,19 @@ export async function startBuildProjectInngest(project: ProjectWithEnv, userId: 
     const token = await getGitProviderToken(project.gitProvider);
     if (!token) throw new Error('No access token provider found');
 
-    const build = await createBuildInngest(project.id);
+    const lastCommit = await gitProviderService.getLatestCommit(
+        project.repositoryUrl,
+        project.branch,
+        token.accessToken,
+        project.gitProvider,
+    );
+
+    const build = await createBuildInngest({
+        projectId: project.id,
+        branch: project.branch,
+        commitHash: lastCommit?.hash,
+        commitMessage: lastCommit?.message,
+    });
 
     const imageName = `nexploy-${project.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
@@ -38,11 +51,24 @@ export async function startBuildProjectInngest(project: ProjectWithEnv, userId: 
     await addBuildJob(build.id, config);
 }
 
-export async function createBuildInngest(projectId: string) {
+export async function createBuildInngest({
+    projectId,
+    branch,
+    commitMessage,
+    commitHash,
+}: {
+    projectId: string;
+    branch: string;
+    commitMessage?: string;
+    commitHash?: string;
+}) {
     try {
         return await prisma.build.create({
             data: {
                 projectId,
+                branch,
+                commitMessage,
+                commitHash,
             },
         });
     } catch (error: unknown) {
