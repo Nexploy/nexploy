@@ -11,6 +11,8 @@ import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { useContainerLogsStore } from '@/stores/docker/useContainerLogsStore';
 import { SSEChannel } from '@workspace/typescript-interface/sse';
 import { useContainerStatsStore } from '@/stores/docker/useContainerStatsStore';
+import { useSwarmStore } from '@/stores/docker/useSwarmStore';
+import { useRequestsStore } from '@/stores/traefik/useRequestsStore';
 
 type ExtractConnectParams<T> = T extends (params: infer P) => void ? P : never;
 
@@ -24,6 +26,8 @@ type SSEParams = {
     container?: ExtractConnectParams<ReturnType<typeof useContainerStore.getState>['connect']>;
     logs?: ExtractConnectParams<ReturnType<typeof useContainerLogsStore.getState>['connect']>;
     stats?: ExtractConnectParams<ReturnType<typeof useContainerStatsStore.getState>['connect']>;
+    swarm?: ExtractConnectParams<ReturnType<typeof useSwarmStore.getState>['connect']>;
+    traefik?: ExtractConnectParams<ReturnType<typeof useRequestsStore.getState>['connect']>;
 };
 
 interface SSEProviderProps extends PropsWithChildren {
@@ -66,6 +70,12 @@ export function SSEProvider({
     const containerStatsConnect = useContainerStatsStore((s) => s.connect);
     const containerStatsDisconnect = useContainerStatsStore((s) => s.disconnect);
 
+    const swarmConnect = useSwarmStore((s) => s.connect);
+    const swarmDisconnect = useSwarmStore((s) => s.disconnect);
+
+    const traefikConnect = useRequestsStore((s) => s.connect);
+    const traefikDisconnect = useRequestsStore((s) => s.disconnect);
+
     useEffect(() => {
         const connectFns: Record<SSEChannel, (...args: any[]) => void> = {
             containers: containersConnect,
@@ -77,6 +87,8 @@ export function SSEProvider({
             events: eventsConnect,
             volumes: volumesConnect,
             networks: networksConnect,
+            swarm: swarmConnect,
+            traefik: traefikConnect,
         };
 
         const disconnectFns: Record<SSEChannel, (...args: any[]) => void> = {
@@ -89,6 +101,8 @@ export function SSEProvider({
             events: eventsDisconnect,
             volumes: volumesDisconnect,
             networks: networksDisconnect,
+            swarm: swarmDisconnect,
+            traefik: traefikDisconnect,
         };
 
         memoizedConnections.forEach((conn) => {
@@ -125,6 +139,10 @@ export function SSEProvider({
         containerLogsDisconnect,
         containerStatsConnect,
         containerStatsDisconnect,
+        swarmConnect,
+        swarmDisconnect,
+        traefikConnect,
+        traefikDisconnect,
     ]);
 
     return children;

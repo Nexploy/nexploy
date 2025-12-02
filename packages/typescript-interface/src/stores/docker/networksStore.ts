@@ -1,4 +1,4 @@
-import { Network } from '../docker/docker.network';
+import { Network } from '../../docker/docker.network';
 
 export interface NetworkState {
     networks: Network[];

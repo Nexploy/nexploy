@@ -1,4 +1,4 @@
-import { ContainerStats } from '../docker/docker.container.stats';
+import { ContainerStats } from '../../docker/docker.container.stats';
 
 export interface ContainerStatsParams {
     containerId: string;

@@ -60,8 +60,8 @@ const groups: Group[] = [
         title: 'Home',
         children: [
             {
-                title: 'Projects',
-                href: '/projects',
+                title: 'Repositories',
+                href: '/repositories',
                 enableCollapsible: true,
                 icon: Folder,
             },

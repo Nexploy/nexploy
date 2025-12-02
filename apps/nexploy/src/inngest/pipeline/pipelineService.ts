@@ -77,7 +77,11 @@ class PipelineService {
         buildConfig: BuildConfig,
         onProgress?: ProgressCallback,
     ): Promise<string> {
-        const workDir = join(env.DEPLOYER_WORK_DIR, buildConfig.projectId, Date.now().toString());
+        const workDir = join(
+            env.DEPLOYER_WORK_DIR,
+            buildConfig.repositoryId,
+            Date.now().toString(),
+        );
 
         await mkdir(workDir, { recursive: true });
 
@@ -120,8 +124,8 @@ class PipelineService {
             );
         }
 
-        if (buildConfig.projectPath && buildConfig.projectPath !== '.') {
-            return join(workDir, buildConfig.projectPath);
+        if (buildConfig.repositoryPath && buildConfig.repositoryPath !== '.') {
+            return join(workDir, buildConfig.repositoryPath);
         }
 
         return workDir;

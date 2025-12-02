@@ -1,4 +1,4 @@
-import { DockerEventData } from '../docker/docker.events';
+import { DockerEventData } from '../../docker/docker.events';
 
 interface EventFilter {
     types?: string[];

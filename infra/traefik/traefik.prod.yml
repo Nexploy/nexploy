@@ -1,0 +1,56 @@
+api:
+  dashboard: false
+  insecure: false
+
+log:
+  level: INFO
+  format: json
+
+accessLog:
+  format: json
+
+ping:
+  entryPoint: ping
+
+entryPoints:
+  web:
+    address: ":80"
+
+  websecure:
+    address: ":443"
+    http3: { }
+    http:
+      tls:
+        certResolver: letsencrypt
+        options: default
+
+  ping:
+    address: ":8082"
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    network: "nexploy_network"
+    watch: true
+
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: admin@yourdomain.com
+      storage: /etc/traefik/acme.json
+      httpChallenge:
+        entryPoint: web
+
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+      cipherSuites:
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+      sniStrict: true

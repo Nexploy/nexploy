@@ -1,66 +1,81 @@
 import { prisma } from '../../../prisma/prisma';
 import { BuildConfig, BuildStatus } from '@workspace/typescript-interface/inngest/build';
-import { getProjectWithEnv } from '@/services/project.service';
 import { getGitProviderToken } from '@/services/git/git.service';
 import { gitProviderService } from '@/services/api/gitProvider.service';
 import { addBuildJob } from '@/inngest/jobs/queue';
 import { inngest } from '@/inngest/client';
 import { Prisma } from 'generated/client';
+import { getRepositorieWithEnv } from '@/services/repositorie.service';
 
-export async function startBuildProjectInngest(
-    project: Exclude<Prisma.PromiseReturnType<typeof getProjectWithEnv>, null>,
+export async function startBuildRepositoryInngest(
+    repository: Exclude<Prisma.PromiseReturnType<typeof getRepositorieWithEnv>, null>,
     userId: string,
 ) {
-    const token = await getGitProviderToken(project.gitProvider);
+    const token = await getGitProviderToken(repository.gitProvider);
     if (!token) throw new Error('No access token provider found');
 
     const lastCommit = await gitProviderService.getLatestCommit(
-        project.repositoryUrl,
-        project.branch,
+        repository.repositoryUrl,
+        repository.branch,
         token.accessToken,
-        project.gitProvider,
+        repository.gitProvider,
     );
 
     const build = await createBuildInngest({
-        projectId: project.id,
-        branch: project.branch,
+        repositoryId: repository.id,
+        branch: repository.branch,
         commitHash: lastCommit?.hash,
         commitMessage: lastCommit?.message,
     });
 
-    const imageName = `nexploy-${project.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+    const imageName = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
     const envVariables: Record<string, string> = {};
-    for (const env of project.envVariables) {
+    for (const env of repository.envVariables) {
         envVariables[env.key] = env.value;
     }
+
+    const traefikLabels: Record<string, string> = {};
+    if (repository.traefikLabels) {
+        for (const label of repository.traefikLabels) {
+            traefikLabels[label.key] = label.value;
+        }
+    }
+
+    const primaryDomain = repository.domains?.[0];
+    const traefikEnabled = !!primaryDomain;
 
     const config: BuildConfig = {
         ...token,
         userId,
-        projectId: project.id,
-        projectPath: project.contextPath || '.',
-        gitProvider: project.gitProvider,
-        gitUrl: project.repositoryUrl,
-        gitBranch: project.branch,
-        port: 3432,
+        repositoryId: repository.id,
+        repositoryPath: repository.contextPath || '.',
+        gitProvider: repository.gitProvider,
+        gitUrl: repository.repositoryUrl,
+        gitBranch: repository.branch,
+        port: primaryDomain?.containerPort || 3000,
         envVariables,
-        dockerfilePath: project.dockerfilePath || undefined,
+        dockerfilePath: repository.dockerfilePath || undefined,
         imageName,
         imageTag: build.id.slice(-8),
-        autoDeploy: project.autoDeploy,
+        autoDeploy: repository.autoDeploy,
+        traefik: {
+            enabled: traefikEnabled,
+            domain: primaryDomain?.host,
+            labels: traefikLabels,
+        },
     };
 
     await addBuildJob(build.id, config);
 }
 
 export async function createBuildInngest({
-    projectId,
+    repositoryId,
     branch,
     commitMessage,
     commitHash,
 }: {
-    projectId: string;
+    repositoryId: string;
     branch: string;
     commitMessage?: string;
     commitHash?: string;
@@ -68,7 +83,7 @@ export async function createBuildInngest({
     try {
         return await prisma.build.create({
             data: {
-                projectId,
+                repositoryId,
                 branch,
                 commitMessage,
                 commitHash,
@@ -119,7 +134,7 @@ export async function findBuildWithEnvInngest(buildId: string) {
         return await prisma.build.findUnique({
             where: { id: buildId },
             include: {
-                project: {
+                repository: {
                     include: {
                         envVariables: true,
                     },
@@ -131,50 +146,54 @@ export async function findBuildWithEnvInngest(buildId: string) {
     }
 }
 
-export async function retryBuildProjectInngest(
+export async function retryBuildRepositoryInngest(
     buildId: string,
     userId: string,
     existingBuild: Awaited<ReturnType<typeof findBuildWithEnvInngest>>,
 ) {
-    if (!existingBuild || !existingBuild.project || existingBuild.status === 'COMPLETED') {
-        throw new Error('Build or project not found');
+    if (!existingBuild || !existingBuild.repository || existingBuild.status === 'COMPLETED') {
+        throw new Error('Build or Repository not found');
     }
 
-    const project = existingBuild.project;
+    const repository = existingBuild.repository;
 
-    const token = await getGitProviderToken(project.gitProvider);
+    const token = await getGitProviderToken(repository.gitProvider);
     if (!token) throw new Error('No access token provider found');
 
-    const imageName = `nexploy-${project.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+    const imageName = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
     const envVariables: Record<string, string> = {};
-    for (const env of project.envVariables) {
+    for (const env of repository.envVariables) {
         envVariables[env.key] = env.value;
     }
 
     const config: BuildConfig = {
         ...token,
         userId,
-        projectId: project.id,
-        projectPath: project.contextPath || '.',
-        gitProvider: project.gitProvider,
-        gitUrl: project.repositoryUrl,
+        repositoryId: repository.id,
+        repositoryPath: repository.contextPath || '.',
+        gitProvider: repository.gitProvider,
+        gitUrl: repository.repositoryUrl,
         gitBranch: existingBuild.branch,
         port: 3432,
         envVariables,
-        dockerfilePath: project.dockerfilePath || undefined,
+        dockerfilePath: repository.dockerfilePath || undefined,
         imageName,
         imageTag: buildId.slice(-8),
-        autoDeploy: project.autoDeploy,
+        autoDeploy: repository.autoDeploy,
+        traefik: {
+            enabled: true,
+            labels: {},
+        },
     };
 
     await addBuildJob(buildId, config);
 }
 
-export async function getAllBuildsInngest(projectId: string) {
+export async function getAllBuildsInngest(repositoryId: string) {
     try {
         return await prisma.build.findMany({
-            where: { projectId },
+            where: { repositoryId },
             orderBy: { createdAt: 'desc' },
         });
     } catch (error: unknown) {
@@ -182,10 +201,10 @@ export async function getAllBuildsInngest(projectId: string) {
     }
 }
 
-export async function getAllEnvsBuildInngest(projectId: string) {
+export async function getAllEnvsBuildInngest(repositoryId: string) {
     try {
         return await prisma.envVariable.findMany({
-            where: { projectId },
+            where: { repositoryId },
         });
     } catch (error: unknown) {
         throw new Error('Failed to get builds');

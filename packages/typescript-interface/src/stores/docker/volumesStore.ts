@@ -1,4 +1,4 @@
-import { Volume } from '../docker/docker.volume';
+import { Volume } from '../../docker/docker.volume';
 
 export interface VolumeState {
     volumes: Volume[];

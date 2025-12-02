@@ -18,6 +18,8 @@ export type SSEChannel =
     | 'volumes'
     | 'networks'
     | 'logs'
-    | 'stats';
+    | 'stats'
+    | 'swarm'
+    | 'traefik';
 
 export type SSEEventHandler = (event: MessageEvent) => void;

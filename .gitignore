@@ -37,3 +37,8 @@ npm-debug.log*
 
 .idea
 /TODO
+
+infra/traefik/letsencrypt/
+infra/traefik/logs/
+*.log
+

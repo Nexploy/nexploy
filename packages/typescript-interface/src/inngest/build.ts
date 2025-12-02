@@ -1,6 +1,13 @@
 import { GetGitProviderToken } from '../git';
+import { TraefikConfig } from '../traefik/traefik.config';
 
-export type BuildStatus = 'QUEUED' | 'BUILDING' | 'COMPLETED' | 'FAILED' | 'DEPLOYING' | 'CANCELLED';
+export type BuildStatus =
+    | 'QUEUED'
+    | 'BUILDING'
+    | 'COMPLETED'
+    | 'FAILED'
+    | 'DEPLOYING'
+    | 'CANCELLED';
 
 export interface BuildLogEntry {
     createdAt: Date;
@@ -12,8 +19,8 @@ export interface BuildLogEntry {
 
 export interface BuildConfig extends GetGitProviderToken {
     userId: string;
-    projectId: string;
-    projectPath: string;
+    repositoryId: string;
+    repositoryPath: string;
     gitProvider: string;
     gitUrl: string;
     gitBranch: string;
@@ -24,4 +31,5 @@ export interface BuildConfig extends GetGitProviderToken {
     imageTag: string;
     port?: number;
     autoDeploy: boolean;
+    traefik?: TraefikConfig;
 }

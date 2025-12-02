@@ -1,4 +1,4 @@
-import { DockerStatus } from '../docker/docker.status';
+import { DockerStatus } from '../../docker/docker.status';
 
 export interface DockerState {
     status: DockerStatus;

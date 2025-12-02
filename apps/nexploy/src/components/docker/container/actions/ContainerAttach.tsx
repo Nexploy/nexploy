@@ -10,7 +10,6 @@ import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/k
 import { Terminal } from 'lucide-react';
 import { statusMap } from '@/utils/statusMap';
 import { useTerminalStore } from '@/stores/useTerminalStore';
-import { WebsocketProvider } from '@/providers/WebsocketProviders';
 
 interface ContainerAttachProps {
     children: (props: { openAttach: () => void }) => React.ReactNode;
@@ -26,6 +25,7 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
 
     const handleOpen = async () => {
         setOpen(true);
+        await connect(socketUrl);
     };
 
     const handleClose = () => {
@@ -49,48 +49,46 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
                     onOpenAutoFocus={(e) => e.preventDefault()}
                     className="gap-0 overflow-hidden border border-neutral-800 bg-black p-0 sm:max-w-5/6"
                 >
-                    <WebsocketProvider connections={['terminal']} params={{ terminal: socketUrl }}>
-                        <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 p-2 pl-3">
-                            <div className="flex flex-row items-center gap-2">
-                                <DialogTitle className="flex items-center gap-2 text-sm text-white">
-                                    <div className="flex size-4 items-center">
-                                        <Terminal />
-                                    </div>
-                                    Attach — {container?.name}
-                                    <Status
-                                        className="rounded-none bg-transparent"
-                                        status={currentStatus.status}
-                                    >
-                                        <StatusIndicator />
-                                        <StatusLabel className={currentStatus.text}>
-                                            {currentStatus.label}
-                                        </StatusLabel>
-                                    </Status>
-                                </DialogTitle>
-                            </div>
-                            <div className="flex flex-row items-center gap-2">
-                                <Button
-                                    onClick={handleReconnect}
-                                    disabled={isConnected}
-                                    className="h-7 text-xs"
-                                    variant="white"
-                                    size="sm"
+                    <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 p-2 pl-3">
+                        <div className="flex flex-row items-center gap-2">
+                            <DialogTitle className="flex items-center gap-2 text-sm text-white">
+                                <div className="flex size-4 items-center">
+                                    <Terminal />
+                                </div>
+                                Attach — {container?.name}
+                                <Status
+                                    className="rounded-none bg-transparent"
+                                    status={currentStatus.status}
                                 >
-                                    Reconnect
-                                </Button>
-                                <Button
-                                    onClick={handleClose}
-                                    className="h-7 text-xs"
-                                    variant="white"
-                                    size="sm"
-                                >
-                                    Close
-                                </Button>
-                            </div>
-                        </DialogHeader>
+                                    <StatusIndicator />
+                                    <StatusLabel className={currentStatus.text}>
+                                        {currentStatus.label}
+                                    </StatusLabel>
+                                </Status>
+                            </DialogTitle>
+                        </div>
+                        <div className="flex flex-row items-center gap-2">
+                            <Button
+                                onClick={handleReconnect}
+                                disabled={isConnected}
+                                className="h-7 text-xs"
+                                variant="white"
+                                size="sm"
+                            >
+                                Reconnect
+                            </Button>
+                            <Button
+                                onClick={handleClose}
+                                className="h-7 text-xs"
+                                variant="white"
+                                size="sm"
+                            >
+                                Close
+                            </Button>
+                        </div>
+                    </DialogHeader>
 
-                        <div ref={terminalRef} className="m-1 h-[400px]" />
-                    </WebsocketProvider>
+                    <div ref={terminalRef} className="m-1 h-[400px]" />
                 </DialogContent>
             </Dialog>
         </>

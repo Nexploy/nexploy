@@ -1,4 +1,4 @@
-import { Container } from '../docker/docker.container';
+import { Container } from '../../docker/docker.container';
 
 export interface ContainerState {
     containerId: string | null;

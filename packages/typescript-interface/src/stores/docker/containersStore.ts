@@ -1,4 +1,4 @@
-import { Containers } from '../docker/docker.containers';
+import { Containers } from '../../docker/docker.containers';
 
 export interface ContainerState {
     containers: Containers[];

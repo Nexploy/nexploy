@@ -1,0 +1,41 @@
+api:
+  dashboard: true
+  insecure: true
+
+log:
+  level: DEBUG
+  format: json
+
+accessLog:
+  format: json
+
+ping:
+  entryPoint: ping
+
+entryPoints:
+  web:
+    address: ":80"
+
+  websecure:
+    address: ":443"
+    http3: { }
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    network: "nexploy_network"
+    watch: true
+
+  file:
+    directory: /etc/nexploy/traefik/service
+    watch: true
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: dev@example.com
+      storage: /etc/nexploy/traefik/acme.json
+      caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
+      httpChallenge:
+        entryPoint: web

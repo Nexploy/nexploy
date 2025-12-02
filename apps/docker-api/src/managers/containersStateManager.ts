@@ -10,6 +10,8 @@ import {
 } from '@workspace/typescript-interface/docker/docker.containers';
 import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { BaseStateManager } from '@/lib/BaseStateManager';
+import { buildTraefikLabels, sanitizeServiceName } from '@/services/traefik.service';
+import { DeployOptions } from '@workspace/typescript-interface/inngest/deploy';
 
 class ContainersStateManager extends BaseStateManager {
     private containers: Map<string, Containers> = new Map();
@@ -394,57 +396,58 @@ class ContainersStateManager extends BaseStateManager {
     }
 
     async deploy(
-        projectId: string,
+        repositoryId: string,
         imageName: string,
-        options: {
-            containerName?: string;
-            port?: number;
-            envVars?: Record<string, string>;
-        } = {},
+        options: DeployOptions = {},
     ): Promise<{
         buildId: string;
         containerId: string;
         port?: number;
     }> {
-        const port = options.port;
-        const containerName = options.containerName || `deploy-${projectId}`;
+        const port = options.port || 3000;
+        const containerName = options.containerName || `deploy-${repositoryId}`;
+        const serviceName = sanitizeServiceName(containerName);
 
-        logger.info({ projectId, imageName, containerName, port }, 'Starting deployment');
+        logger.info({ repositoryId, imageName, containerName, port }, 'Starting deployment');
 
-        try {
-            const existing = docker.getContainer(containerName);
-            const info = await existing.inspect();
-            if (info.State.Running) {
-                await existing.stop();
-            }
-            await existing.remove();
-            logger.info({ containerName }, 'Removed existing container');
-        } catch {}
+        await this.removeExistingContainer(containerName);
 
         const envArray = options.envVars
             ? Object.entries(options.envVars).map(([key, value]) => `${key}=${value}`)
             : [];
 
-        const container = await docker.createContainer({
+        const { labels: traefikLabels, networkMode } = buildTraefikLabels(
+            serviceName,
+            port,
+            options.traefik,
+        );
+
+        const labels: Record<string, string> = {
+            'deployer.project': repositoryId,
+            ...traefikLabels,
+        };
+
+        const containerConfig: any = {
             name: containerName,
             Image: imageName,
             Env: envArray,
             ExposedPorts: {
-                '3000/tcp': {},
+                [`${port}/tcp`]: {},
             },
             HostConfig: {
-                PortBindings: {
-                    '3000/tcp': [{ HostPort: String(port) }],
-                },
-                RestartPolicy: {
-                    Name: 'unless-stopped',
-                },
+                RestartPolicy: { Name: 'unless-stopped' },
+                NetworkMode: networkMode,
             },
-            Labels: {
-                'deployer.project': projectId,
-            },
-        });
+            Labels: labels,
+        };
 
+        if (options.port) {
+            containerConfig.HostConfig.PortBindings = {
+                [`${port}/tcp`]: [{ HostPort: String(port) }],
+            };
+        }
+
+        const container = await docker.createContainer(containerConfig);
         await container.start();
 
         logger.info({ containerId: container.id, port }, 'Deployment started');
@@ -454,6 +457,20 @@ class ContainersStateManager extends BaseStateManager {
             containerId: container.id,
             port,
         };
+    }
+
+    private async removeExistingContainer(containerName: string): Promise<void> {
+        try {
+            const existing = docker.getContainer(containerName);
+            const info = await existing.inspect();
+            if (info.State.Running) {
+                await existing.stop();
+            }
+            await existing.remove();
+            logger.info({ containerName }, 'Removed existing container');
+        } catch {
+            // Container doesn't exist, ignore
+        }
     }
 }
 

@@ -85,7 +85,7 @@ export const buildFunction = inngest.createFunction(
             });
 
             const buildResult = await step.run('build-docker-image', async () => {
-                const imageName = `${config.projectId}:${buildId}`;
+                const imageName = `${config.repositoryId}:${buildId}`;
                 await publishLog('build', `Building Docker image: ${imageName}`, 'INFO');
 
                 const response = await fetch(
@@ -120,7 +120,7 @@ export const buildFunction = inngest.createFunction(
                 await publishStatus('DEPLOYING');
                 await publishLog('deploy', 'Starting deployment', 'INFO');
 
-                const imageName = `${config.projectId}:${buildId}`;
+                const imageName = `${config.repositoryId}:${buildId}`;
 
                 const response = await fetch(`${env.DOCKER_API_URL}/api/pipeline/deploy`, {
                     method: 'POST',
@@ -128,11 +128,12 @@ export const buildFunction = inngest.createFunction(
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        projectId: config.projectId,
+                        repositoryId: config.repositoryId,
                         imageName,
                         options: {
                             port: config.port,
                             envVars: config.envVariables,
+                            traefik: config.traefik,
                         },
                     }),
                     signal: abortController.signal,
@@ -144,9 +145,13 @@ export const buildFunction = inngest.createFunction(
 
                 const deployResult = await response.json();
 
+                const deployMessage = config.traefik?.enabled
+                    ? `Deployed via Traefik at ${config.traefik.domain || `deploy-${config.repositoryId}.localhost`}`
+                    : `Deployed on port ${deployResult.port}`;
+
                 await publishLog(
                     'deploy',
-                    `Deployed on port ${deployResult.port} (container: ${deployResult.containerId.slice(0, 12)})`,
+                    `${deployMessage} (container: ${deployResult.containerId.slice(0, 12)})`,
                     'INFO',
                 );
             });

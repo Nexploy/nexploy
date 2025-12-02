@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 
-// Types
 interface EnvVariable {
     id: string;
     key: string;
@@ -13,14 +12,12 @@ interface NewEnvVariable {
 }
 
 interface ProjectEnvState {
-    // State
     envVariables: EnvVariable[];
-    originalEnvVariables: EnvVariable[]; // To detect changes
+    originalEnvVariables: EnvVariable[];
     newEnvs: NewEnvVariable[];
     deletedIds: string[];
     showValues: Record<string, boolean>;
 
-    // Actions
     initialize: (envVariables: EnvVariable[]) => void;
     addNew: () => void;
     removeNew: (index: number) => void;

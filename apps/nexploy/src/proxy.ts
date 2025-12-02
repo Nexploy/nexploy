@@ -9,7 +9,7 @@ const handleI18nRouting = createMiddleware(routing);
 const PUBLIC_ROUTES = ['/signin', '/2fa', '/2fa/backup-codes', '/setup'];
 
 const SIMPLE_REDIRECTS: Record<string, string> = {
-    '/': '/projects',
+    '/': '/repositories',
     '/docker': '/docker/containers',
 };
 

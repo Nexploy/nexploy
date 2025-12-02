@@ -49,11 +49,11 @@ class GitProviderService {
         accessToken: string | null,
     ): Promise<{ hash: string; message: string } | null> {
         try {
-            const projectPath = this.extractGitLabProjectPath(repositoryUrl);
-            const encodedProjectPath = encodeURIComponent(projectPath);
+            const repositoryPath = this.extractGitLabRepositoryPath(repositoryUrl);
+            const encodedrepositoryPath = encodeURIComponent(repositoryPath);
 
             const response = await fetch(
-                `https://gitlab.com/api/v4/projects/${encodedProjectPath}/repository/commits?ref_name=${branch}&per_page=1`,
+                `https://gitlab.com/api/v4/projects/${encodedrepositoryPath}/repository/commits?ref_name=${branch}&per_page=1`,
                 {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
@@ -122,7 +122,7 @@ class GitProviderService {
         }
     }
 
-    private extractGitLabProjectPath(repositoryUrl: string): string {
+    private extractGitLabRepositoryPath(repositoryUrl: string): string {
         const httpsMatch = repositoryUrl.match(/gitlab\.com[\/:](.+?)(\.git)?$/);
         if (httpsMatch && httpsMatch[1]) {
             return httpsMatch[1].replace('.git', '');

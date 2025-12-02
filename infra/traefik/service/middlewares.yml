@@ -1,0 +1,21 @@
+http:
+  middlewares:
+
+    redirect-to-https:
+      redirectScheme:
+        scheme: https
+        permanent: true
+
+    gzip-compress:
+      compress: { }
+
+    security-headers:
+      headers:
+        frameDeny: true
+        contentTypeNosniff: true
+        browserXssFilter: true
+        referrerPolicy: "strict-origin-when-cross-origin"
+        forceSTSHeader: true
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true

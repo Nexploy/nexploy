@@ -29,6 +29,12 @@ import networksRoutes from '@/routes/networksRoutes';
 import pipelineEvents from '@/routes/events/pipelineEvents';
 import { env } from '../env';
 import pipelineRoutes from '@/routes/pipelineRoutes';
+import swarmRoutes from '@/routes/swarmRoutes';
+import swarmEvents from '@/routes/events/swarmEvents';
+import { swarmStateManager } from '@/managers/swarmStateManager';
+import traefikRoutes from '@/routes/traefikRoutes';
+import traefikEvents from '@/routes/events/traefikEvents';
+import { traefikLogsManager } from '@/managers/traefikLogsManager';
 
 const app = new Hono();
 
@@ -67,6 +73,12 @@ app.route('/api/networks', networksRoutes);
 app.route('/api/pipeline/events', pipelineEvents);
 app.route('/api/pipeline', pipelineRoutes);
 
+app.route('/api/swarm/events', swarmEvents);
+app.route('/api/swarm', swarmRoutes);
+
+app.route('/api/traefik/events', traefikEvents);
+app.route('/api/traefik', traefikRoutes);
+
 app.route('/api/events/events', eventsEvents);
 
 app.route('/ws/docker', createTerminalRoutes(upgradeWebSocket));
@@ -92,6 +104,8 @@ const startServer = async () => {
             volumesStateManager.start(),
             networksStateManager.start(),
             eventsStateManager.start(),
+            swarmStateManager.start(),
+            traefikLogsManager.start(),
         ]);
 
         const dockerStatus = dockerStatusManager.getStatus();
@@ -120,6 +134,8 @@ setupGracefulShutdown(async () => {
         volumesStateManager.stop(),
         networksStateManager.stop(),
         eventsStateManager.stop(),
+        swarmStateManager.stop(),
+        traefikLogsManager.stop(),
     ]);
 
     logger.info('Docker management services stopped');
