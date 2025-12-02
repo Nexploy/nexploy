@@ -20,6 +20,7 @@ const createBuildChannel = (buildId: string) => {
 export const buildFunction = inngest.createFunction(
     {
         id: 'build-pipeline',
+        cancelOn: [{ event: 'build/cancel', if: 'event.data.buildId == async.data.buildId' }],
         retries: 0,
     },
     { event: 'build/start' },
@@ -27,6 +28,7 @@ export const buildFunction = inngest.createFunction(
         const { buildId, config } = event.data as { buildId: string; config: BuildConfig };
 
         const buildChannel = createBuildChannel(buildId);
+        const abortController = new AbortController();
 
         const publishLog = async (
             stepName: string,
@@ -97,15 +99,15 @@ export const buildFunction = inngest.createFunction(
                             workDir,
                             imageName,
                         }),
+                        signal: abortController.signal,
                     },
                 );
 
                 if (!response.ok) {
-                    console.log(response);
                     throw new Error(`Build failed with status ${response.status}`);
                 }
 
-                return await parseSSEStream(response, async (event) => {
+                return await parseSSEStream(response, abortController.signal, async (event) => {
                     if (event.type === 'log') {
                         await publishLog('build', event.message, 'INFO');
                     } else if (event.type === 'error') {
@@ -116,7 +118,7 @@ export const buildFunction = inngest.createFunction(
 
             await step.run('deploy-container', async () => {
                 await publishStatus('DEPLOYING');
-                await publishLog('deploy', 'Starting local deployment', 'INFO');
+                await publishLog('deploy', 'Starting deployment', 'INFO');
 
                 const imageName = `${config.projectId}:${buildId}`;
 
@@ -129,10 +131,11 @@ export const buildFunction = inngest.createFunction(
                         projectId: config.projectId,
                         imageName,
                         options: {
-                            port: config.port || 3000,
+                            port: config.port,
                             envVars: config.envVariables,
                         },
                     }),
+                    signal: abortController.signal,
                 });
 
                 if (!response.ok) {
@@ -164,13 +167,20 @@ export const buildFunction = inngest.createFunction(
                 imageId: buildResult?.imageId,
             };
         } catch (error) {
+            abortController.abort();
+
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
-            await publishLog('error', `Build failed: ${errorMessage}`, 'ERROR');
-            await publishStatus('FAILED');
+            if (error instanceof Error && error.name === 'AbortError') {
+                await publishLog('cancel', 'Build cancelled by user', 'INFO');
+                await publishStatus('CANCELLED');
+            } else {
+                await publishLog('error', `Build failed: ${errorMessage}`, 'ERROR');
+                await publishStatus('FAILED');
+            }
 
             if (workDir) {
-                await pipelineService.cleanup(workDir).catch(() => {});
+                await pipelineService.cleanup(workDir);
             }
 
             throw error;
@@ -178,9 +188,9 @@ export const buildFunction = inngest.createFunction(
     },
 );
 
-// Helper pour parser le SSE stream
 async function parseSSEStream(
     response: Response,
+    signal: AbortSignal,
     onEvent: (event: any) => Promise<void>,
 ): Promise<any> {
     const reader = response.body?.getReader();
@@ -193,8 +203,17 @@ async function parseSSEStream(
     let buffer = '';
     let result: any = null;
 
+    const abortHandler = () => {
+        reader.cancel();
+    };
+    signal.addEventListener('abort', abortHandler);
+
     try {
         while (true) {
+            if (signal.aborted) {
+                throw new DOMException('Request aborted', 'AbortError');
+            }
+
             const { done, value } = await reader.read();
 
             if (done) break;
@@ -202,14 +221,12 @@ async function parseSSEStream(
             buffer += decoder.decode(value, { stream: true });
             const lines = buffer.split('\n');
 
-            // Garder la dernière ligne incomplète
             buffer = lines.pop() || '';
 
             let currentEvent: any = {};
 
             for (const line of lines) {
                 if (line.trim() === '') {
-                    // Ligne vide = fin d'un événement SSE
                     if (currentEvent.data) {
                         try {
                             const parsedData = JSON.parse(currentEvent.data);
@@ -234,6 +251,7 @@ async function parseSSEStream(
             }
         }
     } finally {
+        signal.removeEventListener('abort', abortHandler);
         reader.releaseLock();
     }
 

@@ -1,9 +1,11 @@
 'use client';
 
 import {
+    ExpandedState,
     FilterFn,
     flexRender,
     getCoreRowModel,
+    getExpandedRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
@@ -18,10 +20,10 @@ import {
     TableHeader,
     TableRow,
 } from '@workspace/ui/components/table';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { columnsTableImages } from '@/components/docker/image/table/ColumnsDockerImages';
 import { useImageStore } from '@/stores/docker/useImageStore';
-import { Image } from '@workspace/typescript-interface/docker/docker.image';
+import { Image, ImageRow } from '@workspace/typescript-interface/docker/docker.image';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { ChevronLeft, ChevronRight, Play, Plus, Trash } from 'lucide-react';
@@ -43,31 +45,90 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useRouter } from '@/i18n/navigation';
 
-const globalFilterFn: FilterFn<Image> = (row, _, value) => {
-    const search = value.toLowerCase();
-    const { name, tag, id, size, created, containersUsed } = row.original;
-
+function matchesSearch(image: ImageRow, search: string): boolean {
+    const { name, tag, id, size, created } = image;
     const realSize = formatBytes(size);
     const date = new Date(created * 1000).toLocaleDateString();
 
-    if (
+    return (
         name?.some((n) => n.toLowerCase().includes(search)) ||
         tag?.some((t) => t.toLowerCase().includes(search)) ||
         id.toLowerCase().includes(search) ||
         date.toLowerCase().includes(search) ||
         realSize.toLowerCase().includes(search)
-    ) {
-        return true;
+    );
+}
+
+const globalFilterFn: FilterFn<ImageRow> = (row, _, value) => {
+    const search = value.toLowerCase();
+    const { isGroup, groupName, subRows } = row.original;
+
+    if (isGroup && groupName) {
+        if (groupName.toLowerCase().includes(search)) return true;
+        if (subRows?.some((img) => matchesSearch(img, search))) {
+            return true;
+        }
+        return false;
     }
 
-    return false;
+    return matchesSearch(row.original, search);
 };
+
+function groupImagesByRepository(images: Image[]): ImageRow[] {
+    const grouped = new Map<string, Image[]>();
+
+    images.forEach((image) => {
+        const repoName = image.name?.[0] || '<none>';
+        if (!grouped.has(repoName)) {
+            grouped.set(repoName, []);
+        }
+        grouped.get(repoName)!.push(image);
+    });
+
+    const result: ImageRow[] = [];
+
+    grouped.forEach((groupImages, repoName) => {
+        if (groupImages.length === 1) {
+            result.push(groupImages[0] as ImageRow);
+        } else {
+            const totalSize = groupImages.reduce((acc, img) => acc + img.size, 0);
+            const latestCreated = Math.max(...groupImages.map((img) => img.created));
+            const containersUsed = groupImages.reduce((acc, img) => acc + img.containersUsed, 0);
+
+            result.push({
+                id: `group-${repoName}`,
+                fullId: `group-${repoName}`,
+                name: [repoName],
+                tag: groupImages.map((img) => img.tag?.[0] || '<none>'),
+                repoTags: groupImages.flatMap((img) => img.repoTags),
+                repoDigests: [],
+                created: latestCreated,
+                size: totalSize,
+                virtualSize: totalSize,
+                sharedSize: 0,
+                labels: {},
+                containersUsed,
+                timestamp: Date.now(),
+                isGroup: true,
+                groupName: repoName,
+                subRows: groupImages as ImageRow[],
+            });
+        }
+    });
+
+    return result.sort((a, b) => {
+        const nameA = a.name?.[0]?.toLowerCase() || '';
+        const nameB = b.name?.[0]?.toLowerCase() || '';
+        return nameA.localeCompare(nameB);
+    });
+}
 
 export function TableDockerImages() {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [rowSelection, setRowSelection] = useState({});
     const [pageSize, setPageSize] = useState<number | 'all'>(10);
+    const [expanded, setExpanded] = useState<ExpandedState>({});
 
     const router = useRouter();
 
@@ -75,13 +136,15 @@ export function TableDockerImages() {
     const lastUpdate = useImageStore((state) => state.lastUpdate);
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
+    const groupedImages = useMemo(() => groupImagesByRepository(images), [images]);
+
     const isLoading = !images.length && !lastUpdate;
     const isEmpty = !images.length && !!lastUpdate;
 
     const table = useReactTable({
-        data: images,
+        data: groupedImages,
         columns: columnsTableImages,
-        getRowId: (originalRow: Image) => originalRow.id,
+        getRowId: (originalRow: ImageRow) => originalRow.id,
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
         onGlobalFilterChange: setGlobalFilter,
@@ -89,11 +152,15 @@ export function TableDockerImages() {
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        getExpandedRowModel: getExpandedRowModel(),
         onRowSelectionChange: setRowSelection,
+        onExpandedChange: setExpanded,
+        getSubRows: (row) => row.subRows,
         state: {
             sorting,
             globalFilter,
             rowSelection,
+            expanded,
         },
     });
 

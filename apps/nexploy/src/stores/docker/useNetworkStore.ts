@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { Network, NetworkEvent } from '@workspace/typescript-interface/docker/docker.network';
 import { toast } from 'sonner';
 import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
-import { NetworkState } from '@workspace/typescript-interface/stores/networksStore';
+import { NetworkState } from '@workspace/typescript-interface/stores/docker/networksStore';
 import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
 
 export const useNetworkStore = create<NetworkState>((set, get) => ({

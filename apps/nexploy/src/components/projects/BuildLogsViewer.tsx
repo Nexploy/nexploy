@@ -10,6 +10,7 @@ import { BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { getStatusBadge } from '@/components/utils/StatusBadge';
+import { cn } from '@workspace/ui/lib/utils';
 
 interface BuildLogsViewerProps {
     buildId: string;
@@ -17,6 +18,74 @@ interface BuildLogsViewerProps {
     initialLogs: BuildLogEntry[];
     createdAt: Date;
 }
+
+const getLogLevelColor = (level: string) => {
+    switch (level) {
+        case 'error':
+            return 'text-red-500';
+        case 'warn':
+            return 'text-yellow-500';
+        case 'debug':
+            return 'text-muted-foreground/60';
+        default:
+            return 'text-foreground';
+    }
+};
+
+const parseAnsiColors = (text: string) => {
+    const ansiColorMap: Record<string, string> = {
+        '30': 'text-current',
+        '31': 'text-red-500',
+        '32': 'text-green-500',
+        '33': 'text-yellow-500',
+        '34': 'text-blue-500',
+        '35': 'text-purple-500',
+        '36': 'text-cyan-500',
+        '37': 'text-gray-300',
+        '90': 'text-gray-500',
+        '91': 'text-red-400',
+        '92': 'text-green-400',
+        '93': 'text-yellow-400',
+        '94': 'text-blue-400',
+        '95': 'text-purple-400',
+        '96': 'text-cyan-400',
+        '97': 'text-current',
+    };
+
+    const parts: Array<{ text: string; color?: string }> = [];
+    let currentColor: string | undefined;
+    let buffer = '';
+    let i = 0;
+
+    while (i < text.length) {
+        const ansiMatch = text.slice(i).match(/^(?:\x1b)?\[(\d+)m/);
+
+        if (ansiMatch) {
+            if (buffer) {
+                parts.push({ text: buffer, color: currentColor });
+                buffer = '';
+            }
+
+            const code: any = ansiMatch[1];
+            if (code === '0') {
+                currentColor = undefined;
+            } else {
+                currentColor = ansiColorMap[code];
+            }
+
+            i += ansiMatch[0].length;
+        } else {
+            buffer += text[i];
+            i++;
+        }
+    }
+
+    if (buffer) {
+        parts.push({ text: buffer, color: currentColor });
+    }
+
+    return parts;
+};
 
 export function BuildLogsViewer({
     buildId,
@@ -30,7 +99,6 @@ export function BuildLogsViewer({
     const lastScrollTop = useRef<number>(0);
 
     const { latestData, data } = useInngestSubscription({
-        enabled: initialStatus !== 'COMPLETED',
         refreshToken: async () => {
             const result = await onGetTokenBuildIdAction({
                 buildId,
@@ -45,7 +113,7 @@ export function BuildLogsViewer({
         .map((evt) => evt.data.log);
 
     const logs = [...initialLogs, ...liveLogs];
-    const status = latestData?.data.status ?? initialStatus;
+    const status: BuildStatus = latestData?.data.status ?? initialStatus;
 
     useEffect(() => {
         const logsContainer = logsContainerRef.current;
@@ -102,22 +170,9 @@ export function BuildLogsViewer({
         URL.revokeObjectURL(url);
     };
 
-    const getLogLevelColor = (level: string) => {
-        switch (level) {
-            case 'error':
-                return 'text-red-500';
-            case 'warn':
-                return 'text-yellow-500';
-            case 'debug':
-                return 'text-muted-foreground/60';
-            default:
-                return 'text-foreground';
-        }
-    };
-
     return (
         <div className="flex flex-1 flex-col overflow-hidden">
-            <div className="flex items-center justify-between border-b px-3 py-3">
+            <div className="flex items-center justify-between border-b p-3">
                 <div className="flex items-center gap-4">
                     {getStatusBadge(status)}
                     <span className="text-muted-foreground text-sm">
@@ -154,17 +209,22 @@ export function BuildLogsViewer({
                         {logs.map((log, index) => (
                             <div
                                 key={index}
-                                className={`flex gap-2 ${getLogLevelColor(log.level)}`}
+                                className={cn(
+                                    'grid grid-cols-[auto_1fr] gap-2',
+                                    getLogLevelColor(log.level),
+                                )}
                             >
-                                <div className={'flex gap-1'}>
-                                    <span className="text-muted-foreground shrink-0 select-none">
+                                <div className={'text-muted-foreground flex gap-1'}>
+                                    <span className="shrink-0 select-none">
                                         [{dayjs(log.createdAt).format('DD/MM/YYYY HH:mm:ss')}]
                                     </span>
-                                    <span className="text-muted-foreground shrink-0 select-none">
-                                        [{log.step}]
-                                    </span>
+                                    <span className="shrink-0 select-none">[{log.step}]</span>
                                 </div>
-                                <span className="break-all">{log.message}</span>
+                                {parseAnsiColors(log.message).map((part, partIndex) => (
+                                    <span key={partIndex} className={part.color}>
+                                        {part.text}
+                                    </span>
+                                ))}
                             </div>
                         ))}
                         <div ref={logsEndRef} />

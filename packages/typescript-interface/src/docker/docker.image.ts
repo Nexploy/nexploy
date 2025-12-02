@@ -53,3 +53,9 @@ export interface ImageStateChanges {
         to: number;
     };
 }
+
+export type ImageRow = Image & {
+    isGroup?: boolean;
+    groupName?: string;
+    subRows?: ImageRow[];
+};

@@ -3,7 +3,7 @@ import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
 import {
     ContainerStatsParams,
     ContainerStatsState,
-} from '@workspace/typescript-interface/stores/containerStatsStore';
+} from '@workspace/typescript-interface/stores/docker/containerStatsStore';
 import { ContainerStatsEvent } from '@workspace/typescript-interface/docker/docker.container.stats';
 import { formatBytes } from '@/utils/formatBytes';
 

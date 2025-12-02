@@ -1,10 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-interface NotificationState {
-    containerToast: boolean;
-    setContainerToast: (enabled: boolean) => void;
-}
+import { NotificationState } from '@workspace/typescript-interface/stores/notificationStore';
 
 export const useNotificationStore = create<NotificationState>()(
     persist(

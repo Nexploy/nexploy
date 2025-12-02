@@ -67,9 +67,6 @@ app.route('/api/networks', networksRoutes);
 app.route('/api/pipeline/events', pipelineEvents);
 app.route('/api/pipeline', pipelineRoutes);
 
-// app.route('/api/build/events', buildLogsEvents);
-// app.route('/api/build', buildRoutes);
-
 app.route('/api/events/events', eventsEvents);
 
 app.route('/ws/docker', createTerminalRoutes(upgradeWebSocket));

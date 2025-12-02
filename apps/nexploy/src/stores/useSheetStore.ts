@@ -1,23 +1,5 @@
-import { ReactNode } from 'react';
 import { create } from 'zustand/react';
-
-type SheetContentType = 'ADD_VOLUME' | ReactNode;
-
-interface SheetData {
-    title: string;
-    description?: string;
-    content: SheetContentType;
-    side?: 'top' | 'right' | 'bottom' | 'left';
-    onAction?: (data: any) => void;
-    contextData?: any;
-}
-
-interface SheetStore {
-    isOpen: boolean;
-    data: SheetData | null;
-    openSheet: (data: SheetData) => void;
-    closeSheet: () => void;
-}
+import { SheetStore } from '@workspace/typescript-interface/stores/sheetStore';
 
 export const useSheetStore = create<SheetStore>((set) => ({
     isOpen: false,

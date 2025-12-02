@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { VolumeEvent } from '@workspace/typescript-interface/docker/docker.volume';
 import { toast } from 'sonner';
 import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
-import { VolumeState } from '@workspace/typescript-interface/stores/volumesStore';
+import { VolumeState } from '@workspace/typescript-interface/stores/docker/volumesStore';
 import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
 
 export const useVolumeStore = create<VolumeState>((set, get) => ({

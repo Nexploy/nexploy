@@ -11,6 +11,7 @@ import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { BaseStateManager } from '@/lib/BaseStateManager';
 import * as tar from 'tar-fs';
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
+import { Readable } from 'stream';
 
 class ImagesStateManager extends BaseStateManager {
     private images: Map<string, Image> = new Map();
@@ -53,7 +54,7 @@ class ImagesStateManager extends BaseStateManager {
     }
 
     async handleDockerEvent(event: any): Promise<void> {
-        const imageId = event.id;
+        const imageId = event.Actor?.ID;
         if (!imageId) return;
 
         const action = event.Action;
@@ -343,22 +344,51 @@ class ImagesStateManager extends BaseStateManager {
         }
     }
 
+    async pruneAllUnusedImages(): Promise<void> {
+        logger.info('Starting prune of all unused images');
+
+        try {
+            const result = await docker.pruneImages();
+            logger.info({ result }, 'Pruned all unused images');
+        } catch (err) {
+            logger.error({ err }, 'Error pruning all unused images');
+            throw err;
+        }
+    }
+
     async buildImage(
         workDir: string,
         imageName: string,
-        onLog?: (log: string) => void,
+        onLog: (log: string) => void,
+        signal?: AbortSignal,
     ): Promise<{ imageId?: string }> {
         logger.info({ workDir, imageName }, 'Starting Docker build');
+
+        if (signal?.aborted) {
+            throw new DOMException('Build aborted before start', 'AbortError');
+        }
 
         return new Promise((resolve, reject) => {
             const tarStream = tar.pack(workDir);
 
             (docker.buildImage as any)(
                 tarStream,
-                { t: imageName, dockerfile: 'Dockerfile' },
-                (err: any, stream: NodeJS.ReadableStream) => {
+                {
+                    t: imageName,
+                    dockerfile: 'Dockerfile',
+                    rm: true,
+                    forcerm: true,
+                    abortSignal: signal,
+                },
+                (err: any, stream: Readable) => {
                     if (err) {
                         reject(err);
+                        return;
+                    }
+
+                    if (signal?.aborted) {
+                        stream.destroy();
+                        reject(new DOMException('Build aborted', 'AbortError'));
                         return;
                     }
 
@@ -366,8 +396,17 @@ class ImagesStateManager extends BaseStateManager {
 
                     docker.modem.followProgress(
                         stream,
-                        (progressErr: any, output: any) => {
+                        async (progressErr: any, output: any) => {
                             if (progressErr) {
+                                if (
+                                    progressErr.name === 'AbortError' ||
+                                    progressErr.message?.includes('aborted') ||
+                                    progressErr.message?.includes('cancel')
+                                ) {
+                                    logger.info('Build was aborted');
+                                    reject(new DOMException('Build aborted', 'AbortError'));
+                                    return;
+                                }
                                 reject(progressErr);
                                 return;
                             }
@@ -378,9 +417,15 @@ class ImagesStateManager extends BaseStateManager {
                             }
 
                             logger.info({ imageName, imageId }, 'Docker build completed');
+
+                            await this.cleanupDanglingImages();
                             resolve({ imageId });
                         },
                         (event: any) => {
+                            if (signal?.aborted) {
+                                return;
+                            }
+
                             if (event.stream) {
                                 const line = event.stream.trim();
                                 if (line && onLog) {
@@ -395,6 +440,25 @@ class ImagesStateManager extends BaseStateManager {
                 },
             );
         });
+    }
+
+    async cleanupDanglingImages(): Promise<void> {
+        try {
+            const images = await docker.listImages({
+                filters: { dangling: ['true'] },
+            });
+
+            for (const image of images) {
+                try {
+                    await docker.getImage(image.Id).remove({ force: true });
+                    logger.info({ imageId: image.Id }, 'Removed dangling image');
+                } catch (err) {
+                    logger.warn({ imageId: image.Id, err }, 'Failed to remove dangling image');
+                }
+            }
+        } catch (err) {
+            logger.error({ err }, 'Failed to cleanup dangling images');
+        }
     }
 }
 

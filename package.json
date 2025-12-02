@@ -4,8 +4,8 @@
     "private": true,
     "scripts": {
         "dev": "turbo run dev --filter=nexploy --filter=docker-api",
-        "dev:nexploy": "turbo run dev --filter=nexploy",
-        "dev:docker-api": "turbo run dev --filter=docker-api",
+        "dev:nexploy": "turbo run dev --filter=nexploy --ui stream",
+        "dev:docker-api": "turbo run dev --filter=docker-api --ui stream",
         "dev:desktop": "turbo run dev --filter=desktop",
         "scalar": "turbo run dev --filter=scalar-server",
         "build": "turbo run build",

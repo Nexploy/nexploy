@@ -2,8 +2,8 @@ import { create } from 'zustand';
 import { Image, ImageEvent } from '@workspace/typescript-interface/docker/docker.image';
 import { toast } from 'sonner';
 import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
-import { ImageState } from '@workspace/typescript-interface/stores/imagesStore';
 import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
+import { ImageState } from '@workspace/typescript-interface/stores/docker/imagesStore';
 
 export const useImageStore = create<ImageState>((set, get) => ({
     images: [],

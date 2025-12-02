@@ -1,5 +1,4 @@
 import {
-    Activity,
     Box,
     Bug,
     ChevronRight,
@@ -66,11 +65,11 @@ const groups: Group[] = [
                 enableCollapsible: true,
                 icon: Folder,
             },
-            {
-                title: 'Monitoring',
-                href: '/monitoring',
-                icon: Activity,
-            },
+            // {
+            //     title: 'Monitoring',
+            //     href: '/monitoring',
+            //     icon: Activity,
+            // },
             {
                 title: 'Docker',
                 href: '/docker/containers',

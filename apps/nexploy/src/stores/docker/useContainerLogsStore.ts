@@ -4,7 +4,7 @@ import {
     ContainerLogsEvent,
     LogEntry,
 } from '@workspace/typescript-interface/docker/docker.container.logs';
-import { ContainerLogsState } from '@workspace/typescript-interface/stores/containerLogsStore';
+import { ContainerLogsState } from '@workspace/typescript-interface/stores/docker/containerLogsStore';
 
 const defaultValue = {
     containerId: null,

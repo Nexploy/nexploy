@@ -1,14 +1,13 @@
-'use client';
-
-import { Build } from 'generated/client';
 import { ProjectBuild } from '@/components/projects/tabs/builds/ProjectBuild';
+import { getAllBuildsInngest } from '@/services/inngest/build.inngest.service';
 
 interface ProjectOverviewTabProps {
     projectId: string;
-    builds: Build[];
 }
 
-export function ProjectBuildsTab({ builds, projectId }: ProjectOverviewTabProps) {
+export async function ProjectBuildsTab({ projectId }: ProjectOverviewTabProps) {
+    const builds = await getAllBuildsInngest(projectId);
+
     return (
         <div className="flex flex-col gap-4 px-5">
             <h2 className="text-xl font-semibold">Recent Builds</h2>

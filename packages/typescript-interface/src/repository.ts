@@ -97,9 +97,9 @@ export interface GithubRepo {
 
     visibility?: 'public' | 'private' | 'internal';
 
-    pushed_at: string; // ISO date
-    created_at: string; // ISO date
-    updated_at: string; // ISO date
+    pushed_at: string;
+    created_at: string;
+    updated_at: string;
 
     permissions?: {
         admin: boolean;

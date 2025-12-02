@@ -37,7 +37,6 @@ export async function POST(req: Request) {
                 parameters: containerCreateFormSchema,
                 execute: async (params) => {
                     try {
-                        // Using drinoDocker directly with the transformed params
                         const response = await drinoDocker
                             .post<{ id: string }>(`/container/create`, params)
                             .consume();

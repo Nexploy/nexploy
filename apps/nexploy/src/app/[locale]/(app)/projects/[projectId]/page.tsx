@@ -2,10 +2,10 @@ import { notFound } from 'next/navigation';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { RunBuildButton } from '@/components/projects/RunBuildButton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
-import { ProjectEnvTab } from '@/components/projects/tabs/ProjectEnvTab';
+import { ProjectEnvTab } from '@/components/projects/tabs/env/ProjectEnvTab';
 import { GitBranch, Github, Gitlab, Key, LayoutDashboard, Link2 } from 'lucide-react';
 import { ProjectBuildsTab } from '@/components/projects/tabs/builds/ProjectBuildsTab';
-import { getProjectByIdService } from '@/services/project.service';
+import { getProjectById } from '@/services/project.service';
 
 interface ProjectIdPageProps {
     params: Promise<{
@@ -22,7 +22,7 @@ const getGitIcon = (provider: string) => {
 
 export default async function ProjectIdPage({ params }: ProjectIdPageProps) {
     const { projectId } = await params;
-    const project = await getProjectByIdService(projectId);
+    const project = await getProjectById(projectId);
     if (!project) notFound();
 
     const GitIcon = getGitIcon(project.gitProvider);
@@ -62,13 +62,10 @@ export default async function ProjectIdPage({ params }: ProjectIdPageProps) {
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
                         <div className="pb-5">
                             <TabsContent value="overview" className="mt-0">
-                                <ProjectBuildsTab projectId={project.id} builds={project.build} />
+                                <ProjectBuildsTab projectId={project.id} />
                             </TabsContent>
                             <TabsContent value="env" className="mt-0">
-                                <ProjectEnvTab
-                                    projectId={project.id}
-                                    envVariables={project.envVariables}
-                                />
+                                <ProjectEnvTab projectId={project.id} />
                             </TabsContent>
                         </div>
                     </ScrollAreaWithShadow>

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
-import { ContainerState } from '@workspace/typescript-interface/stores/containerStore';
+import { ContainerState } from '@workspace/typescript-interface/stores/docker/containerStore';
 import { ContainerEvent } from '@workspace/typescript-interface/docker/docker.container';
 
 const defaultValue = {

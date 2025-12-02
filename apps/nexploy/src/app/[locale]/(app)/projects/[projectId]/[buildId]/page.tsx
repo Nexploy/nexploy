@@ -6,6 +6,8 @@ import { Button } from '@workspace/ui/components/button';
 import { getProjectBuildLogs } from '@/services/project.service';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Separator } from '@workspace/ui/components/separator';
+import { RetryBuildButton } from '@/components/projects/RetryBuildButton';
+import { StopBuildButton } from '@/components/projects/StopBuildButton';
 
 interface BuildPageProps {
     params: Promise<{
@@ -22,7 +24,7 @@ export default async function BuildPage({ params }: BuildPageProps) {
 
     return (
         <div className="flex h-full w-full flex-col">
-            <div className="border-b py-3 pr-2 pl-5">
+            <div className="border-b p-3">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="icon" asChild className="shrink-0">
                         <Link href={`/projects/${projectId}`}>
@@ -54,6 +56,15 @@ export default async function BuildPage({ params }: BuildPageProps) {
                                 </code>
                             )}
                         </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        {(build.status === 'QUEUED' || build.status === 'BUILDING') && (
+                            <StopBuildButton buildId={buildId} />
+                        )}
+                        {build.status === 'FAILED' ||
+                            (build.status === 'CANCELLED' && (
+                                <RetryBuildButton buildId={buildId} projectId={projectId} />
+                            ))}
                     </div>
                 </div>
             </div>

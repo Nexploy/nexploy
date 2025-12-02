@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useAction } from 'next-safe-action/hooks';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import { Label } from '@workspace/ui/components/label';
 import {
     Card,
     CardContent,
@@ -27,10 +26,7 @@ interface ProjectEnvTabProps {
     envVariables: EnvVariable[];
 }
 
-export function ProjectEnvTab({
-    projectId,
-    envVariables: initialEnvVariables,
-}: ProjectEnvTabProps) {
+export function ProjectEnv({ projectId, envVariables: initialEnvVariables }: ProjectEnvTabProps) {
     const router = useRouter();
     const [envVariables, setEnvVariables] = useState<EnvVariable[]>(initialEnvVariables);
     const [newEnvs, setNewEnvs] = useState<{ key: string; value: string }[]>([]);
@@ -200,7 +196,6 @@ export function ProjectEnvTab({
                             {newEnvs.map((env, index) => (
                                 <div key={`new-${index}`} className="flex items-end gap-4">
                                     <div className="flex-1">
-                                        <Label htmlFor={`new-key-${index}`}>Key</Label>
                                         <Input
                                             id={`new-key-${index}`}
                                             value={env.key}
@@ -212,7 +207,6 @@ export function ProjectEnvTab({
                                         />
                                     </div>
                                     <div className="flex-1">
-                                        <Label htmlFor={`new-value-${index}`}>Value</Label>
                                         <Input
                                             id={`new-value-${index}`}
                                             value={env.value}

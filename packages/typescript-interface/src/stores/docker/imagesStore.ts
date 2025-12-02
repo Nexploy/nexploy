@@ -1,4 +1,4 @@
-import { Image } from '../docker/docker.image';
+import { Image } from '../../docker/docker.image';
 
 export interface ImageState {
     images: Image[];

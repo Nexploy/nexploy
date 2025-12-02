@@ -93,7 +93,6 @@ class GitProviderService {
         accessToken: string | null,
     ): Promise<{ hash: string; message: string } | null> {
         try {
-            // Extract owner/repo from URL (e.g., "owner/repo")
             const repoPath = this.extractGitHubRepoPath(repositoryUrl);
 
             const response = await fetch(

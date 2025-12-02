@@ -3,7 +3,7 @@ import { Session } from '@/lib/auth/auth';
 import { getUserSession } from '@/services/auth/auth.service';
 import { prisma } from '../../prisma/prisma';
 
-export async function createProjectService(
+export async function createProject(
     { repo, ...restProjectCreate }: ProjectCreateForm,
     ctx: { session: Session },
 ) {
@@ -22,23 +22,11 @@ export async function createProjectService(
     }
 }
 
-export async function getProjectByIdService(projectId: string) {
+export async function getProjectById(projectId: string) {
     try {
         const project = await prisma.project.findUnique({
             where: {
                 id: projectId,
-            },
-            include: {
-                build: {
-                    orderBy: {
-                        createdAt: 'desc',
-                    },
-                },
-                envVariables: {
-                    orderBy: {
-                        key: 'asc',
-                    },
-                },
             },
         });
 

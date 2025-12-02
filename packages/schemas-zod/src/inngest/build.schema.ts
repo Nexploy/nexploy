@@ -21,3 +21,11 @@ export const buildSchema = z.object({
 export const startBuildSchema = z.object({
     projectId: z.cuid(),
 });
+
+export const retryBuildSchema = z.object({
+    buildId: z.cuid(),
+});
+
+export const cancelBuildSchema = z.object({
+    buildId: z.cuid(),
+});

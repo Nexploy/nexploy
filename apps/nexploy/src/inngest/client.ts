@@ -9,6 +9,11 @@ type Events = {
             config: BuildConfig;
         };
     };
+    'build/cancel': {
+        data: {
+            buildId: string;
+        };
+    };
 };
 
 export const inngest = new Inngest({

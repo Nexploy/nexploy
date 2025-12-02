@@ -2,11 +2,10 @@
 
 import * as React from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, MoreVertical } from 'lucide-react';
+import { ArrowUpDown, ChevronRight, MoreVertical } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Badge } from '@workspace/ui/components/badge';
-import { Image } from '@workspace/typescript-interface/docker/docker.image';
 import CopyButton from '@/components/utils/CopyButton';
 import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';
@@ -14,27 +13,52 @@ import { ImageDropdownActions } from '@/components/docker/image/ImageDropdownAct
 import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import { cn } from '@workspace/ui/lib/utils';
+import { ImageRow } from '@workspace/typescript-interface/docker/docker.image';
 
-export const columnsTableImages: ColumnDef<Image>[] = [
+export const columnsTableImages: ColumnDef<ImageRow>[] = [
     {
         id: 'select',
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && 'indeterminate')
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
-        ),
+        header: ({ table }) => {
+            const allRows = table.getRowModel().flatRows;
+            const selectableRows = allRows.filter((row) => !row.original.isGroup);
+            const allSelected =
+                selectableRows.length > 0 && selectableRows.every((row) => row.getIsSelected());
+            const someSelected = selectableRows.some((row) => row.getIsSelected());
+
+            return (
+                <Checkbox
+                    checked={allSelected || (someSelected && 'indeterminate')}
+                    onCheckedChange={(value) => {
+                        selectableRows.forEach((row) => row.toggleSelected(!!value));
+                    }}
+                    aria-label="Select all"
+                />
+            );
+        },
+        cell: ({ row }) => {
+            const isGroup = row.original.isGroup;
+            if (isGroup) {
+                const isAllSelected = row.getIsAllSubRowsSelected();
+                const isSomeSelected = row.getIsSomeSelected() && !isAllSelected;
+                return (
+                    <Checkbox
+                        checked={isSomeSelected ? 'indeterminate' : isAllSelected}
+                        onCheckedChange={(value) => {
+                            row.subRows.forEach((subRow) => subRow.toggleSelected(!!value));
+                        }}
+                        aria-label="Select group"
+                    />
+                );
+            }
+            return (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label="Select row"
+                />
+            );
+        },
         enableSorting: false,
         enableHiding: false,
     },
@@ -50,12 +74,54 @@ export const columnsTableImages: ColumnDef<Image>[] = [
             </Button>
         ),
         cell: ({ row }) => {
+            const isGroup = row.original.isGroup;
             const nameTags = row.original.name;
             const containersUsed = row.original.containersUsed;
             const nameJoin = nameTags?.join(', ') || '<none>';
+            const depth = row.depth;
+
+            if (isGroup) {
+                return (
+                    <div className="flex items-center">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-6"
+                            onClick={() => row.toggleExpanded()}
+                        >
+                            <ChevronRight
+                                className={cn(
+                                    'size-4 transition-transform duration-200',
+                                    row.getIsExpanded() && 'rotate-90',
+                                )}
+                            />
+                        </Button>
+                        <Status
+                            className={'max-w-60 truncate border-0 text-sm'}
+                            status={containersUsed ? 'online' : 'offline'}
+                            variant="outline"
+                        >
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <StatusIndicator />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    {containersUsed ? <p>Image Used</p> : <p>Image Unused</p>}
+                                </TooltipContent>
+                            </Tooltip>
+                            <StatusLabel className="truncate font-medium text-current">
+                                {nameJoin}
+                            </StatusLabel>
+                        </Status>
+                    </div>
+                );
+            }
 
             return (
-                <div className="flex items-start gap-2">
+                <div
+                    className="flex items-start gap-2"
+                    style={{ paddingLeft: depth > 0 ? `${depth * 24 + 8}px` : undefined }}
+                >
                     <Status
                         className={'max-w-60 truncate border-0 text-sm'}
                         status={containersUsed ? 'online' : 'offline'}
@@ -90,10 +156,32 @@ export const columnsTableImages: ColumnDef<Image>[] = [
             </Button>
         ),
         cell: ({ row }) => {
+            const isGroup = row.original.isGroup;
+            if (isGroup) {
+                const tags = row.original.tag || [];
+                return (
+                    <div className="flex flex-wrap gap-1">
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Badge variant="outline" className="text-xs">
+                                    {tags.length} versions
+                                </Badge>
+                            </TooltipTrigger>
+                            <TooltipContent className={'flex max-w-xs flex-col gap-1 p-2 text-sm'}>
+                                {tags.map((tag: string, index: number) => (
+                                    <Badge key={index} variant="secondary" className="font-mono">
+                                        {tag}
+                                    </Badge>
+                                ))}
+                            </TooltipContent>
+                        </Tooltip>
+                    </div>
+                );
+            }
             const tag = row.original.tag;
             return (
                 <Badge variant="secondary" className="font-mono">
-                    {tag.length ? tag : '<none>'}
+                    <span className={'max-w-30 truncate'}>{tag.length ? tag : '<none>'}</span>
                 </Badge>
             );
         },
@@ -102,9 +190,13 @@ export const columnsTableImages: ColumnDef<Image>[] = [
         accessorKey: 'id',
         header: 'Image ID',
         cell: ({ row }) => {
+            const isGroup = row.original.isGroup;
+            if (isGroup) {
+                return <span className="text-muted-foreground text-sm">—</span>;
+            }
             const imageId = row.original.id;
             return (
-                <div className="flex max-w-60 items-center gap-2">
+                <div className="flex max-w-50 items-center gap-2">
                     <code className="text-muted-foreground truncate text-sm">{imageId}</code>
                     <CopyButton
                         textToCopy={row.original.id}
@@ -154,15 +246,21 @@ export const columnsTableImages: ColumnDef<Image>[] = [
     },
     {
         id: 'actions',
-        cell: ({ row }) => (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                        <MoreVertical />
-                    </Button>
-                </DropdownMenuTrigger>
-                <ImageDropdownActions image={row.original} />
-            </DropdownMenu>
-        ),
+        cell: ({ row }) => {
+            const isGroup = row.original.isGroup;
+            if (isGroup) {
+                return null;
+            }
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                            <MoreVertical />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <ImageDropdownActions image={row.original} />
+                </DropdownMenu>
+            );
+        },
     },
 ];

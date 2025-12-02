@@ -2,6 +2,7 @@ import { prisma } from '@/../prisma/prisma';
 import { getUserSession } from '@/services/auth/auth.service';
 import { GetGitProviderToken, GitBranch, GitRepository } from '@workspace/typescript-interface/git';
 import { GithubRepo } from '@workspace/typescript-interface/repository';
+import { gitProviderService } from '@/services/api/gitProvider.service';
 
 export async function getGitProviderToken(provider: string): Promise<GetGitProviderToken> {
     const session = await getUserSession();
@@ -26,17 +27,26 @@ export async function getGitProviderToken(provider: string): Promise<GetGitProvi
     return tokens;
 }
 
-export async function getRepositories(provider: string): Promise<GitRepository[]> {
+export async function getRepositories(provider: string, userId: string): Promise<GitRepository[]> {
     const token = await getGitProviderToken(provider);
 
     switch (provider) {
         case 'github': {
             const res = await fetch('https://api.github.com/user/repos', {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${token.accessToken}`,
                     Accept: 'application/vnd.github+json',
                 },
             });
+
+            // const res = (await drino
+            //     .get('https://api.github.com/user/repos', {
+            //         headers: {
+            //             Authorization: `Bearer ${token.accessToken}`,
+            //             Accept: 'application/vnd.github+json',
+            //         },
+            //     })
+            //     .consume()) as Response;
 
             if (!res.ok) throw new Error('Failed to fetch GitHub repositories');
 
@@ -52,11 +62,14 @@ export async function getRepositories(provider: string): Promise<GitRepository[]
             }));
         }
         case 'gitlab': {
+            const token = await getGitProviderToken(provider);
+            await gitProviderService.getValidToken(token, provider, userId);
+
             const res = await fetch(
-                'https://gitlab.com/api/v4/projects?membership=true&order_by=updated_at&per_page=100',
+                'https://gitlab.com/api/v4/projects?membership=true&order_by=updated_at',
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${token.accessToken}`,
                     },
                 },
             );
@@ -102,7 +115,6 @@ export async function getBranches(
             protected: branch.protected,
         }));
     } else {
-        // GitLab
         const res = await fetch(
             `https://gitlab.com/api/v4/projects/${repoId}/repository/branches`,
             {

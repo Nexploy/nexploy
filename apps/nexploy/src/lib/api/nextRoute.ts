@@ -18,8 +18,11 @@ export const authRouteServer: MiddlewareFunction = async ({ next }) => {
             type: 'error',
             message: 'Unauthorized action attempt',
         });
-        return NextResponse.json({ message: 'Unauthorized action attempt' }, { status: 403 });
+
+        return new Response(JSON.stringify({ message: 'Unauthorized action attempt' }), {
+            status: 403,
+        });
     }
 
-    return next({ ctx: session });
+    return next({ ctx: { session } });
 };
