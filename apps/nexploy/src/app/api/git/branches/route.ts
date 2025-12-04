@@ -2,7 +2,7 @@ import { getBranches } from '@/services/git/git.service';
 import { NextResponse } from 'next/server';
 import { authRouteServer, route } from '@/lib/api/nextRoute';
 
-export const GET = route.use(authRouteServer).handler(async (request) => {
+export const GET = route.use(authRouteServer).handler(async (request, { ctx }: any) => {
     const { searchParams } = new URL(request.url);
 
     const provider = searchParams.get('provider');
@@ -19,7 +19,7 @@ export const GET = route.use(authRouteServer).handler(async (request) => {
     }
 
     try {
-        const branches = await getBranches(provider, repoId, owner, repoName);
+        const branches = await getBranches(provider, repoId, ctx.session.user.id, repoName);
         return NextResponse.json(branches);
     } catch (error: any) {
         return NextResponse.json(

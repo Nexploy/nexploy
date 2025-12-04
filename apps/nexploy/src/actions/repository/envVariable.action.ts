@@ -1,27 +1,9 @@
 'use server';
 
-import { z } from 'zod';
 import { authActionServer } from '@/lib/api/safe-action';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { prisma } from '../../../prisma/prisma';
-
-const envVariableSchema = z.object({
-    repositoryId: z.string(),
-    updates: z.array(
-        z.object({
-            id: z.string(),
-            key: z.string().min(1),
-            value: z.string(),
-        }),
-    ),
-    creates: z.array(
-        z.object({
-            key: z.string().min(1),
-            value: z.string(),
-        }),
-    ),
-    deleteIds: z.array(z.string()),
-});
+import { envVariableSchema } from '@workspace/schemas-zod/repository/envVariable.schema';
 
 export const onEnvVariableAction = authActionServer
     .inputSchema(envVariableSchema)

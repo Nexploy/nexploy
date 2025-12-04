@@ -1,14 +1,26 @@
 import { channel, topic } from '@inngest/realtime';
 import {
+    BUILD_STEPS_ORDER,
     BuildConfig,
     BuildLogEntry,
     BuildStatus,
+    BuildStep,
 } from '@workspace/typescript-interface/inngest/build';
 import { inngest } from '@/inngest/client';
-import { updateStatusBuildInngest } from '@/services/inngest/build.inngest.service';
+import {
+    updateLastCompletedStepInngest,
+    updateStatusBuildInngest,
+} from '@/services/inngest/build.inngest.service';
 import { createLogInngest } from '@/services/inngest/log.inngest.service';
 import { pipelineService } from '@/inngest/pipeline/pipelineService';
 import { env } from '../../../env';
+
+function shouldRunStep(step: BuildStep, startFromStep?: BuildStep): boolean {
+    if (!startFromStep) return true;
+    const startIndex = BUILD_STEPS_ORDER.indexOf(startFromStep);
+    const stepIndex = BUILD_STEPS_ORDER.indexOf(step);
+    return stepIndex >= startIndex;
+}
 
 const createBuildChannel = (buildId: string) => {
     const channelDef = channel(`build:${buildId}`)
@@ -54,118 +66,164 @@ export const buildFunction = inngest.createFunction(
         };
 
         let workDir: string | null = null;
+        const { startFromStep } = config;
+
+        const markStepCompleted = async (stepName: BuildStep) => {
+            await updateLastCompletedStepInngest(buildId, stepName);
+        };
 
         try {
-            workDir = await step.run('clone-repository', async () => {
-                await publishStatus('BUILDING');
-                await publishLog('clone', `Cloning repository ${config.gitUrl}`, 'INFO');
+            if (startFromStep) {
+                await publishLog('resume', `Resuming build from step: ${startFromStep}`, 'INFO');
+            }
 
-                const onProgress = async (progress: number, message: string) => {
-                    await publishLog('clone', `${message} (${Math.round(progress)}%)`, 'INFO');
-                };
+            const needsClone =
+                shouldRunStep('clone-repository', startFromStep) ||
+                shouldRunStep('prepare-dockerfile', startFromStep) ||
+                shouldRunStep('write-env-file', startFromStep) ||
+                shouldRunStep('build-docker-image', startFromStep);
 
-                const dir = await pipelineService.cloneRepository(config, onProgress);
+            if (needsClone) {
+                workDir = await step.run('clone-repository', async () => {
+                    await publishStatus('BUILDING');
 
-                await publishLog('clone', 'Repository cloned!', 'INFO');
-                return dir;
-            });
+                    if (!shouldRunStep('clone-repository', startFromStep)) {
+                        await publishLog(
+                            'clone',
+                            'Skipping clone (re-cloning for context)',
+                            'INFO',
+                        );
+                    }
 
-            await step.run('prepare-dockerfile', async () => {
-                await publishLog('dockerfile', 'Preparing Dockerfile', 'INFO');
-                await pipelineService.prepareDockerfile(workDir!, config);
-                await publishLog('dockerfile', 'Dockerfile ready', 'INFO');
-            });
+                    await publishLog('clone', `Cloning repository ${config.gitUrl}`, 'INFO');
 
-            await step.run('write-env-file', async () => {
-                if (Object.keys(config.envVariables).length > 0) {
-                    await publishLog('env', 'Writing environment variables', 'INFO');
-                    await pipelineService.writeEnvFile(workDir!, config.envVariables);
-                    await publishLog('env', 'Environment file written', 'INFO');
-                }
-            });
+                    const onProgress = async (progress: number, message: string) => {
+                        await publishLog('clone', `${message} (${Math.round(progress)}%)`, 'INFO');
+                    };
 
-            const buildResult = await step.run('build-docker-image', async () => {
-                const imageName = `${config.repositoryId}:${buildId}`;
-                await publishLog('build', `Building Docker image: ${imageName}`, 'INFO');
+                    const dir = await pipelineService.cloneRepository(config, onProgress);
 
-                const response = await fetch(
-                    `${env.DOCKER_API_URL}/api/pipeline/events/stream/build`,
-                    {
+                    await publishLog('clone', 'Repository cloned!', 'INFO');
+                    await markStepCompleted('clone-repository');
+                    return dir;
+                });
+            }
+
+            if (shouldRunStep('prepare-dockerfile', startFromStep)) {
+                await step.run('prepare-dockerfile', async () => {
+                    await publishLog('dockerfile', 'Preparing Dockerfile', 'INFO');
+                    await pipelineService.prepareDockerfile(workDir!, config);
+                    await publishLog('dockerfile', 'Dockerfile ready', 'INFO');
+                    await markStepCompleted('prepare-dockerfile');
+                });
+            }
+
+            if (shouldRunStep('write-env-file', startFromStep)) {
+                await step.run('write-env-file', async () => {
+                    if (Object.keys(config.envVariables).length > 0) {
+                        await publishLog('env', 'Writing environment variables', 'INFO');
+                        await pipelineService.writeEnvFile(workDir!, config.envVariables);
+                        await publishLog('env', 'Environment file written', 'INFO');
+                    }
+                    await markStepCompleted('write-env-file');
+                });
+            }
+
+            let buildResult: any = null;
+            if (shouldRunStep('build-docker-image', startFromStep)) {
+                buildResult = await step.run('build-docker-image', async () => {
+                    const imageName = `${config.repositoryId}:${buildId}`;
+                    await publishLog('build', `Building Docker image: ${imageName}`, 'INFO');
+
+                    const response = await fetch(
+                        `${env.DOCKER_API_URL}/api/pipeline/events/stream/build`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                workDir,
+                                imageName,
+                            }),
+                            signal: abortController.signal,
+                        },
+                    );
+
+                    if (!response.ok) {
+                        throw new Error(`Build failed with status ${response.status}`);
+                    }
+
+                    const result = await parseSSEStream(
+                        response,
+                        abortController.signal,
+                        async (event) => {
+                            if (event.type === 'log') {
+                                await publishLog('build', event.message, 'INFO');
+                            } else if (event.type === 'error') {
+                                throw new Error(event.message);
+                            }
+                        },
+                    );
+
+                    await markStepCompleted('build-docker-image');
+                    return result;
+                });
+            }
+
+            if (shouldRunStep('deploy-container', startFromStep)) {
+                await step.run('deploy-container', async () => {
+                    await publishStatus('DEPLOYING');
+                    await publishLog('deploy', 'Starting deployment', 'INFO');
+
+                    const imageName = `${config.repositoryId}:${buildId}`;
+
+                    const response = await fetch(`${env.DOCKER_API_URL}/api/pipeline/deploy`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            workDir,
+                            repositoryId: config.repositoryId,
                             imageName,
+                            options: {
+                                envVars: config.envVariables,
+                            },
                         }),
                         signal: abortController.signal,
-                    },
-                );
+                    });
 
-                if (!response.ok) {
-                    throw new Error(`Build failed with status ${response.status}`);
-                }
-
-                return await parseSSEStream(response, abortController.signal, async (event) => {
-                    if (event.type === 'log') {
-                        await publishLog('build', event.message, 'INFO');
-                    } else if (event.type === 'error') {
-                        throw new Error(event.message);
+                    if (!response.ok) {
+                        throw new Error(`Deployment failed with status ${response.status}`);
                     }
+
+                    const deployResult = await response.json();
+
+                    await publishLog(
+                        'deploy',
+                        `Deployed (container: ${deployResult.containerId.slice(0, 12)})`,
+                        'INFO',
+                    );
+                    await markStepCompleted('deploy-container');
                 });
-            });
+            }
 
-            await step.run('deploy-container', async () => {
-                await publishStatus('DEPLOYING');
-                await publishLog('deploy', 'Starting deployment', 'INFO');
-
-                const imageName = `${config.repositoryId}:${buildId}`;
-
-                const response = await fetch(`${env.DOCKER_API_URL}/api/pipeline/deploy`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        repositoryId: config.repositoryId,
-                        imageName,
-                        options: {
-                            port: config.port,
-                            envVars: config.envVariables,
-                            traefik: config.traefik,
-                        },
-                    }),
-                    signal: abortController.signal,
+            if (shouldRunStep('cleanup', startFromStep)) {
+                await step.run('cleanup', async () => {
+                    if (workDir) {
+                        await pipelineService.cleanup(workDir);
+                    }
+                    await markStepCompleted('cleanup');
                 });
+            }
 
-                if (!response.ok) {
-                    throw new Error(`Deployment failed with status ${response.status}`);
-                }
-
-                const deployResult = await response.json();
-
-                const deployMessage = config.traefik?.enabled
-                    ? `Deployed via Traefik at ${config.traefik.domain || `deploy-${config.repositoryId}.localhost`}`
-                    : `Deployed on port ${deployResult.port}`;
-
-                await publishLog(
-                    'deploy',
-                    `${deployMessage} (container: ${deployResult.containerId.slice(0, 12)})`,
-                    'INFO',
-                );
-            });
-
-            await step.run('cleanup', async () => {
-                if (workDir) {
-                    await pipelineService.cleanup(workDir);
-                }
-            });
-
-            await step.run('finalize-logs', async () => {
-                await publishLog('complete', 'Build pipeline completed successfully', 'INFO');
-                await publishStatus('COMPLETED');
-            });
+            if (shouldRunStep('finalize-logs', startFromStep)) {
+                await step.run('finalize-logs', async () => {
+                    await publishLog('complete', 'Build pipeline completed successfully', 'INFO');
+                    await publishStatus('COMPLETED');
+                    await markStepCompleted('finalize-logs');
+                });
+            }
 
             return {
                 success: true,

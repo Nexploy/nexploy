@@ -2,16 +2,20 @@ model Repository {
   id   String @id @default(cuid())
   name String
 
-  repositoryUrl String
+  repositoryUrl String @unique
   branch        String @default("main")
-  gitProvider   String
+
+  gitProvider String
+  gitId       String @unique
 
   buildType      String  @default("DOCKERFILE")
   dockerfilePath String? @default("Dockerfile")
   contextPath    String? @default(".")
   buildArgs      String?
 
-  autoDeploy Boolean @default(true)
+  autoDeploy    Boolean @default(true)
+  webhookId     String?
+  webhookSecret String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -19,10 +23,8 @@ model Repository {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  build         Build[]
-  envVariables  EnvVariable[]
-  traefikLabels TraefikLabel[]
-  domains       Domain[]
+  build        Build[]
+  envVariables EnvVariable[]
 
   @@map("repository")
 }
@@ -46,9 +48,10 @@ model Build {
   id     String      @id @default(cuid())
   status BuildStatus @default(QUEUED)
 
-  branch        String
-  commitHash    String?
-  commitMessage String?
+  branch            String
+  commitHash        String?
+  commitMessage     String?
+  lastCompletedStep String?
 
   log Log[]
 
@@ -89,37 +92,4 @@ enum BuildStatus {
   FAILED
   DEPLOYING
   CANCELLED
-}
-
-model TraefikLabel {
-  id    String @id @default(cuid())
-  key   String
-  value String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  repositoryId String
-  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
-
-  @@unique([repositoryId, key])
-  @@map("traefik_label")
-}
-
-model Domain {
-  id            String  @id @default(cuid())
-  host          String
-  path          String  @default("/")
-  internalPath  String  @default("/")
-  stripPath     Boolean @default(false)
-  containerPort Int     @default(3000)
-  https         Boolean @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  repositoryId String
-  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
-
-  @@map("domain")
 }

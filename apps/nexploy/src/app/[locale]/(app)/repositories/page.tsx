@@ -17,7 +17,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@workspace/ui/components/card';
-import { getRepositories } from '@/services/repositorie.service';
+import { getRepositories } from '@/services/repository.service';
 import { getStatusBadge } from '@/components/utils/StatusBadge';
 import { RunBuildButton } from '@/components/repositories/RunBuildButton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
@@ -66,9 +66,9 @@ export default async function RepositoriesPage() {
                                     <EmptyMedia variant="icon" className="bg-primary/10">
                                         <Folder className="text-primary" />
                                     </EmptyMedia>
-                                    <EmptyTitle>Aucun projet</EmptyTitle>
+                                    <EmptyTitle>Aucun Repository</EmptyTitle>
                                     <EmptyDescription>
-                                        Créez votre premier projet pour commencer.
+                                        Créez votre repository pour commencer.
                                     </EmptyDescription>
                                 </EmptyHeader>
                             </Empty>

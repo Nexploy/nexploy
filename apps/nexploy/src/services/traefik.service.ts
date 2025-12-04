@@ -1,18 +1,159 @@
-import { prisma } from '../../prisma/prisma';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import * as yaml from 'yaml';
+import { Domain } from '@workspace/typescript-interface/traefik/traefik.config';
 
-export async function getTraefikConfig(repositoryId: string) {
-    const repository = await prisma.repository.findUnique({
-        where: { id: repositoryId },
-        select: {
-            traefikLabels: true,
-        },
-    });
+const TRAEFIK_SERVICE_DIR = path.join(process.cwd(), '..', '..', 'infra', 'traefik', 'service');
 
-    if (!repository) {
-        return null;
+export async function generateTraefikConfigForRepository(
+    repositoryId: string,
+    domains: Domain[],
+): Promise<void> {
+    await fs.mkdir(TRAEFIK_SERVICE_DIR, { recursive: true });
+
+    const filePath = path.join(TRAEFIK_SERVICE_DIR, `${repositoryId}.yml`);
+
+    if (domains.length === 0) {
+        try {
+            await fs.unlink(filePath);
+        } catch {
+            /* empty */
+        }
+        return;
     }
 
-    return {
-        labels: repository.traefikLabels,
+    const containerName = `deploy-${repositoryId}`;
+
+    const config: {
+        http: {
+            routers: Record<string, unknown>;
+            services: Record<string, unknown>;
+            middlewares: Record<string, unknown>;
+        };
+    } = {
+        http: {
+            routers: {},
+            services: {},
+            middlewares: {},
+        },
     };
+
+    for (const domain of domains) {
+        const routerName = `repo-${repositoryId}-${domain.id}`;
+        const serviceName = `svc-${repositoryId}-${domain.id}`;
+
+        let rule = `Host(\`${domain.host}\`)`;
+        if (domain.path && domain.path !== '/') {
+            rule += ` && PathPrefix(\`${domain.path}\`)`;
+        }
+
+        const middlewares: string[] = [];
+
+        if (domain.stripPath && domain.path !== '/') {
+            const stripMiddlewareName = `strip-${repositoryId}-${domain.id}`;
+            middlewares.push(stripMiddlewareName);
+
+            config.http.middlewares[stripMiddlewareName] = {
+                stripPrefix: {
+                    prefixes: [domain.path],
+                },
+            };
+        }
+
+        if (
+            domain.internalPath &&
+            domain.internalPath !== '/' &&
+            domain.internalPath !== domain.path
+        ) {
+            const addPrefixMiddlewareName = `addprefix-${repositoryId}-${domain.id}`;
+            middlewares.push(addPrefixMiddlewareName);
+
+            config.http.middlewares[addPrefixMiddlewareName] = {
+                addPrefix: {
+                    prefix: domain.internalPath,
+                },
+            };
+        }
+
+        const router: Record<string, unknown> = {
+            rule,
+            service: serviceName,
+            entryPoints: domain.https ? ['websecure'] : ['web'],
+        };
+
+        if (middlewares.length > 0) {
+            router.middlewares = middlewares;
+        }
+
+        if (domain.https) {
+            router.tls = {
+                certResolver: 'letsencrypt',
+            };
+        }
+
+        config.http.routers[routerName] = router;
+
+        config.http.services[serviceName] = {
+            loadBalancer: {
+                servers: [
+                    {
+                        url: `http://${containerName}:${domain.containerPort}`,
+                    },
+                ],
+            },
+        };
+    }
+
+    if (Object.keys(config.http.middlewares).length === 0) {
+        delete (config.http as Record<string, unknown>).middlewares;
+    }
+
+    const yamlContent = yaml.stringify(config);
+    await fs.writeFile(filePath, yamlContent, 'utf-8');
+}
+
+export async function deleteTraefikConfigForRepository(repositoryId: string): Promise<void> {
+    const filePath = path.join(TRAEFIK_SERVICE_DIR, `${repositoryId}.yml`);
+
+    try {
+        await fs.unlink(filePath);
+    } catch {
+        /* empty */
+    }
+}
+
+export async function getDomainsFromTraefikConfig(repositoryId: string): Promise<Domain[]> {
+    const filePath = path.join(TRAEFIK_SERVICE_DIR, `${repositoryId}.yml`);
+
+    try {
+        const content = await fs.readFile(filePath, 'utf-8');
+        const config = yaml.parse(content);
+
+        const routers = config?.http?.routers ?? {};
+        const services = config?.http?.services ?? {};
+        const middlewares = config?.http?.middlewares ?? {};
+
+        return Object.entries(routers).map(([routerName, router]: [string, any]) => {
+            const domainId = routerName.replace(`repo-${repositoryId}-`, '');
+
+            const hostMatch = router.rule?.match(/Host\(`([^`]+)`\)/);
+            const pathMatch = router.rule?.match(/PathPrefix\(`([^`]+)`\)/);
+
+            const serverUrl = services[router.service]?.loadBalancer?.servers?.[0]?.url ?? '';
+            const portMatch = serverUrl.match(/:(\d+)$/);
+
+            return {
+                id: domainId,
+                host: hostMatch?.[1] ?? '',
+                path: pathMatch?.[1] ?? '/',
+                internalPath:
+                    middlewares[`addprefix-${repositoryId}-${domainId}`]?.addPrefix?.prefix ?? '/',
+                stripPath: !!middlewares[`strip-${repositoryId}-${domainId}`],
+                containerPort: portMatch ? parseInt(portMatch[1]) : 3000,
+                https: !!router.tls,
+            };
+        });
+    } catch {
+        return [];
+    }
 }

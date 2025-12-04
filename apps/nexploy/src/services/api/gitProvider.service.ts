@@ -62,10 +62,7 @@ class GitProviderService {
                 },
             );
 
-            if (!response.ok) {
-                console.error(`GitLab API error: ${response.status} ${response.statusText}`);
-                return null;
-            }
+            if (!response.ok) throw new Error(`Failed to fetch commits: ${response.status}`);
 
             const commits: GitLabCommit[] = await response.json();
 
@@ -82,8 +79,7 @@ class GitProviderService {
                 message: latestCommit.message,
             };
         } catch (error) {
-            console.error('Error fetching latest GitLab commit:', error);
-            return null;
+            throw new Error(`Failed to fetch commits: ${error}`);
         }
     }
 

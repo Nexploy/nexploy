@@ -7,7 +7,6 @@
         "dev:nexploy": "turbo run dev --filter=nexploy --ui stream",
         "dev:docker-api": "turbo run dev --filter=docker-api --ui stream",
         "dev:desktop": "turbo run dev --filter=desktop",
-        "scalar": "turbo run dev --filter=scalar-server",
         "build": "turbo run build",
         "lint": "turbo run lint",
         "types": "tsc --noEmit",
@@ -93,7 +92,8 @@
         "vaul": "^1.1.2",
         "ws": "^8.18.3",
         "zod": "^4.1.12",
-        "zustand": "^5.0.8"
+        "zustand": "^5.0.8",
+        "yaml": "^2.8.2"
     },
     "devDependencies": {
         "@next/eslint-plugin-next": "^15.5.4",

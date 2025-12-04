@@ -18,9 +18,10 @@ export async function RepositoryBuildsTab({ repositoryId }: RepositoryOverviewTa
                     </div>
                 ) : (
                     <div className="divide-y">
-                        {builds.map((build) => (
+                        {builds.map((build, index) => (
                             <RepositoryBuild
                                 key={build.id}
+                                index={builds.length - index}
                                 repositoryId={repositoryId}
                                 build={build}
                             />

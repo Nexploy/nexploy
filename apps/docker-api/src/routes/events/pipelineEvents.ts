@@ -15,7 +15,6 @@ app.post('/stream/build', async (c) => {
         let isClientDisconnected = false;
 
         c.req.raw.signal.addEventListener('abort', () => {
-            console.log('Client disconnected, aborting build...');
             isClientDisconnected = true;
             abortController.abort();
         });
@@ -62,7 +61,6 @@ app.post('/stream/build', async (c) => {
             await stream.close();
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
-                console.log('Build aborted successfully');
                 await stream.close();
                 return;
             }

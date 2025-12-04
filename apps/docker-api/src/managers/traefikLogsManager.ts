@@ -1,43 +1,92 @@
-import { docker } from '@/utils/dockerClient';
 import { logger } from '@/utils/logger';
-import { EventEmitter } from 'events';
+import { docker } from '@/utils/dockerClient';
 import { TraefikRequest } from '@workspace/typescript-interface/traefik/traefik.request';
+import { BaseStateManager } from '@/lib/BaseStateManager';
 
-const TRAEFIK_CONTAINER_NAME = 'nexploy_traefik_dev';
+const TRAEFIK_CONTAINER_NAME = 'nexploy_traefik';
 const MAX_REQUESTS = 500;
 
-class TraefikLogsManager extends EventEmitter {
+interface TraefikLogEvent {
+    type: 'request' | 'clear';
+    request?: TraefikRequest;
+    requests?: TraefikRequest[];
+    timestamp: number;
+}
+
+class TraefikLogsManager extends BaseStateManager {
     private requests: TraefikRequest[] = [];
-    private isRunning = false;
+    private logStream: NodeJS.ReadableStream | null = null;
+    private logBuffer = '';
+    private reconnectTimeout: NodeJS.Timeout | null = null;
+    private isReconnecting = false;
 
     constructor() {
-        super();
-        this.setMaxListeners(100);
+        super({
+            managerName: 'Traefik Logs Manager',
+            pollIntervalMs: 0,
+            maxReconnectAttempts: 5,
+            maxListeners: 100,
+        });
     }
 
-    async start(): Promise<void> {
-        if (this.isRunning) return;
+    getEventFilters(): Record<string, string[]> {
+        return {
+            type: ['container'],
+            event: ['start', 'stop', 'die', 'kill', 'restart'],
+            container: [TRAEFIK_CONTAINER_NAME],
+        };
+    }
 
+    async loadInitialState(): Promise<void> {
         try {
             const container = docker.getContainer(TRAEFIK_CONTAINER_NAME);
             await container.inspect();
 
-            this.isRunning = true;
-            await this.streamLogs();
-            logger.info('Traefik logs manager started');
+            await this.startLogStream();
+            logger.info('Traefik logs manager initial state loaded');
         } catch (err) {
             logger.warn('Traefik container not found, manager not started');
+            throw err;
         }
     }
 
-    async stop(): Promise<void> {
-        this.isRunning = false;
-        this.requests = [];
-        logger.info('Traefik logs manager stopped');
+    async handleDockerEvent(event: any): Promise<void> {
+        if (event.Type === 'container' && event.Actor.Attributes?.name === TRAEFIK_CONTAINER_NAME) {
+            logger.debug(
+                {
+                    action: event.Action,
+                    containerId: event.Actor.ID,
+                },
+                'Traefik container event received',
+            );
+
+            switch (event.Action) {
+                case 'start':
+                case 'restart':
+                    await this.reconnectLogStream();
+                    break;
+                case 'stop':
+                case 'die':
+                case 'kill':
+                    this.stopLogStream();
+                    break;
+            }
+        }
     }
 
-    private async streamLogs(): Promise<void> {
-        if (!this.isRunning) return;
+    async fullStateSync(): Promise<void> {
+        if (!this.logStream && !this.isReconnecting) {
+            await this.reconnectLogStream();
+        }
+    }
+
+    private async startLogStream(): Promise<void> {
+        if (this.logStream || this.isReconnecting) {
+            logger.debug('Log stream already active or reconnecting, skipping start');
+            return;
+        }
+
+        this.isReconnecting = true;
 
         try {
             const container = docker.getContainer(TRAEFIK_CONTAINER_NAME);
@@ -46,46 +95,96 @@ class TraefikLogsManager extends EventEmitter {
                 follow: true,
                 stdout: true,
                 stderr: true,
-                tail: 100,
+                tail: 0,
                 timestamps: false,
             });
 
-            let buffer = '';
+            this.logStream = stream;
+            this.logBuffer = '';
+            this.isReconnecting = false;
 
             stream.on('data', (chunk: Buffer) => {
-                const data = chunk.toString('utf8');
-                buffer += data;
-
-                const lines = buffer.split('\n');
-                buffer = lines.pop() || '';
-
-                for (const line of lines) {
-                    this.parseLine(line);
-                }
+                this.handleLogData(chunk);
             });
 
             stream.on('error', (err) => {
                 logger.error({ err }, 'Traefik log stream error');
-                this.reconnect();
+                this.logStream = null;
+                if (this.polling) {
+                    this.scheduleReconnect();
+                }
             });
 
             stream.on('end', () => {
                 logger.info('Traefik log stream ended');
-                this.reconnect();
+                this.logStream = null;
+                if (this.polling) {
+                    this.scheduleReconnect();
+                }
             });
+
+            logger.info('Traefik log stream started');
         } catch (err) {
-            logger.error({ err }, 'Failed to stream Traefik logs');
-            this.reconnect();
+            this.isReconnecting = false;
+            logger.error({ err }, 'Failed to start Traefik log stream');
+            throw err;
         }
     }
 
-    private reconnect(): void {
-        if (!this.isRunning) return;
+    private stopLogStream(): void {
+        // Clear any pending reconnect
+        if (this.reconnectTimeout) {
+            clearTimeout(this.reconnectTimeout);
+            this.reconnectTimeout = null;
+        }
 
-        setTimeout(() => {
+        if (this.logStream) {
+            try {
+                (this.logStream as any).destroy?.();
+            } catch (err) {
+                logger.error({ err }, 'Error stopping log stream');
+            }
+            this.logStream = null;
+            this.logBuffer = '';
+        }
+
+        this.isReconnecting = false;
+    }
+
+    private async reconnectLogStream(): Promise<void> {
+        if (this.isReconnecting) {
+            logger.debug('Already reconnecting, skipping');
+            return;
+        }
+
+        this.stopLogStream();
+        await this.startLogStream();
+    }
+
+    private scheduleReconnect(): void {
+        if (!this.polling || this.reconnectTimeout || this.isReconnecting) {
+            return;
+        }
+
+        this.reconnectTimeout = setTimeout(() => {
+            this.reconnectTimeout = null;
             logger.info('Reconnecting to Traefik logs...');
-            this.streamLogs();
+            this.reconnectLogStream().catch((err) => {
+                logger.error({ err }, 'Failed to reconnect log stream');
+            });
         }, 5000);
+    }
+
+    private handleLogData(chunk: Buffer): void {
+        const data = chunk.toString('utf8');
+        this.logBuffer += data;
+
+        const lines = this.logBuffer.split('\n');
+        this.logBuffer = lines.pop() || '';
+
+        for (const line of lines) {
+            this.parseLine(line);
+        }
     }
 
     private parseLine(line: string): void {
@@ -157,16 +256,61 @@ class TraefikLogsManager extends EventEmitter {
             this.requests = this.requests.slice(0, MAX_REQUESTS);
         }
 
-        this.emit('request', { type: 'request', request, timestamp: Date.now() });
+        const event: TraefikLogEvent = {
+            type: 'request',
+            request,
+            timestamp: Date.now(),
+        };
+
+        this.emit('request', event);
+        this.emit('traefik-request', event);
+    }
+
+    protected onStop(): void {
+        this.stopLogStream();
+        this.requests = [];
+        this.logBuffer = '';
+        logger.info('Traefik logs manager stopped and cleaned up');
+    }
+
+    protected getCustomStats(): Record<string, any> {
+        return {
+            requestsInMemory: this.requests.length,
+            logStreamActive: this.logStream !== null,
+            bufferSize: this.logBuffer.length,
+            isReconnecting: this.isReconnecting,
+        };
     }
 
     getRequests(): TraefikRequest[] {
-        return this.requests;
+        return [...this.requests];
+    }
+
+    getRecentRequests(count: number): TraefikRequest[] {
+        return this.requests.slice(0, count);
     }
 
     clearRequests(): void {
         this.requests = [];
-        this.emit('clear', { type: 'initial', requests: [], timestamp: Date.now() });
+
+        const event: TraefikLogEvent = {
+            type: 'clear',
+            requests: [],
+            timestamp: Date.now(),
+        };
+
+        this.emit('clear', event);
+        logger.info('Traefik requests cleared from memory');
+    }
+
+    getRequestStats() {
+        return {
+            totalRequests: this.requests.length,
+            logStreamActive: this.logStream !== null,
+            reconnectAttempts: this.reconnectAttempts,
+            listening: this.polling,
+            isReconnecting: this.isReconnecting,
+        };
     }
 }
 

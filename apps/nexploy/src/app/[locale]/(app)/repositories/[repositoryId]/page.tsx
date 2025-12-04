@@ -4,9 +4,12 @@ import { RunBuildButton } from '@/components/repositories/RunBuildButton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { RepositoryEnvTab } from '@/components/repositories/tabs/envs/RepositoryEnvTab';
 import { RepositoryDomainsTab } from '@/components/repositories/tabs/domains/RepositoryDomainsTab';
-import { GitBranch, Github, Gitlab, Globe, Key, LayoutDashboard, Link2 } from 'lucide-react';
+import { RepositorySettingsTab } from '@/components/repositories/tabs/settings/RepositorySettingsTab';
+import { GitBranch, Github, Gitlab, Globe, Hammer, Key, Link2, Settings } from 'lucide-react';
 import { RepositoryBuildsTab } from '@/components/repositories/tabs/builds/RepositoryBuildsTab';
-import { getRepositorieById } from '@/services/repositorie.service';
+import { getRepositorieById } from '@/services/repository.service';
+import { Separator } from '@workspace/ui/components/separator';
+import { capitalizeFirstLetter } from '@/utils/capitalize';
 
 interface RepositoryIdPageProps {
     params: Promise<{
@@ -40,30 +43,46 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                             <h1 className="text-3xl leading-none font-semibold tracking-tight">
                                 {repository.name}
                             </h1>
-                            <p className="text-muted-foreground flex items-center gap-1 text-sm">
-                                <GitBranch className="size-3" />
-                                <span className="font-mono">{repository.branch}</span>
-                            </p>
+                            <div
+                                className={'text-muted-foreground flex items-center gap-2 text-sm'}
+                            >
+                                <span>{capitalizeFirstLetter(repository.gitProvider)}</span>
+                                <Separator orientation={'vertical'} className={'!h-3 w-1'} />
+                                <p className="flex items-center gap-1">
+                                    <GitBranch className="size-3" />
+                                    <span>{repository.branch}</span>
+                                </p>
+                            </div>
                         </div>
                     </div>
                     <RunBuildButton repositoryId={repository.id} />
                 </div>
 
                 <Tabs defaultValue="overview" className="flex flex-1 flex-col overflow-hidden">
-                    <TabsList className="mx-5 mb-2">
-                        <TabsTrigger value="overview">
-                            <LayoutDashboard />
-                            Builds
-                        </TabsTrigger>
-                        <TabsTrigger value="env">
-                            <Key />
-                            Environment
-                        </TabsTrigger>
-                        <TabsTrigger value="domains">
-                            <Globe />
-                            Domains
-                        </TabsTrigger>
-                    </TabsList>
+                    <div className={'flex justify-between'}>
+                        <TabsList className="mx-5 mb-2">
+                            <div className={'flex gap-2'}>
+                                <TabsTrigger value="overview">
+                                    <Hammer />
+                                    Builds
+                                </TabsTrigger>
+                                <TabsTrigger value="env">
+                                    <Key />
+                                    Environments
+                                </TabsTrigger>
+                                <TabsTrigger value="domain">
+                                    <Globe />
+                                    Domains
+                                </TabsTrigger>
+                            </div>
+                        </TabsList>
+                        <TabsList className="mx-5 mb-2">
+                            <TabsTrigger value="setting">
+                                <Settings />
+                                Settings
+                            </TabsTrigger>
+                        </TabsList>
+                    </div>
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
                         <div className="pb-5">
                             <TabsContent value="overview" className="mt-0">
@@ -72,8 +91,11 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                             <TabsContent value="env" className="mt-0">
                                 <RepositoryEnvTab repositoryId={repository.id} />
                             </TabsContent>
-                            <TabsContent value="domains" className="mt-0">
+                            <TabsContent value="domain" className="mt-0">
                                 <RepositoryDomainsTab repositoryId={repository.id} />
+                            </TabsContent>
+                            <TabsContent value="setting" className="mt-0">
+                                <RepositorySettingsTab repositoryId={repository.id} />
                             </TabsContent>
                         </div>
                     </ScrollAreaWithShadow>

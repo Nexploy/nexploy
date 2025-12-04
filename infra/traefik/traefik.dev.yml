@@ -9,9 +9,6 @@ log:
 accessLog:
   format: json
 
-ping:
-  entryPoint: ping
-
 entryPoints:
   web:
     address: ":80"

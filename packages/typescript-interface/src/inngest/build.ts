@@ -1,5 +1,4 @@
 import { GetGitProviderToken } from '../git';
-import { TraefikConfig } from '../traefik/traefik.config';
 
 export type BuildStatus =
     | 'QUEUED'
@@ -8,6 +7,25 @@ export type BuildStatus =
     | 'FAILED'
     | 'DEPLOYING'
     | 'CANCELLED';
+
+export type BuildStep =
+    | 'clone-repository'
+    | 'prepare-dockerfile'
+    | 'write-env-file'
+    | 'build-docker-image'
+    | 'deploy-container'
+    | 'cleanup'
+    | 'finalize-logs';
+
+export const BUILD_STEPS_ORDER: BuildStep[] = [
+    'clone-repository',
+    'prepare-dockerfile',
+    'write-env-file',
+    'build-docker-image',
+    'deploy-container',
+    'cleanup',
+    'finalize-logs',
+];
 
 export interface BuildLogEntry {
     createdAt: Date;
@@ -29,7 +47,6 @@ export interface BuildConfig extends GetGitProviderToken {
     dockerfilePath?: string;
     imageName: string;
     imageTag: string;
-    port?: number;
     autoDeploy: boolean;
-    traefik?: TraefikConfig;
+    startFromStep?: BuildStep;
 }

@@ -85,7 +85,6 @@ export default function AddRepositoryPage() {
             <ScrollAreaWithShadow className="h-full overflow-hidden">
                 <Form {...form}>
                     <div className="space-y-5 px-5 pb-5">
-                        {/*<GeneralInfoStep />*/}
                         <GitSourceStep />
                         <BuildConfigurationStep />
                         <DeploymentStep />

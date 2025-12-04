@@ -1,23 +1,34 @@
 import { prisma } from '../../../prisma/prisma';
-import { BuildConfig, BuildStatus } from '@workspace/typescript-interface/inngest/build';
+import { BuildConfig, BuildStatus, BuildStep } from '@workspace/typescript-interface/inngest/build';
 import { getGitProviderToken } from '@/services/git/git.service';
 import { gitProviderService } from '@/services/api/gitProvider.service';
 import { addBuildJob } from '@/inngest/jobs/queue';
 import { inngest } from '@/inngest/client';
-import { Prisma } from 'generated/client';
-import { getRepositorieWithEnv } from '@/services/repositorie.service';
+import { getRepositorieWithEnv } from '@/services/repository.service';
+import { setToastServer } from '@/components/utils/toaster/toastServer';
 
-export async function startBuildRepositoryInngest(
-    repository: Exclude<Prisma.PromiseReturnType<typeof getRepositorieWithEnv>, null>,
-    userId: string,
-) {
+export async function startBuildRepositoryInngest(repositoryId: string, userId: string) {
+    const repository = await getRepositorieWithEnv(repositoryId);
+
+    if (!repository) {
+        await setToastServer({
+            type: 'error',
+            message: 'Repository not found',
+        });
+        throw new Error('Repository not found');
+    }
+
     const token = await getGitProviderToken(repository.gitProvider);
-    if (!token) throw new Error('No access token provider found');
+    const accessToken = await gitProviderService.getValidToken(
+        token,
+        repository.gitProvider,
+        userId,
+    );
 
     const lastCommit = await gitProviderService.getLatestCommit(
         repository.repositoryUrl,
         repository.branch,
-        token.accessToken,
+        accessToken,
         repository.gitProvider,
     );
 
@@ -35,16 +46,6 @@ export async function startBuildRepositoryInngest(
         envVariables[env.key] = env.value;
     }
 
-    const traefikLabels: Record<string, string> = {};
-    if (repository.traefikLabels) {
-        for (const label of repository.traefikLabels) {
-            traefikLabels[label.key] = label.value;
-        }
-    }
-
-    const primaryDomain = repository.domains?.[0];
-    const traefikEnabled = !!primaryDomain;
-
     const config: BuildConfig = {
         ...token,
         userId,
@@ -53,17 +54,11 @@ export async function startBuildRepositoryInngest(
         gitProvider: repository.gitProvider,
         gitUrl: repository.repositoryUrl,
         gitBranch: repository.branch,
-        port: primaryDomain?.containerPort || 3000,
         envVariables,
         dockerfilePath: repository.dockerfilePath || undefined,
         imageName,
         imageTag: build.id.slice(-8),
         autoDeploy: repository.autoDeploy,
-        traefik: {
-            enabled: traefikEnabled,
-            domain: primaryDomain?.host,
-            labels: traefikLabels,
-        },
     };
 
     await addBuildJob(build.id, config);
@@ -102,6 +97,17 @@ export async function updateStatusBuildInngest(buildId: string, status: BuildSta
         });
     } catch (error: unknown) {
         throw new Error('Failed to update status build');
+    }
+}
+
+export async function updateLastCompletedStepInngest(buildId: string, step: BuildStep) {
+    try {
+        return await prisma.build.update({
+            where: { id: buildId },
+            data: { lastCompletedStep: step },
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to update last completed step');
     }
 }
 
@@ -175,19 +181,88 @@ export async function retryBuildRepositoryInngest(
         gitProvider: repository.gitProvider,
         gitUrl: repository.repositoryUrl,
         gitBranch: existingBuild.branch,
-        port: 3432,
         envVariables,
         dockerfilePath: repository.dockerfilePath || undefined,
         imageName,
         imageTag: buildId.slice(-8),
         autoDeploy: repository.autoDeploy,
-        traefik: {
-            enabled: true,
-            labels: {},
-        },
     };
 
     await addBuildJob(buildId, config);
+}
+
+export async function resumeBuildRepositoryInngest(
+    buildId: string,
+    userId: string,
+    existingBuild: Awaited<ReturnType<typeof findBuildWithEnvInngest>>,
+    startFromStep?: BuildStep,
+) {
+    if (!existingBuild || !existingBuild.repository) {
+        throw new Error('Build or Repository not found');
+    }
+
+    if (existingBuild.status !== 'FAILED') {
+        throw new Error('Can only resume failed builds');
+    }
+
+    const repository = existingBuild.repository;
+
+    const token = await getGitProviderToken(repository.gitProvider);
+    if (!token) throw new Error('No access token provider found');
+
+    const imageName = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+
+    const envVariables: Record<string, string> = {};
+    for (const env of repository.envVariables) {
+        envVariables[env.key] = env.value;
+    }
+
+    const resumeStep =
+        startFromStep || getNextStep(existingBuild.lastCompletedStep as BuildStep | null);
+
+    const config: BuildConfig = {
+        ...token,
+        userId,
+        repositoryId: repository.id,
+        repositoryPath: repository.contextPath || '.',
+        gitProvider: repository.gitProvider,
+        gitUrl: repository.repositoryUrl,
+        gitBranch: existingBuild.branch,
+        envVariables,
+        dockerfilePath: repository.dockerfilePath || undefined,
+        imageName,
+        imageTag: buildId.slice(-8),
+        autoDeploy: repository.autoDeploy,
+        startFromStep: resumeStep,
+    };
+
+    await prisma.build.update({
+        where: { id: buildId },
+        data: { status: 'QUEUED' },
+    });
+
+    await addBuildJob(buildId, config);
+}
+
+function getNextStep(lastCompletedStep: BuildStep | null): BuildStep | undefined {
+    if (!lastCompletedStep) return undefined;
+
+    const steps: BuildStep[] = [
+        'clone-repository',
+        'prepare-dockerfile',
+        'write-env-file',
+        'build-docker-image',
+        'deploy-container',
+        'cleanup',
+        'finalize-logs',
+    ];
+
+    const currentIndex = steps.indexOf(lastCompletedStep);
+    if (currentIndex === -1 || currentIndex >= steps.length - 1) {
+        return undefined;
+    }
+
+    return steps[currentIndex + 1];
 }
 
 export async function getAllBuildsInngest(repositoryId: string) {

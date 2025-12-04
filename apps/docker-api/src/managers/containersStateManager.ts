@@ -1,6 +1,6 @@
 import { docker } from '@/utils/dockerClient';
 import { logger } from '@/utils/logger';
-import { ContainerInfo, ContainerInspectInfo } from 'dockerode';
+import { ContainerCreateOptions, ContainerInfo, ContainerInspectInfo } from 'dockerode';
 import {
     Containers,
     ContainersEvent,
@@ -10,7 +10,6 @@ import {
 } from '@workspace/typescript-interface/docker/docker.containers';
 import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { BaseStateManager } from '@/lib/BaseStateManager';
-import { buildTraefikLabels, sanitizeServiceName } from '@/services/traefik.service';
 import { DeployOptions } from '@workspace/typescript-interface/inngest/deploy';
 
 class ContainersStateManager extends BaseStateManager {
@@ -404,11 +403,9 @@ class ContainersStateManager extends BaseStateManager {
         containerId: string;
         port?: number;
     }> {
-        const port = options.port || 3000;
         const containerName = options.containerName || `deploy-${repositoryId}`;
-        const serviceName = sanitizeServiceName(containerName);
 
-        logger.info({ repositoryId, imageName, containerName, port }, 'Starting deployment');
+        logger.info({ repositoryId, imageName, containerName }, 'Starting deployment');
 
         await this.removeExistingContainer(containerName);
 
@@ -416,46 +413,24 @@ class ContainersStateManager extends BaseStateManager {
             ? Object.entries(options.envVars).map(([key, value]) => `${key}=${value}`)
             : [];
 
-        const { labels: traefikLabels, networkMode } = buildTraefikLabels(
-            serviceName,
-            port,
-            options.traefik,
-        );
-
-        const labels: Record<string, string> = {
-            'deployer.project': repositoryId,
-            ...traefikLabels,
-        };
-
-        const containerConfig: any = {
+        const containerConfig: ContainerCreateOptions = {
             name: containerName,
             Image: imageName,
             Env: envArray,
-            ExposedPorts: {
-                [`${port}/tcp`]: {},
-            },
             HostConfig: {
                 RestartPolicy: { Name: 'unless-stopped' },
-                NetworkMode: networkMode,
+                NetworkMode: 'nexploy_traefik_network',
             },
-            Labels: labels,
         };
-
-        if (options.port) {
-            containerConfig.HostConfig.PortBindings = {
-                [`${port}/tcp`]: [{ HostPort: String(port) }],
-            };
-        }
 
         const container = await docker.createContainer(containerConfig);
         await container.start();
 
-        logger.info({ containerId: container.id, port }, 'Deployment started');
+        logger.info({ containerId: container.id }, 'Deployment started');
 
         return {
             buildId: containerName,
             containerId: container.id,
-            port,
         };
     }
 

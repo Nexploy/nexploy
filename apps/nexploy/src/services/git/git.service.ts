@@ -29,24 +29,16 @@ export async function getGitProviderToken(provider: string): Promise<GetGitProvi
 
 export async function getRepositories(provider: string, userId: string): Promise<GitRepository[]> {
     const token = await getGitProviderToken(provider);
+    const accessToken = await gitProviderService.getValidToken(token, provider, userId);
 
     switch (provider) {
         case 'github': {
             const res = await fetch('https://api.github.com/user/repos', {
                 headers: {
-                    Authorization: `Bearer ${token.accessToken}`,
+                    Authorization: `Bearer ${accessToken}`,
                     Accept: 'application/vnd.github+json',
                 },
             });
-
-            // const res = (await drino
-            //     .get('https://api.github.com/user/repos', {
-            //         headers: {
-            //             Authorization: `Bearer ${token.accessToken}`,
-            //             Accept: 'application/vnd.github+json',
-            //         },
-            //     })
-            //     .consume()) as Response;
 
             if (!res.ok) throw new Error('Failed to fetch GitHub repositories');
 
@@ -62,14 +54,11 @@ export async function getRepositories(provider: string, userId: string): Promise
             }));
         }
         case 'gitlab': {
-            const token = await getGitProviderToken(provider);
-            await gitProviderService.getValidToken(token, provider, userId);
-
             const res = await fetch(
                 'https://gitlab.com/api/v4/projects?membership=true&order_by=updated_at',
                 {
                     headers: {
-                        Authorization: `Bearer ${token.accessToken}`,
+                        Authorization: `Bearer ${accessToken}`,
                     },
                 },
             );
@@ -93,16 +82,18 @@ export async function getRepositories(provider: string, userId: string): Promise
 export async function getBranches(
     provider: 'github' | 'gitlab',
     repoId: string,
+    userId: string,
     owner?: string,
     repoName?: string,
 ): Promise<GitBranch[]> {
     const token = await getGitProviderToken(provider);
+    const accessToken = await gitProviderService.getValidToken(token, provider, userId);
 
     if (provider === 'github') {
         if (!owner || !repoName) throw new Error('Owner and repo name required for GitHub');
         const res = await fetch(`https://api.github.com/repos/${owner}/${repoName}/branches`, {
             headers: {
-                Authorization: `Bearer ${token.accessToken}`,
+                Authorization: `Bearer ${accessToken}`,
                 Accept: 'application/vnd.github+json',
             },
         });
@@ -119,7 +110,7 @@ export async function getBranches(
             `https://gitlab.com/api/v4/projects/${repoId}/repository/branches`,
             {
                 headers: {
-                    Authorization: `Bearer ${token.accessToken}`,
+                    Authorization: `Bearer ${accessToken}`,
                 },
             },
         );

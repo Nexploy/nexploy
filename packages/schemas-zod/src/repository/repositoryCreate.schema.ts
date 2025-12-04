@@ -1,8 +1,8 @@
 import { z } from 'zod';
+import { branchNameSchema } from './branch.schema';
 
 export const repositoryCreateFormSchema = z.object({
     name: z.string().min(1, 'Le nom du projet est requis'),
-
     repo: z.object(
         {
             id: z.string(),
@@ -16,13 +16,12 @@ export const repositoryCreateFormSchema = z.object({
             error: 'Le dépôt est requis',
         },
     ),
-    branch: z.string().default('main'),
+    branch: branchNameSchema,
     gitToken: z
         .string()
         .optional()
         .transform((value) => (value === '' ? undefined : value)),
     gitProvider: z.enum(['github', 'gitlab', 'manual']),
-
     buildType: z.enum(['DOCKERFILE', 'NIXPACKS', 'BUILDPACKS']).default('DOCKERFILE'),
     dockerfilePath: z.string().default('Dockerfile'),
     contextPath: z.string().default('.'),
@@ -30,7 +29,6 @@ export const repositoryCreateFormSchema = z.object({
         .string()
         .optional()
         .transform((value) => (value === '' ? undefined : value)),
-
     autoDeploy: z.boolean().default(true),
 });
 

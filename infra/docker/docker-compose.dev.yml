@@ -1,8 +1,9 @@
-name: nexploy_dev
+name: nexploy
 services:
   postgres:
     image: postgres:18.0
-    container_name: nexploy_postgres_dev
+    container_name: nexploy_postgres
+    restart: unless-stopped
     ports:
       - "5433:5432"
     networks:
@@ -21,7 +22,8 @@ services:
 
   inngest:
     image: inngest/inngest:v1.14.0
-    container_name: nexploy_inngest_dev
+    container_name: nexploy_inngest
+    restart: unless-stopped
     ports:
       - "8288:8288"
     networks:
@@ -35,7 +37,7 @@ services:
 
   traefik:
     image: traefik:v3.6.2
-    container_name: nexploy_traefik_dev
+    container_name: nexploy_traefik
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -45,7 +47,7 @@ services:
       - "80:80"
       - "8080:8080"
     networks:
-      - nexploy_network
+      - traefik_network
     labels:
       - "traefik.enable=true"
     healthcheck:
@@ -59,4 +61,7 @@ volumes:
 
 networks:
   nexploy_network:
+    driver: bridge
+  traefik_network:
+    name: nexploy_traefik_network
     driver: bridge
