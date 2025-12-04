@@ -33,7 +33,6 @@ export function ClientToasts({ toasts }: { toasts: ToastItem[] }) {
                     description: toast.description,
                     onDismiss: () => startTransition(toast.dismiss),
                     onAutoClose: () => startTransition(toast.dismiss),
-                    position: 'top-right' as const,
                 };
 
                 sonnerToast[toast.type](toast.message, options);

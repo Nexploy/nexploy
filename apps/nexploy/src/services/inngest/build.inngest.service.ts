@@ -18,7 +18,7 @@ export async function startBuildRepositoryInngest(repositoryId: string, userId: 
         throw new Error('Repository not found');
     }
 
-    const token = await getGitProviderToken(repository.gitProvider);
+    const token = await getGitProviderToken(repository.gitProvider, userId);
     const accessToken = await gitProviderService.getValidToken(
         token,
         repository.gitProvider,

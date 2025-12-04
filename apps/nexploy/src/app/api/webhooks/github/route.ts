@@ -41,6 +41,8 @@ export async function POST(request: NextRequest) {
         }
 
         await startBuildRepositoryInngest(repo.id, repo.webhookSecret!);
+
+        return NextResponse.json({ message: 'Build started' });
     } catch (error: unknown) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }

@@ -1,7 +1,7 @@
 import { GitProviderCard } from '@/components/git/GitProviderCard';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { listAccount } from '@/services/auth/auth.service';
-import { GitBranch, Github, Gitlab } from 'lucide-react';
+import { Github, Gitlab, Plug } from 'lucide-react';
 
 export default async function GitPage() {
     const accounts = await listAccount();
@@ -31,15 +31,13 @@ export default async function GitPage() {
             <div className="flex flex-col gap-5 overflow-hidden">
                 <div className="flex gap-3 px-5">
                     <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <GitBranch className="text-primary size-7" />
+                        <Plug className="text-primary size-7" />
                     </div>
                     <div className="flex flex-col">
                         <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                            Git Integrations
+                            Integrations
                         </h1>
-                        <p className="text-muted-foreground text-sm">
-                            Gérez vos connexions aux fournisseurs de versioning
-                        </p>
+                        <p className="text-muted-foreground text-sm">Gérez vos connexions</p>
                     </div>
                 </div>
 

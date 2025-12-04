@@ -48,9 +48,8 @@ export function RepositorySettings({ repository }: RepositorySettingsProps) {
             toast.success(data?.autoDeploy ? 'Auto-deploy activé' : 'Auto-deploy désactivé');
             router.refresh();
         },
-        onError: ({ error }) => {
-            setAutoDeploy(!autoDeploy);
-            toast.error(error.serverError || 'Erreur lors de la mise à jour');
+        onError: () => {
+            setAutoDeploy((prevState) => !prevState);
         },
     });
 
@@ -87,9 +86,11 @@ export function RepositorySettings({ repository }: RepositorySettingsProps) {
                 <CardContent>
                     <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
-                            <Label htmlFor="auto-deploy">Activer l'auto-deploy</Label>
+                            <Label htmlFor="auto-deploy">
+                                {autoDeploy ? 'Désactiver' : 'Activer'} l'auto-deploy
+                            </Label>
                             <p className="text-muted-foreground text-sm">
-                                Un webhook sera {autoDeploy ? 'configuré' : 'supprimé'} sur le dépôt
+                                Un webhook sera {autoDeploy ? 'supprimé' : 'configuré'} sur le dépôt
                                 Git
                             </p>
                         </div>

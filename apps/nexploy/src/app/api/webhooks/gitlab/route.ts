@@ -35,6 +35,8 @@ export async function POST(request: NextRequest) {
         }
 
         await startBuildRepositoryInngest(repo.id, gitlabTokenUserId);
+
+        return NextResponse.json({ message: 'Build started' });
     } catch (error) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }

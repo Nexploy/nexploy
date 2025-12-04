@@ -18,7 +18,7 @@ import { ProviderSource } from '@/components/repositories/create/steps/source/Pr
 import { SocialAccount } from '@workspace/typescript-interface/auth/social-account';
 
 export function GitSourceStep() {
-    const { control } = useFormContext();
+    const { control, setValue } = useFormContext();
 
     const { data: accounts } = useSWR<SocialAccount[] | null>(
         'auth/listAccounts',
@@ -38,7 +38,11 @@ export function GitSourceStep() {
                     render={({ field }) => (
                         <FormItem>
                             <Tabs
-                                onValueChange={field.onChange}
+                                onValueChange={(value) => {
+                                    field.onChange(value);
+                                    setValue('repo', undefined);
+                                    setValue('branch', 'main');
+                                }}
                                 defaultValue={field.value}
                                 className="w-full"
                             >

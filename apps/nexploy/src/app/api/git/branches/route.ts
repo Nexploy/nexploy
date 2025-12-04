@@ -19,7 +19,7 @@ export const GET = route.use(authRouteServer).handler(async (request, { ctx }: a
     }
 
     try {
-        const branches = await getBranches(provider, repoId, ctx.session.user.id, repoName);
+        const branches = await getBranches(provider, repoId, ctx.session.user.id, owner, repoName);
         return NextResponse.json(branches);
     } catch (error: any) {
         return NextResponse.json(

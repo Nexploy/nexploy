@@ -20,6 +20,7 @@ export const auth = betterAuth({
         github: {
             clientId: env.GITHUB_CLIENT_ID,
             clientSecret: env.GITHUB_CLIENT_SECRET,
+            scope: ['user:email', 'read:user', 'repo'],
         },
         gitlab: {
             clientId: env.GITLAB_CLIENT_ID,

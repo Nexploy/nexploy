@@ -81,6 +81,7 @@ export async function deleteGitLabWebhook(
 
 export async function createGitHubWebhook(
     repositoryUrl: string,
+    accessToken: string,
     userId: string,
     webhookUrl: string,
 ): Promise<{ webhookId: string; webhookSecret: string }> {
@@ -89,9 +90,9 @@ export async function createGitHubWebhook(
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/hooks`, {
         method: 'POST',
         headers: {
-            Authorization: `token ${userId}`,
-            Accept: 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+            Accept: 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
         },
         body: JSON.stringify({
             name: 'web',
@@ -100,8 +101,8 @@ export async function createGitHubWebhook(
             config: {
                 url: webhookUrl,
                 content_type: 'json',
-                secret: userId,
                 insecure_ssl: '0',
+                secret: userId,
             },
         }),
     });
@@ -153,7 +154,7 @@ export async function setupWebhookForRepository(
     if (gitProvider === 'gitlab') {
         result = await createGitLabWebhook(repositoryUrl, accessToken, userId, webhookUrl);
     } else if (gitProvider === 'github') {
-        result = await createGitHubWebhook(repositoryUrl, userId, webhookUrl);
+        result = await createGitHubWebhook(repositoryUrl, accessToken, userId, webhookUrl);
     } else {
         throw new Error(`Unsupported git provider: ${gitProvider}`);
     }

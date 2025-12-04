@@ -22,6 +22,7 @@ import { capitalizeFirstLetter } from '@/utils/capitalize';
 import Link from 'next/link';
 import { SocialAccount } from '@workspace/typescript-interface/auth/social-account';
 import { GitBranch, GitRepository } from '@workspace/typescript-interface/git';
+import { BookMarked, GitBranch as GitBranchIcon } from 'lucide-react';
 
 interface ProviderSourceProps {
     accounts?: SocialAccount[] | null;
@@ -56,7 +57,7 @@ export function ProviderSource({ accounts }: ProviderSourceProps) {
                     Vous n&apos;avez pas connecté de compte {capitalizeFirstLetter(gitProvider)}
                 </div>
                 <Button asChild>
-                    <Link href="/git">Connecter {capitalizeFirstLetter(gitProvider)}</Link>
+                    <Link href="/integrations">Connecter {capitalizeFirstLetter(gitProvider)}</Link>
                 </Button>
             </div>
         );
@@ -79,7 +80,7 @@ export function ProviderSource({ accounts }: ProviderSourceProps) {
                                     setValue('branch', repo.defaultBranch);
                                 }
                             }}
-                            value={field.value?.id}
+                            value={field.value?.id || ''}
                             disabled={isLoadingRepos}
                         >
                             <FormControl>
@@ -96,6 +97,7 @@ export function ProviderSource({ accounts }: ProviderSourceProps) {
                             <SelectContent>
                                 {repos?.map((repo) => (
                                     <SelectItem key={repo.id} value={repo.id}>
+                                        <BookMarked />
                                         {repo.fullName || repo.name}
                                     </SelectItem>
                                 ))}
@@ -126,6 +128,7 @@ export function ProviderSource({ accounts }: ProviderSourceProps) {
                             <SelectContent>
                                 {branches?.map((branch) => (
                                     <SelectItem key={branch.name} value={branch.name}>
+                                        <GitBranchIcon />
                                         {branch.name}
                                     </SelectItem>
                                 ))}

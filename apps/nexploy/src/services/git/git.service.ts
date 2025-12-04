@@ -4,13 +4,16 @@ import { GetGitProviderToken, GitBranch, GitRepository } from '@workspace/typesc
 import { GithubRepo } from '@workspace/typescript-interface/repository';
 import { gitProviderService } from '@/services/api/gitProvider.service';
 
-export async function getGitProviderToken(provider: string): Promise<GetGitProviderToken> {
-    const session = await getUserSession();
-    if (!session?.user) throw new Error('Unauthorized');
+export async function getGitProviderToken(
+    provider: string,
+    requestedUserId?: string,
+): Promise<GetGitProviderToken> {
+    const userId = requestedUserId ?? (await getUserSession())?.user.id;
+    if (!userId) throw new Error('Unauthorized');
 
     const tokens = await prisma.account.findFirst({
         where: {
-            userId: session.user.id,
+            userId,
             providerId: provider,
         },
         select: {

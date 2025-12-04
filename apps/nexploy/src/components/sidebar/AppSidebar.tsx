@@ -3,13 +3,15 @@ import {
     Bug,
     ChevronRight,
     Container,
+    Database,
     EthernetPort,
     Folder,
-    GitBranch,
     HardDrive,
     LayoutList,
     Network,
     Send,
+    Settings,
+    Users,
 } from 'lucide-react';
 import {
     Sidebar,
@@ -34,7 +36,7 @@ import {
 import Link from 'next/link';
 import { ElementType, ReactElement } from 'react';
 import { NexployLogo } from '@/components/sidebar/NexployLogo';
-import { AccountMenu } from '@/components/sidebar/account/AccountMenu';
+import { AccountMenu } from '@/components/sidebar/AccountMenu';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset';
@@ -55,7 +57,8 @@ interface SidebarItem {
     children?: SidebarItem[];
 }
 
-const groups: Group[] = [
+let groups: Group[];
+groups = [
     {
         title: 'Home',
         children: [
@@ -87,10 +90,11 @@ const groups: Group[] = [
         ],
     },
     {
-        title: 'Settings',
+        title: 'Admin',
         children: [
-            { title: 'Git', href: '/git', icon: GitBranch },
-            { title: 'Preferences', href: '/settings/preferences', icon: LayoutList },
+            { title: 'Users', href: '/admin/users', icon: Users },
+            { title: 'Backups', href: '/admin/backups', icon: Database },
+            { title: 'Preferences', href: '/settings/preferences', icon: Settings },
         ],
     },
 ];

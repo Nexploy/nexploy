@@ -12,6 +12,9 @@ import {
 import { Plus, X } from 'lucide-react';
 import * as React from 'react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
+import { statusMap } from '@/utils/statusMap';
 
 interface GitProviderCardProps {
     provider: string;
@@ -29,32 +32,24 @@ export function GitProviderCard({
     icon,
 }: GitProviderCardProps) {
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
 
     const handleConnect = async () => {
-        try {
-            setIsLoading(true);
-            await authClient.linkSocial({
-                provider,
-                callbackURL: '/git',
-            });
-        } catch (error) {
-            console.error('Error connecting to ' + provider, error);
-        } finally {
-            setIsLoading(false);
-        }
+        setIsLoading(true);
+        await authClient.linkSocial({
+            provider,
+            callbackURL: '/integrations',
+        });
+        setIsLoading(false);
     };
 
     const handleDeconnect = async () => {
-        try {
-            setIsLoading(true);
-            await authClient.unlinkAccount({
-                providerId: provider,
-            });
-        } catch (error) {
-            console.error('Error connecting to ' + provider, error);
-        } finally {
-            setIsLoading(false);
-        }
+        setIsLoading(true);
+        await authClient.unlinkAccount({
+            providerId: provider,
+        });
+        setIsLoading(false);
+        router.refresh();
     };
 
     return (
@@ -63,6 +58,12 @@ export function GitProviderCard({
                 <CardTitle className="flex items-center gap-2">
                     {icon}
                     {name}
+                    <Status status={statusMap[isConnected ? 'connected' : 'disconnected'].status}>
+                        <StatusIndicator />
+                        <StatusLabel>
+                            {statusMap[isConnected ? 'connected' : 'disconnected'].label}
+                        </StatusLabel>
+                    </Status>
                 </CardTitle>
                 <CardDescription>{description}</CardDescription>
             </CardHeader>
