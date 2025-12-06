@@ -2,7 +2,15 @@ import { prisma } from '@/../prisma/prisma';
 import { getUserSession } from '@/services/auth/auth.service';
 import { GetGitProviderToken, GitBranch, GitRepository } from '@workspace/typescript-interface/git';
 import { GithubRepo } from '@workspace/typescript-interface/repository';
-import { gitProviderService } from '@/services/api/gitProvider.service';
+import { getValidToken } from '@/services/api/gitProvider.service';
+
+export function extractGitHubRepo(repositoryUrl: string): { owner: string; repo: string } {
+    const match = repositoryUrl.match(/github\.com[\/:]([^\/]+)\/([^\/\.]+)/);
+    if (match && match[1] && match[2]) {
+        return { owner: match[1], repo: match[2].replace('.git', '') };
+    }
+    throw new Error(`Invalid GitHub repository URL: ${repositoryUrl}`);
+}
 
 export async function getGitProviderToken(
     provider: string,
@@ -32,7 +40,7 @@ export async function getGitProviderToken(
 
 export async function getRepositories(provider: string, userId: string): Promise<GitRepository[]> {
     const token = await getGitProviderToken(provider);
-    const accessToken = await gitProviderService.getValidToken(token, provider, userId);
+    const accessToken = await getValidToken(token, provider, userId);
 
     switch (provider) {
         case 'github': {
@@ -90,7 +98,7 @@ export async function getBranches(
     repoName?: string,
 ): Promise<GitBranch[]> {
     const token = await getGitProviderToken(provider);
-    const accessToken = await gitProviderService.getValidToken(token, provider, userId);
+    const accessToken = await getValidToken(token, provider, userId);
 
     if (provider === 'github') {
         if (!owner || !repoName) throw new Error('Owner and repo name required for GitHub');

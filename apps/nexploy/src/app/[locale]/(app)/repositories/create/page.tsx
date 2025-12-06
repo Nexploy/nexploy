@@ -9,9 +9,9 @@ import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { repositoryCreateFormSchema } from '@workspace/schemas-zod/repository/repositoryCreate.schema';
 import { onRepositoryCreateAction } from '@/actions/repository/repositoryCreate.action';
-import { GitSourceStep } from '@/components/repositories/create/steps/source/GitSourceStep';
-import { BuildConfigurationStep } from '@/components/repositories/create/steps/BuildConfigurationStep';
-import { DeploymentStep } from '@/components/repositories/create/steps/DeploymentStep';
+import { GitSourceStep } from '@/components/repositories/steps/source/GitSourceStep';
+import { BuildConfigurationStep } from '@/components/repositories/steps/BuildConfigurationStep';
+import { DeploymentStep } from '@/components/repositories/steps/DeploymentStep';
 
 export default function AddRepositoryPage() {
     const router = useRouter();

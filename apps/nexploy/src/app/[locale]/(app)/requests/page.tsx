@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeft, ChevronRight, Send, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Send } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { useRequestsStore } from '@/stores/traefik/useRequestsStore';
 import { useState } from 'react';
@@ -38,7 +38,6 @@ function RequestsContent() {
         setSearchQuery,
         setMethodFilter,
         setStatusFilter,
-        clearRequests,
     } = useRequestsStore();
 
     const [pageSize, setPageSize] = useState<number | 'all'>(25);
@@ -115,32 +114,22 @@ function RequestsContent() {
     const paginatedRequests = filteredRequests.slice(startIndex, endIndex);
 
     return (
-        <div className="flex h-full flex-1 flex-col gap-5 pt-5">
-            <div className="flex items-center justify-between px-5">
-                <div className="flex gap-3">
-                    <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <Send className="text-primary size-7" />
-                    </div>
-                    <div className="flex flex-col">
-                        <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                            Requests
-                        </h1>
-                        <p className="text-muted-foreground text-sm">
-                            {requests.length > 0
-                                ? `${requests.length} requêtes capturées`
-                                : 'En attente de requêtes...'}
-                        </p>
-                    </div>
+        <div className="flex h-full flex-1 flex-col gap-4 pt-5">
+            <div className="flex gap-3 px-5">
+                <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+                    <Send className="text-primary size-7" />
                 </div>
-                {requests.length > 0 && (
-                    <Button variant="outline" size="sm" onClick={clearRequests}>
-                        <Trash2 className="size-4" />
-                        Effacer
-                    </Button>
-                )}
+                <div className="flex flex-col">
+                    <h1 className="text-3xl leading-none font-semibold tracking-tight">Requests</h1>
+                    <p className="text-muted-foreground text-sm">
+                        {requests.length > 0
+                            ? `${requests.length} requêtes capturées`
+                            : 'En attente de requêtes...'}
+                    </p>
+                </div>
             </div>
             <ScrollAreaWithShadow className="h-full overflow-hidden">
-                <div className="space-y-3 pb-5">
+                <div className="space-y-3 pt-1 pb-5">
                     <div className="mx-5 flex justify-between gap-3">
                         <Input
                             className="w-1/4 shadow-xs"

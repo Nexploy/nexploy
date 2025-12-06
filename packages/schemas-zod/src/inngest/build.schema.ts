@@ -18,6 +18,10 @@ export const retryBuildSchema = z.object({
     buildId: z.cuid(),
 });
 
+export const removeBuildSchema = z.object({
+    buildId: z.cuid(),
+});
+
 export const resumeBuildSchema = z.object({
     buildId: z.cuid(),
     startFromStep: buildStepSchema.optional(),

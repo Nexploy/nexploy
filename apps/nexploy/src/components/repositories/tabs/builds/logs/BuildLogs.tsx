@@ -6,12 +6,11 @@ import { Button } from '@workspace/ui/components/button';
 import { ArrowLeft, GitBranch, GitCommit } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Separator } from '@workspace/ui/components/separator';
-import { StopBuildButton } from '@/components/repositories/StopBuildButton';
-import { RetryBuildButton } from '@/components/repositories/RetryBuildButton';
 import { BuildLogsViewer } from '@/components/repositories/tabs/builds/logs/BuildLogsViewer';
 import { useRouter } from 'next/navigation';
 import { getRepositorieBuildLogs } from '@/services/repository.service';
 import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
+import { useBuildActions } from '@/hooks/useBuildActions';
 
 interface BuildLogsProps {
     build: NonNullable<Awaited<ReturnType<typeof getRepositorieBuildLogs>>>;
@@ -31,6 +30,11 @@ export function BuildLogs({ build }: BuildLogsProps) {
     });
 
     const status: BuildStatus = latestData?.data.status ?? build.status;
+    const actions = useBuildActions({
+        buildId: build.id,
+        status,
+        lastCompletedStep: build.lastCompletedStep,
+    });
 
     return (
         <div className="flex h-full w-full flex-col">
@@ -68,10 +72,23 @@ export function BuildLogs({ build }: BuildLogsProps) {
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        {status === 'QUEUED' ||
-                            (status === 'BUILDING' && <StopBuildButton buildId={build.id} />)}
-                        {status === 'FAILED' ||
-                            (status === 'CANCELLED' && <RetryBuildButton buildId={build.id} />)}
+                        {actions.map((action) =>
+                            action.type === 'component' ? (
+                                <div key={action.id}>{action.component}</div>
+                            ) : (
+                                <Button
+                                    key={action.id}
+                                    size={action.label ? 'default' : 'icon'}
+                                    variant={
+                                        action.variant === 'destructive' ? 'destructive' : 'default'
+                                    }
+                                    onClick={action.onClick}
+                                >
+                                    <action.icon className="size-4" />
+                                    {action.label}
+                                </Button>
+                            ),
+                        )}
                     </div>
                 </div>
             </div>

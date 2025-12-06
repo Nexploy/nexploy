@@ -14,6 +14,7 @@ import {
 } from '@workspace/ui/components/form';
 import { Switch } from '@workspace/ui/components/switch';
 import { useFormContext } from 'react-hook-form';
+import { Rocket } from 'lucide-react';
 
 export function DeploymentStep() {
     const { control } = useFormContext();
@@ -21,8 +22,15 @@ export function DeploymentStep() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Déploiement</CardTitle>
-                <CardDescription>Paramètres de déploiement automatique</CardDescription>
+                <div className={'flex gap-2'}>
+                    <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
+                        <Rocket className="text-primary size-5" />
+                    </div>
+                    <div className={'flex flex-col'}>
+                        <CardTitle>Déploiement</CardTitle>
+                        <CardDescription>Paramètres de déploiement</CardDescription>
+                    </div>
+                </div>
             </CardHeader>
             <CardContent>
                 <FormField

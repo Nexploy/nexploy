@@ -24,7 +24,6 @@ export interface RequestsState {
 
     setRequests: (requests: TraefikRequest[]) => void;
     addRequest: (request: TraefikRequest) => void;
-    clearRequests: () => void;
     setError: (error: Error | null) => void;
     setLastUpdate: (timestamp: number) => void;
     applyFilter: () => void;

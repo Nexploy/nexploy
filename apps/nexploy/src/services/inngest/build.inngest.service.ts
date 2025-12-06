@@ -1,7 +1,7 @@
 import { prisma } from '../../../prisma/prisma';
 import { BuildConfig, BuildStatus, BuildStep } from '@workspace/typescript-interface/inngest/build';
 import { getGitProviderToken } from '@/services/git/git.service';
-import { gitProviderService } from '@/services/api/gitProvider.service';
+import { getLatestCommit, getValidToken } from '@/services/api/gitProvider.service';
 import { addBuildJob } from '@/inngest/jobs/queue';
 import { inngest } from '@/inngest/client';
 import { getRepositorieWithEnv } from '@/services/repository.service';
@@ -19,13 +19,9 @@ export async function startBuildRepositoryInngest(repositoryId: string, userId: 
     }
 
     const token = await getGitProviderToken(repository.gitProvider, userId);
-    const accessToken = await gitProviderService.getValidToken(
-        token,
-        repository.gitProvider,
-        userId,
-    );
+    const accessToken = await getValidToken(token, repository.gitProvider, userId);
 
-    const lastCommit = await gitProviderService.getLatestCommit(
+    const lastCommit = await getLatestCommit(
         repository.repositoryUrl,
         repository.branch,
         accessToken,
@@ -62,6 +58,16 @@ export async function startBuildRepositoryInngest(repositoryId: string, userId: 
     };
 
     await addBuildJob(build.id, config);
+}
+
+export async function removeBuild(buildId: string) {
+    try {
+        return await prisma.build.delete({
+            where: { id: buildId },
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to remove build');
+    }
 }
 
 export async function createBuildInngest({

@@ -8,6 +8,8 @@ import dayjs from 'dayjs';
 import { Build } from 'generated/client';
 import { Separator } from '@workspace/ui/components/separator';
 import { getStatusBadge } from '@/components/utils/StatusBadge';
+import { BuildDropdownActions } from '@/components/repositories/BuildDropdownActions';
+import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
 
 interface BuildLogsProps {
     repositoryId: string;
@@ -27,14 +29,16 @@ export function RepositoryBuild({ repositoryId, build, index }: BuildLogsProps) 
         },
     });
 
+    const status: BuildStatus = latestData?.data.status ?? build.status;
+
     return (
         <Link
             href={`/repositories/${repositoryId}/${build.id}`}
-            className="hover:bg-muted/50 flex cursor-pointer flex-col justify-center p-3"
+            className="hover:bg-muted/50 flex cursor-pointer items-center justify-between gap-2 p-3"
         >
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
-                    {getStatusBadge(latestData?.data.status ?? build.status)}
+                    {getStatusBadge(status)}
                     <span className="line-clamp-1 text-sm font-medium">
                         #{index} {build.commitMessage ?? `#${build.id}`}
                     </span>
@@ -57,6 +61,11 @@ export function RepositoryBuild({ repositoryId, build, index }: BuildLogsProps) 
                     </span>
                 </div>
             </div>
+            <BuildDropdownActions
+                buildId={build.id}
+                status={status}
+                lastCompletedStep={build.lastCompletedStep}
+            />
         </Link>
     );
 }

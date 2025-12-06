@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
-    findRepositoryByWebhook,
     parseGitHubWebhook,
     verifyGitHubSignature,
-} from '@/services/webhook.service';
+} from '@/services/webhook/github.webhook.service';
 import { startBuildRepositoryInngest } from '@/services/inngest/build.inngest.service';
+import { findRepositoryByWebhook } from '@/services/webhook/webhook.service';
 
 export async function POST(request: NextRequest) {
     try {

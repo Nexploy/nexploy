@@ -9,12 +9,12 @@ import {
 } from '@workspace/ui/components/card';
 import { FormField, FormItem } from '@workspace/ui/components/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
-import { Github, Gitlab, Link2 } from 'lucide-react';
+import { GitBranch, Github, Gitlab, Link2 } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import useSWR from 'swr';
 import { authClient } from '@/lib/auth/auth-client';
-import { ManuelSource } from '@/components/repositories/create/steps/source/ManuelSource';
-import { ProviderSource } from '@/components/repositories/create/steps/source/ProviderSource';
+import { ManuelSource } from '@/components/repositories/steps/source/ManuelSource';
+import { ProviderSource } from '@/components/repositories/steps/source/ProviderSource';
 import { SocialAccount } from '@workspace/typescript-interface/auth/social-account';
 
 export function GitSourceStep() {
@@ -28,8 +28,15 @@ export function GitSourceStep() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Source Git</CardTitle>
-                <CardDescription>Configuration du dépôt source</CardDescription>
+                <div className={'flex gap-2'}>
+                    <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
+                        <GitBranch className="text-primary size-5" />
+                    </div>
+                    <div className={'flex flex-col'}>
+                        <CardTitle>Source Git</CardTitle>
+                        <CardDescription>Configuration du dépôt source</CardDescription>
+                    </div>
+                </div>
             </CardHeader>
             <CardContent className="space-y-4">
                 <FormField

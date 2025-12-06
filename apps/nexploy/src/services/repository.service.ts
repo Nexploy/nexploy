@@ -1,11 +1,16 @@
 import { RepositoryCreateForm } from '@workspace/schemas-zod/repository/repositoryCreate.schema';
 import { Session } from '@/lib/auth/auth';
 import { prisma } from '../../prisma/prisma';
-import { setupWebhookForRepository } from '@/services/webhook.service';
-import { headers } from 'next/headers';
 import { WebhookConfig } from '@workspace/schemas-zod/repository/webhook.schema';
 import { getGitProviderToken } from '@/services/git/git.service';
-import { gitProviderService } from '@/services/api/gitProvider.service';
+import { tokenStorage } from '@/lib/storage/token-storage';
+import { getUserSession } from '@/services/auth/auth.service';
+import { getBaseUrl } from '@/lib/getBaseUrl';
+import { getValidToken } from '@/services/api/gitProvider.service';
+import {
+    removeWebhookForRepository,
+    setupWebhookForRepository,
+} from '@/services/webhook/webhook.service';
 
 export async function createRepository(
     { repo, ...restRepositoryCreate }: RepositoryCreateForm,
@@ -16,22 +21,18 @@ export async function createRepository(
 
         if (restRepositoryCreate.autoDeploy) {
             const token = await getGitProviderToken(restRepositoryCreate.gitProvider);
-            const accessToken = await gitProviderService.getValidToken(
+            const accessToken = await getValidToken(
                 token,
                 restRepositoryCreate.gitProvider,
                 ctx.session.user.id,
             );
 
             if (accessToken) {
-                const headersList = await headers();
-                const host = headersList.get('host') || 'localhost:3000';
-                const protocol = headersList.get('x-forwarded-proto') || 'http';
-                const baseUrl = `${protocol}://${host}`;
+                const baseUrl = await getBaseUrl();
 
                 webhookValues = await setupWebhookForRepository(
                     repo.url,
                     restRepositoryCreate.gitProvider,
-                    accessToken,
                     ctx.session.user.id,
                     baseUrl,
                 );
@@ -138,5 +139,111 @@ export async function updateBranchRepository(newBranch: string, repositoryId: st
         });
     } catch (error: unknown) {
         throw new Error('Failed to update branch repository');
+    }
+}
+
+async function getRepositoryById(repositoryId: string) {
+    try {
+        const session = await getUserSession();
+
+        const repository = await prisma.repository.findFirst({
+            where: { id: repositoryId, userId: session?.user.id },
+        });
+
+        if (!repository) {
+            throw new Error('Repository not found');
+        }
+
+        return repository;
+    } catch (error: unknown) {
+        throw new Error('Failed to get repository');
+    }
+}
+
+async function updateRepositoryAutoDeploy(
+    repositoryId: string,
+    autoDeploy: boolean,
+    webhookConfig?: { webhookId: string; webhookSecret: string },
+) {
+    try {
+        return prisma.repository.update({
+            where: { id: repositoryId },
+            data: {
+                autoDeploy,
+                ...(webhookConfig && {
+                    webhookId: webhookConfig.webhookId,
+                    webhookSecret: webhookConfig.webhookSecret,
+                }),
+            },
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to update webhook repository');
+    }
+}
+
+export async function deleteRepository(repositoryId: string, userId: string) {
+    const repository = await getRepositoryById(repositoryId);
+
+    const token = await getGitProviderToken(repository.gitProvider);
+    const accessToken = await getValidToken(token, repository.gitProvider, userId);
+
+    if (accessToken && repository.webhookId) {
+        await tokenStorage.run({ ...token, accessToken }, async () => {
+            return await removeWebhookForRepository(repositoryId);
+        });
+    }
+
+    await prisma.repository.delete({
+        where: { id: repositoryId },
+    });
+}
+
+export async function toggleAutoDeployRepository(
+    repositoryId: string,
+    autoDeploy: boolean,
+    userId: string,
+) {
+    const repository = await getRepositoryById(repositoryId);
+
+    const token = await getGitProviderToken(repository.gitProvider);
+    const accessToken = await getValidToken(token, repository.gitProvider, userId);
+
+    if (autoDeploy && !repository.webhookId && accessToken) {
+        const baseUrl = await getBaseUrl();
+
+        const webhookConfig = await tokenStorage.run({ ...token, accessToken }, async () => {
+            return await setupWebhookForRepository(
+                repository.repositoryUrl,
+                repository.gitProvider,
+                userId,
+                baseUrl,
+            );
+        });
+
+        await updateRepositoryAutoDeploy(repositoryId, true, webhookConfig);
+    } else if (!autoDeploy && repository.webhookId && accessToken) {
+        await tokenStorage.run({ ...token, accessToken }, async () => {
+            return await removeWebhookForRepository(repositoryId);
+        });
+
+        await updateRepositoryAutoDeploy(repositoryId, false);
+    } else {
+        await updateRepositoryAutoDeploy(repositoryId, autoDeploy);
+    }
+
+    return { success: true, autoDeploy };
+}
+
+export async function deleteWebhookForRepository(repositoryId: string) {
+    try {
+        return await prisma.repository.update({
+            where: { id: repositoryId },
+            data: {
+                webhookId: null,
+                webhookSecret: null,
+            },
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to delete webhook for repository');
     }
 }

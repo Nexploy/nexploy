@@ -23,6 +23,7 @@ import {
 } from '@workspace/ui/components/select';
 import { Input } from '@workspace/ui/components/input';
 import { useFormContext } from 'react-hook-form';
+import { Hammer } from 'lucide-react';
 
 export function BuildConfigurationStep() {
     const { control, watch } = useFormContext();
@@ -31,10 +32,17 @@ export function BuildConfigurationStep() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Configuration de Build</CardTitle>
-                <CardDescription>
-                    Comment votre application doit être construite
-                </CardDescription>
+                <div className={'flex gap-2'}>
+                    <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
+                        <Hammer className="text-primary size-5" />
+                    </div>
+                    <div className={'flex flex-col'}>
+                        <CardTitle>Configuration de Build</CardTitle>
+                        <CardDescription>
+                            Comment votre application doit être construite
+                        </CardDescription>
+                    </div>
+                </div>
             </CardHeader>
             <CardContent className="space-y-4">
                 <FormField
@@ -43,10 +51,7 @@ export function BuildConfigurationStep() {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Type de build</FormLabel>
-                            <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                            >
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Sélectionner un type" />

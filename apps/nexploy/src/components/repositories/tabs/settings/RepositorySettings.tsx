@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAction } from 'next-safe-action/hooks';
 import { Button } from '@workspace/ui/components/button';
 import {
@@ -13,7 +12,6 @@ import {
 } from '@workspace/ui/components/card';
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
-import { Switch } from '@workspace/ui/components/switch';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -25,44 +23,25 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@workspace/ui/components/alert-dialog';
-import { Loader2, Trash2, Webhook } from 'lucide-react';
+import { Loader2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-import {
-    deleteRepositoryAction,
-    toggleAutoDeployAction,
-} from '@/actions/repository/settings/repositorySettings.action';
 import { ChangeBranch } from '@/components/repositories/tabs/settings/ChangeBranch';
 import { Repository } from 'generated/client';
+import { deleteRepositoryAction } from '@/actions/repository/settings/deleteRepository.action';
+import { ChangeDeployment } from '@/components/repositories/tabs/settings/ChangeDeployment';
 
 interface RepositorySettingsProps {
     repository: Repository;
 }
 
 export function RepositorySettings({ repository }: RepositorySettingsProps) {
-    const router = useRouter();
-    const [autoDeploy, setAutoDeploy] = useState(repository.autoDeploy);
     const [confirmName, setConfirmName] = useState('');
-
-    const toggleAutoDeploy = useAction(toggleAutoDeployAction, {
-        onSuccess: ({ data }) => {
-            toast.success(data?.autoDeploy ? 'Auto-deploy activé' : 'Auto-deploy désactivé');
-            router.refresh();
-        },
-        onError: () => {
-            setAutoDeploy((prevState) => !prevState);
-        },
-    });
 
     const deleteRepository = useAction(deleteRepositoryAction, {
         onError: ({ error }) => {
             toast.error(error.serverError || 'Erreur lors de la suppression');
         },
     });
-
-    const handleAutoDeployToggle = (checked: boolean) => {
-        setAutoDeploy(checked);
-        toggleAutoDeploy.execute({ repositoryId: repository.id, autoDeploy: checked });
-    };
 
     const handleDelete = () => {
         if (confirmName === repository.name) {
@@ -73,36 +52,8 @@ export function RepositorySettings({ repository }: RepositorySettingsProps) {
     return (
         <div className="mx-5 space-y-6">
             <ChangeBranch repository={repository} />
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Webhook className="size-5" />
-                        Auto-deploy
-                    </CardTitle>
-                    <CardDescription>
-                        Déclencher automatiquement un build lors d'un push sur la branche
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                            <Label htmlFor="auto-deploy">
-                                {autoDeploy ? 'Désactiver' : 'Activer'} l'auto-deploy
-                            </Label>
-                            <p className="text-muted-foreground text-sm">
-                                Un webhook sera {autoDeploy ? 'supprimé' : 'configuré'} sur le dépôt
-                                Git
-                            </p>
-                        </div>
-                        <Switch
-                            id="auto-deploy"
-                            checked={autoDeploy}
-                            onCheckedChange={handleAutoDeployToggle}
-                            disabled={toggleAutoDeploy.status === 'executing'}
-                        />
-                    </div>
-                </CardContent>
-            </Card>
+
+            <ChangeDeployment repository={repository} />
 
             <Card className="border-destructive">
                 <CardHeader>

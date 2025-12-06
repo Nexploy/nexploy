@@ -73,9 +73,7 @@ export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateSer
 
         setIsLoading(true);
         try {
-            const env = envVars
-                .filter((e) => e.key)
-                .map((e) => `${e.key}=${e.value}`);
+            const env = envVars.filter((e) => e.key).map((e) => `${e.key}=${e.value}`);
 
             const res = await fetch(`${dockerApiUrl}/api/swarm/services/create`, {
                 method: 'POST',
@@ -123,9 +121,7 @@ export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateSer
             <DialogContent className="max-w-2xl">
                 <DialogHeader>
                     <DialogTitle>Create Swarm Service</DialogTitle>
-                    <DialogDescription>
-                        Deploy a new service to the swarm cluster
-                    </DialogDescription>
+                    <DialogDescription>Deploy a new service to the swarm cluster</DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
@@ -170,7 +166,7 @@ export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateSer
                     </div>
 
                     <div className="grid grid-cols-4 gap-4">
-                        <Label className="text-right pt-2">Ports</Label>
+                        <Label className="pt-2 text-right">Ports</Label>
                         <div className="col-span-3 space-y-2">
                             {ports.map((port, index) => (
                                 <div key={index} className="flex items-center gap-2">
@@ -179,7 +175,11 @@ export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateSer
                                         placeholder="Published"
                                         value={port.publishedPort}
                                         onChange={(e) =>
-                                            updatePort(index, 'publishedPort', parseInt(e.target.value) || 0)
+                                            updatePort(
+                                                index,
+                                                'publishedPort',
+                                                parseInt(e.target.value) || 0,
+                                            )
                                         }
                                         className="w-24"
                                     />
@@ -189,13 +189,19 @@ export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateSer
                                         placeholder="Target"
                                         value={port.targetPort}
                                         onChange={(e) =>
-                                            updatePort(index, 'targetPort', parseInt(e.target.value) || 0)
+                                            updatePort(
+                                                index,
+                                                'targetPort',
+                                                parseInt(e.target.value) || 0,
+                                            )
                                         }
                                         className="w-24"
                                     />
                                     <select
                                         value={port.protocol}
-                                        onChange={(e) => updatePort(index, 'protocol', e.target.value)}
+                                        onChange={(e) =>
+                                            updatePort(index, 'protocol', e.target.value)
+                                        }
                                         className="border-input bg-background h-9 rounded-md border px-3"
                                     >
                                         <option value="tcp">TCP</option>
@@ -218,7 +224,7 @@ export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateSer
                     </div>
 
                     <div className="grid grid-cols-4 gap-4">
-                        <Label className="text-right pt-2">Environment</Label>
+                        <Label className="pt-2 text-right">Environment</Label>
                         <div className="col-span-3 space-y-2">
                             {envVars.map((env, index) => (
                                 <div key={index} className="flex items-center gap-2">
@@ -232,7 +238,9 @@ export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateSer
                                     <Input
                                         placeholder="value"
                                         value={env.value}
-                                        onChange={(e) => updateEnvVar(index, 'value', e.target.value)}
+                                        onChange={(e) =>
+                                            updateEnvVar(index, 'value', e.target.value)
+                                        }
                                         className="flex-1"
                                     />
                                     <Button

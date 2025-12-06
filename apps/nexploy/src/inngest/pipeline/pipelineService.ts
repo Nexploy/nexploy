@@ -3,7 +3,7 @@ import { access, copyFile, mkdir, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 import { env } from '../../../env';
-import { gitProviderService } from '@/services/api/gitProvider.service';
+import { getValidToken } from '@/services/api/gitProvider.service';
 
 type ProgressCallback = (progress: number, message: string) => void;
 
@@ -87,7 +87,7 @@ class PipelineService {
 
         let gitToken = buildConfig.accessToken;
         if (buildConfig.gitProvider) {
-            const accessToken = await gitProviderService.getValidToken(
+            const accessToken = await getValidToken(
                 {
                     accessToken: buildConfig.accessToken,
                     accessTokenExpiresAt: buildConfig.accessTokenExpiresAt,

@@ -51,8 +51,6 @@ export const useRequestsStore = create<RequestsState>((set, get) => ({
             };
         }),
 
-    clearRequests: () => set({ requests: [], filteredRequests: [] }),
-
     setError: (error) => set({ error }),
 
     setLastUpdate: (timestamp) => set({ lastUpdate: timestamp }),

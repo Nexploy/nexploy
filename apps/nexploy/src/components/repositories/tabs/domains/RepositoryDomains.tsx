@@ -149,7 +149,7 @@ export function RepositoryDomains({ repositoryId, domainsConfig }: RepositoryDom
                                 Enregistrer
                             </Button>
                         )}
-                        <Button variant="outline" size="sm" onClick={handleAddNew}>
+                        <Button size="sm" onClick={handleAddNew}>
                             <Plus />
                             Ajouter
                         </Button>
