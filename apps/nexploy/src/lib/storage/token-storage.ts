@@ -1,7 +1,7 @@
 import { AsyncLocalStorage } from 'async_hooks';
-import { GetGitProviderToken } from '@workspace/typescript-interface/git';
+import { GitProviderToken } from '@workspace/typescript-interface/git/git';
 
-export const tokenStorage = new AsyncLocalStorage<GetGitProviderToken>();
+export const tokenStorage = new AsyncLocalStorage<GitProviderToken>();
 
 export const getTokenStorage = () => {
     const store = tokenStorage.getStore();

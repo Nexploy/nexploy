@@ -14,7 +14,13 @@ app.post(
 
 app.get(
     '/',
-    handleAsync(async () => {
+    handleAsync(async (c) => {
+        const name = c.req.query('name');
+
+        if (name) {
+            return imagesStateManager.getByName(name);
+        }
+
         return imagesStateManager.getAllImages();
     }),
 );

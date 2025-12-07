@@ -1,4 +1,4 @@
-import { GetGitProviderToken } from '../git';
+import { GitProviderToken } from '../git/git';
 
 export type BuildStatus =
     | 'QUEUED'
@@ -35,7 +35,7 @@ export interface BuildLogEntry {
     buildId: string;
 }
 
-export interface BuildConfig extends GetGitProviderToken {
+export interface BuildConfig extends GitProviderToken {
     userId: string;
     repositoryId: string;
     repositoryPath: string;

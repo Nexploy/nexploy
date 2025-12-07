@@ -12,7 +12,7 @@ export interface GitBranch {
     protected: boolean;
 }
 
-export interface GetGitProviderToken {
+export interface GitProviderToken {
     accessToken: string | null;
     refreshToken: string | null;
     accessTokenExpiresAt: Date | null;

@@ -18,13 +18,13 @@ export async function startBuildRepositoryInngest(repositoryId: string, userId: 
         throw new Error('Repository not found');
     }
 
-    const token = await getGitProviderToken(repository.gitProvider, userId);
-    const accessToken = await getValidToken(token, repository.gitProvider, userId);
+    const oldToken = await getGitProviderToken(repository.gitProvider, userId);
+    const token = await getValidToken(oldToken, repository.gitProvider, userId);
 
     const lastCommit = await getLatestCommit(
         repository.repositoryUrl,
         repository.branch,
-        accessToken,
+        token.accessToken,
         repository.gitProvider,
     );
 
@@ -289,5 +289,19 @@ export async function getAllEnvsBuildInngest(repositoryId: string) {
         });
     } catch (error: unknown) {
         throw new Error('Failed to get builds');
+    }
+}
+
+export async function getCompletedBuildsInngest(repositoryId: string) {
+    try {
+        return await prisma.build.findMany({
+            where: {
+                repositoryId,
+                status: 'COMPLETED',
+            },
+            orderBy: { createdAt: 'desc' },
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to get completed builds');
     }
 }

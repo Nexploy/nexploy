@@ -1,30 +1,27 @@
 import { updateGitProviderToken } from '@/services/git/git.service';
-import { GetGitProviderToken, GitLabCommit } from '@workspace/typescript-interface/git';
+import { GitLabCommit, GitProviderToken } from '@workspace/typescript-interface/git/git';
 import { env } from '../../../env';
 
 export async function getValidToken(
-    token: GetGitProviderToken,
+    token: GitProviderToken,
     provider: string,
     userId: string,
-): Promise<string | null> {
+): Promise<GitProviderToken> {
     if (!token.accessTokenExpiresAt) {
-        return token.accessToken;
+        return token;
     }
 
     if (new Date(token.accessTokenExpiresAt) < new Date()) {
         if (provider === 'gitlab') {
             return await refreshGitLabToken(token, userId);
         } else if (provider === 'github') {
-            console.warn(
-                `GitHub access token expired for user ${userId}. User must re-authenticate.`,
-            );
-            return null;
+            return token;
         } else {
             throw new Error(`Unknown provider: ${provider}`);
         }
     }
 
-    return token.accessToken;
+    return token;
 }
 
 export async function getLatestCommit(
@@ -130,7 +127,10 @@ function extractGitHubRepoPath(repositoryUrl: string): string {
     throw new Error(`Invalid GitHub repository URL: ${repositoryUrl}`);
 }
 
-async function refreshGitLabToken(token: GetGitProviderToken, userId: string): Promise<string> {
+async function refreshGitLabToken(
+    token: GitProviderToken,
+    userId: string,
+): Promise<GitProviderToken> {
     if (!token.refreshToken) {
         throw new Error('No refresh token available for GitLab');
     }
@@ -138,10 +138,10 @@ async function refreshGitLabToken(token: GetGitProviderToken, userId: string): P
     const clientId = env.GITLAB_CLIENT_ID;
     const clientSecret = env.GITLAB_CLIENT_SECRET;
 
+    const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+
     const body = new URLSearchParams({
         grant_type: 'refresh_token',
-        client_id: clientId,
-        client_secret: clientSecret,
         refresh_token: token.refreshToken,
     });
 
@@ -149,6 +149,7 @@ async function refreshGitLabToken(token: GetGitProviderToken, userId: string): P
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Basic ${basicAuth}`,
         },
         body,
     });
@@ -162,11 +163,13 @@ async function refreshGitLabToken(token: GetGitProviderToken, userId: string): P
 
     const expiresAt = new Date(Date.now() + data.expires_in * 1000);
 
-    await updateGitProviderToken('gitlab', userId, {
+    const newToken = {
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
         accessTokenExpiresAt: expiresAt,
-    });
+    };
 
-    return data.access_token;
+    await updateGitProviderToken('gitlab', userId, newToken);
+
+    return newToken;
 }

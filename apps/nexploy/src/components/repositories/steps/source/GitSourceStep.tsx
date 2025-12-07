@@ -9,11 +9,10 @@ import {
 } from '@workspace/ui/components/card';
 import { FormField, FormItem } from '@workspace/ui/components/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
-import { GitBranch, Github, Gitlab, Link2 } from 'lucide-react';
+import { GitBranch, Github, Gitlab } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import useSWR from 'swr';
 import { authClient } from '@/lib/auth/auth-client';
-import { ManuelSource } from '@/components/repositories/steps/source/ManuelSource';
 import { ProviderSource } from '@/components/repositories/steps/source/ProviderSource';
 import { SocialAccount } from '@workspace/typescript-interface/auth/social-account';
 
@@ -53,16 +52,16 @@ export function GitSourceStep() {
                                 defaultValue={field.value}
                                 className="w-full"
                             >
-                                <TabsList className="grid w-full grid-cols-3">
+                                <TabsList className="flex w-full">
                                     <TabsTrigger value="github" className="gap-2">
                                         <Github /> GitHub
                                     </TabsTrigger>
                                     <TabsTrigger value="gitlab" className="gap-2">
                                         <Gitlab /> GitLab
                                     </TabsTrigger>
-                                    <TabsTrigger value="manual" className="gap-2">
-                                        <Link2 /> Manuel
-                                    </TabsTrigger>
+                                    {/*<TabsTrigger value="manual" className="gap-2">*/}
+                                    {/*    <Link2 /> Manuel*/}
+                                    {/*</TabsTrigger>*/}
                                 </TabsList>
                                 <TabsContent value="github">
                                     <ProviderSource accounts={accounts} />
@@ -70,9 +69,9 @@ export function GitSourceStep() {
                                 <TabsContent value="gitlab">
                                     <ProviderSource accounts={accounts} />
                                 </TabsContent>
-                                <TabsContent value="manual">
-                                    <ManuelSource />
-                                </TabsContent>
+                                {/*<TabsContent value="manual">*/}
+                                {/*    <ManuelSource />*/}
+                                {/*</TabsContent>*/}
                             </Tabs>
                         </FormItem>
                     )}

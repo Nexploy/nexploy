@@ -30,3 +30,8 @@ export const resumeBuildSchema = z.object({
 export const cancelBuildSchema = z.object({
     buildId: z.cuid(),
 });
+
+export const deployVersionSchema = z.object({
+    buildId: z.cuid(),
+    repositoryId: z.cuid(),
+});

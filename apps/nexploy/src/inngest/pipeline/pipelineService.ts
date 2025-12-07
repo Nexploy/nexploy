@@ -67,8 +67,7 @@ class PipelineService {
             url.username = 'oauth2';
             url.password = gitToken;
             return url.toString();
-        } catch (error) {
-            console.error('Failed to parse git URL:', error);
+        } catch {
             return gitUrl;
         }
     }
@@ -85,21 +84,17 @@ class PipelineService {
 
         await mkdir(workDir, { recursive: true });
 
-        let gitToken = buildConfig.accessToken;
-        if (buildConfig.gitProvider) {
-            const accessToken = await getValidToken(
-                {
-                    accessToken: buildConfig.accessToken,
-                    accessTokenExpiresAt: buildConfig.accessTokenExpiresAt,
-                    refreshToken: buildConfig.refreshToken,
-                },
-                buildConfig.gitProvider,
-                buildConfig.userId,
-            );
-            if (accessToken) gitToken = accessToken;
-        }
+        const token = await getValidToken(
+            {
+                accessToken: buildConfig.accessToken,
+                accessTokenExpiresAt: buildConfig.accessTokenExpiresAt,
+                refreshToken: buildConfig.refreshToken,
+            },
+            buildConfig.gitProvider,
+            buildConfig.userId,
+        );
 
-        const authenticatedUrl = this.getAuthenticatedGitUrl(buildConfig.gitUrl, gitToken);
+        const authenticatedUrl = this.getAuthenticatedGitUrl(buildConfig.gitUrl, token.accessToken);
 
         try {
             await this.exec(

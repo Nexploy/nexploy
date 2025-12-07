@@ -1,8 +1,18 @@
 import { prisma } from '@/../prisma/prisma';
 import { getUserSession } from '@/services/auth/auth.service';
-import { GetGitProviderToken, GitBranch, GitRepository } from '@workspace/typescript-interface/git';
-import { GithubRepo } from '@workspace/typescript-interface/repository';
+import {
+    GitBranch,
+    GitProviderToken,
+    GitRepository,
+} from '@workspace/typescript-interface/git/git';
 import { getValidToken } from '@/services/api/gitProvider.service';
+import { drinoGithub } from '@/lib/api/drinoGithub';
+import { tokenStorage } from '@/lib/storage/token-storage';
+import { drinoGitlab } from '@/lib/api/drinoGitlab';
+import { GithubRepo } from '@workspace/typescript-interface/git/repository/github.repository';
+import { GitlabRepo } from '@workspace/typescript-interface/git/repository/gitlab.repository';
+import { GitlabBranch } from '@workspace/typescript-interface/git/branch/gitlab.branch';
+import { GithubBranch } from '@workspace/typescript-interface/git/branch/github.branch';
 
 export function extractGitHubRepo(repositoryUrl: string): { owner: string; repo: string } {
     const match = repositoryUrl.match(/github\.com[\/:]([^\/]+)\/([^\/\.]+)/);
@@ -15,7 +25,7 @@ export function extractGitHubRepo(repositoryUrl: string): { owner: string; repo:
 export async function getGitProviderToken(
     provider: string,
     requestedUserId?: string,
-): Promise<GetGitProviderToken> {
+): Promise<GitProviderToken> {
     const userId = requestedUserId ?? (await getUserSession())?.user.id;
     if (!userId) throw new Error('Unauthorized');
 
@@ -39,22 +49,22 @@ export async function getGitProviderToken(
 }
 
 export async function getRepositories(provider: string, userId: string): Promise<GitRepository[]> {
-    const token = await getGitProviderToken(provider);
-    const accessToken = await getValidToken(token, provider, userId);
+    const oldToken = await getGitProviderToken(provider);
+    const token = await getValidToken(oldToken, provider, userId);
 
     switch (provider) {
         case 'github': {
-            const res = await fetch('https://api.github.com/user/repos', {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    Accept: 'application/vnd.github+json',
-                },
+            const repositories = await tokenStorage.run(token, async () => {
+                return await drinoGithub
+                    .get<GithubRepo[]>('/user/repos', {
+                        headers: {
+                            Accept: 'application/vnd.github+json',
+                        },
+                    })
+                    .consume();
             });
 
-            if (!res.ok) throw new Error('Failed to fetch GitHub repositories');
-
-            const data = await res.json();
-            return data.map((repo: GithubRepo) => ({
+            return repositories.map((repo: GithubRepo) => ({
                 id: String(repo.id),
                 name: repo.name,
                 fullName: repo.full_name,
@@ -65,25 +75,29 @@ export async function getRepositories(provider: string, userId: string): Promise
             }));
         }
         case 'gitlab': {
-            const res = await fetch(
-                'https://gitlab.com/api/v4/projects?membership=true&order_by=updated_at',
-                {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                },
-            );
-            if (!res.ok) throw new Error('Failed to fetch GitLab repositories');
+            try {
+                const repositories = await tokenStorage.run(token, async () => {
+                    return await drinoGitlab
+                        .get<GitlabRepo[]>('/v4/projects', {
+                            queryParams: {
+                                membership: true,
+                                order_by: 'updated_at',
+                            },
+                        })
+                        .consume();
+                });
 
-            const data = await res.json();
-            return data.map((repo: any) => ({
-                id: String(repo.id),
-                name: repo.name,
-                fullName: repo.path_with_namespace,
-                url: repo.http_url_to_repo,
-                private: repo.visibility === 'private',
-                defaultBranch: repo.default_branch,
-            }));
+                return repositories.map((repo: GitlabRepo) => ({
+                    id: String(repo.id),
+                    name: repo.name,
+                    fullName: repo.path_with_namespace,
+                    url: repo.http_url_to_repo,
+                    private: repo.visibility === 'private',
+                    defaultBranch: repo.default_branch,
+                }));
+            } catch (error: unknown) {
+                throw new Error('Failed to fetch GitLab repositories');
+            }
         }
         default:
             throw new Error(`Unsupported provider: ${provider}`);
@@ -97,42 +111,48 @@ export async function getBranches(
     owner?: string,
     repoName?: string,
 ): Promise<GitBranch[]> {
-    const token = await getGitProviderToken(provider);
-    const accessToken = await getValidToken(token, provider, userId);
+    const oldToken = await getGitProviderToken(provider);
+    const token = await getValidToken(oldToken, provider, userId);
 
-    if (provider === 'github') {
-        if (!owner || !repoName) throw new Error('Owner and repo name required for GitHub');
-        const res = await fetch(`https://api.github.com/repos/${owner}/${repoName}/branches`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-                Accept: 'application/vnd.github+json',
-            },
-        });
+    switch (provider) {
+        case 'github': {
+            try {
+                const branchs = await tokenStorage.run(token, async () => {
+                    return await drinoGithub
+                        .get<GithubBranch[]>(`/repos/${owner}/${repoName}/branches`, {
+                            headers: {
+                                Accept: 'application/vnd.github+json',
+                            },
+                        })
+                        .consume();
+                });
 
-        if (!res.ok) throw new Error('Failed to fetch GitHub branches');
+                return branchs.map((branch: GithubBranch) => ({
+                    name: branch.name,
+                    protected: branch.protected,
+                }));
+            } catch (error: unknown) {
+                throw new Error('Failed to fetch GitHub branches');
+            }
+        }
+        case 'gitlab': {
+            try {
+                const branchs = await tokenStorage.run(token, async () => {
+                    return await drinoGitlab
+                        .get<GitlabBranch[]>(`/v4/projects/${repoId}/repository/branches`)
+                        .consume();
+                });
 
-        const data = await res.json();
-        return data.map((branch: any) => ({
-            name: branch.name,
-            protected: branch.protected,
-        }));
-    } else {
-        const res = await fetch(
-            `https://gitlab.com/api/v4/projects/${repoId}/repository/branches`,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            },
-        );
-
-        if (!res.ok) throw new Error('Failed to fetch GitLab branches');
-
-        const data = await res.json();
-        return data.map((branch: any) => ({
-            name: branch.name,
-            protected: branch.protected,
-        }));
+                return branchs.map((branch: GitlabBranch) => ({
+                    name: branch.name,
+                    protected: branch.protected,
+                }));
+            } catch (error: unknown) {
+                throw new Error('Failed to fetch GitLab branches');
+            }
+        }
+        default:
+            throw new Error(`Unsupported provider: ${provider}`);
     }
 }
 

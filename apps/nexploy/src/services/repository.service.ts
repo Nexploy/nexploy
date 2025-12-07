@@ -17,40 +17,38 @@ export async function createRepository(
     ctx: { session: Session },
 ) {
     try {
-        let webhookValues: WebhookConfig | null = null;
-
         if (restRepositoryCreate.autoDeploy) {
-            const token = await getGitProviderToken(restRepositoryCreate.gitProvider);
-            const accessToken = await getValidToken(
-                token,
+            const oldToken = await getGitProviderToken(restRepositoryCreate.gitProvider);
+            const token = await getValidToken(
+                oldToken,
                 restRepositoryCreate.gitProvider,
                 ctx.session.user.id,
             );
 
-            if (accessToken) {
-                const baseUrl = await getBaseUrl();
+            const baseUrl = await getBaseUrl();
 
-                webhookValues = await setupWebhookForRepository(
-                    repo.url,
-                    restRepositoryCreate.gitProvider,
+            const webhookConfig: WebhookConfig = await tokenStorage.run(token, async () => {
+                return await setupWebhookForRepository(
+                    repository.repositoryUrl,
+                    repository.gitProvider,
                     ctx.session.user.id,
                     baseUrl,
                 );
-            }
+            });
+
+            const repository = await prisma.repository.create({
+                data: {
+                    ...restRepositoryCreate,
+                    gitId: repo.id,
+                    webhookId: webhookConfig.webhookId,
+                    webhookSecret: webhookConfig.webhookSecret,
+                    repositoryUrl: repo.url,
+                    userId: ctx.session.user.id,
+                },
+            });
+
+            return repository.id;
         }
-
-        const repository = await prisma.repository.create({
-            data: {
-                ...restRepositoryCreate,
-                gitId: repo.id,
-                webhookId: webhookValues?.webhookId,
-                webhookSecret: webhookValues?.webhookSecret,
-                repositoryUrl: repo.url,
-                userId: ctx.session.user.id,
-            },
-        });
-
-        return repository.id;
     } catch (error: unknown) {
         throw new Error('Failed to create repository');
     }
@@ -184,11 +182,11 @@ async function updateRepositoryAutoDeploy(
 export async function deleteRepository(repositoryId: string, userId: string) {
     const repository = await getRepositoryById(repositoryId);
 
-    const token = await getGitProviderToken(repository.gitProvider);
-    const accessToken = await getValidToken(token, repository.gitProvider, userId);
+    const oldToken = await getGitProviderToken(repository.gitProvider);
+    const token = await getValidToken(oldToken, repository.gitProvider, userId);
 
-    if (accessToken && repository.webhookId) {
-        await tokenStorage.run({ ...token, accessToken }, async () => {
+    if (repository.webhookId) {
+        await tokenStorage.run(token, async () => {
             return await removeWebhookForRepository(repositoryId);
         });
     }
@@ -205,13 +203,13 @@ export async function toggleAutoDeployRepository(
 ) {
     const repository = await getRepositoryById(repositoryId);
 
-    const token = await getGitProviderToken(repository.gitProvider);
-    const accessToken = await getValidToken(token, repository.gitProvider, userId);
+    const oldToken = await getGitProviderToken(repository.gitProvider);
+    const token = await getValidToken(oldToken, repository.gitProvider, userId);
 
-    if (autoDeploy && !repository.webhookId && accessToken) {
+    if (autoDeploy && !repository.webhookId) {
         const baseUrl = await getBaseUrl();
 
-        const webhookConfig = await tokenStorage.run({ ...token, accessToken }, async () => {
+        const webhookConfig = await tokenStorage.run(token, async () => {
             return await setupWebhookForRepository(
                 repository.repositoryUrl,
                 repository.gitProvider,
@@ -221,8 +219,8 @@ export async function toggleAutoDeployRepository(
         });
 
         await updateRepositoryAutoDeploy(repositoryId, true, webhookConfig);
-    } else if (!autoDeploy && repository.webhookId && accessToken) {
-        await tokenStorage.run({ ...token, accessToken }, async () => {
+    } else if (!autoDeploy && repository.webhookId) {
+        await tokenStorage.run(token, async () => {
             return await removeWebhookForRepository(repositoryId);
         });
 

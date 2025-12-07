@@ -21,7 +21,7 @@ import { fetcherApi } from '@/lib/api/fetcherApi';
 import { capitalizeFirstLetter } from '@/utils/capitalize';
 import Link from 'next/link';
 import { SocialAccount } from '@workspace/typescript-interface/auth/social-account';
-import { GitBranch, GitRepository } from '@workspace/typescript-interface/git';
+import { GitBranch, GitRepository } from '@workspace/typescript-interface/git/git';
 import { BookMarked, GitBranch as GitBranchIcon } from 'lucide-react';
 
 interface ProviderSourceProps {

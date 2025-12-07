@@ -8,7 +8,7 @@ import {
 import { GitBranch as GitBranchIcon, Save } from 'lucide-react';
 import useSWR from 'swr';
 import { fetcherApi } from '@/lib/api/fetcherApi';
-import { GitBranch } from '@workspace/typescript-interface/git';
+import { GitBranch } from '@workspace/typescript-interface/git/git';
 import { Repository } from 'generated/client';
 import {
     Form,
@@ -37,11 +37,15 @@ interface ChangeBranchProps {
 }
 
 export function ChangeBranch({ repository }: ChangeBranchProps) {
-    const { data: branches, isLoading: isLoadingBranches } = useSWR<GitBranch[]>(
+    const {
+        data: branches,
+        isLoading: isLoadingBranches,
+        error,
+    } = useSWR<GitBranch[]>(
         `/api/git/branches?provider=${repository.gitProvider}&repoId=${repository.gitId}&owner=${repository.name.split('/')[0]}&repoName=${repository.name.split('/')[1]}`,
         fetcherApi,
     );
-
+    console.log(error);
     const bindUpdateBranchAction = updateBranchAction.bind(null, repository.id);
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         bindUpdateBranchAction,

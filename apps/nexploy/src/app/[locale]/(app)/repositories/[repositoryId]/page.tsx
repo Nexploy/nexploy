@@ -5,7 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/componen
 import { RepositoryEnvTab } from '@/components/repositories/tabs/envs/RepositoryEnvTab';
 import { RepositoryDomainsTab } from '@/components/repositories/tabs/domains/RepositoryDomainsTab';
 import { RepositorySettingsTab } from '@/components/repositories/tabs/settings/RepositorySettingsTab';
-import { GitBranch, Github, Gitlab, Globe, Hammer, Key, Link2, Settings } from 'lucide-react';
+import { RepositoryVersionsTab } from '@/components/repositories/tabs/versions/RepositoryVersionsTab';
+import { GitBranch, Github, Gitlab, Globe, Hammer, Key, Link2, Settings, Tag } from 'lucide-react';
 import { RepositoryBuildsTab } from '@/components/repositories/tabs/builds/RepositoryBuildsTab';
 import { getRepositorieById } from '@/services/repository.service';
 import { Separator } from '@workspace/ui/components/separator';
@@ -66,6 +67,10 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                                     <Hammer />
                                     Builds
                                 </TabsTrigger>
+                                <TabsTrigger value="versions">
+                                    <Tag />
+                                    Versions
+                                </TabsTrigger>
                                 <TabsTrigger value="env">
                                     <Key />
                                     Environments
@@ -87,6 +92,9 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                         <div className="pb-5">
                             <TabsContent value="overview" className="mt-0">
                                 <RepositoryBuildsTab repositoryId={repository.id} />
+                            </TabsContent>
+                            <TabsContent value="versions" className="mt-0">
+                                <RepositoryVersionsTab repositoryId={repository.id} />
                             </TabsContent>
                             <TabsContent value="env" className="mt-0">
                                 <RepositoryEnvTab repositoryId={repository.id} />
