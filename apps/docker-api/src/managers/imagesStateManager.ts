@@ -12,6 +12,7 @@ import { BaseStateManager } from '@/lib/BaseStateManager';
 import * as tar from 'tar-fs';
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 import { Readable } from 'stream';
+import { containerImageEvents } from '@/managers/containersStateManager';
 
 class ImagesStateManager extends BaseStateManager {
     private images: Map<string, Image> = new Map();
@@ -22,6 +23,13 @@ class ImagesStateManager extends BaseStateManager {
             pollIntervalMs: 10000,
             maxReconnectAttempts: 5,
             maxListeners: 100,
+        });
+        this.setupContainerListeners();
+    }
+
+    private setupContainerListeners(): void {
+        containerImageEvents.on('container-usage-changed', (data: any) => {
+            this.updateImageUsageFromContainers();
         });
     }
 
@@ -110,6 +118,56 @@ class ImagesStateManager extends BaseStateManager {
 
     protected onStop(): void {
         this.images.clear();
+        containerImageEvents.removeAllListeners('containers-loaded');
+        containerImageEvents.removeAllListeners('container-usage-changed');
+    }
+
+    private async updateImageUsageFromContainers(): Promise<void> {
+        try {
+            const containers = await docker.listContainers({ all: true });
+            const imageUsageMap = new Map<string, number>();
+
+            // Compte combien de conteneurs utilisent chaque image
+            for (const container of containers) {
+                // Peut être soit sha256:xxxxx soit un nom d'image
+                let imageId = container.ImageID;
+                if (imageId.includes(':')) {
+                    imageId = imageId.split(':')[1];
+                }
+                imageUsageMap.set(imageId, (imageUsageMap.get(imageId) || 0) + 1);
+            }
+
+            // Met à jour chaque image avec son nouveau compteur
+            for (const [imageId, image] of this.images.entries()) {
+                const newContainersUsed = imageUsageMap.get(imageId) || 0;
+
+                if (image.containersUsed !== newContainersUsed) {
+                    const oldState = { ...image };
+                    const newState = {
+                        ...image,
+                        containersUsed: newContainersUsed,
+                        timestamp: Date.now(),
+                    };
+
+                    this.images.set(imageId, newState);
+
+                    const imageUpdated: ImageEvent = {
+                        type: 'updated',
+                        oldState,
+                        image: newState,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('image-updated', imageUpdated);
+
+                    logger.debug(
+                        { imageId, oldCount: oldState.containersUsed, newCount: newContainersUsed },
+                        'Image container usage updated',
+                    );
+                }
+            }
+        } catch (err) {
+            logger.error({ err }, 'Error updating image usage from containers');
+        }
     }
 
     protected getCustomStats(): Record<string, any> {
@@ -342,18 +400,6 @@ class ImagesStateManager extends BaseStateManager {
         }
     }
 
-    async pruneAllUnusedImages(): Promise<void> {
-        logger.info('Starting prune of all unused images');
-
-        try {
-            const result = await docker.pruneImages();
-            logger.info({ result }, 'Pruned all unused images');
-        } catch (err) {
-            logger.error({ err }, 'Error pruning all unused images');
-            throw err;
-        }
-    }
-
     async buildImage(
         workDir: string,
         imageName: string,
@@ -442,20 +488,12 @@ class ImagesStateManager extends BaseStateManager {
 
     async cleanupDanglingImages(): Promise<void> {
         try {
-            const images = await docker.listImages({
+            await docker.pruneImages({
                 filters: { dangling: ['true'] },
             });
-
-            for (const image of images) {
-                try {
-                    await docker.getImage(image.Id).remove({ force: true });
-                    logger.info({ imageId: image.Id }, 'Removed dangling image');
-                } catch (err) {
-                    logger.warn({ imageId: image.Id, err }, 'Failed to remove dangling image');
-                }
-            }
+            logger.info('Pruned dangling images');
         } catch (err) {
-            logger.error({ err }, 'Failed to cleanup dangling images');
+            logger.error({ err }, 'Failed to prune images');
         }
     }
 }

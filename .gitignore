@@ -42,3 +42,5 @@ infra/traefik/letsencrypt/
 infra/traefik/logs/
 *.log
 
+.claude
+

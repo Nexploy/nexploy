@@ -124,7 +124,7 @@ export default function EventsPage() {
     const paginatedEvents = filteredEvents.slice(startIndex, endIndex);
 
     return (
-        <div className="flex h-full flex-1 flex-col gap-5 pt-5">
+        <div className="flex h-full flex-1 flex-col gap-4 pt-5">
             <div className={'flex gap-3 px-5'}>
                 <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
                     <Bug className="text-primary size-7" />
@@ -141,7 +141,7 @@ export default function EventsPage() {
                 </div>
             </div>
             <ScrollAreaWithShadow className="h-full overflow-hidden">
-                <div className={'space-y-3 pb-5'}>
+                <div className={'space-y-3 pt-1 pb-5'}>
                     <div className={'mx-5 flex justify-between gap-3'}>
                         <Input
                             className={'w-1/4 shadow-xs'}

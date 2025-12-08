@@ -37,6 +37,7 @@ import Link from 'next/link';
 import { ElementType, ReactElement } from 'react';
 import { NexployLogo } from '@/components/sidebar/NexployLogo';
 import { AccountMenu } from '@/components/sidebar/AccountMenu';
+import { RefreshDocker } from '@/components/sidebar/RefreshDocker';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset';
@@ -77,6 +78,7 @@ groups = [
                 title: 'Docker',
                 href: '/docker/containers',
                 icon: Box,
+                actionIcon: <RefreshDocker />,
                 children: [
                     { title: 'Containers', icon: Container, href: '/docker/containers' },
                     { title: 'Images', icon: LayoutList, href: '/docker/images' },

@@ -22,7 +22,6 @@ export const GET = route.use(authRouteServer).handler(async (request, { ctx }: a
         const branches = await getBranches(provider, repoId, ctx.session.user.id, owner, repoName);
         return NextResponse.json(branches);
     } catch (error: any) {
-        console.log({ error });
         return NextResponse.json(
             { error: error.message || 'Failed to fetch branches' },
             { status: 500 },

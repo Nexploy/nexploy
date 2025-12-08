@@ -121,7 +121,7 @@ export function ProviderSource({ accounts }: ProviderSourceProps) {
                             disabled={!selectedRepo || isLoadingBranches}
                         >
                             <FormControl>
-                                <SelectTrigger>
+                                <SelectTrigger className={'min-w-32'}>
                                     <SelectValue placeholder={field.value} />
                                 </SelectTrigger>
                             </FormControl>

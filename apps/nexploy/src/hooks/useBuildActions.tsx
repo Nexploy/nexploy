@@ -1,9 +1,9 @@
 import { ReactNode } from 'react';
-import { LucideIcon, RotateCcw, Square, Trash2 } from 'lucide-react';
+import { LucideIcon, RotateCcw, Square } from 'lucide-react';
 import { onCancelBuild } from '@/actions/repository/builds/cancelBuild.action';
 import { onRetryBuild } from '@/actions/repository/builds/retryBuild.action';
-import { onRemoveBuild } from '@/actions/repository/builds/removeBuild.action';
 import { ResumeBuildButton } from '@/components/repositories/ResumeBuildButton';
+import { RemoveBuildButton } from '@/components/repositories/RemoveBuildButton';
 import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
 
 interface BaseBuildAction {
@@ -84,13 +84,10 @@ export function useBuildActions({
 
     if (canRemove) {
         actions.push({
-            type: 'button',
+            type: 'component',
             id: 'remove',
-            icon: Trash2,
-            label: mode === 'dropdown' ? 'Remove' : '',
-            onClick: () => onRemoveBuild({ buildId }),
-            variant: 'destructive',
             separator: canResume || canRetry,
+            component: <RemoveBuildButton mode={mode} buildId={buildId} />,
         });
     }
 

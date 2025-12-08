@@ -6,6 +6,7 @@ import { addBuildJob } from '@/inngest/jobs/queue';
 import { inngest } from '@/inngest/client';
 import { getRepositorieWithEnv } from '@/services/repository.service';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { decrypt } from '@/lib/encryption';
 
 export async function startBuildRepositoryInngest(repositoryId: string, userId: string) {
     const repository = await getRepositorieWithEnv(repositoryId);
@@ -143,7 +144,7 @@ export async function cancelBuildInngest(buildId: string) {
 
 export async function findBuildWithEnvInngest(buildId: string) {
     try {
-        return await prisma.build.findUnique({
+        const build = await prisma.build.findUnique({
             where: { id: buildId },
             include: {
                 repository: {
@@ -153,6 +154,15 @@ export async function findBuildWithEnvInngest(buildId: string) {
                 },
             },
         });
+
+        if (build && build.repository) {
+            build.repository.envVariables = build.repository.envVariables.map((env) => ({
+                ...env,
+                value: decrypt(env.value),
+            }));
+        }
+
+        return build;
     } catch (error: unknown) {
         throw new Error('Failed to find build');
     }
@@ -284,9 +294,14 @@ export async function getAllBuildsInngest(repositoryId: string) {
 
 export async function getAllEnvsBuildInngest(repositoryId: string) {
     try {
-        return await prisma.envVariable.findMany({
+        const envs = await prisma.envVariable.findMany({
             where: { repositoryId },
         });
+
+        return envs.map((env) => ({
+            ...env,
+            value: decrypt(env.value),
+        }));
     } catch (error: unknown) {
         throw new Error('Failed to get builds');
     }

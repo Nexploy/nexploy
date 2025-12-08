@@ -45,7 +45,7 @@ export function ChangeBranch({ repository }: ChangeBranchProps) {
         `/api/git/branches?provider=${repository.gitProvider}&repoId=${repository.gitId}&owner=${repository.name.split('/')[0]}&repoName=${repository.name.split('/')[1]}`,
         fetcherApi,
     );
-    console.log(error);
+
     const bindUpdateBranchAction = updateBranchAction.bind(null, repository.id);
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         bindUpdateBranchAction,
@@ -78,13 +78,17 @@ export function ChangeBranch({ repository }: ChangeBranchProps) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <GitBranchIcon className="size-5" />
-                    Branche de déploiement
-                </CardTitle>
-                <CardDescription>
-                    Modifiez la branche utilisée pour les builds et déploiements
-                </CardDescription>
+                <div className="flex gap-2">
+                    <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
+                        <GitBranchIcon className="text-primary size-5" />
+                    </div>
+                    <div className="flex flex-col">
+                        <CardTitle>Branche de déploiement</CardTitle>
+                        <CardDescription>
+                            Modifiez la branche utilisée pour les builds et déploiements
+                        </CardDescription>
+                    </div>
+                </div>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -114,6 +118,7 @@ export function ChangeBranch({ repository }: ChangeBranchProps) {
                                         <SelectContent>
                                             {branches?.map((branch) => (
                                                 <SelectItem key={branch.name} value={branch.name}>
+                                                    <GitBranchIcon />
                                                     {branch.name}
                                                 </SelectItem>
                                             ))}

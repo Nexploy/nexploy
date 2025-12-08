@@ -5,6 +5,7 @@ import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { deployVersionSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { prisma } from '../../../../prisma/prisma';
 import { drinoDocker } from '@/lib/api/drinoDocker';
+import { decrypt } from '@/lib/encryption';
 
 export const onDeployVersion = authActionServer
     .inputSchema(deployVersionSchema)
@@ -35,7 +36,7 @@ export const onDeployVersion = authActionServer
 
             const envVariables: Record<string, string> = {};
             for (const envVar of build.repository.envVariables) {
-                envVariables[envVar.key] = envVar.value;
+                envVariables[envVar.key] = decrypt(envVar.value);
             }
 
             await drinoDocker

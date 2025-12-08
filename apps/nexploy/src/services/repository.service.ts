@@ -11,6 +11,7 @@ import {
     removeWebhookForRepository,
     setupWebhookForRepository,
 } from '@/services/webhook/webhook.service';
+import { decrypt, encrypt } from '@/lib/encryption';
 
 export async function createRepository(
     { repo, ...restRepositoryCreate }: RepositoryCreateForm,
@@ -94,12 +95,21 @@ export function getRepositories() {
 
 export async function getRepositorieWithEnv(repositoryId: string) {
     try {
-        return await prisma.repository.findUnique({
+        const repository = await prisma.repository.findUnique({
             where: { id: repositoryId },
             include: {
                 envVariables: true,
             },
         });
+
+        if (repository) {
+            repository.envVariables = repository.envVariables.map((env) => ({
+                ...env,
+                value: decrypt(env.value),
+            }));
+        }
+
+        return repository;
     } catch (error: unknown) {
         throw new Error('Failed to get repository with env');
     }
@@ -243,5 +253,58 @@ export async function deleteWebhookForRepository(repositoryId: string) {
         });
     } catch (error: unknown) {
         throw new Error('Failed to delete webhook for repository');
+    }
+}
+
+export async function updateEnvVariables(
+    repositoryId: string,
+    userId: string,
+    data: {
+        updates: { id: string; key: string; value: string }[];
+        creates: { key: string; value: string }[];
+        deleteIds: string[];
+    },
+) {
+    try {
+        const repository = await prisma.repository.findUnique({
+            where: { id: repositoryId, userId },
+        });
+
+        if (!repository) {
+            throw new Error('Repository not found');
+        }
+
+        return await prisma.$transaction(async (tx) => {
+            if (data.deleteIds.length > 0) {
+                await tx.envVariable.deleteMany({
+                    where: {
+                        id: { in: data.deleteIds },
+                        repositoryId,
+                    },
+                });
+            }
+
+            for (const update of data.updates) {
+                await tx.envVariable.update({
+                    where: { id: update.id, repositoryId },
+                    data: {
+                        key: update.key,
+                        value: encrypt(update.value),
+                    },
+                });
+            }
+
+            for (const create of data.creates) {
+                await tx.envVariable.create({
+                    data: {
+                        key: create.key,
+                        value: encrypt(create.value),
+                        repositoryId,
+                    },
+                });
+            }
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to update env variables');
     }
 }

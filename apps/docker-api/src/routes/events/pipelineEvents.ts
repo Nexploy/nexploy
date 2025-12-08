@@ -37,16 +37,12 @@ app.post('/stream/build', async (c) => {
                 } catch (e) {}
             };
 
-            const buildPromise = imagesStateManager.buildImage(
+            const result = await imagesStateManager.buildImage(
                 workDir,
                 imageName,
                 onLog,
                 abortController.signal,
             );
-
-            await imagesStateManager.pruneAllUnusedImages();
-
-            const result = await buildPromise;
 
             if (!isClientDisconnected && !c.req.raw.signal.aborted) {
                 await stream.writeSSE({

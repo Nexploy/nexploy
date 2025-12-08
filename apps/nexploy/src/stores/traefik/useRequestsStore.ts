@@ -139,7 +139,6 @@ export const useRequestsStore = create<RequestsState>((set, get) => ({
                 eventSource: { close: () => unsubscribers.forEach((fn) => fn()) } as EventSource,
             });
         } catch (err) {
-            console.error('Requests - Failed to connect:', err);
             set({ error: err as Error });
         }
     },

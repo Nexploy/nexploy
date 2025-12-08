@@ -7,8 +7,12 @@ import { setToastServer } from '@/components/utils/toaster/toastServer';
 
 export const onDockerRefreshAction = authActionServer.action(async () => {
     try {
-        await drinoDocker.post(`/containers/hardRefresh`, null).consume();
-        await drinoDocker.post(`/images/hardRefresh`, null).consume();
+        await Promise.all([
+            drinoDocker.post(`/containers/hardRefresh`, null).consume(),
+            drinoDocker.post(`/images/hardRefresh`, null).consume(),
+            drinoDocker.post(`/volumes/hardRefresh`, null).consume(),
+            drinoDocker.post(`/networks/hardRefresh`, null).consume(),
+        ]);
         await setToastServer({
             type: 'success',
             message: 'Refresh docker success !',

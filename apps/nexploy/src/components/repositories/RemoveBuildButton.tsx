@@ -2,29 +2,59 @@
 
 import { useAction } from 'next-safe-action/hooks';
 import { Button } from '@workspace/ui/components/button';
-import { Loader2, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { ComponentProps } from 'react';
 import { toast } from 'sonner';
 import { onRemoveBuild } from '@/actions/repository/builds/removeBuild.action';
+import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
 
 interface RemoveBuildButtonProps extends ComponentProps<typeof Button> {
     buildId: string;
+    mode?: 'button' | 'dropdown';
 }
 
-export function RemoveBuildButton({ buildId, ...props }: RemoveBuildButtonProps) {
-    const { execute, isPending } = useAction(onRemoveBuild, {
+export function RemoveBuildButton({ buildId, mode = 'button', ...props }: RemoveBuildButtonProps) {
+    const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
+
+    const { executeAsync } = useAction(onRemoveBuild, {
         onSuccess: () => {
             toast.success('Build removed successfully');
         },
     });
 
-    const handleRemove = async () => {
-        execute({ buildId });
+    const handleRemove = () => {
+        openAlertDialog({
+            title: 'Supprimer le build',
+            description:
+                'Êtes-vous sûr de vouloir supprimer ce build ? Cette action est irréversible.',
+            cancelLabel: 'Annuler',
+            actionLabel: 'Supprimer',
+            onAction: async () => {
+                await executeAsync({ buildId });
+            },
+        });
     };
 
+    if (mode === 'dropdown') {
+        return (
+            <DropdownMenuItem
+                onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleRemove();
+                }}
+                className="text-destructive focus:text-destructive"
+            >
+                <Trash2 className="size-4" />
+                Remove
+            </DropdownMenuItem>
+        );
+    }
+
     return (
-        <Button {...props} onClick={handleRemove} variant={'destructive'} disabled={isPending}>
-            {isPending ? <Loader2 className="animate-spin" /> : <Trash2 />}
+        <Button {...props} onClick={handleRemove} variant={'destructive'}>
+            <Trash2 />
         </Button>
     );
 }

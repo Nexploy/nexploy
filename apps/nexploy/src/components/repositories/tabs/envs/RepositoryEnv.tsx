@@ -1,22 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { useAction } from 'next-safe-action/hooks';
+import { useRouter } from 'next/navigation';
+import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import { Form, FormControl, FormField, FormItem } from '@workspace/ui/components/form';
 import { Eye, EyeOff, Loader2, Plus, Save, Trash2 } from 'lucide-react';
 import { onEnvVariableAction } from '@/actions/repository/envVariable.action';
-import { useRouter } from 'next/navigation';
+import { envVariableSchema } from '@workspace/schemas-zod/repository/envVariable.schema';
+import { toast } from 'sonner';
 
 interface EnvVariable {
-    id: string;
+    id?: string;
     key: string;
     value: string;
 }
@@ -26,93 +24,94 @@ interface RepositoryEnvTabProps {
     envVariables: EnvVariable[];
 }
 
+const defaultNewEnv = {
+    key: '',
+    value: '',
+};
+
 export function RepositoryEnv({
     repositoryId,
     envVariables: initialEnvVariables,
 }: RepositoryEnvTabProps) {
     const router = useRouter();
-    const [envVariables, setEnvVariables] = useState<EnvVariable[]>(initialEnvVariables);
-    const [newEnvs, setNewEnvs] = useState<{ key: string; value: string }[]>([]);
-    const [deletedIds, setDeletedIds] = useState<string[]>([]);
     const [showValues, setShowValues] = useState<Record<string, boolean>>({});
 
-    const { execute, isPending } = useAction(onEnvVariableAction, {
-        onSuccess: () => {
-            router.refresh();
-            setNewEnvs([]);
-            setDeletedIds([]);
+    const { form, action, handleSubmitWithAction } = useHookFormAction(
+        onEnvVariableAction,
+        zodResolver(envVariableSchema),
+        {
+            formProps: {
+                defaultValues: {
+                    repositoryId,
+                    envVariables: initialEnvVariables,
+                    deleteIds: [],
+                },
+            },
+            actionProps: {
+                onSuccess: () => {
+                    toast.success('Environment variables updated');
+                    router.refresh();
+
+                    form.reset({
+                        repositoryId,
+                        envVariables: form.getValues('envVariables'),
+                        deleteIds: [],
+                    });
+                },
+                onError: ({ error }) => {
+                    toast.error(error.serverError || 'Failed to update environment variables');
+                },
+            },
         },
-    });
+    );
+
+    const isSubmitting = action.status === 'executing';
+    const envVariables = form.watch('envVariables');
+    const deletedIds = form.watch('deleteIds');
 
     const handleAddNew = () => {
-        setNewEnvs([...newEnvs, { key: '', value: '' }]);
+        const currentEnvs = form.getValues('envVariables');
+        form.setValue('envVariables', [...currentEnvs, { ...defaultNewEnv }]);
     };
 
-    const handleRemoveNew = (index: number) => {
-        setNewEnvs(newEnvs.filter((_, i) => i !== index));
-    };
+    const handleRemove = (index: number) => {
+        const currentEnvs = form.getValues('envVariables');
+        const env = currentEnvs[index];
 
-    const handleUpdateNew = (index: number, field: 'key' | 'value', value: string) => {
-        const updated = [...newEnvs];
-        if (updated[index]) {
-            updated[index][field] = value;
+        if (env?.id) {
+            const deleted = new Set(form.getValues('deleteIds') ?? []);
+            deleted.add(env.id);
+            form.setValue('deleteIds', Array.from(deleted), { shouldDirty: true });
         }
-        setNewEnvs(updated);
-    };
 
-    const handleUpdateExisting = (id: string, field: 'key' | 'value', value: string) => {
-        setEnvVariables(
-            envVariables.map((env) => (env.id === id ? { ...env, [field]: value } : env)),
+        form.setValue(
+            'envVariables',
+            currentEnvs.filter((_, i) => i !== index),
+            { shouldDirty: true },
         );
     };
 
-    const handleDeleteExisting = (id: string) => {
-        setDeletedIds([...deletedIds, id]);
-    };
+    const handleUndoDelete = (id?: string) => {
+        if (!id) return;
 
-    const handleUndoDelete = (id: string) => {
-        setDeletedIds(deletedIds.filter((did) => did !== id));
-    };
+        const deleted = new Set(form.getValues('deleteIds') ?? []);
+        deleted.delete(id);
+        form.setValue('deleteIds', Array.from(deleted), { shouldDirty: true });
 
-    const toggleShowValue = (id: string) => {
-        setShowValues((prev) => ({ ...prev, [id]: !prev[id] }));
-    };
-
-    const hasChanges = () => {
-        if (newEnvs.length > 0) return true;
-        if (deletedIds.length > 0) return true;
-
-        const originalMap = new Map(initialEnvVariables.map((env) => [env.id, env]));
-        for (const env of envVariables) {
-            const original = originalMap.get(env.id);
-            if (!original || original.key !== env.key || original.value !== env.value) {
-                return true;
-            }
+        const originalEnv = initialEnvVariables.find((e) => e.id === id);
+        if (originalEnv) {
+            const currentEnvs = form.getValues('envVariables');
+            form.setValue('envVariables', [...currentEnvs, originalEnv], { shouldDirty: true });
         }
-        return false;
     };
 
-    const handleSave = () => {
-        const updates = envVariables
-            .filter((env) => !deletedIds.includes(env.id))
-            .map((env) => ({
-                id: env.id,
-                key: env.key,
-                value: env.value,
-            }));
-
-        const creates = newEnvs.filter((env) => env.key.trim() !== '');
-
-        execute({
-            repositoryId,
-            updates,
-            creates,
-            deleteIds: deletedIds,
-        });
+    const toggleShowValue = (index: number) => {
+        setShowValues((prev) => ({ ...prev, [index]: !prev[index] }));
     };
 
-    const activeEnvs = envVariables.filter((env) => !deletedIds.includes(env.id));
-    const deletedEnvs = envVariables.filter((env) => deletedIds.includes(env.id));
+    const deletedIdsSet = new Set(deletedIds);
+    const deletedEnvs = initialEnvVariables.filter((env) => env.id && deletedIdsSet.has(env.id));
+    const hasChanges = form.formState.isDirty || deletedIdsSet.size > 0;
 
     return (
         <Card className={'mx-5'}>
@@ -123,9 +122,13 @@ export function RepositoryEnv({
                         <CardDescription>Configure environment variables</CardDescription>
                     </div>
                     <div className="flex gap-2">
-                        {hasChanges() && (
-                            <Button size="sm" onClick={handleSave} disabled={isPending}>
-                                {isPending ? <Loader2 className="animate-spin" /> : <Save />}
+                        {hasChanges && (
+                            <Button
+                                size="sm"
+                                onClick={handleSubmitWithAction}
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? <Loader2 className="animate-spin" /> : <Save />}
                                 Save Changes
                             </Button>
                         )}
@@ -137,126 +140,110 @@ export function RepositoryEnv({
                 </div>
             </CardHeader>
             <CardContent>
-                <div className="space-y-2">
-                    {activeEnvs.length === 0 && newEnvs.length === 0 ? (
-                        <div className="text-muted-foreground py-8 text-center">
-                            No environment variables configured.
-                        </div>
-                    ) : (
-                        <>
-                            {activeEnvs.map((env) => (
-                                <div key={env.id} className="flex items-end gap-2">
+                <Form {...form}>
+                    <form onSubmit={handleSubmitWithAction} className="space-y-2">
+                        {envVariables.length === 0 ? (
+                            <div className="text-muted-foreground py-8 text-center">
+                                No environment variables configured.
+                            </div>
+                        ) : (
+                            envVariables.map((env, index) => (
+                                <div key={index} className="flex items-end gap-2">
                                     <div className="flex-1">
-                                        <Input
-                                            id={`key-${env.id}`}
-                                            value={env.key}
-                                            onChange={(e) =>
-                                                handleUpdateExisting(env.id, 'key', e.target.value)
-                                            }
-                                            placeholder="VARIABLE_NAME"
-                                            className="font-mono"
+                                        <FormField
+                                            control={form.control}
+                                            name={`envVariables.${index}.key`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                        <Input
+                                                            {...field}
+                                                            placeholder="VARIABLE_NAME"
+                                                            className="font-mono"
+                                                        />
+                                                    </FormControl>
+                                                </FormItem>
+                                            )}
                                         />
                                     </div>
                                     <div className="flex-1">
-                                        <div className="relative">
-                                            <Input
-                                                id={`value-${env.id}`}
-                                                type={showValues[env.id] ? 'text' : 'password'}
-                                                value={
-                                                    showValues[env.id] ? env.value : '************'
-                                                }
-                                                onChange={(e) =>
-                                                    handleUpdateExisting(
-                                                        env.id,
-                                                        'value',
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                placeholder="value"
-                                                className="pr-10 font-mono"
-                                            />
-                                            <Button
-                                                type="button"
-                                                variant="ghost"
-                                                size="sm"
-                                                className="absolute top-1/2 right-1 -translate-y-1/2"
-                                                onClick={() => toggleShowValue(env.id)}
-                                            >
-                                                {showValues[env.id] ? <Eye /> : <EyeOff />}
-                                            </Button>
-                                        </div>
-                                    </div>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => handleDeleteExisting(env.id)}
-                                    >
-                                        <Trash2 className="text-destructive size-4" />
-                                    </Button>
-                                </div>
-                            ))}
-
-                            {newEnvs.map((env, index) => (
-                                <div key={`new-${index}`} className="flex items-end gap-4">
-                                    <div className="flex-1">
-                                        <Input
-                                            id={`new-key-${index}`}
-                                            value={env.key}
-                                            onChange={(e) =>
-                                                handleUpdateNew(index, 'key', e.target.value)
-                                            }
-                                            placeholder="VARIABLE_NAME"
-                                            className="font-mono"
-                                        />
-                                    </div>
-                                    <div className="flex-1">
-                                        <Input
-                                            id={`new-value-${index}`}
-                                            value={env.value}
-                                            onChange={(e) =>
-                                                handleUpdateNew(index, 'value', e.target.value)
-                                            }
-                                            placeholder="value"
-                                            className="font-mono"
+                                        <FormField
+                                            control={form.control}
+                                            name={`envVariables.${index}.value`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                        <div className="relative">
+                                                            <Input
+                                                                {...field}
+                                                                type={
+                                                                    showValues[index]
+                                                                        ? 'text'
+                                                                        : 'password'
+                                                                }
+                                                                placeholder="value"
+                                                                className="pr-10 font-mono"
+                                                            />
+                                                            <Button
+                                                                type="button"
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="absolute top-1/2 right-1 -translate-y-1/2"
+                                                                onClick={() =>
+                                                                    toggleShowValue(index)
+                                                                }
+                                                            >
+                                                                {showValues[index] ? (
+                                                                    <Eye />
+                                                                ) : (
+                                                                    <EyeOff />
+                                                                )}
+                                                            </Button>
+                                                        </div>
+                                                    </FormControl>
+                                                </FormItem>
+                                            )}
                                         />
                                     </div>
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        onClick={() => handleRemoveNew(index)}
+                                        type="button"
+                                        onClick={() => handleRemove(index)}
                                     >
                                         <Trash2 className="text-destructive size-4" />
                                     </Button>
                                 </div>
-                            ))}
-                        </>
-                    )}
+                            ))
+                        )}
 
-                    {deletedEnvs.length > 0 && (
-                        <div className="border-t pt-4">
-                            <p className="text-muted-foreground mb-2 text-sm">
-                                Pending deletion (save to confirm):
-                            </p>
-                            {deletedEnvs.map((env) => (
-                                <div
-                                    key={env.id}
-                                    className="bg-destructive/10 flex items-center justify-between rounded-md p-2"
-                                >
-                                    <span className="font-mono text-sm line-through">
-                                        {env.key}
-                                    </span>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => handleUndoDelete(env.id)}
+                        {deletedEnvs.length > 0 && (
+                            <div className="border-t pt-4">
+                                <p className="text-muted-foreground mb-2 text-sm">
+                                    Pending deletion (save to confirm):
+                                </p>
+                                {deletedEnvs.map((env) => (
+                                    <div
+                                        key={env.id}
+                                        className="bg-destructive/10 flex items-center justify-between rounded-md p-2"
                                     >
-                                        Undo
-                                    </Button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                                        <span className="font-mono text-sm line-through">
+                                            {env.key}
+                                        </span>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            type="button"
+                                            onClick={() => handleUndoDelete(env.id)}
+                                        >
+                                            Undo
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </form>
+                </Form>
             </CardContent>
         </Card>
     );

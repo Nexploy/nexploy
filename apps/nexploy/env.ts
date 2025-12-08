@@ -11,6 +11,7 @@ const envSchema = z.object({
     DOCKER_API_URL: z.url(),
     AI_KEY: z.string(),
     DEPLOYER_WORK_DIR: z.string(),
+    ENCRYPTION_KEY: z.string(),
 });
 
 export const env = envSchema.parse(process.env);

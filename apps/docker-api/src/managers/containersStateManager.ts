@@ -11,6 +11,9 @@ import {
 import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { BaseStateManager } from '@/lib/BaseStateManager';
 import { DeployOptions } from '@workspace/typescript-interface/inngest/deploy';
+import { EventEmitter } from 'events';
+
+export const containerImageEvents = new EventEmitter();
 
 class ContainersStateManager extends BaseStateManager {
     private containers: Map<string, Containers> = new Map();
@@ -151,6 +154,12 @@ class ContainersStateManager extends BaseStateManager {
 
                 if (oldState) {
                     this.emit('container-removed', { containerId, action, oldState });
+
+                    containerImageEvents.emit('container-usage-changed', {
+                        action: 'destroy',
+                        containerId,
+                        imageId: oldState.image,
+                    });
                 }
                 return;
             }
@@ -170,6 +179,12 @@ class ContainersStateManager extends BaseStateManager {
                     timestamp: Date.now(),
                 };
                 this.emit('container-added', containerAddedData);
+
+                containerImageEvents.emit('container-usage-changed', {
+                    action: 'create',
+                    containerId: newState.id,
+                    imageId: newState.image,
+                });
             } else if (this.hasStateChanged(oldState, newState)) {
                 const containerUpdatedData: ContainersEvent = {
                     type: 'updated',
@@ -179,6 +194,18 @@ class ContainersStateManager extends BaseStateManager {
                     timestamp: Date.now(),
                 };
                 this.emit('container-updated', containerUpdatedData);
+
+                if (oldState.state !== newState.state) {
+                    containerImageEvents.emit('container-usage-changed', {
+                        action: action,
+                        containerId: newState.id,
+                        imageId: newState.image,
+                        stateChange: {
+                            from: oldState.state,
+                            to: newState.state,
+                        },
+                    });
+                }
             }
         } catch (err: any) {
             if (err.statusCode === 404) {
@@ -193,6 +220,12 @@ class ContainersStateManager extends BaseStateManager {
                         timestamp: Date.now(),
                     };
                     this.emit('container-removed', containerRemovedData);
+
+                    containerImageEvents.emit('container-usage-changed', {
+                        action: 'destroy',
+                        containerId,
+                        imageId: oldState.image,
+                    });
                 }
             } else {
                 logger.error({ err, containerId }, 'Error updating container state');

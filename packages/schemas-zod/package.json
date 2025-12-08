@@ -1,8 +1,9 @@
 {
-  "name": "@workspace/schemas-zod",
-  "version": "1.0.0",
-  "private": true,
-  "exports": {
-    "./*": "./src/*.ts"
-  }
+    "name": "@workspace/schemas-zod",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        "./*": "./src/*.ts"
+    }
 }

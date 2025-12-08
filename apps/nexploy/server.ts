@@ -1,5 +1,4 @@
 import { createServer, IncomingMessage, ServerResponse } from 'http';
-import { parse } from 'url';
 import httpProxy from 'http-proxy';
 import next from 'next';
 import { terminalSchema } from '@workspace/schemas-zod/websocket/terminal.schema';
@@ -119,8 +118,7 @@ function matchAndTransformWsUrl(pathname: string): MatchResult {
 app.prepare().then(() => {
     const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
         try {
-            const parsedUrl = parse(req.url!, true);
-            await handle(req, res, parsedUrl);
+            await handle(req, res);
         } catch (err) {
             console.error('❌ Error handling request:', req.url, err);
             res.statusCode = 500;
@@ -129,8 +127,8 @@ app.prepare().then(() => {
     });
 
     server.on('upgrade', (req: IncomingMessage, socket: Socket, head: Buffer) => {
-        const parsedUrl = parse(req.url!, true);
-        const { pathname } = parsedUrl;
+        const parsedUrl = new URL(req.url!, `http://${req.headers.host}`);
+        const pathname = parsedUrl.pathname;
 
         try {
             if (dev && pathname?.startsWith('/_next/webpack-hmr')) return;
