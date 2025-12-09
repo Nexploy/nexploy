@@ -17,7 +17,7 @@ import { KeyValueInput, KeyValueList } from '@/components/forms/KeyValue';
 import { Button } from '@workspace/ui/components/button';
 import { useKeyValueState } from '@/hooks/useKeyValueState';
 import { UseFormReturn } from 'react-hook-form';
-import { NetworkCreateForm } from '@workspace/schemas-zod/network/networkAction.schema';
+import { NetworkCreateForm } from '@workspace/schemas-zod/docker/network/networkAction.schema';
 
 interface AdvancedConfigProps {
     form: UseFormReturn<NetworkCreateForm>;

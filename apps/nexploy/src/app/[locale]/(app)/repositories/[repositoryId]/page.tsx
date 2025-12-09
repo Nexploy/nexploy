@@ -6,11 +6,23 @@ import { RepositoryEnvTab } from '@/components/repositories/tabs/envs/Repository
 import { RepositoryDomainsTab } from '@/components/repositories/tabs/domains/RepositoryDomainsTab';
 import { RepositorySettingsTab } from '@/components/repositories/tabs/settings/RepositorySettingsTab';
 import { RepositoryVersionsTab } from '@/components/repositories/tabs/versions/RepositoryVersionsTab';
-import { GitBranch, Github, Gitlab, Globe, Hammer, Key, Link2, Settings, Tag } from 'lucide-react';
+import {
+    GitBranch,
+    Github,
+    Gitlab,
+    Globe,
+    Hammer,
+    Key,
+    Link2,
+    Rocket,
+    Settings,
+    Tag,
+} from 'lucide-react';
 import { RepositoryBuildsTab } from '@/components/repositories/tabs/builds/RepositoryBuildsTab';
+import { RepositoryDeploymentTab } from '@/components/repositories/tabs/deployment/RepositoryDeploymentTab';
 import { getRepositorieById } from '@/services/repository.service';
 import { Separator } from '@workspace/ui/components/separator';
-import { capitalizeFirstLetter } from '@/utils/capitalize';
+import { capitalizeFirstLetter, capitalizeOnlyFirst } from '@/utils/capitalize';
 
 interface RepositoryIdPageProps {
     params: Promise<{
@@ -53,6 +65,8 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                                     <GitBranch className="size-3" />
                                     <span>{repository.branch}</span>
                                 </p>
+                                <Separator orientation={'vertical'} className={'!h-3 w-1'} />
+                                <span>{capitalizeOnlyFirst(repository.buildType)}</span>
                             </div>
                         </div>
                     </div>
@@ -79,6 +93,10 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                                     <Globe />
                                     Domains
                                 </TabsTrigger>
+                                <TabsTrigger value="deployment">
+                                    <Rocket />
+                                    Deployment
+                                </TabsTrigger>
                             </div>
                         </TabsList>
                         <TabsList className="mx-5 mb-2">
@@ -101,6 +119,9 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                             </TabsContent>
                             <TabsContent value="domain" className="mt-0">
                                 <RepositoryDomainsTab repositoryId={repository.id} />
+                            </TabsContent>
+                            <TabsContent value="deployment" className="mt-0">
+                                <RepositoryDeploymentTab repositoryId={repository.id} />
                             </TabsContent>
                             <TabsContent value="setting" className="mt-0">
                                 <RepositorySettingsTab repositoryId={repository.id} />

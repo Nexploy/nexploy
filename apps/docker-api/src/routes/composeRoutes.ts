@@ -1,10 +1,9 @@
-import Docker from 'dockerode';
 import { Hono } from 'hono';
 import { handleAsync } from '@/helpers/handleAsync';
 import { logger } from '@/utils/logger';
 import { ComposesAction } from '@workspace/typescript-interface/docker/docker.composeStack';
+import { docker } from '@/utils/dockerClient';
 
-const docker = new Docker();
 const app = new Hono();
 
 async function controlComposeStack(projectName: string, action: ComposesAction) {
@@ -42,18 +41,19 @@ async function controlComposeStack(projectName: string, action: ComposesAction) 
     return await Promise.all(actions);
 }
 
-/**
- * @openapi
- * /compose/{project}/start:
- *   post:
- *     summary: Démarre une stack Docker Compose
- *     parameters:
- *       - in: path
- *         name: project
- *         required: true
- *         schema:
- *           type: string
- */
+app.get(
+    '/:project/list',
+    handleAsync(async (c) => {
+        const projectName = c.req.param('project');
+
+        return await docker.listContainers({
+            filters: {
+                label: [`com.docker.compose.project=${projectName}`],
+            },
+        });
+    }),
+);
+
 app.post(
     '/:project/start',
     handleAsync(async (c) => {
@@ -62,18 +62,6 @@ app.post(
     }),
 );
 
-/**
- * @openapi
- * /compose/{project}/stop:
- *   post:
- *     summary: Stoppe une stack Docker Compose
- *     parameters:
- *       - in: path
- *         name: project
- *         required: true
- *         schema:
- *           type: string
- */
 app.post(
     '/:project/stop',
     handleAsync(async (c) => {
@@ -82,18 +70,6 @@ app.post(
     }),
 );
 
-/**
- * @openapi
- * /compose/{project}/pause:
- *   post:
- *     summary: Pause une stack Docker Compose
- *     parameters:
- *       - in: path
- *         name: project
- *         required: true
- *         schema:
- *           type: string
- */
 app.post(
     '/:project/pause',
     handleAsync(async (c) => {
@@ -110,18 +86,6 @@ app.post(
     }),
 );
 
-/**
- * @openapi
- * /compose/{project}/restart:
- *   post:
- *     summary: Redémarre une stack Docker Compose
- *     parameters:
- *       - in: path
- *         name: project
- *         required: true
- *         schema:
- *           type: string
- */
 app.post(
     '/:project/restart',
     handleAsync(async (c) => {
@@ -138,18 +102,6 @@ app.post(
     }),
 );
 
-/**
- * @openapi
- * /compose/{project}:
- *   get:
- *     summary: Liste les conteneurs d'une stack Docker Compose
- *     parameters:
- *       - in: path
- *         name: project
- *         required: true
- *         schema:
- *           type: string
- */
 app.get(
     '/:project',
     handleAsync(async (c) => {

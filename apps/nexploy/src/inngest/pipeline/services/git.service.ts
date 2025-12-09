@@ -1,13 +1,19 @@
 import { spawn } from 'child_process';
-import { access, copyFile, mkdir, rm, writeFile } from 'fs/promises';
+import { access, mkdir, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
-import { env } from '../../../env';
+import { env } from '../../../../env';
 import { getValidToken } from '@/services/api/gitProvider.service';
+import { ProgressCallback } from '../types';
 
-type ProgressCallback = (progress: number, message: string) => void;
-
-class PipelineService {
+/**
+ * Git Service
+ * Handles all git-related operations for the pipeline
+ */
+class GitService {
+    /**
+     * Execute a shell command with progress tracking
+     */
     private async exec(
         command: string,
         args: string[],
@@ -57,6 +63,9 @@ class PipelineService {
         });
     }
 
+    /**
+     * Build authenticated git URL with OAuth token
+     */
     private getAuthenticatedGitUrl(gitUrl: string, gitToken: string | null): string {
         if (!gitToken) {
             return gitUrl;
@@ -72,6 +81,9 @@ class PipelineService {
         }
     }
 
+    /**
+     * Clone a repository to the work directory
+     */
     async cloneRepository(
         buildConfig: BuildConfig,
         onProgress?: ProgressCallback,
@@ -94,7 +106,10 @@ class PipelineService {
             buildConfig.userId,
         );
 
-        const authenticatedUrl = this.getAuthenticatedGitUrl(buildConfig.gitUrl, token.accessToken);
+        const authenticatedUrl = this.getAuthenticatedGitUrl(
+            buildConfig.gitUrl,
+            token.accessToken,
+        );
 
         try {
             await this.exec(
@@ -113,12 +128,12 @@ class PipelineService {
             );
         } catch (error) {
             await rm(workDir, { recursive: true, force: true }).catch(() => {});
-
             throw new Error(
                 `Failed to clone repository from ${buildConfig.gitUrl} (branch: ${buildConfig.gitBranch})`,
             );
         }
 
+        // Handle context path if specified
         if (buildConfig.repositoryPath && buildConfig.repositoryPath !== '.') {
             return join(workDir, buildConfig.repositoryPath);
         }
@@ -126,26 +141,9 @@ class PipelineService {
         return workDir;
     }
 
-    async prepareDockerfile(workDir: string, buildConfig: BuildConfig): Promise<void> {
-        const dockerfilePath = join(workDir, 'Dockerfile');
-
-        try {
-            await access(dockerfilePath);
-            return;
-        } catch {
-            /* empty */
-        }
-
-        if (buildConfig.dockerfile) {
-            await writeFile(dockerfilePath, buildConfig.dockerfile);
-            return;
-        }
-
-        if (buildConfig.dockerfilePath) {
-            await copyFile(buildConfig.dockerfilePath, dockerfilePath);
-        }
-    }
-
+    /**
+     * Write environment variables to .env.production file
+     */
     async writeEnvFile(workDir: string, envVariables: Record<string, string>): Promise<void> {
         if (!envVariables || Object.keys(envVariables).length === 0) {
             return;
@@ -159,13 +157,71 @@ class PipelineService {
         await writeFile(envPath, envContent);
     }
 
+    /**
+     * Validate that a Docker Compose file exists
+     */
+    async validateComposeFile(workDir: string, composePath?: string): Promise<string> {
+        const primaryPath = composePath || 'docker-compose.yml';
+        const composeFilePath = join(workDir, primaryPath);
+
+        try {
+            await access(composeFilePath);
+            return primaryPath;
+        } catch {
+            // Try alternative paths
+            const alternativePaths = [
+                'docker-compose.yaml',
+                'compose.yml',
+                'compose.yaml',
+            ];
+
+            for (const altPath of alternativePaths) {
+                try {
+                    await access(join(workDir, altPath));
+                    return altPath;
+                } catch {
+                    continue;
+                }
+            }
+
+            throw new Error(
+                `Docker Compose file not found. Tried: ${primaryPath}, ${alternativePaths.join(', ')}`,
+            );
+        }
+    }
+
+    /**
+     * Validate Docker Compose file syntax
+     */
+    async validateComposeSyntax(workDir: string, composePath: string): Promise<void> {
+        await this.exec('docker', ['compose', '-f', composePath, 'config', '--quiet'], {
+            cwd: workDir,
+        });
+    }
+
+    /**
+     * Validate that a Dockerfile exists
+     */
+    async validateDockerfile(workDir: string, dockerfilePath?: string): Promise<void> {
+        const path = join(workDir, dockerfilePath || 'Dockerfile');
+
+        try {
+            await access(path);
+        } catch {
+            throw new Error(`Dockerfile not found at: ${dockerfilePath || 'Dockerfile'}`);
+        }
+    }
+
+    /**
+     * Cleanup work directory
+     */
     async cleanup(workDir: string): Promise<void> {
         try {
             await rm(workDir, { recursive: true, force: true });
-        } catch (error: unknown) {
-            /* empty */
+        } catch {
+            // Ignore cleanup errors
         }
     }
 }
 
-export const pipelineService = new PipelineService();
+export const gitService = new GitService();

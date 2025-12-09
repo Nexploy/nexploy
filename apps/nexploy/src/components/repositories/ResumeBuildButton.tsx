@@ -29,9 +29,11 @@ interface ResumeBuildButtonProps extends ComponentProps<typeof Button> {
 const STEP_LABELS: Record<BuildStep, string> = {
     'clone-repository': 'Clone Repository',
     'prepare-dockerfile': 'Prepare Dockerfile',
+    'prepare-compose': 'Prepare Docker Compose',
     'write-env-file': 'Write Env File',
     'build-docker-image': 'Build Docker Image',
     'deploy-container': 'Deploy Container',
+    'deploy-compose': 'Deploy Docker Compose',
     cleanup: 'Cleanup',
     'finalize-logs': 'Finalize',
 };

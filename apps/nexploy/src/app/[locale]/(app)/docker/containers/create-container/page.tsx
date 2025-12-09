@@ -42,7 +42,7 @@ import {
 } from '@workspace/ui/components/select';
 import { Switch } from '@workspace/ui/components/switch';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { containerCreateFormSchema } from '@workspace/schemas-zod/container/containerCreate.schema';
+import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { onContainerCreateAction } from '@/actions/docker/container/containerCreate.action';
 import {
     InputAutoComplete,

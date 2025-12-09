@@ -2,7 +2,7 @@
 
 import { authActionServer } from '@/lib/api/safe-action';
 import { HttpErrorResponse } from 'drino';
-import { containerCreateFormSchema } from '@workspace/schemas-zod/container/containerCreate.schema';
+import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 

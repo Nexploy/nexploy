@@ -3,7 +3,7 @@
 import { authActionServer } from '@/lib/api/safe-action';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { HttpErrorResponse } from 'drino';
-import { imageActionsSchema } from '@workspace/schemas-zod/image/imageAction.schema';
+import { imageActionsSchema } from '@workspace/schemas-zod/docker/image/imageAction.schema';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 
 export const onImageAction = authActionServer

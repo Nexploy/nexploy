@@ -40,7 +40,7 @@ import {
 } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { onImagePullAction } from '@/actions/docker/image/imagePullAction.action';
-import { imagePullSchema } from '@workspace/schemas-zod/image/imagePullAction.schema';
+import { imagePullSchema } from '@workspace/schemas-zod/docker/image/imagePullAction.schema';
 import { Alert, AlertTitle } from '@workspace/ui/components/alert';
 import { toast } from 'sonner';
 import { cn } from '@workspace/ui/lib/utils';

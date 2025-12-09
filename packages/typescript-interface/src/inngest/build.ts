@@ -8,21 +8,27 @@ export type BuildStatus =
     | 'DEPLOYING'
     | 'CANCELLED';
 
+export type BuildType = 'DOCKERFILE' | 'DOCKER_COMPOSE' | 'NIXPACKS' | 'BUILDPACKS';
+
 export type BuildStep =
     | 'clone-repository'
     | 'prepare-dockerfile'
+    | 'prepare-compose'
     | 'write-env-file'
     | 'build-docker-image'
     | 'deploy-container'
+    | 'deploy-compose'
     | 'cleanup'
     | 'finalize-logs';
 
 export const BUILD_STEPS_ORDER: BuildStep[] = [
     'clone-repository',
     'prepare-dockerfile',
+    'prepare-compose',
     'write-env-file',
     'build-docker-image',
     'deploy-container',
+    'deploy-compose',
     'cleanup',
     'finalize-logs',
 ];
@@ -43,8 +49,10 @@ export interface BuildConfig extends GitProviderToken {
     gitUrl: string;
     gitBranch: string;
     envVariables: Record<string, string>;
+    buildType: BuildType;
     dockerfile?: string;
     dockerfilePath?: string;
+    dockerComposePath?: string;
     imageName: string;
     imageTag: string;
     autoDeploy: boolean;

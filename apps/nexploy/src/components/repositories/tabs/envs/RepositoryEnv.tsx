@@ -6,7 +6,13 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@workspace/ui/components/card';
 import { Form, FormControl, FormField, FormItem } from '@workspace/ui/components/form';
 import { Eye, EyeOff, Loader2, Plus, Save, Trash2 } from 'lucide-react';
 import { onEnvVariableAction } from '@/actions/repository/envVariable.action';
@@ -143,7 +149,7 @@ export function RepositoryEnv({
                 <Form {...form}>
                     <form onSubmit={handleSubmitWithAction} className="space-y-2">
                         {envVariables.length === 0 ? (
-                            <div className="text-muted-foreground py-8 text-center">
+                            <div className="text-muted-foreground py-8 text-center text-sm">
                                 No environment variables configured.
                             </div>
                         ) : (

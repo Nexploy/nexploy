@@ -43,6 +43,8 @@ export async function startBuildRepositoryInngest(repositoryId: string, userId: 
         envVariables[env.key] = env.value;
     }
 
+    const buildType = (repository.buildType as BuildConfig['buildType']) || 'DOCKERFILE';
+
     const config: BuildConfig = {
         ...token,
         userId,
@@ -52,7 +54,9 @@ export async function startBuildRepositoryInngest(repositoryId: string, userId: 
         gitUrl: repository.repositoryUrl,
         gitBranch: repository.branch,
         envVariables,
+        buildType,
         dockerfilePath: repository.dockerfilePath || undefined,
+        dockerComposePath: repository.dockerComposePath || undefined,
         imageName,
         imageTag: build.id.slice(-8),
         autoDeploy: repository.autoDeploy,
@@ -189,6 +193,8 @@ export async function retryBuildRepositoryInngest(
         envVariables[env.key] = env.value;
     }
 
+    const buildType = (repository.buildType as BuildConfig['buildType']) || 'DOCKERFILE';
+
     const config: BuildConfig = {
         ...token,
         userId,
@@ -198,7 +204,9 @@ export async function retryBuildRepositoryInngest(
         gitUrl: repository.repositoryUrl,
         gitBranch: existingBuild.branch,
         envVariables,
+        buildType,
         dockerfilePath: repository.dockerfilePath || undefined,
+        dockerComposePath: repository.dockerComposePath || undefined,
         imageName,
         imageTag: buildId.slice(-8),
         autoDeploy: repository.autoDeploy,
@@ -236,6 +244,8 @@ export async function resumeBuildRepositoryInngest(
     const resumeStep =
         startFromStep || getNextStep(existingBuild.lastCompletedStep as BuildStep | null);
 
+    const buildType = (repository.buildType as BuildConfig['buildType']) || 'DOCKERFILE';
+
     const config: BuildConfig = {
         ...token,
         userId,
@@ -245,7 +255,9 @@ export async function resumeBuildRepositoryInngest(
         gitUrl: repository.repositoryUrl,
         gitBranch: existingBuild.branch,
         envVariables,
+        buildType,
         dockerfilePath: repository.dockerfilePath || undefined,
+        dockerComposePath: repository.dockerComposePath || undefined,
         imageName,
         imageTag: buildId.slice(-8),
         autoDeploy: repository.autoDeploy,
@@ -266,9 +278,11 @@ function getNextStep(lastCompletedStep: BuildStep | null): BuildStep | undefined
     const steps: BuildStep[] = [
         'clone-repository',
         'prepare-dockerfile',
+        'prepare-compose',
         'write-env-file',
         'build-docker-image',
         'deploy-container',
+        'deploy-compose',
         'cleanup',
         'finalize-logs',
     ];

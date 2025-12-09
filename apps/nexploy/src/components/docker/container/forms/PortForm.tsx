@@ -20,7 +20,7 @@ import { Button } from '@workspace/ui/components/button';
 import {
     ContainerPortForm,
     containerPortSchema,
-} from '@workspace/schemas-zod/container/containerPort.schema';
+} from '@workspace/schemas-zod/docker/container/containerPort.schema';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { DialogClose, DialogFooter } from '@workspace/ui/components/dialog';
 import { Plus, Save, Trash } from 'lucide-react';

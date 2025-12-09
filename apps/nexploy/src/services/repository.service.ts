@@ -1,7 +1,6 @@
 import { RepositoryCreateForm } from '@workspace/schemas-zod/repository/repositoryCreate.schema';
 import { Session } from '@/lib/auth/auth';
 import { prisma } from '../../prisma/prisma';
-import { WebhookConfig } from '@workspace/schemas-zod/repository/webhook.schema';
 import { getGitProviderToken } from '@/services/git/git.service';
 import { tokenStorage } from '@/lib/storage/token-storage';
 import { getUserSession } from '@/services/auth/auth.service';
@@ -18,6 +17,8 @@ export async function createRepository(
     ctx: { session: Session },
 ) {
     try {
+        let webhookConfig = null;
+
         if (restRepositoryCreate.autoDeploy) {
             const oldToken = await getGitProviderToken(restRepositoryCreate.gitProvider);
             const token = await getValidToken(
@@ -28,28 +29,28 @@ export async function createRepository(
 
             const baseUrl = await getBaseUrl();
 
-            const webhookConfig: WebhookConfig = await tokenStorage.run(token, async () => {
+            webhookConfig = await tokenStorage.run(token, async () => {
                 return await setupWebhookForRepository(
-                    repository.repositoryUrl,
-                    repository.gitProvider,
+                    repo.url,
+                    restRepositoryCreate.gitProvider,
                     ctx.session.user.id,
                     baseUrl,
                 );
             });
-
-            const repository = await prisma.repository.create({
-                data: {
-                    ...restRepositoryCreate,
-                    gitId: repo.id,
-                    webhookId: webhookConfig.webhookId,
-                    webhookSecret: webhookConfig.webhookSecret,
-                    repositoryUrl: repo.url,
-                    userId: ctx.session.user.id,
-                },
-            });
-
-            return repository.id;
         }
+
+        const repository = await prisma.repository.create({
+            data: {
+                ...restRepositoryCreate,
+                gitId: repo.id,
+                webhookId: webhookConfig?.webhookId,
+                webhookSecret: webhookConfig?.webhookSecret,
+                repositoryUrl: repo.url,
+                userId: ctx.session.user.id,
+            },
+        });
+
+        return repository.id;
     } catch (error: unknown) {
         throw new Error('Failed to create repository');
     }
@@ -253,6 +254,54 @@ export async function deleteWebhookForRepository(repositoryId: string) {
         });
     } catch (error: unknown) {
         throw new Error('Failed to delete webhook for repository');
+    }
+}
+
+export async function updateDeploymentSettings(
+    repositoryId: string,
+    settings: {
+        deploymentMode: 'CONTAINER' | 'SWARM';
+        replicas: number;
+        updateParallelism: number;
+        updateDelay: string;
+        updateFailureAction: 'CONTINUE' | 'PAUSE' | 'ROLLBACK';
+        updateOrder: 'STOP_FIRST' | 'START_FIRST';
+        rollbackParallelism: number;
+        rollbackDelay: string;
+        rollbackFailureAction: 'CONTINUE' | 'PAUSE';
+        restartCondition: 'NONE' | 'ON_FAILURE' | 'ANY';
+        restartDelay: string;
+        restartMaxAttempts: number;
+        restartWindow: string;
+        cpuLimit: number | null;
+        cpuReservation: number | null;
+        memoryLimit: string | null;
+        memoryReservation: string | null;
+        placementConstraints: string[];
+        healthCheckEnabled: boolean;
+        healthCheckCommand: string | null;
+        healthCheckInterval: string;
+        healthCheckTimeout: string;
+        healthCheckRetries: number;
+        healthCheckStartPeriod: string;
+    },
+    userId: string,
+) {
+    try {
+        const repository = await prisma.repository.findFirst({
+            where: { id: repositoryId, userId },
+        });
+
+        if (!repository) {
+            throw new Error('Repository not found');
+        }
+
+        return await prisma.repository.update({
+            where: { id: repositoryId },
+            data: settings,
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to update deployment settings');
     }
 }
 

@@ -27,8 +27,6 @@ export default function AddRepositoryPage() {
                     gitToken: '',
                     gitProvider: 'github',
                     buildType: 'DOCKERFILE',
-                    dockerfilePath: 'Dockerfile',
-                    contextPath: '.',
                     buildArgs: '',
                     autoDeploy: true,
                 },

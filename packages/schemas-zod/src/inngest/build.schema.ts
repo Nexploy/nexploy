@@ -3,9 +3,11 @@ import { z } from 'zod';
 export const buildStepSchema = z.enum([
     'clone-repository',
     'prepare-dockerfile',
+    'prepare-compose',
     'write-env-file',
     'build-docker-image',
     'deploy-container',
+    'deploy-compose',
     'cleanup',
     'finalize-logs',
 ]);

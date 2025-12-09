@@ -34,7 +34,7 @@ import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { onVolumeCreateAction } from '@/actions/docker/volume/volumeCreate.action';
 import { Alert, AlertTitle } from '@workspace/ui/components/alert';
 import { toast } from 'sonner';
-import { volumeCreateSchema } from '@workspace/schemas-zod/volume/volumeAction.schema';
+import { volumeCreateSchema } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 
 const VOLUME_DRIVERS = [
     {

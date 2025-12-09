@@ -18,7 +18,7 @@ import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStor
 import {
     ContainerVolumeForm,
     containerVolumeSchema,
-} from '@workspace/schemas-zod/container/containerVolume.schema';
+} from '@workspace/schemas-zod/docker/container/containerVolume.schema';
 import { Label } from '@workspace/ui/components/label';
 import { Switch } from '@workspace/ui/components/switch';
 

@@ -1,27 +1,37 @@
 import { docker } from '@/utils/dockerClient';
 import { logger } from '@/utils/logger';
-import {
-    SwarmInfo,
-    SwarmNode,
-    SwarmService,
-    SwarmEvent,
-    SwarmNodeStatus,
-    SwarmNodeAvailability,
-} from '@workspace/typescript-interface/docker/docker.swarm';
 import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { BaseStateManager } from '@/lib/BaseStateManager';
-import { Swarm } from 'dockerode';
+import type { Swarm } from 'dockerode';
+import type {
+    SwarmEvent,
+    SwarmInfo,
+    SwarmNode,
+    SwarmNodeAvailability,
+    SwarmNodeChanges,
+    SwarmNodeRole,
+    SwarmNodeState,
+    SwarmService,
+    SwarmServiceChanges,
+    SwarmServiceMode,
+    SwarmStats,
+    SwarmTask,
+    SwarmTaskChanges,
+    SwarmTaskDesiredState,
+    SwarmTaskState,
+} from '@workspace/typescript-interface/docker/swarm';
 
 class SwarmStateManager extends BaseStateManager {
     private nodes: Map<string, SwarmNode> = new Map();
     private services: Map<string, SwarmService> = new Map();
+    private tasks: Map<string, SwarmTask> = new Map();
     private swarmInfo: SwarmInfo | null = null;
     private isSwarmActive: boolean = false;
 
     constructor() {
         super({
             managerName: 'Swarm State Manager',
-            pollIntervalMs: 15000,
+            pollIntervalMs: 10000,
             maxReconnectAttempts: 5,
             maxListeners: 100,
         });
@@ -41,9 +51,11 @@ class SwarmStateManager extends BaseStateManager {
                 this.swarmInfo = null;
                 this.nodes.clear();
                 this.services.clear();
+                this.tasks.clear();
 
                 const notInSwarmEvent: SwarmEvent = {
                     type: 'not-in-swarm',
+                    isSwarmActive: false,
                     timestamp: Date.now(),
                 };
                 this.emit('initial-state', notInSwarmEvent);
@@ -63,24 +75,50 @@ class SwarmStateManager extends BaseStateManager {
             }
 
             const servicesList = await docker.listServices();
-            const tasks = await docker.listTasks();
+            const tasksList = await docker.listTasks();
+
+            const serviceTaskCounts = new Map<string, { running: number; total: number }>();
+            for (const task of tasksList) {
+                const serviceId = task.ServiceID;
+                if (!serviceTaskCounts.has(serviceId)) {
+                    serviceTaskCounts.set(serviceId, { running: 0, total: 0 });
+                }
+                const counts = serviceTaskCounts.get(serviceId)!;
+                counts.total++;
+                if (task.Status?.State === 'running' && task.DesiredState === 'running') {
+                    counts.running++;
+                }
+            }
 
             for (const service of servicesList) {
-                const serviceTasks = tasks.filter((t) => t.ServiceID === service.ID);
-                const parsedService = this.parseServiceInfo(service, serviceTasks);
+                const counts = serviceTaskCounts.get(service.ID) || { running: 0, total: 0 };
+                const parsedService = this.parseServiceInfo(service, counts.running);
                 this.services.set(parsedService.id, parsedService);
             }
 
+            for (const task of tasksList) {
+                const service = this.services.get(task.ServiceID);
+                const node = task.NodeID ? this.nodes.get(task.NodeID) : undefined;
+                const parsedTask = this.parseTaskInfo(task, service?.name, node?.hostname);
+                this.tasks.set(parsedTask.id, parsedTask);
+            }
+
             logger.info(
-                { nodes: this.nodes.size, services: this.services.size },
+                {
+                    nodes: this.nodes.size,
+                    services: this.services.size,
+                    tasks: this.tasks.size,
+                },
                 'Initial swarm state loaded',
             );
 
             const initialState: SwarmEvent = {
                 type: 'initial',
+                isSwarmActive: true,
                 swarmInfo: this.swarmInfo,
                 nodes: Array.from(this.nodes.values()),
                 services: Array.from(this.services.values()),
+                tasks: Array.from(this.tasks.values()),
                 timestamp: Date.now(),
             };
             this.emit('initial-state', initialState);
@@ -89,6 +127,7 @@ class SwarmStateManager extends BaseStateManager {
                 this.isSwarmActive = false;
                 const notInSwarmEvent: SwarmEvent = {
                     type: 'not-in-swarm',
+                    isSwarmActive: false,
                     timestamp: Date.now(),
                 };
                 this.emit('initial-state', notInSwarmEvent);
@@ -117,13 +156,13 @@ class SwarmStateManager extends BaseStateManager {
     private async handleNodeEvent(nodeId: string, action: string): Promise<void> {
         try {
             if (action === 'remove') {
-                const oldState = this.nodes.get(nodeId);
-                if (oldState) {
+                const previousNode = this.nodes.get(nodeId);
+                if (previousNode) {
                     this.nodes.delete(nodeId);
                     const event: SwarmEvent = {
                         type: 'node-removed',
                         nodeId,
-                        oldState,
+                        previousNode,
                         timestamp: Date.now(),
                     };
                     this.emit('node-removed', event);
@@ -133,10 +172,10 @@ class SwarmStateManager extends BaseStateManager {
 
             const node = await docker.getNode(nodeId).inspect();
             const parsedNode = this.parseNodeInfo(node);
-            const oldState = this.nodes.get(nodeId);
+            const previousNode = this.nodes.get(nodeId);
             this.nodes.set(nodeId, parsedNode);
 
-            if (!oldState) {
+            if (!previousNode) {
                 const event: SwarmEvent = {
                     type: 'node-added',
                     node: parsedNode,
@@ -144,23 +183,27 @@ class SwarmStateManager extends BaseStateManager {
                 };
                 this.emit('node-added', event);
             } else {
-                const event: SwarmEvent = {
-                    type: 'node-updated',
-                    node: parsedNode,
-                    oldState,
-                    timestamp: Date.now(),
-                };
-                this.emit('node-updated', event);
+                const changes = this.getNodeChanges(previousNode, parsedNode);
+                if (Object.keys(changes).length > 0) {
+                    const event: SwarmEvent = {
+                        type: 'node-updated',
+                        node: parsedNode,
+                        previousNode,
+                        changes,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('node-updated', event);
+                }
             }
         } catch (err: any) {
             if (err.statusCode === 404) {
-                const oldState = this.nodes.get(nodeId);
+                const previousNode = this.nodes.get(nodeId);
                 this.nodes.delete(nodeId);
-                if (oldState) {
+                if (previousNode) {
                     const event: SwarmEvent = {
                         type: 'node-removed',
                         nodeId,
-                        oldState,
+                        previousNode,
                         timestamp: Date.now(),
                     };
                     this.emit('node-removed', event);
@@ -174,13 +217,27 @@ class SwarmStateManager extends BaseStateManager {
     private async handleServiceEvent(serviceId: string, action: string): Promise<void> {
         try {
             if (action === 'remove') {
-                const oldState = this.services.get(serviceId);
-                if (oldState) {
+                const previousService = this.services.get(serviceId);
+                if (previousService) {
                     this.services.delete(serviceId);
+
+                    for (const [taskId, task] of this.tasks) {
+                        if (task.serviceId === serviceId) {
+                            this.tasks.delete(taskId);
+                            const taskEvent: SwarmEvent = {
+                                type: 'task-removed',
+                                taskId,
+                                previousTask: task,
+                                timestamp: Date.now(),
+                            };
+                            this.emit('task-removed', taskEvent);
+                        }
+                    }
+
                     const event: SwarmEvent = {
                         type: 'service-removed',
                         serviceId,
-                        oldState,
+                        previousService,
                         timestamp: Date.now(),
                     };
                     this.emit('service-removed', event);
@@ -189,12 +246,45 @@ class SwarmStateManager extends BaseStateManager {
             }
 
             const service = await docker.getService(serviceId).inspect();
-            const tasks = await docker.listTasks({ filters: { service: [serviceId] } });
-            const parsedService = this.parseServiceInfo(service, tasks);
-            const oldState = this.services.get(serviceId);
+            const tasksList = await docker.listTasks({ filters: { service: [serviceId] } });
+
+            const runningCount = tasksList.filter(
+                (t: any) => t.Status?.State === 'running' && t.DesiredState === 'running',
+            ).length;
+
+            const parsedService = this.parseServiceInfo(service, runningCount);
+            const previousService = this.services.get(serviceId);
             this.services.set(serviceId, parsedService);
 
-            if (!oldState) {
+            for (const task of tasksList) {
+                const node = task.NodeID ? this.nodes.get(task.NodeID) : undefined;
+                const parsedTask = this.parseTaskInfo(task, parsedService.name, node?.hostname);
+                const previousTask = this.tasks.get(parsedTask.id);
+                this.tasks.set(parsedTask.id, parsedTask);
+
+                if (!previousTask) {
+                    const taskEvent: SwarmEvent = {
+                        type: 'task-added',
+                        task: parsedTask,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('task-added', taskEvent);
+                } else {
+                    const taskChanges = this.getTaskChanges(previousTask, parsedTask);
+                    if (Object.keys(taskChanges).length > 0) {
+                        const taskEvent: SwarmEvent = {
+                            type: 'task-updated',
+                            task: parsedTask,
+                            previousTask,
+                            changes: taskChanges,
+                            timestamp: Date.now(),
+                        };
+                        this.emit('task-updated', taskEvent);
+                    }
+                }
+            }
+
+            if (!previousService) {
                 const event: SwarmEvent = {
                     type: 'service-added',
                     service: parsedService,
@@ -202,23 +292,27 @@ class SwarmStateManager extends BaseStateManager {
                 };
                 this.emit('service-added', event);
             } else {
-                const event: SwarmEvent = {
-                    type: 'service-updated',
-                    service: parsedService,
-                    oldState,
-                    timestamp: Date.now(),
-                };
-                this.emit('service-updated', event);
+                const changes = this.getServiceChanges(previousService, parsedService);
+                if (Object.keys(changes).length > 0) {
+                    const event: SwarmEvent = {
+                        type: 'service-updated',
+                        service: parsedService,
+                        previousService,
+                        changes,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('service-updated', event);
+                }
             }
         } catch (err: any) {
             if (err.statusCode === 404) {
-                const oldState = this.services.get(serviceId);
+                const previousService = this.services.get(serviceId);
                 this.services.delete(serviceId);
-                if (oldState) {
+                if (previousService) {
                     const event: SwarmEvent = {
                         type: 'service-removed',
                         serviceId,
-                        oldState,
+                        previousService,
                         timestamp: Date.now(),
                     };
                     this.emit('service-removed', event);
@@ -247,8 +341,10 @@ class SwarmStateManager extends BaseStateManager {
                 this.swarmInfo = null;
                 this.nodes.clear();
                 this.services.clear();
+                this.tasks.clear();
                 const event: SwarmEvent = {
                     type: 'not-in-swarm',
+                    isSwarmActive: false,
                     timestamp: Date.now(),
                 };
                 this.emit('initial-state', event);
@@ -257,88 +353,164 @@ class SwarmStateManager extends BaseStateManager {
 
             if (!this.isSwarmActive) return;
 
-            const tasks = await docker.listTasks();
+            await this.syncNodes();
+            await this.syncServicesAndTasks();
+        } catch (err) {
+            logger.error({ err }, 'Error in swarm full state sync');
+        }
+    }
 
-            const servicesList = await docker.listServices();
-            for (const service of servicesList) {
-                const serviceTasks = tasks.filter((t) => t.ServiceID === service.ID);
-                const newState = this.parseServiceInfo(service, serviceTasks);
-                const oldState = this.services.get(newState.id);
+    private async syncNodes(): Promise<void> {
+        const nodesList = await docker.listNodes();
+        const currentNodeIds = new Set<string>();
 
-                if (!oldState) {
-                    this.services.set(newState.id, newState);
-                    const event: SwarmEvent = {
-                        type: 'service-added',
-                        service: newState,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('service-added', event);
-                } else if (this.hasServiceChanged(oldState, newState)) {
-                    this.services.set(newState.id, newState);
-                    const event: SwarmEvent = {
-                        type: 'service-updated',
-                        service: newState,
-                        oldState,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('service-updated', event);
-                }
-            }
+        for (const node of nodesList) {
+            const parsedNode = this.parseNodeInfo(node);
+            currentNodeIds.add(parsedNode.id);
+            const previousNode = this.nodes.get(parsedNode.id);
 
-            const currentServiceIds = new Set(servicesList.map((s: any) => s.ID));
-            for (const [serviceId, oldState] of this.services) {
-                if (!currentServiceIds.has(serviceId)) {
-                    this.services.delete(serviceId);
-                    const event: SwarmEvent = {
-                        type: 'service-removed',
-                        serviceId,
-                        oldState,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('service-removed', event);
-                }
-            }
-
-            const nodesList = await docker.listNodes();
-            for (const node of nodesList) {
-                const newState = this.parseNodeInfo(node);
-                const oldState = this.nodes.get(newState.id);
-
-                if (!oldState) {
-                    this.nodes.set(newState.id, newState);
-                    const event: SwarmEvent = {
-                        type: 'node-added',
-                        node: newState,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('node-added', event);
-                } else if (this.hasNodeChanged(oldState, newState)) {
-                    this.nodes.set(newState.id, newState);
+            if (!previousNode) {
+                this.nodes.set(parsedNode.id, parsedNode);
+                const event: SwarmEvent = {
+                    type: 'node-added',
+                    node: parsedNode,
+                    timestamp: Date.now(),
+                };
+                this.emit('node-added', event);
+            } else {
+                const changes = this.getNodeChanges(previousNode, parsedNode);
+                if (Object.keys(changes).length > 0) {
+                    this.nodes.set(parsedNode.id, parsedNode);
                     const event: SwarmEvent = {
                         type: 'node-updated',
-                        node: newState,
-                        oldState,
+                        node: parsedNode,
+                        previousNode,
+                        changes,
                         timestamp: Date.now(),
                     };
                     this.emit('node-updated', event);
                 }
             }
+        }
 
-            const currentNodeIds = new Set(nodesList.map((n: any) => n.ID));
-            for (const [nodeId, oldState] of this.nodes) {
-                if (!currentNodeIds.has(nodeId)) {
-                    this.nodes.delete(nodeId);
+        for (const [nodeId, previousNode] of this.nodes) {
+            if (!currentNodeIds.has(nodeId)) {
+                this.nodes.delete(nodeId);
+                const event: SwarmEvent = {
+                    type: 'node-removed',
+                    nodeId,
+                    previousNode,
+                    timestamp: Date.now(),
+                };
+                this.emit('node-removed', event);
+            }
+        }
+    }
+
+    private async syncServicesAndTasks(): Promise<void> {
+        const servicesList = await docker.listServices();
+        const tasksList = await docker.listTasks();
+        const currentServiceIds = new Set<string>();
+        const currentTaskIds = new Set<string>();
+
+        const serviceTaskCounts = new Map<string, { running: number; total: number }>();
+        for (const task of tasksList) {
+            const serviceId = task.ServiceID;
+            if (!serviceTaskCounts.has(serviceId)) {
+                serviceTaskCounts.set(serviceId, { running: 0, total: 0 });
+            }
+            const counts = serviceTaskCounts.get(serviceId)!;
+            counts.total++;
+            if (task.Status?.State === 'running' && task.DesiredState === 'running') {
+                counts.running++;
+            }
+        }
+
+        for (const service of servicesList) {
+            const counts = serviceTaskCounts.get(service.ID) || { running: 0, total: 0 };
+            const parsedService = this.parseServiceInfo(service, counts.running);
+            currentServiceIds.add(parsedService.id);
+            const previousService = this.services.get(parsedService.id);
+
+            if (!previousService) {
+                this.services.set(parsedService.id, parsedService);
+                const event: SwarmEvent = {
+                    type: 'service-added',
+                    service: parsedService,
+                    timestamp: Date.now(),
+                };
+                this.emit('service-added', event);
+            } else {
+                const changes = this.getServiceChanges(previousService, parsedService);
+                if (Object.keys(changes).length > 0) {
+                    this.services.set(parsedService.id, parsedService);
                     const event: SwarmEvent = {
-                        type: 'node-removed',
-                        nodeId,
-                        oldState,
+                        type: 'service-updated',
+                        service: parsedService,
+                        previousService,
+                        changes,
                         timestamp: Date.now(),
                     };
-                    this.emit('node-removed', event);
+                    this.emit('service-updated', event);
                 }
             }
-        } catch (err) {
-            logger.error({ err }, 'Error in swarm full state sync');
+        }
+
+        for (const task of tasksList) {
+            const service = this.services.get(task.ServiceID);
+            const node = task.NodeID ? this.nodes.get(task.NodeID) : undefined;
+            const parsedTask = this.parseTaskInfo(task, service?.name, node?.hostname);
+            currentTaskIds.add(parsedTask.id);
+            const previousTask = this.tasks.get(parsedTask.id);
+
+            if (!previousTask) {
+                this.tasks.set(parsedTask.id, parsedTask);
+                const event: SwarmEvent = {
+                    type: 'task-added',
+                    task: parsedTask,
+                    timestamp: Date.now(),
+                };
+                this.emit('task-added', event);
+            } else {
+                const changes = this.getTaskChanges(previousTask, parsedTask);
+                if (Object.keys(changes).length > 0) {
+                    this.tasks.set(parsedTask.id, parsedTask);
+                    const event: SwarmEvent = {
+                        type: 'task-updated',
+                        task: parsedTask,
+                        previousTask,
+                        changes,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('task-updated', event);
+                }
+            }
+        }
+
+        for (const [serviceId, previousService] of this.services) {
+            if (!currentServiceIds.has(serviceId)) {
+                this.services.delete(serviceId);
+                const event: SwarmEvent = {
+                    type: 'service-removed',
+                    serviceId,
+                    previousService,
+                    timestamp: Date.now(),
+                };
+                this.emit('service-removed', event);
+            }
+        }
+
+        for (const [taskId, previousTask] of this.tasks) {
+            if (!currentTaskIds.has(taskId)) {
+                this.tasks.delete(taskId);
+                const event: SwarmEvent = {
+                    type: 'task-removed',
+                    taskId,
+                    previousTask,
+                    timestamp: Date.now(),
+                };
+                this.emit('task-removed', event);
+            }
         }
     }
 
@@ -349,6 +521,7 @@ class SwarmStateManager extends BaseStateManager {
     protected onStop(): void {
         this.nodes.clear();
         this.services.clear();
+        this.tasks.clear();
         this.swarmInfo = null;
         this.isSwarmActive = false;
     }
@@ -357,24 +530,29 @@ class SwarmStateManager extends BaseStateManager {
         return {
             nodeCount: this.nodes.size,
             serviceCount: this.services.size,
+            taskCount: this.tasks.size,
             isSwarmActive: this.isSwarmActive,
         };
     }
 
+    // ===== PARSING METHODS =====
+
     private parseSwarmInfo(swarm: Swarm, info: any): SwarmInfo {
         return {
             id: swarm.ID,
+            version: swarm.Version?.Index || 0,
             createdAt: swarm.CreatedAt ? new Date(swarm.CreatedAt).getTime() : Date.now(),
             updatedAt: swarm.UpdatedAt ? new Date(swarm.UpdatedAt).getTime() : Date.now(),
             joinTokens: {
                 worker: swarm.JoinTokens?.Worker || '',
                 manager: swarm.JoinTokens?.Manager || '',
             },
+            totalNodes: info.Swarm?.Nodes || 0,
             managerNodes: info.Swarm?.Managers || 0,
             workerNodes: (info.Swarm?.Nodes || 0) - (info.Swarm?.Managers || 0),
             isManager: info.Swarm?.ControlAvailable || false,
             localNodeId: info.Swarm?.NodeID || '',
-            timestamp: Date.now(),
+            dataPathPort: swarm.DataPathPort || 4789,
         };
     }
 
@@ -386,84 +564,220 @@ class SwarmStateManager extends BaseStateManager {
 
         return {
             id: node.ID,
+            version: node.Version?.Index || 0,
+            createdAt: node.CreatedAt ? new Date(node.CreatedAt).getTime() : Date.now(),
+            updatedAt: node.UpdatedAt ? new Date(node.UpdatedAt).getTime() : Date.now(),
             hostname: description.Hostname || 'unknown',
-            status: (status.State?.toLowerCase() || 'unknown') as SwarmNodeStatus,
+            role: (spec.Role?.toLowerCase() || 'worker') as SwarmNodeRole,
             availability: (spec.Availability?.toLowerCase() || 'active') as SwarmNodeAvailability,
-            role: (spec.Role?.toLowerCase() || 'worker') as 'manager' | 'worker',
+            state: (status.State?.toLowerCase() || 'unknown') as SwarmNodeState,
             address: status.Addr || '',
             engineVersion: description.Engine?.EngineVersion || '',
-            labels: spec.Labels || {},
-            managerStatus: managerStatus
-                ? {
-                      leader: managerStatus.Leader || false,
-                      reachability: managerStatus.Reachability || '',
-                      addr: managerStatus.Addr || '',
-                  }
-                : undefined,
+            platform: {
+                architecture: description.Platform?.Architecture || '',
+                os: description.Platform?.OS || '',
+            },
             resources: {
                 nanoCPUs: description.Resources?.NanoCPUs || 0,
                 memoryBytes: description.Resources?.MemoryBytes || 0,
             },
-            createdAt: node.CreatedAt ? new Date(node.CreatedAt).getTime() : Date.now(),
-            updatedAt: node.UpdatedAt ? new Date(node.UpdatedAt).getTime() : Date.now(),
-            timestamp: Date.now(),
+            labels: spec.Labels || {},
+            managerStatus: managerStatus
+                ? {
+                      leader: managerStatus.Leader || false,
+                      reachability: (managerStatus.Reachability?.toLowerCase() || 'unknown') as
+                          | 'unknown'
+                          | 'unreachable'
+                          | 'reachable',
+                      addr: managerStatus.Addr || '',
+                  }
+                : undefined,
         };
     }
 
-    private parseServiceInfo(service: any, tasks: any[]): SwarmService {
+    private parseServiceInfo(service: any, runningReplicas: number): SwarmService {
         const spec = service.Spec || {};
         const mode = spec.Mode || {};
         const endpointSpec = spec.EndpointSpec || {};
+        const taskTemplate = spec.TaskTemplate || {};
+        const containerSpec = taskTemplate.ContainerSpec || {};
 
         const isReplicated = !!mode.Replicated;
-        const replicas = isReplicated ? mode.Replicated?.Replicas || 0 : 0;
+        const isGlobal = !!mode.Global;
+        const isReplicatedJob = !!mode.ReplicatedJob;
+        const isGlobalJob = !!mode.GlobalJob;
 
-        const runningTasks = tasks.filter(
-            (t) => t.Status?.State === 'running' && t.DesiredState === 'running',
-        );
+        let serviceMode: SwarmServiceMode = 'replicated';
+        let replicas = 0;
+
+        if (isReplicated) {
+            serviceMode = 'replicated';
+            replicas = mode.Replicated?.Replicas || 0;
+        } else if (isGlobal) {
+            serviceMode = 'global';
+            replicas = this.nodes.size;
+        } else if (isReplicatedJob) {
+            serviceMode = 'replicated-job';
+            replicas = mode.ReplicatedJob?.TotalCompletions || 0;
+        } else if (isGlobalJob) {
+            serviceMode = 'global-job';
+            replicas = this.nodes.size;
+        }
 
         const ports = (endpointSpec.Ports || []).map((p: any) => ({
-            protocol: p.Protocol || 'tcp',
+            protocol: (p.Protocol?.toLowerCase() || 'tcp') as 'tcp' | 'udp' | 'sctp',
             targetPort: p.TargetPort || 0,
             publishedPort: p.PublishedPort || 0,
-            publishMode: p.PublishMode || 'ingress',
+            publishMode: (p.PublishMode?.toLowerCase() || 'ingress') as 'ingress' | 'host',
         }));
+
+        const placement = taskTemplate.Placement || {};
 
         return {
             id: service.ID,
-            name: spec.Name || '',
-            mode: isReplicated ? 'replicated' : 'global',
-            replicas,
-            runningReplicas: runningTasks.length,
-            image: spec.TaskTemplate?.ContainerSpec?.Image || '',
-            ports,
-            labels: spec.Labels || {},
+            version: service.Version?.Index || 0,
             createdAt: service.CreatedAt ? new Date(service.CreatedAt).getTime() : Date.now(),
             updatedAt: service.UpdatedAt ? new Date(service.UpdatedAt).getTime() : Date.now(),
-            timestamp: Date.now(),
+            name: spec.Name || '',
+            mode: serviceMode,
+            replicas,
+            runningReplicas,
+            image: containerSpec.Image || '',
+            ports,
+            labels: spec.Labels || {},
+            env: containerSpec.Env || [],
+            constraints: placement.Constraints || [],
+            networks: (spec.Networks || []).map((n: any) => n.Target),
+            updateStatus: service.UpdateStatus
+                ? {
+                      state: service.UpdateStatus.State?.toLowerCase() as any,
+                      startedAt: service.UpdateStatus.StartedAt
+                          ? new Date(service.UpdateStatus.StartedAt).getTime()
+                          : undefined,
+                      completedAt: service.UpdateStatus.CompletedAt
+                          ? new Date(service.UpdateStatus.CompletedAt).getTime()
+                          : undefined,
+                      message: service.UpdateStatus.Message,
+                  }
+                : undefined,
+            previousSpec: !!service.PreviousSpec,
         };
     }
 
-    private hasNodeChanged(oldState: SwarmNode, newState: SwarmNode): boolean {
-        return (
-            oldState.status !== newState.status ||
-            oldState.availability !== newState.availability ||
-            oldState.role !== newState.role ||
-            JSON.stringify(oldState.labels) !== JSON.stringify(newState.labels) ||
-            oldState.managerStatus?.leader !== newState.managerStatus?.leader ||
-            oldState.managerStatus?.reachability !== newState.managerStatus?.reachability
-        );
+    private parseTaskInfo(task: any, serviceName?: string, nodeHostname?: string): SwarmTask {
+        const status = task.Status || {};
+        const containerStatus = status.ContainerStatus;
+        const spec = task.Spec || {};
+        const containerSpec = spec.ContainerSpec || {};
+
+        return {
+            id: task.ID,
+            version: task.Version?.Index || 0,
+            createdAt: task.CreatedAt ? new Date(task.CreatedAt).getTime() : Date.now(),
+            updatedAt: task.UpdatedAt ? new Date(task.UpdatedAt).getTime() : Date.now(),
+            serviceId: task.ServiceID,
+            serviceName: serviceName || '',
+            nodeId: task.NodeID,
+            nodeHostname: nodeHostname,
+            slot: task.Slot,
+            state: (status.State?.toLowerCase() || 'unknown') as SwarmTaskState,
+            desiredState: (task.DesiredState?.toLowerCase() || 'running') as SwarmTaskDesiredState,
+            message: status.Message,
+            error: status.Err,
+            containerStatus: containerStatus
+                ? {
+                      containerId: containerStatus.ContainerID,
+                      pid: containerStatus.PID,
+                      exitCode: containerStatus.ExitCode,
+                  }
+                : undefined,
+            image: containerSpec.Image || '',
+        };
     }
 
-    private hasServiceChanged(oldState: SwarmService, newState: SwarmService): boolean {
-        return (
-            oldState.replicas !== newState.replicas ||
-            oldState.runningReplicas !== newState.runningReplicas ||
-            oldState.image !== newState.image ||
-            JSON.stringify(oldState.ports) !== JSON.stringify(newState.ports) ||
-            JSON.stringify(oldState.labels) !== JSON.stringify(newState.labels)
+    // ===== CHANGE DETECTION =====
+
+    private getNodeChanges(previous: SwarmNode, current: SwarmNode): SwarmNodeChanges {
+        const changes: SwarmNodeChanges = {};
+
+        if (previous.role !== current.role) {
+            changes.role = { from: previous.role, to: current.role };
+        }
+        if (previous.availability !== current.availability) {
+            changes.availability = { from: previous.availability, to: current.availability };
+        }
+        if (previous.state !== current.state) {
+            changes.state = { from: previous.state, to: current.state };
+        }
+
+        const prevLabels = Object.keys(previous.labels);
+        const currLabels = Object.keys(current.labels);
+        const added = currLabels.filter((k) => !prevLabels.includes(k));
+        const removed = prevLabels.filter((k) => !currLabels.includes(k));
+        const changed = currLabels.filter(
+            (k) => prevLabels.includes(k) && previous.labels[k] !== current.labels[k],
         );
+
+        if (added.length > 0 || removed.length > 0 || changed.length > 0) {
+            changes.labels = { added, removed, changed };
+        }
+
+        const prevLeader = previous.managerStatus?.leader;
+        const currLeader = current.managerStatus?.leader;
+        const prevReach = previous.managerStatus?.reachability;
+        const currReach = current.managerStatus?.reachability;
+        if (prevLeader !== currLeader || prevReach !== currReach) {
+            changes.managerStatus = true;
+        }
+
+        return changes;
     }
+
+    private getServiceChanges(previous: SwarmService, current: SwarmService): SwarmServiceChanges {
+        const changes: SwarmServiceChanges = {};
+
+        if (previous.replicas !== current.replicas) {
+            changes.replicas = { from: previous.replicas, to: current.replicas };
+        }
+        if (previous.runningReplicas !== current.runningReplicas) {
+            changes.runningReplicas = {
+                from: previous.runningReplicas,
+                to: current.runningReplicas,
+            };
+        }
+        if (previous.image !== current.image) {
+            changes.image = { from: previous.image, to: current.image };
+        }
+        if (previous.updateStatus?.state !== current.updateStatus?.state) {
+            changes.updateStatus = true;
+        }
+
+        return changes;
+    }
+
+    private getTaskChanges(previous: SwarmTask, current: SwarmTask): SwarmTaskChanges {
+        const changes: SwarmTaskChanges = {};
+
+        if (previous.state !== current.state) {
+            changes.state = { from: previous.state, to: current.state };
+        }
+        if (previous.desiredState !== current.desiredState) {
+            changes.desiredState = { from: previous.desiredState, to: current.desiredState };
+        }
+        if (previous.nodeId !== current.nodeId) {
+            changes.nodeId = { from: previous.nodeId, to: current.nodeId };
+        }
+        if (current.message && previous.message !== current.message) {
+            changes.message = current.message;
+        }
+        if (current.error && previous.error !== current.error) {
+            changes.error = current.error;
+        }
+
+        return changes;
+    }
+
+    // ===== PUBLIC GETTERS =====
 
     getAllNodes(): SwarmNode[] {
         return Array.from(this.nodes.values());
@@ -471,6 +785,10 @@ class SwarmStateManager extends BaseStateManager {
 
     getAllServices(): SwarmService[] {
         return Array.from(this.services.values());
+    }
+
+    getAllTasks(): SwarmTask[] {
+        return Array.from(this.tasks.values());
     }
 
     getSwarmInfo(): SwarmInfo | null {
@@ -487,6 +805,45 @@ class SwarmStateManager extends BaseStateManager {
 
     getService(serviceId: string): SwarmService | undefined {
         return this.services.get(serviceId);
+    }
+
+    getTask(taskId: string): SwarmTask | undefined {
+        return this.tasks.get(taskId);
+    }
+
+    getTasksByService(serviceId: string): SwarmTask[] {
+        return Array.from(this.tasks.values()).filter((t) => t.serviceId === serviceId);
+    }
+
+    getTasksByNode(nodeId: string): SwarmTask[] {
+        return Array.from(this.tasks.values()).filter((t) => t.nodeId === nodeId);
+    }
+
+    getSwarmStats(): SwarmStats {
+        const tasks = Array.from(this.tasks.values());
+        return {
+            isSwarmActive: this.isSwarmActive,
+            totalNodes: this.nodes.size,
+            managerNodes: Array.from(this.nodes.values()).filter((n) => n.role === 'manager')
+                .length,
+            workerNodes: Array.from(this.nodes.values()).filter((n) => n.role === 'worker').length,
+            healthyNodes: Array.from(this.nodes.values()).filter((n) => n.state === 'ready').length,
+            totalServices: this.services.size,
+            totalTasks: tasks.length,
+            runningTasks: tasks.filter((t) => t.state === 'running').length,
+            pendingTasks: tasks.filter((t) =>
+                [
+                    'new',
+                    'pending',
+                    'assigned',
+                    'accepted',
+                    'preparing',
+                    'ready',
+                    'starting',
+                ].includes(t.state),
+            ).length,
+            failedTasks: tasks.filter((t) => t.state === 'failed').length,
+        };
     }
 
     async hardRefresh(): Promise<void> {

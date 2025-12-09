@@ -18,7 +18,7 @@ import { EnvFormProps } from '@workspace/typescript-interface/docker/docker.env'
 import {
     ContainerEnvForm,
     containerEnvSchema,
-} from '@workspace/schemas-zod/container/containerEnv.schema';
+} from '@workspace/schemas-zod/docker/container/containerEnv.schema';
 
 export function EnvForm({ mode, defaultEnvVar, originalEnvVar }: EnvFormProps) {
     const { closeDialog } = useConfirmationDialogStore();

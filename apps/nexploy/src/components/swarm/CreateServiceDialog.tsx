@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
     Dialog,
     DialogContent,
@@ -12,33 +13,51 @@ import {
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@workspace/ui/components/select';
 import { Plus, Trash2 } from 'lucide-react';
-import { useState } from 'react';
 import { toast } from 'sonner';
+
+const DOCKER_API_URL = process.env.NEXT_PUBLIC_DOCKER_API_URL || 'http://localhost:3300';
 
 interface PortConfig {
     targetPort: number;
     publishedPort: number;
     protocol: 'tcp' | 'udp';
+    publishMode: 'ingress' | 'host';
 }
 
-const DOCKER_API_URL = 'http://localhost:3300';
+interface EnvVar {
+    key: string;
+    value: string;
+}
 
 interface CreateServiceDialogProps {
-    dockerApiUrl?: string;
+    trigger?: React.ReactNode;
 }
 
-export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateServiceDialogProps) {
+export function CreateServiceDialog({ trigger }: CreateServiceDialogProps) {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+
     const [name, setName] = useState('');
     const [image, setImage] = useState('');
+    const [mode, setMode] = useState<'replicated' | 'global'>('replicated');
     const [replicas, setReplicas] = useState(1);
     const [ports, setPorts] = useState<PortConfig[]>([]);
-    const [envVars, setEnvVars] = useState<{ key: string; value: string }[]>([]);
+    const [envVars, setEnvVars] = useState<EnvVar[]>([]);
+    const [constraints, setConstraints] = useState('');
 
     const addPort = () => {
-        setPorts([...ports, { targetPort: 80, publishedPort: 8080, protocol: 'tcp' }]);
+        setPorts([
+            ...ports,
+            { targetPort: 80, publishedPort: 8080, protocol: 'tcp', publishMode: 'ingress' },
+        ]);
     };
 
     const removePort = (index: number) => {
@@ -46,9 +65,9 @@ export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateSer
     };
 
     const updatePort = (index: number, field: keyof PortConfig, value: any) => {
-        const newPorts = [...ports];
-        newPorts[index] = { ...newPorts[index], [field]: value };
-        setPorts(newPorts);
+        setPorts(ports.map((port, i) =>
+            i === index ? { ...port, [field]: value } as PortConfig : port
+        ));
     };
 
     const addEnvVar = () => {
@@ -60,9 +79,9 @@ export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateSer
     };
 
     const updateEnvVar = (index: number, field: 'key' | 'value', value: string) => {
-        const newEnvVars = [...envVars];
-        newEnvVars[index] = { ...newEnvVars[index], [field]: value };
-        setEnvVars(newEnvVars);
+        setEnvVars(envVars.map((env, i) =>
+            i === index ? { ...env, [field]: value } as EnvVar : env
+        ));
     };
 
     const handleCreate = async () => {
@@ -74,22 +93,28 @@ export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateSer
         setIsLoading(true);
         try {
             const env = envVars.filter((e) => e.key).map((e) => `${e.key}=${e.value}`);
+            const constraintList = constraints
+                .split('\n')
+                .map((c) => c.trim())
+                .filter((c) => c);
 
-            const res = await fetch(`${dockerApiUrl}/api/swarm/services/create`, {
+            const res = await fetch(`${DOCKER_API_URL}/api/swarm/services`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name,
                     image,
-                    replicas,
+                    mode,
+                    replicas: mode === 'replicated' ? replicas : undefined,
                     ports,
                     env,
+                    constraints: constraintList.length > 0 ? constraintList : undefined,
                 }),
             });
 
             if (!res.ok) {
                 const error = await res.json();
-                throw new Error(error.error || 'Failed to create service');
+                throw new Error(error.message || error.error || 'Failed to create service');
             }
 
             toast.success(`Service ${name} created successfully`);
@@ -105,23 +130,29 @@ export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateSer
     const resetForm = () => {
         setName('');
         setImage('');
+        setMode('replicated');
         setReplicas(1);
         setPorts([]);
         setEnvVars([]);
+        setConstraints('');
     };
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>
-                    <Plus className="mr-2 size-4" />
-                    Create Service
-                </Button>
+                {trigger || (
+                    <Button>
+                        <Plus className="mr-2 size-4" />
+                        Create Service
+                    </Button>
+                )}
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Create Swarm Service</DialogTitle>
-                    <DialogDescription>Deploy a new service to the swarm cluster</DialogDescription>
+                    <DialogDescription>
+                        Deploy a new service to the swarm cluster.
+                    </DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
@@ -152,18 +183,35 @@ export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateSer
                     </div>
 
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="replicas" className="text-right">
-                            Replicas
+                        <Label htmlFor="mode" className="text-right">
+                            Mode
                         </Label>
-                        <Input
-                            id="replicas"
-                            type="number"
-                            min={1}
-                            value={replicas}
-                            onChange={(e) => setReplicas(parseInt(e.target.value) || 1)}
-                            className="col-span-3"
-                        />
+                        <Select value={mode} onValueChange={(v) => setMode(v as 'replicated' | 'global')}>
+                            <SelectTrigger className="col-span-3">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="replicated">Replicated</SelectItem>
+                                <SelectItem value="global">Global</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
+
+                    {mode === 'replicated' && (
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="replicas" className="text-right">
+                                Replicas
+                            </Label>
+                            <Input
+                                id="replicas"
+                                type="number"
+                                min={1}
+                                value={replicas}
+                                onChange={(e) => setReplicas(parseInt(e.target.value) || 1)}
+                                className="col-span-3"
+                            />
+                        </div>
+                    )}
 
                     <div className="grid grid-cols-4 gap-4">
                         <Label className="pt-2 text-right">Ports</Label>
@@ -175,11 +223,7 @@ export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateSer
                                         placeholder="Published"
                                         value={port.publishedPort}
                                         onChange={(e) =>
-                                            updatePort(
-                                                index,
-                                                'publishedPort',
-                                                parseInt(e.target.value) || 0,
-                                            )
+                                            updatePort(index, 'publishedPort', parseInt(e.target.value) || 0)
                                         }
                                         className="w-24"
                                     />
@@ -189,24 +233,34 @@ export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateSer
                                         placeholder="Target"
                                         value={port.targetPort}
                                         onChange={(e) =>
-                                            updatePort(
-                                                index,
-                                                'targetPort',
-                                                parseInt(e.target.value) || 0,
-                                            )
+                                            updatePort(index, 'targetPort', parseInt(e.target.value) || 0)
                                         }
                                         className="w-24"
                                     />
-                                    <select
+                                    <Select
                                         value={port.protocol}
-                                        onChange={(e) =>
-                                            updatePort(index, 'protocol', e.target.value)
-                                        }
-                                        className="border-input bg-background h-9 rounded-md border px-3"
+                                        onValueChange={(v) => updatePort(index, 'protocol', v)}
                                     >
-                                        <option value="tcp">TCP</option>
-                                        <option value="udp">UDP</option>
-                                    </select>
+                                        <SelectTrigger className="w-20">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="tcp">TCP</SelectItem>
+                                            <SelectItem value="udp">UDP</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <Select
+                                        value={port.publishMode}
+                                        onValueChange={(v) => updatePort(index, 'publishMode', v)}
+                                    >
+                                        <SelectTrigger className="w-24">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="ingress">Ingress</SelectItem>
+                                            <SelectItem value="host">Host</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                     <Button
                                         variant="ghost"
                                         size="icon"
@@ -238,9 +292,7 @@ export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateSer
                                     <Input
                                         placeholder="value"
                                         value={env.value}
-                                        onChange={(e) =>
-                                            updateEnvVar(index, 'value', e.target.value)
-                                        }
+                                        onChange={(e) => updateEnvVar(index, 'value', e.target.value)}
                                         className="flex-1"
                                     />
                                     <Button
@@ -256,6 +308,23 @@ export function CreateServiceDialog({ dockerApiUrl = DOCKER_API_URL }: CreateSer
                                 <Plus className="mr-2 size-4" />
                                 Add Variable
                             </Button>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-4 gap-4">
+                        <Label htmlFor="constraints" className="pt-2 text-right">
+                            Constraints
+                        </Label>
+                        <div className="col-span-3">
+                            <Input
+                                id="constraints"
+                                value={constraints}
+                                onChange={(e) => setConstraints(e.target.value)}
+                                placeholder="node.role==worker"
+                            />
+                            <p className="text-muted-foreground mt-1 text-xs">
+                                Placement constraints (e.g., node.role==worker, node.labels.zone==us-east)
+                            </p>
                         </div>
                     </div>
                 </div>

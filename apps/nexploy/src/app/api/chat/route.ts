@@ -2,10 +2,10 @@ import { openai } from '@ai-sdk/openai';
 import { streamText, tool } from 'ai';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { getUserSession } from '@/services/auth/auth.service';
-import { containerCreateFormSchema } from '@workspace/schemas-zod/container/containerCreate.schema';
-import { networkCreateSchema } from '@workspace/schemas-zod/network/networkAction.schema';
-import { volumeCreateSchema } from '@workspace/schemas-zod/volume/volumeAction.schema';
-import { imagePullSchema } from '@workspace/schemas-zod/image/imagePullAction.schema';
+import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
+import { networkCreateSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';
+import { volumeCreateSchema } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
+import { imagePullSchema } from '@workspace/schemas-zod/docker/image/imagePullAction.schema';
 
 export const maxDuration = 60;
 

@@ -13,3 +13,9 @@ export function capitalizeWords(val: string) {
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
 }
+
+export function capitalizeOnlyFirst(val: string) {
+    if (!val) return '';
+    const lower = String(val).toLowerCase();
+    return lower.charAt(0).toUpperCase() + lower.slice(1);
+}

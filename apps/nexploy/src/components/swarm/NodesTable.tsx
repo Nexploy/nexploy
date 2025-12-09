@@ -10,8 +10,13 @@ import {
 } from '@workspace/ui/components/table';
 import { Badge } from '@workspace/ui/components/badge';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
-import { SwarmNode } from '@workspace/typescript-interface/docker/docker.swarm';
 import { Crown, Server } from 'lucide-react';
+import { NodeActions } from './NodeActions';
+import type {
+    SwarmNode,
+    SwarmNodeAvailability,
+    SwarmNodeState,
+} from '@workspace/typescript-interface/docker/swarm';
 
 function formatBytes(bytes: number): string {
     if (bytes === 0) return '0 B';
@@ -25,18 +30,24 @@ function formatCPUs(nanoCPUs: number): string {
     return (nanoCPUs / 1e9).toFixed(2);
 }
 
-function getStatusBadgeVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
-    switch (status) {
+function getStateBadgeVariant(
+    state: SwarmNodeState,
+): 'default' | 'secondary' | 'destructive' | 'outline' {
+    switch (state) {
         case 'ready':
             return 'default';
         case 'down':
+            return 'destructive';
+        case 'disconnected':
             return 'destructive';
         default:
             return 'secondary';
     }
 }
 
-function getAvailabilityBadgeVariant(availability: string): 'default' | 'secondary' | 'destructive' | 'outline' {
+function getAvailabilityBadgeVariant(
+    availability: SwarmNodeAvailability,
+): 'default' | 'secondary' | 'destructive' | 'outline' {
     switch (availability) {
         case 'active':
             return 'default';
@@ -49,7 +60,7 @@ function getAvailabilityBadgeVariant(availability: string): 'default' | 'seconda
     }
 }
 
-export function TableSwarmNodes() {
+export function NodesTable() {
     const { nodes, isSwarmActive } = useSwarmStore();
 
     if (!isSwarmActive) {
@@ -72,7 +83,6 @@ export function TableSwarmNodes() {
 
     return (
         <div className="px-5">
-            <h2 className="mb-4 text-xl font-semibold">Nodes</h2>
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -84,6 +94,8 @@ export function TableSwarmNodes() {
                             <TableHead>Address</TableHead>
                             <TableHead>Engine</TableHead>
                             <TableHead>Resources</TableHead>
+                            <TableHead>Labels</TableHead>
+                            <TableHead className="w-[50px]"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -92,19 +104,21 @@ export function TableSwarmNodes() {
                                 <TableCell className="font-medium">
                                     <div className="flex items-center gap-2">
                                         {node.managerStatus?.leader && (
-                                            <Crown className="text-yellow-500 size-4" />
+                                            <Crown className="size-4 text-yellow-500" />
                                         )}
                                         {node.hostname}
                                     </div>
                                 </TableCell>
                                 <TableCell>
-                                    <Badge variant={node.role === 'manager' ? 'default' : 'secondary'}>
+                                    <Badge
+                                        variant={node.role === 'manager' ? 'default' : 'secondary'}
+                                    >
                                         {node.role}
                                     </Badge>
                                 </TableCell>
                                 <TableCell>
-                                    <Badge variant={getStatusBadgeVariant(node.status)}>
-                                        {node.status}
+                                    <Badge variant={getStateBadgeVariant(node.state)}>
+                                        {node.state}
                                     </Badge>
                                 </TableCell>
                                 <TableCell>
@@ -119,7 +133,31 @@ export function TableSwarmNodes() {
                                     {node.engineVersion || '-'}
                                 </TableCell>
                                 <TableCell className="text-muted-foreground text-sm">
-                                    {formatCPUs(node.resources.nanoCPUs)} CPUs / {formatBytes(node.resources.memoryBytes)}
+                                    {formatCPUs(node.resources.nanoCPUs)} CPUs /{' '}
+                                    {formatBytes(node.resources.memoryBytes)}
+                                </TableCell>
+                                <TableCell>
+                                    <div className="flex flex-wrap gap-1">
+                                        {Object.entries(node.labels || {})
+                                            .slice(0, 2)
+                                            .map(([key, value]) => (
+                                                <Badge
+                                                    key={key}
+                                                    variant="outline"
+                                                    className="text-xs"
+                                                >
+                                                    {key}={value}
+                                                </Badge>
+                                            ))}
+                                        {Object.keys(node.labels || {}).length > 2 && (
+                                            <Badge variant="outline" className="text-xs">
+                                                +{Object.keys(node.labels).length - 2}
+                                            </Badge>
+                                        )}
+                                    </div>
+                                </TableCell>
+                                <TableCell>
+                                    <NodeActions node={node} />
                                 </TableCell>
                             </TableRow>
                         ))}

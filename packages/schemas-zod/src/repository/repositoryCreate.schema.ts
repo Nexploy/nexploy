@@ -22,8 +22,11 @@ export const repositoryCreateFormSchema = z.object({
         .optional()
         .transform((value) => (value === '' ? undefined : value)),
     gitProvider: z.enum(['github', 'gitlab', 'manual']),
-    buildType: z.enum(['DOCKERFILE', 'NIXPACKS', 'BUILDPACKS']).default('DOCKERFILE'),
+    buildType: z
+        .enum(['DOCKERFILE', 'DOCKER_COMPOSE', 'NIXPACKS', 'BUILDPACKS'])
+        .default('DOCKERFILE'),
     dockerfilePath: z.string().default('Dockerfile'),
+    dockerComposePath: z.string().default('docker-compose.yml'),
     contextPath: z.string().default('.'),
     buildArgs: z
         .string()

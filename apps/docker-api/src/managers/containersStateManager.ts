@@ -436,7 +436,7 @@ class ContainersStateManager extends BaseStateManager {
         containerId: string;
         port?: number;
     }> {
-        const containerName = options.containerName || `deploy-${repositoryId}`;
+        const containerName = options.containerName || `nexploy-${repositoryId}`;
 
         logger.info({ repositoryId, imageName, containerName }, 'Starting deployment');
 
@@ -476,9 +476,7 @@ class ContainersStateManager extends BaseStateManager {
             }
             await existing.remove();
             logger.info({ containerName }, 'Removed existing container');
-        } catch {
-            // Container doesn't exist, ignore
-        }
+        } catch {}
     }
 }
 

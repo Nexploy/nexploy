@@ -2,29 +2,13 @@
 
 import { authActionServer } from '@/lib/api/safe-action';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
-import { prisma } from '../../../prisma/prisma';
 import { generateTraefikConfigForRepository } from '@/services/traefik.service';
 import { domainsFormSchema } from '@workspace/schemas-zod/repository/domain.schema';
 
 export const onDomainAction = authActionServer
     .inputSchema(domainsFormSchema)
-    .action(async ({ parsedInput, ctx }) => {
+    .action(async ({ parsedInput }) => {
         const { repositoryId, domains, deletedIds } = parsedInput;
-
-        const repository = await prisma.repository.findUnique({
-            where: {
-                id: repositoryId,
-                userId: ctx.session.user.id,
-            },
-        });
-
-        if (!repository) {
-            await setToastServer({
-                type: 'error',
-                message: 'Repository introuvable ou accès non autorisé',
-            });
-            throw new Error('Repository not found');
-        }
 
         try {
             const cleanedDomains = domains.map((d) => ({
@@ -46,7 +30,7 @@ export const onDomainAction = authActionServer
                 })),
             ];
 
-            await generateTraefikConfigForRepository(repositoryId, allDomains);
+            await generateTraefikConfigForRepository(repositoryId, domains);
 
             return allDomains;
         } catch (error) {

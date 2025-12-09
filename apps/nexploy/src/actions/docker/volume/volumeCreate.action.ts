@@ -3,7 +3,7 @@
 import { authActionServer } from '@/lib/api/safe-action';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { HttpErrorResponse } from 'drino';
-import { volumeCreateSchema } from '@workspace/schemas-zod/volume/volumeAction.schema';
+import { volumeCreateSchema } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 
 export const onVolumeCreateAction = authActionServer

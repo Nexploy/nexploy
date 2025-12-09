@@ -4,7 +4,7 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { HttpErrorResponse } from 'drino';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { drinoDocker } from '@/lib/api/drinoDocker';
-import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/container/containerRecreate.schema';
+import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 
 export const onContainerRecreateAction = authActionServer
     .inputSchema(ContainerRecreateFormSchema)

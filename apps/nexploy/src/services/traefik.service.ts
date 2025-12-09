@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as yaml from 'yaml';
 import { Domain } from '@workspace/typescript-interface/traefik/traefik.config';
+import { getContainerByProjectName } from '@/services/docker/container.service';
 
 const TRAEFIK_SERVICE_DIR = path.join(process.cwd(), '..', '..', 'infra', 'traefik', 'service');
 
@@ -14,15 +15,13 @@ export async function generateTraefikConfigForRepository(
     const filePath = path.join(TRAEFIK_SERVICE_DIR, `${repositoryId}.yml`);
 
     if (domains.length === 0) {
-        try {
-            await fs.unlink(filePath);
-        } catch {
-            /* empty */
-        }
+        await deleteTraefikConfigForRepository(repositoryId);
         return;
     }
 
-    const containerName = `deploy-${repositoryId}`;
+    const projectName = `nexploy-${repositoryId}`;
+
+    const containers = await getContainerByProjectName(projectName);
 
     const config: {
         http: {
@@ -39,8 +38,8 @@ export async function generateTraefikConfigForRepository(
     };
 
     for (const domain of domains) {
-        const routerName = `repo-${repositoryId}-${domain.id}`;
-        const serviceName = `svc-${repositoryId}-${domain.id}`;
+        const routerName = `repo-${repositoryId}-${domain.host}`;
+        const serviceName = `svc-${repositoryId}-${domain.host}`;
 
         let rule = `Host(\`${domain.host}\`)`;
         if (domain.path && domain.path !== '/') {
@@ -50,7 +49,7 @@ export async function generateTraefikConfigForRepository(
         const middlewares: string[] = [];
 
         if (domain.stripPath && domain.path !== '/') {
-            const stripMiddlewareName = `strip-${repositoryId}-${domain.id}`;
+            const stripMiddlewareName = `strip-${repositoryId}-${domain.host}`;
             middlewares.push(stripMiddlewareName);
 
             config.http.middlewares[stripMiddlewareName] = {
@@ -65,7 +64,7 @@ export async function generateTraefikConfigForRepository(
             domain.internalPath !== '/' &&
             domain.internalPath !== domain.path
         ) {
-            const addPrefixMiddlewareName = `addprefix-${repositoryId}-${domain.id}`;
+            const addPrefixMiddlewareName = `addprefix-${repositoryId}-${domain.host}`;
             middlewares.push(addPrefixMiddlewareName);
 
             config.http.middlewares[addPrefixMiddlewareName] = {
@@ -92,6 +91,14 @@ export async function generateTraefikConfigForRepository(
         }
 
         config.http.routers[routerName] = router;
+
+        const matchedContainer = containers.find((container) =>
+            container.Ports?.some((p) => p.PrivatePort === domain.containerPort),
+        );
+
+        const containerName = matchedContainer
+            ? matchedContainer.Names[0]?.replace(/^\//, '')
+            : projectName;
 
         config.http.services[serviceName] = {
             loadBalancer: {

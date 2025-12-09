@@ -59,6 +59,7 @@ export function BuildConfigurationStep() {
                                 </FormControl>
                                 <SelectContent>
                                     <SelectItem value="DOCKERFILE">Dockerfile</SelectItem>
+                                    <SelectItem value="DOCKER_COMPOSE">Docker Compose</SelectItem>
                                     <SelectItem value="NIXPACKS">Nixpacks</SelectItem>
                                     <SelectItem value="BUILDPACKS">Buildpacks</SelectItem>
                                 </SelectContent>
@@ -78,6 +79,37 @@ export function BuildConfigurationStep() {
                                     <FormLabel>Chemin du Dockerfile</FormLabel>
                                     <FormControl>
                                         <Input placeholder="Dockerfile" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={control}
+                            name="contextPath"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Contexte de build</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="." {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                )}
+
+                {buildType === 'DOCKER_COMPOSE' && (
+                    <div className="grid gap-4 md:grid-cols-2">
+                        <FormField
+                            control={control}
+                            name="dockerComposePath"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Chemin du fichier Compose</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="docker-compose.yml" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

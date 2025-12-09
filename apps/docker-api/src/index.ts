@@ -3,7 +3,6 @@ import { Hono } from 'hono';
 import { logger } from './utils/logger';
 import { cors } from 'hono/cors';
 import containerRoutes from './routes/containerRoutes';
-import composeStackRoutes from './routes/composeStackRoutes';
 import imagesRoutes from './routes/imagesRoutes';
 import containersRoutes from './routes/containersRoutes';
 import containersEvents from './routes/events/containersEvents';
@@ -29,12 +28,13 @@ import networksRoutes from '@/routes/networksRoutes';
 import pipelineEvents from '@/routes/events/pipelineEvents';
 import { env } from '../env';
 import pipelineRoutes from '@/routes/pipelineRoutes';
-import swarmRoutes from '@/routes/swarmRoutes';
+import swarmRoutes from '@/routes/swarm';
 import swarmEvents from '@/routes/events/swarmEvents';
-import { swarmStateManager } from '@/managers/swarmStateManager';
 import traefikRoutes from '@/routes/traefikRoutes';
 import traefikEvents from '@/routes/events/traefikEvents';
 import { traefikLogsManager } from '@/managers/traefikLogsManager';
+import { swarmStateManager } from '@/managers/swarmStateManager';
+import composeRoutes from './routes/composeRoutes';
 
 const app = new Hono();
 
@@ -59,7 +59,7 @@ app.route('/api/containers', containersRoutes);
 app.route('/api/container/events', containerEvents);
 app.route('/api/container', containerRoutes);
 
-app.route('/api/composes', composeStackRoutes);
+app.route('/api/composes', composeRoutes);
 
 app.route('/api/images/events', imagesEvents);
 app.route('/api/images', imagesRoutes);

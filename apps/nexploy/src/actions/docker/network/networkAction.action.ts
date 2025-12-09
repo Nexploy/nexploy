@@ -4,7 +4,7 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { drinoDocker } from '@/lib/api/drinoDocker';
 import { HttpErrorResponse } from 'drino';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
-import { networkActionsSchema } from '@workspace/schemas-zod/network/networkAction.schema';
+import { networkActionsSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';
 
 export const onNetworkAction = authActionServer
     .inputSchema(networkActionsSchema)

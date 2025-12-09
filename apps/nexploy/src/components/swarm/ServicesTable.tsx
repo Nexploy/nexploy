@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
     Table,
     TableBody,
@@ -10,14 +11,16 @@ import {
 } from '@workspace/ui/components/table';
 import { Badge } from '@workspace/ui/components/badge';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
-import { SwarmService } from '@workspace/typescript-interface/docker/docker.swarm';
 import { Layers } from 'lucide-react';
 import { ServiceActions } from './ServiceActions';
 import { CreateServiceDialog } from './CreateServiceDialog';
+import { ScaleServiceDialog } from './ScaleServiceDialog';
+import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
 
-const DOCKER_API_URL = process.env.NEXT_PUBLIC_DOCKER_API_URL || 'http://localhost:3300';
-
-function getReplicasBadgeVariant(running: number, total: number): 'default' | 'secondary' | 'destructive' {
+function getReplicasBadgeVariant(
+    running: number,
+    total: number,
+): 'default' | 'secondary' | 'destructive' {
     if (running === 0 && total > 0) return 'destructive';
     if (running < total) return 'secondary';
     return 'default';
@@ -39,8 +42,9 @@ function formatImage(image: string): string {
     return imageName;
 }
 
-export function TableSwarmServices() {
+export function ServicesTable() {
     const { services, isSwarmActive } = useSwarmStore();
+    const [scaleService, setScaleService] = useState<SwarmService | null>(null);
 
     if (!isSwarmActive) {
         return null;
@@ -50,7 +54,7 @@ export function TableSwarmServices() {
         <div className="px-5">
             <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl font-semibold">Services</h2>
-                <CreateServiceDialog dockerApiUrl={DOCKER_API_URL} />
+                <CreateServiceDialog />
             </div>
 
             {services.length === 0 ? (
@@ -71,6 +75,7 @@ export function TableSwarmServices() {
                                 <TableHead>Replicas</TableHead>
                                 <TableHead>Image</TableHead>
                                 <TableHead>Ports</TableHead>
+                                <TableHead>Update Status</TableHead>
                                 <TableHead className="w-[50px]"></TableHead>
                             </TableRow>
                         </TableHeader>
@@ -85,7 +90,7 @@ export function TableSwarmServices() {
                                         <Badge
                                             variant={getReplicasBadgeVariant(
                                                 service.runningReplicas,
-                                                service.replicas
+                                                service.replicas,
                                             )}
                                         >
                                             {service.runningReplicas}/{service.replicas}
@@ -101,9 +106,30 @@ export function TableSwarmServices() {
                                         {formatPorts(service)}
                                     </TableCell>
                                     <TableCell>
+                                        {service.updateStatus ? (
+                                            <Badge
+                                                variant={
+                                                    service.updateStatus.state === 'completed'
+                                                        ? 'default'
+                                                        : service.updateStatus.state.includes('rollback')
+                                                          ? 'destructive'
+                                                          : 'secondary'
+                                                }
+                                            >
+                                                {service.updateStatus.state}
+                                            </Badge>
+                                        ) : (
+                                            <span className="text-muted-foreground text-sm">-</span>
+                                        )}
+                                    </TableCell>
+                                    <TableCell>
                                         <ServiceActions
                                             service={service}
-                                            dockerApiUrl={DOCKER_API_URL}
+                                            onScale={
+                                                service.mode === 'replicated'
+                                                    ? () => setScaleService(service)
+                                                    : undefined
+                                            }
                                         />
                                     </TableCell>
                                 </TableRow>
@@ -111,6 +137,14 @@ export function TableSwarmServices() {
                         </TableBody>
                     </Table>
                 </div>
+            )}
+
+            {scaleService && (
+                <ScaleServiceDialog
+                    service={scaleService}
+                    open={!!scaleService}
+                    onOpenChange={(open) => !open && setScaleService(null)}
+                />
             )}
         </div>
     );

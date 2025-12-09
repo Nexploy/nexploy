@@ -1,0 +1,134 @@
+'use client';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import { AlertCircle, Box, Layers } from 'lucide-react';
+import { UseFormReturn } from 'react-hook-form';
+import { DeploymentSettingsForm } from '@workspace/schemas-zod/repository/settings/deploymentSettings.schema';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import { RadioGroup, RadioGroupItem } from '@workspace/ui/components/radio-group';
+import { cn } from '@workspace/ui/lib/utils';
+import Link from 'next/link';
+import { useSwarmStore } from '@/stores/docker/useSwarmStore';
+
+interface DeploymentModeCardProps {
+    form: UseFormReturn<DeploymentSettingsForm>;
+}
+
+export function DeploymentModeCard({ form }: DeploymentModeCardProps) {
+    const isSwarmActive = useSwarmStore((s) => s.isSwarmActive);
+
+    return (
+        <Card>
+            <CardHeader>
+                <div className="flex gap-2">
+                    <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
+                        <Layers className="text-primary size-5" />
+                    </div>
+                    <div className="flex flex-col">
+                        <CardTitle>Mode de déploiement</CardTitle>
+                        <CardDescription>
+                            Choisissez comment déployer votre application
+                        </CardDescription>
+                    </div>
+                </div>
+            </CardHeader>
+
+            <CardContent>
+                <FormField
+                    control={form.control}
+                    name="deploymentMode"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <RadioGroup
+                                    onValueChange={(value) => {
+                                        if (value === 'SWARM' && !isSwarmActive) return;
+                                        field.onChange(value);
+                                    }}
+                                    value={field.value}
+                                    className="grid gap-4 sm:grid-cols-2"
+                                >
+                                    <FormItem>
+                                        <FormControl>
+                                            <RadioGroupItem
+                                                value="CONTAINER"
+                                                id="container"
+                                                className="peer sr-only"
+                                            />
+                                        </FormControl>
+                                        <FormLabel
+                                            htmlFor="container"
+                                            className={cn(
+                                                'group relative flex cursor-pointer items-center gap-4 rounded-lg border-2 transition-all',
+                                                'border-border bg-card hover:border-primary/50',
+                                                'peer-data-[state=checked]:border-primary',
+                                            )}
+                                        >
+                                            <Box />
+                                            <div className="flex flex-col gap-1">
+                                                <span className="font-semibold">Container</span>
+                                                <span className="text-muted-foreground text-sm">
+                                                    Un seul container Docker
+                                                </span>
+                                            </div>
+                                        </FormLabel>
+                                    </FormItem>
+
+                                    <FormItem>
+                                        <FormControl>
+                                            <RadioGroupItem
+                                                value="SWARM"
+                                                id="swarm"
+                                                className="peer sr-only"
+                                                disabled={!isSwarmActive}
+                                            />
+                                        </FormControl>
+                                        <FormLabel
+                                            htmlFor="swarm"
+                                            className={cn(
+                                                'group relative flex items-center gap-4 rounded-lg border-2 p-4 transition-all',
+                                                isSwarmActive
+                                                    ? 'border-border bg-card hover:border-primary/50 peer-data-[state=checked]:border-primary cursor-pointer'
+                                                    : 'border-border bg-muted/30 cursor-not-allowed opacity-60',
+                                            )}
+                                        >
+                                            <Layers
+                                                className={cn(
+                                                    'size-8 shrink-0 transition-colors',
+                                                    isSwarmActive
+                                                        ? 'text-muted-foreground group-hover:text-primary'
+                                                        : 'text-muted-foreground/50',
+                                                )}
+                                            />
+                                            <div className="flex flex-1 flex-col gap-1">
+                                                <span className="font-semibold">Swarm</span>
+                                                <span className="text-muted-foreground text-sm">
+                                                    Service avec réplicas et orchestration
+                                                </span>
+                                                {!isSwarmActive && (
+                                                    <div className="mt-2 flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 p-2 dark:border-amber-900/50 dark:bg-amber-950/20">
+                                                        <AlertCircle className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-500" />
+                                                        <span className="text-xs text-amber-900 dark:text-amber-200">
+                                                            Swarm n'est pas actif.{' '}
+                                                            <Link
+                                                                href="/swarm"
+                                                                className="font-medium underline hover:no-underline"
+                                                            >
+                                                                Initialiser un Swarm
+                                                            </Link>
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </FormLabel>
+                                    </FormItem>
+                                </RadioGroup>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+            </CardContent>
+        </Card>
+    );
+}

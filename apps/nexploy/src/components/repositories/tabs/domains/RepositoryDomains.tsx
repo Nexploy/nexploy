@@ -161,7 +161,7 @@ export function RepositoryDomains({ repositoryId, domainsConfig }: RepositoryDom
                     <form onSubmit={handleSubmitWithAction}>
                         <div className="space-y-3">
                             {activeDomains.length === 0 ? (
-                                <div className="text-muted-foreground py-8 text-center">
+                                <div className="text-muted-foreground py-8 text-center text-sm">
                                     Aucun domaine configuré. Ajoutez un domaine pour exposer votre
                                     application.
                                 </div>
