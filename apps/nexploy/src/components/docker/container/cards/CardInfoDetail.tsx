@@ -1,9 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { Box } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import dayjs from 'dayjs';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 
 export function CardInfoDetail() {
     const container = useContainerStore((state) => state.container);
@@ -52,14 +53,7 @@ export function CardInfoDetail() {
 
     return (
         <Card className={'flex-2'}>
-            <CardHeader>
-                <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
-                        <Box className="text-primary size-4" />
-                    </div>
-                    <CardTitle>Informations détaillées</CardTitle>
-                </div>
-            </CardHeader>
+            <CardHeaderWithIcon icon={Box} title={'Informations détaillées'} />
             <CardContent className={'px-0'}>
                 <ScrollAreaWithShadow
                     colorShadow={'from-card via-card/50'}

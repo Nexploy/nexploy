@@ -1,10 +1,6 @@
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+'use client';
+
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { GitBranch as GitBranchIcon, Save } from 'lucide-react';
 import useSWR from 'swr';
 import { fetcherApi } from '@/lib/api/fetcherApi';
@@ -31,17 +27,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { branchSchema } from '@workspace/schemas-zod/repository/branch.schema';
 import { updateBranchAction } from '@/actions/repository/settings/updateBranch.action';
 import { useEffect } from 'react';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 
 interface ChangeBranchProps {
     repository: Repository;
 }
 
 export function ChangeBranch({ repository }: ChangeBranchProps) {
-    const {
-        data: branches,
-        isLoading: isLoadingBranches,
-        error,
-    } = useSWR<GitBranch[]>(
+    const { data: branches, isLoading: isLoadingBranches } = useSWR<GitBranch[]>(
         `/api/git/branches?provider=${repository.gitProvider}&repoId=${repository.gitId}&owner=${repository.name.split('/')[0]}&repoName=${repository.name.split('/')[1]}`,
         fetcherApi,
     );
@@ -77,19 +70,11 @@ export function ChangeBranch({ repository }: ChangeBranchProps) {
 
     return (
         <Card>
-            <CardHeader>
-                <div className="flex gap-2">
-                    <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
-                        <GitBranchIcon className="text-primary size-5" />
-                    </div>
-                    <div className="flex flex-col">
-                        <CardTitle>Branche de déploiement</CardTitle>
-                        <CardDescription>
-                            Modifiez la branche utilisée pour les builds et déploiements
-                        </CardDescription>
-                    </div>
-                </div>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={GitBranchIcon}
+                title={'Branche de déploiement'}
+                description={'Modifiez la branche utilisée pour les builds et déploiements'}
+            />
             <CardContent>
                 <Form {...form}>
                     <form onSubmit={handleSubmitWithAction} className="space-y-4">

@@ -5,20 +5,14 @@ import { useRouter } from 'next/navigation';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
 import {
     Collapsible,
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@workspace/ui/components/collapsible';
 import { Form } from '@workspace/ui/components/form';
-import { ChevronDown, Globe, Loader2, Lock, Plus, Save, Trash2 } from 'lucide-react';
+import { ChevronDown, Cloud, Globe, Loader2, Lock, Plus, Save, Trash2 } from 'lucide-react';
 import { onDomainAction } from '@/actions/repository/domain.action';
 import { cn } from '@workspace/ui/lib/utils';
 import { Domain } from '@workspace/typescript-interface/traefik/traefik.config';
@@ -26,10 +20,12 @@ import { toast } from 'sonner';
 import { domainsFormSchema } from '@workspace/schemas-zod/repository/domain.schema';
 import Link from 'next/link';
 import { DomainFields } from '@/components/repositories/tabs/domains/DomainFields';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 
 interface RepositoryDomainsProps {
     repositoryId: string;
     domainsConfig: Domain[];
+    isCloudflareConnected: boolean;
 }
 
 const defaultNewDomain = {
@@ -41,7 +37,11 @@ const defaultNewDomain = {
     https: false,
 };
 
-export function RepositoryDomains({ repositoryId, domainsConfig }: RepositoryDomainsProps) {
+export function RepositoryDomains({
+    repositoryId,
+    domainsConfig,
+    isCloudflareConnected,
+}: RepositoryDomainsProps) {
     const router = useRouter();
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
@@ -59,7 +59,6 @@ export function RepositoryDomains({ repositoryId, domainsConfig }: RepositoryDom
             actionProps: {
                 onSuccess: ({ data }) => {
                     toast.success('Domaines mis à jour avec succès');
-                    router.refresh();
                     form.reset({
                         repositoryId,
                         domains: data,
@@ -124,20 +123,30 @@ export function RepositoryDomains({ repositoryId, domainsConfig }: RepositoryDom
 
     const deletedIdsSet = new Set(form.watch('deletedIds'));
 
-    const hasChanges = form.formState.isDirty || deletedIdsSet.size > 0;
     const activeDomains = domains.filter((d) => !d.id || !deletedIdsSet.has(d.id));
     const deletedDomains = domainsConfig.filter((d) => d.id && deletedIdsSet.has(d.id));
+
+    const newDomainsValid = activeDomains
+        .filter((d) => !d.id)
+        .every((d) => d.host && d.host.trim() !== '');
+
+    const hasChanges =
+        (form.formState.isDirty &&
+            (activeDomains.filter((d) => !d.id).length === 0 || newDomainsValid)) ||
+        deletedIdsSet.size > 0;
+
+    console.log(form.formState.isDirty);
 
     return (
         <Card className="mx-5">
             <CardHeader>
                 <div className="flex items-center justify-between">
-                    <div>
-                        <CardTitle>Domaines</CardTitle>
-                        <CardDescription>
-                            Configurez les domaines et le routage pour votre application
-                        </CardDescription>
-                    </div>
+                    <CardHeaderWithIcon
+                        as={'div'}
+                        icon={Globe}
+                        title={'Domaines'}
+                        description={'Configurez les domaines et le routage pour votre application'}
+                    />
                     <div className="flex gap-2">
                         {hasChanges && (
                             <Button
@@ -189,7 +198,9 @@ export function RepositoryDomains({ repositoryId, domainsConfig }: RepositoryDom
                                                     <CollapsibleTrigger asChild>
                                                         <div className="hover:bg-muted/50 flex cursor-pointer items-center justify-between p-3">
                                                             <code className="flex items-center gap-2">
-                                                                {domain.https ? (
+                                                                {domain.cloudflareDnsRecordId ? (
+                                                                    <Cloud className="size-4 text-orange-500" />
+                                                                ) : domain.https ? (
                                                                     <Lock className="size-4 text-green-500" />
                                                                 ) : (
                                                                     <Globe className="text-muted-foreground size-4" />
@@ -219,6 +230,7 @@ export function RepositoryDomains({ repositoryId, domainsConfig }: RepositoryDom
                                                             </code>
                                                             <div className="flex items-center gap-2">
                                                                 <Button
+                                                                    type="button"
                                                                     variant="ghost"
                                                                     size="icon"
                                                                     onClick={(e) => {
@@ -245,6 +257,7 @@ export function RepositoryDomains({ repositoryId, domainsConfig }: RepositoryDom
                                                             Nouveau domaine
                                                         </span>
                                                         <Button
+                                                            type="button"
                                                             variant="ghost"
                                                             size="icon"
                                                             onClick={() =>
@@ -261,6 +274,9 @@ export function RepositoryDomains({ repositoryId, domainsConfig }: RepositoryDom
                                                         <DomainFields
                                                             form={form}
                                                             index={actualIndex}
+                                                            isCloudflareConnected={
+                                                                isCloudflareConnected
+                                                            }
                                                         />
                                                     </div>
                                                 </CollapsibleContent>
@@ -275,24 +291,26 @@ export function RepositoryDomains({ repositoryId, domainsConfig }: RepositoryDom
                                     <p className="text-muted-foreground mb-2 text-sm">
                                         Suppression en attente (enregistrez pour confirmer) :
                                     </p>
-                                    {deletedDomains.map((domain) => (
-                                        <div
-                                            key={domain.id}
-                                            className="bg-destructive/10 flex items-center justify-between rounded-md p-3"
-                                        >
-                                            <span className="font-mono text-sm line-through">
-                                                {domain.host}
-                                                {domain.path}
-                                            </span>
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => handleUndoDelete(domain.id)}
+                                    <div className={'flex flex-col gap-2'}>
+                                        {deletedDomains.map((domain) => (
+                                            <div
+                                                key={domain.id}
+                                                className="bg-destructive/10 flex items-center justify-between rounded-md p-3"
                                             >
-                                                Annuler
-                                            </Button>
-                                        </div>
-                                    ))}
+                                                <span className="font-mono text-sm line-through">
+                                                    {domain.host}
+                                                    {domain.path}
+                                                </span>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => handleUndoDelete(domain.id)}
+                                                >
+                                                    Annuler
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
                         </div>

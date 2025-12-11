@@ -11,12 +11,21 @@ import { Switch } from '@workspace/ui/components/switch';
 interface DomainFieldsProps {
     form: any;
     index: number;
+    isCloudflareConnected: boolean;
 }
 
-export function DomainFields({ form, index }: DomainFieldsProps) {
+export function DomainFields({ form, index, isCloudflareConnected }: DomainFieldsProps) {
+    const cloudflareZoneId = form.watch(`domains.${index}.cloudflareZoneId`);
+
     return (
         <div className="grid gap-4">
-            <div className="grid gap-4 md:grid-cols-2">
+            {/*<CloudflareDomainSelector*/}
+            {/*    form={form}*/}
+            {/*    index={index}*/}
+            {/*    isCloudflareConnected={isCloudflareConnected}*/}
+            {/*/>*/}
+
+            <div className="grid items-start gap-4 md:grid-cols-2">
                 <FormField
                     control={form.control}
                     name={`domains.${index}.host`}
@@ -28,8 +37,15 @@ export function DomainFields({ form, index }: DomainFieldsProps) {
                                     {...field}
                                     placeholder="api.example.com"
                                     className="font-mono"
+                                    readOnly={!!cloudflareZoneId}
+                                    disabled={!!cloudflareZoneId}
                                 />
                             </FormControl>
+                            {cloudflareZoneId && (
+                                <FormDescription>
+                                    Géré par la sélection de zone Cloudflare
+                                </FormDescription>
+                            )}
                         </FormItem>
                     )}
                 />
@@ -75,9 +91,7 @@ export function DomainFields({ form, index }: DomainFieldsProps) {
                                 <Input
                                     {...field}
                                     type="number"
-                                    onChange={(e) =>
-                                        field.onChange(parseInt(e.target.value) || 3000)
-                                    }
+                                    onChange={(e) => field.onChange(parseInt(e.target.value) || '')}
                                     placeholder="3000"
                                     className="font-mono"
                                 />

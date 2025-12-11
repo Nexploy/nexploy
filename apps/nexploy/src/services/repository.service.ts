@@ -11,6 +11,7 @@ import {
     setupWebhookForRepository,
 } from '@/services/webhook/webhook.service';
 import { decrypt, encrypt } from '@/lib/encryption';
+import { BuildType } from 'generated/client';
 
 export async function createRepository(
     { repo, ...restRepositoryCreate }: RepositoryCreateForm,
@@ -148,6 +149,17 @@ export async function updateBranchRepository(newBranch: string, repositoryId: st
         });
     } catch (error: unknown) {
         throw new Error('Failed to update branch repository');
+    }
+}
+
+export async function updateBuildTypeRepository(buildType: BuildType, repositoryId: string) {
+    try {
+        return await prisma.repository.update({
+            where: { id: repositoryId },
+            data: { buildType },
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to update build type repository');
     }
 }
 

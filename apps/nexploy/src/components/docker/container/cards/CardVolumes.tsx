@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
 import { Database, Plus, Trash2, X } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
@@ -9,6 +9,7 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import { VolumeForm } from '@/components/docker/container/forms/VolumeForm';
 import { Badge } from '@workspace/ui/components/badge';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 
 type Mount = {
     type: string;
@@ -167,31 +168,18 @@ export function CardVolumes() {
         <Card>
             <CardHeader>
                 <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
-                            <Database className="text-primary size-4" />
-                        </div>
-                        <CardTitle>
-                            Volumes montés{' '}
-                            <Badge variant={'secondary'}>
-                                {container.mounts.length + addedVolumes.length}
-                            </Badge>
-                        </CardTitle>
-                    </div>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                className="size-9 md:size-fit"
-                                icon={Plus}
-                                onClick={() => handleOpenDialog()}
-                            >
-                                <span className="hidden md:flex">Add volume</span>
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent className="flex xl:hidden">
-                            <span>Add volume</span>
-                        </TooltipContent>
-                    </Tooltip>
+                    <CardHeaderWithIcon as={'div'} icon={Database} title={'Volumes montés'}>
+                        <Badge variant={'secondary'}>
+                            {container.mounts.length + addedVolumes.length}
+                        </Badge>
+                    </CardHeaderWithIcon>
+                    <Button
+                        className="size-9 md:size-fit"
+                        icon={Plus}
+                        onClick={() => handleOpenDialog()}
+                    >
+                        <span className="hidden md:flex">Add volume</span>
+                    </Button>
                 </div>
             </CardHeader>
             <CardContent className="px-0">

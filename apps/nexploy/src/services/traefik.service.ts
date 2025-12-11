@@ -29,17 +29,20 @@ export async function generateTraefikConfigForRepository(
             services: Record<string, unknown>;
             middlewares: Record<string, unknown>;
         };
+        'x-nexploy-domains': Record<string, unknown>;
     } = {
         http: {
             routers: {},
             services: {},
             middlewares: {},
         },
+        'x-nexploy-domains': {},
     };
 
     for (const domain of domains) {
-        const routerName = `repo-${repositoryId}-${domain.host}`;
-        const serviceName = `svc-${repositoryId}-${domain.host}`;
+        const id = domain.id!;
+        const routerName = `repo-${id}`;
+        const serviceName = `svc-${id}`;
 
         let rule = `Host(\`${domain.host}\`)`;
         if (domain.path && domain.path !== '/') {
@@ -49,7 +52,7 @@ export async function generateTraefikConfigForRepository(
         const middlewares: string[] = [];
 
         if (domain.stripPath && domain.path !== '/') {
-            const stripMiddlewareName = `strip-${repositoryId}-${domain.host}`;
+            const stripMiddlewareName = `strip-${id}`;
             middlewares.push(stripMiddlewareName);
 
             config.http.middlewares[stripMiddlewareName] = {
@@ -64,7 +67,7 @@ export async function generateTraefikConfigForRepository(
             domain.internalPath !== '/' &&
             domain.internalPath !== domain.path
         ) {
-            const addPrefixMiddlewareName = `addprefix-${repositoryId}-${domain.host}`;
+            const addPrefixMiddlewareName = `addprefix-${id}`;
             middlewares.push(addPrefixMiddlewareName);
 
             config.http.middlewares[addPrefixMiddlewareName] = {
@@ -109,6 +112,14 @@ export async function generateTraefikConfigForRepository(
                 ],
             },
         };
+
+        config['x-nexploy-domains'][id] = {
+            cloudflare: domain.cloudflareZoneId && {
+                zoneId: domain.cloudflareZoneId,
+                zoneName: domain.cloudflareZoneName,
+                dnsRecordId: domain.cloudflareDnsRecordId,
+            },
+        };
     }
 
     if (Object.keys(config.http.middlewares).length === 0) {
@@ -139,9 +150,11 @@ export async function getDomainsFromTraefikConfig(repositoryId: string): Promise
         const routers = config?.http?.routers ?? {};
         const services = config?.http?.services ?? {};
         const middlewares = config?.http?.middlewares ?? {};
+        const nexployDomains = config?.['x-nexploy-domains'] ?? {};
 
         return Object.entries(routers).map(([routerName, router]: [string, any]) => {
-            const domainId = routerName.replace(`repo-${repositoryId}-`, '');
+            const id = routerName.replace(`repo-`, '');
+            const hostFromRouter = routerName.replace(`repo-${repositoryId}-`, '');
 
             const hostMatch = router.rule?.match(/Host\(`([^`]+)`\)/);
             const pathMatch = router.rule?.match(/PathPrefix\(`([^`]+)`\)/);
@@ -149,15 +162,22 @@ export async function getDomainsFromTraefikConfig(repositoryId: string): Promise
             const serverUrl = services[router.service]?.loadBalancer?.servers?.[0]?.url ?? '';
             const portMatch = serverUrl.match(/:(\d+)$/);
 
+            const domainMeta = nexployDomains[id] ?? {};
+            const cloudflare = domainMeta.cloudflare;
+
             return {
-                id: domainId,
+                id: routerName,
                 host: hostMatch?.[1] ?? '',
                 path: pathMatch?.[1] ?? '/',
                 internalPath:
-                    middlewares[`addprefix-${repositoryId}-${domainId}`]?.addPrefix?.prefix ?? '/',
-                stripPath: !!middlewares[`strip-${repositoryId}-${domainId}`],
+                    middlewares[`addprefix-${repositoryId}-${hostFromRouter}`]?.addPrefix?.prefix ??
+                    '/',
+                stripPath: !!middlewares[`strip-${repositoryId}-${hostFromRouter}`],
                 containerPort: portMatch ? parseInt(portMatch[1]) : 3000,
                 https: !!router.tls,
+                cloudflareZoneId: cloudflare?.zoneId,
+                cloudflareZoneName: cloudflare?.zoneName,
+                cloudflareDnsRecordId: cloudflare?.dnsRecordId,
             };
         });
     } catch {

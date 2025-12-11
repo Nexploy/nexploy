@@ -14,7 +14,8 @@ model User {
   sessions         Session[]
   accounts         Account[]
   twofactors       TwoFactor[]
-  repositories     Repository[]
+  repositories          Repository[]
+  cloudflareCredential  CloudflareCredential?
 
   @@unique([email])
   @@map("user")

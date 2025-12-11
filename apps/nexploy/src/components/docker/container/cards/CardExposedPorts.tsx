@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
-import { Network, Pencil, Plus } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
+import { ExternalLink, Network, Pencil, Plus } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Button } from '@workspace/ui/components/button';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
@@ -10,6 +10,13 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 import { PortFormProps } from '@workspace/typescript-interface/docker/docker.port';
 import { cn } from '@workspace/ui/lib/utils';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+
+function getPortUrl(port: number) {
+    if (typeof window === 'undefined') return `http://localhost:${port}`;
+    const { protocol, hostname } = window.location;
+    return `${protocol}//${hostname}:${port}`;
+}
 
 export function CardExposedPorts() {
     const container = useContainerStore((state) => state.container);
@@ -83,12 +90,7 @@ export function CardExposedPorts() {
         <Card className={'flex flex-1 flex-col'}>
             <CardHeader>
                 <div className="flex items-center justify-between gap-3">
-                    <div className={'flex items-center gap-3'}>
-                        <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
-                            <Network className="text-primary size-4" />
-                        </div>
-                        <CardTitle>Ports exposés</CardTitle>
-                    </div>
+                    <CardHeaderWithIcon as={'div'} icon={Network} title={'Ports exposés'} />
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button
@@ -118,6 +120,7 @@ export function CardExposedPorts() {
                                     const { isEdited, isDeleted, editedPort } =
                                         getPortChangeStatus(port);
                                     const displayPort = editedPort || port;
+                                    const hasPublicPort = displayPort.publicPort != null;
 
                                     return (
                                         <div
@@ -126,10 +129,29 @@ export function CardExposedPorts() {
                                                 'group bg-muted/60 relative flex items-center justify-between gap-2 rounded-md px-3 py-2',
                                             )}
                                         >
-                                            <code className="flex gap-2 text-sm leading-none">
-                                                <span className="font-semibold">
-                                                    {displayPort.publicPort ?? '—'}
-                                                </span>
+                                            <code className="flex items-center gap-2 text-sm leading-none">
+                                                {hasPublicPort ? (
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <a
+                                                                href={getPortUrl(displayPort.publicPort!)}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="text-primary inline-flex items-center gap-1 font-semibold hover:underline"
+                                                            >
+                                                                {displayPort.publicPort}
+                                                                <ExternalLink className="h-3 w-3" />
+                                                            </a>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            Ouvrir le port {displayPort.publicPort}
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                ) : (
+                                                    <span className="text-muted-foreground font-semibold">
+                                                        —
+                                                    </span>
+                                                )}
                                                 <span className="text-muted-foreground">→</span>
                                                 <span>{displayPort.privatePort}</span>
                                                 <span className="text-muted-foreground">
@@ -161,45 +183,69 @@ export function CardExposedPorts() {
                                     );
                                 })}
 
-                                {addedPorts.map((change, idx) => (
-                                    <div
-                                        key={`new-${idx}`}
-                                        className="group bg-muted/60 relative flex items-center justify-between gap-2 rounded-md px-3 py-2"
-                                    >
-                                        <code className="flex gap-2 text-sm leading-none">
-                                            <span className="font-semibold">
-                                                {change.publicPort}
-                                            </span>
-                                            <span className="text-muted-foreground">→</span>
-                                            <span>{change.privatePort}</span>
-                                            <span className="text-muted-foreground">
-                                                ({change.type})
-                                            </span>
-                                            <span className="text-green-500">+</span>
-                                        </code>
-                                        <div className="flex gap-1">
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Button
-                                                        size="icon"
-                                                        variant="ghost"
-                                                        className="h-6 w-6"
-                                                        onClick={() =>
-                                                            handleEditPort({
-                                                                type: change.type!,
-                                                                privatePort: change.privatePort!,
-                                                                publicPort: change.publicPort!,
-                                                            })
-                                                        }
-                                                    >
-                                                        <Pencil />
-                                                    </Button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>Modifier</TooltipContent>
-                                            </Tooltip>
+                                {addedPorts.map((change, idx) => {
+                                    const hasPublicPort = change.publicPort != null;
+
+                                    return (
+                                        <div
+                                            key={`new-${idx}`}
+                                            className="group bg-muted/60 relative flex items-center justify-between gap-2 rounded-md px-3 py-2"
+                                        >
+                                            <code className="flex items-center gap-2 text-sm leading-none">
+                                                {hasPublicPort ? (
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <a
+                                                                href={getPortUrl(change.publicPort!)}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="text-primary inline-flex items-center gap-1 font-semibold hover:underline"
+                                                            >
+                                                                {change.publicPort}
+                                                                <ExternalLink className="h-3 w-3" />
+                                                            </a>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            Ouvrir le port {change.publicPort}
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                ) : (
+                                                    <span className="text-muted-foreground font-semibold">
+                                                        —
+                                                    </span>
+                                                )}
+                                                <span className="text-muted-foreground">→</span>
+                                                <span>{change.privatePort}</span>
+                                                <span className="text-muted-foreground">
+                                                    ({change.type})
+                                                </span>
+                                                <span className="text-green-500">+</span>
+                                            </code>
+                                            <div className="flex gap-1">
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button
+                                                            size="icon"
+                                                            variant="ghost"
+                                                            className="h-6 w-6"
+                                                            onClick={() =>
+                                                                handleEditPort({
+                                                                    type: change.type!,
+                                                                    privatePort:
+                                                                        change.privatePort!,
+                                                                    publicPort: change.publicPort,
+                                                                })
+                                                            }
+                                                        >
+                                                            <Pencil />
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>Modifier</TooltipContent>
+                                                </Tooltip>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         ) : (
                             <div className="mb-16 flex flex-1 items-center justify-center">

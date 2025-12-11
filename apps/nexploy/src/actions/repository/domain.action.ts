@@ -2,35 +2,91 @@
 
 import { authActionServer } from '@/lib/api/safe-action';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
-import { generateTraefikConfigForRepository } from '@/services/traefik.service';
+import {
+    generateTraefikConfigForRepository,
+    getDomainsFromTraefikConfig,
+} from '@/services/traefik.service';
 import { domainsFormSchema } from '@workspace/schemas-zod/repository/domain.schema';
+import {
+    createCloudflareDnsRecord,
+    deleteCloudflareDnsRecord,
+    getCloudflareCredentialInfo,
+} from '@/services/cloudflare.service';
 
 export const onDomainAction = authActionServer
     .inputSchema(domainsFormSchema)
-    .action(async ({ parsedInput }) => {
+    .action(async ({ parsedInput, ctx }) => {
         const { repositoryId, domains, deletedIds } = parsedInput;
+        const userId = ctx.session.user.id;
 
         try {
+            const cloudflareInfo = await getCloudflareCredentialInfo(userId);
+            const existingDomains = await getDomainsFromTraefikConfig(repositoryId);
+
             const cleanedDomains = domains.map((d) => ({
                 ...d,
                 host: d.host.replace(/^https?:\/\//, ''),
             }));
 
-            const existingDomains = cleanedDomains.filter(
-                (d) => d.id && !deletedIds.includes(d.id),
+            if (cloudflareInfo.isConnected) {
+                for (const deletedId of deletedIds) {
+                    const deletedDomain = existingDomains.find((d) => d.id === deletedId);
+                    if (deletedDomain?.cloudflareZoneId && deletedDomain?.cloudflareDnsRecordId) {
+                        try {
+                            await deleteCloudflareDnsRecord(
+                                userId,
+                                deletedDomain.cloudflareZoneId,
+                                deletedDomain.cloudflareDnsRecordId,
+                            );
+                        } catch (error) {
+                            console.error('Failed to delete Cloudflare DNS record:', error);
+                        }
+                    }
+                }
+            }
+
+            const keptDomains = cleanedDomains.filter((d) => d.id && !deletedIds.includes(d.id));
+
+            const newDomainsWithIds = await Promise.all(
+                cleanedDomains
+                    .filter((d) => !d.id)
+                    .map(async (d) => {
+                        let cloudflareDnsRecordId: string | undefined = d.cloudflareDnsRecordId;
+
+                        if (
+                            cloudflareInfo.isConnected &&
+                            d.cloudflareZoneId &&
+                            d.cloudflareZoneName &&
+                            !d.cloudflareDnsRecordId
+                        ) {
+                            try {
+                                const subdomain = d.host
+                                    .replace(`.${d.cloudflareZoneName}`, '')
+                                    .replace(d.cloudflareZoneName, '');
+
+                                const dnsRecord = await createCloudflareDnsRecord(
+                                    userId,
+                                    d.cloudflareZoneId,
+                                    subdomain,
+                                    d.cloudflareZoneName,
+                                );
+                                cloudflareDnsRecordId = dnsRecord.id;
+                            } catch (error) {
+                                throw new Error(`Échec de la création du DNS pour ${d.host}`);
+                            }
+                        }
+
+                        return {
+                            ...d,
+                            id: `repo-${repositoryId}-${d.host}`,
+                            cloudflareDnsRecordId,
+                        };
+                    }),
             );
 
-            const newDomains = cleanedDomains.filter((d) => !d.id);
+            const allDomains = [...keptDomains, ...newDomainsWithIds];
 
-            const allDomains = [
-                ...existingDomains,
-                ...newDomains.map((d) => ({
-                    ...d,
-                    id: crypto.randomUUID(),
-                })),
-            ];
-
-            await generateTraefikConfigForRepository(repositoryId, domains);
+            await generateTraefikConfigForRepository(repositoryId, allDomains);
 
             return allDomains;
         } catch (error) {

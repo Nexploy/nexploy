@@ -6,18 +6,13 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
 import { Form, FormControl, FormField, FormItem } from '@workspace/ui/components/form';
-import { Eye, EyeOff, Loader2, Plus, Save, Trash2 } from 'lucide-react';
+import { Eye, EyeOff, Key, Loader2, Plus, Save, Trash2 } from 'lucide-react';
 import { onEnvVariableAction } from '@/actions/repository/envVariable.action';
 import { envVariableSchema } from '@workspace/schemas-zod/repository/envVariable.schema';
 import { toast } from 'sonner';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 
 interface EnvVariable {
     id?: string;
@@ -123,10 +118,12 @@ export function RepositoryEnv({
         <Card className={'mx-5'}>
             <CardHeader>
                 <div className="flex items-center justify-between">
-                    <div>
-                        <CardTitle>Environment Variables</CardTitle>
-                        <CardDescription>Configure environment variables</CardDescription>
-                    </div>
+                    <CardHeaderWithIcon
+                        as={'div'}
+                        icon={Key}
+                        title={'Environment Variables'}
+                        description={'Configure environment variables'}
+                    />
                     <div className="flex gap-2">
                         {hasChanges && (
                             <Button

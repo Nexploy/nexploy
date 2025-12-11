@@ -8,7 +8,7 @@ model Repository {
   gitProvider String
   gitId       String @unique
 
-  buildType         String  @default("DOCKERFILE")
+  buildType         BuildType  @default(DOCKERFILE)
   dockerfilePath    String? @default("Dockerfile")
   dockerComposePath String? @default("docker-compose.yml")
   contextPath       String? @default(".")
@@ -18,41 +18,35 @@ model Repository {
   webhookId     String?
   webhookSecret String?
 
-  // Deployment configuration
   deploymentMode DeploymentMode @default(CONTAINER)
 
-  // Swarm configuration
-  replicas          Int     @default(1)
-  updateParallelism Int     @default(1)
-  updateDelay       String  @default("10s")
-  updateFailureAction UpdateFailureAction @default(PAUSE)
-  updateOrder       UpdateOrder @default(STOP_FIRST)
-  rollbackParallelism Int   @default(1)
-  rollbackDelay     String  @default("10s")
+  replicas              Int                   @default(1)
+  updateParallelism     Int                   @default(1)
+  updateDelay           String                @default("10s")
+  updateFailureAction   UpdateFailureAction   @default(PAUSE)
+  updateOrder           UpdateOrder           @default(STOP_FIRST)
+  rollbackParallelism   Int                   @default(1)
+  rollbackDelay         String                @default("10s")
   rollbackFailureAction RollbackFailureAction @default(PAUSE)
 
-  // Restart policy
-  restartCondition  RestartCondition @default(ANY)
-  restartDelay      String  @default("5s")
-  restartMaxAttempts Int    @default(3)
-  restartWindow     String  @default("120s")
+  restartCondition   RestartCondition @default(ANY)
+  restartDelay       String           @default("5s")
+  restartMaxAttempts Int              @default(3)
+  restartWindow      String           @default("120s")
 
-  // Resources
   cpuLimit          Float?
   cpuReservation    Float?
   memoryLimit       String?
   memoryReservation String?
 
-  // Placement
   placementConstraints String[] @default([])
 
-  // Health check
-  healthCheckEnabled    Boolean @default(false)
-  healthCheckCommand    String?
-  healthCheckInterval   String  @default("30s")
-  healthCheckTimeout    String  @default("10s")
-  healthCheckRetries    Int     @default(3)
-  healthCheckStartPeriod String @default("0s")
+  healthCheckEnabled     Boolean @default(false)
+  healthCheckCommand     String?
+  healthCheckInterval    String  @default("30s")
+  healthCheckTimeout     String  @default("10s")
+  healthCheckRetries     Int     @default(3)
+  healthCheckStartPeriod String  @default("0s")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -113,6 +107,13 @@ model Log {
   build   Build  @relation(fields: [buildId], references: [id], onDelete: Cascade)
 
   @@map("log")
+}
+
+enum BuildType {
+  DOCKERFILE
+  DOCKER_COMPOSE
+  NIXPACKS
+  BUILDPACKS
 }
 
 enum LogLevel {

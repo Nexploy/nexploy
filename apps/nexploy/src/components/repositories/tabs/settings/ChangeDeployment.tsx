@@ -1,12 +1,6 @@
 'use client';
 
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { Switch } from '@workspace/ui/components/switch';
 import { Rocket } from 'lucide-react';
 import { toast } from 'sonner';
@@ -16,6 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toggleAutoDeployAction } from '@/actions/repository/settings/toggleAutoDeploy.action';
 import { toggleAutoDeploySchema } from '@workspace/schemas-zod/repository/settings/toggleAutoDeploy.schema';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 
 interface ChangeDeploymentProps {
     repository: Repository;
@@ -54,18 +49,11 @@ export function ChangeDeployment({ repository }: ChangeDeploymentProps) {
 
     return (
         <Card>
-            <CardHeader>
-                <div className="flex gap-2">
-                    <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
-                        <Rocket className="text-primary size-5" />
-                    </div>
-                    <div className="flex flex-col">
-                        <CardTitle>Déploiement</CardTitle>
-                        <CardDescription>Paramètres de déploiement</CardDescription>
-                    </div>
-                </div>
-            </CardHeader>
-
+            <CardHeaderWithIcon
+                icon={Rocket}
+                title={'Déploiement'}
+                description={'Paramètres de déploiement'}
+            />
             <CardContent>
                 <form onSubmit={handleSubmitWithAction}>
                     <Label className="flex cursor-pointer items-center justify-between rounded-lg border p-4">

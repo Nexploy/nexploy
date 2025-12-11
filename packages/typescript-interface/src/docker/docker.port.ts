@@ -3,12 +3,12 @@ export type PortType = 'tcp' | 'udp' | 'sctp';
 export interface PortFormProps {
     mode: 'add' | 'edit';
     originalPort?: {
-        publicPort: number;
+        publicPort?: number;
         privatePort: number;
         type: PortType;
     };
     defaultPort?: {
-        publicPort: number;
+        publicPort?: number;
         privatePort: number;
         type: PortType;
     };
@@ -16,7 +16,7 @@ export interface PortFormProps {
 
 export type ContainerPorts = {
     privatePort: number;
-    publicPort: number;
+    publicPort?: number;
     hostIps: string[];
     type: PortType;
 };

@@ -6,6 +6,7 @@ export const useContainerChangesStore = create<ContainerChangesStore>((set, get)
     envVarChanges: [],
     volumeChanges: [],
     networkChanges: [],
+    labelChanges: [],
 
     onPortChange: (change) =>
         set((state) => {
@@ -277,12 +278,85 @@ export const useContainerChangesStore = create<ContainerChangesStore>((set, get)
             return { networkChanges };
         }),
 
+    onLabelChange: (change) =>
+        set((state) => {
+            const labelChanges = [...state.labelChanges];
+
+            const labelIdentifier = {
+                currentKey: change.currentKey,
+            };
+
+            const existingIndex = labelChanges.findIndex((c) => {
+                if (c.typeAction === 'add') {
+                    return c.key === labelIdentifier.currentKey;
+                }
+                return c.currentKey === labelIdentifier.currentKey;
+            });
+
+            if (existingIndex !== -1) {
+                const existing = labelChanges[existingIndex];
+
+                if (existing?.typeAction === 'add' && change.typeAction === 'edit') {
+                    labelChanges[existingIndex] = {
+                        typeAction: 'add',
+                        key: change.key,
+                        value: change.value,
+                    };
+                    return { labelChanges };
+                }
+
+                if (existing?.typeAction === 'add' && change.typeAction === 'delete') {
+                    labelChanges.splice(existingIndex, 1);
+                    return { labelChanges };
+                }
+
+                if (existing?.typeAction === 'edit' && change.typeAction === 'delete') {
+                    labelChanges[existingIndex] = {
+                        typeAction: 'delete',
+                        currentKey: existing?.currentKey,
+                        currentValue: existing?.currentValue,
+                    };
+                    return { labelChanges };
+                }
+
+                if (existing?.typeAction === 'edit' && change.typeAction === 'edit') {
+                    labelChanges[existingIndex] = {
+                        typeAction: 'edit',
+                        key: change.key,
+                        value: change.value,
+                        currentKey: existing?.currentKey,
+                        currentValue: existing?.currentValue,
+                    };
+                    return { labelChanges };
+                }
+
+                if (existing?.typeAction === 'delete' && change.typeAction === 'edit') {
+                    labelChanges[existingIndex] = {
+                        typeAction: 'edit',
+                        key: change.key,
+                        value: change.value,
+                        currentKey: existing?.currentKey,
+                        currentValue: existing?.currentValue,
+                    };
+                    return { labelChanges };
+                }
+
+                if (existing?.typeAction === 'delete' && change.typeAction === 'delete') {
+                    return { labelChanges };
+                }
+            }
+
+            labelChanges.push(change);
+            return { labelChanges };
+        }),
+
     resetAllChanges: () =>
         set({
             portChanges: [],
             envVarChanges: [],
             volumeChanges: [],
             networkChanges: [],
+            labelChanges: [],
         }),
 
     hasChanges: () => {
@@ -291,7 +365,8 @@ export const useContainerChangesStore = create<ContainerChangesStore>((set, get)
             state.portChanges.length > 0 ||
             state.envVarChanges.length > 0 ||
             state.volumeChanges.length > 0 ||
-            state.networkChanges.length > 0
+            state.networkChanges.length > 0 ||
+            state.labelChanges.length > 0
         );
     },
 }));

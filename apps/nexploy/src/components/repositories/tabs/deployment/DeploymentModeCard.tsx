@@ -1,14 +1,21 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { AlertCircle, Box, Layers } from 'lucide-react';
 import { UseFormReturn } from 'react-hook-form';
 import { DeploymentSettingsForm } from '@workspace/schemas-zod/repository/settings/deploymentSettings.schema';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { RadioGroup, RadioGroupItem } from '@workspace/ui/components/radio-group';
 import { cn } from '@workspace/ui/lib/utils';
 import Link from 'next/link';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 
 interface DeploymentModeCardProps {
     form: UseFormReturn<DeploymentSettingsForm>;
@@ -19,20 +26,11 @@ export function DeploymentModeCard({ form }: DeploymentModeCardProps) {
 
     return (
         <Card>
-            <CardHeader>
-                <div className="flex gap-2">
-                    <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
-                        <Layers className="text-primary size-5" />
-                    </div>
-                    <div className="flex flex-col">
-                        <CardTitle>Mode de déploiement</CardTitle>
-                        <CardDescription>
-                            Choisissez comment déployer votre application
-                        </CardDescription>
-                    </div>
-                </div>
-            </CardHeader>
-
+            <CardHeaderWithIcon
+                icon={Layers}
+                title={'Mode de déploiement'}
+                description={'Choisissez comment déployer votre application'}
+            />
             <CardContent>
                 <FormField
                     control={form.control}
@@ -59,12 +57,19 @@ export function DeploymentModeCard({ form }: DeploymentModeCardProps) {
                                         <FormLabel
                                             htmlFor="container"
                                             className={cn(
-                                                'group relative flex cursor-pointer items-center gap-4 rounded-lg border-2 transition-all',
+                                                'group relative flex cursor-pointer items-center gap-4 rounded-lg border-2 p-4 transition-all',
                                                 'border-border bg-card hover:border-primary/50',
                                                 'peer-data-[state=checked]:border-primary',
                                             )}
                                         >
-                                            <Box />
+                                            <Box
+                                                className={cn(
+                                                    'size-7 shrink-0 transition-colors',
+                                                    isSwarmActive
+                                                        ? 'text-muted-foreground group-hover:text-primary'
+                                                        : 'text-muted-foreground/50',
+                                                )}
+                                            />
                                             <div className="flex flex-col gap-1">
                                                 <span className="font-semibold">Container</span>
                                                 <span className="text-muted-foreground text-sm">
@@ -94,7 +99,7 @@ export function DeploymentModeCard({ form }: DeploymentModeCardProps) {
                                         >
                                             <Layers
                                                 className={cn(
-                                                    'size-8 shrink-0 transition-colors',
+                                                    'size-7 shrink-0 transition-colors',
                                                     isSwarmActive
                                                         ? 'text-muted-foreground group-hover:text-primary'
                                                         : 'text-muted-foreground/50',

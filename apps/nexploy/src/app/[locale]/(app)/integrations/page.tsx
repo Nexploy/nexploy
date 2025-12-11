@@ -1,10 +1,17 @@
 import { IntegrationCard } from '@/components/git/IntegrationCard';
+import { CloudflareIntegrationCard } from '@/components/cloudflare/CloudflareIntegrationCard';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { listAccount } from '@/services/auth/auth.service';
+import { listAccount, getUserSession } from '@/services/auth/auth.service';
+import { getCloudflareCredentialInfo } from '@/services/cloudflare.service';
 import { Cloud, GitBranch, Github, Gitlab, Plug } from 'lucide-react';
 
 export default async function IntegrationsPage() {
     const accounts = await listAccount();
+    const session = await getUserSession();
+
+    const cloudflareInfo = session
+        ? await getCloudflareCredentialInfo(session.user.id)
+        : { isConnected: false };
 
     const getAccount = (provider: string) =>
         accounts.find((a) => a.providerId === provider) ?? null;
@@ -24,15 +31,6 @@ export default async function IntegrationsPage() {
         },
     ];
 
-    const cloudProviders = [
-        {
-            provider: 'cloudflare',
-            name: 'Cloudflare',
-            description: 'Gérez vos DNS et tunnels.',
-            icon: <Cloud className="size-5" />,
-            comingSoon: true,
-        },
-    ];
 
     return (
         <div className="flex h-full flex-1 flex-col pt-5">
@@ -78,24 +76,9 @@ export default async function IntegrationsPage() {
                                 <h2 className="text-sm font-medium">Cloud & Infrastructure</h2>
                             </div>
                             <div className="space-y-2">
-                                {cloudProviders.map((p) => (
-                                    <div key={p.provider} className="relative">
-                                        {p.comingSoon && (
-                                            <div className="bg-background/80 absolute inset-0 z-10 flex items-center justify-center rounded-lg backdrop-blur-[1px]">
-                                                <span className="bg-muted text-muted-foreground rounded-full px-3 py-1 text-xs font-medium">
-                                                    Bientôt disponible
-                                                </span>
-                                            </div>
-                                        )}
-                                        <IntegrationCard
-                                            provider={p.provider}
-                                            name={p.name}
-                                            description={p.description}
-                                            icon={p.icon}
-                                            isConnected={false}
-                                        />
-                                    </div>
-                                ))}
+                                <CloudflareIntegrationCard
+                                    isConnected={cloudflareInfo.isConnected}
+                                />
                             </div>
                         </section>
                     </div>

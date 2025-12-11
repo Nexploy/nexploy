@@ -9,7 +9,6 @@ import { CardProcessExecution } from '@/components/docker/container/cards/CardPr
 import { CardNetworkConfig } from '@/components/docker/container/cards/CardNetworkConfig';
 import { CardVolumes } from '@/components/docker/container/cards/CardVolumes';
 import { CardEnv } from '@/components/docker/container/cards/CardEnv';
-import { CardLabels } from '@/components/docker/container/cards/CardLabels';
 import { CardHealthDetails } from '@/components/docker/container/cards/CardHealthDetails';
 import { CardNetworkDetails } from '@/components/docker/container/cards/CardNetworkDetails';
 import { CardError } from '@/components/docker/container/cards/CardError';
@@ -24,6 +23,7 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ContainerStats } from '@/components/docker/container/actions/ContainerStats';
 import { CardExecuteId } from '@/components/docker/container/cards/CardExecuteId';
 import { ApplyChangesButtonForm } from '@/components/docker/container/forms/ApplyChangesButtonForm';
+import { CardLabels } from '@/components/docker/container/cards/label/CardLabels';
 
 export function ContainerDetailPage() {
     const container = useContainerStore((state) => state.container);
@@ -101,9 +101,9 @@ export function ContainerDetailPage() {
                         <CardEnv />
                         <CardVolumes />
                         <CardNetworkDetails />
+                        <CardLabels />
                         <CardNetworkConfig />
                         <CardProcessExecution />
-                        <CardLabels />
                         <CardHealthDetails />
                         <CardExecuteId />
                     </div>

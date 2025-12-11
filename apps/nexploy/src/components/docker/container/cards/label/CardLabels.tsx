@@ -1,0 +1,138 @@
+import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
+import { Plus, Tags } from 'lucide-react';
+import { useContainerStore } from '@/stores/docker/useContainerStore';
+import { Skeleton } from '@workspace/ui/components/skeleton';
+import { Badge } from '@workspace/ui/components/badge';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { Button } from '@workspace/ui/components/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
+import { LabelForm } from '@/components/docker/container/forms/LabelForm';
+import { Label } from '@workspace/typescript-interface/docker/docker.label';
+import { LabelItem } from '@/components/docker/container/cards/label/LabelItem';
+
+const DIALOG_CONFIG = {
+    closeOnBackground: true,
+    title: 'Ajouter un label',
+    description:
+        'Le conteneur doit être arrêté pour ajouter un label. Il sera recréé avec la nouvelle configuration.',
+    props: {
+        className: 'sm:max-w-[425px]',
+    },
+} as const;
+
+export function CardLabels() {
+    const container = useContainerStore((state) => state.container);
+    const { openDialog } = useConfirmationDialogStore();
+    const labelChanges = useContainerChangesStore((state) => state.labelChanges);
+
+    const handleOpenDialog = (mode: 'add' | 'edit', label?: Label, originalLabel?: Label) => {
+        openDialog({
+            ...DIALOG_CONFIG,
+            title: mode === 'add' ? 'Ajouter un label' : 'Modifier un label',
+            content: <LabelForm mode={mode} defaultLabel={label} originalLabel={originalLabel} />,
+        });
+    };
+
+    const getLabelChangeStatus = (label: Label) => {
+        const editChange = labelChanges.find(
+            (change) =>
+                change.typeAction === 'edit' &&
+                change.currentKey === label.key &&
+                change.currentValue === label.value,
+        );
+
+        const deleteChange = labelChanges.find(
+            (change) =>
+                change.typeAction === 'delete' &&
+                change.currentKey === label.key &&
+                change.currentValue === label.value,
+        );
+
+        return {
+            isEdited: !!editChange,
+            isDeleted: !!deleteChange,
+            editedLabel: editChange ? { key: editChange.key!, value: editChange.value! } : null,
+        };
+    };
+
+    if (!container) {
+        return <Skeleton className="h-100 flex-1" />;
+    }
+
+    const addedLabels = labelChanges.filter((change) => change.typeAction === 'add');
+    const labelCount = Object.keys(container.labels).length + addedLabels.length;
+
+    return (
+        <Card>
+            <CardHeader>
+                <div className="flex items-center justify-between gap-3">
+                    <CardHeaderWithIcon as="div" icon={Tags} title="Labels">
+                        <Badge variant="secondary">{labelCount}</Badge>
+                    </CardHeaderWithIcon>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                className="size-9 md:size-fit"
+                                icon={Plus}
+                                onClick={() => handleOpenDialog('add')}
+                            >
+                                <span className="hidden md:flex">Ajouter</span>
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="flex xl:hidden">
+                            <span>Ajouter</span>
+                        </TooltipContent>
+                    </Tooltip>
+                </div>
+            </CardHeader>
+            <CardContent className="px-0">
+                {labelCount > 0 ? (
+                    <ScrollAreaWithShadow
+                        colorShadow="from-card via-card/50"
+                        bottomShadow
+                        className="h-50 overflow-hidden px-6"
+                    >
+                        <div className="space-y-2">
+                            {Object.entries(container.labels).map(([key, value], idx) => {
+                                const label = { key, value };
+                                const { isEdited, isDeleted, editedLabel } =
+                                    getLabelChangeStatus(label);
+                                const displayLabel = editedLabel || label;
+
+                                return (
+                                    <LabelItem
+                                        key={idx}
+                                        label={label}
+                                        isEdited={isEdited}
+                                        isDeleted={isDeleted}
+                                        displayLabel={displayLabel}
+                                        onEdit={handleOpenDialog.bind(null, 'edit')}
+                                    />
+                                );
+                            })}
+
+                            {addedLabels.map(({ key, value }, idx) => (
+                                <LabelItem
+                                    key={`new-${idx}`}
+                                    label={{ key: key!, value: value! }}
+                                    isEdited={false}
+                                    isDeleted={false}
+                                    isNew
+                                    displayLabel={{ key: key!, value: value! }}
+                                    onEdit={handleOpenDialog.bind(null, 'edit')}
+                                />
+                            ))}
+                        </div>
+                    </ScrollAreaWithShadow>
+                ) : (
+                    <div className="flex h-50 items-center justify-center pb-24 font-semibold">
+                        Aucun label
+                    </div>
+                )}
+            </CardContent>
+        </Card>
+    );
+}

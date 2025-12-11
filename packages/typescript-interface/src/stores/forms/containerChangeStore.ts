@@ -42,16 +42,28 @@ export type NetworkChange = {
     currentName?: string;
 };
 
+export type LabelChange = {
+    typeAction: 'add' | 'edit' | 'delete';
+
+    key?: string;
+    value?: string;
+
+    currentKey?: string;
+    currentValue?: string;
+};
+
 export type ContainerChangesStore = {
     portChanges: PortChange[];
     envVarChanges: EnvVarChange[];
     volumeChanges: VolumeChange[];
     networkChanges: NetworkChange[];
+    labelChanges: LabelChange[];
 
     onPortChange: (change: PortChange) => void;
     onEnvVarChange: (change: EnvVarChange) => void;
     onVolumeChange: (change: VolumeChange) => void;
     onNetworkChange: (change: NetworkChange) => void;
+    onLabelChange: (change: LabelChange) => void;
 
     resetAllChanges: () => void;
     hasChanges: () => boolean;

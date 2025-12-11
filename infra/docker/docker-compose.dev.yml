@@ -1,4 +1,3 @@
-name: nexploy
 services:
   postgres:
     image: postgres:18.0

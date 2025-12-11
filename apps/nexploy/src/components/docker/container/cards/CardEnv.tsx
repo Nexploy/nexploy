@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
 import { Key, Pencil, Plus } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
@@ -9,6 +9,7 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 import { EnvForm } from '@/components/docker/container/forms/EnvForm';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import { Badge } from '@workspace/ui/components/badge';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 
 type EnvVar = { key: string; value: string };
 
@@ -116,17 +117,11 @@ export function CardEnv() {
         <Card>
             <CardHeader>
                 <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
-                            <Key className="text-primary size-4" />
-                        </div>
-                        <CardTitle>
-                            Variables d'environnement{' '}
-                            <Badge variant={'secondary'}>
-                                {container.env.length + addedEnvVars.length}
-                            </Badge>
-                        </CardTitle>
-                    </div>
+                    <CardHeaderWithIcon as={'div'} icon={Key} title={"Variables d'environnement"}>
+                        <Badge variant={'secondary'}>
+                            {container.env.length + addedEnvVars.length}
+                        </Badge>
+                    </CardHeaderWithIcon>
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button

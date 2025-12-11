@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -35,7 +36,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
         resolver: zodResolver(containerPortSchema),
         defaultValues: {
             privatePort: defaultPort?.privatePort ?? 0,
-            publicPort: defaultPort?.publicPort ?? 0,
+            publicPort: defaultPort?.publicPort ?? undefined,
             type: defaultPort?.type ?? 'tcp',
         },
     });
@@ -44,7 +45,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
         if (mode === 'add') {
             onPortChange({
                 typeAction: 'add',
-                publicPort: data.publicPort,
+                publicPort: data.publicPort ?? undefined,
                 privatePort: data.privatePort,
                 type: data.type,
             });
@@ -53,7 +54,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
 
             onPortChange({
                 typeAction: 'edit',
-                publicPort: data.publicPort,
+                publicPort: data.publicPort ?? undefined,
                 privatePort: data.privatePort,
                 type: data.type,
                 currentPublicPort: referencePort?.publicPort,
@@ -85,15 +86,15 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                     control={form.control}
-                    name="publicPort"
+                    name="privatePort"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Port hôte</FormLabel>
+                            <FormLabel>Port conteneur *</FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
-                                    placeholder="8080"
                                     type="number"
+                                    placeholder="80"
                                     value={field.value || ''}
                                     onChange={(e) =>
                                         field.onChange(parseInt(e.target.value) || undefined)
@@ -107,21 +108,26 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
 
                 <FormField
                     control={form.control}
-                    name="privatePort"
+                    name="publicPort"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Port conteneur</FormLabel>
+                            <FormLabel>Port hôte</FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
+                                    placeholder="8080"
                                     type="number"
-                                    placeholder="80"
                                     value={field.value || ''}
-                                    onChange={(e) =>
-                                        field.onChange(parseInt(e.target.value) || undefined)
-                                    }
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        field.onChange(value ? parseInt(value) : undefined);
+                                    }}
                                 />
                             </FormControl>
+                            <FormDescription className="text-xs">
+                                Optionnel. Laissez vide pour exposer uniquement dans le réseau
+                                Docker.
+                            </FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -150,22 +156,22 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                     )}
                 />
 
-                <DialogFooter className={'flex !justify-between pt-4'}>
+                <DialogFooter className="flex !justify-between pt-4">
                     {mode === 'edit' && (
                         <Button
-                            size={'icon'}
+                            size="icon"
                             type="button"
                             variant="destructive"
                             icon={Trash}
                             onClick={handleDelete}
                         />
                     )}
-                    <div className={'flex flex-1 flex-row justify-end gap-2'}>
+                    <div className="flex flex-1 flex-row justify-end gap-2">
                         <DialogClose asChild>
-                            <Button variant={'outline'}>Annuler</Button>
+                            <Button variant="outline">Annuler</Button>
                         </DialogClose>
                         <Button
-                            className={'flex-1 sm:flex-0'}
+                            className="flex-1 sm:flex-0"
                             type="submit"
                             disabled={!form.formState.isDirty}
                             icon={mode === 'add' ? Plus : Save}

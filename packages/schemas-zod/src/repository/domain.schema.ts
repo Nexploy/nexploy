@@ -8,6 +8,9 @@ const domainSchema = z.object({
     stripPath: z.boolean().default(false),
     containerPort: z.number().int().positive().default(3000),
     https: z.boolean().default(false),
+    cloudflareZoneId: z.string().optional(),
+    cloudflareZoneName: z.string().optional(),
+    cloudflareDnsRecordId: z.string().optional(),
 });
 
 export const domainsFormSchema = z.object({
