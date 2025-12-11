@@ -1,50 +1,60 @@
+import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import {
     FormControl,
     FormDescription,
     FormField,
     FormItem,
     FormLabel,
+    FormMessage,
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
+import { CloudflareDomainSelector } from '@/components/repositories/tabs/domains/CloudflareDomainSelector';
 
-interface DomainFieldsProps {
-    form: any;
+interface DomainFieldsProps<T extends FieldValues> {
+    form: UseFormReturn<T>;
     index: number;
     isCloudflareConnected: boolean;
 }
 
-export function DomainFields({ form, index, isCloudflareConnected }: DomainFieldsProps) {
-    const cloudflareZoneId = form.watch(`domains.${index}.cloudflareZoneId`);
+export function DomainFields<T extends FieldValues>({
+    form,
+    index,
+    isCloudflareConnected,
+}: DomainFieldsProps<T>) {
+    const cloudflareZoneId = form.watch(`domains.${index}.cloudflareZoneId` as Path<T>);
 
     return (
         <div className="grid gap-4">
-            {/*<CloudflareDomainSelector*/}
-            {/*    form={form}*/}
-            {/*    index={index}*/}
-            {/*    isCloudflareConnected={isCloudflareConnected}*/}
-            {/*/>*/}
+            <CloudflareDomainSelector
+                form={form}
+                index={index}
+                isCloudflareConnected={isCloudflareConnected}
+            />
 
             <div className="grid items-start gap-4 md:grid-cols-2">
                 <FormField
                     control={form.control}
-                    name={`domains.${index}.host`}
+                    name={`domains.${index}.host` as Path<T>}
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Host</FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
-                                    placeholder="api.example.com"
+                                    value={field.value as string}
+                                    placeholder="example.com"
                                     className="font-mono"
                                     readOnly={!!cloudflareZoneId}
                                     disabled={!!cloudflareZoneId}
                                 />
                             </FormControl>
-                            {cloudflareZoneId && (
+                            {cloudflareZoneId ? (
                                 <FormDescription>
                                     Géré par la sélection de zone Cloudflare
                                 </FormDescription>
+                            ) : (
+                                <FormMessage />
                             )}
                         </FormItem>
                     )}
@@ -52,13 +62,19 @@ export function DomainFields({ form, index, isCloudflareConnected }: DomainField
 
                 <FormField
                     control={form.control}
-                    name={`domains.${index}.path`}
+                    name={`domains.${index}.path` as Path<T>}
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Path</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder="/" className="font-mono" />
+                                <Input
+                                    {...field}
+                                    value={field.value as string}
+                                    placeholder="/"
+                                    className="font-mono"
+                                />
                             </FormControl>
+                            <FormMessage />
                         </FormItem>
                     )}
                 />
@@ -67,12 +83,17 @@ export function DomainFields({ form, index, isCloudflareConnected }: DomainField
             <div className="grid gap-4 md:grid-cols-2">
                 <FormField
                     control={form.control}
-                    name={`domains.${index}.internalPath`}
+                    name={`domains.${index}.internalPath` as Path<T>}
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Chemin interne</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder="/" className="font-mono" />
+                                <Input
+                                    {...field}
+                                    value={field.value as string}
+                                    placeholder="/"
+                                    className="font-mono"
+                                />
                             </FormControl>
                             <FormDescription>
                                 Le chemin où votre application attend les requêtes en interne
@@ -83,17 +104,23 @@ export function DomainFields({ form, index, isCloudflareConnected }: DomainField
 
                 <FormField
                     control={form.control}
-                    name={`domains.${index}.containerPort`}
+                    name={`domains.${index}.containerPort` as Path<T>}
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Port du conteneur</FormLabel>
                             <FormControl>
                                 <Input
-                                    {...field}
                                     type="number"
-                                    onChange={(e) => field.onChange(parseInt(e.target.value) || '')}
                                     placeholder="3000"
                                     className="font-mono"
+                                    value={field.value as number}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        field.onChange(value === '' ? 0 : parseInt(value, 10));
+                                    }}
+                                    onBlur={field.onBlur}
+                                    name={field.name}
+                                    ref={field.ref}
                                 />
                             </FormControl>
                             <FormDescription>
@@ -107,11 +134,14 @@ export function DomainFields({ form, index, isCloudflareConnected }: DomainField
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
                 <FormField
                     control={form.control}
-                    name={`domains.${index}.stripPath`}
+                    name={`domains.${index}.stripPath` as Path<T>}
                     render={({ field }) => (
                         <FormItem className="flex items-center gap-3">
                             <FormControl>
-                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                <Switch
+                                    checked={field.value as boolean}
+                                    onCheckedChange={field.onChange}
+                                />
                             </FormControl>
                             <div>
                                 <FormLabel className="cursor-pointer">Strip Path</FormLabel>
@@ -125,11 +155,14 @@ export function DomainFields({ form, index, isCloudflareConnected }: DomainField
 
                 <FormField
                     control={form.control}
-                    name={`domains.${index}.https`}
+                    name={`domains.${index}.https` as Path<T>}
                     render={({ field }) => (
                         <FormItem className="flex items-center gap-3">
                             <FormControl>
-                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                <Switch
+                                    checked={field.value as boolean}
+                                    onCheckedChange={field.onChange}
+                                />
                             </FormControl>
                             <div>
                                 <FormLabel className="cursor-pointer">HTTPS</FormLabel>

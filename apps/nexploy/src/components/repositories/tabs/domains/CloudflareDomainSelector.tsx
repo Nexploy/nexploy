@@ -1,6 +1,6 @@
 'use client';
 
-import { UseFormReturn } from 'react-hook-form';
+import { UseFormReturn, FieldValues, Path } from 'react-hook-form';
 import {
     Select,
     SelectContent,
@@ -9,35 +9,36 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Input } from '@workspace/ui/components/input';
-import {
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-} from '@workspace/ui/components/form';
+import { FormDescription, FormItem, FormLabel } from '@workspace/ui/components/form';
 import { CloudflareZone } from '@workspace/typescript-interface/cloudflare/cloudflare';
 import { Cloud, Loader2 } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
 import useSWR from 'swr';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 
-interface CloudflareDomainSelectorProps {
-    form: UseFormReturn<any>;
+interface CloudflareDomainSelectorProps<T extends FieldValues> {
+    form: UseFormReturn<T>;
     index: number;
     isCloudflareConnected: boolean;
 }
 
-export function CloudflareDomainSelector({
+export function CloudflareDomainSelector<T extends FieldValues>({
     form,
     index,
     isCloudflareConnected,
-}: CloudflareDomainSelectorProps) {
-    const { data: zones, isLoading } = useSWR<CloudflareZone[]>('/api/cloudflare/zone', fetcherApi);
+}: CloudflareDomainSelectorProps<T>) {
+    const { data: zones, isLoading } = useSWR<CloudflareZone[]>(
+        isCloudflareConnected ? '/api/cloudflare/zone' : null,
+        fetcherApi,
+    );
 
-    const selectedZoneId = form.watch(`domains.${index}.cloudflareZoneId`);
-    const selectedZoneName = form.watch(`domains.${index}.cloudflareZoneName`);
-    const currentHost = form.watch(`domains.${index}.host`);
+    const selectedZoneId = form.watch(`domains.${index}.cloudflareZoneId` as Path<T>) as
+        | string
+        | undefined;
+    const selectedZoneName = form.watch(`domains.${index}.cloudflareZoneName` as Path<T>) as
+        | string
+        | undefined;
+    const currentHost = form.watch(`domains.${index}.host` as Path<T>) as string | undefined;
 
     const selectedZone = zones?.find((z) => z.id === selectedZoneId);
     const displayZoneName = selectedZone?.name || selectedZoneName;
@@ -49,17 +50,27 @@ export function CloudflareDomainSelector({
 
     const handleZoneChange = (zoneId: string) => {
         if (zoneId === 'manual') {
-            form.setValue(`domains.${index}.cloudflareZoneId`, undefined, { shouldDirty: true });
-            form.setValue(`domains.${index}.cloudflareZoneName`, undefined, { shouldDirty: true });
-            form.setValue(`domains.${index}.host`, '', { shouldDirty: true });
+            form.setValue(`domains.${index}.cloudflareZoneId` as Path<T>, undefined as never, {
+                shouldDirty: true,
+            });
+            form.setValue(`domains.${index}.cloudflareZoneName` as Path<T>, undefined as never, {
+                shouldDirty: true,
+            });
+            form.setValue(`domains.${index}.host` as Path<T>, '' as never, { shouldDirty: true });
         } else {
             const zone = zones?.find((z) => z.id === zoneId);
             if (zone) {
-                form.setValue(`domains.${index}.cloudflareZoneId`, zoneId, { shouldDirty: true });
-                form.setValue(`domains.${index}.cloudflareZoneName`, zone.name, {
+                form.setValue(`domains.${index}.cloudflareZoneId` as Path<T>, zoneId as never, {
                     shouldDirty: true,
                 });
-                form.setValue(`domains.${index}.host`, zone.name, { shouldDirty: true });
+                form.setValue(
+                    `domains.${index}.cloudflareZoneName` as Path<T>,
+                    zone.name as never,
+                    { shouldDirty: true },
+                );
+                form.setValue(`domains.${index}.host` as Path<T>, zone.name as never, {
+                    shouldDirty: true,
+                });
             }
         }
     };
@@ -67,8 +78,9 @@ export function CloudflareDomainSelector({
     const handleSubdomainChange = (value: string) => {
         const zoneName = selectedZone?.name || selectedZoneName;
         if (zoneName) {
-            const host = value ? `${value}.${zoneName}` : zoneName;
-            form.setValue(`domains.${index}.host`, host, { shouldDirty: true });
+            const cleanValue = value.trim();
+            const host = cleanValue ? `${cleanValue}.${zoneName}` : zoneName;
+            form.setValue(`domains.${index}.host` as Path<T>, host as never, { shouldDirty: true });
         }
     };
 
@@ -98,40 +110,27 @@ export function CloudflareDomainSelector({
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
-                <FormField
-                    control={form.control}
-                    name={`domains.${index}.cloudflareZoneId`}
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Zone Cloudflare</FormLabel>
-                            <Select
-                                onValueChange={handleZoneChange}
-                                value={field.value || 'manual'}
-                            >
-                                <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Sélectionner une zone" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    <SelectItem value="manual">
-                                        <span className="text-muted-foreground">
-                                            Saisie manuelle
-                                        </span>
-                                    </SelectItem>
-                                    {zones?.map((zone) => (
-                                        <SelectItem key={zone.id} value={zone.id}>
-                                            {zone.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <FormDescription>
-                                Sélectionnez une zone pour créer automatiquement le DNS
-                            </FormDescription>
-                        </FormItem>
-                    )}
-                />
+                <div className="space-y-2">
+                    <FormLabel>Zone Cloudflare</FormLabel>
+                    <Select onValueChange={handleZoneChange} value={selectedZoneId || 'manual'}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Sélectionner une zone" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="manual">
+                                <span className="text-muted-foreground">Saisie manuelle</span>
+                            </SelectItem>
+                            {zones?.map((zone) => (
+                                <SelectItem key={zone.id} value={zone.id}>
+                                    {zone.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <FormDescription>
+                        Sélectionnez une zone pour créer automatiquement le DNS
+                    </FormDescription>
+                </div>
 
                 {(selectedZoneId || selectedZoneName) && (
                     <FormItem>
@@ -143,7 +142,7 @@ export function CloudflareDomainSelector({
                                 value={subdomain}
                                 onChange={(e) => handleSubdomainChange(e.target.value)}
                             />
-                            <span className="text-muted-foreground text-sm whitespace-nowrap">
+                            <span className="text-muted-foreground whitespace-nowrap text-sm">
                                 .{displayZoneName}
                             </span>
                         </div>

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
@@ -13,7 +12,7 @@ import {
 } from '@workspace/ui/components/collapsible';
 import { Form } from '@workspace/ui/components/form';
 import { ChevronDown, Cloud, Globe, Loader2, Lock, Plus, Save, Trash2 } from 'lucide-react';
-import { onDomainAction } from '@/actions/repository/domain.action';
+import { onEditDomainAction } from '@/actions/repository/editDomain.action';
 import { cn } from '@workspace/ui/lib/utils';
 import { Domain } from '@workspace/typescript-interface/traefik/traefik.config';
 import { toast } from 'sonner';
@@ -21,6 +20,7 @@ import { domainsFormSchema } from '@workspace/schemas-zod/repository/domain.sche
 import Link from 'next/link';
 import { DomainFields } from '@/components/repositories/tabs/domains/DomainFields';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+import { useRouter } from 'next/navigation';
 
 interface RepositoryDomainsProps {
     repositoryId: string;
@@ -45,13 +45,13 @@ export function RepositoryDomains({
     const router = useRouter();
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
+    const bindOnDomainAction = onEditDomainAction.bind(null, repositoryId);
     const { form, action, handleSubmitWithAction } = useHookFormAction(
-        onDomainAction,
+        bindOnDomainAction,
         zodResolver(domainsFormSchema),
         {
             formProps: {
                 defaultValues: {
-                    repositoryId,
                     domains: domainsConfig,
                     deletedIds: [],
                 },
@@ -59,8 +59,9 @@ export function RepositoryDomains({
             actionProps: {
                 onSuccess: ({ data }) => {
                     toast.success('Domaines mis à jour avec succès');
+                    setExpandedIds(new Set());
+                    router.refresh();
                     form.reset({
-                        repositoryId,
                         domains: data,
                         deletedIds: [],
                     });
@@ -72,18 +73,22 @@ export function RepositoryDomains({
     const isSubmitting = action.status === 'executing';
     const domains = form.watch('domains');
 
+    console.log(form.watch());
+
     const handleAddNew = () => {
         const currentDomains = form.getValues('domains');
-        form.setValue('domains', [...currentDomains, { ...defaultNewDomain }]);
+        form.setValue('domains', [...currentDomains, defaultNewDomain]);
     };
 
     const handleRemove = (index: number) => {
         const currentDomains = form.getValues('domains');
         const domain = currentDomains[index];
 
-        if (domain?.id) {
+        const isExistingDomain = domain?.id && domainsConfig.some((d) => d.id === domain.id);
+
+        if (isExistingDomain) {
             const deleted = new Set(form.getValues('deletedIds') ?? []);
-            deleted.add(domain.id);
+            deleted.add(domain.id!);
             form.setValue('deletedIds', Array.from(deleted), { shouldDirty: true });
         }
 
@@ -101,11 +106,27 @@ export function RepositoryDomains({
         deleted.delete(id);
         form.setValue('deletedIds', Array.from(deleted), { shouldDirty: true });
 
-        const originalDomain = domainsConfig.find((d) => d.id === id);
-        if (originalDomain) {
-            const currentDomains = form.getValues('domains');
-            form.setValue('domains', [...currentDomains, originalDomain], { shouldDirty: true });
-        }
+        const originalIndex = domainsConfig.findIndex((d) => d.id === id);
+        if (originalIndex === -1) return;
+
+        const originalDomain = domainsConfig[originalIndex];
+        if (!originalDomain) return;
+
+        const currentDomains = form.getValues('domains');
+
+        const insertIndex = currentDomains.findIndex((domain) => {
+            const idx = domainsConfig.findIndex((d) => d.id === domain?.id);
+            return idx === -1 || idx > originalIndex;
+        });
+
+        const newDomains = [...currentDomains];
+        newDomains.splice(
+            insertIndex === -1 ? currentDomains.length : insertIndex,
+            0,
+            originalDomain,
+        );
+
+        form.setValue('domains', newDomains, { shouldDirty: true });
     };
 
     const toggleExpanded = (index: number) => {
@@ -134,8 +155,6 @@ export function RepositoryDomains({
         (form.formState.isDirty &&
             (activeDomains.filter((d) => !d.id).length === 0 || newDomainsValid)) ||
         deletedIdsSet.size > 0;
-
-    console.log(form.formState.isDirty);
 
     return (
         <Card className="mx-5">

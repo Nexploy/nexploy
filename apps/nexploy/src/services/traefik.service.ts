@@ -40,9 +40,8 @@ export async function generateTraefikConfigForRepository(
     };
 
     for (const domain of domains) {
-        const id = domain.id!;
-        const routerName = `repo-${id}`;
-        const serviceName = `svc-${id}`;
+        const routerName = `repo-${repositoryId}-${domain.host}`;
+        const serviceName = `svc-${repositoryId}-${domain.host}`;
 
         let rule = `Host(\`${domain.host}\`)`;
         if (domain.path && domain.path !== '/') {
@@ -52,7 +51,7 @@ export async function generateTraefikConfigForRepository(
         const middlewares: string[] = [];
 
         if (domain.stripPath && domain.path !== '/') {
-            const stripMiddlewareName = `strip-${id}`;
+            const stripMiddlewareName = `strip-${repositoryId}-${domain.host}`;
             middlewares.push(stripMiddlewareName);
 
             config.http.middlewares[stripMiddlewareName] = {
@@ -67,7 +66,7 @@ export async function generateTraefikConfigForRepository(
             domain.internalPath !== '/' &&
             domain.internalPath !== domain.path
         ) {
-            const addPrefixMiddlewareName = `addprefix-${id}`;
+            const addPrefixMiddlewareName = `addprefix-${repositoryId}-${domain.host}`;
             middlewares.push(addPrefixMiddlewareName);
 
             config.http.middlewares[addPrefixMiddlewareName] = {
@@ -113,7 +112,13 @@ export async function generateTraefikConfigForRepository(
             },
         };
 
-        config['x-nexploy-domains'][id] = {
+        console.log({
+            zoneId: domain.cloudflareZoneId,
+            zoneName: domain.cloudflareZoneName,
+            dnsRecordId: domain.cloudflareDnsRecordId,
+        });
+
+        config['x-nexploy-domains'][routerName] = {
             cloudflare: domain.cloudflareZoneId && {
                 zoneId: domain.cloudflareZoneId,
                 zoneName: domain.cloudflareZoneName,
@@ -153,7 +158,6 @@ export async function getDomainsFromTraefikConfig(repositoryId: string): Promise
         const nexployDomains = config?.['x-nexploy-domains'] ?? {};
 
         return Object.entries(routers).map(([routerName, router]: [string, any]) => {
-            const id = routerName.replace(`repo-`, '');
             const hostFromRouter = routerName.replace(`repo-${repositoryId}-`, '');
 
             const hostMatch = router.rule?.match(/Host\(`([^`]+)`\)/);
@@ -162,7 +166,7 @@ export async function getDomainsFromTraefikConfig(repositoryId: string): Promise
             const serverUrl = services[router.service]?.loadBalancer?.servers?.[0]?.url ?? '';
             const portMatch = serverUrl.match(/:(\d+)$/);
 
-            const domainMeta = nexployDomains[id] ?? {};
+            const domainMeta = nexployDomains[routerName] ?? {};
             const cloudflare = domainMeta.cloudflare;
 
             return {

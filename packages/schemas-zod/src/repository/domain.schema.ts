@@ -1,22 +1,22 @@
 import { z } from 'zod';
 
-const domainSchema = z.object({
+export const domainSchema = z.object({
     id: z.string().optional(),
-    host: z.string().min(1, 'Host requis'),
-    path: z.string().default('/'),
-    internalPath: z.string().default('/'),
-    stripPath: z.boolean().default(false),
-    containerPort: z.number().int().positive().default(3000),
-    https: z.boolean().default(false),
+    host: z.string().min(1, 'Le domaine est requis'),
+    path: z.string().min(1),
+    internalPath: z.string().min(1),
+    stripPath: z.boolean(),
+    containerPort: z.number().int().min(1).max(65535),
+    https: z.boolean(),
     cloudflareZoneId: z.string().optional(),
     cloudflareZoneName: z.string().optional(),
     cloudflareDnsRecordId: z.string().optional(),
 });
 
 export const domainsFormSchema = z.object({
-    repositoryId: z.string(),
     domains: z.array(domainSchema),
     deletedIds: z.array(z.string()),
 });
 
-type DomainsFormValues = z.infer<typeof domainsFormSchema>;
+export type DomainFormValues = z.infer<typeof domainSchema>;
+export type DomainsFormValues = z.infer<typeof domainsFormSchema>;
