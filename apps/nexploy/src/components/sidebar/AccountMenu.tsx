@@ -1,4 +1,4 @@
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@workspace/ui/components/sidebar';
+import { SidebarMenu, SidebarMenuItem } from '@workspace/ui/components/sidebar';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -6,7 +6,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
-import { ChevronUp, Plug, User } from 'lucide-react';
+import { Plug, User } from 'lucide-react';
 import Link from 'next/link';
 import { getUserSession } from '@/services/auth/auth.service';
 import { AvatarDisplay } from '@/components/user/AvatarDisplay';
@@ -20,11 +20,7 @@ export async function AccountMenu() {
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton className={'py-5'}>
-                            <AvatarDisplay seed={session?.user.name ?? ''} />
-                            <span className={'truncate'}>{session?.user.name}</span>
-                            <ChevronUp className="ml-auto" />
-                        </SidebarMenuButton>
+                        <AvatarDisplay session={session} />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
                         className="w-[var(--radix-dropdown-menu-trigger-width)]"

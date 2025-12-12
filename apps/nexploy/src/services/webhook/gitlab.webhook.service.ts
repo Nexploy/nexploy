@@ -48,7 +48,6 @@ export async function createGitLabWebhook(
 
         return { webhookId: String(data.id), webhookSecret: userId };
     } catch (error: any) {
-        console.log(error);
         throw new Error(`Failed to create GitLab webhook: ${error.response?.status} - ${error}`);
     }
 }

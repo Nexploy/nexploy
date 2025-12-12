@@ -112,12 +112,6 @@ export async function generateTraefikConfigForRepository(
             },
         };
 
-        console.log({
-            zoneId: domain.cloudflareZoneId,
-            zoneName: domain.cloudflareZoneName,
-            dnsRecordId: domain.cloudflareDnsRecordId,
-        });
-
         config['x-nexploy-domains'][routerName] = {
             cloudflare: domain.cloudflareZoneId && {
                 zoneId: domain.cloudflareZoneId,

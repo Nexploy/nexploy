@@ -73,8 +73,6 @@ export function RepositoryDomains({
     const isSubmitting = action.status === 'executing';
     const domains = form.watch('domains');
 
-    console.log(form.watch());
-
     const handleAddNew = () => {
         const currentDomains = form.getValues('domains');
         form.setValue('domains', [...currentDomains, defaultNewDomain]);

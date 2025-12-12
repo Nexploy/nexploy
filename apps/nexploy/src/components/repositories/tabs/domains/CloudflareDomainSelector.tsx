@@ -1,6 +1,6 @@
 'use client';
 
-import { UseFormReturn, FieldValues, Path } from 'react-hook-form';
+import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import {
     Select,
     SelectContent,
@@ -43,6 +43,8 @@ export function CloudflareDomainSelector<T extends FieldValues>({
     const selectedZone = zones?.find((z) => z.id === selectedZoneId);
     const displayZoneName = selectedZone?.name || selectedZoneName;
 
+    const isOrphanedZone = selectedZoneId && !selectedZone && selectedZoneName;
+
     const subdomain =
         currentHost && displayZoneName
             ? currentHost.replace(`.${displayZoneName}`, '').replace(displayZoneName, '')
@@ -56,7 +58,6 @@ export function CloudflareDomainSelector<T extends FieldValues>({
             form.setValue(`domains.${index}.cloudflareZoneName` as Path<T>, undefined as never, {
                 shouldDirty: true,
             });
-            form.setValue(`domains.${index}.host` as Path<T>, '' as never, { shouldDirty: true });
         } else {
             const zone = zones?.find((z) => z.id === zoneId);
             if (zone) {
@@ -68,9 +69,11 @@ export function CloudflareDomainSelector<T extends FieldValues>({
                     zone.name as never,
                     { shouldDirty: true },
                 );
-                form.setValue(`domains.${index}.host` as Path<T>, zone.name as never, {
-                    shouldDirty: true,
-                });
+                if (!currentHost || !currentHost.includes(zone.name)) {
+                    form.setValue(`domains.${index}.host` as Path<T>, zone.name as never, {
+                        shouldDirty: true,
+                    });
+                }
             }
         }
     };
@@ -120,6 +123,13 @@ export function CloudflareDomainSelector<T extends FieldValues>({
                             <SelectItem value="manual">
                                 <span className="text-muted-foreground">Saisie manuelle</span>
                             </SelectItem>
+                            {isOrphanedZone && (
+                                <SelectItem value={selectedZoneId}>
+                                    <span className="text-muted-foreground">
+                                        {selectedZoneName} (zone non trouvée)
+                                    </span>
+                                </SelectItem>
+                            )}
                             {zones?.map((zone) => (
                                 <SelectItem key={zone.id} value={zone.id}>
                                     {zone.name}
@@ -128,7 +138,9 @@ export function CloudflareDomainSelector<T extends FieldValues>({
                         </SelectContent>
                     </Select>
                     <FormDescription>
-                        Sélectionnez une zone pour créer automatiquement le DNS
+                        {isOrphanedZone
+                            ? "La zone d'origine n'est plus disponible. Sélectionnez une autre zone ou passez en saisie manuelle."
+                            : 'Sélectionnez une zone pour créer automatiquement le DNS'}
                     </FormDescription>
                 </div>
 
@@ -142,7 +154,7 @@ export function CloudflareDomainSelector<T extends FieldValues>({
                                 value={subdomain}
                                 onChange={(e) => handleSubdomainChange(e.target.value)}
                             />
-                            <span className="text-muted-foreground whitespace-nowrap text-sm">
+                            <span className="text-muted-foreground text-sm whitespace-nowrap">
                                 .{displayZoneName}
                             </span>
                         </div>

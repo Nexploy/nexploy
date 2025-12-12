@@ -5,6 +5,7 @@ import { useTheme } from 'next-themes';
 import { Button } from '@workspace/ui/components/button';
 import { motion } from 'motion/react';
 import { cn } from '@workspace/ui/lib/utils';
+import { useSidebar } from '@workspace/ui/components/sidebar';
 
 const THEME = [
     {
@@ -23,14 +24,17 @@ const THEME = [
 
 export function ChangeTheme() {
     const { setTheme, theme } = useTheme();
+    const { state, isMobile } = useSidebar();
+
+    const isSidebarExpanded = state === 'expanded' || isMobile;
 
     return (
         <div
             className="flex items-center justify-between px-2 py-1 text-sm focus:bg-transparent"
             onSelect={(e) => e.preventDefault()}
         >
-            Theme
-            <div className="flex gap-1">
+            {isSidebarExpanded && 'Theme'}
+            <div className={cn('flex gap-1', !isSidebarExpanded && 'w-full justify-between')}>
                 {THEME.map(({ name, icon: Icon }, index) => (
                     <Button
                         key={index}

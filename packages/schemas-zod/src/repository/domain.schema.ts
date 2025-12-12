@@ -18,5 +18,12 @@ export const domainsFormSchema = z.object({
     deletedIds: z.array(z.string()),
 });
 
+export const domainsActionSchema = z.object({
+    add: z.array(domainSchema),
+    edit: z.array(domainSchema),
+    delete: z.array(domainSchema),
+});
+
 export type DomainFormValues = z.infer<typeof domainSchema>;
 export type DomainsFormValues = z.infer<typeof domainsFormSchema>;
+export type DomainsActionValues = z.infer<typeof domainsActionSchema>;

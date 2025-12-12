@@ -333,7 +333,6 @@ class ImagesStateManager extends BaseStateManager {
     }
 
     getByName(fullName: string): Image[] {
-        console.log(fullName);
         return Array.from(this.images.values()).filter((image) =>
             image.name.some((n) => n.includes(fullName)),
         );

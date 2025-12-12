@@ -132,6 +132,38 @@ export async function deleteCloudflareDnsRecord(
     );
 }
 
+export async function updateCloudflareDnsRecord(
+    userId: string,
+    zoneId: string,
+    dnsRecordId: string,
+    subdomain: string,
+    zoneName: string,
+): Promise<CloudflareDnsRecord> {
+    const apiToken = await getApiToken(userId);
+    const serverIp = env.SERVER_IP;
+
+    if (!serverIp) {
+        throw new Error('SERVER_IP environment variable not configured');
+    }
+
+    const fullHostname = subdomain ? `${subdomain}.${zoneName}` : zoneName;
+
+    return cloudflareRequest<CloudflareDnsRecord>(
+        apiToken,
+        `/zones/${zoneId}/dns_records/${dnsRecordId}`,
+        {
+            method: 'PATCH',
+            body: JSON.stringify({
+                type: 'A',
+                name: fullHostname,
+                content: serverIp,
+                proxied: true,
+                ttl: 1,
+            }),
+        },
+    );
+}
+
 export async function listCloudflareDnsRecords(
     userId: string,
     zoneId: string,

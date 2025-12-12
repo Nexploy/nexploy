@@ -4,7 +4,7 @@ import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { Globe, Hammer, Key, Rocket, Settings, Tag } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 
 const VALID_TABS = ['overview', 'versions', 'env', 'domain', 'deployment', 'setting'] as const;
 type TabValue = (typeof VALID_TABS)[number];
@@ -24,7 +24,12 @@ export function RepositoryTabs({ children }: RepositoryTabsProps) {
     const [tab, setTab] = useQueryState(
         'tab',
         parseAsStringLiteral(VALID_TABS).withDefault('overview'),
+        { clearOnUnmount: true },
     );
+
+    useEffect(() => {
+        return () => setTab('overview');
+    }, []);
 
     return (
         <Tabs
