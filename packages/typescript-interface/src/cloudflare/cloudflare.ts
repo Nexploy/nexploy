@@ -24,3 +24,7 @@ export interface CloudflareCredentialInfo {
     isConnected: boolean;
     createdAt?: Date;
 }
+
+export interface CloudflareToken {
+    apiToken: string;
+}

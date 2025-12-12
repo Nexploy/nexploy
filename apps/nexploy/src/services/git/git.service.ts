@@ -7,7 +7,7 @@ import {
 } from '@workspace/typescript-interface/git/git';
 import { getValidToken } from '@/services/api/gitProvider.service';
 import { drinoGithub } from '@/lib/api/drinoGithub';
-import { tokenStorage } from '@/lib/storage/token-storage';
+import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { drinoGitlab } from '@/lib/api/drinoGitlab';
 import { GithubRepo } from '@workspace/typescript-interface/git/repository/github.repository';
 import { GitlabRepo } from '@workspace/typescript-interface/git/repository/gitlab.repository';
@@ -54,7 +54,7 @@ export async function getRepositories(provider: string, userId: string): Promise
 
     switch (provider) {
         case 'github': {
-            const repositories = await tokenStorage.run(token, async () => {
+            const repositories = await tokenGitStorage.run(token, async () => {
                 return await drinoGithub
                     .get<GithubRepo[]>('/user/repos', {
                         headers: {
@@ -76,7 +76,7 @@ export async function getRepositories(provider: string, userId: string): Promise
         }
         case 'gitlab': {
             try {
-                const repositories = await tokenStorage.run(token, async () => {
+                const repositories = await tokenGitStorage.run(token, async () => {
                     return await drinoGitlab
                         .get<GitlabRepo[]>('/v4/projects', {
                             queryParams: {
@@ -117,7 +117,7 @@ export async function getBranches(
     switch (provider) {
         case 'github': {
             try {
-                const branchs = await tokenStorage.run(token, async () => {
+                const branchs = await tokenGitStorage.run(token, async () => {
                     return await drinoGithub
                         .get<GithubBranch[]>(`/repos/${owner}/${repoName}/branches`, {
                             headers: {
@@ -137,7 +137,7 @@ export async function getBranches(
         }
         case 'gitlab': {
             try {
-                const branchs = await tokenStorage.run(token, async () => {
+                const branchs = await tokenGitStorage.run(token, async () => {
                     return await drinoGitlab
                         .get<GitlabBranch[]>(`/v4/projects/${repoId}/repository/branches`)
                         .consume();

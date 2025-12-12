@@ -24,11 +24,12 @@ export function RepositoryTabs({ children }: RepositoryTabsProps) {
     const [tab, setTab] = useQueryState(
         'tab',
         parseAsStringLiteral(VALID_TABS).withDefault('overview'),
-        { clearOnUnmount: true },
     );
 
     useEffect(() => {
-        return () => setTab('overview');
+        return () => {
+            setTab('overview');
+        };
     }, []);
 
     return (

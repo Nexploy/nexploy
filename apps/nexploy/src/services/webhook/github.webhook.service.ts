@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { extractGitHubRepo } from '@/services/git/git.service';
-import { getTokenStorage } from '@/lib/storage/token-storage';
+import { getTokenGitStorage } from '@/lib/storage/token-git-storage';
 import { WebhookPayload } from '@workspace/typescript-interface/webhook';
 
 export function parseGitHubWebhook(payload: any): WebhookPayload | null {
@@ -40,7 +40,7 @@ export async function createGitHubWebhook(
 ): Promise<{ webhookId: string; webhookSecret: string }> {
     const { owner, repo } = extractGitHubRepo(repositoryUrl);
 
-    const token = getTokenStorage();
+    const token = getTokenGitStorage();
 
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/hooks`, {
         method: 'POST',

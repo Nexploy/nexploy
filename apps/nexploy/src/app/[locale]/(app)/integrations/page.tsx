@@ -1,7 +1,7 @@
 import { IntegrationCard } from '@/components/git/IntegrationCard';
 import { CloudflareIntegrationCard } from '@/components/cloudflare/CloudflareIntegrationCard';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { listAccount, getUserSession } from '@/services/auth/auth.service';
+import { getUserSession, listAccount } from '@/services/auth/auth.service';
 import { getCloudflareCredentialInfo } from '@/services/cloudflare.service';
 import { Cloud, GitBranch, Github, Gitlab, Plug } from 'lucide-react';
 
@@ -30,7 +30,6 @@ export default async function IntegrationsPage() {
             icon: <Gitlab className="size-5" />,
         },
     ];
-
 
     return (
         <div className="flex h-full flex-1 flex-col pt-5">

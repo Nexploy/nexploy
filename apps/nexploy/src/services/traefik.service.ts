@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as yaml from 'yaml';
-import { Domain } from '@workspace/typescript-interface/traefik/traefik.config';
+import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
 import { getContainerByProjectName } from '@/services/docker/container.service';
 
 const TRAEFIK_SERVICE_DIR = path.join(process.cwd(), '..', '..', 'infra', 'traefik', 'service');

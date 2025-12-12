@@ -2,7 +2,7 @@ import { RepositoryCreateForm } from '@workspace/schemas-zod/repository/reposito
 import { Session } from '@/lib/auth/auth';
 import { prisma } from '../../prisma/prisma';
 import { getGitProviderToken } from '@/services/git/git.service';
-import { tokenStorage } from '@/lib/storage/token-storage';
+import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { getUserSession } from '@/services/auth/auth.service';
 import { getBaseUrl } from '@/lib/getBaseUrl';
 import { getValidToken } from '@/services/api/gitProvider.service';
@@ -30,7 +30,7 @@ export async function createRepository(
 
             const baseUrl = await getBaseUrl();
 
-            webhookConfig = await tokenStorage.run(token, async () => {
+            webhookConfig = await tokenGitStorage.run(token, async () => {
                 return await setupWebhookForRepository(
                     repo.url,
                     restRepositoryCreate.gitProvider,
@@ -209,7 +209,7 @@ export async function deleteRepository(repositoryId: string, userId: string) {
     const token = await getValidToken(oldToken, repository.gitProvider, userId);
 
     if (repository.webhookId) {
-        await tokenStorage.run(token, async () => {
+        await tokenGitStorage.run(token, async () => {
             return await removeWebhookForRepository(repositoryId);
         });
     }
@@ -232,7 +232,7 @@ export async function toggleAutoDeployRepository(
     if (autoDeploy && !repository.webhookId) {
         const baseUrl = await getBaseUrl();
 
-        const webhookConfig = await tokenStorage.run(token, async () => {
+        const webhookConfig = await tokenGitStorage.run(token, async () => {
             return await setupWebhookForRepository(
                 repository.repositoryUrl,
                 repository.gitProvider,
@@ -243,7 +243,7 @@ export async function toggleAutoDeployRepository(
 
         await updateRepositoryAutoDeploy(repositoryId, true, webhookConfig);
     } else if (!autoDeploy && repository.webhookId) {
-        await tokenStorage.run(token, async () => {
+        await tokenGitStorage.run(token, async () => {
             return await removeWebhookForRepository(repositoryId);
         });
 

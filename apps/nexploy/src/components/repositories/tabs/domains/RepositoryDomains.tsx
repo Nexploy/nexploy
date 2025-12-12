@@ -12,11 +12,11 @@ import {
 } from '@workspace/ui/components/collapsible';
 import { Form } from '@workspace/ui/components/form';
 import { ChevronDown, Cloud, Globe, Loader2, Lock, Plus, Save, Trash2 } from 'lucide-react';
-import { onEditDomainAction } from '@/actions/repository/editDomain.action';
+import { manageDomains } from '@/actions/repository/manageDomains.action';
 import { cn } from '@workspace/ui/lib/utils';
-import { Domain } from '@workspace/typescript-interface/traefik/traefik.config';
-import { toast } from 'sonner';
+import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
 import { domainsFormSchema } from '@workspace/schemas-zod/repository/domain.schema';
+import { toast } from 'sonner';
 import Link from 'next/link';
 import { DomainFields } from '@/components/repositories/tabs/domains/DomainFields';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
@@ -28,13 +28,15 @@ interface RepositoryDomainsProps {
     isCloudflareConnected: boolean;
 }
 
-const defaultNewDomain = {
+const DEFAULT_NEW_DOMAIN: Partial<Domain> = {
     host: '',
     path: '/',
     internalPath: '/',
     stripPath: false,
     containerPort: 3000,
     https: false,
+    cloudflareZoneId: undefined,
+    cloudflareZoneName: undefined,
 };
 
 export function RepositoryDomains({
@@ -45,9 +47,9 @@ export function RepositoryDomains({
     const router = useRouter();
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
-    const bindOnDomainAction = onEditDomainAction.bind(null, repositoryId);
+    const bindManageDomains = manageDomains.bind(null, repositoryId);
     const { form, action, handleSubmitWithAction } = useHookFormAction(
-        bindOnDomainAction,
+        bindManageDomains,
         zodResolver(domainsFormSchema),
         {
             formProps: {
@@ -72,21 +74,24 @@ export function RepositoryDomains({
 
     const isSubmitting = action.status === 'executing';
     const domains = form.watch('domains');
+    const deletedIds = form.watch('deletedIds');
 
     const handleAddNew = () => {
         const currentDomains = form.getValues('domains');
-        form.setValue('domains', [...currentDomains, defaultNewDomain]);
+        form.setValue('domains', [...currentDomains, DEFAULT_NEW_DOMAIN as Domain], {
+            shouldDirty: true,
+        });
     };
 
     const handleRemove = (index: number) => {
         const currentDomains = form.getValues('domains');
         const domain = currentDomains[index];
 
-        const isExistingDomain = domain?.id && domainsConfig.some((d) => d.id === domain.id);
+        if (!domain) return;
 
-        if (isExistingDomain) {
+        if (domain.id) {
             const deleted = new Set(form.getValues('deletedIds') ?? []);
-            deleted.add(domain.id!);
+            deleted.add(domain.id);
             form.setValue('deletedIds', Array.from(deleted), { shouldDirty: true });
         }
 
@@ -97,32 +102,19 @@ export function RepositoryDomains({
         );
     };
 
-    const handleUndoDelete = (id?: string) => {
-        if (!id) return;
-
+    const handleUndoDelete = (id: string) => {
         const deleted = new Set(form.getValues('deletedIds') ?? []);
         deleted.delete(id);
         form.setValue('deletedIds', Array.from(deleted), { shouldDirty: true });
 
-        const originalIndex = domainsConfig.findIndex((d) => d.id === id);
-        if (originalIndex === -1) return;
-
-        const originalDomain = domainsConfig[originalIndex];
+        const originalDomain = domainsConfig.find((d) => d.id === id);
         if (!originalDomain) return;
 
         const currentDomains = form.getValues('domains');
-
-        const insertIndex = currentDomains.findIndex((domain) => {
-            const idx = domainsConfig.findIndex((d) => d.id === domain?.id);
-            return idx === -1 || idx > originalIndex;
-        });
+        const originalIndex = domainsConfig.findIndex((d) => d.id === id);
 
         const newDomains = [...currentDomains];
-        newDomains.splice(
-            insertIndex === -1 ? currentDomains.length : insertIndex,
-            0,
-            originalDomain,
-        );
+        newDomains.splice(originalIndex, 0, originalDomain);
 
         form.setValue('domains', newDomains, { shouldDirty: true });
     };
@@ -140,8 +132,7 @@ export function RepositoryDomains({
         });
     };
 
-    const deletedIdsSet = new Set(form.watch('deletedIds'));
-
+    const deletedIdsSet = new Set(deletedIds);
     const activeDomains = domains.filter((d) => !d.id || !deletedIdsSet.has(d.id));
     const deletedDomains = domainsConfig.filter((d) => d.id && deletedIdsSet.has(d.id));
 
@@ -192,14 +183,15 @@ export function RepositoryDomains({
                                     application.
                                 </div>
                             ) : (
-                                activeDomains.map((domain) => {
+                                activeDomains.map((domain, displayIndex) => {
+                                    // Trouver l'index réel dans le tableau domains
                                     const actualIndex = domains.findIndex((d) => d === domain);
                                     const isNew = !domain.id;
                                     const isExpanded = expandedIds.has(`domain-${actualIndex}`);
 
                                     return (
                                         <Collapsible
-                                            key={actualIndex}
+                                            key={domain.id || `new-${displayIndex}`}
                                             open={isExpanded || isNew}
                                             onOpenChange={() =>
                                                 !isNew && toggleExpanded(actualIndex)
@@ -211,6 +203,7 @@ export function RepositoryDomains({
                                                     isNew && 'border-dashed',
                                                 )}
                                             >
+                                                {/* Header pour domaines existants */}
                                                 {!isNew && (
                                                     <CollapsibleTrigger asChild>
                                                         <div className="hover:bg-muted/50 flex cursor-pointer items-center justify-between p-3">
@@ -232,6 +225,8 @@ export function RepositoryDomains({
                                                                             : ''
                                                                     }`}
                                                                     className="text-sm font-medium hover:underline"
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
                                                                 >
                                                                     {domain.https
                                                                         ? 'https://'
@@ -268,6 +263,7 @@ export function RepositoryDomains({
                                                     </CollapsibleTrigger>
                                                 )}
 
+                                                {/* Header pour nouveaux domaines */}
                                                 {isNew && (
                                                     <div className="flex items-center justify-between p-3">
                                                         <span className="text-muted-foreground text-sm font-medium">
@@ -286,6 +282,7 @@ export function RepositoryDomains({
                                                     </div>
                                                 )}
 
+                                                {/* Contenu du formulaire */}
                                                 <CollapsibleContent>
                                                     <div className="border-t border-dashed p-4">
                                                         <DomainFields
@@ -303,6 +300,7 @@ export function RepositoryDomains({
                                 })
                             )}
 
+                            {/* Liste des domaines supprimés */}
                             {deletedDomains.length > 0 && (
                                 <div className="border-t pt-4">
                                     <p className="text-muted-foreground mb-2 text-sm">
@@ -316,12 +314,14 @@ export function RepositoryDomains({
                                             >
                                                 <span className="font-mono text-sm line-through">
                                                     {domain.host}
-                                                    {domain.path}
+                                                    {domain.path !== '/' && domain.path}
                                                 </span>
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    onClick={() => handleUndoDelete(domain.id)}
+                                                    onClick={() =>
+                                                        domain.id && handleUndoDelete(domain.id)
+                                                    }
                                                 >
                                                     Annuler
                                                 </Button>
