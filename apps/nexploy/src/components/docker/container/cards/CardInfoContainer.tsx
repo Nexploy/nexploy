@@ -10,7 +10,7 @@ export function CardInfoContainer() {
 
     if (!container) {
         return (
-            <div className="grid grid-cols-1 gap-5 px-5 md:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 px-5 md:grid-cols-4">
                 {Array.from({ length: 4 }).map((_, index) => (
                     <Skeleton key={index} className={'h-38 flex-1'} />
                 ))}
@@ -59,7 +59,7 @@ export function CardInfoContainer() {
     ];
 
     return (
-        <div className="grid grid-cols-1 gap-5 px-5 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 px-5 md:grid-cols-4">
             {containerInfoCards.map((info, index) => (
                 <Card key={index} className="flex flex-col justify-between gap-0 py-6">
                     <CardHeader className="flex flex-row justify-between space-y-0">

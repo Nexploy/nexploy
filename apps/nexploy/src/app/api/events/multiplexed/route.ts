@@ -1,6 +1,6 @@
 import { authRouteServer, route } from '@/lib/api/nextRoute';
 import { NextResponse } from 'next/server';
-import { SSEChannel } from '@workspace/typescript-interface/sse';
+import { ChannelConfig, ChannelState, SSEChannel } from '@workspace/typescript-interface/sse';
 import { env } from '../../../../../env';
 
 export const dynamic = 'force-dynamic';
@@ -18,6 +18,7 @@ const CHANNEL_ENDPOINTS: Record<SSEChannel, string> = {
     networks: '/api/networks/events/stream',
     swarm: '/api/swarm/events/stream',
     traefik: '/api/traefik/events/stream',
+    monitoring: '',
 };
 
 const CONFIG = {
@@ -26,17 +27,6 @@ const CONFIG = {
     MAX_RETRY_ATTEMPTS: 5,
     BACKOFF_MULTIPLIER: 1.5,
 } as const;
-
-interface ChannelState {
-    reader: ReadableStreamDefaultReader<Uint8Array> | null;
-    retryCount: number;
-    retryTimeout: NodeJS.Timeout | null;
-}
-
-interface ChannelConfig {
-    channel: SSEChannel;
-    params?: Record<string, string>;
-}
 
 const parseChannelConfig = (channelStr: string): ChannelConfig => {
     const [channel, paramsStr] = channelStr.split(':');

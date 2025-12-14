@@ -11,7 +11,11 @@ import {
 import { drinoCloudflare } from '@/lib/api/drinoCloudflare';
 import { tokenCloudflareStorage } from '@/lib/storage/token-cloudlfare-storage';
 
-export async function saveCloudflareCredential(userId: string, apiToken: string): Promise<void> {
+export async function saveCloudflareCredential(
+    userId: string,
+    apiToken: string,
+    serverIp: string,
+): Promise<void> {
     try {
         return await tokenCloudflareStorage.run({ apiToken }, async () => {
             return drinoCloudflare.get<CloudflareZone[]>('/zones').consume({
@@ -20,8 +24,8 @@ export async function saveCloudflareCredential(userId: string, apiToken: string)
 
                     await prisma.cloudflareCredential.upsert({
                         where: { userId },
-                        update: { apiToken: encryptedToken },
-                        create: { userId, apiToken: encryptedToken },
+                        update: { apiToken: encryptedToken, serverIp },
+                        create: { userId, apiToken: encryptedToken, serverIp },
                     });
                 },
             });
@@ -73,6 +77,21 @@ async function getCloudflareApiToken(userId: string): Promise<string> {
     }
 }
 
+async function getServerIp(userId: string): Promise<string> {
+    try {
+        const credential = await prisma.cloudflareCredential.findUnique({
+            where: { userId },
+            select: { serverIp: true },
+        });
+
+        if (!credential) throw new Error('Cloudflare not connected');
+
+        return credential.serverIp;
+    } catch (error: unknown) {
+        throw new Error('Cloudflare error getting server IP');
+    }
+}
+
 export async function listCloudflareZones(userId: string): Promise<CloudflareZone[]> {
     try {
         const apiToken = await getCloudflareApiToken(userId);
@@ -97,11 +116,7 @@ export async function createCloudflareDnsRecord(
 ): Promise<CloudflareDnsRecord> {
     try {
         const apiToken = await getCloudflareApiToken(userId);
-        const serverIp = env.SERVER_IP;
-
-        if (!serverIp) {
-            throw new Error('SERVER_IP environment variable not configured');
-        }
+        const serverIp = await getServerIp(userId);
 
         const fullHostname = subdomain ? `${subdomain}.${zoneName}` : zoneName;
 
@@ -157,9 +172,7 @@ export async function updateCloudflareDnsRecord(
 ): Promise<CloudflareDnsRecord> {
     try {
         const apiToken = await getCloudflareApiToken(userId);
-        const serverIp = env.SERVER_IP;
-
-        if (!serverIp) throw new Error('SERVER_IP environment variable not configured');
+        const serverIp = await getServerIp(userId);
 
         const fullHostname = subdomain ? `${subdomain}.${zoneName}` : zoneName;
 

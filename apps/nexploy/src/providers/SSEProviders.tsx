@@ -13,6 +13,7 @@ import { SSEChannel } from '@workspace/typescript-interface/sse';
 import { useContainerStatsStore } from '@/stores/docker/useContainerStatsStore';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
 import { useRequestsStore } from '@/stores/traefik/useRequestsStore';
+import { useMonitoringStore } from '@/stores/monitoring/useMonitoringStore';
 
 type ExtractConnectParams<T> = T extends (params: infer P) => void ? P : never;
 
@@ -28,6 +29,7 @@ type SSEParams = {
     stats?: ExtractConnectParams<ReturnType<typeof useContainerStatsStore.getState>['connect']>;
     swarm?: ExtractConnectParams<ReturnType<typeof useSwarmStore.getState>['connect']>;
     traefik?: ExtractConnectParams<ReturnType<typeof useRequestsStore.getState>['connect']>;
+    monitoring?: ExtractConnectParams<ReturnType<typeof useMonitoringStore.getState>['connect']>;
 };
 
 interface SSEProviderProps extends PropsWithChildren {
@@ -76,6 +78,9 @@ export function SSEProvider({
     const traefikConnect = useRequestsStore((s) => s.connect);
     const traefikDisconnect = useRequestsStore((s) => s.disconnect);
 
+    const monitoringConnect = useMonitoringStore((s) => s.connect);
+    const monitoringDisconnect = useMonitoringStore((s) => s.disconnect);
+
     useEffect(() => {
         const connectFns: Record<SSEChannel, (...args: any[]) => void> = {
             containers: containersConnect,
@@ -89,6 +94,7 @@ export function SSEProvider({
             networks: networksConnect,
             swarm: swarmConnect,
             traefik: traefikConnect,
+            monitoring: monitoringConnect,
         };
 
         const disconnectFns: Record<SSEChannel, (...args: any[]) => void> = {
@@ -103,6 +109,7 @@ export function SSEProvider({
             networks: networksDisconnect,
             swarm: swarmDisconnect,
             traefik: traefikDisconnect,
+            monitoring: monitoringDisconnect,
         };
 
         memoizedConnections.forEach((conn) => {
@@ -143,6 +150,8 @@ export function SSEProvider({
         swarmDisconnect,
         traefikConnect,
         traefikDisconnect,
+        monitoringConnect,
+        monitoringDisconnect,
     ]);
 
     return children;

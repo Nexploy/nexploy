@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
 import { isToastT } from '@/utils/isToastT';
 import { DockerState } from '@workspace/typescript-interface/stores/docker/dockerStore';
-import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
+import { sseMultiplexer } from '@/services/SSEMultiplexer';
 
 export const useDockerStore = create<DockerState>((set, get) => ({
     status: 'connecting',

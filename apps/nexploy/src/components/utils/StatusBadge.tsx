@@ -2,7 +2,7 @@ import { Badge } from '@workspace/ui/components/badge';
 import { CheckCircle2, Clock, Loader2, XCircle } from 'lucide-react';
 import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
 
-export const getStatusBadge = (status?: BuildStatus) => {
+export const getStatusBadge = (status?: BuildStatus | string) => {
     switch (status) {
         case 'COMPLETED':
             return (

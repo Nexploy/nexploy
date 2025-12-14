@@ -35,7 +35,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
         messageEnd,
     } = useContainerLogsStore(useShallow((state) => state));
 
-    const [showTimestamp, setShowTimestamp] = useLocalStorage('log-showTimestamp', true);
+    const [showTimestamp, setShowTimestamp] = useLocalStorage('timestamp-container-log', true);
 
     const [open, setOpen] = useState(false);
     const logsEndRef = useRef<HTMLDivElement>(null);

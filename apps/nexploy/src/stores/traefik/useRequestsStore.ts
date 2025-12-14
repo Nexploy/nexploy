@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { TraefikRequestEvent } from '@workspace/typescript-interface/traefik/traefik.request';
 import { RequestsState } from '@workspace/typescript-interface/stores/traefik/requestsStore';
-import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
+import { sseMultiplexer } from '@/services/SSEMultiplexer';
 
 export const useRequestsStore = create<RequestsState>((set, get) => ({
     requests: [],

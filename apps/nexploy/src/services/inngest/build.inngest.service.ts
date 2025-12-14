@@ -1,14 +1,18 @@
 import { prisma } from '../../../prisma/prisma';
 import { BuildConfig, BuildStatus, BuildStep } from '@workspace/typescript-interface/inngest/build';
 import { getGitProviderToken } from '@/services/git/git.service';
-import { getLatestCommit, getValidToken } from '@/services/api/gitProvider.service';
+import { getCommit, getValidToken } from '@/services/api/gitProvider.service';
 import { addBuildJob } from '@/inngest/jobs/queue';
 import { inngest } from '@/inngest/client';
 import { getRepositorieWithEnv } from '@/services/repository.service';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { decrypt } from '@/lib/encryption';
 
-export async function startBuildRepositoryInngest(repositoryId: string, userId: string) {
+export async function startBuildRepositoryInngest(
+    repositoryId: string,
+    userId: string,
+    commitHash?: string,
+) {
     const repository = await getRepositorieWithEnv(repositoryId);
 
     if (!repository) {
@@ -22,18 +26,19 @@ export async function startBuildRepositoryInngest(repositoryId: string, userId: 
     const oldToken = await getGitProviderToken(repository.gitProvider, userId);
     const token = await getValidToken(oldToken, repository.gitProvider, userId);
 
-    const lastCommit = await getLatestCommit(
+    const commit = await getCommit(
         repository.repositoryUrl,
         repository.branch,
         token.accessToken,
         repository.gitProvider,
+        commitHash,
     );
 
     const build = await createBuildInngest({
         repositoryId: repository.id,
         branch: repository.branch,
-        commitHash: lastCommit?.hash,
-        commitMessage: lastCommit?.message,
+        commitHash: commit?.hash,
+        commitMessage: commit?.message,
     });
 
     const imageName = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
@@ -43,7 +48,7 @@ export async function startBuildRepositoryInngest(repositoryId: string, userId: 
         envVariables[env.key] = env.value;
     }
 
-    const buildType = (repository.buildType as BuildConfig['buildType']) || 'DOCKERFILE';
+    const buildType = repository.buildType || 'DOCKERFILE';
 
     const config: BuildConfig = {
         ...token,
@@ -53,6 +58,7 @@ export async function startBuildRepositoryInngest(repositoryId: string, userId: 
         gitProvider: repository.gitProvider,
         gitUrl: repository.repositoryUrl,
         gitBranch: repository.branch,
+        gitCommitHash: commit?.hash,
         envVariables,
         buildType,
         dockerfilePath: repository.dockerfilePath || undefined,
@@ -203,6 +209,7 @@ export async function retryBuildRepositoryInngest(
         gitProvider: repository.gitProvider,
         gitUrl: repository.repositoryUrl,
         gitBranch: existingBuild.branch,
+        gitCommitHash: existingBuild.commitHash || undefined,
         envVariables,
         buildType,
         dockerfilePath: repository.dockerfilePath || undefined,
@@ -254,6 +261,7 @@ export async function resumeBuildRepositoryInngest(
         gitProvider: repository.gitProvider,
         gitUrl: repository.repositoryUrl,
         gitBranch: existingBuild.branch,
+        gitCommitHash: existingBuild.commitHash || undefined,
         envVariables,
         buildType,
         dockerfilePath: repository.dockerfilePath || undefined,

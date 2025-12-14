@@ -20,8 +20,6 @@ export function CardInfoImages() {
     const totalDiskCapacity = 2 * 1024 * 1024 * 1024;
     const percentUsed = (totalSizeImages / totalDiskCapacity) * 100;
 
-    // const activePercent = totalImages > 0 ? (activeImagesCount / totalImages) * 100 : 0;
-
     const lastUpdated = [...images].sort(
         (a, b) => new Date(b.created || 0).getTime() - new Date(a.created || 0).getTime(),
     )[0];
@@ -60,7 +58,7 @@ export function CardInfoImages() {
     ];
 
     return (
-        <div className="grid grid-cols-1 gap-5 px-5 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 px-5 md:grid-cols-2 lg:grid-cols-4">
             {imageInfos.map((info, index) =>
                 isLoading ? (
                     <Skeleton key={index} className="rounded-xl py-19" />
@@ -76,7 +74,9 @@ export function CardInfoImages() {
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-semibold">{info.content}</div>
-                            <p className="text-muted-foreground text-xs">{info.description}</p>
+                            <p className="text-muted-foreground truncate text-xs">
+                                {info.description}
+                            </p>
                         </CardContent>
                     </Card>
                 ),

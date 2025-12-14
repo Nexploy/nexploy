@@ -120,7 +120,6 @@ export const createTerminalRoutes = (
                         const data = event.data;
 
                         if (!stream || stream.destroyed) {
-                            console.warn('Received message but stream is not available');
                             logger.warn(
                                 { containerId },
                                 'Received message but stream is not available',
@@ -250,7 +249,6 @@ export const createTerminalRoutes = (
                         const data = event.data;
 
                         if (!stream || stream.destroyed) {
-                            console.warn('Received message but stream is not available');
                             logger.warn(
                                 { containerId },
                                 'Received message but stream is not available',

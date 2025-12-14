@@ -10,7 +10,7 @@ import { RepositoryBuildsTab } from '@/components/repositories/tabs/builds/Repos
 import { RepositoryDeploymentTab } from '@/components/repositories/tabs/deployment/RepositoryDeploymentTab';
 import { getRepositorieById } from '@/services/repository.service';
 import { Separator } from '@workspace/ui/components/separator';
-import { capitalizeFirstLetter, capitalizeOnlyFirst } from '@/utils/capitalize';
+import { capitalizeFirstLetter, toDisplayLabel } from '@/utils/capitalize';
 
 interface RepositoryIdPageProps {
     params: Promise<{
@@ -54,7 +54,7 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                                     <span>{repository.branch}</span>
                                 </p>
                                 <Separator orientation={'vertical'} className={'!h-3 w-1'} />
-                                <span>{capitalizeOnlyFirst(repository.buildType)}</span>
+                                <span>{toDisplayLabel(repository.buildType)}</span>
                             </div>
                         </div>
                     </div>

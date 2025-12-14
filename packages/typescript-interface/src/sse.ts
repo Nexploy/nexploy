@@ -20,6 +20,18 @@ export type SSEChannel =
     | 'logs'
     | 'stats'
     | 'swarm'
-    | 'traefik';
+    | 'traefik'
+    | 'monitoring';
 
 export type SSEEventHandler = (event: MessageEvent) => void;
+
+export interface ChannelState {
+    reader: ReadableStreamDefaultReader<Uint8Array> | null;
+    retryCount: number;
+    retryTimeout: NodeJS.Timeout | null;
+}
+
+export interface ChannelConfig {
+    channel: SSEChannel;
+    params?: Record<string, string>;
+}

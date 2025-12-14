@@ -103,7 +103,6 @@ export function ChangeBranch({ repository }: ChangeBranchProps) {
                                         <SelectContent>
                                             {branches?.map((branch) => (
                                                 <SelectItem key={branch.name} value={branch.name}>
-                                                    <GitBranchIcon />
                                                     {branch.name}
                                                 </SelectItem>
                                             ))}

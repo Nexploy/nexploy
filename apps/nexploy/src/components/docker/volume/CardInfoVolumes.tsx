@@ -58,7 +58,7 @@ export function CardInfoVolumes() {
     ];
 
     return (
-        <div className="grid grid-cols-1 gap-5 px-5 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 px-5 md:grid-cols-4">
             {volumeInfos.map((info, index) =>
                 isLoading ? (
                     <Skeleton key={index} className="rounded-xl py-19" />

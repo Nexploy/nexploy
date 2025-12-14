@@ -2,20 +2,24 @@
 
 import { createAvatar } from '@dicebear/core';
 import { glass } from '@dicebear/collection';
-import { ImgHTMLAttributes } from 'react';
+import { ComponentProps } from 'react';
 import { cn } from '@workspace/ui/lib/utils';
 import Image from 'next/image';
 import { ChevronUp } from 'lucide-react';
 import { SidebarMenuButton, useSidebar } from '@workspace/ui/components/sidebar';
 import { Session } from '@/lib/auth/auth';
 
-interface AvatarProps extends ImgHTMLAttributes<HTMLImageElement> {
-    session: Session;
+interface AvatarProps {
+    session: Session | null;
 }
 
-export function AvatarDisplay({ session, className, ...props }: AvatarProps) {
+export function AvatarDisplay({
+    session,
+    className,
+    ...props
+}: AvatarProps & ComponentProps<'button'>) {
     const avatar = createAvatar(glass, {
-        seed: session.user.name,
+        seed: session?.user.name,
         size: 12,
     }).toDataUri();
 
@@ -40,7 +44,7 @@ export function AvatarDisplay({ session, className, ...props }: AvatarProps) {
                 height={28}
                 alt="Account Image"
             />
-            <span className={'truncate'}>{session.user.name}</span>
+            <span className={'truncate'}>{session?.user.name}</span>
             <ChevronUp className="ml-auto" />
         </SidebarMenuButton>
     );

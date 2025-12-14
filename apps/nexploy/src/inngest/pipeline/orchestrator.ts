@@ -14,6 +14,28 @@ import { PipelineContext } from './context';
 import { dockerComposeStrategy, dockerfileStrategy } from './strategies';
 import { gitService } from '@/inngest/pipeline/services';
 
+function formatErrorDetails(error: unknown): string {
+    if (error instanceof Error) {
+        const details = [`Error: ${error.message}`, `Name: ${error.name}`];
+
+        if (error.stack) {
+            details.push(`Stack trace:\n${error.stack}`);
+        }
+
+        const additionalProps = Object.entries(error)
+            .filter(([key]) => !['message', 'name', 'stack'].includes(key))
+            .map(([key, value]) => `${key}: ${JSON.stringify(value)}`);
+
+        if (additionalProps.length > 0) {
+            details.push(`Additional info:\n${additionalProps.join('\n')}`);
+        }
+
+        return details.join('\n');
+    }
+
+    return `Unknown error: ${JSON.stringify(error, null, 2)}`;
+}
+
 /**
  * Pipeline Orchestrator
  * Manages the execution of build pipelines using the Strategy pattern
@@ -85,7 +107,10 @@ export class PipelineOrchestrator implements IPipelineOrchestrator {
             await inngestStep.run('pipeline-init', async () => {
                 // Log resume info if applicable
                 if (config.startFromStep) {
-                    await logger.info('resume', `Resuming build from step: ${config.startFromStep}`);
+                    await logger.info(
+                        'resume',
+                        `Resuming build from step: ${config.startFromStep}`,
+                    );
                 }
                 // Set initial status
                 await reporter.setStatus('BUILDING');
@@ -153,7 +178,8 @@ export class PipelineOrchestrator implements IPipelineOrchestrator {
                     // Update context with values from the step
                     if (contextUpdates.workDir) context.workDir = contextUpdates.workDir;
                     if (contextUpdates.imageId) context.imageId = contextUpdates.imageId;
-                    if (contextUpdates.containerId) context.containerId = contextUpdates.containerId;
+                    if (contextUpdates.containerId)
+                        context.containerId = contextUpdates.containerId;
 
                     if (!result.skipped) {
                         context.setStepResult(stepId, result);
@@ -176,29 +202,24 @@ export class PipelineOrchestrator implements IPipelineOrchestrator {
                 completedSteps,
             };
         } catch (error) {
-            // Handle errors - wrapped in a step to avoid publish() step ID conflicts
+            const errorDetails = formatErrorDetails(error);
+
             const workDirToClean = context.workDir;
 
-            await inngestStep.run('pipeline-error', async () => {
-                // Handle abort
-                if (error instanceof Error && error.name === 'AbortError') {
-                    await logger.info('cancel', 'Build cancelled by user');
-                    await reporter.setStatus('CANCELLED');
-                } else {
-                    // Handle other errors
-                    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-                    await logger.error('error', `Build failed: ${errorMessage}`);
-                    await reporter.setStatus('FAILED');
-                }
-
-                // Cleanup on failure
-                if (workDirToClean) {
-                    await gitService.cleanup(workDirToClean);
-                }
-            });
-
-            // Handle abort - return appropriate result
+            // Handle abort error
             if (error instanceof Error && error.name === 'AbortError') {
+                await logger.info('cancel', 'Build cancelled by user');
+                await reporter.setStatus('CANCELLED');
+
+                // Cleanup on cancellation
+                if (workDirToClean) {
+                    try {
+                        await gitService.cleanup(workDirToClean);
+                    } catch (cleanupError) {
+                        console.error('Cleanup failed after cancellation:', cleanupError);
+                    }
+                }
+
                 return {
                     success: false,
                     error: 'Build cancelled',
@@ -206,13 +227,31 @@ export class PipelineOrchestrator implements IPipelineOrchestrator {
                 };
             }
 
+            // Handle all other errors
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-            return {
-                success: false,
-                error: errorMessage,
-                completedSteps,
-                failedStep: completedSteps[completedSteps.length - 1],
-            };
+
+            // Log the full error details
+            await logger.error('error', `Build failed: ${errorMessage}`);
+            await logger.error('error-details', errorDetails);
+
+            // Set status to failed
+            await reporter.setStatus('FAILED');
+
+            // Cleanup on failure
+            if (workDirToClean) {
+                try {
+                    await gitService.cleanup(workDirToClean);
+                } catch (cleanupError) {
+                    console.error('Cleanup failed after error:', cleanupError);
+                    await logger.error(
+                        'cleanup-error',
+                        `Cleanup failed: ${formatErrorDetails(cleanupError)}`,
+                    );
+                }
+            }
+
+            // Throw the error to mark the Inngest function as failed
+            throw error;
         }
     }
 }

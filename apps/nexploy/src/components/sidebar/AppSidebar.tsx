@@ -1,4 +1,5 @@
 import {
+    Activity,
     Box,
     Bug,
     ChevronRight,
@@ -28,11 +29,7 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
 } from '@workspace/ui/components/sidebar';
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from '@workspace/ui/components/collapsible';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger, } from '@workspace/ui/components/collapsible';
 import Link from 'next/link';
 import { ElementType, ReactElement } from 'react';
 import { NexployLogo } from '@/components/sidebar/NexployLogo';
@@ -69,11 +66,11 @@ groups = [
                 enableCollapsible: true,
                 icon: Folder,
             },
-            // {
-            //     title: 'Monitoring',
-            //     href: '/monitoring',
-            //     icon: Activity,
-            // },
+            {
+                title: 'Monitoring',
+                href: '/monitoring',
+                icon: Activity,
+            },
             {
                 title: 'Docker',
                 href: '/docker/containers',

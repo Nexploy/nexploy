@@ -22,7 +22,6 @@ import { capitalizeFirstLetter } from '@/utils/capitalize';
 import Link from 'next/link';
 import { SocialAccount } from '@workspace/typescript-interface/auth/social-account';
 import { GitBranch, GitRepository } from '@workspace/typescript-interface/git/git';
-import { BookMarked, GitBranch as GitBranchIcon } from 'lucide-react';
 
 interface ProviderSourceProps {
     accounts?: SocialAccount[] | null;
@@ -97,7 +96,6 @@ export function ProviderSource({ accounts }: ProviderSourceProps) {
                             <SelectContent>
                                 {repos?.map((repo) => (
                                     <SelectItem key={repo.id} value={repo.id}>
-                                        <BookMarked />
                                         {repo.fullName || repo.name}
                                     </SelectItem>
                                 ))}
@@ -128,7 +126,6 @@ export function ProviderSource({ accounts }: ProviderSourceProps) {
                             <SelectContent>
                                 {branches?.map((branch) => (
                                     <SelectItem key={branch.name} value={branch.name}>
-                                        <GitBranchIcon />
                                         {branch.name}
                                     </SelectItem>
                                 ))}

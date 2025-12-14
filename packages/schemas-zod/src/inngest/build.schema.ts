@@ -14,6 +14,7 @@ export const buildStepSchema = z.enum([
 
 export const startBuildSchema = z.object({
     repositoryId: z.cuid(),
+    commitHash: z.string().optional(),
 });
 
 export const retryBuildSchema = z.object({

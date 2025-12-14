@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { ContainerDetailPage } from '@/components/docker/container/ContainerDetailPage';
 import { SSEProvider } from '@/providers/SSEProviders';
 import { drinoDocker } from '@/lib/api/drinoDocker';
-import { redirect, RedirectType } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
 export async function generateMetadata({
     params,
@@ -26,7 +26,7 @@ export default async function ContainerPage({
     try {
         await drinoDocker.get(`/container/${containerId}`).consume();
     } catch {
-        redirect('/docker/containers', RedirectType.push);
+        notFound();
     }
 
     return (

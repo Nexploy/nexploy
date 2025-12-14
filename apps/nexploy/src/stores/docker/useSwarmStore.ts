@@ -1,26 +1,19 @@
 import { create } from 'zustand';
 import { toast } from 'sonner';
-import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
+import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import type { SwarmState } from '@workspace/typescript-interface/stores/docker/swarmStore';
-import type {
-    SwarmInfo,
-    SwarmNode,
-    SwarmService,
-    SwarmTask,
-} from '@workspace/typescript-interface/docker/swarm';
 import type {
     SwarmEvent,
     SwarmInitialStateEvent,
-    SwarmNotActiveEvent,
     SwarmNodeAddedEvent,
-    SwarmNodeUpdatedEvent,
     SwarmNodeRemovedEvent,
+    SwarmNodeUpdatedEvent,
     SwarmServiceAddedEvent,
-    SwarmServiceUpdatedEvent,
     SwarmServiceRemovedEvent,
+    SwarmServiceUpdatedEvent,
     SwarmTaskAddedEvent,
-    SwarmTaskUpdatedEvent,
     SwarmTaskRemovedEvent,
+    SwarmTaskUpdatedEvent,
 } from '@workspace/typescript-interface/docker/swarm';
 
 export const useSwarmStore = create<SwarmState>((set, get) => ({
@@ -176,15 +169,22 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
 
                     // Show toast for significant changes
                     if (data.changes.role) {
-                        toast.info(`Node ${data.node.hostname} role changed to ${data.changes.role.to}`);
+                        toast.info(
+                            `Node ${data.node.hostname} role changed to ${data.changes.role.to}`,
+                        );
                     }
                     if (data.changes.availability) {
-                        toast.info(`Node ${data.node.hostname} is now ${data.changes.availability.to}`);
+                        toast.info(
+                            `Node ${data.node.hostname} is now ${data.changes.availability.to}`,
+                        );
                     }
                     if (data.changes.state) {
                         if (data.changes.state.to === 'down') {
                             toast.error(`Node ${data.node.hostname} is down`);
-                        } else if (data.changes.state.to === 'ready' && data.changes.state.from === 'down') {
+                        } else if (
+                            data.changes.state.to === 'ready' &&
+                            data.changes.state.from === 'down'
+                        ) {
                             toast.success(`Node ${data.node.hostname} is back online`);
                         }
                     }
@@ -245,7 +245,9 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
 
                     // Show toast for failed tasks
                     if (data.changes.state?.to === 'failed') {
-                        toast.error(`Task ${data.task.id.slice(0, 12)} failed: ${data.task.error || 'Unknown error'}`);
+                        toast.error(
+                            `Task ${data.task.id.slice(0, 12)} failed: ${data.task.error || 'Unknown error'}`,
+                        );
                     }
 
                     set({ lastUpdate: data.timestamp });

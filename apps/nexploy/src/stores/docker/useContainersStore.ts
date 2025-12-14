@@ -5,7 +5,7 @@ import {
 } from '@workspace/typescript-interface/docker/docker.containers';
 import { toast } from 'sonner';
 import { ContainerState } from '@workspace/typescript-interface/stores/docker/containersStore';
-import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
+import { sseMultiplexer } from '@/services/SSEMultiplexer';
 
 export const useContainersStore = create<ContainerState>((set, get) => ({
     containers: [],

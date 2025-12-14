@@ -5,6 +5,7 @@ import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { redirect } from 'next/navigation';
 import { deleteRepository } from '@/services/repository.service';
 import { deleteRepositorySchema } from '@workspace/schemas-zod/repository/settings/deleteRepository.schema';
+import { isRedirectError } from 'next/dist/client/components/redirect-error';
 
 export const deleteRepositoryAction = authActionServer
     .inputSchema(deleteRepositorySchema)
@@ -13,6 +14,7 @@ export const deleteRepositoryAction = authActionServer
             await deleteRepository(parsedInput.repositoryId, ctx.session.user.id);
             redirect('/repositories');
         } catch (error: unknown) {
+            if (isRedirectError(error)) throw error;
             if (error instanceof Error) {
                 await setToastServer({
                     type: 'error',

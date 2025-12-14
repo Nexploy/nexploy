@@ -1,6 +1,22 @@
 import { updateGitProviderToken } from '@/services/git/git.service';
 import { GitLabCommit, GitProviderToken } from '@workspace/typescript-interface/git/git';
 import { env } from '../../../env';
+import { drinoGithub } from '@/lib/api/drinoGithub';
+import { drinoGitlab } from '@/lib/api/drinoGitlab';
+import { tokenGitStorage } from '@/lib/storage/token-git-storage';
+
+interface GitHubCommit {
+    sha: string;
+    commit: {
+        message: string;
+        author: {
+            name: string;
+            email: string;
+            date: string;
+        };
+    };
+    html_url: string;
+}
 
 export async function getValidToken(
     token: GitProviderToken,
@@ -24,89 +40,102 @@ export async function getValidToken(
     return token;
 }
 
-export async function getLatestCommit(
+export async function getCommit(
     repositoryUrl: string,
     branch: string,
     accessToken: string | null,
     provider: string,
+    commitHash?: string,
 ): Promise<{ hash: string; message: string } | null> {
     if (provider === 'gitlab') {
-        return await getLatestGitLabCommit(repositoryUrl, branch, accessToken);
+        return await getGitLabCommit(repositoryUrl, branch, accessToken, commitHash);
     } else if (provider === 'github') {
-        return await getLatestGitHubCommit(repositoryUrl, branch, accessToken);
+        return await getGitHubCommit(repositoryUrl, branch, accessToken, commitHash);
     }
 
     throw new Error(`Unknown provider: ${provider}`);
 }
 
-async function getLatestGitLabCommit(
+async function getGitLabCommit(
     repositoryUrl: string,
     branch: string,
     accessToken: string | null,
+    commitHash?: string,
 ): Promise<{ hash: string; message: string } | null> {
+    const repositoryPath = extractGitLabRepositoryPath(repositoryUrl);
+    const encodedRepositoryPath = encodeURIComponent(repositoryPath);
+
+    const token: GitProviderToken = {
+        accessToken,
+        refreshToken: null,
+        accessTokenExpiresAt: null,
+    };
+
     try {
-        const repositoryPath = extractGitLabRepositoryPath(repositoryUrl);
-        const encodedrepositoryPath = encodeURIComponent(repositoryPath);
+        return await tokenGitStorage.run(token, async () => {
+            const endpoint = commitHash
+                ? `/v4/projects/${encodedRepositoryPath}/repository/commits/${commitHash}`
+                : `/v4/projects/${encodedRepositoryPath}/repository/commits`;
 
-        const response = await fetch(
-            `https://gitlab.com/api/v4/projects/${encodedrepositoryPath}/repository/commits?ref_name=${branch}&per_page=1`,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-            },
-        );
+            const options = commitHash
+                ? undefined
+                : {
+                      queryParams: {
+                          ref_name: branch,
+                          per_page: 1,
+                      },
+                  };
 
-        if (!response.ok) throw new Error(`Failed to fetch commits: ${response.status}`);
+            const response = await drinoGitlab
+                .get<GitLabCommit | GitLabCommit[]>(endpoint, options)
+                .consume();
 
-        const commits: GitLabCommit[] = await response.json();
+            const commit = Array.isArray(response) ? response[0] : response;
 
-        if (commits.length === 0) {
-            console.warn(`No commits found for branch ${branch}`);
-            return null;
-        }
+            if (!commit) return null;
 
-        const latestCommit = commits[0];
-        if (!latestCommit) return null;
-
-        return {
-            hash: latestCommit.short_id,
-            message: latestCommit.message,
-        };
+            return {
+                hash: commit.short_id,
+                message: commit.message,
+            };
+        });
     } catch (error) {
         throw new Error(`Failed to fetch commits: ${error}`);
     }
 }
 
-async function getLatestGitHubCommit(
+async function getGitHubCommit(
     repositoryUrl: string,
     branch: string,
     accessToken: string | null,
+    commitHash?: string,
 ): Promise<{ hash: string; message: string } | null> {
     try {
         const repoPath = extractGitHubRepoPath(repositoryUrl);
+        // Use specific commit hash if provided, otherwise use branch to get latest commit
+        const ref = commitHash || branch;
 
-        const response = await fetch(`https://api.github.com/repos/${repoPath}/commits/${branch}`, {
-            headers: {
-                Authorization: `token ${accessToken}`,
-                Accept: 'application/vnd.github.v3+json',
-            },
-        });
-
-        if (!response.ok) {
-            console.error(`GitHub API error: ${response.status} ${response.statusText}`);
-            return null;
-        }
-
-        const commit = await response.json();
-
-        return {
-            hash: commit.sha.substring(0, 8),
-            message: commit.commit.message,
+        const token: GitProviderToken = {
+            accessToken,
+            refreshToken: null,
+            accessTokenExpiresAt: null,
         };
+
+        return await tokenGitStorage.run(token, async () => {
+            const commit = await drinoGithub
+                .get<GitHubCommit>(`/repos/${repoPath}/commits/${ref}`, {
+                    headers: {
+                        Accept: 'application/vnd.github.v3+json',
+                    },
+                })
+                .consume();
+
+            return {
+                hash: commit.sha.substring(0, 8),
+                message: commit.commit.message,
+            };
+        });
     } catch (error) {
-        console.error('Error fetching latest GitHub commit:', error);
         return null;
     }
 }

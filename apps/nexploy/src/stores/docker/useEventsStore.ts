@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 import { EventsStateEvent } from '@workspace/typescript-interface/docker/docker.events';
 import { EventsState } from '@workspace/typescript-interface/stores/docker/eventsStore';
-import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
+import { sseMultiplexer } from '@/services/SSEMultiplexer';
 
 export const useEventsStore = create<EventsState>((set, get) => ({
     events: [],

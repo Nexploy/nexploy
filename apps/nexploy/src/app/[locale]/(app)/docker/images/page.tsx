@@ -26,7 +26,7 @@ export default function ImagesPage() {
                 </div>
             </div>
             <ScrollAreaWithShadow className="h-full overflow-hidden">
-                <div className={'space-y-8 pb-6'}>
+                <div className={'space-y-8 pb-5'}>
                     <CardInfoImages />
                     <TableDockerImages />
                 </div>

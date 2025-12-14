@@ -3,7 +3,6 @@ export function capitalizeFirstLetter(val: string) {
 }
 
 export function addSpaceBeforeUppercase(val: string) {
-    if (!val) return '';
     return val.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/-/g, ' ');
 }
 
@@ -15,7 +14,13 @@ export function capitalizeWords(val: string) {
 }
 
 export function capitalizeOnlyFirst(val: string) {
-    if (!val) return '';
     const lower = String(val).toLowerCase();
     return lower.charAt(0).toUpperCase() + lower.slice(1);
+}
+
+export function toDisplayLabel(val: string) {
+    return String(val)
+        .split(/[_\-\s]+/)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
 }

@@ -13,11 +13,12 @@ import {
     DialogTrigger,
 } from '@workspace/ui/components/dialog';
 import { Label } from '@workspace/ui/components/label';
-import { Plus, X, Cloud } from 'lucide-react';
+import { Cloud, Plus, RefreshCw, X } from 'lucide-react';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { statusMap } from '@/utils/statusMap';
 import { connectCloudflareAction } from '@/actions/cloudflare/connect.action';
 import { disconnectCloudflareAction } from '@/actions/cloudflare/disconnect.action';
+import { detectPublicIpAction } from '@/actions/network/detectPublicIp.action';
 import { toast } from 'sonner';
 
 interface CloudflareIntegrationCardProps {
@@ -26,9 +27,28 @@ interface CloudflareIntegrationCardProps {
 
 export function CloudflareIntegrationCard({ isConnected }: CloudflareIntegrationCardProps) {
     const [isLoading, setIsLoading] = useState(false);
+    const [isDetectingIp, setIsDetectingIp] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [apiToken, setApiToken] = useState('');
+    const [serverIp, setServerIp] = useState('');
     const router = useRouter();
+
+    const handleDetectIp = async () => {
+        setIsDetectingIp(true);
+        try {
+            const result = await detectPublicIpAction();
+            if (result?.data?.ip) {
+                setServerIp(result.data.ip);
+                toast.success(`IP détectée : ${result.data.ip}`);
+            } else if (result?.serverError) {
+                toast.error(result.serverError);
+            }
+        } catch {
+            toast.error("Échec de la détection automatique de l'IP");
+        } finally {
+            setIsDetectingIp(false);
+        }
+    };
 
     const handleConnect = async () => {
         if (!apiToken.trim()) {
@@ -36,19 +56,25 @@ export function CloudflareIntegrationCard({ isConnected }: CloudflareIntegration
             return;
         }
 
+        if (!serverIp.trim()) {
+            toast.error("Veuillez entrer l'IP de votre serveur ou la détecter automatiquement");
+            return;
+        }
+
         setIsLoading(true);
         try {
-            const result = await connectCloudflareAction({ apiToken });
+            const result = await connectCloudflareAction({ apiToken, serverIp });
             if (result?.serverError) {
                 toast.error(result.serverError);
             } else {
                 toast.success('Cloudflare connecté avec succès');
                 setIsDialogOpen(false);
                 setApiToken('');
+                setServerIp('');
                 router.refresh();
             }
         } catch {
-            toast.error('Échec de la connexion. Vérifiez votre API Token.');
+            toast.error('Échec de la connexion. Vérifiez vos informations.');
         } finally {
             setIsLoading(false);
         }
@@ -132,16 +158,45 @@ export function CloudflareIntegrationCard({ isConnected }: CloudflareIntegration
                                     placeholder="Votre API Token Cloudflare"
                                     value={apiToken}
                                     onChange={(e) => setApiToken(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter' && apiToken.trim()) {
-                                            handleConnect();
-                                        }
-                                    }}
                                 />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="serverIp">IP publique du serveur</Label>
+                                <div className="flex gap-2">
+                                    <Input
+                                        id="serverIp"
+                                        type="text"
+                                        placeholder="xxx.xxx.xxx.xxx"
+                                        value={serverIp}
+                                        onChange={(e) => setServerIp(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (
+                                                e.key === 'Enter' &&
+                                                apiToken.trim() &&
+                                                serverIp.trim()
+                                            ) {
+                                                handleConnect();
+                                            }
+                                        }}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={handleDetectIp}
+                                        disabled={isDetectingIp}
+                                        isLoading={isDetectingIp}
+                                        icon={RefreshCw}
+                                    >
+                                        Détecter
+                                    </Button>
+                                </div>
+                                <p className="text-muted-foreground text-xs">
+                                    Utilisée pour créer les enregistrements DNS de type A
+                                </p>
                             </div>
                             <Button
                                 onClick={handleConnect}
-                                disabled={isLoading || !apiToken.trim()}
+                                disabled={isLoading || !apiToken.trim() || !serverIp.trim()}
                                 isLoading={isLoading}
                                 className="w-full"
                             >

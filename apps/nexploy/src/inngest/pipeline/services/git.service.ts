@@ -106,30 +106,41 @@ class GitService {
             buildConfig.userId,
         );
 
-        const authenticatedUrl = this.getAuthenticatedGitUrl(
-            buildConfig.gitUrl,
-            token.accessToken,
-        );
+        const authenticatedUrl = this.getAuthenticatedGitUrl(buildConfig.gitUrl, token.accessToken);
 
         try {
-            await this.exec(
-                'git',
-                [
-                    'clone',
-                    '--depth=1',
-                    '--single-branch',
-                    `--branch=${buildConfig.gitBranch}`,
-                    '--progress',
-                    authenticatedUrl,
-                    workDir,
-                ],
-                {},
-                onProgress,
+            // If a specific commit hash is provided, we need to clone without depth restriction
+            // so we can checkout the specific commit
+            const cloneArgs = ['clone'];
+
+            if (!buildConfig.gitCommitHash) {
+                // Only use shallow clone if no specific commit is requested
+                cloneArgs.push('--depth=1');
+            }
+
+            cloneArgs.push(
+                '--single-branch',
+                `--branch=${buildConfig.gitBranch}`,
+                '--progress',
+                authenticatedUrl,
+                workDir,
             );
+
+            await this.exec('git', cloneArgs, {}, onProgress);
+
+            // If a specific commit hash is provided, checkout that commit
+            if (buildConfig.gitCommitHash) {
+                await this.exec('git', ['checkout', buildConfig.gitCommitHash], {
+                    cwd: workDir,
+                });
+            }
         } catch (error) {
             await rm(workDir, { recursive: true, force: true }).catch(() => {});
+            const commitInfo = buildConfig.gitCommitHash
+                ? `, commit: ${buildConfig.gitCommitHash}`
+                : '';
             throw new Error(
-                `Failed to clone repository from ${buildConfig.gitUrl} (branch: ${buildConfig.gitBranch})`,
+                `Failed to clone repository from ${buildConfig.gitUrl} (branch: ${buildConfig.gitBranch}${commitInfo})`,
             );
         }
 
@@ -169,11 +180,7 @@ class GitService {
             return primaryPath;
         } catch {
             // Try alternative paths
-            const alternativePaths = [
-                'docker-compose.yaml',
-                'compose.yml',
-                'compose.yaml',
-            ];
+            const alternativePaths = ['docker-compose.yaml', 'compose.yml', 'compose.yaml'];
 
             for (const altPath of alternativePaths) {
                 try {

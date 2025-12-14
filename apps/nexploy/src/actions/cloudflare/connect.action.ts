@@ -10,8 +10,8 @@ export const connectCloudflareAction = authActionServer
     .inputSchema(cloudflareConnectSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {
-            const { apiToken } = parsedInput;
-            return await saveCloudflareCredential(ctx.session.user.id, apiToken);
+            const { apiToken, serverIp } = parsedInput;
+            return await saveCloudflareCredential(ctx.session.user.id, apiToken, serverIp);
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
                 await setToastServer({

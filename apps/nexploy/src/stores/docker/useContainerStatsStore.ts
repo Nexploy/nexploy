@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { sseMultiplexer } from '@/services/docker/SSEMultiplexer';
+import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import {
     ContainerStatsParams,
     ContainerStatsState,

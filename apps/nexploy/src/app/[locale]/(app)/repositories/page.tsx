@@ -102,11 +102,14 @@ export default async function RepositoriesPage() {
                                                         </div>
                                                     </div>
                                                 </CardHeader>
-                                                <CardFooter className="bg-muted/40 text-muted-foreground flex h-14 justify-between border-t !p-4 text-xs">
-                                                    {getStatusBadge(lastDeployment?.status)}
+                                                <CardFooter className="bg-muted/40 text-muted-foreground flex h-14 justify-between border-t !p-3">
+                                                    {getStatusBadge(
+                                                        lastDeployment?.status ?? 'Pending build',
+                                                    )}
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <RunBuildButton
+                                                                mode={'onlyDeploy'}
                                                                 size={'icon'}
                                                                 showText={false}
                                                                 variant={'secondary'}

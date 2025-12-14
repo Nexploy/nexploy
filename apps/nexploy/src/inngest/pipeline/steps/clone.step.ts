@@ -22,7 +22,13 @@ export class CloneStep extends BaseStep {
     async execute(ctx: StepExecutionContext): Promise<StepResult<CloneStepResult>> {
         const { config } = ctx.context;
 
-        await ctx.logger.info(this.metadata.id, `Cloning repository ${config.gitUrl}`);
+        const commitInfo = config.gitCommitHash
+            ? ` (commit: ${config.gitCommitHash.substring(0, 7)})`
+            : '';
+        await ctx.logger.info(
+            this.metadata.id,
+            `Cloning repository ${config.gitUrl} (branch: ${config.gitBranch}${commitInfo})`,
+        );
 
         try {
             const onProgress = async (progress: number, message: string) => {
@@ -33,6 +39,13 @@ export class CloneStep extends BaseStep {
 
             // Update context with work directory
             ctx.context.workDir = workDir;
+
+            if (config.gitCommitHash) {
+                await ctx.logger.info(
+                    this.metadata.id,
+                    `Checked out commit ${config.gitCommitHash.substring(0, 7)}`,
+                );
+            }
 
             await ctx.logger.info(this.metadata.id, 'Repository cloned successfully');
 

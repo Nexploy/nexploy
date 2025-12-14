@@ -48,6 +48,7 @@ export interface BuildConfig extends GitProviderToken {
     gitProvider: string;
     gitUrl: string;
     gitBranch: string;
+    gitCommitHash?: string;
     envVariables: Record<string, string>;
     buildType: BuildType;
     dockerfile?: string;

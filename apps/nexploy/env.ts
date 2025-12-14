@@ -12,7 +12,6 @@ const envSchema = z.object({
     AI_KEY: z.string(),
     DEPLOYER_WORK_DIR: z.string(),
     ENCRYPTION_KEY: z.string(),
-    SERVER_IP: z.string().optional(),
 });
 
 export const env = envSchema.parse(process.env);

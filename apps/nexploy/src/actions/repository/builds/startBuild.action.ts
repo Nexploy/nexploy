@@ -9,9 +9,9 @@ import { revalidatePath } from 'next/cache';
 
 export const onStartBuild = authActionServer
     .inputSchema(startBuildSchema)
-    .action(async ({ parsedInput: { repositoryId }, ctx }) => {
+    .action(async ({ parsedInput: { repositoryId, commitHash }, ctx }) => {
         try {
-            await startBuildRepositoryInngest(repositoryId, ctx.session.user.id);
+            await startBuildRepositoryInngest(repositoryId, ctx.session.user.id, commitHash);
 
             revalidatePath('/[locale]/repositories', 'page');
         } catch (err: unknown) {
