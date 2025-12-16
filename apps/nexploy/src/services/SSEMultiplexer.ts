@@ -19,6 +19,7 @@ class SSEMultiplexerService {
     private reconnectTimeout: NodeJS.Timeout | null = null;
     private readonly RECONNECT_DELAY = 5000;
     private activeChannelKeys: Set<string> = new Set();
+    private currentEnvironmentId: string | null = null;
 
     subscribe(
         channel: SSEChannel,
@@ -192,6 +193,10 @@ class SSEMultiplexerService {
             const url = new URL('/api/events/multiplexed', window.location.origin);
             url.searchParams.set('channels', channelsParam);
 
+            if (this.currentEnvironmentId) {
+                url.searchParams.set('environment', this.currentEnvironmentId);
+            }
+
             this.multiplexedEventSource = new EventSource(url.toString());
             this.activeChannelKeys = new Set(remoteChannelKeys);
 
@@ -311,6 +316,19 @@ class SSEMultiplexerService {
 
     getActiveChannels(): Array<{ channel: SSEChannel; params?: Record<string, string> }> {
         return Array.from(this.subscriptions.values()).map(({ config }) => config);
+    }
+
+    setEnvironmentId(environmentId: string | null): void {
+        if (this.currentEnvironmentId === environmentId) return;
+        this.currentEnvironmentId = environmentId;
+
+        if (this.subscriptions.size > 0) {
+            this.reconnectMultiplexed();
+        }
+    }
+
+    getCurrentEnvironmentId(): string | null {
+        return this.currentEnvironmentId;
     }
 }
 

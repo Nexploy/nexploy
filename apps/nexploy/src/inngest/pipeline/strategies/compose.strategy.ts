@@ -1,17 +1,10 @@
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 import { BaseStrategy } from './base.strategy';
 import { BaseStep } from '../steps/base.step';
-import { IPipelineStep, StepMetadata, StepExecutionContext, StepResult } from '../types';
-import { gitService, dockerService } from '../services';
+import { IPipelineStep, StepExecutionContext, StepMetadata, StepResult } from '../types';
+import { gitService } from '@/inngest/pipeline/services/git.service';
+import { dockerService } from '@/inngest/pipeline/services/docker.service';
 
-// ============================================================================
-// Docker Compose-specific Steps
-// ============================================================================
-
-/**
- * Prepare Compose Step
- * Validates the Docker Compose file exists and has valid syntax
- */
 class PrepareComposeStep extends BaseStep {
     readonly metadata: StepMetadata = {
         id: 'prepare-compose',
@@ -33,19 +26,19 @@ class PrepareComposeStep extends BaseStep {
         await ctx.logger.info(this.metadata.id, 'Validating Docker Compose file');
 
         try {
-            // Find the compose file
             const composePath = await gitService.validateComposeFile(
                 workDir,
                 config.dockerComposePath,
             );
 
-            // Validate syntax
             await gitService.validateComposeSyntax(workDir, composePath);
 
-            // Store the found path for later use
             ctx.setMetadata('composePath', composePath);
 
-            await ctx.logger.info(this.metadata.id, `Docker Compose file validated: ${composePath}`);
+            await ctx.logger.info(
+                this.metadata.id,
+                `Docker Compose file validated: ${composePath}`,
+            );
 
             return this.success({ composePath });
         } catch (error) {
@@ -56,17 +49,13 @@ class PrepareComposeStep extends BaseStep {
     }
 }
 
-/**
- * Deploy Compose Step
- * Deploys the Docker Compose stack
- */
 class DeployComposeStep extends BaseStep {
     readonly metadata: StepMetadata = {
         id: 'deploy-compose',
         name: 'Deploy Docker Compose',
         description: 'Deploy Docker Compose stack',
         retryable: true,
-        timeout: 600000, // 10 minutes
+        timeout: 600000,
     };
 
     protected readonly applicableBuildTypes = ['DOCKER_COMPOSE'] as const;
@@ -118,17 +107,9 @@ class DeployComposeStep extends BaseStep {
     }
 }
 
-// ============================================================================
-// Docker Compose Strategy
-// ============================================================================
-
 const prepareComposeStep = new PrepareComposeStep();
 const deployComposeStep = new DeployComposeStep();
 
-/**
- * Docker Compose Build Strategy
- * Deploys applications using Docker Compose
- */
 export class DockerComposeStrategy extends BaseStrategy {
     readonly buildType = 'DOCKER_COMPOSE' as const;
     readonly name = 'Docker Compose';
@@ -139,7 +120,6 @@ export class DockerComposeStrategy extends BaseStrategy {
 
     validateConfig(config: BuildConfig): void {
         super.validateConfig(config);
-        // Docker Compose-specific validation can be added here
     }
 }
 

@@ -1,8 +1,9 @@
-import { createSafeActionClient } from 'next-safe-action';
+import { createMiddleware, createSafeActionClient } from 'next-safe-action';
 import { HttpErrorResponse } from 'drino';
 import { getUserSession } from '@/services/auth/auth.service';
 import { redirect } from 'next/navigation';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { cookies } from 'next/headers';
 
 export const actionServer = createSafeActionClient({
     handleServerError(error) {
@@ -28,4 +29,16 @@ export const authActionServer = actionServer.use(async ({ next }) => {
     }
 
     return next({ ctx: { session } });
+});
+
+export const injectDockerApiCookie = createMiddleware().define(async ({ ctx, next }) => {
+    const cookieStore = await cookies();
+    const environmentId = cookieStore.get('X-Docker-Environment')?.value || null;
+
+    return next({
+        ctx: {
+            ...ctx,
+            environmentId,
+        },
+    });
 });

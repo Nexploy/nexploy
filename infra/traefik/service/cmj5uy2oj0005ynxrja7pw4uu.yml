@@ -1,0 +1,14 @@
+http:
+  routers:
+    repo-cmj5uy2oj0005ynxrja7pw4uu-cmq.localhost:
+      rule: Host(`cmq.localhost`)
+      service: svc-cmj5uy2oj0005ynxrja7pw4uu-cmq.localhost
+      entryPoints:
+        - web
+  services:
+    svc-cmj5uy2oj0005ynxrja7pw4uu-cmq.localhost:
+      loadBalancer:
+        servers:
+          - url: http://test_deploy:3000
+x-nexploy-domains:
+  repo-cmj5uy2oj0005ynxrja7pw4uu-cmq.localhost: {}

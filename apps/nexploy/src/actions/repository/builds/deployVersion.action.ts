@@ -4,7 +4,7 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { deployVersionSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { prisma } from '../../../../prisma/prisma';
-import { drinoDocker } from '@/lib/api/drinoDocker';
+import { kyDocker } from '@/lib/api/kyDocker';
 import { decrypt } from '@/lib/encryption';
 
 export const onDeployVersion = authActionServer
@@ -39,15 +39,17 @@ export const onDeployVersion = authActionServer
                 envVariables[envVar.key] = decrypt(envVar.value);
             }
 
-            await drinoDocker
-                .post('/pipeline/deploy', {
-                    repositoryId,
-                    imageName,
-                    options: {
-                        envVars: envVariables,
+            return await kyDocker
+                .post('pipeline/deploy', {
+                    json: {
+                        repositoryId,
+                        imageName,
+                        options: {
+                            envVars: envVariables,
+                        },
                     },
                 })
-                .consume();
+                .json();
         } catch (err: unknown) {
             if (err instanceof Error) {
                 await setToastServer({

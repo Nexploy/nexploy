@@ -1,4 +1,3 @@
-import { docker } from '@/utils/dockerClient';
 import { logger } from '@/utils/logger';
 import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { BaseStateManager } from '@/lib/BaseStateManager';
@@ -20,17 +19,21 @@ import type {
     SwarmTaskDesiredState,
     SwarmTaskState,
 } from '@workspace/typescript-interface/docker/swarm';
+import { getCurrentEnvironmentId } from '@/lib/dockerContext';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 
-class SwarmStateManager extends BaseStateManager {
+export class SwarmStateManager extends BaseStateManager {
     private nodes: Map<string, SwarmNode> = new Map();
     private services: Map<string, SwarmService> = new Map();
     private tasks: Map<string, SwarmTask> = new Map();
     private swarmInfo: SwarmInfo | null = null;
     private isSwarmActive: boolean = false;
 
-    constructor() {
+    constructor(environmentId: string) {
         super({
-            managerName: 'Swarm State Manager',
+            managerName: `Swarm State Manager [${environmentId}]`,
+            environmentId,
             pollIntervalMs: 10000,
             maxReconnectAttempts: 5,
             maxListeners: 100,
@@ -44,7 +47,7 @@ class SwarmStateManager extends BaseStateManager {
         }
 
         try {
-            const info = await docker.info();
+            const info = await this.docker.info();
 
             if (!info.Swarm || info.Swarm.LocalNodeState !== 'active') {
                 this.isSwarmActive = false;
@@ -65,17 +68,17 @@ class SwarmStateManager extends BaseStateManager {
 
             this.isSwarmActive = true;
 
-            const swarm = await docker.swarmInspect();
+            const swarm = await this.docker.swarmInspect();
             this.swarmInfo = this.parseSwarmInfo(swarm, info);
 
-            const nodesList = await docker.listNodes();
+            const nodesList = await this.docker.listNodes();
             for (const node of nodesList) {
                 const parsedNode = this.parseNodeInfo(node);
                 this.nodes.set(parsedNode.id, parsedNode);
             }
 
-            const servicesList = await docker.listServices();
-            const tasksList = await docker.listTasks();
+            const servicesList = await this.docker.listServices();
+            const tasksList = await this.docker.listTasks();
 
             const serviceTaskCounts = new Map<string, { running: number; total: number }>();
             for (const task of tasksList) {
@@ -170,7 +173,7 @@ class SwarmStateManager extends BaseStateManager {
                 return;
             }
 
-            const node = await docker.getNode(nodeId).inspect();
+            const node = await this.docker.getNode(nodeId).inspect();
             const parsedNode = this.parseNodeInfo(node);
             const previousNode = this.nodes.get(nodeId);
             this.nodes.set(nodeId, parsedNode);
@@ -245,8 +248,8 @@ class SwarmStateManager extends BaseStateManager {
                 return;
             }
 
-            const service = await docker.getService(serviceId).inspect();
-            const tasksList = await docker.listTasks({ filters: { service: [serviceId] } });
+            const service = await this.docker.getService(serviceId).inspect();
+            const tasksList = await this.docker.listTasks({ filters: { service: [serviceId] } });
 
             const runningCount = tasksList.filter(
                 (t: any) => t.Status?.State === 'running' && t.DesiredState === 'running',
@@ -325,7 +328,7 @@ class SwarmStateManager extends BaseStateManager {
 
     async fullStateSync(): Promise<void> {
         try {
-            const info = await docker.info();
+            const info = await this.docker.info();
             const wasSwarmActive = this.isSwarmActive;
             const isNowSwarmActive = info.Swarm?.LocalNodeState === 'active';
 
@@ -361,7 +364,7 @@ class SwarmStateManager extends BaseStateManager {
     }
 
     private async syncNodes(): Promise<void> {
-        const nodesList = await docker.listNodes();
+        const nodesList = await this.docker.listNodes();
         const currentNodeIds = new Set<string>();
 
         for (const node of nodesList) {
@@ -408,8 +411,8 @@ class SwarmStateManager extends BaseStateManager {
     }
 
     private async syncServicesAndTasks(): Promise<void> {
-        const servicesList = await docker.listServices();
-        const tasksList = await docker.listTasks();
+        const servicesList = await this.docker.listServices();
+        const tasksList = await this.docker.listTasks();
         const currentServiceIds = new Set<string>();
         const currentTaskIds = new Set<string>();
 
@@ -853,4 +856,25 @@ class SwarmStateManager extends BaseStateManager {
     }
 }
 
-export const swarmStateManager = new SwarmStateManager();
+export function getSwarmStateManager(): SwarmStateManager {
+    const environmentId = getCurrentEnvironmentId();
+    if (!environmentId) {
+        const defaultId = dockerClientRegistry.getDefaultEnvironmentId();
+        if (!defaultId) {
+            throw new Error('No Docker environment available');
+        }
+        return stateManagerFactory.getManagers(defaultId).swarm;
+    }
+    return stateManagerFactory.getManagers(environmentId).swarm;
+}
+
+export const swarmStateManager = new Proxy({} as SwarmStateManager, {
+    get(_target, prop) {
+        const manager = getSwarmStateManager();
+        const value = (manager as any)[prop];
+        if (typeof value === 'function') {
+            return value.bind(manager);
+        }
+        return value;
+    },
+});

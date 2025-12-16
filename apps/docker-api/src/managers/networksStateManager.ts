@@ -1,4 +1,3 @@
-import { docker } from '@/utils/dockerClient';
 import { logger } from '@/utils/logger';
 import { NetworkInspectInfo } from 'dockerode';
 import {
@@ -9,13 +8,17 @@ import {
 } from '@workspace/typescript-interface/docker/docker.network';
 import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { BaseStateManager } from '@/lib/BaseStateManager';
+import { getCurrentEnvironmentId } from '@/lib/dockerContext';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 
-class NetworksStateManager extends BaseStateManager {
+export class NetworksStateManager extends BaseStateManager {
     private networks: Map<string, Network> = new Map();
 
-    constructor() {
+    constructor(environmentId: string) {
         super({
-            managerName: 'Network State Manager',
+            managerName: `Network State Manager [${environmentId}]`,
+            environmentId,
             pollIntervalMs: 10000,
             maxReconnectAttempts: 5,
             maxListeners: 100,
@@ -29,10 +32,10 @@ class NetworksStateManager extends BaseStateManager {
         }
 
         try {
-            const networks = await docker.listNetworks();
+            const networks = await this.docker.listNetworks();
 
             for (const { Id } of networks) {
-                const network = await docker.getNetwork(Id).inspect();
+                const network = await this.docker.getNetwork(Id).inspect();
                 const state = this.parseNetworkInfo(network);
                 this.networks.set(state.id, state);
             }
@@ -73,10 +76,10 @@ class NetworksStateManager extends BaseStateManager {
 
     async fullStateSync(): Promise<void> {
         try {
-            const networks = await docker.listNetworks();
+            const networks = await this.docker.listNetworks();
 
             for (const { Id } of networks) {
-                const network = await docker.getNetwork(Id).inspect();
+                const network = await this.docker.getNetwork(Id).inspect();
                 const newState = this.parseNetworkInfo(network);
                 const oldState = this.networks.get(newState.id);
 
@@ -154,7 +157,7 @@ class NetworksStateManager extends BaseStateManager {
     }
 
     private async refreshNetworkState(networkId: string): Promise<void> {
-        const network = docker.getNetwork(networkId);
+        const network = this.docker.getNetwork(networkId);
         const info = await network.inspect();
         const newState = this.parseNetworkInfo(info);
 
@@ -244,15 +247,34 @@ class NetworksStateManager extends BaseStateManager {
         return undefined;
     }
 
+    async ensureNetworkExists(networkName: string): Promise<boolean> {
+        try {
+            const networks = await this.docker.listNetworks({
+                filters: { name: [networkName] },
+            });
+
+            if (networks.length === 0) {
+                logger.warn({ networkName }, 'Network does not exist');
+                return false;
+            } else {
+                logger.debug({ networkName }, 'Network already exists');
+                return true;
+            }
+        } catch (error: any) {
+            logger.error({ error, networkName }, 'Failed to check network existence');
+            throw new Error(`Failed to check network ${networkName}: ${error.message}`);
+        }
+    }
+
     async hardRefresh(): Promise<void> {
         logger.info('Starting hard refresh of network state');
 
         try {
-            const networks = await docker.listNetworks();
+            const networks = await this.docker.listNetworks();
             const newNetworkMap = new Map<string, Network>();
 
             for (const { Id } of networks) {
-                const network = await docker.getNetwork(Id).inspect();
+                const network = await this.docker.getNetwork(Id).inspect();
                 const state = this.parseNetworkInfo(network);
                 newNetworkMap.set(state.id, state);
             }
@@ -303,4 +325,25 @@ class NetworksStateManager extends BaseStateManager {
     }
 }
 
-export const networksStateManager = new NetworksStateManager();
+export function getNetworksStateManager(): NetworksStateManager {
+    const environmentId = getCurrentEnvironmentId();
+    if (!environmentId) {
+        const defaultId = dockerClientRegistry.getDefaultEnvironmentId();
+        if (!defaultId) {
+            throw new Error('No Docker environment available');
+        }
+        return stateManagerFactory.getManagers(defaultId).networks;
+    }
+    return stateManagerFactory.getManagers(environmentId).networks;
+}
+
+export const networksStateManager = new Proxy({} as NetworksStateManager, {
+    get(_target, prop) {
+        const manager = getNetworksStateManager();
+        const value = (manager as any)[prop];
+        if (typeof value === 'function') {
+            return value.bind(manager);
+        }
+        return value;
+    },
+});

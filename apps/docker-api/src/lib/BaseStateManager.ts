@@ -3,10 +3,12 @@ import { logger } from '@/utils/logger';
 import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
 import byline from 'byline';
-import { docker } from '@/utils/dockerClient';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import type Docker from 'dockerode';
 
 export interface BaseStateManagerConfig {
     managerName: string;
+    environmentId: string;
     pollIntervalMs?: number;
     maxReconnectAttempts?: number;
     maxListeners?: number;
@@ -14,6 +16,8 @@ export interface BaseStateManagerConfig {
 
 export abstract class BaseStateManager extends EventEmitter {
     protected readonly managerName: string;
+    protected readonly environmentId: string;
+    protected readonly docker: Docker;
     protected polling: boolean = false;
     protected pollInterval: NodeJS.Timeout | null = null;
     protected readonly POLL_INTERVAL_MS: number;
@@ -24,6 +28,8 @@ export abstract class BaseStateManager extends EventEmitter {
     protected constructor(config: BaseStateManagerConfig) {
         super();
         this.managerName = config.managerName;
+        this.environmentId = config.environmentId;
+        this.docker = dockerClientRegistry.getClient(config.environmentId);
         this.POLL_INTERVAL_MS = config.pollIntervalMs ?? 10000;
         this.MAX_RECONNECT_ATTEMPTS = config.maxReconnectAttempts ?? 5;
         this.setMaxListeners(config.maxListeners ?? 100);
@@ -120,7 +126,7 @@ export abstract class BaseStateManager extends EventEmitter {
 
         try {
             const filters = this.getEventFilters();
-            const stream = await docker.getEvents({ filters });
+            const stream = await this.docker.getEvents({ filters });
 
             this.dockerEventStream = stream;
             this.reconnectAttempts = 0;
@@ -189,7 +195,7 @@ export abstract class BaseStateManager extends EventEmitter {
             if (!this.polling) return;
 
             if (!dockerStatusManager.isConnected()) {
-                logger.debug(`Skipping ${this.managerName} poll: Docker not connected`);
+                // logger.debug(`Skipping ${this.managerName} poll: Docker not connected`);
                 return;
             }
 

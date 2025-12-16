@@ -3,11 +3,13 @@ import { logger } from '@/utils/logger';
 import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
 import byline from 'byline';
-import { docker } from '@/utils/dockerClient';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import type Docker from 'dockerode';
 
 export interface BaseSingleResourceStateManagerConfig {
     resourceType: string;
     resourceId: string;
+    environmentId: string;
     pollIntervalMs?: number;
     maxReconnectAttempts?: number;
     maxListeners?: number;
@@ -16,6 +18,8 @@ export interface BaseSingleResourceStateManagerConfig {
 export abstract class BaseSingleResourceStateManager<TState> extends EventEmitter {
     protected readonly resourceType: string;
     protected readonly resourceId: string;
+    protected readonly environmentId: string;
+    protected readonly docker: Docker;
     protected currentState: TState | null = null;
     protected monitoring: boolean = false;
     protected pollInterval: NodeJS.Timeout | null = null;
@@ -28,6 +32,8 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
         super();
         this.resourceType = config.resourceType;
         this.resourceId = config.resourceId;
+        this.environmentId = config.environmentId;
+        this.docker = dockerClientRegistry.getClient(config.environmentId);
         this.POLL_INTERVAL_MS = config.pollIntervalMs ?? 5000;
         this.MAX_RECONNECT_ATTEMPTS = config.maxReconnectAttempts ?? 5;
         this.setMaxListeners(config.maxListeners ?? 50);
@@ -177,7 +183,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
 
         try {
             const filters = this.getEventFilters();
-            const stream = await docker.getEvents({ filters });
+            const stream = await this.docker.getEvents({ filters });
 
             this.dockerEventStream = stream;
             this.reconnectAttempts = 0;

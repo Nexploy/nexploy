@@ -2,15 +2,15 @@ import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
 import { EventsStateEvent } from '@workspace/typescript-interface/docker/docker.events';
-import { eventsStateManager } from '@/managers/eventsStateManager';
+import { getEventsStateManager } from '@/managers/eventsStateManager';
 
 const app = new Hono();
 
 app.get('/stream', (c) => {
+    const manager = getEventsStateManager();
+
     return streamSSE(c, async (stream) => {
         const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-
-        logger.info({ clientId }, 'SSE Events client connected');
 
         const handleDockerEvent = async (eventData: EventsStateEvent) => {
             try {
@@ -30,7 +30,7 @@ app.get('/stream', (c) => {
                 const heartbeatData = {
                     type: 'heartbeat',
                     timestamp: Date.now(),
-                    stats: eventsStateManager.getStats(),
+                    stats: manager.getStats(),
                 };
 
                 await stream.writeSSE({
@@ -47,15 +47,13 @@ app.get('/stream', (c) => {
         const cleanup = () => {
             clearInterval(heartbeat);
 
-            eventsStateManager.off('docker-event', handleDockerEvent);
-
-            logger.info({ clientId }, 'SSE Events client disconnected');
+            manager.off('docker-event', handleDockerEvent);
         };
 
         const initialStats = {
             type: 'initial',
-            stats: eventsStateManager.getStats(),
-            events: eventsStateManager.getAllEvents(),
+            stats: manager.getStats(),
+            events: manager.getAllEvents(),
             timestamp: Date.now(),
         };
 
@@ -65,7 +63,7 @@ app.get('/stream', (c) => {
             id: `${Date.now()}`,
         });
 
-        eventsStateManager.on('docker-event', handleDockerEvent);
+        manager.on('docker-event', handleDockerEvent);
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 
@@ -76,10 +74,10 @@ app.get('/stream', (c) => {
 app.get('/stream/:eventType', (c) => {
     const eventType = c.req.param('eventType');
 
+    const manager = getEventsStateManager();
+
     return streamSSE(c, async (stream) => {
         const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-
-        logger.info({ clientId, eventType }, 'SSE Events client connected with filter');
 
         const handleDockerEvent = async (eventData: EventsStateEvent) => {
             try {
@@ -100,7 +98,7 @@ app.get('/stream/:eventType', (c) => {
                     type: 'heartbeat',
                     eventType,
                     timestamp: Date.now(),
-                    stats: eventsStateManager.getStats(),
+                    stats: manager.getStats(),
                 };
 
                 await stream.writeSSE({
@@ -117,15 +115,13 @@ app.get('/stream/:eventType', (c) => {
         const cleanup = () => {
             clearInterval(heartbeat);
 
-            eventsStateManager.off(`docker-event:${eventType}`, handleDockerEvent);
-
-            logger.info({ clientId, eventType }, 'SSE Events client disconnected (filtered)');
+            manager.off(`docker-event:${eventType}`, handleDockerEvent);
         };
 
         const initialStats = {
             type: 'initial',
             eventType,
-            stats: eventsStateManager.getStats(),
+            stats: manager.getStats(),
             timestamp: Date.now(),
         };
 
@@ -135,7 +131,7 @@ app.get('/stream/:eventType', (c) => {
             id: `${Date.now()}`,
         });
 
-        eventsStateManager.on(`docker-event:${eventType}`, handleDockerEvent);
+        manager.on(`docker-event:${eventType}`, handleDockerEvent);
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 
@@ -147,13 +143,10 @@ app.get('/stream/:eventType/:action', (c) => {
     const eventType = c.req.param('eventType');
     const action = c.req.param('action');
 
+    const manager = getEventsStateManager();
+
     return streamSSE(c, async (stream) => {
         const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-
-        logger.info(
-            { clientId, eventType, action },
-            'SSE Events client connected with action filter',
-        );
 
         const handleDockerEvent = async (eventData: EventsStateEvent) => {
             try {
@@ -178,7 +171,7 @@ app.get('/stream/:eventType/:action', (c) => {
                     eventType,
                     action,
                     timestamp: Date.now(),
-                    stats: eventsStateManager.getStats(),
+                    stats: manager.getStats(),
                 };
 
                 await stream.writeSSE({
@@ -195,19 +188,14 @@ app.get('/stream/:eventType/:action', (c) => {
         const cleanup = () => {
             clearInterval(heartbeat);
 
-            eventsStateManager.off(`docker-event:${eventType}:${action}`, handleDockerEvent);
-
-            logger.info(
-                { clientId, eventType, action },
-                'SSE Events client disconnected (action-filtered)',
-            );
+            manager.off(`docker-event:${eventType}:${action}`, handleDockerEvent);
         };
 
         const initialStats = {
             type: 'initial',
             eventType,
             action,
-            stats: eventsStateManager.getStats(),
+            stats: manager.getStats(),
             timestamp: Date.now(),
         };
 
@@ -217,7 +205,7 @@ app.get('/stream/:eventType/:action', (c) => {
             id: `${Date.now()}`,
         });
 
-        eventsStateManager.on(`docker-event:${eventType}:${action}`, handleDockerEvent);
+        manager.on(`docker-event:${eventType}:${action}`, handleDockerEvent);
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 

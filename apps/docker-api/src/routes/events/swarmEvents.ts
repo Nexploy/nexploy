@@ -2,15 +2,15 @@ import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
 import type { SwarmEvent } from '@workspace/typescript-interface/docker/swarm';
-import { swarmStateManager } from '@/managers/swarmStateManager';
+import { getSwarmStateManager } from '@/managers/swarmStateManager';
 
 const app = new Hono();
 
 app.get('/stream', (c) => {
+    const manager = getSwarmStateManager();
+
     return streamSSE(c, async (stream) => {
         const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-
-        logger.info({ clientId }, 'SSE Swarm client connected');
 
         const sendEvent = async (event: SwarmEvent, eventName: string) => {
             try {
@@ -58,33 +58,31 @@ app.get('/stream', (c) => {
         const cleanup = () => {
             clearInterval(heartbeat);
 
-            swarmStateManager.off('initial-state', handleInitialState);
-            swarmStateManager.off('node-added', handleNodeAdded);
-            swarmStateManager.off('node-updated', handleNodeUpdated);
-            swarmStateManager.off('node-removed', handleNodeRemoved);
-            swarmStateManager.off('service-added', handleServiceAdded);
-            swarmStateManager.off('service-updated', handleServiceUpdated);
-            swarmStateManager.off('service-removed', handleServiceRemoved);
-            swarmStateManager.off('task-added', handleTaskAdded);
-            swarmStateManager.off('task-updated', handleTaskUpdated);
-            swarmStateManager.off('task-removed', handleTaskRemoved);
-            swarmStateManager.off('swarm-updated', handleSwarmUpdated);
-
-            logger.info({ clientId }, 'SSE Swarm client disconnected');
+            manager.off('initial-state', handleInitialState);
+            manager.off('node-added', handleNodeAdded);
+            manager.off('node-updated', handleNodeUpdated);
+            manager.off('node-removed', handleNodeRemoved);
+            manager.off('service-added', handleServiceAdded);
+            manager.off('service-updated', handleServiceUpdated);
+            manager.off('service-removed', handleServiceRemoved);
+            manager.off('task-added', handleTaskAdded);
+            manager.off('task-updated', handleTaskUpdated);
+            manager.off('task-removed', handleTaskRemoved);
+            manager.off('swarm-updated', handleSwarmUpdated);
         };
 
         // Send initial state
-        const isSwarmActive = swarmStateManager.getIsSwarmActive();
+        const isSwarmActive = manager.getIsSwarmActive();
 
         if (isSwarmActive) {
             await sendEvent(
                 {
                     type: 'initial',
                     isSwarmActive: true,
-                    swarmInfo: swarmStateManager.getSwarmInfo()!,
-                    nodes: swarmStateManager.getAllNodes(),
-                    services: swarmStateManager.getAllServices(),
-                    tasks: swarmStateManager.getAllTasks(),
+                    swarmInfo: manager.getSwarmInfo()!,
+                    nodes: manager.getAllNodes(),
+                    services: manager.getAllServices(),
+                    tasks: manager.getAllTasks(),
                     timestamp: Date.now(),
                 },
                 'initial-state',
@@ -101,17 +99,17 @@ app.get('/stream', (c) => {
         }
 
         // Register event listeners
-        swarmStateManager.on('initial-state', handleInitialState);
-        swarmStateManager.on('node-added', handleNodeAdded);
-        swarmStateManager.on('node-updated', handleNodeUpdated);
-        swarmStateManager.on('node-removed', handleNodeRemoved);
-        swarmStateManager.on('service-added', handleServiceAdded);
-        swarmStateManager.on('service-updated', handleServiceUpdated);
-        swarmStateManager.on('service-removed', handleServiceRemoved);
-        swarmStateManager.on('task-added', handleTaskAdded);
-        swarmStateManager.on('task-updated', handleTaskUpdated);
-        swarmStateManager.on('task-removed', handleTaskRemoved);
-        swarmStateManager.on('swarm-updated', handleSwarmUpdated);
+        manager.on('initial-state', handleInitialState);
+        manager.on('node-added', handleNodeAdded);
+        manager.on('node-updated', handleNodeUpdated);
+        manager.on('node-removed', handleNodeRemoved);
+        manager.on('service-added', handleServiceAdded);
+        manager.on('service-updated', handleServiceUpdated);
+        manager.on('service-removed', handleServiceRemoved);
+        manager.on('task-added', handleTaskAdded);
+        manager.on('task-updated', handleTaskUpdated);
+        manager.on('task-removed', handleTaskRemoved);
+        manager.on('swarm-updated', handleSwarmUpdated);
 
         // Handle client disconnect
         c.req.raw.signal.addEventListener('abort', cleanup);

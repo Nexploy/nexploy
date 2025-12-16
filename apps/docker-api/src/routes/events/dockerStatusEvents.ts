@@ -1,23 +1,23 @@
 import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
-import { dockerStatusManager } from '@/managers/dockerStatusManager';
+import { getDockerStatusManager } from '@/managers/dockerStatusManager';
 import { logger } from '@/utils/logger';
 import { DockerStatusEvent, Event } from '@workspace/typescript-interface/docker/docker.status';
 
 const app = new Hono();
 
-app.get('/stream', (c) =>
-    streamSSE(c, async (stream) => {
+app.get('/stream', (c) => {
+    const manager = getDockerStatusManager();
+
+    return streamSSE(c, async (stream) => {
         let isActive = true;
         const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 
-        logger.info({ clientId }, 'SSE Docker client connected');
-
         const initialData: DockerStatusEvent = {
             type: 'initial',
-            status: dockerStatusManager.getStatus(),
-            isConnected: dockerStatusManager.isConnected(),
-            lastCheck: dockerStatusManager.getLastCheck(),
+            status: manager.getStatus(),
+            isConnected: manager.isConnected(),
+            lastCheck: manager.getLastCheck(),
             timestamp: Date.now(),
         };
 
@@ -64,17 +64,15 @@ app.get('/stream', (c) =>
             if (!isActive) return;
             isActive = false;
 
-            dockerStatusManager.off('status-changed', onStatusChange);
-
-            logger.info({ clientId }, 'SSE Docker client disconnected');
+            manager.off('status-changed', onStatusChange);
         };
 
-        dockerStatusManager.on('status-changed', onStatusChange);
+        manager.on('status-changed', onStatusChange);
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 
         await stream.sleep(2_147_483_647);
-    }),
-);
+    });
+});
 
 export default app;

@@ -1,4 +1,3 @@
-import { docker } from '@/utils/dockerClient';
 import { logger } from '@/utils/logger';
 import { ImageInfo, ImageInspectInfo } from 'dockerode';
 import {
@@ -13,13 +12,17 @@ import * as tar from 'tar-fs';
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 import { Readable } from 'stream';
 import { containerImageEvents } from '@/managers/containersStateManager';
+import { getCurrentEnvironmentId } from '@/lib/dockerContext';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 
-class ImagesStateManager extends BaseStateManager {
+export class ImagesStateManager extends BaseStateManager {
     private images: Map<string, Image> = new Map();
 
-    constructor() {
+    constructor(environmentId: string) {
         super({
-            managerName: 'Image State Manager',
+            managerName: `Image State Manager [${environmentId}]`,
+            environmentId,
             pollIntervalMs: 10000,
             maxReconnectAttempts: 5,
             maxListeners: 100,
@@ -40,7 +43,7 @@ class ImagesStateManager extends BaseStateManager {
         }
 
         try {
-            const images = await docker.listImages({ all: true });
+            const images = await this.docker.listImages({ all: true });
 
             for (const image of images) {
                 const state = this.parseImageInfo(image);
@@ -86,7 +89,7 @@ class ImagesStateManager extends BaseStateManager {
 
     async fullStateSync(): Promise<void> {
         try {
-            const images = await docker.listImages({ all: true });
+            const images = await this.docker.listImages({ all: true });
 
             for (const image of images) {
                 const newState = this.parseImageInfo(image);
@@ -124,7 +127,7 @@ class ImagesStateManager extends BaseStateManager {
 
     private async updateImageUsageFromContainers(): Promise<void> {
         try {
-            const containers = await docker.listContainers({ all: true });
+            const containers = await this.docker.listContainers({ all: true });
             const imageUsageMap = new Map<string, number>();
 
             // Compte combien de conteneurs utilisent chaque image
@@ -241,7 +244,7 @@ class ImagesStateManager extends BaseStateManager {
     }
 
     private async refreshImageState(imageId: string): Promise<void> {
-        const image = docker.getImage(imageId);
+        const image = this.docker.getImage(imageId);
         const info = await image.inspect();
         const newState = this.parseImageInfo(info);
 
@@ -346,7 +349,7 @@ class ImagesStateManager extends BaseStateManager {
         logger.info('Starting hard refresh of image state');
 
         try {
-            const images = await docker.listImages({ all: true });
+            const images = await this.docker.listImages({ all: true });
             const newImageMap = new Map<string, Image>();
 
             for (const image of images) {
@@ -414,7 +417,7 @@ class ImagesStateManager extends BaseStateManager {
         return new Promise((resolve, reject) => {
             const tarStream = tar.pack(workDir);
 
-            (docker.buildImage as any)(
+            (this.docker.buildImage as any)(
                 tarStream,
                 {
                     t: imageName,
@@ -437,7 +440,7 @@ class ImagesStateManager extends BaseStateManager {
 
                     let imageId: string | undefined;
 
-                    docker.modem.followProgress(
+                    this.docker.modem.followProgress(
                         stream,
                         async (progressErr: any, output: any) => {
                             if (progressErr) {
@@ -487,7 +490,7 @@ class ImagesStateManager extends BaseStateManager {
 
     async cleanupDanglingImages(): Promise<void> {
         try {
-            await docker.pruneImages({
+            await this.docker.pruneImages({
                 filters: { dangling: ['true'] },
             });
             logger.info('Pruned dangling images');
@@ -497,4 +500,25 @@ class ImagesStateManager extends BaseStateManager {
     }
 }
 
-export const imagesStateManager = new ImagesStateManager();
+export function getImagesStateManager(): ImagesStateManager {
+    const environmentId = getCurrentEnvironmentId();
+    if (!environmentId) {
+        const defaultId = dockerClientRegistry.getDefaultEnvironmentId();
+        if (!defaultId) {
+            throw new Error('No Docker environment available');
+        }
+        return stateManagerFactory.getManagers(defaultId).images;
+    }
+    return stateManagerFactory.getManagers(environmentId).images;
+}
+
+export const imagesStateManager = new Proxy({} as ImagesStateManager, {
+    get(_target, prop) {
+        const manager = getImagesStateManager();
+        const value = (manager as any)[prop];
+        if (typeof value === 'function') {
+            return value.bind(manager);
+        }
+        return value;
+    },
+});

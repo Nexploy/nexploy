@@ -5,13 +5,15 @@ import { cloudflareConnectSchema } from '@workspace/schemas-zod/cloudflare/cloud
 import { saveCloudflareCredential } from '@/services/cloudflare.service';
 import { HttpErrorResponse } from 'drino';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { revalidatePath } from 'next/cache';
 
 export const connectCloudflareAction = authActionServer
     .inputSchema(cloudflareConnectSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {
             const { apiToken, serverIp } = parsedInput;
-            return await saveCloudflareCredential(ctx.session.user.id, apiToken, serverIp);
+            await saveCloudflareCredential(ctx.session.user.id, apiToken, serverIp);
+            revalidatePath('/integrations');
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
                 await setToastServer({

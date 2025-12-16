@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 import { twoFactorAuthSchema } from '@workspace/schemas-zod/auth/twoFactorAuth.schema';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { onTwoFactorAuthDisableAction } from '@/actions/docker/auth/twoFactorAuthDisable.action';
+import { onTwoFactorAuthDisableAction } from '@/actions/auth/twoFactorAuthDisable.action';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { useRouter } from 'next/navigation';
 

@@ -6,15 +6,16 @@ import {
 } from '@workspace/typescript-interface/docker/docker.events';
 import { BaseStateManager } from '@/lib/BaseStateManager';
 
-class EventsStateManager extends BaseStateManager {
+export class EventsStateManager extends BaseStateManager {
     private eventsReceived = 0;
     private lastEventTime: number | null = null;
     private events: DockerEventData[] = [];
     private readonly MAX_EVENTS = 1000;
 
-    constructor() {
+    constructor(environmentId: string) {
         super({
-            managerName: 'Events State Manager',
+            managerName: `Events State Manager [${environmentId}]`,
+            environmentId,
             pollIntervalMs: 0,
             maxReconnectAttempts: 5,
             maxListeners: 100,
@@ -128,4 +129,29 @@ class EventsStateManager extends BaseStateManager {
     }
 }
 
-export const eventsStateManager = new EventsStateManager();
+import { getCurrentEnvironmentId } from '@/lib/dockerContext';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
+
+export function getEventsStateManager(): EventsStateManager {
+    const environmentId = getCurrentEnvironmentId();
+    if (!environmentId) {
+        const defaultId = dockerClientRegistry.getDefaultEnvironmentId();
+        if (!defaultId) {
+            throw new Error('No Docker environment available');
+        }
+        return stateManagerFactory.getManagers(defaultId).events;
+    }
+    return stateManagerFactory.getManagers(environmentId).events;
+}
+
+export const eventsStateManager = new Proxy({} as EventsStateManager, {
+    get(_target, prop) {
+        const manager = getEventsStateManager();
+        const value = (manager as any)[prop];
+        if (typeof value === 'function') {
+            return value.bind(manager);
+        }
+        return value;
+    },
+});

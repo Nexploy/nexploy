@@ -14,7 +14,7 @@ import {
 import { CheckCircle2 } from 'lucide-react';
 import { twoFactorAuthCodeSchema } from '@workspace/schemas-zod/auth/twoFactorAuth.schema';
 import { useRouter } from '@/i18n/navigation';
-import { twoFactorAuthUseBackupCodeAction } from '@/actions/docker/auth/twoFactorAuthUseBackupCode.action';
+import { twoFactorAuthUseBackupCodeAction } from '@/actions/auth/twoFactorAuthUseBackupCode.action';
 
 interface TwoFactoVerifCodeFormProps {
     onSuccess?: () => void;

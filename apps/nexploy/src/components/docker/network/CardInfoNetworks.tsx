@@ -76,7 +76,9 @@ export function CardInfoNetworks() {
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-semibold">{info.content}</div>
-                            <p className="text-muted-foreground text-xs">{info.description}</p>
+                            <p className="text-muted-foreground truncate text-xs">
+                                {info.description}
+                            </p>
                         </CardContent>
                     </Card>
                 ),

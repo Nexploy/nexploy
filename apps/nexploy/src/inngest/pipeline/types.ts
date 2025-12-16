@@ -13,7 +13,13 @@ export type StepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipp
 /**
  * Build status for the entire pipeline
  */
-export type PipelineStatus = 'QUEUED' | 'BUILDING' | 'DEPLOYING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
+export type PipelineStatus =
+    | 'QUEUED'
+    | 'BUILDING'
+    | 'DEPLOYING'
+    | 'COMPLETED'
+    | 'FAILED'
+    | 'CANCELLED';
 
 /**
  * Step identifier - unique name for each step

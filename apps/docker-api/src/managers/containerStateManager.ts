@@ -11,10 +11,11 @@ import { BaseSingleResourceStateManager } from '@/lib/BaseSingleResourceStateMan
 import { ContainerPorts, PortType } from '@workspace/typescript-interface/docker/docker.port';
 
 export class ContainerStateManager extends BaseSingleResourceStateManager<Container> {
-    constructor(containerId: string) {
+    constructor(containerId: string, environmentId: string) {
         super({
             resourceType: 'Container',
             resourceId: containerId,
+            environmentId,
             pollIntervalMs: 5000,
             maxReconnectAttempts: 5,
             maxListeners: 50,
@@ -22,7 +23,7 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
     }
 
     async fetchResourceState(): Promise<Container> {
-        const container = docker.getContainer(this.resourceId);
+        const container = this.docker.getContainer(this.resourceId);
         const info = await container.inspect();
         return this.parseContainerInspect(info);
     }
@@ -225,14 +226,16 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
                     ]),
                 ),
             },
-            graphDriver: {
-                name: container.GraphDriver.Name,
-                data: {
-                    deviceId: container.GraphDriver.Data?.DeviceId,
-                    deviceName: container.GraphDriver.Data?.DeviceName,
-                    deviceSize: container.GraphDriver.Data?.DeviceSize,
-                },
-            },
+            graphDriver: container.GraphDriver
+                ? {
+                      name: container.GraphDriver.Name,
+                      data: {
+                          deviceId: container.GraphDriver.Data?.DeviceId,
+                          deviceName: container.GraphDriver.Data?.DeviceName,
+                          deviceSize: container.GraphDriver.Data?.DeviceSize,
+                      },
+                  }
+                : undefined,
             mounts,
             execIds: container.ExecIDs || [],
             timestamp: Date.now(),

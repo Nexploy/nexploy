@@ -2,15 +2,16 @@ import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
 import { ContainersEvent } from '@workspace/typescript-interface/docker/docker.containers';
-import { containersStateManager } from '@/managers/containersStateManager';
+import { getContainersStateManager } from '@/managers/containersStateManager';
 
 const app = new Hono();
 
 app.get('/stream', (c) => {
+    // Capture the manager BEFORE entering streamSSE to preserve AsyncLocalStorage context
+    const manager = getContainersStateManager();
+
     return streamSSE(c, async (stream) => {
         const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-
-        logger.info({ clientId }, 'SSE Containers client connected');
 
         const handleInitialState = async (containerEvent: ContainersEvent) => {
             try {
@@ -96,23 +97,21 @@ app.get('/stream', (c) => {
         }, 15000);
 
         const cleanup = () => {
-            containersStateManager.off('initial-state', handleInitialState);
-            containersStateManager.off('state-change', handleStateChange);
-            containersStateManager.off('container-added', handleContainerAdded);
-            containersStateManager.off('container-updated', handleContainerUpdated);
-            containersStateManager.off('container-removed', handleContainerRemoved);
-
-            logger.info({ clientId }, 'SSE Containers client disconnected');
+            manager.off('initial-state', handleInitialState);
+            manager.off('state-change', handleStateChange);
+            manager.off('container-added', handleContainerAdded);
+            manager.off('container-updated', handleContainerUpdated);
+            manager.off('container-removed', handleContainerRemoved);
         };
 
-        const containers = containersStateManager.getAllStates();
+        const containers = manager.getAllStates();
         await handleInitialState({ type: 'initial', containers, timestamp: Date.now() });
 
-        containersStateManager.on('initial-state', handleInitialState);
-        containersStateManager.on('state-change', handleStateChange);
-        containersStateManager.on('container-added', handleContainerAdded);
-        containersStateManager.on('container-updated', handleContainerUpdated);
-        containersStateManager.on('container-removed', handleContainerRemoved);
+        manager.on('initial-state', handleInitialState);
+        manager.on('state-change', handleStateChange);
+        manager.on('container-added', handleContainerAdded);
+        manager.on('container-updated', handleContainerUpdated);
+        manager.on('container-removed', handleContainerRemoved);
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 

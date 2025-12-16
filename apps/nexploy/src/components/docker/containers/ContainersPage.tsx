@@ -1,6 +1,6 @@
 'use client';
 
-import { Container as IconContainer, Container, Layers, LayoutGrid } from 'lucide-react';
+import { Container as IconContainer, Container, Layers, LayoutGrid, Plus } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { Badge } from '@workspace/ui/components/badge';
 import {
@@ -11,12 +11,13 @@ import {
     EmptyMedia,
     EmptyTitle,
 } from '@workspace/ui/components/empty';
-import { AddContainer } from '@/components/docker/containers/AddContainer';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { ContainersStack } from '@/components/docker/containers/ContainersStack';
 import { ContainersStandalone } from '@/components/docker/containers/ContainersStandalone';
 import { useContainersStore } from '@/stores/docker/useContainersStore';
+import Link from 'next/link';
+import { Button } from '@workspace/ui/components/button';
 
 export default function ContainersPage() {
     const lastUpdate = useContainersStore((state) => state.lastUpdate);
@@ -72,7 +73,12 @@ export default function ContainersPage() {
                         )}
                     </div>
                 </div>
-                <AddContainer />
+                <Button asChild>
+                    <Link href={'/docker/containers/create-container'}>
+                        <Plus />
+                        Ajouter un conteneur
+                    </Link>
+                </Button>
             </div>
 
             {isLoading && (
@@ -95,7 +101,12 @@ export default function ContainersPage() {
                         </EmptyDescription>
                     </EmptyHeader>
                     <EmptyContent>
-                        <AddContainer />
+                        <Button asChild>
+                            <Link href={'/docker/containers/create-container'}>
+                                <Plus />
+                                Ajouter un conteneur
+                            </Link>
+                        </Button>
                     </EmptyContent>
                 </Empty>
             )}

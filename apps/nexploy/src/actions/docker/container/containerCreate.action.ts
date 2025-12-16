@@ -4,15 +4,15 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { HttpErrorResponse } from 'drino';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
-import { drinoDocker } from '@/lib/api/drinoDocker';
+import { kyDocker } from '@/lib/api/kyDocker';
 
 export const onContainerCreateAction = authActionServer
     .inputSchema(containerCreateFormSchema)
     .action(async ({ parsedInput }) => {
         try {
-            return await drinoDocker
-                .post<{ id: string }>(`/container/create`, parsedInput)
-                .consume();
+            return await kyDocker
+                .post(`container/create`, { json: parsedInput })
+                .json<{ id: string }>();
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
                 await setToastServer({

@@ -1,8 +1,8 @@
-import { getInvitations, getUsers } from '@/actions/admin/users.action';
+import { getInvitations, getUsers } from '@/actions/auth/users.action';
 import { getUserSession } from '@/services/auth/auth.service';
 import { UsersTable } from '@/components/admin/users/UsersTable';
 import { InvitationsTable } from '@/components/admin/users/InvitationsTable';
-import { InviteUserDialog } from '@/components/admin/users/InviteUserDialog';
+import { AddUserButton } from '@/components/admin/users/AddUserButton';
 import {
     Card,
     CardContent,
@@ -32,7 +32,7 @@ export async function UsersSection() {
                             Manage user accounts and their permissions
                         </CardDescription>
                     </div>
-                    {isAdmin && <InviteUserDialog />}
+                    {isAdmin && <AddUserButton />}
                 </CardHeader>
                 <CardContent>
                     <UsersTable users={users} currentUserId={session?.user.id} isAdmin={isAdmin} />

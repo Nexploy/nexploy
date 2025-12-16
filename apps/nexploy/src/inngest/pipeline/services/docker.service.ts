@@ -1,70 +1,43 @@
-import { env } from '../../../../env';
 import { SSEEvent } from '../types';
+import { kyDocker } from '@/lib/api/kyDocker';
 
-/**
- * Docker Service
- * Handles communication with docker-api for build and deploy operations
- */
 class DockerService {
-    private readonly baseUrl: string;
-
-    constructor() {
-        this.baseUrl = env.DOCKER_API_URL;
-    }
-
-    /**
-     * Build a Docker image from a Dockerfile
-     */
     async buildImage(
         workDir: string,
         imageName: string,
         signal: AbortSignal,
         onLog: (message: string) => Promise<void>,
     ): Promise<{ imageId?: string }> {
-        const response = await fetch(`${this.baseUrl}/api/pipeline/events/stream/build`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ workDir, imageName }),
+        return this.streamSSERequest<{ imageId?: string }>(
+            'pipeline/events/stream/build',
+            { workDir, imageName },
             signal,
-        });
-
-        if (!response.ok) {
-            throw new Error(`Build failed with status ${response.status}`);
-        }
-
-        return this.parseSSEStream(response, signal, onLog);
+            onLog,
+        );
     }
 
-    /**
-     * Deploy a Docker container from an image
-     */
     async deployContainer(
         repositoryId: string,
         imageName: string,
         envVars: Record<string, string>,
         signal: AbortSignal,
     ): Promise<{ containerId: string }> {
-        const response = await fetch(`${this.baseUrl}/api/pipeline/deploy`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                repositoryId,
-                imageName,
-                options: { envVars },
-            }),
-            signal,
-        });
-
-        if (!response.ok) {
-            throw new Error(`Deployment failed with status ${response.status}`);
+        try {
+            return await kyDocker
+                .post('pipeline/deploy', {
+                    json: {
+                        repositoryId,
+                        imageName,
+                        options: { envVars },
+                    },
+                    signal,
+                })
+                .json<{ containerId: string }>();
+        } catch (error: unknown) {
+            throw new Error(`Deployment failed : ${error}`);
         }
-
-        return response.json();
     }
 
-    /**
-     * Deploy a Docker Compose stack
-     */
     async deployCompose(
         workDir: string,
         projectName: string,
@@ -73,94 +46,99 @@ class DockerService {
         signal: AbortSignal,
         onLog: (message: string) => Promise<void>,
     ): Promise<{ success: boolean; containers?: string[] }> {
-        const response = await fetch(`${this.baseUrl}/api/pipeline/events/stream/compose`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                workDir,
-                projectName,
-                composePath,
-                envVars,
-            }),
+        return this.streamSSERequest<{ success: boolean; containers?: string[] }>(
+            'pipeline/events/stream/compose',
+            { workDir, projectName, composePath, envVars },
             signal,
-        });
-
-        if (!response.ok) {
-            throw new Error(`Docker Compose deployment failed with status ${response.status}`);
-        }
-
-        return this.parseSSEStream(response, signal, onLog);
+            onLog,
+        );
     }
 
-    /**
-     * Parse SSE stream from docker-api
-     */
-    private async parseSSEStream<T>(
-        response: Response,
+    private async streamSSERequest<T>(
+        endpoint: string,
+        body: Record<string, unknown>,
         signal: AbortSignal,
         onLog: (message: string) => Promise<void>,
     ): Promise<T> {
-        const reader = response.body?.getReader();
-        const decoder = new TextDecoder();
+        return new Promise<T>(async (resolve, reject) => {
+            const decoder = new TextDecoder();
+            let buffer = '';
+            let result: T | null = null;
 
-        if (!reader) {
-            throw new Error('No response body');
-        }
+            const abortHandler = () => {
+                reject(new DOMException('Request aborted', 'AbortError'));
+            };
+            signal.addEventListener('abort', abortHandler);
 
-        let buffer = '';
-        let result: T | null = null;
+            try {
+                const response = await kyDocker.post(endpoint, {
+                    json: body,
+                    signal,
+                });
 
-        const abortHandler = () => reader.cancel();
-        signal.addEventListener('abort', abortHandler);
-
-        try {
-            while (true) {
-                if (signal.aborted) {
-                    throw new DOMException('Request aborted', 'AbortError');
+                const reader = response.body?.getReader();
+                if (!reader) {
+                    throw new Error('Response body is not readable');
                 }
 
-                const { done, value } = await reader.read();
-                if (done) break;
+                while (true) {
+                    const { done, value: chunk } = await reader.read();
 
-                buffer += decoder.decode(value, { stream: true });
-                const lines = buffer.split('\n');
-                buffer = lines.pop() || '';
+                    if (done) break;
 
-                let currentEvent: { event?: string; data?: string } = {};
+                    if (signal.aborted) {
+                        await reader.cancel();
+                        throw new DOMException('Request aborted', 'AbortError');
+                    }
 
-                for (const line of lines) {
-                    if (line.trim() === '') {
-                        if (currentEvent.data) {
-                            try {
-                                const parsedData: SSEEvent = JSON.parse(currentEvent.data);
+                    buffer += decoder.decode(chunk, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
 
-                                if (parsedData.type === 'complete') {
-                                    result = parsedData.result as T;
-                                } else if (parsedData.type === 'error') {
-                                    throw new Error(parsedData.message || 'Unknown error');
-                                } else if (parsedData.type === 'log' && parsedData.message) {
-                                    await onLog(parsedData.message);
-                                }
-                            } catch (e) {
-                                if (e instanceof Error && e.message !== 'Unknown error') {
-                                    throw e;
+                    let currentEvent: { event?: string; data?: string } = {};
+
+                    for (const line of lines) {
+                        if (line.trim() === '') {
+                            if (currentEvent.data) {
+                                try {
+                                    const parsedData: SSEEvent = JSON.parse(currentEvent.data);
+
+                                    if (parsedData.type === 'complete') {
+                                        result = parsedData.result as T;
+                                    } else if (parsedData.type === 'error') {
+                                        throw new Error(parsedData.message || 'Unknown error');
+                                    } else if (parsedData.type === 'log' && parsedData.message) {
+                                        void onLog(parsedData.message);
+                                    }
+                                } catch (e) {
+                                    if (e instanceof Error && e.message !== 'Unknown error') {
+                                        await reader.cancel();
+                                        signal.removeEventListener('abort', abortHandler);
+                                        reject(e);
+                                        return;
+                                    }
                                 }
                             }
+                            currentEvent = {};
+                        } else if (line.startsWith('event:')) {
+                            currentEvent.event = line.slice(6).trim();
+                        } else if (line.startsWith('data:')) {
+                            currentEvent.data = line.slice(5).trim();
                         }
-                        currentEvent = {};
-                    } else if (line.startsWith('event:')) {
-                        currentEvent.event = line.slice(6).trim();
-                    } else if (line.startsWith('data:')) {
-                        currentEvent.data = line.slice(5).trim();
                     }
                 }
-            }
-        } finally {
-            signal.removeEventListener('abort', abortHandler);
-            reader.releaseLock();
-        }
 
-        return result as T;
+                signal.removeEventListener('abort', abortHandler);
+                if (result !== null) {
+                    resolve(result);
+                } else {
+                    reject(new Error('No result received from stream'));
+                }
+            } catch (error) {
+                signal.removeEventListener('abort', abortHandler);
+                reject(error);
+            }
+        });
     }
 }
 

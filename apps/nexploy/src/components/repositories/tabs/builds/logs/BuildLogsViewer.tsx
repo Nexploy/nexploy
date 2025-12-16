@@ -118,10 +118,7 @@ export function BuildLogsViewer({
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="flex items-center space-x-2">
-                        <Label
-                            htmlFor="log-showTimestamp"
-                            className={'cursor-pointer text-xs text-white'}
-                        >
+                        <Label htmlFor="log-showTimestamp" className={'cursor-pointer text-xs'}>
                             Show Date
                         </Label>
                         <Switch

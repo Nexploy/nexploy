@@ -1,17 +1,10 @@
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 import { BaseStrategy } from './base.strategy';
 import { BaseStep } from '../steps/base.step';
-import { IPipelineStep, StepMetadata, StepExecutionContext, StepResult } from '../types';
-import { gitService, dockerService } from '../services';
+import { IPipelineStep, StepExecutionContext, StepMetadata, StepResult } from '../types';
+import { gitService } from '@/inngest/pipeline/services/git.service';
+import { dockerService } from '@/inngest/pipeline/services/docker.service';
 
-// ============================================================================
-// Dockerfile-specific Steps
-// ============================================================================
-
-/**
- * Prepare Dockerfile Step
- * Validates the Dockerfile exists in the work directory
- */
 class PrepareDockerfileStep extends BaseStep {
     readonly metadata: StepMetadata = {
         id: 'prepare-dockerfile',
@@ -44,17 +37,13 @@ class PrepareDockerfileStep extends BaseStep {
     }
 }
 
-/**
- * Build Docker Image Step
- * Builds the Docker image using the Dockerfile
- */
 class BuildDockerImageStep extends BaseStep {
     readonly metadata: StepMetadata = {
         id: 'build-docker-image',
         name: 'Build Docker Image',
         description: 'Build Docker image from Dockerfile',
         retryable: true,
-        timeout: 600000, // 10 minutes
+        timeout: 600000,
     };
 
     protected readonly applicableBuildTypes = ['DOCKERFILE'] as const;
@@ -99,17 +88,13 @@ class BuildDockerImageStep extends BaseStep {
     }
 }
 
-/**
- * Deploy Container Step
- * Creates and starts a container from the built image
- */
 class DeployContainerStep extends BaseStep {
     readonly metadata: StepMetadata = {
         id: 'deploy-container',
         name: 'Deploy Container',
         description: 'Deploy Docker container from built image',
         retryable: true,
-        timeout: 120000, // 2 minutes
+        timeout: 120000,
     };
 
     protected readonly applicableBuildTypes = ['DOCKERFILE'] as const;
@@ -148,18 +133,10 @@ class DeployContainerStep extends BaseStep {
     }
 }
 
-// ============================================================================
-// Dockerfile Strategy
-// ============================================================================
-
 const prepareDockerfileStep = new PrepareDockerfileStep();
 const buildDockerImageStep = new BuildDockerImageStep();
 const deployContainerStep = new DeployContainerStep();
 
-/**
- * Dockerfile Build Strategy
- * Builds applications using a Dockerfile and deploys as a single container
- */
 export class DockerfileStrategy extends BaseStrategy {
     readonly buildType = 'DOCKERFILE' as const;
     readonly name = 'Dockerfile';
@@ -170,7 +147,6 @@ export class DockerfileStrategy extends BaseStrategy {
 
     validateConfig(config: BuildConfig): void {
         super.validateConfig(config);
-        // Dockerfile-specific validation can be added here
     }
 }
 

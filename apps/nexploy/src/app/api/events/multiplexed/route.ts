@@ -60,6 +60,7 @@ const buildEndpointUrl = (template: string, params?: Record<string, string>): st
 export const GET = route.use(authRouteServer).handler(async (request: Request) => {
     const { searchParams } = new URL(request.url);
     const channelsParam = searchParams.get('channels');
+    const environment = searchParams.get('environment');
 
     if (!channelsParam) {
         return NextResponse.json({ error: 'Missing "channels" query parameter' }, { status: 400 });
@@ -181,7 +182,12 @@ export const GET = route.use(authRouteServer).handler(async (request: Request) =
 
                 const endpointTemplate = CHANNEL_ENDPOINTS[config.channel];
                 const endpoint = buildEndpointUrl(endpointTemplate, config.params);
-                const url = `${serverUrl}${endpoint}`;
+                let url = `${serverUrl}${endpoint}`;
+
+                if (environment) {
+                    const separator = url.includes('?') ? '&' : '?';
+                    url += `${separator}environment=${encodeURIComponent(environment)}`;
+                }
 
                 try {
                     const response = await fetch(url, {

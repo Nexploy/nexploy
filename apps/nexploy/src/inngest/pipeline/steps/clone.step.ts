@@ -1,22 +1,18 @@
 import { BaseStep } from './base.step';
 import { StepExecutionContext, StepMetadata, StepResult } from '../types';
-import { gitService } from '@/inngest/pipeline';
+import { gitService } from '@/inngest/pipeline/services/git.service';
 
 export interface CloneStepResult {
     workDir: string;
 }
 
-/**
- * Clone Repository Step
- * Clones the git repository to a temporary directory
- */
 export class CloneStep extends BaseStep {
     readonly metadata: StepMetadata = {
         id: 'clone-repository',
         name: 'Clone Repository',
         description: 'Clone the git repository from the remote source',
         retryable: true,
-        timeout: 300000, // 5 minutes
+        timeout: 300000,
     };
 
     async execute(ctx: StepExecutionContext): Promise<StepResult<CloneStepResult>> {
@@ -37,7 +33,6 @@ export class CloneStep extends BaseStep {
 
             const workDir = await gitService.cloneRepository(config, onProgress);
 
-            // Update context with work directory
             ctx.context.workDir = workDir;
 
             if (config.gitCommitHash) {

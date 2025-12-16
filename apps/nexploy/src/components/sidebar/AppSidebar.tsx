@@ -29,12 +29,17 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
 } from '@workspace/ui/components/sidebar';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger, } from '@workspace/ui/components/collapsible';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@workspace/ui/components/collapsible';
 import Link from 'next/link';
 import { ElementType, ReactElement } from 'react';
-import { NexployLogo } from '@/components/sidebar/NexployLogo';
 import { AccountMenu } from '@/components/sidebar/AccountMenu';
 import { RefreshDocker } from '@/components/sidebar/RefreshDocker';
+import { NexployLogo } from '@/components/sidebar/NexployLogo';
+import { Environment } from '@/components/sidebar/environment/Environment';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset';
@@ -55,8 +60,7 @@ interface SidebarItem {
     children?: SidebarItem[];
 }
 
-let groups: Group[];
-groups = [
+const groups: Group[] = [
     {
         title: 'Home',
         children: [
@@ -100,21 +104,29 @@ groups = [
 
 export function AppSidebar({ variant }: AppSidebarProps) {
     return (
-        <Sidebar className="z-50 whitespace-nowrap" collapsible="icon" variant={variant}>
-            <SidebarHeader>
+        <Sidebar
+            className="z-50 whitespace-nowrap transition-all duration-300 ease-in-out"
+            collapsible="icon"
+            variant={variant}
+        >
+            <SidebarHeader
+                className={
+                    'flex flex-row justify-between gap-4 overflow-hidden group-data-[state=collapsed]:flex-col'
+                }
+            >
                 <Link href="/" className="flex items-center gap-2">
                     <div className="flex aspect-square size-7 items-center justify-center rounded-none">
                         <NexployLogo className="size-7" />
                     </div>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
+                    <div className="grid flex-1 text-left text-sm leading-tight transition-opacity duration-300 ease-in-out group-data-[state=collapsed]:opacity-0">
                         <span className="truncate font-bold">Nexploy</span>
                         <span className="text-muted-foreground truncate text-xs">
                             v{process.env.appVersion}
                         </span>
                     </div>
                 </Link>
+                <Environment />
             </SidebarHeader>
-
             <SidebarContent>
                 {groups.map((group) => (
                     <SidebarGroup key={group.title}>

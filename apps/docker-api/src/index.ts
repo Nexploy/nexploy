@@ -13,14 +13,10 @@ import eventsEvents from './routes/events/eventsEvents';
 import imagesEvents from './routes/events/imagesEvents';
 import { serve } from '@hono/node-server';
 import { setupGracefulShutdown } from './utils/shutdown';
-import { dockerStatusManager } from '@/managers/dockerStatusManager';
-import { imagesStateManager } from '@/managers/imagesStateManager';
-import { containersStateManager } from '@/managers/containersStateManager';
+import { DockerStatusManager } from '@/managers/dockerStatusManager';
 import dockerStatusRoutes from '@/routes/dockerStatusRoutes';
-import { eventsStateManager } from '@/managers/eventsStateManager';
-import { volumesStateManager } from '@/managers/volumesStateManager';
+import { loadEnvironmentsFromAPI } from '@/lib/loadEnvironments';
 import networksEvents from '@/routes/events/networksEvents';
-import { networksStateManager } from '@/managers/networksStateManager';
 import { createNodeWebSocket } from '@hono/node-ws';
 import { createTerminalRoutes } from '@/routes/terminalRoutes';
 import volumesRoutes from '@/routes/volumesRoutes';
@@ -32,20 +28,30 @@ import swarmRoutes from '@/routes/swarm';
 import swarmEvents from '@/routes/events/swarmEvents';
 import traefikRoutes from '@/routes/traefikRoutes';
 import traefikEvents from '@/routes/events/traefikEvents';
-import { traefikLogsManager } from '@/managers/traefikLogsManager';
-import { swarmStateManager } from '@/managers/swarmStateManager';
 import composeRoutes from './routes/composeRoutes';
+import { dockerEnvironmentMiddleware } from '@/middleware/dockerEnvironment.middleware';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
+import { ContainersStateManager } from '@/managers/containersStateManager';
+import { ImagesStateManager } from '@/managers/imagesStateManager';
+import { VolumesStateManager } from '@/managers/volumesStateManager';
+import { NetworksStateManager } from '@/managers/networksStateManager';
+import { EventsStateManager } from '@/managers/eventsStateManager';
+import { SwarmStateManager } from '@/managers/swarmStateManager';
+import { TraefikLogsManager } from '@/managers/traefikLogsManager';
 
 const app = new Hono();
 
 const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });
+
+app.use('*', dockerEnvironmentMiddleware);
 
 app.use(
     '/api/*/events/*',
     cors({
         origin: '*',
         allowMethods: ['GET', 'OPTIONS'],
-        allowHeaders: ['Content-Type'],
+        allowHeaders: ['Content-Type', 'X-Docker-Environment'],
         credentials: true,
     }),
 );
@@ -96,25 +102,43 @@ app.onError((err, c) => {
 
 const startServer = async () => {
     try {
-        logger.info('Starting all state managers...');
-        await Promise.all([
-            dockerStatusManager.start(),
-            containersStateManager.start(),
-            imagesStateManager.start(),
-            volumesStateManager.start(),
-            networksStateManager.start(),
-            eventsStateManager.start(),
-            swarmStateManager.start(),
-            traefikLogsManager.start(),
-        ]);
+        stateManagerFactory.registerConstructors({
+            containers: ContainersStateManager,
+            images: ImagesStateManager,
+            volumes: VolumesStateManager,
+            networks: NetworksStateManager,
+            events: EventsStateManager,
+            swarm: SwarmStateManager,
+            traefik: TraefikLogsManager,
+            dockerStatus: DockerStatusManager,
+        });
 
-        const dockerStatus = dockerStatusManager.getStatus();
-        if (dockerStatus === 'connected') {
-            logger.info('✓ Docker daemon is available');
-        } else if (dockerStatus === 'disconnected') {
-            logger.warn('✗ Docker daemon is not available - running in polling mode');
-        } else if (dockerStatus === 'connecting') {
-            logger.info('⟳ Connecting to Docker daemon...');
+        const environments = await loadEnvironmentsFromAPI();
+
+        logger.info('Initializing Docker client registry...');
+        await dockerClientRegistry.initialize(environments);
+
+        logger.info('Initializing state managers for all environments...');
+
+        const initResults = await Promise.allSettled(
+            environments.map((environment) =>
+                stateManagerFactory.initializeEnvironment(environment.id),
+            ),
+        );
+
+        const succeeded = initResults.filter((r) => r.status === 'fulfilled').length;
+        const failed = initResults.filter((r) => r.status === 'rejected').length;
+
+        if (failed > 0) {
+            logger.warn(
+                { total: environments.length, succeeded, failed },
+                'Some environments failed to initialize',
+            );
+        } else {
+            logger.info(
+                { total: environments.length, succeeded },
+                '✓ All environments initialized successfully',
+            );
         }
 
         return app;
@@ -126,18 +150,8 @@ const startServer = async () => {
 
 setupGracefulShutdown(async () => {
     logger.info('Shutting down Docker management services...');
-
-    await Promise.all([
-        dockerStatusManager.stop(),
-        containersStateManager.stop(),
-        imagesStateManager.stop(),
-        volumesStateManager.stop(),
-        networksStateManager.stop(),
-        eventsStateManager.stop(),
-        swarmStateManager.stop(),
-        traefikLogsManager.stop(),
-    ]);
-
+    await stateManagerFactory.shutdownAll();
+    await dockerClientRegistry.shutdown();
     logger.info('Docker management services stopped');
 });
 

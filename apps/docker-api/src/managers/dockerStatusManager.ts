@@ -1,4 +1,6 @@
-import { docker } from '@/utils/dockerClient';
+import { getCurrentEnvironmentId } from '@/lib/dockerContext';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 import { logger } from '@/utils/logger';
 import {
     DockerStatus,
@@ -6,23 +8,26 @@ import {
 } from '@workspace/typescript-interface/docker/docker.status';
 import { BaseMonitor } from '@/lib/BaseMonitor';
 
-class DockerStatusManager extends BaseMonitor {
+export class DockerStatusManager extends BaseMonitor {
     private status: DockerStatus = 'disconnected';
+    private readonly environmentId: string;
 
-    constructor() {
+    constructor(environmentId: string) {
         super({
-            monitorName: 'Docker Status Manager',
+            monitorName: `Docker Status Manager [${environmentId}]`,
             checkIntervalMs: 5000,
             maxListeners: 100,
         });
+        this.environmentId = environmentId;
     }
 
     protected async performCheck(): Promise<DockerStatus> {
         try {
-            await docker.ping();
+            const dockerClient = dockerClientRegistry.getClient(this.environmentId);
+            await dockerClient.ping();
             return 'connected';
         } catch (err) {
-            logger.error('Docker daemon not available');
+            logger.error({ environmentId: this.environmentId }, 'Docker daemon not available');
             return 'error';
         }
     }
@@ -129,6 +134,28 @@ class DockerStatusManager extends BaseMonitor {
     isDisconnected(): boolean {
         return this.status === 'disconnected';
     }
+
+    getEnvironmentId(): string {
+        return this.environmentId;
+    }
 }
 
-export const dockerStatusManager = new DockerStatusManager();
+export function getDockerStatusManager(): DockerStatusManager {
+    const environmentId = getCurrentEnvironmentId();
+    if (!environmentId) {
+        const defaultId = dockerClientRegistry.getDefaultEnvironmentId();
+        return stateManagerFactory.getManagers(defaultId!).dockerStatus;
+    }
+    return stateManagerFactory.getManagers(environmentId).dockerStatus;
+}
+
+export const dockerStatusManager = new Proxy({} as DockerStatusManager, {
+    get(_target, prop) {
+        const manager = getDockerStatusManager();
+        const value = (manager as any)[prop];
+        if (typeof value === 'function') {
+            return value.bind(manager);
+        }
+        return value;
+    },
+});

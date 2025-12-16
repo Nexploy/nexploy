@@ -70,7 +70,7 @@ export function useContainerActions({
             onClick: () =>
                 new Promise((resolve, reject) => {
                     openAlertDialog({
-                        title: 'Remove Images',
+                        title: 'Remove Container',
                         description: `Are you sure you want to remove ${containerName} container?`,
                         cancelLabel: 'Cancel',
                         actionLabel: 'Remove',

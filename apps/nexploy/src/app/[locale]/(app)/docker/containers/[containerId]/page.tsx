@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { ContainerDetailPage } from '@/components/docker/container/ContainerDetailPage';
 import { SSEProvider } from '@/providers/SSEProviders';
-import { drinoDocker } from '@/lib/api/drinoDocker';
+import { kyDocker } from '@/lib/api/kyDocker';
 import { notFound } from 'next/navigation';
 
 export async function generateMetadata({
@@ -24,7 +24,7 @@ export default async function ContainerPage({
     const { containerId } = await params;
 
     try {
-        await drinoDocker.get(`/container/${containerId}`).consume();
+        await kyDocker.get(`container/${containerId}`).json();
     } catch {
         notFound();
     }

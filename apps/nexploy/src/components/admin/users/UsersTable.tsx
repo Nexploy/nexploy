@@ -27,7 +27,7 @@ import {
 } from '@workspace/ui/components/select';
 import { Ban, CheckCircle, MoreHorizontal, Shield, ShieldOff, Trash2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar';
-import { banUser, deleteUser, updateUserRole } from '@/actions/admin/users.action';
+import { banUser, deleteUser, updateUserRole } from '@/actions/auth/users.action';
 import { useAction } from 'next-safe-action/hooks';
 import { toast } from 'sonner';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';

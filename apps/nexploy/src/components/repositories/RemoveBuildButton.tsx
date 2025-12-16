@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { onRemoveBuild } from '@/actions/repository/builds/removeBuild.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
+import { useRouter } from 'next/navigation';
 
 interface RemoveBuildButtonProps extends ComponentProps<typeof Button> {
     buildId: string;
@@ -16,9 +17,11 @@ interface RemoveBuildButtonProps extends ComponentProps<typeof Button> {
 
 export function RemoveBuildButton({ buildId, mode = 'button', ...props }: RemoveBuildButtonProps) {
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
+    const router = useRouter();
 
     const { executeAsync } = useAction(onRemoveBuild, {
         onSuccess: () => {
+            router.back();
             toast.success('Build removed successfully');
         },
     });

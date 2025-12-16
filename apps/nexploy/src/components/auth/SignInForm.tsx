@@ -1,7 +1,7 @@
 'use client';
 
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
-import { onSignInAction } from '@/actions/docker/auth/signIn.action';
+import { onSignInAction } from '@/actions/auth/signIn.action';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signInFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 import {

@@ -2,15 +2,15 @@ import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
 import { TraefikRequestEvent } from '@workspace/typescript-interface/traefik/traefik.request';
-import { traefikLogsManager } from '@/managers/traefikLogsManager';
+import { getTraefikLogsManager } from '@/managers/traefikLogsManager';
 
 const app = new Hono();
 
 app.get('/stream', (c) => {
+    const manager = getTraefikLogsManager();
+
     return streamSSE(c, async (stream) => {
         const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-
-        logger.info({ clientId }, 'SSE Traefik client connected');
 
         const handleRequest = async (event: TraefikRequestEvent) => {
             try {
@@ -58,12 +58,11 @@ app.get('/stream', (c) => {
 
         const cleanup = () => {
             clearInterval(heartbeat);
-            traefikLogsManager.off('request', handleRequest);
-            traefikLogsManager.off('clear', handleClear);
-            logger.info({ clientId }, 'SSE Traefik client disconnected');
+            manager.off('request', handleRequest);
+            manager.off('clear', handleClear);
         };
 
-        const requests = traefikLogsManager.getRequests();
+        const requests = manager.getRequests();
         const initialEvent: TraefikRequestEvent = {
             type: 'initial',
             requests,
@@ -76,8 +75,8 @@ app.get('/stream', (c) => {
             id: `${Date.now()}`,
         });
 
-        traefikLogsManager.on('request', handleRequest);
-        traefikLogsManager.on('clear', handleClear);
+        manager.on('request', handleRequest);
+        manager.on('clear', handleClear);
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 

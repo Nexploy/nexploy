@@ -7,10 +7,11 @@ import {
 } from '@workspace/typescript-interface/docker/docker.container.stats';
 
 export class ContainerStatsStateManager extends BaseSingleResourceStateManager<ContainerStats> {
-    constructor(containerId: string, pollIntervalMs: number = 5000) {
+    constructor(containerId: string, environmentId: string, pollIntervalMs: number = 5000) {
         super({
             resourceType: 'ContainerStats',
             resourceId: containerId,
+            environmentId,
             pollIntervalMs,
             maxReconnectAttempts: 5,
             maxListeners: 50,
@@ -18,7 +19,7 @@ export class ContainerStatsStateManager extends BaseSingleResourceStateManager<C
     }
 
     async fetchResourceState(): Promise<ContainerStats> {
-        const container = docker.getContainer(this.resourceId);
+        const container = this.docker.getContainer(this.resourceId);
         const statsData = await container.stats({ stream: false });
         return this.parseContainerStats(statsData);
     }

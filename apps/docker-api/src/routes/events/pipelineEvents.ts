@@ -1,10 +1,10 @@
 import { Hono } from 'hono';
-import { imagesStateManager } from '@/managers/imagesStateManager';
+import { getImagesStateManager } from '@/managers/imagesStateManager';
 import { streamSSE } from 'hono/streaming';
 import { spawn } from 'child_process';
 import { logger } from '@/utils/logger';
 import { execAsync } from '@/helpers/execAsync';
-import { docker } from '@/utils/dockerClient';
+import { getCurrentDockerClient } from '@/lib/dockerContext';
 
 const app = new Hono();
 
@@ -15,6 +15,8 @@ app.post('/stream/compose', async (c) => {
         composePath?: string;
         envVars?: Record<string, string>;
     }>();
+
+    const dockerClient = getCurrentDockerClient();
 
     return streamSSE(c, async (stream) => {
         let isClientDisconnected = false;
@@ -106,7 +108,7 @@ app.post('/stream/compose', async (c) => {
                                 for (const containerId of containerIds) {
                                     try {
                                         const network =
-                                            docker.getNetwork('nexploy_traefik_network');
+                                            dockerClient.getNetwork('nexploy_traefik_network');
 
                                         await network.connect({
                                             Container: containerId,
@@ -162,6 +164,8 @@ app.post('/stream/build', async (c) => {
         imageName: string;
     }>();
 
+    const manager = getImagesStateManager();
+
     return streamSSE(c, async (stream) => {
         const abortController = new AbortController();
         let isClientDisconnected = false;
@@ -189,7 +193,7 @@ app.post('/stream/build', async (c) => {
                 } catch (e) {}
             };
 
-            const result = await imagesStateManager.buildImage(
+            const result = await manager.buildImage(
                 workDir,
                 imageName,
                 onLog,

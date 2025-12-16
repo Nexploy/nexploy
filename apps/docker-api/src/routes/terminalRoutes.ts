@@ -3,7 +3,7 @@ import type { UpgradeWebSocket } from 'hono/ws';
 import type { WebSocket } from 'ws';
 import { logger } from '@/utils/logger';
 import { Duplex } from 'stream';
-import Docker from 'dockerode';
+import { Exec, ExecCreateOptions } from 'dockerode';
 import { docker } from '@/utils/dockerClient';
 
 function getShellCommand(shell: string): string[] {
@@ -36,7 +36,7 @@ export const createTerminalRoutes = (
             const containerId = c.req.param('containerId');
             const shell = c.req.param('shell') ?? 'auto';
 
-            let exec: Docker.Exec | null = null;
+            let exec: Exec | null = null;
             let stream: Duplex | null = null;
 
             return {
@@ -52,7 +52,7 @@ export const createTerminalRoutes = (
                             return;
                         }
 
-                        const execOptions: Docker.ExecCreateOptions = {
+                        const execOptions: ExecCreateOptions = {
                             AttachStdin: true,
                             AttachStdout: true,
                             AttachStderr: true,

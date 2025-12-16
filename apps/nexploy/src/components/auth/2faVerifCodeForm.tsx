@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@workspace/ui/components/input-otp';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { CheckCircle2 } from 'lucide-react';
-import { twoFactorAuthVerifCodeAction } from '@/actions/docker/auth/twoFactorAuthVerifCode.action';
+import { twoFactorAuthVerifCodeAction } from '@/actions/auth/twoFactorAuthVerifCode.action';
 import { twoFactorAuthCodeSchema } from '@workspace/schemas-zod/auth/twoFactorAuth.schema';
 import { useRouter } from 'next/navigation';
 

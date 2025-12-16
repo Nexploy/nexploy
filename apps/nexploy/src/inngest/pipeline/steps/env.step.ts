@@ -1,18 +1,14 @@
 import { BaseStep } from './base.step';
-import { StepMetadata, StepExecutionContext, StepResult } from '../types';
+import { StepExecutionContext, StepMetadata, StepResult } from '../types';
 import { gitService } from '../services/git.service';
 
-/**
- * Write Environment File Step
- * Writes environment variables to .env.production file
- */
 export class EnvStep extends BaseStep {
     readonly metadata: StepMetadata = {
         id: 'write-env-file',
         name: 'Write Environment File',
         description: 'Write environment variables to .env.production',
         retryable: false,
-        timeout: 30000, // 30 seconds
+        timeout: 30000,
     };
 
     async execute(ctx: StepExecutionContext): Promise<StepResult> {

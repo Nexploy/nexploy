@@ -10,12 +10,13 @@ import {
 import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { BaseStateManager } from '@/lib/BaseStateManager';
 
-class VolumesStateManager extends BaseStateManager {
+export class VolumesStateManager extends BaseStateManager {
     private volumes: Map<string, Volume> = new Map();
 
-    constructor() {
+    constructor(environmentId: string) {
         super({
-            managerName: 'Volume State Manager',
+            managerName: `Volume State Manager [${environmentId}]`,
+            environmentId,
             pollIntervalMs: 10000,
             maxReconnectAttempts: 5,
             maxListeners: 100,
@@ -29,7 +30,7 @@ class VolumesStateManager extends BaseStateManager {
         }
 
         try {
-            const volumesResponse = await docker.df();
+            const volumesResponse = await this.docker.df();
             const volumes = volumesResponse.Volumes || [];
 
             for (const volume of volumes) {
@@ -67,7 +68,7 @@ class VolumesStateManager extends BaseStateManager {
 
     async fullStateSync(): Promise<void> {
         try {
-            const volumesResponse = await docker.df();
+            const volumesResponse = await this.docker.df();
             const volumes = volumesResponse.Volumes || [];
 
             for (const volume of volumes) {
@@ -148,7 +149,7 @@ class VolumesStateManager extends BaseStateManager {
     }
 
     private async refreshVolumeState(volumeName: string): Promise<void> {
-        const volume = docker.getVolume(volumeName);
+        const volume = this.docker.getVolume(volumeName);
         const info = await volume.inspect();
         const newState = this.parseVolumeInfo(info);
 
@@ -220,7 +221,7 @@ class VolumesStateManager extends BaseStateManager {
         logger.info('Starting hard refresh of volume state');
 
         try {
-            const volumesResponse = await docker.df();
+            const volumesResponse = await this.docker.df();
             const volumes = volumesResponse.Volumes || [];
             const newVolumeMap = new Map<string, Volume>();
 
@@ -275,4 +276,29 @@ class VolumesStateManager extends BaseStateManager {
     }
 }
 
-export const volumesStateManager = new VolumesStateManager();
+import { getCurrentEnvironmentId } from '@/lib/dockerContext';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
+
+export function getVolumesStateManager(): VolumesStateManager {
+    const environmentId = getCurrentEnvironmentId();
+    if (!environmentId) {
+        const defaultId = dockerClientRegistry.getDefaultEnvironmentId();
+        if (!defaultId) {
+            throw new Error('No Docker environment available');
+        }
+        return stateManagerFactory.getManagers(defaultId).volumes;
+    }
+    return stateManagerFactory.getManagers(environmentId).volumes;
+}
+
+export const volumesStateManager = new Proxy({} as VolumesStateManager, {
+    get(_target, prop) {
+        const manager = getVolumesStateManager();
+        const value = (manager as any)[prop];
+        if (typeof value === 'function') {
+            return value.bind(manager);
+        }
+        return value;
+    },
+});

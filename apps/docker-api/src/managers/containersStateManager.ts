@@ -1,4 +1,3 @@
-import { docker } from '@/utils/dockerClient';
 import { logger } from '@/utils/logger';
 import { ContainerCreateOptions, ContainerInfo, ContainerInspectInfo } from 'dockerode';
 import {
@@ -12,15 +11,20 @@ import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { BaseStateManager } from '@/lib/BaseStateManager';
 import { DeployOptions } from '@workspace/typescript-interface/inngest/deploy';
 import { EventEmitter } from 'events';
+import { getCurrentEnvironmentId } from '@/lib/dockerContext';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
+import { networksStateManager } from '@/managers/networksStateManager';
 
 export const containerImageEvents = new EventEmitter();
 
-class ContainersStateManager extends BaseStateManager {
+export class ContainersStateManager extends BaseStateManager {
     private containers: Map<string, Containers> = new Map();
 
-    constructor() {
+    constructor(environmentId: string) {
         super({
-            managerName: 'Containers State Manager',
+            managerName: `Containers State Manager [${environmentId}]`,
+            environmentId,
             pollIntervalMs: 10000,
             maxReconnectAttempts: 5,
             maxListeners: 100,
@@ -34,7 +38,7 @@ class ContainersStateManager extends BaseStateManager {
         }
 
         try {
-            const containers = await docker.listContainers({ all: true });
+            const containers = await this.docker.listContainers({ all: true });
 
             for (const container of containers) {
                 const state = this.parseContainerInfo(container);
@@ -92,7 +96,7 @@ class ContainersStateManager extends BaseStateManager {
         }
 
         try {
-            const containers = await docker.listContainers({ all: true });
+            const containers = await this.docker.listContainers({ all: true });
 
             for (const container of containers) {
                 const newState = this.parseContainerInfo(container);
@@ -164,7 +168,7 @@ class ContainersStateManager extends BaseStateManager {
                 return;
             }
 
-            const container = docker.getContainer(containerId);
+            const container = this.docker.getContainer(containerId);
             const info = await container.inspect();
             const newState = this.parseContainerInspect(info);
 
@@ -373,7 +377,7 @@ class ContainersStateManager extends BaseStateManager {
         logger.info('Starting hard refresh of container states');
 
         try {
-            const containers = await docker.listContainers({ all: true });
+            const containers = await this.docker.listContainers({ all: true });
             const currentIds = new Set(containers.map((c) => c.Id));
             const oldIds = new Set(this.containers.keys());
 
@@ -442,6 +446,9 @@ class ContainersStateManager extends BaseStateManager {
 
         await this.removeExistingContainer(containerName);
 
+        const traefikNetworkExist =
+            await networksStateManager.ensureNetworkExists('nexploy_traefik_network');
+
         const envArray = options.envVars
             ? Object.entries(options.envVars).map(([key, value]) => `${key}=${value}`)
             : [];
@@ -452,11 +459,11 @@ class ContainersStateManager extends BaseStateManager {
             Env: envArray,
             HostConfig: {
                 RestartPolicy: { Name: 'unless-stopped' },
-                NetworkMode: 'nexploy_traefik_network',
+                ...(traefikNetworkExist && { NetworkMode: 'nexploy_traefik_network' }),
             },
         };
 
-        const container = await docker.createContainer(containerConfig);
+        const container = await this.docker.createContainer(containerConfig);
         await container.start();
 
         logger.info({ containerId: container.id }, 'Deployment started');
@@ -469,7 +476,7 @@ class ContainersStateManager extends BaseStateManager {
 
     private async removeExistingContainer(containerName: string): Promise<void> {
         try {
-            const existing = docker.getContainer(containerName);
+            const existing = this.docker.getContainer(containerName);
             const info = await existing.inspect();
             if (info.State.Running) {
                 await existing.stop();
@@ -480,4 +487,28 @@ class ContainersStateManager extends BaseStateManager {
     }
 }
 
-export const containersStateManager = new ContainersStateManager();
+export function getContainersStateManager(): ContainersStateManager {
+    const environmentId = getCurrentEnvironmentId();
+    if (!environmentId) {
+        const defaultId = dockerClientRegistry.getDefaultEnvironmentId();
+        if (!defaultId) {
+            throw new Error('No Docker environment available');
+        }
+        return stateManagerFactory.getManagers(defaultId).containers;
+    }
+
+    return stateManagerFactory.getManagers(environmentId).containers;
+}
+
+export const containersStateManager = new Proxy({} as ContainersStateManager, {
+    get(_target, prop) {
+        const manager = getContainersStateManager();
+        const value = (manager as any)[prop];
+
+        if (typeof value === 'function') {
+            return value.bind(manager);
+        }
+
+        return value;
+    },
+});

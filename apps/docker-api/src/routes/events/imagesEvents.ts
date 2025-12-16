@@ -1,16 +1,16 @@
 import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
-import { imagesStateManager } from '@/managers/imagesStateManager';
+import { getImagesStateManager } from '@/managers/imagesStateManager';
 import { logger } from '@/utils/logger';
 import { ImageEvent } from '@workspace/typescript-interface/docker/docker.image';
 
 const app = new Hono();
 
 app.get('/stream', (c) => {
+    const manager = getImagesStateManager();
+
     return streamSSE(c, async (stream) => {
         const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-
-        logger.info({ clientId }, 'SSE Image client connected');
 
         const handleInitialState = async (imageEvent: ImageEvent) => {
             try {
@@ -76,29 +76,25 @@ app.get('/stream', (c) => {
         }, 15000);
 
         const cleanup = () => {
-            logger.info('Client disconnected from image events stream');
-
-            imagesStateManager.off('state-change', handleStateChange);
-            imagesStateManager.off('initial-state', handleInitialState);
-            imagesStateManager.off('image-added', handleImageAdded);
-            imagesStateManager.off('image-updated', handleImageUpdated);
-            imagesStateManager.off('image-removed', handleImageRemoved);
-
-            logger.info({ clientId }, 'SSE Image client disconnected');
+            manager.off('state-change', handleStateChange);
+            manager.off('initial-state', handleInitialState);
+            manager.off('image-added', handleImageAdded);
+            manager.off('image-updated', handleImageUpdated);
+            manager.off('image-removed', handleImageRemoved);
         };
 
-        const initialImages = imagesStateManager.getAllImages();
+        const initialImages = manager.getAllImages();
         await handleInitialState({
             type: 'initial',
             images: initialImages,
             timestamp: Date.now(),
         });
 
-        imagesStateManager.on('state-change', handleStateChange);
-        imagesStateManager.on('initial-state', handleInitialState);
-        imagesStateManager.on('image-added', handleImageAdded);
-        imagesStateManager.on('image-updated', handleImageUpdated);
-        imagesStateManager.on('image-removed', handleImageRemoved);
+        manager.on('state-change', handleStateChange);
+        manager.on('initial-state', handleInitialState);
+        manager.on('image-added', handleImageAdded);
+        manager.on('image-updated', handleImageUpdated);
+        manager.on('image-removed', handleImageRemoved);
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 

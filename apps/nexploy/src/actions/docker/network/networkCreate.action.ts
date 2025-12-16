@@ -1,7 +1,7 @@
 'use server';
 
 import { authActionServer } from '@/lib/api/safe-action';
-import { drinoDocker } from '@/lib/api/drinoDocker';
+import { kyDocker } from '@/lib/api/kyDocker';
 import { HttpErrorResponse } from 'drino';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { networkCreateSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';
@@ -10,7 +10,7 @@ export const onNetworkCreateAction = authActionServer
     .inputSchema(networkCreateSchema)
     .action(async ({ parsedInput }) => {
         try {
-            const response = await drinoDocker.post('/networks/create', parsedInput).consume();
+            const response = await kyDocker.post('networks/create', { json: parsedInput }).json();
 
             await setToastServer({
                 type: 'success',

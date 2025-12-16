@@ -7,18 +7,20 @@ import { ContainerLogsStateManager } from '@/managers/containerLogsStateManager'
 import { ContainerLogsEvent } from '@workspace/typescript-interface/docker/docker.container.logs';
 import { ContainerStatsStateManager } from '@/managers/containerStatsStateManager';
 import { ContainerStatsEvent } from '@workspace/typescript-interface/docker/docker.container.stats';
+import { getCurrentEnvironmentId } from '@/lib/dockerContext';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 
 const app = new Hono();
 
 app.get('/stream/:containerId', (c) => {
     const containerId = c.req.param('containerId');
 
+    const environmentId =
+        getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
+    const manager = new ContainerStateManager(containerId, environmentId);
+
     return streamSSE(c, async (stream) => {
         const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-
-        logger.info({ clientId, containerId }, 'SSE Container client connected');
-
-        const manager = new ContainerStateManager(containerId);
 
         try {
             await manager.start();
@@ -96,8 +98,6 @@ app.get('/stream/:containerId', (c) => {
             manager.off('initial-state', handleInitialState);
             manager.off('state-change', handleStateChange);
             manager.off('removed', handleRemoved);
-
-            logger.info({ clientId, containerId }, 'SSE Container monitor client disconnected');
         };
 
         const currentState = manager.getCurrentState();
@@ -126,11 +126,12 @@ app.get('/stream/:containerId/logs/:follow/:tail', (c) => {
     const follow = true;
     const tail = parseInt(c.req.param('tail') || '500', 10);
 
+    const environmentId =
+        getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
+    const logsManager = new ContainerLogsStateManager(containerId, environmentId);
+
     return streamSSE(c, async (stream) => {
         const clientId = `logs-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-        logger.info({ clientId, containerId, follow, tail }, 'SSE Container logs client connected');
-
-        const logsManager = new ContainerLogsStateManager(containerId);
 
         try {
             await logsManager.start({ follow, tail });
@@ -175,8 +176,6 @@ app.get('/stream/:containerId/logs/:follow/:tail', (c) => {
             clearInterval(heartbeat);
             logsManager.off('log', handleLog);
             logsManager.stop();
-
-            logger.info({ clientId, containerId }, 'SSE Container logs client disconnected');
         };
 
         logsManager.on('log', handleLog);
@@ -191,11 +190,12 @@ app.get('/stream/:containerId/stats/:refreshRate', (c) => {
     const containerId = c.req.param('containerId');
     const refreshRate = parseInt(c.req.param('refreshRate'), 10);
 
+    const environmentId =
+        getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
+    const statsManager = new ContainerStatsStateManager(containerId, environmentId, refreshRate);
+
     return streamSSE(c, async (stream) => {
         const clientId = `stats-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-        logger.info({ clientId, containerId }, 'SSE Container stats client connected');
-
-        const statsManager = new ContainerStatsStateManager(containerId, refreshRate);
 
         try {
             await statsManager.start();
@@ -269,8 +269,6 @@ app.get('/stream/:containerId/stats/:refreshRate', (c) => {
             statsManager.off('stats-update', handleStatsUpdate);
             statsManager.off('removed', handleRemoved);
             statsManager.stop();
-
-            logger.info({ clientId, containerId }, 'SSE Container stats client disconnected');
         };
 
         const currentStats = statsManager.getCurrentState();

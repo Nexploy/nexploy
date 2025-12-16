@@ -50,32 +50,6 @@ app.post(
     }),
 );
 
-/**
- * @openapi
- * /images/{id}/tag:
- *   post:
- *     summary: Tag an image
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               repo:
- *                 type: string
- *               tag:
- *                 type: string
- *     responses:
- *       200:
- *         description: Image tagged
- */
 app.post(
     '/:id/tag',
     handleAsync(async (c) => {

@@ -2,8 +2,9 @@ import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { prisma } from '../../../prisma/prisma';
 import { nextCookies } from 'better-auth/next-js';
-import { admin, twoFactor } from 'better-auth/plugins';
+import { admin, apiKey, twoFactor } from 'better-auth/plugins';
 import { env } from '../../../env';
+import { permission } from '@/lib/auth/permissions';
 
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
@@ -37,11 +38,16 @@ export const auth = betterAuth({
     },
     appName: 'Nexploy',
     plugins: [
-        admin(),
+        admin(permission),
         twoFactor({
             backupCodeOptions: {
                 storeBackupCodes: 'plain',
             },
+        }),
+        apiKey({
+            enableSessionForAPIKeys: true,
+            apiKeyHeaders: ['x-api-key'],
+            enableMetadata: true,
         }),
         nextCookies(),
     ],

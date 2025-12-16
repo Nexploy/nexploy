@@ -1,4 +1,5 @@
-import { docker } from '@/utils/dockerClient';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import type Docker from 'dockerode';
 import { EventEmitter } from 'events';
 import { logger } from '@/utils/logger';
 import { Readable } from 'stream';
@@ -9,15 +10,17 @@ import {
 
 export class ContainerLogsStateManager extends EventEmitter {
     private containerId: string;
+    private readonly docker: Docker;
     private logStream: Readable | null = null;
     private isActive = false;
     private reconnectAttempts = 0;
     private maxReconnectAttempts = 5;
     private reconnectDelay = 1000;
 
-    constructor(containerId: string) {
+    constructor(containerId: string, environmentId: string) {
         super();
         this.containerId = containerId;
+        this.docker = dockerClientRegistry.getClient(environmentId);
         this.setMaxListeners(50);
     }
 
@@ -30,7 +33,7 @@ export class ContainerLogsStateManager extends EventEmitter {
         const { follow = true, tail = 500 } = options || {};
 
         try {
-            const container = docker.getContainer(this.containerId);
+            const container = this.docker.getContainer(this.containerId);
 
             await container.inspect();
 
@@ -102,7 +105,7 @@ export class ContainerLogsStateManager extends EventEmitter {
             this.logStream = null;
 
             try {
-                const container = docker.getContainer(this.containerId);
+                const container = this.docker.getContainer(this.containerId);
                 const info = await container.inspect();
                 if (info.State.Status === 'running') {
                     logger.info(

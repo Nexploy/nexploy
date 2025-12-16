@@ -7,7 +7,7 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { twoFactorAuthSchema } from '@workspace/schemas-zod/auth/twoFactorAuth.schema';
-import { onTwoFactorAuthEnableAction } from '@/actions/docker/auth/twoFactorAuthEnable.action';
+import { onTwoFactorAuthEnableAction } from '@/actions/auth/twoFactorAuthEnable.action';
 import {
     Form,
     FormControl,

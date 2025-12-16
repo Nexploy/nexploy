@@ -1,7 +1,5 @@
-import 'server-only';
 import { prisma } from '../../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
-import { env } from '../../env';
 import {
     CloudflareApiResponse,
     CloudflareCredentialInfo,
@@ -15,20 +13,21 @@ export async function saveCloudflareCredential(
     userId: string,
     apiToken: string,
     serverIp: string,
-): Promise<void> {
+): Promise<CloudflareCredentialInfo> {
     try {
         return await tokenCloudflareStorage.run({ apiToken }, async () => {
-            return drinoCloudflare.get<CloudflareZone[]>('/zones').consume({
-                result: async () => {
-                    const encryptedToken = encrypt(apiToken);
+            await drinoCloudflare.get<CloudflareZone[]>('/zones').consume();
 
-                    await prisma.cloudflareCredential.upsert({
-                        where: { userId },
-                        update: { apiToken: encryptedToken, serverIp },
-                        create: { userId, apiToken: encryptedToken, serverIp },
-                    });
-                },
+            const encryptedToken = encrypt(apiToken);
+
+            const cloudflareCredential = await prisma.cloudflareCredential.create({
+                data: { userId, apiToken: encryptedToken, serverIp },
             });
+
+            return {
+                isConnected: true,
+                createdAt: cloudflareCredential.createdAt,
+            };
         });
     } catch (error: unknown) {
         throw new Error('Cloudflare error saving credential');

@@ -1,7 +1,7 @@
 'use server';
 
 import { authActionServer } from '@/lib/api/safe-action';
-import { drinoDocker } from '@/lib/api/drinoDocker';
+import { kyDocker } from '@/lib/api/kyDocker';
 import { HttpErrorResponse } from 'drino';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { composesActionsSchema } from '@workspace/schemas-zod/docker/composes/composesAction.schema';
@@ -10,7 +10,7 @@ export const onComposesAction = authActionServer
     .inputSchema(composesActionsSchema)
     .action(async ({ parsedInput: { stackName, action } }) => {
         try {
-            await drinoDocker.post(`/composes/${stackName}/${action}`, null).consume();
+            return await kyDocker.post(`composes/${stackName}/${action}`).json();
         } catch (err: unknown) {
             if (err instanceof HttpErrorResponse) {
                 await setToastServer({

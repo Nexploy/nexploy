@@ -1,7 +1,9 @@
 import { logger } from '@/utils/logger';
-import { docker } from '@/utils/dockerClient';
 import { TraefikRequest } from '@workspace/typescript-interface/traefik/traefik.request';
 import { BaseStateManager } from '@/lib/BaseStateManager';
+import { getCurrentEnvironmentId } from '@/lib/dockerContext';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 
 const TRAEFIK_CONTAINER_NAME = 'nexploy_traefik';
 const MAX_REQUESTS = 500;
@@ -13,20 +15,32 @@ interface TraefikLogEvent {
     timestamp: number;
 }
 
-class TraefikLogsManager extends BaseStateManager {
+export class TraefikLogsManager extends BaseStateManager {
     private requests: TraefikRequest[] = [];
     private logStream: NodeJS.ReadableStream | null = null;
     private logBuffer = '';
     private reconnectTimeout: NodeJS.Timeout | null = null;
     private isReconnecting = false;
+    private traefikExists = false;
 
-    constructor() {
+    constructor(environmentId: string) {
         super({
-            managerName: 'Traefik Logs Manager',
+            managerName: `Traefik Logs Manager [${environmentId}]`,
+            environmentId,
             pollIntervalMs: 0,
             maxReconnectAttempts: 5,
             maxListeners: 100,
         });
+    }
+
+    private async checkTraefikExists(): Promise<boolean> {
+        try {
+            const container = this.docker.getContainer(TRAEFIK_CONTAINER_NAME);
+            await container.inspect();
+            return true;
+        } catch (err) {
+            return false;
+        }
     }
 
     getEventFilters(): Record<string, string[]> {
@@ -38,15 +52,21 @@ class TraefikLogsManager extends BaseStateManager {
     }
 
     async loadInitialState(): Promise<void> {
-        try {
-            const container = docker.getContainer(TRAEFIK_CONTAINER_NAME);
-            await container.inspect();
+        this.traefikExists = await this.checkTraefikExists();
 
+        if (!this.traefikExists) {
+            logger.info(
+                { environmentId: this.environmentId },
+                'Traefik container not found in this environment, skipping log stream',
+            );
+            return;
+        }
+
+        try {
             await this.startLogStream();
             logger.info('Traefik logs manager initial state loaded');
         } catch (err) {
-            logger.warn('Traefik container not found, manager not started');
-            throw err;
+            logger.error({ err }, 'Failed to start Traefik log stream');
         }
     }
 
@@ -75,6 +95,14 @@ class TraefikLogsManager extends BaseStateManager {
     }
 
     async fullStateSync(): Promise<void> {
+        // Re-check if Traefik exists (it might have been created after initial start)
+        if (!this.traefikExists) {
+            this.traefikExists = await this.checkTraefikExists();
+            if (!this.traefikExists) {
+                return; // Still doesn't exist, skip
+            }
+        }
+
         if (!this.logStream && !this.isReconnecting) {
             await this.reconnectLogStream();
         }
@@ -86,10 +114,18 @@ class TraefikLogsManager extends BaseStateManager {
             return;
         }
 
+        // Check if container still exists before attempting connection
+        const exists = await this.checkTraefikExists();
+        if (!exists) {
+            logger.debug('Traefik container not found, cannot start log stream');
+            this.traefikExists = false;
+            return;
+        }
+
         this.isReconnecting = true;
 
         try {
-            const container = docker.getContainer(TRAEFIK_CONTAINER_NAME);
+            const container = this.docker.getContainer(TRAEFIK_CONTAINER_NAME);
 
             const stream = await container.logs({
                 follow: true,
@@ -102,6 +138,7 @@ class TraefikLogsManager extends BaseStateManager {
             this.logStream = stream;
             this.logBuffer = '';
             this.isReconnecting = false;
+            this.traefikExists = true;
 
             stream.on('data', (chunk: Buffer) => {
                 this.handleLogData(chunk);
@@ -126,8 +163,10 @@ class TraefikLogsManager extends BaseStateManager {
             logger.info('Traefik log stream started');
         } catch (err) {
             this.isReconnecting = false;
-            logger.error({ err }, 'Failed to start Traefik log stream');
-            throw err;
+            // Don't log error if container doesn't exist (404)
+            if ((err as any).statusCode !== 404) {
+                logger.error({ err }, 'Failed to start Traefik log stream');
+            }
         }
     }
 
@@ -168,9 +207,12 @@ class TraefikLogsManager extends BaseStateManager {
 
         this.reconnectTimeout = setTimeout(() => {
             this.reconnectTimeout = null;
-            logger.info('Reconnecting to Traefik logs...');
+            logger.debug('Attempting to reconnect to Traefik logs...');
             this.reconnectLogStream().catch((err) => {
-                logger.error({ err }, 'Failed to reconnect log stream');
+                // Silently fail if container doesn't exist (404)
+                if ((err as any).statusCode !== 404) {
+                    logger.error({ err }, 'Failed to reconnect log stream');
+                }
             });
         }, 5000);
     }
@@ -314,4 +356,25 @@ class TraefikLogsManager extends BaseStateManager {
     }
 }
 
-export const traefikLogsManager = new TraefikLogsManager();
+export function getTraefikLogsManager(): TraefikLogsManager {
+    const environmentId = getCurrentEnvironmentId();
+    if (!environmentId) {
+        const defaultId = dockerClientRegistry.getDefaultEnvironmentId();
+        if (!defaultId) {
+            throw new Error('No Docker environment available');
+        }
+        return stateManagerFactory.getManagers(defaultId).traefik;
+    }
+    return stateManagerFactory.getManagers(environmentId).traefik;
+}
+
+export const traefikLogsManager = new Proxy({} as TraefikLogsManager, {
+    get(_target, prop) {
+        const manager = getTraefikLogsManager();
+        const value = (manager as any)[prop];
+        if (typeof value === 'function') {
+            return value.bind(manager);
+        }
+        return value;
+    },
+});

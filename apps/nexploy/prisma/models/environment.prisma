@@ -1,0 +1,39 @@
+enum DockerConnectionType {
+  UNIX_SOCKET
+  TCP
+  TCP_TLS
+}
+
+model Environment {
+  id   String @id @default(cuid())
+  name String
+
+  // Connection configuration
+  connectionType DockerConnectionType @default(UNIX_SOCKET)
+  socketPath     String?
+  host           String?
+  port           Int?
+
+  // TLS credentials (encrypted with AES-256-CBC)
+  tlsCert String? // Encrypted certificate
+  tlsKey  String? // Encrypted private key
+  tlsCa   String? // Encrypted CA certificate
+
+  // Environment metadata
+  isDefault   Boolean @default(false)
+  isActive    Boolean @default(true)
+  description String?
+
+  // Health tracking
+  lastHealthCheck DateTime?
+  healthStatus    String? // connected, error, unknown
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Optional: Multi-tenancy support
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("environment")
+}

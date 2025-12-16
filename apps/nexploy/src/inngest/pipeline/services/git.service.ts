@@ -6,14 +6,7 @@ import { env } from '../../../../env';
 import { getValidToken } from '@/services/api/gitProvider.service';
 import { ProgressCallback } from '../types';
 
-/**
- * Git Service
- * Handles all git-related operations for the pipeline
- */
 class GitService {
-    /**
-     * Execute a shell command with progress tracking
-     */
     private async exec(
         command: string,
         args: string[],
@@ -63,9 +56,6 @@ class GitService {
         });
     }
 
-    /**
-     * Build authenticated git URL with OAuth token
-     */
     private getAuthenticatedGitUrl(gitUrl: string, gitToken: string | null): string {
         if (!gitToken) {
             return gitUrl;
@@ -81,9 +71,6 @@ class GitService {
         }
     }
 
-    /**
-     * Clone a repository to the work directory
-     */
     async cloneRepository(
         buildConfig: BuildConfig,
         onProgress?: ProgressCallback,
@@ -109,12 +96,9 @@ class GitService {
         const authenticatedUrl = this.getAuthenticatedGitUrl(buildConfig.gitUrl, token.accessToken);
 
         try {
-            // If a specific commit hash is provided, we need to clone without depth restriction
-            // so we can checkout the specific commit
             const cloneArgs = ['clone'];
 
             if (!buildConfig.gitCommitHash) {
-                // Only use shallow clone if no specific commit is requested
                 cloneArgs.push('--depth=1');
             }
 
@@ -128,13 +112,12 @@ class GitService {
 
             await this.exec('git', cloneArgs, {}, onProgress);
 
-            // If a specific commit hash is provided, checkout that commit
             if (buildConfig.gitCommitHash) {
                 await this.exec('git', ['checkout', buildConfig.gitCommitHash], {
                     cwd: workDir,
                 });
             }
-        } catch (error) {
+        } catch (error: unknown) {
             await rm(workDir, { recursive: true, force: true }).catch(() => {});
             const commitInfo = buildConfig.gitCommitHash
                 ? `, commit: ${buildConfig.gitCommitHash}`
@@ -144,7 +127,6 @@ class GitService {
             );
         }
 
-        // Handle context path if specified
         if (buildConfig.repositoryPath && buildConfig.repositoryPath !== '.') {
             return join(workDir, buildConfig.repositoryPath);
         }
@@ -152,9 +134,6 @@ class GitService {
         return workDir;
     }
 
-    /**
-     * Write environment variables to .env.production file
-     */
     async writeEnvFile(workDir: string, envVariables: Record<string, string>): Promise<void> {
         if (!envVariables || Object.keys(envVariables).length === 0) {
             return;
@@ -168,9 +147,6 @@ class GitService {
         await writeFile(envPath, envContent);
     }
 
-    /**
-     * Validate that a Docker Compose file exists
-     */
     async validateComposeFile(workDir: string, composePath?: string): Promise<string> {
         const primaryPath = composePath || 'docker-compose.yml';
         const composeFilePath = join(workDir, primaryPath);
@@ -179,7 +155,6 @@ class GitService {
             await access(composeFilePath);
             return primaryPath;
         } catch {
-            // Try alternative paths
             const alternativePaths = ['docker-compose.yaml', 'compose.yml', 'compose.yaml'];
 
             for (const altPath of alternativePaths) {
@@ -197,18 +172,12 @@ class GitService {
         }
     }
 
-    /**
-     * Validate Docker Compose file syntax
-     */
     async validateComposeSyntax(workDir: string, composePath: string): Promise<void> {
         await this.exec('docker', ['compose', '-f', composePath, 'config', '--quiet'], {
             cwd: workDir,
         });
     }
 
-    /**
-     * Validate that a Dockerfile exists
-     */
     async validateDockerfile(workDir: string, dockerfilePath?: string): Promise<void> {
         const path = join(workDir, dockerfilePath || 'Dockerfile');
 
@@ -219,14 +188,11 @@ class GitService {
         }
     }
 
-    /**
-     * Cleanup work directory
-     */
     async cleanup(workDir: string): Promise<void> {
         try {
             await rm(workDir, { recursive: true, force: true });
         } catch {
-            // Ignore cleanup errors
+            /* empty */
         }
     }
 }

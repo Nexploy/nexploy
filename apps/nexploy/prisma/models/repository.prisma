@@ -8,10 +8,10 @@ model Repository {
   gitProvider String
   gitId       String @unique
 
-  buildType         BuildType  @default(DOCKERFILE)
-  dockerfilePath    String? @default("Dockerfile")
-  dockerComposePath String? @default("docker-compose.yml")
-  contextPath       String? @default(".")
+  buildType         BuildType @default(DOCKERFILE)
+  dockerfilePath    String?   @default("Dockerfile")
+  dockerComposePath String?   @default("docker-compose.yml")
+  contextPath       String?   @default(".")
   buildArgs         String?
 
   autoDeploy    Boolean @default(true)

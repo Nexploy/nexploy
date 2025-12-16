@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { email, name, password } from './common.schema';
+import { Role } from './permissions';
 
 export const signInFormSchema = (t: any) =>
     z.object({
@@ -32,3 +33,23 @@ export const changeUsernameFormSchema = (t: any) =>
     });
 
 export type TypeChangeUsernameFormSchema = z.infer<ReturnType<typeof changeUsernameFormSchema>>;
+
+export const createUserFormSchema = (t: any) =>
+    z
+        .object({
+            name: name(t),
+            email: email(t),
+            password: password(t),
+            confirmPassword: z
+                .string({
+                    error: t('required'),
+                })
+                .min(1, { message: t('required') }),
+            role: z.enum(['admin', 'user'] as Role[]),
+        })
+        .refine((data) => data.password === data.confirmPassword, {
+            message: t('passwordsMustMatch'),
+            path: ['confirmPassword'],
+        });
+
+export type TypeCreateUserFormSchema = z.infer<ReturnType<typeof createUserFormSchema>>;

@@ -1,7 +1,7 @@
 'use server';
 
 import { authActionServer } from '@/lib/api/safe-action';
-import { drinoDocker } from '@/lib/api/drinoDocker';
+import { kyDocker } from '@/lib/api/kyDocker';
 import { HttpErrorResponse } from 'drino';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { swarmNodeActionSchema } from '@workspace/schemas-zod/docker/swarm/nodeAction.schema';
@@ -12,30 +12,24 @@ export const onSwarmNodeAction = authActionServer
         try {
             switch (action) {
                 case 'promote': {
-                    await drinoDocker.post(`/swarm/nodes/${nodeId}/promote`, null).consume();
-                    break;
+                    return await kyDocker.post(`swarm/nodes/${nodeId}/promote`).json();
                 }
                 case 'demote': {
-                    await drinoDocker.post(`/swarm/nodes/${nodeId}/demote`, null).consume();
-                    break;
+                    return await kyDocker.post(`swarm/nodes/${nodeId}/demote`).json();
                 }
                 case 'drain': {
-                    await drinoDocker.post(`/swarm/nodes/${nodeId}/drain`, null).consume();
-                    break;
+                    return await kyDocker.post(`swarm/nodes/${nodeId}/drain`).json();
                 }
                 case 'activate': {
-                    await drinoDocker.post(`/swarm/nodes/${nodeId}/activate`, null).consume();
-                    break;
+                    return await kyDocker.post(`swarm/nodes/${nodeId}/activate`).json();
                 }
                 case 'pause': {
-                    await drinoDocker.post(`/swarm/nodes/${nodeId}/pause`, null).consume();
-                    break;
+                    return await kyDocker.post(`swarm/nodes/${nodeId}/pause`).json();
                 }
                 case 'remove': {
-                    await drinoDocker
-                        .delete(`/swarm/nodes/${nodeId}`, { force: !!force })
-                        .consume();
-                    break;
+                    return await kyDocker
+                        .delete(`swarm/nodes/${nodeId}`, { json: { force: !!force } })
+                        .json();
                 }
             }
         } catch (err: unknown) {

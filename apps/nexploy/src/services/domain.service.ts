@@ -1,4 +1,3 @@
-import 'server-only';
 import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
 import {
     createCloudflareDnsRecord,
@@ -6,10 +5,7 @@ import {
     getCloudflareCredentialInfo,
     updateCloudflareDnsRecord,
 } from '@/services/cloudflare.service';
-import {
-    generateTraefikConfigForRepository,
-    getDomainsFromTraefikConfig,
-} from '@/services/traefik.service';
+import { generateTraefikConfigForRepository, getDomainsFromTraefikConfig, } from '@/services/traefik.service';
 import { ApplyDomainOperationsInput } from '@workspace/typescript-interface/domain';
 
 export async function applyDomainOperations({
