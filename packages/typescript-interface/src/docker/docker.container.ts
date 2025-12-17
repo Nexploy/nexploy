@@ -116,7 +116,7 @@ export interface Container {
         propagation: string;
     }>;
 
-    graphDriver: {
+    graphDriver?: {
         name: string;
         data: {
             deviceId?: string;

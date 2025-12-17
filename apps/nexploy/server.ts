@@ -135,8 +135,10 @@ app.prepare().then(() => {
 
             const result = matchAndTransformWsUrl(pathname!);
             if (result.matched) {
-                req.url = result.url!;
-                console.log('🔌 Proxying WebSocket:', result.original, '→', result.url);
+                // Preserve query parameters from the original URL
+                const queryString = parsedUrl.search;
+                req.url = result.url! + queryString;
+                console.log('🔌 Proxying WebSocket:', result.original, '→', req.url);
                 proxy.ws(req, socket, head);
                 return;
             }

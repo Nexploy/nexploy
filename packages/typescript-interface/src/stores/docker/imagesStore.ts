@@ -22,4 +22,5 @@ export interface ImageState {
 
     connect: (imageIds?: string[]) => void;
     disconnect: () => void;
+    reset: () => void;
 }

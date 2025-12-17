@@ -1,13 +1,10 @@
+'use client';
+
 import { LayoutList } from 'lucide-react';
 import { TableDockerImages } from '@/components/docker/image/table/TableDockerImages';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { CardInfoImages } from '@/components/docker/image/CardInfoImages';
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-    title: 'Docker Images',
-    description: 'Gérez et visualisez toutes vos images Docker avec Nexploy',
-};
+import { EnvironmentDisconnectedAlert } from '@/components/docker/EnvironmentDisconnectedAlert';
 
 export default function ImagesPage() {
     return (
@@ -25,6 +22,11 @@ export default function ImagesPage() {
                     </p>
                 </div>
             </div>
+
+            <div className="px-5">
+                <EnvironmentDisconnectedAlert />
+            </div>
+
             <ScrollAreaWithShadow className="h-full overflow-hidden">
                 <div className={'space-y-8 pb-5'}>
                     <CardInfoImages />

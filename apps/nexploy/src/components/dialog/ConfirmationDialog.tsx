@@ -8,6 +8,7 @@ import {
     DialogTitle,
 } from '@workspace/ui/components/dialog';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 
 export function ConfirmationDialog() {
     const { isOpen, title, description, closeDialog, content, closeOnBackground, props } =
@@ -18,14 +19,21 @@ export function ConfirmationDialog() {
             <DialogContent
                 {...props}
                 onPointerDownOutside={(e) => !closeOnBackground && e.preventDefault()}
+                className={'overflow-hidden'}
             >
-                {(title || description) && (
-                    <DialogHeader>
-                        <DialogTitle>{title}</DialogTitle>
-                        <DialogDescription>{description}</DialogDescription>
-                    </DialogHeader>
-                )}
-                {typeof content === 'function' ? content() : content}
+                <div className="flex max-h-[90vh] flex-col gap-4">
+                    {(title || description) && (
+                        <DialogHeader>
+                            <DialogTitle>{title}</DialogTitle>
+                            <DialogDescription>{description}</DialogDescription>
+                        </DialogHeader>
+                    )}
+                    <ScrollAreaWithShadow bottomShadow className="h-full">
+                        <div className="px-6 pb-6">
+                            {typeof content === 'function' ? content() : content}
+                        </div>
+                    </ScrollAreaWithShadow>
+                </div>
             </DialogContent>
         </Dialog>
     );

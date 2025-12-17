@@ -10,6 +10,7 @@ import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/k
 import { Terminal } from 'lucide-react';
 import { statusMap } from '@/utils/statusMap';
 import { useTerminalStore } from '@/stores/useTerminalStore';
+import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 
 interface ContainerAttachProps {
     children: (props: { openAttach: () => void }) => React.ReactNode;
@@ -18,10 +19,16 @@ interface ContainerAttachProps {
 export function ContainerAttach({ children }: ContainerAttachProps) {
     const [open, setOpen] = useState(false);
     const container = useContainerStore((state) => state.container);
+    const selectedEnvironmentId = useEnvironmentStore((state) => state.selectedEnvironmentId);
 
     const { connectionState, connect, disconnect, terminalRef } = useTerminalStore();
 
-    const socketUrl = `ws://${window.location.host}/api/ws/docker/attach/${container?.id}`;
+    const buildSocketUrl = () => {
+        const baseUrl = `ws://${window.location.host}/api/ws/docker/attach/${container?.id}`;
+        return selectedEnvironmentId ? `${baseUrl}?environment=${selectedEnvironmentId}` : baseUrl;
+    };
+
+    const socketUrl = buildSocketUrl();
 
     const handleOpen = async () => {
         setOpen(true);
@@ -34,7 +41,7 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
 
     const handleReconnect = async () => {
         disconnect();
-        await connect(socketUrl);
+        await connect(buildSocketUrl());
     };
 
     const currentStatus = statusMap[connectionState];

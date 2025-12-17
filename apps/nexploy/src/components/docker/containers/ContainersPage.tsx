@@ -18,6 +18,8 @@ import { ContainersStandalone } from '@/components/docker/containers/ContainersS
 import { useContainersStore } from '@/stores/docker/useContainersStore';
 import Link from 'next/link';
 import { Button } from '@workspace/ui/components/button';
+import { EnvironmentDisconnectedAlert } from '@/components/docker/EnvironmentDisconnectedAlert';
+import { StatusDocker } from '@/components/docker/StatusDocker';
 
 export default function ContainersPage() {
     const lastUpdate = useContainersStore((state) => state.lastUpdate);
@@ -54,6 +56,7 @@ export default function ContainersPage() {
 
     return (
         <div className="flex h-full flex-1 flex-col gap-5 pt-5">
+            <StatusDocker />
             <div className="flex justify-between gap-2 px-5">
                 <div className={'flex gap-3'}>
                     <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
@@ -79,6 +82,10 @@ export default function ContainersPage() {
                         Ajouter un conteneur
                     </Link>
                 </Button>
+            </div>
+
+            <div className="px-5">
+                <EnvironmentDisconnectedAlert />
             </div>
 
             {isLoading && (

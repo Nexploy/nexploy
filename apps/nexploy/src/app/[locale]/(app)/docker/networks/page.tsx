@@ -1,7 +1,10 @@
+'use client';
+
 import { EthernetPort } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { CardInfoNetworks } from '@/components/docker/network/CardInfoNetworks';
 import { TableDockerNetworks } from '@/components/docker/network/table/TableDockerNetworks';
+import { EnvironmentDisconnectedAlert } from '@/components/docker/EnvironmentDisconnectedAlert';
 
 export default function NetworksPage() {
     return (
@@ -19,6 +22,11 @@ export default function NetworksPage() {
                     </p>
                 </div>
             </div>
+
+            <div className="px-5">
+                <EnvironmentDisconnectedAlert />
+            </div>
+
             <ScrollAreaWithShadow className="h-full overflow-hidden">
                 <div className={'space-y-8 pb-6'}>
                     <CardInfoNetworks />

@@ -21,6 +21,7 @@ import { statusMap } from '@/utils/statusMap';
 import { Terminal } from 'lucide-react';
 import { useTerminalStore } from '@/stores/useTerminalStore';
 import { useLocalStorage } from 'usehooks-ts';
+import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 
 interface ContainerTerminalProps {
     children: (props: { openConsole: () => void }) => ReactNode;
@@ -39,16 +40,20 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
     const [selectedShell, setSelectedShell] = useLocalStorage('terminal-selectedShell', 'auto');
 
     const container = useContainerStore((state) => state.container);
+    const selectedEnvironmentId = useEnvironmentStore((state) => state.selectedEnvironmentId);
 
     const { connectionState, connect, disconnect, terminalRef } = useTerminalStore();
 
-    const socketUrl = `ws://${window.location.host}/api/ws/docker/terminal/${container?.id}/${selectedShell}`;
+    const buildSocketUrl = (shell: string) => {
+        const baseUrl = `ws://${window.location.host}/api/ws/docker/terminal/${container?.id}/${shell}`;
+        return selectedEnvironmentId ? `${baseUrl}?environment=${selectedEnvironmentId}` : baseUrl;
+    };
+
+    const socketUrl = buildSocketUrl(selectedShell);
 
     const handleOpen = async () => {
         setOpen(true);
-        await connect(
-            `ws://${window.location.host}/api/ws/docker/terminal/${container?.id}/${selectedShell}`,
-        );
+        await connect(buildSocketUrl(selectedShell));
     };
 
     const handleClose = () => {
@@ -64,9 +69,7 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
     const onValueChange = async (shellCommand: string) => {
         setSelectedShell(shellCommand);
         disconnect();
-        await connect(
-            `ws://${window.location.host}/api/ws/docker/terminal/${container?.id}/${shellCommand}`,
-        );
+        await connect(buildSocketUrl(shellCommand));
     };
 
     const currentStatus = statusMap[connectionState];

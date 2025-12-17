@@ -25,31 +25,31 @@ export function CardDriverGraph() {
                     <div className="flex items-center justify-between border-b pb-2">
                         <span className="text-muted-foreground text-sm">Nom du driver</span>
                         <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
-                            {container.graphDriver.name}
+                            {container.graphDriver?.name}
                         </code>
                     </div>
-                    {container.graphDriver.data.deviceId && (
+                    {container.graphDriver?.data.deviceId && (
                         <div className="flex items-center justify-between border-b pb-2">
                             <span className="text-muted-foreground text-sm">Device ID</span>
                             <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
-                                {container.graphDriver.data.deviceId}
+                                {container.graphDriver?.data.deviceId}
                             </code>
                         </div>
                     )}
-                    {container.graphDriver.data.deviceName && (
+                    {container.graphDriver?.data.deviceName && (
                         <div className="flex items-center justify-between border-b pb-2">
                             <span className="text-muted-foreground text-sm">Device Name</span>
                             <code className="bg-muted/50 truncate rounded-md px-2 py-1 text-xs">
-                                {container.graphDriver.data.deviceName}
+                                {container.graphDriver?.data.deviceName}
                             </code>
                         </div>
                     )}
-                    {container.graphDriver.data.deviceSize && (
+                    {container.graphDriver?.data.deviceSize && (
                         <div className="flex items-center justify-between">
                             <span className="text-muted-foreground text-sm">Device Size</span>
                             <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
                                 {(
-                                    parseInt(container.graphDriver.data.deviceSize) /
+                                    parseInt(container.graphDriver?.data.deviceSize) /
                                     1024 /
                                     1024 /
                                     1024

@@ -1,30 +1,20 @@
 import Docker from 'dockerode';
 import { logger } from '@/utils/logger';
 import { defaultDocker } from '@/utils/dockerClient';
-
-export interface EnvironmentConfig {
-    id: string;
-    name: string;
-    connectionType: 'UNIX_SOCKET' | 'TCP' | 'TCP_TLS';
-    socketPath?: string;
-    host?: string;
-    port?: number;
-    tlsCert?: string; // Encrypted
-    tlsKey?: string; // Encrypted
-    tlsCa?: string; // Encrypted
-    isDefault?: boolean;
-}
+import { EnvironmentSchemaType } from '@workspace/schemas-zod/docker/environment/environment.schema';
+import { EnvironmentConfig } from '@workspace/typescript-interface/docker/environment/environment';
 
 class DockerClientRegistry {
     private clients: Map<string, Docker> = new Map();
     private defaultEnvironmentId: string | null = null;
     private healthCheckIntervals: Map<string, NodeJS.Timeout> = new Map();
 
-    /**
-     * Initialize registry with environments from database
-     */
-    async initialize(environments: EnvironmentConfig[]): Promise<void> {
+    async initialize(environments: EnvironmentConfig[]): Promise<string[]> {
         logger.info({ count: environments.length }, 'Initializing Docker client registry');
+
+        let successCount = 0;
+        let failCount = 0;
+        const registeredEnvironmentIds: string[] = [];
 
         for (const config of environments) {
             try {
@@ -33,53 +23,73 @@ class DockerClientRegistry {
                 if (config.isDefault) {
                     this.defaultEnvironmentId = config.id;
                 }
+                registeredEnvironmentIds.push(config.id!);
+                successCount++;
             } catch (err) {
-                logger.error({ err, environmentId: config.id }, 'Failed to register environment');
+                logger.error(
+                    { err, environmentId: config.id, name: config.name },
+                    'Failed to register environment',
+                );
+                failCount++;
             }
         }
 
-        // Ensure we have a default
+        logger.info(
+            { total: environments.length, succeeded: successCount, failed: failCount },
+            'Docker client registry initialization complete',
+        );
+
         if (!this.defaultEnvironmentId && environments.length > 0) {
-            this.defaultEnvironmentId = environments[0].id;
-            logger.warn(
-                { environmentId: environments[0].id },
-                'No default environment found, using first environment',
-            );
+            const firstRegistered = environments.find((env) => this.clients.has(env.id));
+            if (firstRegistered) {
+                this.defaultEnvironmentId = firstRegistered.id;
+                logger.warn(
+                    { environmentId: firstRegistered.id, name: firstRegistered.name },
+                    'No default environment found, using first available environment',
+                );
+            }
         }
 
-        // If default environment exists, register the legacy default client
         if (this.defaultEnvironmentId && !this.clients.has(this.defaultEnvironmentId)) {
             this.clients.set(this.defaultEnvironmentId, defaultDocker);
         }
-    }
 
-    /**
-     * Register a new Docker environment
-     */
-    async registerEnvironment(config: EnvironmentConfig): Promise<Docker> {
-        const client = this.createClient(config);
-
-        // Test connection
-        try {
-            await client.ping();
-            logger.info({ environmentId: config.id, name: config.name }, 'Environment connected');
-        } catch (err) {
-            logger.warn({ err, environmentId: config.id }, 'Environment connection failed');
-            // Still register it - might come online later
+        if (this.clients.size === 0) {
+            throw new Error('No Docker environments could be registered. Cannot start service.');
         }
 
-        this.clients.set(config.id, client);
-
-        // Start health checks
-        this.startHealthCheck(config.id);
-
-        return client;
+        return registeredEnvironmentIds;
     }
 
-    /**
-     * Create Docker client from config
-     */
-    private createClient(config: EnvironmentConfig): Docker {
+    async registerEnvironment(config: EnvironmentSchemaType): Promise<Docker> {
+        const client = this.createClient(config);
+
+        try {
+            await Promise.race([
+                client.ping(),
+                new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('Ping timeout after 5s')), 5000),
+                ),
+            ]);
+
+            logger.info({ environmentId: config.id, name: config.name }, 'Environment connected');
+
+            this.clients.set(config.id!, client);
+            this.startHealthCheck(config.id!);
+
+            return client;
+        } catch (err) {
+            logger.error(
+                { err, environmentId: config.id, name: config.name },
+                'Environment connection failed - NOT registering this environment',
+            );
+            throw new Error(
+                `Failed to connect to environment "${config.name}" (${config.id}): Docker daemon unreachable`,
+            );
+        }
+    }
+
+    private createClient(config: EnvironmentSchemaType): Docker {
         switch (config.connectionType) {
             case 'UNIX_SOCKET':
                 return new Docker({ socketPath: config.socketPath });
@@ -109,9 +119,6 @@ class DockerClientRegistry {
         }
     }
 
-    /**
-     * Get client by environment ID
-     */
     getClient(environmentId: string): Docker {
         const client = this.clients.get(environmentId);
         if (!client) {
@@ -122,53 +129,33 @@ class DockerClientRegistry {
         return client;
     }
 
-    /**
-     * Check if environment exists
-     */
     hasEnvironment(environmentId: string): boolean {
         return this.clients.has(environmentId);
     }
 
-    /**
-     * Get client safely (returns null if not found)
-     */
     getClientSafe(environmentId: string): Docker | null {
         return this.clients.get(environmentId) || null;
     }
 
-    /**
-     * Get default client
-     */
     getDefaultClient(): Docker {
         if (!this.defaultEnvironmentId) {
-            // Ultimate fallback to legacy singleton
             logger.debug('No default environment configured, using legacy default client');
             return defaultDocker;
         }
         return this.getClient(this.defaultEnvironmentId);
     }
 
-    /**
-     * Get default environment ID
-     */
     getDefaultEnvironmentId(): string | null {
         return this.defaultEnvironmentId;
     }
 
-    /**
-     * Remove environment
-     */
     async unregisterEnvironment(environmentId: string): Promise<void> {
         this.stopHealthCheck(environmentId);
         this.clients.delete(environmentId);
         logger.info({ environmentId }, 'Environment unregistered');
     }
 
-    /**
-     * Health check for environment
-     */
     private startHealthCheck(environmentId: string): void {
-        // Stagger health checks to avoid thundering herd
         const offset = Math.random() * 10000;
 
         setTimeout(() => {
@@ -182,7 +169,7 @@ class DockerClientRegistry {
                 } catch (err) {
                     logger.error({ err, environmentId }, 'Health check failed for environment');
                 }
-            }, 30000); // Every 30 seconds
+            }, 30000);
 
             this.healthCheckIntervals.set(environmentId, interval);
         }, offset);
@@ -196,24 +183,15 @@ class DockerClientRegistry {
         }
     }
 
-    /**
-     * Get all registered environment IDs
-     */
     getEnvironmentIds(): string[] {
         return Array.from(this.clients.keys());
     }
 
-    /**
-     * Reload environment from DB (for hot-reload of config changes)
-     */
-    async reloadEnvironment(config: EnvironmentConfig): Promise<void> {
-        await this.unregisterEnvironment(config.id);
+    async reloadEnvironment(config: EnvironmentSchemaType): Promise<void> {
+        await this.unregisterEnvironment(config.id!);
         await this.registerEnvironment(config);
     }
 
-    /**
-     * Cleanup all clients
-     */
     async shutdown(): Promise<void> {
         logger.info('Shutting down Docker client registry');
 
@@ -224,10 +202,6 @@ class DockerClientRegistry {
         this.clients.clear();
     }
 
-    /**
-     * Decrypt encrypted values using encryption service
-     * Note: This requires the encryption service to be shared or available
-     */
     private decryptValue(encryptedValue: string): string {
         // TODO: Import and use the encryption service from nexploy
         // For now, return as-is (will be implemented when integrating with nexploy)

@@ -20,6 +20,7 @@ class SSEMultiplexerService {
     private readonly RECONNECT_DELAY = 5000;
     private activeChannelKeys: Set<string> = new Set();
     private currentEnvironmentId: string | null = null;
+    private permanentErrors: Set<string> = new Set();
 
     subscribe(
         channel: SSEChannel,
@@ -217,6 +218,21 @@ class SSEMultiplexerService {
             this.multiplexedEventSource.addEventListener('message', (e) => {
                 try {
                     const { channel, event, data, params } = JSON.parse(e.data);
+
+                    // Check for permanent errors that should not trigger reconnection
+                    if (event === 'error') {
+                        try {
+                            const errorData = JSON.parse(data);
+                            if (errorData.code === 'ENVIRONMENT_NOT_FOUND' || errorData.code === 'ENVIRONMENT_UNAVAILABLE') {
+                                const environmentId = this.currentEnvironmentId || 'default';
+                                this.permanentErrors.add(environmentId);
+                                console.warn(`[SSE] Permanent error for environment ${environmentId}:`, errorData);
+                            }
+                        } catch {
+                            // Not a JSON error, continue normally
+                        }
+                    }
+
                     this.dispatch(channel, event, data, params);
                 } catch (error) {
                     console.error('[SSE] Error parsing message:', error);
@@ -287,6 +303,13 @@ class SSEMultiplexerService {
             clearTimeout(this.reconnectTimeout);
         }
 
+        // Don't reconnect if we have a permanent error for the current environment
+        const environmentId = this.currentEnvironmentId || 'default';
+        if (this.permanentErrors.has(environmentId)) {
+            console.warn(`[SSE] Not reconnecting due to permanent error for environment ${environmentId}`);
+            return;
+        }
+
         this.reconnectTimeout = setTimeout(() => {
             this.connectMultiplexed();
         }, this.RECONNECT_DELAY);
@@ -312,6 +335,7 @@ class SSEMultiplexerService {
             eventSource.close();
         });
         this.localEventSources.clear();
+        this.permanentErrors.clear();
     }
 
     getActiveChannels(): Array<{ channel: SSEChannel; params?: Record<string, string> }> {
@@ -320,6 +344,12 @@ class SSEMultiplexerService {
 
     setEnvironmentId(environmentId: string | null): void {
         if (this.currentEnvironmentId === environmentId) return;
+
+        // Clear permanent error for the old environment when switching
+        if (this.currentEnvironmentId) {
+            this.permanentErrors.delete(this.currentEnvironmentId);
+        }
+
         this.currentEnvironmentId = environmentId;
 
         if (this.subscriptions.size > 0) {

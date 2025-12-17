@@ -186,4 +186,16 @@ export const useNetworkStore = create<NetworkState>((set, get) => ({
             reconnectTimeout: null,
         });
     },
+
+    reset: () => {
+        get().disconnect();
+
+        set({
+            networks: [],
+            error: null,
+            lastUpdate: null,
+            eventSource: null,
+            reconnectTimeout: null,
+        });
+    },
 }));

@@ -240,4 +240,24 @@ export const useEventsStore = create<EventsState>((set, get) => ({
             reconnectTimeout: null,
         });
     },
+
+    reset: () => {
+        get().disconnect();
+
+        set({
+            events: [],
+            filteredEvents: [],
+            error: null,
+            lastUpdate: null,
+            eventSource: null,
+            reconnectTimeout: null,
+            filter: {},
+            maxEvents: 1000,
+            eventsReceived: 0,
+            lastEventTime: null,
+
+            searchQuery: '',
+            typeFilter: 'all',
+        });
+    },
 }));

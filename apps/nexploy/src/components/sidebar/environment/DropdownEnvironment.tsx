@@ -1,7 +1,10 @@
 'use client';
 
-import { createEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
-import { useMemo, useState } from 'react';
+import {
+    initializeEnvironmentStore,
+    useEnvironmentStore,
+} from '@/stores/environment/useEnvironmentStore';
+import { useMemo } from 'react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,6 +19,7 @@ import { CreateEnvironmentForm } from '@/components/sidebar/environment/CreateEn
 import { Environment } from 'generated/client';
 import { setDefaultEnvironmentAction } from '@/actions/environment/environment.action';
 import { useRouter } from 'next/navigation';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 
 interface DropdownEnvironment {
     environments: Environment[];
@@ -23,7 +27,7 @@ interface DropdownEnvironment {
 
 export function DropdownEnvironment({ environments }: DropdownEnvironment) {
     const router = useRouter();
-    const useStore = useMemo(() => createEnvironmentStore(environments), []);
+    useMemo(() => initializeEnvironmentStore(environments), []);
 
     const {
         environments: storeEnvironments,
@@ -31,15 +35,24 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
         selectEnvironment,
         addEnvironment,
         getSelectedEnvironment,
-    } = useStore();
+    } = useEnvironmentStore();
 
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const { openDialog, closeDialog } = useConfirmationDialogStore();
 
     const currentEnvironment = getSelectedEnvironment();
 
-    const handleEnvironmentCreated = (environment: any) => {
-        addEnvironment(environment);
-        selectEnvironment(environment.id);
+    const handleEnvironmentCreate = (environment: any) => {
+        openDialog({
+            title: 'Create Docker environment',
+            description:
+                'Add a new Docker environment to manage containers across different hosts.',
+            content: <CreateEnvironmentForm />,
+            onSuccess: () => {
+                addEnvironment(environment);
+                selectEnvironment(environment.id);
+                closeDialog();
+            },
+        });
     };
 
     const handleEnvironmentsChange = async (environmentId: string) => {
@@ -47,6 +60,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
 
         selectEnvironment(environmentId);
         await setDefaultEnvironmentAction({ environmentId });
+        router.refresh();
     };
 
     return (
@@ -92,7 +106,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
                         </DropdownMenuItem>
                     ))}
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="gap-2 p-2" onClick={() => setIsDialogOpen(true)}>
+                    <DropdownMenuItem className="gap-2 p-2" onClick={handleEnvironmentCreate}>
                         <div className="bg-background flex size-6 items-center justify-center rounded-md border border-dashed">
                             <Plus size={14} />
                         </div>
@@ -100,12 +114,6 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-
-            <CreateEnvironmentForm
-                open={isDialogOpen}
-                onOpenChange={setIsDialogOpen}
-                onSuccess={handleEnvironmentCreated}
-            />
         </>
     );
 }

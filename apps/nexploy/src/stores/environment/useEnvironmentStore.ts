@@ -51,80 +51,85 @@ const determineInitialEnvironmentId = (environments: Environment[]): string | nu
     return environments[0]!.id;
 };
 
-export const createEnvironmentStore = (initialEnvironments: Environment[] = []) => {
-    return create<EnvironmentState>((set, get) => {
-        const initialSelectedId = determineInitialEnvironmentId(initialEnvironments);
+export const useEnvironmentStore = create<EnvironmentState>((set, get) => {
+    return {
+        environments: [],
+        selectedEnvironmentId: null,
+        isLoading: false,
 
-        if (initialSelectedId) {
-            sseMultiplexer.setEnvironmentId(initialSelectedId);
-            setEnvironmentCookie(initialSelectedId);
-        }
+        setEnvironments: (environments) => {
+            set({ environments });
 
-        return {
-            environments: initialEnvironments,
-            selectedEnvironmentId: initialSelectedId,
-            isLoading: false,
+            const current = get().selectedEnvironmentId;
+            if (!current || !environments.find((e) => e.id === current)) {
+                const newId = determineInitialEnvironmentId(environments);
+                if (newId) {
+                    set({ selectedEnvironmentId: newId });
+                    sseMultiplexer.setEnvironmentId(newId);
+                    setEnvironmentCookie(newId);
+                }
+            }
+        },
 
-            setEnvironments: (environments) => {
-                set({ environments });
+        selectEnvironment: (environmentId) => {
+            set({ selectedEnvironmentId: environmentId });
+            sseMultiplexer.setEnvironmentId(environmentId);
+            setEnvironmentCookie(environmentId);
+        },
 
-                const current = get().selectedEnvironmentId;
-                if (!current || !environments.find((e) => e.id === current)) {
-                    const newId = determineInitialEnvironmentId(environments);
-                    if (newId) {
-                        set({ selectedEnvironmentId: newId });
-                        sseMultiplexer.setEnvironmentId(newId);
-                        setEnvironmentCookie(newId);
+        addEnvironment: (environment) => {
+            set((state) => ({
+                environments: [...state.environments, environment],
+            }));
+        },
+
+        updateEnvironment: (id, data) => {
+            set((state) => ({
+                environments: state.environments.map((env) =>
+                    env.id === id ? { ...env, ...data } : env,
+                ),
+            }));
+        },
+
+        removeEnvironment: (id) => {
+            set((state) => {
+                const newEnvironments = state.environments.filter((env) => env.id !== id);
+
+                let newSelectedId = state.selectedEnvironmentId;
+
+                if (state.selectedEnvironmentId === id) {
+                    newSelectedId = determineInitialEnvironmentId(newEnvironments);
+
+                    if (newSelectedId) {
+                        sseMultiplexer.setEnvironmentId(newSelectedId);
+                        setEnvironmentCookie(newSelectedId);
                     }
                 }
-            },
 
-            selectEnvironment: (environmentId) => {
-                set({ selectedEnvironmentId: environmentId });
-                sseMultiplexer.setEnvironmentId(environmentId);
-                setEnvironmentCookie(environmentId);
-            },
+                return {
+                    environments: newEnvironments,
+                    selectedEnvironmentId: newSelectedId,
+                };
+            });
+        },
 
-            addEnvironment: (environment) => {
-                set((state) => ({
-                    environments: [...state.environments, environment],
-                }));
-            },
+        getSelectedEnvironment: () => {
+            const state = get();
+            return state.environments.find((e) => e.id === state.selectedEnvironmentId);
+        },
+    };
+});
 
-            updateEnvironment: (id, data) => {
-                set((state) => ({
-                    environments: state.environments.map((env) =>
-                        env.id === id ? { ...env, ...data } : env,
-                    ),
-                }));
-            },
+export const initializeEnvironmentStore = (initialEnvironments: Environment[]) => {
+    const initialSelectedId = determineInitialEnvironmentId(initialEnvironments);
 
-            removeEnvironment: (id) => {
-                set((state) => {
-                    const newEnvironments = state.environments.filter((env) => env.id !== id);
+    if (initialSelectedId) {
+        sseMultiplexer.setEnvironmentId(initialSelectedId);
+        setEnvironmentCookie(initialSelectedId);
+    }
 
-                    let newSelectedId = state.selectedEnvironmentId;
-
-                    if (state.selectedEnvironmentId === id) {
-                        newSelectedId = determineInitialEnvironmentId(newEnvironments);
-
-                        if (newSelectedId) {
-                            sseMultiplexer.setEnvironmentId(newSelectedId);
-                            setEnvironmentCookie(newSelectedId);
-                        }
-                    }
-
-                    return {
-                        environments: newEnvironments,
-                        selectedEnvironmentId: newSelectedId,
-                    };
-                });
-            },
-
-            getSelectedEnvironment: () => {
-                const state = get();
-                return state.environments.find((e) => e.id === state.selectedEnvironmentId);
-            },
-        };
+    useEnvironmentStore.setState({
+        environments: initialEnvironments,
+        selectedEnvironmentId: initialSelectedId,
     });
 };

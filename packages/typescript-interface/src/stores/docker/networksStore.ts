@@ -23,4 +23,5 @@ export interface NetworkState {
     };
     connect: (networkIds?: string[]) => void;
     disconnect: () => void;
+    reset: () => void;
 }

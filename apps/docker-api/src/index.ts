@@ -29,6 +29,7 @@ import swarmEvents from '@/routes/events/swarmEvents';
 import traefikRoutes from '@/routes/traefikRoutes';
 import traefikEvents from '@/routes/events/traefikEvents';
 import composeRoutes from './routes/composeRoutes';
+import environmentsRoutes from '@/routes/environments.routes';
 import { dockerEnvironmentMiddleware } from '@/middleware/dockerEnvironment.middleware';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
@@ -87,6 +88,8 @@ app.route('/api/traefik', traefikRoutes);
 
 app.route('/api/events/events', eventsEvents);
 
+app.route('/api/environments', environmentsRoutes);
+
 app.route('/ws/docker', createTerminalRoutes(upgradeWebSocket));
 
 app.onError((err, c) => {
@@ -116,13 +119,16 @@ const startServer = async () => {
         const environments = await loadEnvironmentsFromAPI();
 
         logger.info('Initializing Docker client registry...');
-        await dockerClientRegistry.initialize(environments);
+        const registeredEnvironmentIds = await dockerClientRegistry.initialize(environments);
 
-        logger.info('Initializing state managers for all environments...');
+        logger.info(
+            { registeredEnvironmentIds },
+            'Initializing state managers for registered environments...',
+        );
 
         const initResults = await Promise.allSettled(
-            environments.map((environment) =>
-                stateManagerFactory.initializeEnvironment(environment.id),
+            registeredEnvironmentIds.map((environmentId) =>
+                stateManagerFactory.initializeEnvironment(environmentId),
             ),
         );
 
@@ -131,13 +137,22 @@ const startServer = async () => {
 
         if (failed > 0) {
             logger.warn(
-                { total: environments.length, succeeded, failed },
-                'Some environments failed to initialize',
+                {
+                    totalEnvironments: environments.length,
+                    registered: registeredEnvironmentIds.length,
+                    initialized: succeeded,
+                    failed,
+                },
+                'Some registered environments failed to initialize',
             );
         } else {
             logger.info(
-                { total: environments.length, succeeded },
-                '✓ All environments initialized successfully',
+                {
+                    totalEnvironments: environments.length,
+                    registered: registeredEnvironmentIds.length,
+                    initialized: succeeded,
+                },
+                '✓ All registered environments initialized successfully',
             );
         }
 

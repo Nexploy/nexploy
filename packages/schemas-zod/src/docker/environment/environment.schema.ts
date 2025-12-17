@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const dockerConnectionTypeSchema = z.enum(['UNIX_SOCKET', 'TCP', 'TCP_TLS']);
 
 export const environmentSchema = z.object({
+    id: z.uuid().optional(),
     name: z.string().min(1, 'Name is required'),
     connectionType: dockerConnectionTypeSchema,
     socketPath: z.string().optional(),
@@ -18,5 +19,5 @@ export const environmentIdSchema = z.object({
     environmentId: z.cuid(),
 });
 
-export type EnvironmentInput = z.infer<typeof environmentSchema>;
-export type EnvironmentIdInput = z.infer<typeof environmentIdSchema>;
+export type EnvironmentSchemaType = z.infer<typeof environmentSchema>;
+export type EnvironmentIdType = z.infer<typeof environmentIdSchema>;

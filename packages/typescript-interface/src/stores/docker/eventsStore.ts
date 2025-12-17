@@ -40,4 +40,5 @@ export interface EventsState {
 
     connect: (filter?: EventFilter) => void;
     disconnect: () => void;
+    reset: () => void;
 }

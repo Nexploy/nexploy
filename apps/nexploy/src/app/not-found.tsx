@@ -17,8 +17,7 @@ export default function NotFound() {
                     Oops! Wrong turn. Head back to where you came from.
                 </span>
             </div>
-            <Button onClick={() => router.back()} variant="default">
-                <ArrowLeft className="mr-2" />
+            <Button icon={ArrowLeft} onClick={() => router.back()} variant="default">
                 Back
             </Button>
         </div>

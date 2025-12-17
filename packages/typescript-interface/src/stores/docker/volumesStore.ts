@@ -17,4 +17,5 @@ export interface VolumeState {
 
     connect: () => void;
     disconnect: () => void;
+    reset: () => void;
 }

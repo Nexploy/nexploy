@@ -1,18 +1,6 @@
 import { logger } from '@/utils/logger';
 import { env } from '../../env';
-
-interface EnvironmentConfig {
-    id: string;
-    name: string;
-    connectionType: 'UNIX_SOCKET' | 'TCP' | 'TCP_TLS';
-    socketPath?: string;
-    host?: string;
-    port?: number;
-    tlsCert?: string;
-    tlsKey?: string;
-    tlsCa?: string;
-    isDefault: boolean;
-}
+import { EnvironmentConfig } from '@workspace/typescript-interface/docker/environment/environment';
 
 export async function loadEnvironmentsFromAPI(): Promise<EnvironmentConfig[]> {
     try {
@@ -53,5 +41,44 @@ export async function loadEnvironmentsFromAPI(): Promise<EnvironmentConfig[]> {
                 isDefault: true,
             },
         ];
+    }
+}
+
+export async function loadEnvironmentByIdFromAPI(
+    environmentId: string,
+): Promise<EnvironmentConfig | null> {
+    try {
+        const apiUrl = `${env.NEXPLOY_API_URL}/api/environments/${environmentId}`;
+
+        logger.info({ apiUrl, environmentId }, 'Loading specific environment from nexploy API');
+
+        if (!env.INTERNAL_API_KEY) {
+            throw new Error('INTERNAL_API_KEY environment variable is required');
+        }
+
+        const response = await fetch(apiUrl, {
+            headers: {
+                'x-api-key': env.INTERNAL_API_KEY,
+            },
+        });
+
+        if (!response.ok) {
+            if (response.status === 404) {
+                logger.warn({ environmentId }, 'Environment not found in database');
+                return null;
+            }
+            throw new Error(
+                `Failed to fetch environment: ${response.status} ${response.statusText}`,
+            );
+        }
+
+        const environment = (await response.json()) as EnvironmentConfig;
+
+        logger.info({ environmentId, name: environment.name }, 'Loaded environment from API');
+
+        return environment;
+    } catch (error) {
+        logger.error({ error, environmentId }, 'Failed to load environment from API');
+        return null;
     }
 }

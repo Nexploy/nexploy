@@ -154,4 +154,16 @@ export const useVolumeStore = create<VolumeState>((set, get) => ({
             reconnectTimeout: null,
         });
     },
+
+    reset: () => {
+        get().disconnect();
+
+        set({
+            volumes: [],
+            error: null,
+            lastUpdate: null,
+            eventSource: null,
+            reconnectTimeout: null,
+        });
+    },
 }));

@@ -7,12 +7,14 @@ import { sseMultiplexer } from '@/services/SSEMultiplexer';
 
 export const useDockerStore = create<DockerState>((set, get) => ({
     status: 'connecting',
+    environmentStatus: 'unknown',
     error: null,
     lastUpdate: 0,
     eventSource: null,
     reconnectTimeout: null,
 
     setStatus: (status) => set({ status }),
+    setEnvironmentStatus: (environmentStatus) => set({ environmentStatus }),
 
     connect: () => {
         const state = get();
@@ -30,6 +32,7 @@ export const useDockerStore = create<DockerState>((set, get) => ({
 
                     set({
                         status: data.status,
+                        environmentStatus: 'connected',
                         lastUpdate: data.timestamp,
                         error: null,
                     });
@@ -76,11 +79,31 @@ export const useDockerStore = create<DockerState>((set, get) => ({
             );
 
             unsubscribers.push(
-                sseMultiplexer.subscribe('docker', 'error', () => {
-                    set({
-                        status: 'disconnected',
-                        lastUpdate: Date.now(),
-                    });
+                sseMultiplexer.subscribe('docker', 'error', (e) => {
+                    try {
+                        const errorData = JSON.parse(e.data);
+
+                        if (
+                            errorData.code === 'ENVIRONMENT_NOT_FOUND' ||
+                            errorData.code === 'ENVIRONMENT_UNAVAILABLE'
+                        ) {
+                            set({
+                                environmentStatus: 'disconnected',
+                                status: 'error',
+                                lastUpdate: Date.now(),
+                            });
+                        } else {
+                            set({
+                                status: 'disconnected',
+                                lastUpdate: Date.now(),
+                            });
+                        }
+                    } catch (parseError) {
+                        set({
+                            status: 'disconnected',
+                            lastUpdate: Date.now(),
+                        });
+                    }
                 }),
             );
 
@@ -114,6 +137,19 @@ export const useDockerStore = create<DockerState>((set, get) => ({
             eventSource: null,
             reconnectTimeout: null,
             status: 'disconnected',
+        });
+    },
+
+    reset: () => {
+        get().disconnect();
+
+        set({
+            status: 'connecting',
+            environmentStatus: 'unknown',
+            error: null,
+            lastUpdate: 0,
+            eventSource: null,
+            reconnectTimeout: null,
         });
     },
 }));

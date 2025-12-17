@@ -207,7 +207,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                 <DialogContent
                     showCloseButton={false}
                     onOpenAutoFocus={(e) => e.preventDefault()}
-                    className="gap-0 p-0 sm:max-w-5/6"
+                    className="gap-0 overflow-hidden p-0 sm:max-w-5/6"
                 >
                     <SSEProvider
                         connections={['stats']}

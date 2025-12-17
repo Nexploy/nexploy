@@ -2,6 +2,8 @@ import { Context, Next } from 'hono';
 import { logger } from '@/utils/logger';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { runWithDockerContext } from '@/lib/dockerContext';
+import { loadEnvironmentByIdFromAPI } from '@/lib/loadEnvironments';
+import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 
 export async function dockerEnvironmentMiddleware(c: Context, next: Next) {
     const environmentId = c.req.header('X-Docker-Environment') || c.req.query('environment');
@@ -26,7 +28,56 @@ export async function dockerEnvironmentMiddleware(c: Context, next: Next) {
             await next();
         });
     } catch (err: any) {
-        logger.error({ err, environmentId }, 'Invalid Docker environment');
-        return c.json({ error: `Docker environment not found: ${environmentId}` }, 404);
+        logger.info(
+            { environmentId },
+            'Environment not in registry, attempting on-demand initialization',
+        );
+
+        try {
+            const environmentConfig = await loadEnvironmentByIdFromAPI(environmentId);
+
+            if (!environmentConfig) {
+                logger.warn({ environmentId }, 'Environment not found in database');
+                return c.json(
+                    {
+                        error: `Environment not found: ${environmentId}`,
+                        code: 'ENVIRONMENT_NOT_FOUND',
+                        environmentId,
+                    },
+                    404,
+                );
+            }
+
+            logger.info(
+                { environmentId, name: environmentConfig.name },
+                'Attempting to register environment',
+            );
+            const client = await dockerClientRegistry.registerEnvironment(environmentConfig);
+
+            logger.info({ environmentId }, 'Initializing state managers for environment');
+            await stateManagerFactory.initializeEnvironment(environmentId);
+
+            logger.info(
+                { environmentId, name: environmentConfig.name },
+                'Successfully registered and initialized environment on-demand',
+            );
+
+            return runWithDockerContext(environmentId, client, async () => {
+                await next();
+            });
+        } catch (registerErr: any) {
+            logger.error(
+                { err: registerErr, environmentId },
+                'Failed to register environment on-demand',
+            );
+            return c.json(
+                {
+                    error: `Environment unavailable: ${environmentId}. ${registerErr.message}`,
+                    code: 'ENVIRONMENT_UNAVAILABLE',
+                    environmentId,
+                },
+                503,
+            );
+        }
     }
 }

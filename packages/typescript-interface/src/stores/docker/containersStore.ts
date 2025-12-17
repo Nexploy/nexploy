@@ -22,4 +22,5 @@ export interface ContainerState {
 
     connect: (containerIds?: string[]) => void;
     disconnect: () => void;
+    reset: () => void;
 }

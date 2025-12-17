@@ -184,4 +184,16 @@ export const useImageStore = create<ImageState>((set, get) => ({
             reconnectTimeout: null,
         });
     },
+
+    reset: () => {
+        get().disconnect();
+
+        set({
+            images: [],
+            error: null,
+            lastUpdate: null,
+            eventSource: null,
+            reconnectTimeout: null,
+        });
+    },
 }));

@@ -10,7 +10,7 @@ import {
 import {
     environmentIdSchema,
     environmentSchema,
-} from '@workspace/schemas-zod/environment/environment.schema';
+} from '@workspace/schemas-zod/docker/environment/environment.schema';
 import { z } from 'zod';
 import { authActionServer } from '@/lib/api/safe-action';
 

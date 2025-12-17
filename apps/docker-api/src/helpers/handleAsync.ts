@@ -2,11 +2,12 @@ import type { Context } from 'hono';
 import { logger } from '@/utils/logger';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
 
-type Handler = (c: Context) => Promise<any>;
-
-export const handleAsync = (fn: Handler, opts?: { status?: ContentfulStatusCode }) => {
+export const handleAsync = <C extends Context = Context>(
+    fn: (c: C) => Promise<any>,
+    opts?: { status?: ContentfulStatusCode }
+) => {
     const status = opts?.status ?? 200;
-    return async (c: Context) => {
+    return async (c: C) => {
         try {
             const result = await Promise.race([
                 fn(c),

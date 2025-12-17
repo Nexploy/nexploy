@@ -185,4 +185,16 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
             reconnectTimeout: null,
         });
     },
+
+    reset: () => {
+        get().disconnect();
+
+        set({
+            containers: [],
+            error: null,
+            lastUpdate: null,
+            eventSource: null,
+            reconnectTimeout: null,
+        });
+    },
 }));

@@ -4,7 +4,8 @@ import type { WebSocket } from 'ws';
 import { logger } from '@/utils/logger';
 import { Duplex } from 'stream';
 import { Exec, ExecCreateOptions } from 'dockerode';
-import { docker } from '@/utils/dockerClient';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import type Docker from 'dockerode';
 
 function getShellCommand(shell: string): string[] {
     switch (shell) {
@@ -35,14 +36,25 @@ export const createTerminalRoutes = (
         upgradeWebSocket((c) => {
             const containerId = c.req.param('containerId');
             const shell = c.req.param('shell') ?? 'auto';
+            const environmentId = c.req.query('environment');
 
             let exec: Exec | null = null;
             let stream: Duplex | null = null;
+            let dockerClient: Docker;
+
+            try {
+                dockerClient = environmentId
+                    ? dockerClientRegistry.getClient(environmentId)
+                    : dockerClientRegistry.getDefaultClient();
+            } catch (err) {
+                logger.error({ err, environmentId }, 'Failed to get Docker client for WebSocket');
+                dockerClient = dockerClientRegistry.getDefaultClient();
+            }
 
             return {
-                async onOpen(event, ws) {
+                async onOpen(_, ws) {
                     try {
-                        const container = docker.getContainer(containerId);
+                        const container = dockerClient.getContainer(containerId);
                         const containerInfo = await container.inspect();
 
                         if (!containerInfo.State.Running) {
@@ -115,7 +127,7 @@ export const createTerminalRoutes = (
                     }
                 },
 
-                onMessage(event, ws) {
+                onMessage(event) {
                     try {
                         const data = event.data;
 
@@ -178,13 +190,24 @@ export const createTerminalRoutes = (
         '/attach/:containerId',
         upgradeWebSocket((c) => {
             const containerId = c.req.param('containerId');
+            const environmentId = c.req.query('environment');
 
             let stream: Duplex | null = null;
+            let dockerClient: Docker;
+
+            try {
+                dockerClient = environmentId
+                    ? dockerClientRegistry.getClient(environmentId)
+                    : dockerClientRegistry.getDefaultClient();
+            } catch (err) {
+                logger.error({ err, environmentId }, 'Failed to get Docker client for WebSocket');
+                dockerClient = dockerClientRegistry.getDefaultClient();
+            }
 
             return {
-                async onOpen(event, ws) {
+                async onOpen(_, ws) {
                     try {
-                        const container = docker.getContainer(containerId);
+                        const container = dockerClient.getContainer(containerId);
                         const containerInfo = await container.inspect();
 
                         if (!containerInfo.State.Running) {
@@ -244,7 +267,7 @@ export const createTerminalRoutes = (
                     }
                 },
 
-                onMessage(event, ws) {
+                onMessage(event) {
                     try {
                         const data = event.data;
 
