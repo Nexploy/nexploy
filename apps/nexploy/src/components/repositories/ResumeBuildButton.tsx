@@ -19,6 +19,7 @@ import { ComponentProps } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { BUILD_STEPS_ORDER, BuildStep } from '@workspace/typescript-interface/inngest/build';
+import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 
 interface ResumeBuildButtonProps extends ComponentProps<typeof Button> {
     buildId: string;
@@ -45,6 +46,7 @@ export function ResumeBuildButton({
     ...props
 }: ResumeBuildButtonProps) {
     const router = useRouter();
+    const { selectedEnvironmentId } = useEnvironmentStore();
 
     const { execute, isPending } = useAction(onResumeBuild, {
         onSuccess: () => {
@@ -54,7 +56,7 @@ export function ResumeBuildButton({
     });
 
     const handleResume = (startFromStep?: BuildStep) => {
-        execute({ buildId, startFromStep });
+        execute({ buildId, startFromStep, selectedEnvironmentId });
     };
 
     const getNextStep = (): BuildStep | undefined => {

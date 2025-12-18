@@ -13,16 +13,14 @@ export const onRetryBuild = authActionServer
     .inputSchema(retryBuildSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {
-            const { buildId } = parsedInput;
-
-            const existingBuild = await findBuildWithEnvInngest(buildId);
+            const existingBuild = await findBuildWithEnvInngest(parsedInput.buildId);
 
             if (!existingBuild || existingBuild.status === 'COMPLETED') {
                 throw new Error('Build or Repository not found');
             }
 
-            await deleteBuildLogInngest(buildId);
-            await retryBuildRepositoryInngest(buildId, ctx.session.user.id, existingBuild);
+            await deleteBuildLogInngest(parsedInput.buildId);
+            await retryBuildRepositoryInngest(parsedInput, ctx.session.user.id, existingBuild);
         } catch (err: unknown) {
             if (err instanceof Error) {
                 await setToastServer({

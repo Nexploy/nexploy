@@ -16,6 +16,7 @@ import {
     createStatusReporter,
     pipelineOrchestrator,
 } from '@/inngest/pipeline/orchestrator';
+import { runWithEnvironmentContextAsync } from '@/lib/environmentContext';
 
 const createBuildChannel = (buildId: string) => {
     const channelDef = channel(`build:${buildId}`)
@@ -34,33 +35,35 @@ export const buildFunction = inngest.createFunction(
     async ({ event, step, publish }) => {
         const { buildId, config } = event.data as { buildId: string; config: BuildConfig };
 
-        const buildChannel = createBuildChannel(buildId);
+        return await runWithEnvironmentContextAsync(config.environmentId, async () => {
+            const buildChannel = createBuildChannel(buildId);
 
-        const publishLog = async (stepName: string, message: string, level: LogLevel) => {
-            const log: BuildLogEntry = {
-                level,
-                buildId,
-                createdAt: new Date(),
-                step: stepName,
-                message,
+            const publishLog = async (stepName: string, message: string, level: LogLevel) => {
+                const log: BuildLogEntry = {
+                    level,
+                    buildId,
+                    createdAt: new Date(),
+                    step: stepName,
+                    message,
+                };
+
+                await createLogInngest(log);
+                await publish(buildChannel.log({ log }));
             };
 
-            await createLogInngest(log);
-            await publish(buildChannel.log({ log }));
-        };
+            const publishStatus = async (status: PipelineStatus) => {
+                await updateStatusBuildInngest(buildId, status as BuildStatus);
+                await publish(buildChannel.status({ status }));
+            };
 
-        const publishStatus = async (status: PipelineStatus) => {
-            await updateStatusBuildInngest(buildId, status as BuildStatus);
-            await publish(buildChannel.status({ status }));
-        };
+            const markStepCompleted = async (stepId: StepId) => {
+                await updateLastCompletedStepInngest(buildId, stepId as any);
+            };
 
-        const markStepCompleted = async (stepId: StepId) => {
-            await updateLastCompletedStepInngest(buildId, stepId as any);
-        };
+            const logger = createPipelineLogger(publishLog);
+            const reporter = createStatusReporter(publishStatus, markStepCompleted);
 
-        const logger = createPipelineLogger(publishLog);
-        const reporter = createStatusReporter(publishStatus, markStepCompleted);
-
-        return await pipelineOrchestrator.execute(buildId, config, step, logger, reporter);
+            return await pipelineOrchestrator.execute(buildId, config, step, logger, reporter);
+        });
     },
 );

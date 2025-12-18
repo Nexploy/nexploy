@@ -7,11 +7,15 @@ import { inngest } from '@/inngest/client';
 import { getRepositorieWithEnv } from '@/services/repository.service';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { decrypt } from '@/lib/encryption';
+import {
+    ResumeBuildSchemaType,
+    RetryBuildSchemaType,
+    StartBuildSchemaType,
+} from '@workspace/schemas-zod/inngest/build.schema';
 
 export async function startBuildRepositoryInngest(
-    repositoryId: string,
+    { repositoryId, commitHash, environmentId }: StartBuildSchemaType,
     userId: string,
-    commitHash?: string,
 ) {
     const repository = await getRepositorieWithEnv(repositoryId);
 
@@ -66,6 +70,7 @@ export async function startBuildRepositoryInngest(
         imageName,
         imageTag: build.id.slice(-8),
         autoDeploy: repository.autoDeploy,
+        environmentId,
     };
 
     await addBuildJob(build.id, config);
@@ -179,7 +184,7 @@ export async function findBuildWithEnvInngest(buildId: string) {
 }
 
 export async function retryBuildRepositoryInngest(
-    buildId: string,
+    { buildId, environmentId }: RetryBuildSchemaType,
     userId: string,
     existingBuild: Awaited<ReturnType<typeof findBuildWithEnvInngest>>,
 ) {
@@ -217,16 +222,16 @@ export async function retryBuildRepositoryInngest(
         imageName,
         imageTag: buildId.slice(-8),
         autoDeploy: repository.autoDeploy,
+        environmentId,
     };
 
     await addBuildJob(buildId, config);
 }
 
 export async function resumeBuildRepositoryInngest(
-    buildId: string,
+    { buildId, environmentId, startFromStep }: ResumeBuildSchemaType,
     userId: string,
     existingBuild: Awaited<ReturnType<typeof findBuildWithEnvInngest>>,
-    startFromStep?: BuildStep,
 ) {
     if (!existingBuild || !existingBuild.repository) {
         throw new Error('Build or Repository not found');
@@ -270,6 +275,7 @@ export async function resumeBuildRepositoryInngest(
         imageTag: buildId.slice(-8),
         autoDeploy: repository.autoDeploy,
         startFromStep: resumeStep,
+        environmentId,
     };
 
     await prisma.build.update({

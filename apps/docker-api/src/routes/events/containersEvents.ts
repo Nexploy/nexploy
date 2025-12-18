@@ -7,7 +7,6 @@ import { getContainersStateManager } from '@/managers/containersStateManager';
 const app = new Hono();
 
 app.get('/stream', (c) => {
-    // Capture the manager BEFORE entering streamSSE to preserve AsyncLocalStorage context
     const manager = getContainersStateManager();
 
     return streamSSE(c, async (stream) => {

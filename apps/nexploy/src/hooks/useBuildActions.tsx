@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
-import { LucideIcon, RotateCcw, Square } from 'lucide-react';
+import { LucideIcon, Square } from 'lucide-react';
 import { onCancelBuild } from '@/actions/repository/builds/cancelBuild.action';
-import { onRetryBuild } from '@/actions/repository/builds/retryBuild.action';
 import { ResumeBuildButton } from '@/components/repositories/ResumeBuildButton';
 import { RemoveBuildButton } from '@/components/repositories/RemoveBuildButton';
 import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
+import { RetryBuildButton } from '@/components/repositories/RetryBuildButton';
 
 interface BaseBuildAction {
     id: string;
@@ -74,11 +74,9 @@ export function useBuildActions({
 
     if (canRetry) {
         actions.push({
-            type: 'button',
+            type: 'component',
             id: 'retry',
-            icon: RotateCcw,
-            label: 'Retry',
-            onClick: () => onRetryBuild({ buildId }),
+            component: <RetryBuildButton buildId={buildId} />,
         });
     }
 

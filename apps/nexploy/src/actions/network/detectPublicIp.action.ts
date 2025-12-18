@@ -8,7 +8,7 @@ export const detectPublicIpAction = authActionServer.action(async () => {
 
     if (!ip) {
         throw new Error(
-            "Impossible de détecter automatiquement l'IP publique. Veuillez l'entrer manuellement.",
+            'Unable to automatically detect public IP address. Please enter it manually.',
         );
     }
 

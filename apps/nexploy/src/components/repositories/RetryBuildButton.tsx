@@ -7,6 +7,7 @@ import { onRetryBuild } from '@/actions/repository/builds/retryBuild.action';
 import { ComponentProps } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 
 interface RetryBuildButtonProps extends ComponentProps<typeof Button> {
     buildId: string;
@@ -15,6 +16,7 @@ interface RetryBuildButtonProps extends ComponentProps<typeof Button> {
 
 export function RetryBuildButton({ buildId, showText = true, ...props }: RetryBuildButtonProps) {
     const router = useRouter();
+    const { selectedEnvironmentId } = useEnvironmentStore();
 
     const { execute, isPending } = useAction(onRetryBuild, {
         onSuccess: () => {
@@ -24,7 +26,7 @@ export function RetryBuildButton({ buildId, showText = true, ...props }: RetryBu
     });
 
     const handleRetry = async () => {
-        execute({ buildId });
+        execute({ buildId, environmentId: selectedEnvironmentId! });
     };
 
     return (

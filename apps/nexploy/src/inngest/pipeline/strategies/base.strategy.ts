@@ -15,14 +15,9 @@ export abstract class BaseStrategy implements IBuildStrategy {
 
     protected abstract getStrategySteps(): IPipelineStep[];
 
-    protected getCommonPostSteps(): IPipelineStep[] {
-        return [envStep, cleanupStep, finalizeStep];
-    }
-
     getSteps(): IPipelineStep[] {
         const preSteps = this.getCommonPreSteps();
         const strategySteps = this.getStrategySteps();
-        const postSteps = this.getCommonPostSteps();
 
         return [
             ...preSteps,

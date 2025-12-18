@@ -15,42 +15,6 @@ interface EnvironmentState {
     getSelectedEnvironment: () => Environment | undefined;
 }
 
-const getEnvironmentIdFromCookie = (): string | null => {
-    if (typeof window === 'undefined') return null;
-
-    const cookies = document.cookie.split(';');
-    const environmentCookie = cookies.find((c) => c.trim().startsWith('X-Docker-Environment='));
-
-    if (environmentCookie) {
-        const value = environmentCookie.split('=')[1]?.trim();
-        return value || null;
-    }
-
-    return null;
-};
-
-const setEnvironmentCookie = (environmentId: string) => {
-    if (typeof window !== 'undefined') {
-        document.cookie = `X-Docker-Environment=${environmentId}; path=/; max-age=31536000; SameSite=Lax`;
-    }
-};
-
-const determineInitialEnvironmentId = (environments: Environment[]): string | null => {
-    if (environments.length === 0) return null;
-
-    const cookieId = getEnvironmentIdFromCookie();
-    if (cookieId && environments.find((e) => e.id === cookieId)) {
-        return cookieId;
-    }
-
-    const defaultEnv = environments.find((e) => e.isDefault);
-    if (defaultEnv) {
-        return defaultEnv.id;
-    }
-
-    return environments[0]!.id;
-};
-
 export const useEnvironmentStore = create<EnvironmentState>((set, get) => {
     return {
         environments: [],
@@ -132,4 +96,40 @@ export const initializeEnvironmentStore = (initialEnvironments: Environment[]) =
         environments: initialEnvironments,
         selectedEnvironmentId: initialSelectedId,
     });
+};
+
+const getEnvironmentIdFromCookie = (): string | null => {
+    if (typeof window === 'undefined') return null;
+
+    const cookies = document.cookie.split(';');
+    const environmentCookie = cookies.find((c) => c.trim().startsWith('X-Docker-Environment='));
+
+    if (environmentCookie) {
+        const value = environmentCookie.split('=')[1]?.trim();
+        return value || null;
+    }
+
+    return null;
+};
+
+const setEnvironmentCookie = (environmentId: string) => {
+    if (typeof window !== 'undefined') {
+        document.cookie = `X-Docker-Environment=${environmentId}; path=/; max-age=31536000; SameSite=Lax`;
+    }
+};
+
+const determineInitialEnvironmentId = (environments: Environment[]): string | null => {
+    if (environments.length === 0) return null;
+
+    const cookieId = getEnvironmentIdFromCookie();
+    if (cookieId && environments.find((e) => e.id === cookieId)) {
+        return cookieId;
+    }
+
+    const defaultEnv = environments.find((e) => e.isDefault);
+    if (defaultEnv) {
+        return defaultEnv.id;
+    }
+
+    return environments[0]!.id;
 };

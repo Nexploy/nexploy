@@ -12,7 +12,7 @@ export const onResumeBuild = authActionServer
     .inputSchema(resumeBuildSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {
-            const { buildId, startFromStep } = parsedInput;
+            const { buildId, startFromStep, selectedEnvironmentId } = parsedInput;
 
             const existingBuild = await findBuildWithEnvInngest(buildId);
 
@@ -29,6 +29,7 @@ export const onResumeBuild = authActionServer
                 ctx.session.user.id,
                 existingBuild,
                 startFromStep,
+                selectedEnvironmentId,
             );
 
             await setToastServer({

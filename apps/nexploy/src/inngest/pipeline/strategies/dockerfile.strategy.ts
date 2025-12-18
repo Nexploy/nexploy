@@ -67,13 +67,14 @@ class BuildDockerImageStep extends BaseStep {
                 imageName,
                 ctx.context.abortController.signal,
                 onLog,
+                ctx.context.config.environmentId,
             );
 
             ctx.context.imageId = result.imageId || null;
 
             await ctx.logger.info(
                 this.metadata.id,
-                `Docker image built successfully${result.imageId ? `: ${result.imageId.slice(0, 12)}` : ''}`,
+                `Docker image built successfully: ${result.imageId ? `: ${result.imageId.slice(0, 12)}` : ''}`,
             );
 
             return this.success(result);
@@ -115,6 +116,7 @@ class DeployContainerStep extends BaseStep {
                 imageName,
                 config.envVariables,
                 ctx.context.abortController.signal,
+                config.environmentId,
             );
 
             ctx.context.containerId = result.containerId;

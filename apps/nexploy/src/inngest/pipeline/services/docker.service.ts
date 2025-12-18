@@ -1,5 +1,5 @@
 import { SSEEvent } from '../types';
-import { kyDocker } from '@/lib/api/kyDocker';
+import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 
 class DockerService {
     async buildImage(
@@ -7,12 +7,14 @@ class DockerService {
         imageName: string,
         signal: AbortSignal,
         onLog: (message: string) => Promise<void>,
+        environmentId?: string,
     ): Promise<{ imageId?: string }> {
         return this.streamSSERequest<{ imageId?: string }>(
             'pipeline/events/stream/build',
             { workDir, imageName },
             signal,
             onLog,
+            environmentId,
         );
     }
 
@@ -21,6 +23,7 @@ class DockerService {
         imageName: string,
         envVars: Record<string, string>,
         signal: AbortSignal,
+        environmentId?: string,
     ): Promise<{ containerId: string }> {
         try {
             return await kyDocker
@@ -31,7 +34,8 @@ class DockerService {
                         options: { envVars },
                     },
                     signal,
-                })
+                    environmentId,
+                } as KyDockerOptions)
                 .json<{ containerId: string }>();
         } catch (error: unknown) {
             throw new Error(`Deployment failed : ${error}`);
@@ -45,12 +49,14 @@ class DockerService {
         envVars: Record<string, string>,
         signal: AbortSignal,
         onLog: (message: string) => Promise<void>,
+        environmentId?: string,
     ): Promise<{ success: boolean; containers?: string[] }> {
         return this.streamSSERequest<{ success: boolean; containers?: string[] }>(
             'pipeline/events/stream/compose',
             { workDir, projectName, composePath, envVars },
             signal,
             onLog,
+            environmentId,
         );
     }
 
@@ -59,6 +65,7 @@ class DockerService {
         body: Record<string, unknown>,
         signal: AbortSignal,
         onLog: (message: string) => Promise<void>,
+        environmentId?: string,
     ): Promise<T> {
         return new Promise<T>(async (resolve, reject) => {
             const decoder = new TextDecoder();
@@ -74,7 +81,8 @@ class DockerService {
                 const response = await kyDocker.post(endpoint, {
                     json: body,
                     signal,
-                });
+                    environmentId,
+                } as KyDockerOptions);
 
                 const reader = response.body?.getReader();
                 if (!reader) {
