@@ -7,7 +7,6 @@ import {
     VolumeEvent,
     VolumeStateChanges,
 } from '@workspace/typescript-interface/docker/docker.volume';
-import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { BaseStateManager } from '@/lib/BaseStateManager';
 
 export class VolumesStateManager extends BaseStateManager {
@@ -24,8 +23,13 @@ export class VolumesStateManager extends BaseStateManager {
     }
 
     async loadInitialState(): Promise<void> {
-        if (!dockerStatusManager.isConnected()) {
-            logger.warn('Cannot load initial state: Docker is not connected');
+        try {
+            if (!this.getDockerStatusManager().isConnected()) {
+                logger.warn('Cannot load initial state: Docker is not connected');
+                return;
+            }
+        } catch (err) {
+            logger.warn('Cannot load initial state: Docker status manager not available');
             return;
         }
 

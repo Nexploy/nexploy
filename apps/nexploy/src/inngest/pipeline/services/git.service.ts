@@ -2,7 +2,6 @@ import { spawn } from 'child_process';
 import { access, mkdir, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
-import { env } from '../../../../env';
 import { getValidToken } from '@/services/api/gitProvider.service';
 import { ProgressCallback } from '../types';
 
@@ -76,7 +75,7 @@ class GitService {
         onProgress?: ProgressCallback,
     ): Promise<string> {
         const workDir = join(
-            env.DEPLOYER_WORK_DIR,
+            process.env.DEPLOYER_WORK_DIR as string,
             buildConfig.repositoryId,
             Date.now().toString(),
         );

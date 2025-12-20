@@ -6,7 +6,6 @@ import {
     ImageEvent,
     ImageStateChanges,
 } from '@workspace/typescript-interface/docker/docker.image';
-import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { BaseStateManager } from '@/lib/BaseStateManager';
 import * as tar from 'tar-fs';
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
@@ -37,8 +36,13 @@ export class ImagesStateManager extends BaseStateManager {
     }
 
     async loadInitialState(): Promise<void> {
-        if (!dockerStatusManager.isConnected()) {
-            logger.warn('Cannot load initial state: Docker is not connected');
+        try {
+            if (!this.getDockerStatusManager().isConnected()) {
+                logger.warn('Cannot load initial state: Docker is not connected');
+                return;
+            }
+        } catch (err) {
+            logger.warn('Cannot load initial state: Docker status manager not available');
             return;
         }
 

@@ -1,7 +1,6 @@
 import { authRouteServer, route } from '@/lib/api/nextRoute';
 import { NextResponse } from 'next/server';
 import { ChannelConfig, ChannelState, SSEChannel } from '@workspace/typescript-interface/sse';
-import { env } from '../../../../../env';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -84,7 +83,7 @@ export const GET = route.use(authRouteServer).handler(async (request: Request) =
         );
     }
 
-    const serverUrl = env.DOCKER_API_URL;
+    const serverUrl = process.env.DOCKER_API_URL;
     if (!serverUrl) {
         return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }

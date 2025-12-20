@@ -57,7 +57,6 @@ app.post(
         } catch (err: any) {
             logger.error({ err, environmentId: config.id }, 'Failed to register environment');
 
-            // Cleanup on failure
             try {
                 await dockerClientRegistry.unregisterEnvironment(config.id!);
             } catch (cleanupErr) {

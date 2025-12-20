@@ -6,6 +6,10 @@ import { loadEnvironmentByIdFromAPI } from '@/lib/loadEnvironments';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 
 export async function dockerEnvironmentMiddleware(c: Context, next: Next) {
+    if (c.req.path.startsWith('/api/environments')) {
+        return next();
+    }
+
     const environmentId = c.req.header('X-Docker-Environment') || c.req.query('environment');
 
     if (!environmentId) {

@@ -8,21 +8,25 @@ import { toast } from 'sonner';
 import { onRemoveBuild } from '@/actions/repository/builds/removeBuild.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
-import { useRouter } from 'next/navigation';
 
 interface RemoveBuildButtonProps extends ComponentProps<typeof Button> {
     buildId: string;
     mode?: 'button' | 'dropdown';
+    onSuccess?: () => void;
 }
 
-export function RemoveBuildButton({ buildId, mode = 'button', ...props }: RemoveBuildButtonProps) {
+export function RemoveBuildButton({
+    buildId,
+    mode = 'button',
+    onSuccess,
+    ...props
+}: RemoveBuildButtonProps) {
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
-    const router = useRouter();
 
     const { executeAsync } = useAction(onRemoveBuild, {
         onSuccess: () => {
-            router.back();
             toast.success('Build removed successfully');
+            if (onSuccess) onSuccess();
         },
     });
 
@@ -47,9 +51,9 @@ export function RemoveBuildButton({ buildId, mode = 'button', ...props }: Remove
                     e.stopPropagation();
                     handleRemove();
                 }}
-                className="text-destructive focus:text-destructive"
+                className="text-destructive hover:[&_svg:not([class*='text-'])]:text-destructive [&_svg:not([class*='text-'])]:text-destructive focus:text-destructive"
             >
-                <Trash2 className="size-4" />
+                <Trash2 />
                 Remove
             </DropdownMenuItem>
         );

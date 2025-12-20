@@ -1,6 +1,5 @@
 import { updateGitProviderToken } from '@/services/git/git.service';
 import { GitLabCommit, GitProviderToken } from '@workspace/typescript-interface/git/git';
-import { env } from '../../../env';
 import { drinoGithub } from '@/lib/api/drinoGithub';
 import { drinoGitlab } from '@/lib/api/drinoGitlab';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
@@ -164,8 +163,8 @@ async function refreshGitLabToken(
         throw new Error('No refresh token available for GitLab');
     }
 
-    const clientId = env.GITLAB_CLIENT_ID;
-    const clientSecret = env.GITLAB_CLIENT_SECRET;
+    const clientId = process.env.GITLAB_CLIENT_ID;
+    const clientSecret = process.env.GITLAB_CLIENT_SECRET;
 
     const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 

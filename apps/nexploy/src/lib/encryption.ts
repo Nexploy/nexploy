@@ -1,7 +1,6 @@
 import crypto from 'crypto';
-import { env } from '../../env';
 
-const ENCRYPTION_KEY = env.ENCRYPTION_KEY;
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 const ALGORITHM = 'aes-256-cbc';
 const PREFIX = 'nex:';
 

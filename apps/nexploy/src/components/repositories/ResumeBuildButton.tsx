@@ -25,6 +25,7 @@ interface ResumeBuildButtonProps extends ComponentProps<typeof Button> {
     buildId: string;
     mode?: 'button' | 'dropdown';
     lastCompletedStep?: string | null;
+    onSuccess?: () => void;
 }
 
 const STEP_LABELS: Record<BuildStep, string> = {
@@ -43,6 +44,7 @@ export function ResumeBuildButton({
     buildId,
     mode = 'button',
     lastCompletedStep,
+    onSuccess,
     ...props
 }: ResumeBuildButtonProps) {
     const router = useRouter();
@@ -51,12 +53,16 @@ export function ResumeBuildButton({
     const { execute, isPending } = useAction(onResumeBuild, {
         onSuccess: () => {
             toast.success('Build resumed successfully');
-            router.refresh();
+            if (onSuccess) {
+                onSuccess();
+            } else {
+                router.refresh();
+            }
         },
     });
 
     const handleResume = (startFromStep?: BuildStep) => {
-        execute({ buildId, startFromStep, selectedEnvironmentId });
+        execute({ buildId, startFromStep, environmentId: selectedEnvironmentId! });
     };
 
     const getNextStep = (): BuildStep | undefined => {

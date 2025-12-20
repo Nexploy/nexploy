@@ -4,7 +4,7 @@ import type { ContentfulStatusCode } from 'hono/utils/http-status';
 
 export const handleAsync = <C extends Context = Context>(
     fn: (c: C) => Promise<any>,
-    opts?: { status?: ContentfulStatusCode }
+    opts?: { status?: ContentfulStatusCode },
 ) => {
     const status = opts?.status ?? 200;
     return async (c: C) => {

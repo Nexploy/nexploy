@@ -22,6 +22,7 @@ export const repositoryCreateFormSchema = z.object({
         .optional()
         .transform((value) => (value === '' ? undefined : value)),
     gitProvider: z.enum(['github', 'gitlab', 'manual']),
+    environmentId: z.string(),
     buildType: z
         .enum(['DOCKERFILE', 'DOCKER_COMPOSE', 'NIXPACKS', 'BUILDPACKS'])
         .default('DOCKERFILE'),

@@ -12,9 +12,7 @@ export const onResumeBuild = authActionServer
     .inputSchema(resumeBuildSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {
-            const { buildId, startFromStep, selectedEnvironmentId } = parsedInput;
-
-            const existingBuild = await findBuildWithEnvInngest(buildId);
+            const existingBuild = await findBuildWithEnvInngest(parsedInput.buildId);
 
             if (!existingBuild || existingBuild.status === 'COMPLETED') {
                 throw new Error('Build not found or already completed');
@@ -24,17 +22,11 @@ export const onResumeBuild = authActionServer
                 throw new Error('Can only resume failed builds');
             }
 
-            await resumeBuildRepositoryInngest(
-                buildId,
-                ctx.session.user.id,
-                existingBuild,
-                startFromStep,
-                selectedEnvironmentId,
-            );
+            await resumeBuildRepositoryInngest(parsedInput, ctx.session.user.id, existingBuild);
 
             await setToastServer({
                 type: 'success',
-                message: `Build resumed from step: ${startFromStep || 'beginning'}`,
+                message: `Build resumed from step: ${parsedInput.startFromStep || 'beginning'}`,
             });
         } catch (err: unknown) {
             if (err instanceof Error) {

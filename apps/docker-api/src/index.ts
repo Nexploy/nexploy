@@ -22,7 +22,6 @@ import { createTerminalRoutes } from '@/routes/terminalRoutes';
 import volumesRoutes from '@/routes/volumesRoutes';
 import networksRoutes from '@/routes/networksRoutes';
 import pipelineEvents from '@/routes/events/pipelineEvents';
-import { env } from '../env';
 import pipelineRoutes from '@/routes/pipelineRoutes';
 import swarmRoutes from '@/routes/swarm';
 import swarmEvents from '@/routes/events/swarmEvents';
@@ -171,13 +170,15 @@ setupGracefulShutdown(async () => {
 });
 
 startServer().then((app) => {
+    const port = Number(process.env.PORT);
+
     const server = serve({
         fetch: app.fetch,
-        port: env.PORT,
+        port,
     });
 
     injectWebSocket(server);
 
-    logger.info(`🚀 Server running on http://localhost:${env.PORT}`);
+    logger.info(`🚀 Server running on http://localhost:${port}`);
     logger.info(`🔌 WebSocket available`);
 });

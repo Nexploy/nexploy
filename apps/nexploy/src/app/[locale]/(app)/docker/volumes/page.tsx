@@ -4,7 +4,6 @@ import { HardDrive } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { CardInfoVolumes } from '@/components/docker/volume/CardInfoVolumes';
 import { TableDockerVolumes } from '@/components/docker/volume/table/TableDockerVolumes';
-import { EnvironmentDisconnectedAlert } from '@/components/docker/EnvironmentDisconnectedAlert';
 
 export default function VolumesPage() {
     return (
@@ -22,10 +21,6 @@ export default function VolumesPage() {
                             Gérez et visualisez tous vos volumes Docker
                         </p>
                     </div>
-                </div>
-
-                <div className="px-5">
-                    <EnvironmentDisconnectedAlert />
                 </div>
 
                 <ScrollAreaWithShadow className="h-full overflow-hidden">

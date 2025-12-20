@@ -58,5 +58,5 @@ export interface BuildConfig extends GitProviderToken {
     imageTag: string;
     autoDeploy: boolean;
     startFromStep?: BuildStep;
-    environmentId: string;
+    environmentId?: string;
 }

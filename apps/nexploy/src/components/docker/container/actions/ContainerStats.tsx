@@ -207,7 +207,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                 <DialogContent
                     showCloseButton={false}
                     onOpenAutoFocus={(e) => e.preventDefault()}
-                    className="gap-0 overflow-hidden p-0 sm:max-w-5/6"
+                    className="gap-0 overflow-x-visible overflow-y-hidden p-0 sm:max-w-5/6"
                 >
                     <SSEProvider
                         connections={['stats']}
@@ -263,7 +263,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                                 </Button>
                             </div>
                         </DialogHeader>
-                        <ScrollAreaWithShadow bottomShadow className="h-150 overflow-hidden">
+                        <ScrollAreaWithShadow bottomShadow className="h-150 overflow-y-auto">
                             <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
                                 {smallsStats.map((stat, index) =>
                                     connectionState === 'connecting' ? (

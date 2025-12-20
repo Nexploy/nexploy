@@ -4,6 +4,7 @@ import {
     createEnvironment,
     deleteEnvironment,
     getDefaultEnvironment,
+    getUserEnvironments,
     setDefaultEnvironment,
     updateEnvironment,
 } from '@/services/environment/environment.service';
@@ -11,39 +12,36 @@ import {
     environmentIdSchema,
     environmentSchema,
 } from '@workspace/schemas-zod/docker/environment/environment.schema';
-import { z } from 'zod';
 import { authActionServer } from '@/lib/api/safe-action';
 
 export const getDefaultEnvironmentAction = authActionServer.action(async () => {
     return getDefaultEnvironment();
 });
 
+export const getUserEnvironmentsAction = authActionServer.action(async () => {
+    return getUserEnvironments();
+});
+
 export const createEnvironmentAction = authActionServer
     .inputSchema(environmentSchema)
     .action(async ({ parsedInput, ctx }) => {
-        return createEnvironment(parsedInput, ctx.session.user.id);
+        return await createEnvironment(parsedInput, ctx.session.user.id);
     });
 
 export const updateEnvironmentAction = authActionServer
-    .inputSchema(
-        z.object({
-            id: z.cuid(),
-            data: environmentSchema,
-        }),
-    )
+    .inputSchema(environmentSchema)
     .action(async ({ parsedInput }) => {
-        return updateEnvironment(parsedInput.id, parsedInput.data);
+        return updateEnvironment(parsedInput);
     });
 
 export const setDefaultEnvironmentAction = authActionServer
     .inputSchema(environmentIdSchema)
     .action(async ({ parsedInput }) => {
-        await setDefaultEnvironment(parsedInput.environmentId);
+        return setDefaultEnvironment(parsedInput.environmentId);
     });
 
 export const deleteEnvironmentAction = authActionServer
     .inputSchema(environmentIdSchema)
     .action(async ({ parsedInput }) => {
-        await deleteEnvironment(parsedInput.environmentId);
-        return { success: true };
+        return deleteEnvironment(parsedInput.environmentId);
     });

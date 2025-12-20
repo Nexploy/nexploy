@@ -34,6 +34,7 @@ export function BuildLogs({ build }: BuildLogsProps) {
         buildId: build.id,
         status,
         lastCompletedStep: build.lastCompletedStep,
+        onRemoveSuccess: () => router.back(),
     });
 
     return (

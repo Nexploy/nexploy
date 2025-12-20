@@ -7,7 +7,6 @@ import {
     ContainersStateChanges,
     ContainersStateEvents,
 } from '@workspace/typescript-interface/docker/docker.containers';
-import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { BaseStateManager } from '@/lib/BaseStateManager';
 import { DeployOptions } from '@workspace/typescript-interface/inngest/deploy';
 import { EventEmitter } from 'events';
@@ -32,8 +31,13 @@ export class ContainersStateManager extends BaseStateManager {
     }
 
     async loadInitialState(): Promise<void> {
-        if (!dockerStatusManager.isConnected()) {
-            logger.warn('Cannot load initial state: Docker is not connected');
+        try {
+            if (!this.getDockerStatusManager().isConnected()) {
+                logger.warn('Cannot load initial state: Docker is not connected');
+                return;
+            }
+        } catch (err) {
+            logger.warn('Cannot load initial state: Docker status manager not available');
             return;
         }
 
@@ -60,8 +64,13 @@ export class ContainersStateManager extends BaseStateManager {
     }
 
     async handleDockerEvent(event: any): Promise<void> {
-        if (!dockerStatusManager.isConnected()) {
-            logger.debug('Ignoring Docker event: Docker is not connected');
+        try {
+            if (!this.getDockerStatusManager().isConnected()) {
+                logger.debug('Ignoring Docker event: Docker is not connected');
+                return;
+            }
+        } catch (err) {
+            logger.debug('Ignoring Docker event: Docker status manager not available');
             return;
         }
 
@@ -90,8 +99,13 @@ export class ContainersStateManager extends BaseStateManager {
     }
 
     async fullStateSync(): Promise<void> {
-        if (!dockerStatusManager.isConnected()) {
-            logger.debug('Skipping full state sync: Docker not connected');
+        try {
+            if (!this.getDockerStatusManager().isConnected()) {
+                logger.debug('Skipping full state sync: Docker not connected');
+                return;
+            }
+        } catch (err) {
+            logger.debug('Skipping full state sync: Docker status manager not available');
             return;
         }
 
@@ -146,8 +160,13 @@ export class ContainersStateManager extends BaseStateManager {
         containerId: string,
         action: ContainersStateEvents,
     ): Promise<void> {
-        if (!dockerStatusManager.isConnected()) {
-            logger.debug({ containerId }, 'Skipping container state update: Docker not connected');
+        try {
+            if (!this.getDockerStatusManager().isConnected()) {
+                logger.debug({ containerId }, 'Skipping container state update: Docker not connected');
+                return;
+            }
+        } catch (err) {
+            logger.debug({ containerId }, 'Skipping container state update: Docker status manager not available');
             return;
         }
 
@@ -369,9 +388,14 @@ export class ContainersStateManager extends BaseStateManager {
     }
 
     async hardRefresh(): Promise<void> {
-        if (!dockerStatusManager.isConnected()) {
-            logger.warn('Cannot hard refresh: Docker is not connected');
-            throw new Error('Docker is not connected');
+        try {
+            if (!this.getDockerStatusManager().isConnected()) {
+                logger.warn('Cannot hard refresh: Docker is not connected');
+                throw new Error('Docker is not connected');
+            }
+        } catch (err) {
+            logger.warn('Cannot hard refresh: Docker status manager not available');
+            throw new Error('Docker status manager not available');
         }
 
         logger.info('Starting hard refresh of container states');

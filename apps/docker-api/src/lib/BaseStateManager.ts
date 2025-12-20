@@ -1,10 +1,11 @@
 import { EventEmitter } from 'events';
 import { logger } from '@/utils/logger';
-import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
 import byline from 'byline';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import type Docker from 'dockerode';
+import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
+import type { DockerStatusManager } from '@/managers/dockerStatusManager';
 
 export interface BaseStateManagerConfig {
     managerName: string;
@@ -33,28 +34,53 @@ export abstract class BaseStateManager extends EventEmitter {
         this.POLL_INTERVAL_MS = config.pollIntervalMs ?? 10000;
         this.MAX_RECONNECT_ATTEMPTS = config.maxReconnectAttempts ?? 5;
         this.setMaxListeners(config.maxListeners ?? 100);
-        this.setupDockerStatusListeners();
+        // Defer setupDockerStatusListeners to avoid circular dependency during initialization
+        setImmediate(() => this.setupDockerStatusListeners());
+    }
+
+    protected getDockerStatusManager(): DockerStatusManager {
+        const managers = stateManagerFactory.getManagersSafe(this.environmentId);
+        if (!managers) {
+            throw new Error(
+                `No managers found for environment: ${this.environmentId}. The environment may not be initialized.`,
+            );
+        }
+        if (!managers.dockerStatus) {
+            throw new Error(
+                `DockerStatusManager not found for environment: ${this.environmentId}. The manager may not be fully initialized yet.`,
+            );
+        }
+        return managers.dockerStatus;
     }
 
     private setupDockerStatusListeners() {
-        dockerStatusManager.on('status-changed', async (event: DockerStatusEvent) => {
-            if (this.polling && event.status === 'connected') {
-                logger.info(`Docker reconnected, reinitializing ${this.managerName}`);
-                try {
-                    await this.loadInitialState();
-                    await this.startDockerEventsListener();
-                    this.reconnectAttempts = 0;
-                } catch (err) {
-                    logger.error(
-                        { err },
-                        `Failed to reinitialize ${this.managerName} after Docker reconnection`,
-                    );
+        try {
+            const dockerStatusManager = this.getDockerStatusManager();
+
+            dockerStatusManager.on('status-changed', async (event: DockerStatusEvent) => {
+                if (this.polling && event.status === 'connected') {
+                    logger.info(`Docker reconnected, reinitializing ${this.managerName}`);
+                    try {
+                        await this.loadInitialState();
+                        await this.startDockerEventsListener();
+                        this.reconnectAttempts = 0;
+                    } catch (err) {
+                        logger.error(
+                            { err },
+                            `Failed to reinitialize ${this.managerName} after Docker reconnection`,
+                        );
+                    }
+                } else if (this.polling && event.status === 'disconnected') {
+                    logger.warn(`Docker disconnected, stopping ${this.managerName} event stream`);
+                    this.cleanupEventStream();
                 }
-            } else if (this.polling && event.status === 'disconnected') {
-                logger.warn(`Docker disconnected, stopping ${this.managerName} event stream`);
-                this.cleanupEventStream();
-            }
-        });
+            });
+        } catch (err) {
+            logger.error(
+                { err, environmentId: this.environmentId, managerName: this.managerName },
+                'Failed to setup docker status listeners',
+            );
+        }
     }
 
     async start(): Promise<void> {
@@ -66,6 +92,7 @@ export abstract class BaseStateManager extends EventEmitter {
         this.polling = true;
         logger.info(`Starting ${this.managerName}`);
 
+        const dockerStatusManager = this.getDockerStatusManager();
         const status = dockerStatusManager.getStatus();
 
         if (status === 'connecting') {
@@ -119,6 +146,7 @@ export abstract class BaseStateManager extends EventEmitter {
     }
 
     private async startDockerEventsListener(): Promise<void> {
+        const dockerStatusManager = this.getDockerStatusManager();
         if (!dockerStatusManager.isConnected()) {
             logger.warn(`Cannot start events listener: Docker is not connected`);
             return;
@@ -180,11 +208,19 @@ export abstract class BaseStateManager extends EventEmitter {
         );
 
         setTimeout(() => {
-            if (this.polling && dockerStatusManager.isConnected()) {
-                this.startDockerEventsListener();
-            } else {
-                logger.warn(
-                    `Skipping ${this.managerName} event listener reconnection: Docker not connected`,
+            try {
+                const dockerStatusManager = this.getDockerStatusManager();
+                if (this.polling && dockerStatusManager.isConnected()) {
+                    this.startDockerEventsListener();
+                } else {
+                    logger.warn(
+                        `Skipping ${this.managerName} event listener reconnection: Docker not connected`,
+                    );
+                }
+            } catch (err) {
+                logger.error(
+                    { err },
+                    `Failed to reconnect ${this.managerName} event listener: Docker status manager not available`,
                 );
             }
         }, backoffDelay);
@@ -194,12 +230,13 @@ export abstract class BaseStateManager extends EventEmitter {
         this.pollInterval = setInterval(async () => {
             if (!this.polling) return;
 
-            if (!dockerStatusManager.isConnected()) {
-                // logger.debug(`Skipping ${this.managerName} poll: Docker not connected`);
-                return;
-            }
-
             try {
+                const dockerStatusManager = this.getDockerStatusManager();
+                if (!dockerStatusManager.isConnected()) {
+                    // logger.debug(`Skipping ${this.managerName} poll: Docker not connected`);
+                    return;
+                }
+
                 await this.fullStateSync();
             } catch (err) {
                 logger.error({ err }, `Error in ${this.managerName} fallback polling`);
@@ -213,11 +250,20 @@ export abstract class BaseStateManager extends EventEmitter {
     }
 
     getStats() {
+        let dockerConnected = false;
+        try {
+            const dockerStatusManager = this.getDockerStatusManager();
+            dockerConnected = dockerStatusManager.isConnected();
+        } catch (err) {
+            // DockerStatusManager may not be available during initialization
+            dockerConnected = false;
+        }
+
         return {
             eventStreamActive: this.dockerEventStream !== null,
             reconnectAttempts: this.reconnectAttempts,
             polling: this.polling,
-            dockerConnected: dockerStatusManager.isConnected(),
+            dockerConnected,
             ...this.getCustomStats(),
         };
     }

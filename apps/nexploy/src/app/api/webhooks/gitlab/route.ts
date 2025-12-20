@@ -34,7 +34,13 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
         }
 
-        await startBuildRepositoryInngest({ repositoryId: repo.id }, gitlabTokenUserId);
+        await startBuildRepositoryInngest(
+            {
+                repositoryId: repo.id,
+                environmentId: repo.environmentId!,
+            },
+            gitlabTokenUserId,
+        );
 
         return NextResponse.json({ message: 'Build started' });
     } catch (error) {

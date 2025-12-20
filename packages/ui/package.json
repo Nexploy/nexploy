@@ -9,10 +9,5 @@
         "./lib/*": "./src/lib/*.ts",
         "./components/*": "./src/components/*.tsx",
         "./hooks/*": "./src/hooks/*.ts"
-    },
-    "dependencies": {
-        "@radix-ui/react-slot": "^1.2.3",
-        "lucide-react": "^0.556.0",
-        "recharts": "2.15.4"
     }
 }

@@ -4,7 +4,6 @@ import { LayoutList } from 'lucide-react';
 import { TableDockerImages } from '@/components/docker/image/table/TableDockerImages';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { CardInfoImages } from '@/components/docker/image/CardInfoImages';
-import { EnvironmentDisconnectedAlert } from '@/components/docker/EnvironmentDisconnectedAlert';
 
 export default function ImagesPage() {
     return (
@@ -21,10 +20,6 @@ export default function ImagesPage() {
                         Gérez et visualisez toutes vos images Docker
                     </p>
                 </div>
-            </div>
-
-            <div className="px-5">
-                <EnvironmentDisconnectedAlert />
             </div>
 
             <ScrollAreaWithShadow className="h-full overflow-hidden">

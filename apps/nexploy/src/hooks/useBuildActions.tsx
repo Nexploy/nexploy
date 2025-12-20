@@ -32,6 +32,9 @@ interface UseBuildActionsProps {
     status: BuildStatus;
     lastCompletedStep?: string | null;
     mode?: 'button' | 'dropdown';
+    onResumeSuccess?: () => void;
+    onRetrySuccess?: () => void;
+    onRemoveSuccess?: () => void;
 }
 
 export function useBuildActions({
@@ -39,6 +42,9 @@ export function useBuildActions({
     status,
     lastCompletedStep,
     mode = 'button',
+    onResumeSuccess,
+    onRetrySuccess,
+    onRemoveSuccess,
 }: UseBuildActionsProps): BuildAction[] {
     const isBuilding = status === 'QUEUED' || status === 'BUILDING';
     const canResume = status === 'FAILED';
@@ -67,6 +73,7 @@ export function useBuildActions({
                     mode={mode}
                     buildId={buildId}
                     lastCompletedStep={lastCompletedStep}
+                    onSuccess={onResumeSuccess}
                 />
             ),
         });
@@ -76,7 +83,9 @@ export function useBuildActions({
         actions.push({
             type: 'component',
             id: 'retry',
-            component: <RetryBuildButton buildId={buildId} />,
+            component: (
+                <RetryBuildButton mode={mode} buildId={buildId} onSuccess={onRetrySuccess} />
+            ),
         });
     }
 
@@ -85,7 +94,9 @@ export function useBuildActions({
             type: 'component',
             id: 'remove',
             separator: canResume || canRetry,
-            component: <RemoveBuildButton mode={mode} buildId={buildId} />,
+            component: (
+                <RemoveBuildButton mode={mode} buildId={buildId} onSuccess={onRemoveSuccess} />
+            ),
         });
     }
 

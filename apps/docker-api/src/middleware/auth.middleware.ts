@@ -1,6 +1,5 @@
 import { Context, Next } from 'hono';
 import { logger } from '@/utils/logger';
-import { env } from '../../env';
 
 export async function authMiddleware(c: Context, next: Next) {
     const authHeader = c.req.header('Authorization');
@@ -20,7 +19,7 @@ export async function authMiddleware(c: Context, next: Next) {
         );
     }
 
-    if (!constantTimeCompare(token, env.INTERNAL_API_KEY)) {
+    if (!constantTimeCompare(token, process.env.INTERNAL_API_KEY as string)) {
         logger.warn('Invalid API key');
         return c.json({ error: 'Invalid API key' }, 401);
     }

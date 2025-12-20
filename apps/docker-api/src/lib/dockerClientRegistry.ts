@@ -55,7 +55,9 @@ class DockerClientRegistry {
         }
 
         if (this.clients.size === 0) {
-            throw new Error('No Docker environments could be registered. Cannot start service.');
+            logger.warn(
+                'No Docker environments could be registered. Service will start but Docker operations will fail until environments are configured.',
+            );
         }
 
         return registeredEnvironmentIds;

@@ -1,10 +1,9 @@
 import Docker from 'dockerode';
-import { env } from '../../env';
 import { getCurrentDockerClient } from '@/lib/dockerContext';
 import { EnvironmentSchemaType } from '@workspace/schemas-zod/docker/environment/environment.schema';
 
 export const defaultDocker = new Docker({
-    socketPath: env.DOCKER_SOCKET,
+    socketPath: process.env.DOCKER_SOCKET,
 });
 
 export const docker = new Proxy({} as Docker, {

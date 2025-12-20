@@ -53,21 +53,9 @@ export async function getEnvironmentById(id: string) {
 }
 
 export async function createEnvironment(data: EnvironmentSchemaType, userId: string) {
-    const tempConfig = {
-        name: data.name,
-        connectionType: data.connectionType,
-        socketPath: data.socketPath,
-        host: data.host,
-        port: data.port,
-        tlsCert: data.tlsCert,
-        tlsKey: data.tlsKey,
-        tlsCa: data.tlsCa,
-        isDefault: false,
-    };
-
     try {
         await kyDocker.post('environments/validate', {
-            json: tempConfig,
+            json: data,
         });
     } catch (error: any) {
         if (error.response?.status === 400) {
@@ -77,63 +65,34 @@ export async function createEnvironment(data: EnvironmentSchemaType, userId: str
         throw new Error('docker-api is not accessible. Please ensure the service is running.');
     }
 
+    const environment = await prisma.environment.create({
+        data: {
+            ...data,
+            userId,
+            tlsCert: data.tlsCert ? encrypt(data.tlsCert) : null,
+            tlsKey: data.tlsKey ? encrypt(data.tlsKey) : null,
+            tlsCa: data.tlsCa ? encrypt(data.tlsCa) : null,
+        },
+    });
+
     try {
-        const environment = await prisma.environment.create({
-            data: {
-                ...data,
-                userId,
-                tlsCert: data.tlsCert ? encrypt(data.tlsCert) : null,
-                tlsKey: data.tlsKey ? encrypt(data.tlsKey) : null,
-                tlsCa: data.tlsCa ? encrypt(data.tlsCa) : null,
-            },
-            select: {
-                id: true,
-                name: true,
-                connectionType: true,
-                socketPath: true,
-                host: true,
-                port: true,
-                tlsCert: true,
-                tlsKey: true,
-                tlsCa: true,
-                description: true,
-            },
-        });
-
-        const decryptedConfig = {
-            tlsCert: environment.tlsCert ? decrypt(environment.tlsCert) : undefined,
-            tlsKey: environment.tlsKey ? decrypt(environment.tlsKey) : undefined,
-            tlsCa: environment.tlsCa ? decrypt(environment.tlsCa) : undefined,
-        };
-
         await kyDocker.post('environments/register', {
             json: {
-                ...environment,
-                ...decryptedConfig,
+                ...data,
+                id: environment.id,
             },
         });
     } catch (error: any) {
+        await prisma.environment.delete({ where: { id: environment.id } }).catch(() => {});
         throw new Error(`Failed to register environment with docker-api: ${error.message}`);
     }
+
+    return environment;
 }
 
-export async function updateEnvironment(
-    id: string,
-    data: {
-        name?: string;
-        connectionType?: 'UNIX_SOCKET' | 'TCP' | 'TCP_TLS';
-        socketPath?: string;
-        host?: string;
-        port?: number;
-        tlsCert?: string;
-        tlsKey?: string;
-        tlsCa?: string;
-        description?: string;
-        isActive?: boolean;
-    },
-) {
+export async function updateEnvironment(environmentData: EnvironmentSchemaType) {
     const currentEnv = await prisma.environment.findUnique({
-        where: { id },
+        where: { id: environmentData.id },
     });
 
     if (!currentEnv) {
@@ -141,26 +100,31 @@ export async function updateEnvironment(
     }
 
     const dockerConfigChanging =
-        data.connectionType !== undefined ||
-        data.socketPath !== undefined ||
-        data.host !== undefined ||
-        data.port !== undefined ||
-        data.tlsCert !== undefined ||
-        data.tlsKey !== undefined ||
-        data.tlsCa !== undefined;
+        environmentData.connectionType !== undefined ||
+        environmentData.socketPath !== undefined ||
+        environmentData.host !== undefined ||
+        environmentData.port !== undefined ||
+        environmentData.tlsCert !== undefined ||
+        environmentData.tlsKey !== undefined ||
+        environmentData.tlsCa !== undefined;
 
     if (dockerConfigChanging) {
         const validationConfig = {
-            id,
-            name: data.name ?? currentEnv.name,
-            connectionType: data.connectionType ?? currentEnv.connectionType,
-            socketPath: data.socketPath ?? currentEnv.socketPath ?? undefined,
-            host: data.host ?? currentEnv.host ?? undefined,
-            port: data.port ?? currentEnv.port ?? undefined,
-            tlsCert: data.tlsCert ?? (currentEnv.tlsCert ? decrypt(currentEnv.tlsCert) : undefined),
-            tlsKey: data.tlsKey ?? (currentEnv.tlsKey ? decrypt(currentEnv.tlsKey) : undefined),
-            tlsCa: data.tlsCa ?? (currentEnv.tlsCa ? decrypt(currentEnv.tlsCa) : undefined),
-            isDefault: currentEnv.isDefault,
+            id: environmentData.id,
+            name: environmentData.name ?? currentEnv.name,
+            connectionType: environmentData.connectionType ?? currentEnv.connectionType,
+            socketPath: environmentData.socketPath ?? currentEnv.socketPath ?? undefined,
+            host: environmentData.host ?? currentEnv.host ?? undefined,
+            port: environmentData.port ?? currentEnv.port ?? undefined,
+            tlsCert:
+                environmentData.tlsCert ??
+                (currentEnv.tlsCert ? decrypt(currentEnv.tlsCert) : undefined),
+            tlsKey:
+                environmentData.tlsKey ??
+                (currentEnv.tlsKey ? decrypt(currentEnv.tlsKey) : undefined),
+            tlsCa:
+                environmentData.tlsCa ?? (currentEnv.tlsCa ? decrypt(currentEnv.tlsCa) : undefined),
+            description: environmentData.description ?? currentEnv.description ?? undefined,
         };
 
         try {
@@ -179,16 +143,16 @@ export async function updateEnvironment(
     }
 
     const encryptedData = {
-        ...data,
-        tlsCert: data.tlsCert ? encrypt(data.tlsCert) : undefined,
-        tlsKey: data.tlsKey ? encrypt(data.tlsKey) : undefined,
-        tlsCa: data.tlsCa ? encrypt(data.tlsCa) : undefined,
+        ...environmentData,
+        tlsCert: environmentData.tlsCert ? encrypt(environmentData.tlsCert) : undefined,
+        tlsKey: environmentData.tlsKey ? encrypt(environmentData.tlsKey) : undefined,
+        tlsCa: environmentData.tlsCa ? encrypt(environmentData.tlsCa) : undefined,
     };
 
     let environment: Environment;
     try {
         environment = await prisma.environment.update({
-            where: { id },
+            where: { id: environmentData.id },
             data: encryptedData,
         });
     } catch (error: unknown) {
@@ -197,7 +161,7 @@ export async function updateEnvironment(
 
     if (dockerConfigChanging) {
         try {
-            const decryptedConfig = {
+            const updatePayload = {
                 id: environment.id,
                 name: environment.name,
                 connectionType: environment.connectionType,
@@ -207,15 +171,15 @@ export async function updateEnvironment(
                 tlsCert: environment.tlsCert ? decrypt(environment.tlsCert) : undefined,
                 tlsKey: environment.tlsKey ? decrypt(environment.tlsKey) : undefined,
                 tlsCa: environment.tlsCa ? decrypt(environment.tlsCa) : undefined,
-                isDefault: environment.isDefault,
+                description: environment.description || undefined,
             };
 
-            await kyDocker.patch(`environments/${id}`, {
-                json: decryptedConfig,
+            await kyDocker.patch(`environments/${environmentData.id}`, {
+                json: updatePayload,
             });
         } catch (error: any) {
             await prisma.environment.update({
-                where: { id },
+                where: { id: environmentData.id },
                 data: {
                     name: currentEnv.name,
                     connectionType: currentEnv.connectionType,
@@ -261,10 +225,6 @@ export async function deleteEnvironment(id: string) {
 
     if (!environment) {
         throw new Error('Environment not found');
-    }
-
-    if (environment.isDefault) {
-        throw new Error('Cannot delete default environment');
     }
 
     try {

@@ -3,7 +3,6 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { prisma } from '../../../prisma/prisma';
 import { nextCookies } from 'better-auth/next-js';
 import { admin, apiKey, twoFactor } from 'better-auth/plugins';
-import { env } from '../../../env';
 import { permission } from '@/lib/auth/permissions';
 
 export const auth = betterAuth({
@@ -19,13 +18,13 @@ export const auth = betterAuth({
     },
     socialProviders: {
         github: {
-            clientId: env.GITHUB_CLIENT_ID,
-            clientSecret: env.GITHUB_CLIENT_SECRET,
+            clientId: process.env.GITHUB_CLIENT_ID as string,
+            clientSecret: process.env.GITHUB_CLIENT_SECRET,
             scope: ['user:email', 'read:user', 'repo'],
         },
         gitlab: {
-            clientId: env.GITLAB_CLIENT_ID,
-            clientSecret: env.GITLAB_CLIENT_SECRET,
+            clientId: process.env.GITLAB_CLIENT_ID as string,
+            clientSecret: process.env.GITLAB_CLIENT_SECRET,
             scope: ['read_user', 'read_repository', 'api'],
         },
     },

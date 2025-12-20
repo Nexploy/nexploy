@@ -68,7 +68,7 @@ export async function removeWebhookForRepository(repositoryId: string): Promise<
 
 export async function findRepositoryByWebhook(
     repositoryUrl: string,
-): Promise<{ id: string; webhookSecret: string | null } | null> {
+): Promise<{ id: string; webhookSecret: string | null; environmentId: string | null } | null> {
     const repositories = await prisma.repository.findUnique({
         where: {
             repositoryUrl,
@@ -77,9 +77,14 @@ export async function findRepositoryByWebhook(
             id: true,
             repositoryUrl: true,
             webhookSecret: true,
+            environmentId: true,
         },
     });
     if (!repositories) return null;
 
-    return { id: repositories.id, webhookSecret: repositories.webhookSecret };
+    return {
+        id: repositories.id,
+        webhookSecret: repositories.webhookSecret,
+        environmentId: repositories.environmentId,
+    };
 }

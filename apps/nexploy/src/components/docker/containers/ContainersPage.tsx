@@ -18,7 +18,6 @@ import { ContainersStandalone } from '@/components/docker/containers/ContainersS
 import { useContainersStore } from '@/stores/docker/useContainersStore';
 import Link from 'next/link';
 import { Button } from '@workspace/ui/components/button';
-import { EnvironmentDisconnectedAlert } from '@/components/docker/EnvironmentDisconnectedAlert';
 
 export default function ContainersPage() {
     const lastUpdate = useContainersStore((state) => state.lastUpdate);
@@ -80,10 +79,6 @@ export default function ContainersPage() {
                         Ajouter un conteneur
                     </Link>
                 </Button>
-            </div>
-
-            <div className="px-5">
-                <EnvironmentDisconnectedAlert />
             </div>
 
             {isLoading && (

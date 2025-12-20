@@ -21,31 +21,45 @@ import {
     FormLabel,
     FormMessage,
 } from '@workspace/ui/components/form';
-import { createEnvironmentAction } from '@/actions/environment/environment.action';
+import { updateEnvironmentAction } from '@/actions/environment/environment.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import { Environment } from 'generated/client';
+import { decrypt } from '@/lib/encryption';
 
-export function CreateEnvironmentForm() {
+interface EditEnvironmentFormProps {
+    environment: Environment;
+}
+
+export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
     const { onSuccess } = useConfirmationDialogStore();
 
+    const decryptedTlsCert = environment.tlsCert ? decrypt(environment.tlsCert) : undefined;
+    const decryptedTlsKey = environment.tlsKey ? decrypt(environment.tlsKey) : undefined;
+    const decryptedTlsCa = environment.tlsCa ? decrypt(environment.tlsCa) : undefined;
+
     const { form, handleSubmitWithAction } = useHookFormAction(
-        createEnvironmentAction,
+        updateEnvironmentAction,
         zodResolver(environmentSchema),
         {
             formProps: {
                 defaultValues: {
-                    name: '',
-                    connectionType: 'UNIX_SOCKET' as const,
-                    socketPath: '/var/run/docker.sock',
-                    description: '',
+                    name: environment.name,
+                    connectionType: environment.connectionType,
+                    socketPath: environment.socketPath || '/var/run/docker.sock',
+                    host: environment.host || undefined,
+                    port: environment.port || undefined,
+                    description: environment.description || '',
+                    tlsCert: decryptedTlsCert,
+                    tlsKey: decryptedTlsKey,
+                    tlsCa: decryptedTlsCa,
                 },
             },
             actionProps: {
-                onSuccess: ({ data }) => {
-                    console.log(data);
-                    if (data && onSuccess) onSuccess(data);
+                onSuccess: () => {
+                    if (onSuccess) onSuccess();
                 },
                 onError: ({ error }) => {
-                    console.error('Failed to create environment:', error);
+                    console.error('Failed to update environment:', error);
                 },
             },
         },
@@ -100,7 +114,6 @@ export function CreateEnvironmentForm() {
                                     {...field}
                                     placeholder="Describe this environment..."
                                     disabled={form.formState.isSubmitting}
-                                    value={field.value === '' ? undefined : field.value}
                                     rows={2}
                                 />
                             </FormControl>
@@ -284,7 +297,7 @@ export function CreateEnvironmentForm() {
 
                 <div className="flex justify-end gap-2 pt-4">
                     <Button type="submit" disabled={form.formState.isSubmitting}>
-                        {form.formState.isSubmitting ? 'Creating...' : 'Create environment'}
+                        {form.formState.isSubmitting ? 'Updating...' : 'Update environment'}
                     </Button>
                 </div>
             </form>

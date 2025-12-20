@@ -11,15 +11,21 @@ export function getCurrentEnvironmentId(): string | undefined {
     return context?.environmentId;
 }
 
-export function runWithEnvironmentContext<T>(environmentId: string, fn: () => T): T {
+export function runWithEnvironmentContext<T>(environmentId: string | undefined, fn: () => T): T {
+    if (!environmentId) {
+        return fn();
+    }
     const context: EnvironmentContext = { environmentId };
     return environmentContextStorage.run(context, fn);
 }
 
 export async function runWithEnvironmentContextAsync<T>(
-    environmentId: string,
+    environmentId: string | undefined,
     fn: () => Promise<T>,
 ): Promise<T> {
+    if (!environmentId) {
+        return fn();
+    }
     const context: EnvironmentContext = { environmentId };
     return environmentContextStorage.run(context, fn);
 }

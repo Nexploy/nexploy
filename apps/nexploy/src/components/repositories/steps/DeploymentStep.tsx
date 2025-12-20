@@ -11,13 +11,23 @@ import {
     FormField,
     FormItem,
     FormLabel,
+    FormMessage,
 } from '@workspace/ui/components/form';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@workspace/ui/components/select';
 import { Switch } from '@workspace/ui/components/switch';
 import { useFormContext } from 'react-hook-form';
 import { Rocket } from 'lucide-react';
+import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 
 export function DeploymentStep() {
     const { control } = useFormContext();
+    const { environments } = useEnvironmentStore();
 
     return (
         <Card>
@@ -32,7 +42,38 @@ export function DeploymentStep() {
                     </div>
                 </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
+                <FormField
+                    control={control}
+                    name="environmentId"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Environnement</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue
+                                            placeholder={
+                                                'Sélectionner un environnement (optionnel)'
+                                            }
+                                        />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {environments.map((env) => (
+                                        <SelectItem key={env.id} value={env.id}>
+                                            {env.name} ({env.host ?? env.socketPath})
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <FormDescription>
+                                Choisissez l'environnement Docker où ce repository sera déployé
+                            </FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
                 <FormField
                     control={control}
                     name="autoDeploy"
