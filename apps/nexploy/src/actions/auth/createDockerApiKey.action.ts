@@ -29,7 +29,6 @@ export const createDockerApiKeyAction = authActionServer.action(async ({ ctx }) 
             keyId: apiKey.id,
         };
     } catch (error) {
-        console.error('Error creating docker-api key:', error);
         throw new Error('Failed to create API key');
     }
 });

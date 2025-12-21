@@ -9,21 +9,21 @@ import { onStartBuild } from '@/actions/repository/builds/startBuild.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { BuildOptionsDialog } from './BuildOptionsDialog';
 import { ButtonGroup } from '@workspace/ui/components/button-group';
-import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 
 interface DeployButtonProps extends ComponentProps<typeof Button> {
     repositoryId: string;
+    environmentId: string;
     showText?: boolean;
     mode?: 'all' | 'onlyDeploy';
 }
 
 export function RunBuildButton({
     repositoryId,
+    environmentId,
     showText = true,
     mode = 'all',
     ...props
 }: DeployButtonProps) {
-    const { selectedEnvironmentId } = useEnvironmentStore();
     const { execute, isPending } = useAction(onStartBuild, {
         onSuccess: () => {
             toast.success('Build started successfully');
@@ -34,7 +34,7 @@ export function RunBuildButton({
 
     const handleDeploy = (e: MouseEvent<HTMLButtonElement>, commitHash?: string) => {
         e.preventDefault();
-        execute({ repositoryId, commitHash, environmentId: selectedEnvironmentId! });
+        execute({ repositoryId, commitHash });
     };
 
     const handleOpenBuildOptions = () => {
@@ -47,7 +47,7 @@ export function RunBuildButton({
                         execute({
                             repositoryId,
                             commitHash: data.commitHash || undefined,
-                            environmentId: selectedEnvironmentId!,
+                            environmentId,
                         });
                     }}
                 />

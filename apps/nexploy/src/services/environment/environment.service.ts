@@ -241,3 +241,61 @@ export async function deleteEnvironment(id: string) {
         console.warn(`Failed to unregister environment from docker-api: ${error.message}`);
     }
 }
+
+export type EnvironmentHealthStatus = 'connected' | 'disconnected' | 'unknown';
+
+export async function checkEnvironmentHealth(
+    environment: Environment,
+): Promise<EnvironmentHealthStatus> {
+    try {
+        const config = {
+            id: environment.id,
+            name: environment.name,
+            connectionType: environment.connectionType,
+            socketPath: environment.socketPath || undefined,
+            host: environment.host || undefined,
+            port: environment.port || undefined,
+            tlsCert: environment.tlsCert ? decrypt(environment.tlsCert) : undefined,
+            tlsKey: environment.tlsKey ? decrypt(environment.tlsKey) : undefined,
+            tlsCa: environment.tlsCa ? decrypt(environment.tlsCa) : undefined,
+            description: environment.description || undefined,
+        };
+
+        await kyDocker.post('environments/validate', {
+            json: config,
+            timeout: 5000,
+        });
+
+        return 'connected';
+    } catch {
+        return 'disconnected';
+    }
+}
+
+export async function checkAllEnvironmentsHealth(): Promise<
+    Record<string, EnvironmentHealthStatus>
+> {
+    const session = await getUserSession();
+    const environments = await prisma.environment.findMany({
+        where: {
+            OR: [{ userId: session?.user.id }, { userId: null }],
+            isActive: true,
+        },
+    });
+
+    const healthChecks = await Promise.allSettled(
+        environments.map(async (env) => ({
+            id: env.id,
+            status: await checkEnvironmentHealth(env),
+        })),
+    );
+
+    const results: Record<string, EnvironmentHealthStatus> = {};
+    for (const result of healthChecks) {
+        if (result.status === 'fulfilled') {
+            results[result.value.id] = result.value.status;
+        }
+    }
+
+    return results;
+}

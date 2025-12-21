@@ -6,6 +6,7 @@ import { EnvironmentConfig } from '@workspace/typescript-interface/docker/enviro
 
 class DockerClientRegistry {
     private clients: Map<string, Docker> = new Map();
+    private configs: Map<string, EnvironmentConfig> = new Map();
     private defaultEnvironmentId: string | null = null;
     private healthCheckIntervals: Map<string, NodeJS.Timeout> = new Map();
 
@@ -77,6 +78,7 @@ class DockerClientRegistry {
             logger.info({ environmentId: config.id, name: config.name }, 'Environment connected');
 
             this.clients.set(config.id!, client);
+            this.configs.set(config.id!, config as EnvironmentConfig);
             this.startHealthCheck(config.id!);
 
             return client;
@@ -154,7 +156,19 @@ class DockerClientRegistry {
     async unregisterEnvironment(environmentId: string): Promise<void> {
         this.stopHealthCheck(environmentId);
         this.clients.delete(environmentId);
+        this.configs.delete(environmentId);
         logger.info({ environmentId }, 'Environment unregistered');
+    }
+
+    getEnvironmentConfig(environmentId: string): EnvironmentConfig | null {
+        return this.configs.get(environmentId) || null;
+    }
+
+    getDefaultEnvironmentConfig(): EnvironmentConfig | null {
+        if (!this.defaultEnvironmentId) {
+            return null;
+        }
+        return this.configs.get(this.defaultEnvironmentId) || null;
     }
 
     private startHealthCheck(environmentId: string): void {
@@ -202,6 +216,7 @@ class DockerClientRegistry {
         }
 
         this.clients.clear();
+        this.configs.clear();
     }
 
     private decryptValue(encryptedValue: string): string {

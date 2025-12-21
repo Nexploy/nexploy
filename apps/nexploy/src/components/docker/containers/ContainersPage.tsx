@@ -129,7 +129,7 @@ export default function ContainersPage() {
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
                         <div className="pb-5">
                             <TabsContent value="all" className="flex flex-col space-y-4">
-                                <ContainersStack />
+                                {stacksSize ? <ContainersStack /> : null}
                                 <ContainersStandalone />
                             </TabsContent>
                             <TabsContent value="stacks">

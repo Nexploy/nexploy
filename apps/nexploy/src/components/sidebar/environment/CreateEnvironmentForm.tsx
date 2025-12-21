@@ -41,11 +41,7 @@ export function CreateEnvironmentForm() {
             },
             actionProps: {
                 onSuccess: ({ data }) => {
-                    console.log(data);
                     if (data && onSuccess) onSuccess(data);
-                },
-                onError: ({ error }) => {
-                    console.error('Failed to create environment:', error);
                 },
             },
         },

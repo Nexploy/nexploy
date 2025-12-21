@@ -1,6 +1,10 @@
 'use client';
 
-import { initializeEnvironmentStore, useEnvironmentStore, } from '@/stores/environment/useEnvironmentStore';
+import {
+    EnvironmentHealthStatus,
+    initializeEnvironmentStore,
+    useEnvironmentStore,
+} from '@/stores/environment/useEnvironmentStore';
 import { useMemo } from 'react';
 import {
     DropdownMenu,
@@ -15,10 +19,33 @@ import { Check, ChevronsUpDown, MoreHorizontal, Pencil, Plus, Trash } from 'luci
 import { CreateEnvironmentForm } from '@/components/sidebar/environment/CreateEnvironmentForm';
 import { EditEnvironmentForm } from '@/components/sidebar/environment/EditEnvironmentForm';
 import { Environment } from 'generated/client';
-import { deleteEnvironmentAction, setDefaultEnvironmentAction, } from '@/actions/environment/environment.action';
+import {
+    deleteEnvironmentAction,
+    setDefaultEnvironmentAction,
+} from '@/actions/environment/environment.action';
 import { useRouter } from 'next/navigation';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { cn } from '@workspace/ui/lib/utils';
+
+function StatusIndicator({ status }: { status: EnvironmentHealthStatus }) {
+    return (
+        <span
+            className={cn('size-2 rounded-full', {
+                'bg-green-500': status === 'connected',
+                'bg-red-500': status === 'disconnected',
+                'bg-gray-400': status === 'unknown',
+            })}
+            title={
+                status === 'connected'
+                    ? 'Connected'
+                    : status === 'disconnected'
+                      ? 'Disconnected'
+                      : 'Unknown'
+            }
+        />
+    );
+}
 
 interface DropdownEnvironment {
     environments: Environment[];
@@ -34,7 +61,6 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
         selectEnvironment,
         addEnvironment,
         removeEnvironment,
-        updateEnvironment,
         getSelectedEnvironment,
     } = useEnvironmentStore();
 

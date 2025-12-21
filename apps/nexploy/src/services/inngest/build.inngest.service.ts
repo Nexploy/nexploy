@@ -14,7 +14,7 @@ import {
 } from '@workspace/schemas-zod/inngest/build.schema';
 
 export async function startBuildRepositoryInngest(
-    { repositoryId, commitHash, environmentId }: StartBuildSchemaType,
+    { repositoryId, commitHash }: StartBuildSchemaType,
     userId: string,
 ) {
     const repository = await getRepositorieWithEnv(repositoryId);
@@ -70,7 +70,7 @@ export async function startBuildRepositoryInngest(
         imageName,
         imageTag: build.id.slice(-8),
         autoDeploy: repository.autoDeploy,
-        environmentId,
+        environmentId: repository.environmentId,
     };
 
     await addBuildJob(build.id, config);

@@ -61,8 +61,6 @@ export async function loadEnvironmentByIdFromAPI(
             },
         });
 
-        console.log(response);
-
         if (!response.ok) {
             if (response.status === 404) {
                 logger.warn({ environmentId }, 'Environment not found in database');

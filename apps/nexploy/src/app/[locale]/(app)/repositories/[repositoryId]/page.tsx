@@ -5,12 +5,13 @@ import { RepositoryEnvTab } from '@/components/repositories/tabs/envs/Repository
 import { RepositoryDomainsTab } from '@/components/repositories/tabs/domains/RepositoryDomainsTab';
 import { RepositorySettingsTab } from '@/components/repositories/tabs/settings/RepositorySettingsTab';
 import { RepositoryVersionsTab } from '@/components/repositories/tabs/versions/RepositoryVersionsTab';
-import { GitBranch, Github, Gitlab, Link2 } from 'lucide-react';
+import { GitBranch, Github, Gitlab, Link2, Server } from 'lucide-react';
 import { RepositoryBuildsTab } from '@/components/repositories/tabs/builds/RepositoryBuildsTab';
 import { RepositoryDeploymentTab } from '@/components/repositories/tabs/deployment/RepositoryDeploymentTab';
 import { getRepositorieById } from '@/services/repository.service';
 import { Separator } from '@workspace/ui/components/separator';
 import { capitalizeFirstLetter, toDisplayLabel } from '@/utils/capitalize';
+import React from 'react';
 
 interface RepositoryIdPageProps {
     params: Promise<{
@@ -54,11 +55,19 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                                     <span>{repository.branch}</span>
                                 </p>
                                 <Separator orientation={'vertical'} className={'!h-3 w-1'} />
+                                <div className={'flex items-center gap-1'}>
+                                    <Server className="size-3" />
+                                    {repository.environment?.name}
+                                </div>
+                                <Separator orientation={'vertical'} className={'!h-3 w-1'} />
                                 <span>{toDisplayLabel(repository.buildType)}</span>
                             </div>
                         </div>
                     </div>
-                    <RunBuildButton repositoryId={repository.id} />
+                    <RunBuildButton
+                        repositoryId={repository.id}
+                        environmentId={repository.environmentId}
+                    />
                 </div>
 
                 <RepositoryTabs>

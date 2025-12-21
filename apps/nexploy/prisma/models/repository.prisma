@@ -54,8 +54,8 @@ model Repository {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  environmentId String?
-  environment   Environment? @relation(fields: [environmentId], references: [id], onDelete: SetNull)
+  environmentId String
+  environment   Environment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
 
   build        Build[]
   envVariables EnvVariable[]

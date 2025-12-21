@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Folder, GitBranch, Github, Gitlab } from 'lucide-react';
+import { Folder, GitBranch, Github, Gitlab, Server } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import {
     Empty,
@@ -22,6 +22,7 @@ import { getStatusBadge } from '@/components/utils/StatusBadge';
 import { RunBuildButton } from '@/components/repositories/RunBuildButton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import React from 'react';
+import { Separator } from '@workspace/ui/components/separator';
 
 export const metadata: Metadata = {
     title: 'Repositories',
@@ -93,11 +94,27 @@ export default async function RepositoriesPage() {
                                                             <CardTitle className="text-base leading-none font-semibold">
                                                                 {repository.name}
                                                             </CardTitle>
-                                                            <CardDescription className="text-muted-foreground/80 flex items-center gap-1 truncate font-mono text-xs">
-                                                                <GitBranch className="size-3" />
-                                                                <span className="font-mono">
+                                                            <CardDescription className="text-muted-foreground/80 flex items-center gap-2 truncate font-mono text-xs">
+                                                                <div
+                                                                    className={
+                                                                        'flex items-center gap-1'
+                                                                    }
+                                                                >
+                                                                    <GitBranch className="size-3" />
                                                                     {repository.branch}
-                                                                </span>
+                                                                </div>
+                                                                <Separator
+                                                                    orientation={'vertical'}
+                                                                    className={'!h-3 w-1'}
+                                                                />
+                                                                <div
+                                                                    className={
+                                                                        'flex items-center gap-1'
+                                                                    }
+                                                                >
+                                                                    <Server className="size-3" />
+                                                                    {repository.environment?.name}
+                                                                </div>
                                                             </CardDescription>
                                                         </div>
                                                     </div>
@@ -113,6 +130,9 @@ export default async function RepositoriesPage() {
                                                                 size={'icon'}
                                                                 showText={false}
                                                                 variant={'secondary'}
+                                                                environmentId={
+                                                                    repository.environmentId
+                                                                }
                                                                 repositoryId={repository.id}
                                                             />
                                                         </TooltipTrigger>

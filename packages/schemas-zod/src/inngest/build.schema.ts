@@ -15,7 +15,6 @@ export const buildStepSchema = z.enum([
 export const startBuildSchema = z.object({
     repositoryId: z.cuid(),
     commitHash: z.string().optional(),
-    environmentId: z.cuid(),
 });
 
 export type StartBuildSchemaType = z.infer<typeof startBuildSchema>;

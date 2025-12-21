@@ -49,7 +49,7 @@ export function DeploymentStep() {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Environnement</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select {...field} onValueChange={field.onChange}>
                                 <FormControl>
                                     <SelectTrigger>
                                         <SelectValue

@@ -58,9 +58,6 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                 onSuccess: () => {
                     if (onSuccess) onSuccess();
                 },
-                onError: ({ error }) => {
-                    console.error('Failed to update environment:', error);
-                },
             },
         },
     );

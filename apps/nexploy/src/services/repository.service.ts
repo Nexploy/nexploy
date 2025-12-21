@@ -59,17 +59,14 @@ export async function createRepository(
 
 export async function getRepositorieById(repositoryId: string) {
     try {
-        const repository = await prisma.repository.findUnique({
+        return await prisma.repository.findUnique({
             where: {
                 id: repositoryId,
             },
+            include: {
+                environment: true,
+            },
         });
-
-        if (!repository) {
-            return null;
-        }
-
-        return repository;
     } catch (error: unknown) {
         throw new Error('Failed to get repository');
     }
@@ -85,6 +82,7 @@ export function getRepositories() {
                     },
                     take: 1,
                 },
+                environment: true,
             },
             orderBy: {
                 updatedAt: 'desc',
@@ -100,6 +98,7 @@ export async function getRepositorieWithEnv(repositoryId: string) {
         const repository = await prisma.repository.findUnique({
             where: { id: repositoryId },
             include: {
+                environment: true,
                 envVariables: true,
             },
         });

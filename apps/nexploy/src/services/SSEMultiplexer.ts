@@ -223,13 +223,19 @@ class SSEMultiplexerService {
                     if (event === 'error') {
                         try {
                             const errorData = JSON.parse(data);
-                            if (errorData.code === 'ENVIRONMENT_NOT_FOUND' || errorData.code === 'ENVIRONMENT_UNAVAILABLE') {
+                            if (
+                                errorData.code === 'ENVIRONMENT_NOT_FOUND' ||
+                                errorData.code === 'ENVIRONMENT_UNAVAILABLE'
+                            ) {
                                 const environmentId = this.currentEnvironmentId || 'default';
                                 this.permanentErrors.add(environmentId);
-                                console.warn(`[SSE] Permanent error for environment ${environmentId}:`, errorData);
+                                console.warn(
+                                    `[SSE] Permanent error for environment ${environmentId}:`,
+                                    errorData,
+                                );
                             }
                         } catch {
-                            // Not a JSON error, continue normally
+                            /* empty */
                         }
                     }
 
@@ -306,7 +312,9 @@ class SSEMultiplexerService {
         // Don't reconnect if we have a permanent error for the current environment
         const environmentId = this.currentEnvironmentId || 'default';
         if (this.permanentErrors.has(environmentId)) {
-            console.warn(`[SSE] Not reconnecting due to permanent error for environment ${environmentId}`);
+            console.warn(
+                `[SSE] Not reconnecting due to permanent error for environment ${environmentId}`,
+            );
             return;
         }
 

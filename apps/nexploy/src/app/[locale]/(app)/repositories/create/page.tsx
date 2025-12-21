@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,25 +13,31 @@ import { onRepositoryCreateAction } from '@/actions/repository/repositoryCreate.
 import { GitSourceStep } from '@/components/repositories/steps/source/GitSourceStep';
 import { BuildConfigurationStep } from '@/components/repositories/steps/BuildConfigurationStep';
 import { DeploymentStep } from '@/components/repositories/steps/DeploymentStep';
+import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 
 export default function AddRepositoryPage() {
     const router = useRouter();
+    const selectedEnvironmentId = useEnvironmentStore((state) => state.selectedEnvironmentId);
+
+    const defaultValues = useMemo(
+        () => ({
+            name: '',
+            branch: 'main',
+            gitToken: '',
+            gitProvider: 'github' as const,
+            buildType: 'DOCKERFILE' as const,
+            buildArgs: '',
+            autoDeploy: true,
+            environmentId: selectedEnvironmentId ?? undefined,
+        }),
+        [selectedEnvironmentId],
+    );
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onRepositoryCreateAction,
         zodResolver(repositoryCreateFormSchema),
         {
-            formProps: {
-                defaultValues: {
-                    name: '',
-                    branch: 'main',
-                    gitToken: '',
-                    gitProvider: 'github',
-                    buildType: 'DOCKERFILE',
-                    buildArgs: '',
-                    autoDeploy: true,
-                },
-            },
+            formProps: { defaultValues },
             actionProps: {
                 onSuccess: ({ data }) => {
                     if (data) router.push(`/repositories/${data}`);
@@ -40,6 +47,13 @@ export default function AddRepositoryPage() {
     );
 
     const isSubmitting = action.status === 'executing';
+
+    useEffect(() => {
+        const currentValue = form.getValues('environmentId');
+        if (selectedEnvironmentId && !currentValue) {
+            form.setValue('environmentId', selectedEnvironmentId);
+        }
+    }, [selectedEnvironmentId, form]);
 
     return (
         <div className="flex flex-1 flex-col gap-5 overflow-hidden pt-5">

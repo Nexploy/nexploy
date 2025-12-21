@@ -1,6 +1,7 @@
 'use server';
 
 import {
+    checkAllEnvironmentsHealth,
     createEnvironment,
     deleteEnvironment,
     getDefaultEnvironment,

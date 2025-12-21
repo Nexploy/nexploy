@@ -152,4 +152,19 @@ export const useRequestsStore = create<RequestsState>((set, get) => ({
 
         set({ eventSource: null });
     },
+
+    reset: () => {
+        set({
+            requests: [],
+            filteredRequests: [],
+            error: null,
+            lastUpdate: null,
+            eventSource: null,
+            maxRequests: 500,
+
+            searchQuery: '',
+            methodFilter: 'all',
+            statusFilter: 'all',
+        });
+    },
 }));

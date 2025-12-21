@@ -30,4 +30,5 @@ export interface RequestsState {
 
     connect: () => void;
     disconnect: () => void;
+    reset: () => void;
 }
