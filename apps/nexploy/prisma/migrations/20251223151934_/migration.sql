@@ -1,4 +1,7 @@
 -- CreateEnum
+CREATE TYPE "DockerConnectionType" AS ENUM ('UNIX_SOCKET', 'TCP', 'TCP_TLS');
+
+-- CreateEnum
 CREATE TYPE "BuildType" AS ENUM ('DOCKERFILE', 'DOCKER_COMPOSE', 'NIXPACKS', 'BUILDPACKS');
 
 -- CreateEnum
@@ -32,6 +35,29 @@ CREATE TABLE "cloudflare_credential" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "cloudflare_credential_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "environment" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "connectionType" "DockerConnectionType" NOT NULL DEFAULT 'UNIX_SOCKET',
+    "socketPath" TEXT,
+    "host" TEXT,
+    "port" INTEGER,
+    "tlsCert" TEXT,
+    "tlsKey" TEXT,
+    "tlsCa" TEXT,
+    "isDefault" BOOLEAN NOT NULL DEFAULT false,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "description" TEXT,
+    "lastHealthCheck" TIMESTAMP(3),
+    "healthStatus" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "userId" TEXT,
+
+    CONSTRAINT "environment_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -77,6 +103,7 @@ CREATE TABLE "repository" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
+    "environmentId" TEXT NOT NULL,
 
     CONSTRAINT "repository_pkey" PRIMARY KEY ("id")
 );
@@ -207,6 +234,33 @@ CREATE TABLE "invitation" (
     CONSTRAINT "invitation_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "apikey" (
+    "id" TEXT NOT NULL,
+    "name" TEXT,
+    "start" TEXT,
+    "prefix" TEXT,
+    "key" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "refillInterval" INTEGER,
+    "refillAmount" INTEGER,
+    "lastRefillAt" TIMESTAMP(3),
+    "enabled" BOOLEAN DEFAULT true,
+    "rateLimitEnabled" BOOLEAN DEFAULT true,
+    "rateLimitTimeWindow" INTEGER DEFAULT 86400000,
+    "rateLimitMax" INTEGER DEFAULT 10,
+    "requestCount" INTEGER DEFAULT 0,
+    "remaining" INTEGER,
+    "lastRequest" TIMESTAMP(3),
+    "expiresAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "permissions" TEXT,
+    "metadata" TEXT,
+
+    CONSTRAINT "apikey_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "cloudflare_credential_userId_key" ON "cloudflare_credential"("userId");
 
@@ -225,11 +279,23 @@ CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 -- CreateIndex
 CREATE UNIQUE INDEX "session_token_key" ON "session"("token");
 
+-- CreateIndex
+CREATE INDEX "apikey_key_idx" ON "apikey"("key");
+
+-- CreateIndex
+CREATE INDEX "apikey_userId_idx" ON "apikey"("userId");
+
 -- AddForeignKey
 ALTER TABLE "cloudflare_credential" ADD CONSTRAINT "cloudflare_credential_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "environment" ADD CONSTRAINT "environment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "repository" ADD CONSTRAINT "repository_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "repository" ADD CONSTRAINT "repository_environmentId_fkey" FOREIGN KEY ("environmentId") REFERENCES "environment"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "env_variable" ADD CONSTRAINT "env_variable_repositoryId_fkey" FOREIGN KEY ("repositoryId") REFERENCES "repository"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -248,3 +314,6 @@ ALTER TABLE "account" ADD CONSTRAINT "account_userId_fkey" FOREIGN KEY ("userId"
 
 -- AddForeignKey
 ALTER TABLE "twoFactor" ADD CONSTRAINT "twoFactor_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "apikey" ADD CONSTRAINT "apikey_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;

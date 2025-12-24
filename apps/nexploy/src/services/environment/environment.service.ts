@@ -58,11 +58,7 @@ export async function createEnvironment(data: EnvironmentSchemaType, userId: str
             json: data,
         });
     } catch (error: any) {
-        if (error.response?.status === 400) {
-            const errorData = await error.response.json();
-            throw new Error(`Invalid Docker configuration: ${errorData.message || error.message}`);
-        }
-        throw new Error('docker-api is not accessible. Please ensure the service is running.');
+        throw new Error('This environment is not accessible. Please check the connection.');
     }
 
     const environment = await prisma.environment.create({

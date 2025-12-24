@@ -1,7 +1,6 @@
 'use server';
 
 import {
-    checkAllEnvironmentsHealth,
     createEnvironment,
     deleteEnvironment,
     getDefaultEnvironment,
@@ -14,6 +13,7 @@ import {
     environmentSchema,
 } from '@workspace/schemas-zod/docker/environment/environment.schema';
 import { authActionServer } from '@/lib/api/safe-action';
+import { setToastServer } from '@/components/utils/toaster/toastServer';
 
 export const getDefaultEnvironmentAction = authActionServer.action(async () => {
     return getDefaultEnvironment();
@@ -26,7 +26,16 @@ export const getUserEnvironmentsAction = authActionServer.action(async () => {
 export const createEnvironmentAction = authActionServer
     .inputSchema(environmentSchema)
     .action(async ({ parsedInput, ctx }) => {
-        return await createEnvironment(parsedInput, ctx.session.user.id);
+        try {
+            return await createEnvironment(parsedInput, ctx.session.user.id);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                await setToastServer({
+                    type: 'error',
+                    message: err.message as string,
+                });
+            }
+        }
     });
 
 export const updateEnvironmentAction = authActionServer

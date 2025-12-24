@@ -65,9 +65,11 @@ export function CreateServiceDialog({ trigger }: CreateServiceDialogProps) {
     };
 
     const updatePort = (index: number, field: keyof PortConfig, value: any) => {
-        setPorts(ports.map((port, i) =>
-            i === index ? { ...port, [field]: value } as PortConfig : port
-        ));
+        setPorts(
+            ports.map((port, i) =>
+                i === index ? ({ ...port, [field]: value } as PortConfig) : port,
+            ),
+        );
     };
 
     const addEnvVar = () => {
@@ -79,9 +81,9 @@ export function CreateServiceDialog({ trigger }: CreateServiceDialogProps) {
     };
 
     const updateEnvVar = (index: number, field: 'key' | 'value', value: string) => {
-        setEnvVars(envVars.map((env, i) =>
-            i === index ? { ...env, [field]: value } as EnvVar : env
-        ));
+        setEnvVars(
+            envVars.map((env, i) => (i === index ? ({ ...env, [field]: value } as EnvVar) : env)),
+        );
     };
 
     const handleCreate = async () => {
@@ -186,7 +188,10 @@ export function CreateServiceDialog({ trigger }: CreateServiceDialogProps) {
                         <Label htmlFor="mode" className="text-right">
                             Mode
                         </Label>
-                        <Select value={mode} onValueChange={(v) => setMode(v as 'replicated' | 'global')}>
+                        <Select
+                            value={mode}
+                            onValueChange={(v) => setMode(v as 'replicated' | 'global')}
+                        >
                             <SelectTrigger className="col-span-3">
                                 <SelectValue />
                             </SelectTrigger>
@@ -223,7 +228,11 @@ export function CreateServiceDialog({ trigger }: CreateServiceDialogProps) {
                                         placeholder="Published"
                                         value={port.publishedPort}
                                         onChange={(e) =>
-                                            updatePort(index, 'publishedPort', parseInt(e.target.value) || 0)
+                                            updatePort(
+                                                index,
+                                                'publishedPort',
+                                                parseInt(e.target.value) || 0,
+                                            )
                                         }
                                         className="w-24"
                                     />
@@ -233,7 +242,11 @@ export function CreateServiceDialog({ trigger }: CreateServiceDialogProps) {
                                         placeholder="Target"
                                         value={port.targetPort}
                                         onChange={(e) =>
-                                            updatePort(index, 'targetPort', parseInt(e.target.value) || 0)
+                                            updatePort(
+                                                index,
+                                                'targetPort',
+                                                parseInt(e.target.value) || 0,
+                                            )
                                         }
                                         className="w-24"
                                     />
@@ -292,7 +305,9 @@ export function CreateServiceDialog({ trigger }: CreateServiceDialogProps) {
                                     <Input
                                         placeholder="value"
                                         value={env.value}
-                                        onChange={(e) => updateEnvVar(index, 'value', e.target.value)}
+                                        onChange={(e) =>
+                                            updateEnvVar(index, 'value', e.target.value)
+                                        }
                                         className="flex-1"
                                     />
                                     <Button
@@ -323,7 +338,8 @@ export function CreateServiceDialog({ trigger }: CreateServiceDialogProps) {
                                 placeholder="node.role==worker"
                             />
                             <p className="text-muted-foreground mt-1 text-xs">
-                                Placement constraints (e.g., node.role==worker, node.labels.zone==us-east)
+                                Placement constraints (e.g., node.role==worker,
+                                node.labels.zone==us-east)
                             </p>
                         </div>
                     </div>

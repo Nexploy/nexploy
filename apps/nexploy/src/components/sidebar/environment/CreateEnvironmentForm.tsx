@@ -53,14 +53,18 @@ export function CreateEnvironmentForm() {
         const type = value as 'UNIX_SOCKET' | 'TCP' | 'TCP_TLS';
         form.setValue('connectionType', type);
 
+        form.setValue('socketPath', undefined);
+        form.setValue('host', undefined);
+        form.setValue('port', undefined);
+        form.setValue('tlsCert', undefined);
+        form.setValue('tlsKey', undefined);
+        form.setValue('tlsCa', undefined);
+
         if (type === 'UNIX_SOCKET') {
             form.setValue('socketPath', '/var/run/docker.sock');
-            form.setValue('host', undefined);
-            form.setValue('port', undefined);
-        } else {
-            form.setValue('socketPath', undefined);
+        } else if (type === 'TCP' || type === 'TCP_TLS') {
             form.setValue('host', 'localhost');
-            form.setValue('port', 2375);
+            form.setValue('port', type === 'TCP_TLS' ? 2376 : 2375);
         }
     };
 
@@ -280,7 +284,7 @@ export function CreateEnvironmentForm() {
 
                 <div className="flex justify-end gap-2 pt-4">
                     <Button type="submit" disabled={form.formState.isSubmitting}>
-                        {form.formState.isSubmitting ? 'Creating...' : 'Create environment'}
+                        {form.formState.isSubmitting ? 'Adding...' : 'Adding environment'}
                     </Button>
                 </div>
             </form>

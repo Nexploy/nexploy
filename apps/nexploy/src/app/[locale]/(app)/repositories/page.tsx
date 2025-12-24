@@ -69,7 +69,7 @@ export default async function RepositoriesPage() {
                                     </EmptyMedia>
                                     <EmptyTitle>Aucun Repository</EmptyTitle>
                                     <EmptyDescription>
-                                        Créez votre repository pour commencer.
+                                        Ajouté votre repository pour commencer.
                                     </EmptyDescription>
                                 </EmptyHeader>
                             </Empty>
