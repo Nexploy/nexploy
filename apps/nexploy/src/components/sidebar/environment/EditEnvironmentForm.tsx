@@ -21,7 +21,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@workspace/ui/components/form';
-import { updateEnvironmentAction } from '@/actions/environment/environment.action';
+import { updateEnvironmentAction } from '@/actions/environment/updateEnvironment.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { Environment } from 'generated/client';
 import { decrypt } from '@/lib/encryption';

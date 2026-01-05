@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    EnvironmentHealthStatus,
     initializeEnvironmentStore,
     useEnvironmentStore,
 } from '@/stores/environment/useEnvironmentStore';
@@ -19,33 +18,11 @@ import { Check, ChevronsUpDown, MoreHorizontal, Pencil, Plus, Trash } from 'luci
 import { CreateEnvironmentForm } from '@/components/sidebar/environment/CreateEnvironmentForm';
 import { EditEnvironmentForm } from '@/components/sidebar/environment/EditEnvironmentForm';
 import { Environment } from 'generated/client';
-import {
-    deleteEnvironmentAction,
-    setDefaultEnvironmentAction,
-} from '@/actions/environment/environment.action';
+import { deleteEnvironmentAction } from '@/actions/environment/deleteEnvironment.action';
+import { setDefaultEnvironmentAction } from '@/actions/environment/setDefaultEnvironment.action';
 import { useRouter } from 'next/navigation';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
-import { cn } from '@workspace/ui/lib/utils';
-
-function StatusIndicator({ status }: { status: EnvironmentHealthStatus }) {
-    return (
-        <span
-            className={cn('size-2 rounded-full', {
-                'bg-green-500': status === 'connected',
-                'bg-red-500': status === 'disconnected',
-                'bg-gray-400': status === 'unknown',
-            })}
-            title={
-                status === 'connected'
-                    ? 'Connected'
-                    : status === 'disconnected'
-                      ? 'Disconnected'
-                      : 'Unknown'
-            }
-        />
-    );
-}
 
 interface DropdownEnvironment {
     environments: Environment[];

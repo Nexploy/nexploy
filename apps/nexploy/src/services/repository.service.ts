@@ -316,6 +316,18 @@ export async function updateDeploymentSettings(
     }
 }
 
+export async function updateEnvironmentRepository(environmentId: string, repositoryId: string) {
+    try {
+        return await prisma.repository.update({
+            where: { id: repositoryId },
+            data: { environmentId },
+            include: { environment: true },
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to update repository environment');
+    }
+}
+
 export async function updateEnvVariables(
     repositoryId: string,
     userId: string,

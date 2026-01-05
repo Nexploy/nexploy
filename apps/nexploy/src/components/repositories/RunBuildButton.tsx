@@ -43,11 +43,10 @@ export function RunBuildButton({
             description: 'Configurez les paramètres de build',
             content: (
                 <BuildOptionsDialog
-                    onSubmit={(data) => {
+                    onSubmit={({ commitHash }) => {
                         execute({
                             repositoryId,
-                            commitHash: data.commitHash || undefined,
-                            environmentId,
+                            commitHash,
                         });
                     }}
                 />

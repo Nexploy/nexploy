@@ -21,7 +21,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@workspace/ui/components/form';
-import { createEnvironmentAction } from '@/actions/environment/environment.action';
+import { createEnvironmentAction } from '@/actions/environment/createEnvironment.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 
 export function CreateEnvironmentForm() {

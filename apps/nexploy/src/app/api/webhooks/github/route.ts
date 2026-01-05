@@ -43,7 +43,6 @@ export async function POST(request: NextRequest) {
         await startBuildRepositoryInngest(
             {
                 repositoryId: repo.id,
-                environmentId: repo.environmentId!,
             },
             repo.webhookSecret!,
         );

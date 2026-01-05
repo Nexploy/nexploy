@@ -2,14 +2,102 @@ import { Hono } from 'hono';
 import { getImagesStateManager } from '@/managers/imagesStateManager';
 import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
-import { getCurrentDockerClient } from '@/lib/dockerContext';
+import { getCurrentDockerClient, getCurrentEnvironmentId } from '@/lib/dockerContext';
 import DockerodeCompose from 'dockerode-compose';
 import path from 'path';
 import fs from 'fs';
 import yaml from 'yaml';
 import type { Readable } from 'stream';
+import { spawn } from 'child_process';
 
 const app = new Hono();
+
+/**
+ * Writes environment variables to a .env file in the working directory
+ */
+function writeEnvFile(workDir: string, envVars: Record<string, string>): string {
+    const envFilePath = path.join(workDir, '.env');
+    const envContent = Object.entries(envVars)
+        .map(([key, value]) => {
+            // Escape special characters and wrap in quotes if needed
+            const escapedValue =
+                value.includes('\n') || value.includes('"') || value.includes("'")
+                    ? `"${value.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`
+                    : value;
+            return `${key}=${escapedValue}`;
+        })
+        .join('\n');
+
+    fs.writeFileSync(envFilePath, envContent, 'utf8');
+    return envFilePath;
+}
+
+/**
+ * Safely removes the .env file if it exists
+ */
+function cleanupEnvFile(workDir: string): void {
+    const envFilePath = path.join(workDir, '.env');
+    try {
+        if (fs.existsSync(envFilePath)) {
+            fs.unlinkSync(envFilePath);
+        }
+    } catch (error) {
+        logger.warn({ error, envFilePath }, 'Failed to cleanup .env file');
+    }
+}
+
+/**
+ * Runs docker compose build using the CLI (more reliable than dockerode-compose for building)
+ */
+function runDockerComposeBuild(
+    workDir: string,
+    composeFile: string,
+    projectName: string,
+    onLog: (message: string) => void,
+): Promise<void> {
+    return new Promise((resolve, reject) => {
+        const args = [
+            'compose',
+            '-f',
+            composeFile,
+            '-p',
+            projectName,
+            'build',
+            '--no-cache',
+        ];
+
+        const proc = spawn('docker', args, {
+            cwd: workDir,
+            env: process.env,
+        });
+
+        proc.stdout.on('data', (data) => {
+            const lines = data.toString().split('\n').filter(Boolean);
+            for (const line of lines) {
+                onLog(line);
+            }
+        });
+
+        proc.stderr.on('data', (data) => {
+            const lines = data.toString().split('\n').filter(Boolean);
+            for (const line of lines) {
+                onLog(line);
+            }
+        });
+
+        proc.on('close', (code) => {
+            if (code === 0) {
+                resolve();
+            } else {
+                reject(new Error(`Docker compose build failed with exit code ${code}`));
+            }
+        });
+
+        proc.on('error', (err) => {
+            reject(new Error(`Failed to spawn docker compose: ${err.message}`));
+        });
+    });
+}
 
 app.post('/stream/compose', async (c) => {
     const { workDir, projectName, composePath, envVars } = await c.req.json<{
@@ -20,9 +108,11 @@ app.post('/stream/compose', async (c) => {
     }>();
 
     const dockerClient = getCurrentDockerClient();
+    const environmentId = getCurrentEnvironmentId();
 
     return streamSSE(c, async (stream) => {
         let isClientDisconnected = false;
+        let envFileWritten = false;
 
         c.req.raw.signal.addEventListener('abort', () => {
             isClientDisconnected = true;
@@ -33,9 +123,11 @@ app.post('/stream/compose', async (c) => {
             const composeFilePath = path.join(workDir, composeFile);
 
             logger.info(
-                { workDir, projectName, composeFile },
+                { workDir, projectName, composeFile, environmentId, hasEnvVars: !!envVars },
                 'Starting Docker Compose deployment',
             );
+
+            console.log({ projectName });
 
             const compose = new DockerodeCompose(dockerClient, composeFilePath, projectName);
 
@@ -56,6 +148,16 @@ app.post('/stream/compose', async (c) => {
                                 } catch (e) {}
                             }
                         };
+
+                        // Write .env file with environment variables if provided
+                        if (envVars && Object.keys(envVars).length > 0) {
+                            sendLog(
+                                `Writing ${Object.keys(envVars).length} environment variable(s) to .env file...`,
+                            );
+                            writeEnvFile(workDir, envVars);
+                            envFileWritten = true;
+                            sendLog('Environment variables written successfully');
+                        }
 
                         // Parse compose file to check which services need pulling vs building
                         const composeContent = yaml.parse(
@@ -137,6 +239,53 @@ app.post('/stream/compose', async (c) => {
                             sendLog('No images to pull (services use build context)');
                         }
 
+                        // Remove existing containers before starting new ones
+                        sendLog('Removing existing containers if any...');
+                        try {
+                            await compose.down({ volumes: false });
+                            sendLog('Existing containers removed');
+                        } catch (downError) {
+                            // Ignore errors from down (project might not exist yet)
+                            sendLog('No existing containers to remove from project');
+                        }
+
+                        // Also remove any containers with matching names from compose file
+                        // (in case they were created by a different project or manually)
+                        const containerNames = Object.entries(composeContent.services || {})
+                            .map(([serviceName, service]) => {
+                                // Use container_name if specified, otherwise use default naming
+                                return (service as { container_name?: string }).container_name;
+                            })
+                            .filter(Boolean) as string[];
+
+                        for (const containerName of containerNames) {
+                            try {
+                                const container = dockerClient.getContainer(containerName);
+                                const info = await container.inspect();
+                                sendLog(`Stopping existing container: ${containerName}`);
+                                if (info.State.Running) {
+                                    await container.stop();
+                                }
+                                await container.remove({ force: true });
+                                sendLog(`Removed existing container: ${containerName}`);
+                            } catch (removeError) {
+                                // Container doesn't exist, which is fine
+                            }
+                        }
+
+                        // Build images using docker compose CLI (more reliable than dockerode-compose)
+                        const servicesToBuild = Object.entries(composeContent.services || {})
+                            .filter(([, service]) => (service as { build?: unknown }).build)
+                            .map(([name]) => name);
+
+                        if (servicesToBuild.length > 0) {
+                            sendLog(
+                                `Building ${servicesToBuild.length} service(s): ${servicesToBuild.join(', ')}`,
+                            );
+                            await runDockerComposeBuild(workDir, composeFile, projectName, sendLog);
+                            sendLog('Build completed successfully');
+                        }
+
                         sendLog('Starting services...');
                         const upResult = await compose.up({ verbose: true });
 
@@ -175,6 +324,7 @@ app.post('/stream/compose', async (c) => {
                     data: JSON.stringify({
                         type: 'complete',
                         result,
+                        environmentId,
                     }),
                     event: 'compose-complete',
                 });
@@ -182,6 +332,8 @@ app.post('/stream/compose', async (c) => {
 
             await stream.close();
         } catch (error) {
+            logger.error({ error, workDir, projectName }, 'Docker Compose deployment failed');
+
             if (!isClientDisconnected && !c.req.raw.signal.aborted) {
                 try {
                     await stream.writeSSE({
@@ -195,6 +347,12 @@ app.post('/stream/compose', async (c) => {
             }
 
             await stream.close();
+        } finally {
+            // Cleanup .env file if it was written
+            if (envFileWritten) {
+                cleanupEnvFile(workDir);
+                logger.info({ workDir }, 'Cleaned up .env file after compose deployment');
+            }
         }
     });
 });
