@@ -3,6 +3,10 @@ import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
 import { ContainersEvent } from '@workspace/typescript-interface/docker/docker.containers';
 import { getContainersStateManager } from '@/managers/containersStateManager';
+import {
+    filterNexployContainers,
+    isNexployInfrastructureContainer,
+} from '@/utils/nexployFilter';
 
 const app = new Hono();
 
@@ -14,8 +18,14 @@ app.get('/stream', (c) => {
 
         const handleInitialState = async (containerEvent: ContainersEvent) => {
             try {
+                const filteredEvent = {
+                    ...containerEvent,
+                    containers: containerEvent.containers
+                        ? filterNexployContainers(containerEvent.containers)
+                        : undefined,
+                };
                 await stream.writeSSE({
-                    data: JSON.stringify(containerEvent),
+                    data: JSON.stringify(filteredEvent),
                     event: 'initial-state',
                     id: `${Date.now()}`,
                 });
@@ -27,8 +37,14 @@ app.get('/stream', (c) => {
 
         const handleStateChange = async (containerEvent: ContainersEvent) => {
             try {
+                const filteredEvent = {
+                    ...containerEvent,
+                    containers: containerEvent.containers
+                        ? filterNexployContainers(containerEvent.containers)
+                        : undefined,
+                };
                 await stream.writeSSE({
-                    data: JSON.stringify(containerEvent),
+                    data: JSON.stringify(filteredEvent),
                     event: 'state-change',
                     id: `${Date.now()}`,
                 });
@@ -40,6 +56,12 @@ app.get('/stream', (c) => {
 
         const handleContainerAdded = async (containerEvent: ContainersEvent) => {
             try {
+                if (
+                    containerEvent.container &&
+                    isNexployInfrastructureContainer(containerEvent.container)
+                ) {
+                    return;
+                }
                 await stream.writeSSE({
                     data: JSON.stringify(containerEvent),
                     event: 'container-added',
@@ -53,6 +75,12 @@ app.get('/stream', (c) => {
 
         const handleContainerUpdated = async (containerEvent: ContainersEvent) => {
             try {
+                if (
+                    containerEvent.container &&
+                    isNexployInfrastructureContainer(containerEvent.container)
+                ) {
+                    return;
+                }
                 await stream.writeSSE({
                     data: JSON.stringify(containerEvent),
                     event: 'container-updated',
@@ -66,6 +94,12 @@ app.get('/stream', (c) => {
 
         const handleContainerRemoved = async (containerEvent: ContainersEvent) => {
             try {
+                if (
+                    containerEvent.container &&
+                    isNexployInfrastructureContainer(containerEvent.container)
+                ) {
+                    return;
+                }
                 await stream.writeSSE({
                     data: JSON.stringify(containerEvent),
                     event: 'container-removed',
@@ -103,7 +137,8 @@ app.get('/stream', (c) => {
             manager.off('container-removed', handleContainerRemoved);
         };
 
-        const containers = manager.getAllStates();
+        const allContainers = manager.getAllStates();
+        const containers = filterNexployContainers(allContainers);
         await handleInitialState({ type: 'initial', containers, timestamp: Date.now() });
 
         manager.on('initial-state', handleInitialState);

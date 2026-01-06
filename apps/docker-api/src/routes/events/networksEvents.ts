@@ -3,6 +3,7 @@ import { streamSSE } from 'hono/streaming';
 import { getNetworksStateManager } from '@/managers/networksStateManager';
 import { logger } from '@/utils/logger';
 import { NetworkEvent } from '@workspace/typescript-interface/docker/docker.network';
+import { filterNexployNetworks, isNexployInfrastructureNetwork } from '@/utils/nexployFilter';
 
 const app = new Hono();
 
@@ -14,8 +15,14 @@ app.get('/stream', (c) => {
 
         const handleInitialState = async (networkEvent: NetworkEvent) => {
             try {
+                const filteredEvent = {
+                    ...networkEvent,
+                    networks: networkEvent.networks
+                        ? filterNexployNetworks(networkEvent.networks)
+                        : undefined,
+                };
                 await stream.writeSSE({
-                    data: JSON.stringify(networkEvent),
+                    data: JSON.stringify(filteredEvent),
                     event: 'initial-state',
                     id: `${Date.now()}`,
                 });
@@ -26,6 +33,9 @@ app.get('/stream', (c) => {
         };
 
         const handleNetworkAdded = async (networkEvent: NetworkEvent) => {
+            if (networkEvent.network && isNexployInfrastructureNetwork(networkEvent.network)) {
+                return;
+            }
             await stream.writeSSE({
                 data: JSON.stringify(networkEvent),
                 event: 'network-added',
@@ -34,6 +44,9 @@ app.get('/stream', (c) => {
         };
 
         const handleNetworkUpdated = async (networkEvent: NetworkEvent) => {
+            if (networkEvent.network && isNexployInfrastructureNetwork(networkEvent.network)) {
+                return;
+            }
             await stream.writeSSE({
                 data: JSON.stringify(networkEvent),
                 event: 'network-updated',
@@ -42,6 +55,9 @@ app.get('/stream', (c) => {
         };
 
         const handleNetworkRemoved = async (networkEvent: NetworkEvent) => {
+            if (networkEvent.network && isNexployInfrastructureNetwork(networkEvent.network)) {
+                return;
+            }
             await stream.writeSSE({
                 data: JSON.stringify(networkEvent),
                 event: 'network-removed',
@@ -50,8 +66,14 @@ app.get('/stream', (c) => {
         };
 
         const handleStateChange = async (networkEvent: NetworkEvent) => {
+            const filteredEvent = {
+                ...networkEvent,
+                networks: networkEvent.networks
+                    ? filterNexployNetworks(networkEvent.networks)
+                    : undefined,
+            };
             await stream.writeSSE({
-                data: JSON.stringify(networkEvent),
+                data: JSON.stringify(filteredEvent),
                 event: 'state-change',
                 id: `${Date.now()}`,
             });
@@ -85,7 +107,8 @@ app.get('/stream', (c) => {
             manager.off('network-removed', handleNetworkRemoved);
         };
 
-        const initialNetworks = manager.getAllNetworks();
+        const allNetworks = manager.getAllNetworks();
+        const initialNetworks = filterNexployNetworks(allNetworks);
         await handleInitialState({
             type: 'initial',
             networks: initialNetworks,

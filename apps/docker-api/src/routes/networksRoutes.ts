@@ -2,6 +2,7 @@ import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { networksStateManager } from '@/managers/networksStateManager';
+import { filterNexployNetworks } from '@/utils/nexployFilter';
 
 const app = new Hono();
 
@@ -15,7 +16,8 @@ app.post(
 app.get(
     '/',
     handleAsync(async () => {
-        return networksStateManager.getAllNetworks();
+        const allNetworks = networksStateManager.getAllNetworks();
+        return filterNexployNetworks(allNetworks);
     }),
 );
 

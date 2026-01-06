@@ -1,6 +1,7 @@
 import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { containersStateManager } from '@/managers/containersStateManager';
+import { filterNexployContainers } from '@/utils/nexployFilter';
 
 const app = new Hono();
 
@@ -8,7 +9,8 @@ app.get(
     '/',
     handleAsync(async (c) => {
         const name = c.req.query('name');
-        const containers = containersStateManager.getAllStates();
+        const allContainers = containersStateManager.getAllStates();
+        const containers = filterNexployContainers(allContainers);
 
         if (!name) return containers;
 
