@@ -199,7 +199,7 @@ export const GET = route.use(authRouteServer).handler(async (request: Request) =
                     });
 
                     if (!response.ok) {
-                        // Check if this is an environment-related error
+
                         if (response.status === 404) {
                             try {
                                 const errorData = await response.json();
@@ -301,14 +301,13 @@ export const GET = route.use(authRouteServer).handler(async (request: Request) =
                         return;
                     }
 
-                    // Try to parse environment-specific errors
                     let errorData: any = err instanceof Error ? err.message : String(err);
                     let shouldRetry = true;
 
                     try {
                         const parsed = JSON.parse(errorData);
                         if (parsed.code === 'ENVIRONMENT_NOT_FOUND') {
-                            // Don't retry if environment doesn't exist
+
                             shouldRetry = false;
                             errorData = JSON.stringify(parsed);
                         }

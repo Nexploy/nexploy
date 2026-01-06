@@ -31,7 +31,7 @@ async function seedEnvironment() {
 }
 
 async function seedDockerApiKey() {
-    // Check if docker-api key already exists
+
     const existingKey = await prisma.apikey.findFirst({
         where: { name: DOCKER_API_KEY_NAME },
     });
@@ -41,7 +41,6 @@ async function seedDockerApiKey() {
         return;
     }
 
-    // Create system user for docker-api if not exists
     let systemUser = await prisma.user.findUnique({
         where: { id: DOCKER_API_USER_ID },
     });
@@ -59,7 +58,6 @@ async function seedDockerApiKey() {
         console.log('Created system user:', systemUser.name);
     }
 
-    // Create API key using better-auth
     const apiKey = await auth.api.createApiKey({
         body: {
             name: DOCKER_API_KEY_NAME,

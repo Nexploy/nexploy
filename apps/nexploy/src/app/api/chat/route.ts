@@ -23,7 +23,7 @@ export async function POST(req: Request) {
         messages,
         system: `You are a helpful DevOps assistant integrated into the Nexploy application.
     You help users manage Docker resources (containers, images, volumes, networks).
-    
+
     Guidelines:
     - Be concise and helpful.
     - When creating a container, if the user doesn't specify details (like image), ask for them.

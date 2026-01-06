@@ -46,7 +46,6 @@ function cleanupEnvFile(workDir: string): void {
     }
 }
 
-
 app.post('/stream/compose', async (c) => {
     const { workDir, projectName, composePath, envVars } = await c.req.json<{
         workDir: string;

@@ -36,7 +36,6 @@ app.get('/stream', (c) => {
         const handleTaskRemoved = (event: SwarmEvent) => sendEvent(event, 'task-removed');
         const handleSwarmUpdated = (event: SwarmEvent) => sendEvent(event, 'swarm-updated');
 
-        // Heartbeat
         const heartbeat = setInterval(async () => {
             try {
                 const heartbeatEvent: SwarmEvent = {
@@ -54,7 +53,6 @@ app.get('/stream', (c) => {
             }
         }, 15000);
 
-        // Cleanup function
         const cleanup = () => {
             clearInterval(heartbeat);
 
@@ -71,7 +69,6 @@ app.get('/stream', (c) => {
             manager.off('swarm-updated', handleSwarmUpdated);
         };
 
-        // Send initial state
         const isSwarmActive = manager.getIsSwarmActive();
 
         if (isSwarmActive) {
@@ -98,7 +95,6 @@ app.get('/stream', (c) => {
             );
         }
 
-        // Register event listeners
         manager.on('initial-state', handleInitialState);
         manager.on('node-added', handleNodeAdded);
         manager.on('node-updated', handleNodeUpdated);
@@ -111,10 +107,8 @@ app.get('/stream', (c) => {
         manager.on('task-removed', handleTaskRemoved);
         manager.on('swarm-updated', handleSwarmUpdated);
 
-        // Handle client disconnect
         c.req.raw.signal.addEventListener('abort', cleanup);
 
-        // Keep connection alive
         await stream.sleep(2_147_483_647);
     });
 });

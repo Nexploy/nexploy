@@ -27,7 +27,6 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
     eventSource: null,
     reconnectTimeout: null,
 
-    // Setters
     setIsSwarmActive: (active) => set({ isSwarmActive: active }),
     setSwarmInfo: (info) => set({ swarmInfo: info }),
     setNodes: (nodes) => set({ nodes }),
@@ -36,7 +35,6 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
     setError: (error) => set({ error }),
     setLastUpdate: (timestamp) => set({ lastUpdate: timestamp }),
 
-    // Node mutations
     addNode: (node) =>
         set((state) => {
             if (state.nodes.find((n) => n.id === node.id)) {
@@ -55,7 +53,6 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
             nodes: state.nodes.filter((n) => n.id !== nodeId),
         })),
 
-    // Service mutations
     addService: (service) =>
         set((state) => {
             if (state.services.find((s) => s.id === service.id)) {
@@ -74,7 +71,6 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
             services: state.services.filter((s) => s.id !== serviceId),
         })),
 
-    // Task mutations
     addTask: (task) =>
         set((state) => {
             if (state.tasks.find((t) => t.id === task.id)) {
@@ -93,7 +89,6 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
             tasks: state.tasks.filter((t) => t.id !== taskId),
         })),
 
-    // Selectors
     getNode: (id) => get().nodes.find((n) => n.id === id),
     getService: (id) => get().services.find((s) => s.id === id),
     getTask: (id) => get().tasks.find((t) => t.id === id),
@@ -103,7 +98,6 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
     getTasksByNode: (nodeId) => get().tasks.filter((t) => t.nodeId === nodeId),
     getTasksByState: (state) => get().tasks.filter((t) => t.state === state),
 
-    // SSE Connection
     connect: () => {
         const state = get();
 
@@ -114,7 +108,6 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
         try {
             const unsubscribers: (() => void)[] = [];
 
-            // Initial state
             unsubscribers.push(
                 sseMultiplexer.subscribe('swarm', 'initial-state', (e) => {
                     const data = JSON.parse(e.data) as SwarmEvent;
@@ -144,7 +137,6 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 }),
             );
 
-            // Heartbeat
             unsubscribers.push(
                 sseMultiplexer.subscribe('swarm', 'heartbeat', (e) => {
                     const data = JSON.parse(e.data) as SwarmEvent;
@@ -152,7 +144,6 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 }),
             );
 
-            // Node events
             unsubscribers.push(
                 sseMultiplexer.subscribe('swarm', 'node-added', (e) => {
                     const data = JSON.parse(e.data) as SwarmNodeAddedEvent;
@@ -167,7 +158,6 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                     const data = JSON.parse(e.data) as SwarmNodeUpdatedEvent;
                     get().updateNode(data.node);
 
-                    // Show toast for significant changes
                     if (data.changes.role) {
                         toast.info(
                             `Node ${data.node.hostname} role changed to ${data.changes.role.to}`,
@@ -202,7 +192,6 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 }),
             );
 
-            // Service events
             unsubscribers.push(
                 sseMultiplexer.subscribe('swarm', 'service-added', (e) => {
                     const data = JSON.parse(e.data) as SwarmServiceAddedEvent;
@@ -229,7 +218,6 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 }),
             );
 
-            // Task events
             unsubscribers.push(
                 sseMultiplexer.subscribe('swarm', 'task-added', (e) => {
                     const data = JSON.parse(e.data) as SwarmTaskAddedEvent;
@@ -243,7 +231,6 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                     const data = JSON.parse(e.data) as SwarmTaskUpdatedEvent;
                     get().updateTask(data.task);
 
-                    // Show toast for failed tasks
                     if (data.changes.state?.to === 'failed') {
                         toast.error(
                             `Task ${data.task.id.slice(0, 12)} failed: ${data.task.error || 'Unknown error'}`,

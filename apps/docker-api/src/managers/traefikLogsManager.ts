@@ -95,7 +95,7 @@ export class TraefikLogsManager extends BaseStateManager {
     }
 
     async fullStateSync(): Promise<void> {
-        // Re-check if Traefik exists (it might have been created after initial start)
+
         if (!this.traefikExists) {
             this.traefikExists = await this.checkTraefikExists();
             if (!this.traefikExists) {
@@ -114,7 +114,6 @@ export class TraefikLogsManager extends BaseStateManager {
             return;
         }
 
-        // Check if container still exists before attempting connection
         const exists = await this.checkTraefikExists();
         if (!exists) {
             logger.debug('Traefik container not found, cannot start log stream');
@@ -163,7 +162,7 @@ export class TraefikLogsManager extends BaseStateManager {
             logger.info('Traefik log stream started');
         } catch (err) {
             this.isReconnecting = false;
-            // Don't log error if container doesn't exist (404)
+
             if ((err as any).statusCode !== 404) {
                 logger.error({ err }, 'Failed to start Traefik log stream');
             }
@@ -171,7 +170,7 @@ export class TraefikLogsManager extends BaseStateManager {
     }
 
     private stopLogStream(): void {
-        // Clear any pending reconnect
+
         if (this.reconnectTimeout) {
             clearTimeout(this.reconnectTimeout);
             this.reconnectTimeout = null;
@@ -209,7 +208,7 @@ export class TraefikLogsManager extends BaseStateManager {
             this.reconnectTimeout = null;
             logger.debug('Attempting to reconnect to Traefik logs...');
             this.reconnectLogStream().catch((err) => {
-                // Silently fail if container doesn't exist (404)
+
                 if ((err as any).statusCode !== 404) {
                     logger.error({ err }, 'Failed to reconnect log stream');
                 }

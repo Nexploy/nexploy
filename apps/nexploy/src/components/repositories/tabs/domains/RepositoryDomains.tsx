@@ -184,7 +184,7 @@ export function RepositoryDomains({
                                 </div>
                             ) : (
                                 activeDomains.map((domain, displayIndex) => {
-                                    // Trouver l'index réel dans le tableau domains
+
                                     const actualIndex = domains.findIndex((d) => d === domain);
                                     const isNew = !domain.id;
                                     const isExpanded = expandedIds.has(`domain-${actualIndex}`);

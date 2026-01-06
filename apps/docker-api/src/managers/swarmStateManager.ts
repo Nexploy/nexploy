@@ -542,8 +542,6 @@ export class SwarmStateManager extends BaseStateManager {
         };
     }
 
-    // ===== PARSING METHODS =====
-
     private parseSwarmInfo(swarm: Swarm, info: any): SwarmInfo {
         return {
             id: swarm.ID,
@@ -702,8 +700,6 @@ export class SwarmStateManager extends BaseStateManager {
         };
     }
 
-    // ===== CHANGE DETECTION =====
-
     private getNodeChanges(previous: SwarmNode, current: SwarmNode): SwarmNodeChanges {
         const changes: SwarmNodeChanges = {};
 
@@ -783,8 +779,6 @@ export class SwarmStateManager extends BaseStateManager {
 
         return changes;
     }
-
-    // ===== PUBLIC GETTERS =====
 
     getAllNodes(): SwarmNode[] {
         return Array.from(this.nodes.values());

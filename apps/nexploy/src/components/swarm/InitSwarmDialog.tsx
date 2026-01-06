@@ -45,7 +45,7 @@ export function InitSwarmDialog({ trigger, onInitSuccess }: InitSwarmDialogProps
             toast.success('Swarm initialized successfully');
             setOpen(false);
             resetForm();
-            // Trigger refresh to update UI immediately
+
             await onSwarmRefreshAction();
             onInitSuccess?.();
         } catch (err: any) {

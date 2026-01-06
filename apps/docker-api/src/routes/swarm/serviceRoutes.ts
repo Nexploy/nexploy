@@ -5,7 +5,6 @@ import { swarmStateManager } from '@/managers/swarmStateManager';
 
 const app = new Hono();
 
-// List all services
 app.get(
     '/',
     handleAsync(async () => {
@@ -13,7 +12,6 @@ app.get(
     }),
 );
 
-// Get service details with tasks
 app.get(
     '/:id',
     handleAsync(async (c) => {
@@ -29,7 +27,6 @@ app.get(
     }),
 );
 
-// Create service
 app.post(
     '/',
     handleAsync(async (c) => {
@@ -138,7 +135,6 @@ app.post(
     }),
 );
 
-// Update service
 app.patch(
     '/:id',
     handleAsync(async (c) => {
@@ -221,7 +217,6 @@ app.patch(
     }),
 );
 
-// Delete service
 app.delete(
     '/:id',
     handleAsync(async (c) => {
@@ -234,7 +229,6 @@ app.delete(
     }),
 );
 
-// Scale service
 app.post(
     '/:id/scale',
     handleAsync(async (c) => {
@@ -267,7 +261,6 @@ app.post(
     }),
 );
 
-// Rollback service
 app.post(
     '/:id/rollback',
     handleAsync(async (c) => {
@@ -292,7 +285,6 @@ app.post(
     }),
 );
 
-// Force update service (re-deploy tasks)
 app.post(
     '/:id/force-update',
     handleAsync(async (c) => {
@@ -316,7 +308,6 @@ app.post(
     }),
 );
 
-// Get service logs
 app.get(
     '/:id/logs',
     handleAsync(async (c) => {

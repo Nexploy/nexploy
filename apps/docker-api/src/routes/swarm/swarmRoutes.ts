@@ -5,7 +5,6 @@ import { swarmStateManager } from '@/managers/swarmStateManager';
 
 const app = new Hono();
 
-// Get full swarm state
 app.get(
     '/',
     handleAsync(async () => {
@@ -19,7 +18,6 @@ app.get(
     }),
 );
 
-// Get swarm info only
 app.get(
     '/info',
     handleAsync(async () => {
@@ -30,7 +28,6 @@ app.get(
     }),
 );
 
-// Get swarm stats
 app.get(
     '/stats',
     handleAsync(async () => {
@@ -38,7 +35,6 @@ app.get(
     }),
 );
 
-// Initialize swarm
 app.post(
     '/init',
     handleAsync(async (c) => {
@@ -60,7 +56,6 @@ app.post(
     }),
 );
 
-// Join swarm
 app.post(
     '/join',
     handleAsync(async (c) => {
@@ -86,7 +81,6 @@ app.post(
     }),
 );
 
-// Leave swarm
 app.post(
     '/leave',
     handleAsync(async (c) => {
@@ -99,7 +93,6 @@ app.post(
     }),
 );
 
-// Get join tokens
 app.get(
     '/join-tokens',
     handleAsync(async () => {
@@ -111,7 +104,6 @@ app.get(
     }),
 );
 
-// Rotate join tokens
 app.post(
     '/rotate-tokens',
     handleAsync(async (c) => {
@@ -139,7 +131,6 @@ app.post(
     }),
 );
 
-// Hard refresh
 app.post(
     '/hardRefresh',
     handleAsync(async () => {

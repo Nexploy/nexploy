@@ -5,7 +5,6 @@ import { swarmStateManager } from '@/managers/swarmStateManager';
 
 const app = new Hono();
 
-// List all nodes
 app.get(
     '/',
     handleAsync(async () => {
@@ -13,7 +12,6 @@ app.get(
     }),
 );
 
-// Get node details
 app.get(
     '/:id',
     handleAsync(async (c) => {
@@ -29,7 +27,6 @@ app.get(
     }),
 );
 
-// Update node (availability, role, labels)
 app.patch(
     '/:id',
     handleAsync(async (c) => {
@@ -63,7 +60,6 @@ app.patch(
     }),
 );
 
-// Delete node
 app.delete(
     '/:id',
     handleAsync(async (c) => {
@@ -77,7 +73,6 @@ app.delete(
     }),
 );
 
-// Promote worker to manager
 app.post(
     '/:id/promote',
     handleAsync(async (c) => {
@@ -103,7 +98,6 @@ app.post(
     }),
 );
 
-// Demote manager to worker
 app.post(
     '/:id/demote',
     handleAsync(async (c) => {
@@ -129,7 +123,6 @@ app.post(
     }),
 );
 
-// Set node to drain
 app.post(
     '/:id/drain',
     handleAsync(async (c) => {
@@ -151,7 +144,6 @@ app.post(
     }),
 );
 
-// Set node to active
 app.post(
     '/:id/activate',
     handleAsync(async (c) => {
@@ -173,7 +165,6 @@ app.post(
     }),
 );
 
-// Set node to pause
 app.post(
     '/:id/pause',
     handleAsync(async (c) => {
@@ -195,7 +186,6 @@ app.post(
     }),
 );
 
-// Update node labels
 app.put(
     '/:id/labels',
     handleAsync(async (c) => {

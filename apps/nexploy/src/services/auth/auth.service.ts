@@ -101,4 +101,3 @@ export async function listAccount(): Promise<SocialAccount[]> {
 
     return parseRes as unknown as SocialAccount[];
 }
-

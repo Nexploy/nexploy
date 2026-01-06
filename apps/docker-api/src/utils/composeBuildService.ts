@@ -88,7 +88,6 @@ async function buildServiceImage(
 
         const tarStream = tar.pack(config.contextPath);
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const buildOptions: any = {
             t: config.imageName,
             dockerfile: config.dockerfile,
@@ -121,11 +120,10 @@ async function buildServiceImage(
             buildOptions.extrahosts = config.extraHosts.join(',');
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (docker.buildImage as any)(
             tarStream,
             buildOptions,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
             (err: any, stream: Readable) => {
                 if (err) {
                     logger.error(
@@ -145,7 +143,7 @@ async function buildServiceImage(
 
                 docker.modem.followProgress(
                     stream,
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
                     (progressErr: any, output: any) => {
                         if (progressErr) {
                             if (
@@ -187,7 +185,7 @@ async function buildServiceImage(
 
                         resolve(imageId || config.imageName);
                     },
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
                     (event: any) => {
                         if (signal?.aborted) {
                             return;

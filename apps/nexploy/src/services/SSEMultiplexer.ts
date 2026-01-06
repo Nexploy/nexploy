@@ -219,7 +219,6 @@ class SSEMultiplexerService {
                 try {
                     const { channel, event, data, params } = JSON.parse(e.data);
 
-                    // Check for permanent errors that should not trigger reconnection
                     if (event === 'error') {
                         try {
                             const errorData = JSON.parse(data);
@@ -309,7 +308,6 @@ class SSEMultiplexerService {
             clearTimeout(this.reconnectTimeout);
         }
 
-        // Don't reconnect if we have a permanent error for the current environment
         const environmentId = this.currentEnvironmentId || 'default';
         if (this.permanentErrors.has(environmentId)) {
             console.warn(
@@ -353,7 +351,6 @@ class SSEMultiplexerService {
     setEnvironmentId(environmentId: string | null): void {
         if (this.currentEnvironmentId === environmentId) return;
 
-        // Clear permanent error for the old environment when switching
         if (this.currentEnvironmentId) {
             this.permanentErrors.delete(this.currentEnvironmentId);
         }

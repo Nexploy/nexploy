@@ -134,9 +134,8 @@ export class ImagesStateManager extends BaseStateManager {
             const containers = await this.docker.listContainers({ all: true });
             const imageUsageMap = new Map<string, number>();
 
-            // Compte combien de conteneurs utilisent chaque image
             for (const container of containers) {
-                // Peut être soit sha256:xxxxx soit un nom d'image
+
                 let imageId = container.ImageID;
                 if (imageId.includes(':')) {
                     imageId = imageId.split(':')[1];
@@ -144,7 +143,6 @@ export class ImagesStateManager extends BaseStateManager {
                 imageUsageMap.set(imageId, (imageUsageMap.get(imageId) || 0) + 1);
             }
 
-            // Met à jour chaque image avec son nouveau compteur
             for (const [imageId, image] of this.images.entries()) {
                 const newContainersUsed = imageUsageMap.get(imageId) || 0;
 

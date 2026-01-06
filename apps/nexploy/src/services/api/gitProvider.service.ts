@@ -111,7 +111,7 @@ async function getGitHubCommit(
 ): Promise<{ hash: string; message: string } | null> {
     try {
         const repoPath = extractGitHubRepoPath(repositoryUrl);
-        // Use specific commit hash if provided, otherwise use branch to get latest commit
+
         const ref = commitHash || branch;
 
         const token: GitProviderToken = {

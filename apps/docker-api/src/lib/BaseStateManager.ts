@@ -34,7 +34,7 @@ export abstract class BaseStateManager extends EventEmitter {
         this.POLL_INTERVAL_MS = config.pollIntervalMs ?? 10000;
         this.MAX_RECONNECT_ATTEMPTS = config.maxReconnectAttempts ?? 5;
         this.setMaxListeners(config.maxListeners ?? 100);
-        // Defer setupDockerStatusListeners to avoid circular dependency during initialization
+
         setImmediate(() => this.setupDockerStatusListeners());
     }
 
@@ -233,7 +233,7 @@ export abstract class BaseStateManager extends EventEmitter {
             try {
                 const dockerStatusManager = this.getDockerStatusManager();
                 if (!dockerStatusManager.isConnected()) {
-                    // logger.debug(`Skipping ${this.managerName} poll: Docker not connected`);
+
                     return;
                 }
 
@@ -255,7 +255,7 @@ export abstract class BaseStateManager extends EventEmitter {
             const dockerStatusManager = this.getDockerStatusManager();
             dockerConnected = dockerStatusManager.isConnected();
         } catch (err) {
-            // DockerStatusManager may not be available during initialization
+
             dockerConnected = false;
         }
 

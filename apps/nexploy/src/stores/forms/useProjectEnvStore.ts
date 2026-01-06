@@ -57,7 +57,7 @@ export const useProjectEnvStore = create<ProjectEnvState>((set, get) => ({
             newEnvs.splice(index, 1);
             const showValues = { ...state.showValues };
             delete showValues[`new-${index}`];
-            // Adjust keys for remaining newEnvs if necessary, but for simplicity, skip or handle in component
+
             return { newEnvs, showValues };
         }),
 

@@ -34,7 +34,6 @@ app.get(
     }),
 );
 
-// Get task details
 app.get(
     '/:id',
     handleAsync(async (c) => {
@@ -49,7 +48,6 @@ app.get(
     }),
 );
 
-// Get tasks by service
 app.get(
     '/by-service/:serviceId',
     handleAsync(async (c) => {
@@ -59,7 +57,6 @@ app.get(
     }),
 );
 
-// Get tasks by node
 app.get(
     '/by-node/:nodeId',
     handleAsync(async (c) => {
@@ -69,7 +66,6 @@ app.get(
     }),
 );
 
-// Get task logs (via container if available)
 app.get(
     '/:id/logs',
     handleAsync(async (c) => {

@@ -13,8 +13,6 @@ import { createDockerClient } from '@/utils/dockerClient';
 
 const app = new Hono();
 
-// app.use('*', authMiddleware);
-
 app.post(
     '/validate',
     zValidator('json', environmentSchema),

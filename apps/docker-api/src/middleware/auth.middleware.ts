@@ -27,9 +27,6 @@ export async function authMiddleware(c: Context, next: Next) {
     await next();
 }
 
-/**
- * Constant-time string comparison to prevent timing attacks
- */
 function constantTimeCompare(a: string, b: string): boolean {
     if (a.length !== b.length) {
         return false;

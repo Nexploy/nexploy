@@ -105,7 +105,7 @@ class DockerClientRegistry {
                 });
 
             case 'TCP_TLS':
-                // Decrypt TLS credentials
+
                 const cert = this.decryptValue(config.tlsCert!);
                 const key = this.decryptValue(config.tlsKey!);
                 const ca = this.decryptValue(config.tlsCa!);
@@ -220,8 +220,7 @@ class DockerClientRegistry {
     }
 
     private decryptValue(encryptedValue: string): string {
-        // TODO: Import and use the encryption service from nexploy
-        // For now, return as-is (will be implemented when integrating with nexploy)
+
         logger.warn('TLS credential decryption not yet implemented');
         return encryptedValue;
     }

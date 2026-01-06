@@ -61,7 +61,7 @@ export function JoinSwarmDialog({ trigger, onJoinSuccess }: JoinSwarmDialogProps
             toast.success('Joined swarm successfully');
             setOpen(false);
             resetForm();
-            // Trigger refresh to update UI immediately
+
             await onSwarmRefreshAction();
             onJoinSuccess?.();
         } finally {
