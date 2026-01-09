@@ -16,6 +16,7 @@ import { useLocalStorage } from 'usehooks-ts';
 import { Switch } from '@workspace/ui/components/switch';
 import { Label } from '@workspace/ui/components/label';
 import { statusMap } from '@/utils/statusMap';
+import { useTranslations } from 'next-intl';
 
 interface ContainerLogsProps {
     children: (props: { openLogs: () => void }) => ReactNode;
@@ -23,6 +24,7 @@ interface ContainerLogsProps {
 
 export function ContainerLogs({ children }: ContainerLogsProps) {
     const container = useContainerStore((state) => state.container);
+    const t = useTranslations('docker.containerLogs');
 
     const {
         logs,
@@ -111,7 +113,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                                     <div className="flex size-4 items-center">
                                         <FileText />
                                     </div>
-                                    Logs — {container?.name}
+                                    {t('title', { name: container?.name })}
                                 </DialogTitle>
                                 <Status
                                     className="rounded-none bg-transparent"
@@ -130,7 +132,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                                         htmlFor="log-showTimestamp"
                                         className={'text-xs text-white'}
                                     >
-                                        Show Timestamp
+                                        {t('showTimestamp')}
                                     </Label>
                                     <Switch
                                         id="log-showTimestamp"
@@ -148,7 +150,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                                     icon={autoScroll ? ArrowDown : ArrowUp}
                                     size="sm"
                                 >
-                                    {autoScroll ? 'Auto' : 'Manual'}
+                                    {autoScroll ? t('auto') : t('manual')}
                                 </Button>
                                 <Button
                                     onClick={handleDownload}
@@ -158,7 +160,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                                     icon={Download}
                                     size="sm"
                                 >
-                                    Download
+                                    {t('download')}
                                 </Button>
                                 <Separator
                                     orientation="vertical"
@@ -170,7 +172,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                                     variant="white"
                                     size="sm"
                                 >
-                                    Close
+                                    {t('close')}
                                 </Button>
                             </div>
                         </DialogHeader>
@@ -185,16 +187,16 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                                 {isLoading && logs.length === 0 ? (
                                     <div className="text-secondary-foreground flex items-center gap-2">
                                         <Spinner />
-                                        Loading logs...
+                                        {t('loading')}
                                     </div>
                                 ) : error ? (
                                     <div className="text-destructive">
-                                        <div className="font-semibold">Error:</div>
+                                        <div className="font-semibold">{t('error')}</div>
                                         <div className="mt-1">{error.message}</div>
                                     </div>
                                 ) : logs.length === 0 ? (
                                     <div className="text-secondary-foreground">
-                                        No logs available
+                                        {t('noLogs')}
                                     </div>
                                 ) : (
                                     <>

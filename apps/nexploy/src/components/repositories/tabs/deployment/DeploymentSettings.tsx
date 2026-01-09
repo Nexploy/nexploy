@@ -16,7 +16,35 @@ import { Form } from '@workspace/ui/components/form';
 import { SSEProvider } from '@/providers/SSEProviders';
 
 interface DeploymentSettingsProps {
-    repository: Repository;
+    repository: Pick<
+        Repository,
+        | 'id'
+        | 'buildType'
+        | 'deploymentMode'
+        | 'replicas'
+        | 'updateParallelism'
+        | 'updateDelay'
+        | 'updateFailureAction'
+        | 'updateOrder'
+        | 'rollbackParallelism'
+        | 'rollbackDelay'
+        | 'rollbackFailureAction'
+        | 'restartCondition'
+        | 'restartDelay'
+        | 'restartMaxAttempts'
+        | 'restartWindow'
+        | 'cpuLimit'
+        | 'cpuReservation'
+        | 'memoryLimit'
+        | 'memoryReservation'
+        | 'placementConstraints'
+        | 'healthCheckEnabled'
+        | 'healthCheckCommand'
+        | 'healthCheckInterval'
+        | 'healthCheckTimeout'
+        | 'healthCheckRetries'
+        | 'healthCheckStartPeriod'
+    >;
 }
 
 export function DeploymentSettings({ repository }: DeploymentSettingsProps) {
@@ -72,7 +100,7 @@ export function DeploymentSettings({ repository }: DeploymentSettingsProps) {
         <SSEProvider connections={['swarm']}>
             <Form {...form}>
                 <form onSubmit={handleSubmitWithAction} className="mx-5 space-y-6">
-                    <DeploymentModeCard form={form} />
+                    <DeploymentModeCard form={form} buildType={repository.buildType} />
 
                     {isSwarmMode && (
                         <>

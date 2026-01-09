@@ -40,6 +40,7 @@ import {
 } from '@workspace/ui/components/select';
 import { useLocalStorage } from 'usehooks-ts';
 import { refreshRateOptions } from '@/utils/refreshRate';
+import { useTranslations } from 'next-intl';
 
 interface ContainerStatsProps {
     children: (props: { openStats: () => void }) => ReactNode;
@@ -48,6 +49,7 @@ interface ContainerStatsProps {
 export function ContainerStats({ children }: ContainerStatsProps) {
     const [open, setOpen] = useState(false);
     const [refreshRate, setRefreshRate] = useLocalStorage('stats-refreshRate', '5000');
+    const t = useTranslations('docker.containerStats');
 
     const container = useContainerStore((state) => state.container);
     const { connectionState, history, exportStats, stats } = useContainerStatsStore(
@@ -78,11 +80,11 @@ export function ContainerStats({ children }: ContainerStatsProps) {
 
     const statsCard = [
         {
-            title: 'CPU Usage (%)',
-            description: 'Real-time CPU percentage over time',
+            title: t('cpuUsage'),
+            description: t('cpuDescription'),
             config: {
                 cpuPercent: {
-                    label: 'CPU %',
+                    label: t('cpuPercent'),
                     color: 'var(--chart-2)',
                 },
             },
@@ -100,11 +102,11 @@ export function ContainerStats({ children }: ContainerStatsProps) {
             },
         },
         {
-            title: 'Memory Usage',
-            description: 'Real-time memory usage over time',
+            title: t('memoryUsage'),
+            description: t('memoryDescription'),
             config: {
                 memoryUsage: {
-                    label: 'Memory',
+                    label: t('memory'),
                     color: 'var(--chart-2)',
                 },
             },
@@ -122,15 +124,15 @@ export function ContainerStats({ children }: ContainerStatsProps) {
             },
         },
         {
-            title: 'Network',
-            description: 'Real-time network RX and TX over time',
+            title: t('network'),
+            description: t('networkDescription'),
             config: {
                 networkRx: {
-                    label: 'RX',
+                    label: t('rx'),
                     color: 'var(--chart-2)',
                 },
                 networkTx: {
-                    label: 'TX',
+                    label: t('tx'),
                     color: 'var(--chart-1)',
                 },
             },
@@ -154,15 +156,15 @@ export function ContainerStats({ children }: ContainerStatsProps) {
             },
         },
         {
-            title: 'Block I/O',
-            description: 'Real-time block read and write over time',
+            title: t('blockIo'),
+            description: t('blockIoDescription'),
             config: {
                 blockRead: {
-                    label: 'Read',
+                    label: t('read'),
                     color: 'var(--chart-2)',
                 },
                 blockWrite: {
-                    label: 'Write',
+                    label: t('write'),
                     color: 'var(--chart-1)',
                 },
             },
@@ -189,13 +191,13 @@ export function ContainerStats({ children }: ContainerStatsProps) {
 
     const smallsStats = [
         {
-            title: 'PIDs Count',
-            description: 'Current number of processes',
+            title: t('pidsCount'),
+            description: t('pidsDescription'),
             value: stats?.pidsCount || 0,
         },
         {
-            title: 'Memory',
-            description: 'Current memory usage percentage',
+            title: t('memoryPercent'),
+            description: t('memoryPercentDescription'),
             value: `${stats?.memoryPercent?.toFixed(3) || 0}%`,
         },
     ];
@@ -219,7 +221,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                                     <div className="flex size-4 items-center">
                                         <Activity />
                                     </div>
-                                    Stats — {container?.name}
+                                    {t('title', { name: container?.name })}
                                     <Status
                                         className="rounded-none bg-transparent"
                                         status={currentStatus.status}
@@ -234,11 +236,11 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                             <div className="flex flex-row items-center gap-2">
                                 <Select value={refreshRate} onValueChange={setRefreshRate}>
                                     <SelectTrigger className="!h-7">
-                                        <SelectValue placeholder="refresh rate..." />
+                                        <SelectValue placeholder={t('refreshRatePlaceholder')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectLabel>Refresh Rate</SelectLabel>
+                                            <SelectLabel>{t('refreshRate')}</SelectLabel>
                                             {refreshRateOptions.map((option, index) => (
                                                 <SelectItem key={index} value={option.value}>
                                                     {option.label}
@@ -255,11 +257,11 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                                     icon={Download}
                                     size="sm"
                                 >
-                                    Download
+                                    {t('download')}
                                 </Button>
                                 <Separator orientation="vertical" className="!h-5" />
                                 <Button onClick={handleClose} className="h-7 text-xs" size="sm">
-                                    Close
+                                    {t('close')}
                                 </Button>
                             </div>
                         </DialogHeader>

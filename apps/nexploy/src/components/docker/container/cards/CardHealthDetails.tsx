@@ -4,9 +4,11 @@ import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import dayjs from 'dayjs';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
+import { useTranslations } from 'next-intl';
 
 export function CardHealthDetails() {
     const container = useContainerStore((state) => state.container);
+    const t = useTranslations('docker.containerHealth');
 
     if (!container) {
         return <Skeleton className={'h-100 flex-1'} />;
@@ -19,19 +21,19 @@ export function CardHealthDetails() {
                     <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
                         <Activity className="text-primary size-4" />
                     </div>
-                    <CardTitle>Logs de santé ({container.health?.logs.length})</CardTitle>
+                    <CardTitle>{t('title')} ({container.health?.logs.length})</CardTitle>
                 </div>
             </CardHeader>
             <CardContent>
                 <div className="mb-3 flex gap-4">
                     <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground text-sm">Statut:</span>
+                        <span className="text-muted-foreground text-sm">{t('status')}</span>
                         <code className="bg-muted/50 rounded px-2 py-1 text-xs">
                             {container.health?.status}
                         </code>
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground text-sm">Échecs consécutifs:</span>
+                        <span className="text-muted-foreground text-sm">{t('consecutiveFailures')}</span>
                         <code className="bg-muted/50 rounded px-2 py-1 text-xs">
                             {container.health?.failingStreak}
                         </code>
@@ -56,7 +58,7 @@ export function CardHealthDetails() {
                                                 : 'bg-red-500/20 text-red-700 dark:text-red-400'
                                         }`}
                                     >
-                                        Exit: {log.exitCode}
+                                        {t('exit', { code: log.exitCode })}
                                     </span>
                                 </div>
                                 {log.output && (

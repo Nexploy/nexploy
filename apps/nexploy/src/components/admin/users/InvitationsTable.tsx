@@ -8,6 +8,7 @@ import { revokeInvitation } from '@/actions/auth/users.action';
 import { useAction } from 'next-safe-action/hooks';
 import { toast } from 'sonner';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useTranslations } from 'next-intl';
 
 interface Invitation {
     id: string;
@@ -23,25 +24,26 @@ interface InvitationsTableProps {
 
 export function InvitationsTable({ invitations }: InvitationsTableProps) {
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
+    const t = useTranslations('admin');
 
     const { execute: executeRevoke, isPending: isRevoking } = useAction(revokeInvitation, {
-        onSuccess: () => toast.success('Invitation revoked'),
-        onError: ({ error }) => toast.error(error.serverError || 'Failed to revoke invitation'),
+        onSuccess: () => toast.success(t('invitationRevokedSuccess')),
+        onError: ({ error }) => toast.error(error.serverError || t('invitationRevokeFailed')),
     });
 
     const handleCopyLink = (invitation: Invitation) => {
         const baseUrl = window.location.origin;
         const link = `${baseUrl}/signup?invitation=${invitation.id}&email=${encodeURIComponent(invitation.email)}`;
         navigator.clipboard.writeText(link);
-        toast.success('Invitation link copied to clipboard');
+        toast.success(t('invitationLinkCopied'));
     };
 
     const handleRevoke = (invitation: Invitation) => {
         openAlertDialog({
-            title: 'Revoke Invitation',
-            description: `Are you sure you want to revoke the invitation for ${invitation.email}?`,
-            cancelLabel: 'Cancel',
-            actionLabel: 'Revoke',
+            title: t('revokeInvitation'),
+            description: t('confirmRevokeInvitation', { email: invitation.email }),
+            cancelLabel: t('cancel'),
+            actionLabel: t('revoke'),
             onAction: async () => {
                 await executeRevoke({ invitationId: invitation.id });
             },
@@ -68,11 +70,11 @@ export function InvitationsTable({ invitations }: InvitationsTableProps) {
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Expires in</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead className="w-24">Actions</TableHead>
+                    <TableHead>{t('email')}</TableHead>
+                    <TableHead>{t('role')}</TableHead>
+                    <TableHead>{t('expiresIn')}</TableHead>
+                    <TableHead>{t('createdAt')}</TableHead>
+                    <TableHead className="w-24">{t('actions')}</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -86,7 +88,7 @@ export function InvitationsTable({ invitations }: InvitationsTableProps) {
                                 ) : (
                                     <ShieldOff className="mr-1 size-3" />
                                 )}
-                                {invitation.role || 'user'}
+                                {invitation.role === 'admin' ? t('adminRole') : t('userRole')}
                             </Badge>
                         </TableCell>
                         <TableCell>
@@ -104,7 +106,7 @@ export function InvitationsTable({ invitations }: InvitationsTableProps) {
                                     variant="ghost"
                                     size="icon"
                                     onClick={() => handleCopyLink(invitation)}
-                                    title="Copy invitation link"
+                                    title={t('copyInvitationLink')}
                                 >
                                     <Copy className="size-4" />
                                 </Button>
@@ -113,7 +115,7 @@ export function InvitationsTable({ invitations }: InvitationsTableProps) {
                                     size="icon"
                                     onClick={() => handleRevoke(invitation)}
                                     disabled={isRevoking}
-                                    title="Revoke invitation"
+                                    title={t('revokeInvitation')}
                                     className="text-destructive hover:text-destructive"
                                 >
                                     <X className="size-4" />

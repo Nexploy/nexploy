@@ -34,10 +34,12 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { refreshRateOptions } from '@/utils/refreshRate';
+import { useTranslations } from 'next-intl';
 
 export default function MonitoringPage() {
     const [refreshRate, setRefreshRate] = useLocalStorage('stats-refreshRate', '5000');
     const { metrics, history, connectionState, exportMetrics } = useMonitoringStore();
+    const t = useTranslations('monitoring');
 
     const isLoading = connectionState === 'connecting' || !metrics;
 
@@ -61,25 +63,25 @@ export default function MonitoringPage() {
 
     const statsCards = [
         {
-            title: 'CPU Usage',
+            title: t('cpuUsage'),
             icon: Cpu,
             value: `${metrics?.cpuPercent?.toFixed(1) || 0}%`,
             description: `${metrics?.cpuCount || 0} cores • Load: ${metrics?.loadAverage?.[0]?.toFixed(2) || 0}`,
         },
         {
-            title: 'Memory',
+            title: t('memory'),
             icon: MemoryStick,
             value: `${metrics?.memoryPercent?.toFixed(1) || 0}%`,
             description: `${formatBytes(metrics?.memoryUsed || 0)} / ${formatBytes(metrics?.memoryTotal || 0)}`,
         },
         {
-            title: 'Disk',
+            title: t('disk'),
             icon: HardDrive,
             value: `${metrics?.diskPercent?.toFixed(1) || 0}%`,
             description: `${formatBytes(metrics?.diskUsed || 0)} / ${formatBytes(metrics?.diskTotal || 0)}`,
         },
         {
-            title: 'Uptime',
+            title: t('uptime'),
             icon: Clock,
             value: formatUptime(metrics?.uptime || 0),
             description: `${metrics?.hostname || 'Unknown'} • ${metrics?.platform || 'Unknown'}`,
@@ -88,8 +90,8 @@ export default function MonitoringPage() {
 
     const chartCards = [
         {
-            title: 'CPU Usage (%)',
-            description: 'Real-time CPU percentage over time',
+            title: t('cpuUsagePercent'),
+            description: t('cpuUsageDescription'),
             config: {
                 cpuPercent: {
                     label: 'CPU %',
@@ -110,8 +112,8 @@ export default function MonitoringPage() {
             },
         },
         {
-            title: 'Memory Usage (%)',
-            description: 'Real-time memory percentage over time',
+            title: t('memoryUsagePercent'),
+            description: t('memoryUsageDescription'),
             config: {
                 memoryPercent: {
                     label: 'Memory %',
@@ -143,21 +145,21 @@ export default function MonitoringPage() {
                         </div>
                         <div className="flex flex-col">
                             <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                                Monitoring
+                                {t('title')}
                             </h1>
                             <p className="text-muted-foreground text-sm">
-                                System metrics and performance
+                                {t('description')}
                             </p>
                         </div>
                     </div>
                     <div className={'flex gap-3'}>
                         <Select value={refreshRate} onValueChange={setRefreshRate}>
                             <SelectTrigger>
-                                <SelectValue placeholder="refresh rate..." />
+                                <SelectValue placeholder={t('refreshRate')} />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectLabel>Refresh Rate</SelectLabel>
+                                    <SelectLabel>{t('refreshRate')}</SelectLabel>
                                     {refreshRateOptions.map((option, index) => (
                                         <SelectItem key={index} value={option.value}>
                                             {option.label}
@@ -173,7 +175,7 @@ export default function MonitoringPage() {
                             icon={Download}
                             size="sm"
                         >
-                            Export CSV
+                            {t('exportCsv')}
                         </Button>
                     </div>
                 </div>

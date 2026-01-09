@@ -6,8 +6,10 @@ import { Globe, Network, Share2, Shield } from 'lucide-react';
 import dayjs from 'dayjs';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 
 export function CardInfoNetworks() {
+    const t = useTranslations('docker');
     const networks = useNetworkStore((state) => state.networks);
     const lastUpdate = useNetworkStore((state) => state.lastUpdate);
 
@@ -33,31 +35,31 @@ export function CardInfoNetworks() {
 
         return [
             {
-                title: 'Total Networks',
+                title: t('totalNetworks'),
                 icon: Network,
                 content: totalNetworks,
-                description: `${totalNetworks - customNetworks} réseaux système`,
+                description: t('systemNetworks', { count: totalNetworks - customNetworks }),
             },
             {
-                title: 'Réseaux Personnalisés',
+                title: t('customNetworks'),
                 icon: Share2,
                 content: customNetworks,
-                description: `${customNetworks} créés par l'utilisateur`,
+                description: t('createdByUser', { count: customNetworks }),
             },
             {
-                title: 'Conteneurs Connectés',
+                title: t('connectedContainers'),
                 icon: Globe,
                 content: connectedContainers,
-                description: `Total de connexions actives`,
+                description: t('totalActiveConnections'),
             },
             {
-                title: 'Dernier Réseau',
+                title: t('lastNetwork'),
                 icon: Shield,
                 content: lastCreatedLabel,
                 description: lastCreatedName,
             },
         ];
-    }, [networks]);
+    }, [networks, t]);
 
     return (
         <div className="grid grid-cols-1 gap-4 px-5 md:grid-cols-4">

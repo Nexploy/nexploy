@@ -6,8 +6,10 @@ import { Database, HardDrive, Server } from 'lucide-react';
 import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';
 import { Skeleton } from '@workspace/ui/components/skeleton';
+import { useTranslations } from 'next-intl';
 
 export function CardInfoVolumes() {
+    const t = useTranslations('docker');
     const volumes = useVolumeStore((state) => state.volumes);
     const lastUpdate = useVolumeStore((state) => state.lastUpdate);
 
@@ -32,25 +34,28 @@ export function CardInfoVolumes() {
 
     const volumeInfos = [
         {
-            title: 'Total Volumes',
+            title: t('totalVolumes'),
             icon: Database,
             content: totalVolumes,
-            description: `${localVolumes} volumes locaux`,
+            description: t('localVolumes', { count: localVolumes }),
         },
         {
-            title: 'Espace Utilisé',
+            title: t('spaceUsed'),
             icon: HardDrive,
             content: formatBytes(totalSizeVolumes),
-            description: `${percentUsed.toFixed(1)}% de ${formatBytes(totalDiskCapacity)} utilisés`,
+            description: t('percentUsed', {
+                percent: percentUsed.toFixed(1),
+                total: formatBytes(totalDiskCapacity),
+            }),
         },
         {
-            title: 'Drivers',
+            title: t('drivers'),
             icon: Server,
             content: localVolumes,
-            description: `${localVolumes} local drivers`,
+            description: t('localDrivers', { count: localVolumes }),
         },
         {
-            title: 'Dernier Volume',
+            title: t('lastVolume'),
             icon: Database,
             content: lastCreatedLabel,
             description: lastCreatedName,

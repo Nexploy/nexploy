@@ -23,6 +23,7 @@ import { setDefaultEnvironmentAction } from '@/actions/environment/setDefaultEnv
 import { useRouter } from 'next/navigation';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useTranslations } from 'next-intl';
 
 interface DropdownEnvironment {
     environments: Environment[];
@@ -43,14 +44,15 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
 
     const { openDialog, closeDialog } = useConfirmationDialogStore();
     const { openAlertDialog } = useAlertConfirmationDialogStore();
+    const t = useTranslations('navigation');
+    const tCommon = useTranslations('common');
 
     const currentEnvironment = getSelectedEnvironment();
 
     const handleEnvironmentAdd = () => {
         openDialog({
-            title: 'Add Docker environment',
-            description:
-                'Add a new Docker environment to manage containers across different hosts.',
+            title: t('addDockerEnvironment'),
+            description: t('addDockerEnvironmentDescription'),
             content: <CreateEnvironmentForm />,
             onSuccess: async (environment) => {
                 addEnvironment(environment);
@@ -71,8 +73,8 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
 
     const handleEnvironmentEdit = (environment: Environment) => {
         openDialog({
-            title: 'Edit Docker environment',
-            description: `Update configuration for ${environment.name}`,
+            title: t('editDockerEnvironment'),
+            description: t('editDockerEnvironmentDescription', { name: environment.name }),
             content: <EditEnvironmentForm environment={environment} />,
             onSuccess: () => {
                 closeDialog();
@@ -83,10 +85,10 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
 
     const handleEnvironmentDelete = async (environment: Environment) => {
         openAlertDialog({
-            title: 'Delete environment',
-            description: `Are you sure you want to delete "${environment.name}"? This action cannot be undone.`,
-            cancelLabel: 'Cancel',
-            actionLabel: 'Delete',
+            title: t('deleteEnvironment'),
+            description: t('deleteEnvironmentConfirm', { name: environment.name }),
+            cancelLabel: tCommon('cancel'),
+            actionLabel: tCommon('delete'),
             onAction: async () => {
                 await deleteEnvironmentAction({ environmentId: environment.id });
                 removeEnvironment(environment.id);
@@ -114,8 +116,8 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
                     <Button
                         variant="ghost"
                         size="sm"
-                        className="aspect-square w-16 !p-0 group-data-[state=collapsed]:justify-start"
-                        title={currentEnvironment?.name || 'No environment'}
+                        className="aspect-square w-16 !p-0 group-data-[state=collapsed]:justify-start group-data-[state=collapsed]:!bg-transparent"
+                        title={currentEnvironment?.name || t('noEnvironment')}
                     >
                         <div className="bg-sidebar-primary text-sidebar-primary-foreground flex size-8 items-center justify-center rounded font-semibold">
                             {currentEnvironment?.name?.charAt(0).toUpperCase() || '?'}
@@ -130,7 +132,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
                     sideOffset={4}
                 >
                     <DropdownMenuLabel className="text-muted-foreground text-xs">
-                        Environments
+                        {t('environments')}
                     </DropdownMenuLabel>
                     {storeEnvironments.map((environment) => (
                         <div key={environment.id} className="flex items-center">
@@ -164,7 +166,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
                                         onClick={(e) => handleEnvironmentEdit(environment)}
                                     >
                                         <Pencil className="mr-2 h-4 w-4" />
-                                        Edit
+                                        {t('edit')}
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem
@@ -172,7 +174,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
                                         onClick={(e) => handleEnvironmentDelete(environment)}
                                     >
                                         <Trash className="mr-2 h-4 w-4" />
-                                        Delete
+                                        {t('delete')}
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -183,7 +185,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
                         <div className="bg-background flex size-6 items-center justify-center rounded-md border border-dashed">
                             <Plus size={14} />
                         </div>
-                        <span>Add environment</span>
+                        <span>{t('addEnvironment')}</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

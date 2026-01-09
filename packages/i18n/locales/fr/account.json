@@ -1,0 +1,124 @@
+{
+  "title": "Compte",
+  "profile": "Profil",
+  "security": "Sécurité",
+  "preferences": "Préférences",
+  "profileInfo": {
+    "title": "Informations du profil",
+    "description": "Gérez vos informations personnelles et les détails de votre compte",
+    "name": "Nom",
+    "username": "Nom d'utilisateur",
+    "namePlaceholder": "Votre nom",
+    "email": "Email",
+    "emailPlaceholder": "votre@email.com",
+    "updateProfile": "Mettre à jour le profil",
+    "updating": "Mise à jour...",
+    "profileUpdated": "Nom d'utilisateur mis à jour avec succès"
+  },
+  "securitySettings": {
+    "title": "Paramètres de sécurité",
+    "description": "Gérez la sécurité de votre compte et vos préférences d'authentification",
+    "password": "Mot de passe",
+    "lastChanged": "Modifié il y a {days} jours",
+    "change": "Modifier"
+  },
+  "notifications": {
+    "title": "Préférences de notification",
+    "description": "Contrôlez comment et quand vous recevez des notifications"
+  },
+  "regional": {
+    "title": "Paramètres régionaux",
+    "description": "Configurez vos préférences de langue et de fuseau horaire",
+    "language": "Langue"
+  },
+  "password": {
+    "title": "Changer le mot de passe",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "changePassword": "Changer le mot de passe",
+    "changing": "Changement...",
+    "passwordChanged": "Mot de passe changé avec succès"
+  },
+  "twoFactor": {
+    "title": "Authentification à deux facteurs",
+    "description": "Ajoutez une couche de sécurité supplémentaire à votre compte",
+    "enabled": "Activée",
+    "disabled": "Désactivée",
+    "enable": "Activer la 2FA",
+    "disable": "Désactiver la 2FA",
+    "settings": "Paramètres 2FA",
+    "settingsTitle": "Paramètres d'authentification à deux facteurs",
+    "settingsDescription": "Gérez vos paramètres d'authentification à deux facteurs.",
+    "enableTitle": "Activer la 2FA",
+    "enableDescription": "Sécurisez votre compte en activant l'authentification à deux facteurs.",
+    "disableTitle": "Désactiver l'authentification à deux facteurs",
+    "disableDescription": "Êtes-vous sûr de vouloir désactiver l'authentification à deux facteurs ? Votre compte sera moins sécurisé.",
+    "disableButton": "Désactiver la 2FA",
+    "enabling": "Activation...",
+    "disabling": "Désactivation...",
+    "scanQrCode": "Scannez ce QR code avec votre application d'authentification",
+    "cantScan": "Impossible de scanner ? Vous pouvez entrer manuellement la clé secrète dans votre application",
+    "verifTotp": "Vérification TOTP",
+    "verifTotpDescription": "Scannez le QR code avec votre application d'authentification pour terminer la configuration.",
+    "enterVerificationCode": "Entrez le code de vérification :",
+    "enterCode": "Entrez le code de vérification",
+    "codePlaceholder": "000000",
+    "verify": "Vérifier",
+    "verifying": "Vérification...",
+    "backupCodes": "Codes de secours",
+    "backupCodesDescription": "Conservez ces codes de secours dans un endroit sûr. Chaque code ne peut être utilisé qu'une seule fois.",
+    "regenerateBackupCodes": "Régénérer les codes de secours",
+    "downloadCodes": "Télécharger les codes",
+    "close": "Fermer",
+    "useBackupCode": "Utiliser un code de secours",
+    "enterBackupCode": "Entrer le code de secours",
+    "backupCodePlaceholder": "XXXX-XXXX",
+    "enterPassword": "Entrez votre mot de passe",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "Entrez votre mot de passe"
+  },
+  "alerts": {
+    "title": "Alertes et notifications",
+    "dockerAlerts": "Alertes Docker",
+    "containerStatusChanges": "Changements de statut des conteneurs",
+    "buildNotifications": "Notifications de build",
+    "emailNotifications": "Notifications par email",
+    "enableEmailNotifications": "Activer les notifications par email"
+  },
+  "language": {
+    "title": "Langue",
+    "selectLanguage": "Sélectionner une langue",
+    "en": "English (US)",
+    "fr": "Français"
+  },
+  "theme": {
+    "title": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+  "dangerZone": {
+    "title": "Zone de danger",
+    "description": "Actions irréversibles et destructives",
+    "signOut": "Se déconnecter",
+    "signOutDescription": "Terminer votre session actuelle et retourner à la page de connexion",
+    "logOut": "Déconnexion",
+    "clearAllSessions": "Effacer toutes les sessions",
+    "clearAllSessionsDescription": "Se déconnecter de tous les appareils sauf celui-ci",
+    "clear": "Effacer",
+    "deleteAccount": "Supprimer le compte",
+    "deleteAccountDescription": "Supprimer définitivement votre compte et toutes les données associées",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
+    "deleting": "Suppression..."
+  },
+  "sessions": {
+    "title": "Sessions actives",
+    "currentSession": "Session actuelle",
+    "lastActive": "Dernière activité",
+    "revokeSession": "Révoquer",
+    "revokeAllSessions": "Révoquer toutes les sessions",
+    "sessionRevoked": "Session révoquée",
+    "allSessionsRevoked": "Toutes les sessions révoquées"
+  }
+}

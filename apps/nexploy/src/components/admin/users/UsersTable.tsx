@@ -31,6 +31,7 @@ import { banUser, deleteUser, updateUserRole } from '@/actions/auth/users.action
 import { useAction } from 'next-safe-action/hooks';
 import { toast } from 'sonner';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useTranslations } from 'next-intl';
 
 interface User {
     id: string;
@@ -51,20 +52,21 @@ interface UsersTableProps {
 
 export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
+    const t = useTranslations('admin');
 
     const { execute: executeUpdateRole, isPending: isUpdatingRole } = useAction(updateUserRole, {
-        onSuccess: () => toast.success('User role updated'),
-        onError: ({ error }) => toast.error(error.serverError || 'Failed to update role'),
+        onSuccess: () => toast.success(t('userRoleUpdated')),
+        onError: ({ error }) => toast.error(error.serverError || t('userRoleUpdateFailed')),
     });
 
     const { execute: executeDelete, isPending: isDeleting } = useAction(deleteUser, {
-        onSuccess: () => toast.success('User deleted'),
-        onError: ({ error }) => toast.error(error.serverError || 'Failed to delete user'),
+        onSuccess: () => toast.success(t('userDeletedSuccess')),
+        onError: ({ error }) => toast.error(error.serverError || t('userDeleteFailed')),
     });
 
     const { execute: executeBan, isPending: isBanning } = useAction(banUser, {
-        onSuccess: ({ data }) => toast.success(data?.user.banned ? 'User banned' : 'User unbanned'),
-        onError: ({ error }) => toast.error(error.serverError || 'Failed to update ban status'),
+        onSuccess: ({ data }) => toast.success(data?.user.banned ? t('userBannedSuccess') : t('userUnbannedSuccess')),
+        onError: ({ error }) => toast.error(error.serverError || t('userBanUpdateFailed')),
     });
 
     const handleRoleChange = (userId: string, role: 'admin' | 'user') => {
@@ -73,10 +75,10 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
 
     const handleDelete = (user: User) => {
         openAlertDialog({
-            title: 'Delete User',
-            description: `Are you sure you want to delete ${user.name}? This action cannot be undone.`,
-            cancelLabel: 'Cancel',
-            actionLabel: 'Delete',
+            title: t('deleteUser'),
+            description: t('confirmDeleteUser', { name: user.name }),
+            cancelLabel: t('cancel'),
+            actionLabel: t('deleteUser'),
             onAction: async () => {
                 await executeDelete({ userId: user.id });
             },
@@ -86,12 +88,12 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
     const handleBan = (user: User) => {
         const isBanned = user.banned;
         openAlertDialog({
-            title: isBanned ? 'Unban User' : 'Ban User',
+            title: isBanned ? t('unbanUser') : t('banUser'),
             description: isBanned
-                ? `Are you sure you want to unban ${user.name}?`
-                : `Are you sure you want to ban ${user.name}? They will no longer be able to access the platform.`,
-            cancelLabel: 'Cancel',
-            actionLabel: isBanned ? 'Unban' : 'Ban',
+                ? t('confirmUnbanUser', { name: user.name })
+                : t('confirmBanUser', { name: user.name }),
+            cancelLabel: t('cancel'),
+            actionLabel: isBanned ? t('unbanUser') : t('banUser'),
             onAction: async () => {
                 await executeBan({ userId: user.id, ban: !isBanned });
             },
@@ -111,11 +113,11 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>User</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Created</TableHead>
+                    <TableHead>{t('user')}</TableHead>
+                    <TableHead>{t('email')}</TableHead>
+                    <TableHead>{t('role')}</TableHead>
+                    <TableHead>{t('status')}</TableHead>
+                    <TableHead>{t('createdAt')}</TableHead>
                     {isAdmin && <TableHead className="w-12"></TableHead>}
                 </TableRow>
             </TableHeader>
@@ -136,7 +138,7 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
                                         <span className="font-medium">{user.name}</span>
                                         {isCurrentUser && (
                                             <span className="text-muted-foreground text-xs">
-                                                (you)
+                                                {t('you')}
                                             </span>
                                         )}
                                     </div>
@@ -159,13 +161,13 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
                                             <SelectItem value="admin">
                                                 <div className="flex items-center gap-2">
                                                     <Shield className="size-3" />
-                                                    Admin
+                                                    {t('adminRole')}
                                                 </div>
                                             </SelectItem>
                                             <SelectItem value="user">
                                                 <div className="flex items-center gap-2">
                                                     <ShieldOff className="size-3" />
-                                                    User
+                                                    {t('userRole')}
                                                 </div>
                                             </SelectItem>
                                         </SelectContent>
@@ -179,7 +181,7 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
                                         ) : (
                                             <ShieldOff className="mr-1 size-3" />
                                         )}
-                                        {user.role || 'user'}
+                                        {user.role === 'admin' ? t('adminRole') : t('userRole')}
                                     </Badge>
                                 )}
                             </TableCell>
@@ -187,12 +189,12 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
                                 {user.banned ? (
                                     <Badge variant="destructive">
                                         <Ban className="mr-1 size-3" />
-                                        Banned
+                                        {t('banned')}
                                     </Badge>
                                 ) : (
                                     <Badge variant="outline" className="text-green-600">
                                         <CheckCircle className="mr-1 size-3" />
-                                        Active
+                                        {t('active')}
                                     </Badge>
                                 )}
                             </TableCell>
@@ -209,14 +211,14 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
-                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
                                                 <DropdownMenuSeparator />
                                                 <DropdownMenuItem
                                                     onClick={() => handleBan(user)}
                                                     disabled={isBanning}
                                                 >
                                                     <Ban className="mr-2 size-4" />
-                                                    {user.banned ? 'Unban' : 'Ban'}
+                                                    {user.banned ? t('unbanUser') : t('banUser')}
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
                                                     onClick={() => handleDelete(user)}
@@ -224,7 +226,7 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
                                                     className="text-destructive"
                                                 >
                                                     <Trash2 className="mr-2 size-4" />
-                                                    Delete
+                                                    {t('deleteUser')}
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
@@ -237,7 +239,7 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
                 {users.length === 0 && (
                     <TableRow>
                         <TableCell colSpan={6} className="py-6 text-center">
-                            No users found.
+                            {t('noUsers')}
                         </TableCell>
                     </TableRow>
                 )}

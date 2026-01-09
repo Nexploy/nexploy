@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent } from '@workspace/ui/components/card';
-import { AlertCircle, Box, Layers } from 'lucide-react';
+import { AlertCircle, Box, FileCode2, Layers } from 'lucide-react';
 import { UseFormReturn } from 'react-hook-form';
 import { DeploymentSettingsForm } from '@workspace/schemas-zod/repository/settings/deploymentSettings.schema';
 import {
@@ -16,13 +16,49 @@ import { cn } from '@workspace/ui/lib/utils';
 import Link from 'next/link';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+import { BuildType } from 'generated/client';
 
 interface DeploymentModeCardProps {
     form: UseFormReturn<DeploymentSettingsForm>;
+    buildType: BuildType;
 }
 
-export function DeploymentModeCard({ form }: DeploymentModeCardProps) {
+export function DeploymentModeCard({ form, buildType }: DeploymentModeCardProps) {
     const isSwarmActive = useSwarmStore((s) => s.isSwarmActive);
+    const isDockerCompose = buildType === 'DOCKER_COMPOSE';
+
+    if (isDockerCompose) {
+        return (
+            <Card>
+                <CardHeaderWithIcon
+                    icon={Layers}
+                    title={'Mode de déploiement'}
+                    description={'Configuration du mode de déploiement'}
+                />
+                <CardContent>
+                    <div className="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900/50 dark:bg-blue-950/20">
+                        <FileCode2 className="mt-0.5 size-5 shrink-0 text-blue-600 dark:text-blue-400" />
+                        <div className="flex flex-col gap-1">
+                            <span className="font-medium text-blue-900 dark:text-blue-100">
+                                Mode Docker Compose
+                            </span>
+                            <span className="text-sm text-blue-800 dark:text-blue-200">
+                                Le mode de déploiement est défini dans votre fichier{' '}
+                                <code className="rounded bg-blue-100 px-1.5 py-0.5 font-mono text-xs dark:bg-blue-900/50">
+                                    docker-compose.yml
+                                </code>
+                                . Utilisez la section{' '}
+                                <code className="rounded bg-blue-100 px-1.5 py-0.5 font-mono text-xs dark:bg-blue-900/50">
+                                    deploy
+                                </code>{' '}
+                                pour configurer le mode Swarm avec les réplicas et l'orchestration.
+                            </span>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        );
+    }
 
     return (
         <Card>

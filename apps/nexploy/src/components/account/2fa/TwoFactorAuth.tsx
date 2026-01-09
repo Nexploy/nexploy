@@ -14,6 +14,7 @@ import CopyButton from '@/components/utils/CopyButton';
 import { TwoFactorVerifCodeForm } from '@/components/auth/2faVerifCodeForm';
 import { DialogTitle } from '@workspace/ui/components/dialog';
 import { Session } from '@/lib/auth/auth';
+import { useTranslations } from 'next-intl';
 
 interface TwoFactorAuthProps {
     user?: Session['user'];
@@ -21,28 +22,28 @@ interface TwoFactorAuthProps {
 
 export function TwoFactorAuth({ user }: TwoFactorAuthProps) {
     const { openDialog } = useConfirmationDialogStore();
+    const t = useTranslations('account.twoFactor');
 
     const isTwoFactorEnabled = user?.twoFactorEnabled ?? false;
 
     const handleSetting2FA = () => {
         openDialog({
-            title: 'Two-Factor Authentication Settings',
-            description: 'Manage your two-factor authentication settings.',
+            title: t('settingsTitle'),
+            description: t('settingsDescription'),
             content: <TwoFactorAuthSetting />,
         });
     };
 
     const handleSetup2FA = async () => {
         openDialog({
-            title: 'Enable 2FA',
-            description: 'Secure your account by enabling two-factor authentication.',
+            title: t('enableTitle'),
+            description: t('enableDescription'),
             closeOnBackground: false,
             content: <TwoFactorEnabledForm />,
             onSuccess: ({ totpURI, backupCodes }: TOTP) =>
                 openDialog({
-                    title: 'Verif TOTP',
-                    description:
-                        'Scan the QR code with your authenticator app to complete two-factor authentication setup.',
+                    title: t('verifTotp'),
+                    description: t('verifTotpDescription'),
                     closeOnBackground: false,
                     content: () => {
                         const secretKey = totpURI.split('secret=')[1]?.split('&')[0] || '';
@@ -54,8 +55,7 @@ export function TwoFactorAuth({ user }: TwoFactorAuthProps) {
                                         <QRCode value={totpURI} size={200} level="H" />
                                     </div>
                                     <p className="text-muted-foreground text-center text-xs">
-                                        Can't scan? You can manually enter the secret key in your
-                                        authenticator app
+                                        {t('cantScan')}
                                     </p>
                                     <ButtonGroup className={'flex w-full'}>
                                         <Input
@@ -74,14 +74,13 @@ export function TwoFactorAuth({ user }: TwoFactorAuthProps) {
                                 </div>
                                 <div className={'flex flex-col gap-4'}>
                                     <DialogTitle className={'!text-base'}>
-                                        Enter Verification Code :
+                                        {t('enterVerificationCode')}
                                     </DialogTitle>
                                     <TwoFactorVerifCodeForm
                                         onSuccess={() =>
                                             openDialog({
-                                                title: 'Backup Codes',
-                                                description:
-                                                    'Keep these backup codes in a safe place. Each code can only be used once.',
+                                                title: t('backupCodes'),
+                                                description: t('backupCodesDescription'),
                                                 closeOnBackground: false,
                                                 content: (
                                                     <TwoFactorAuthBackupCodes
@@ -103,23 +102,23 @@ export function TwoFactorAuth({ user }: TwoFactorAuthProps) {
         <div className={'flex items-center justify-between rounded-md border p-3'}>
             <div className={'flex flex-col gap-1'}>
                 <div className={'flex items-center gap-2'}>
-                    <p className="font-medium">Two-Factor Authentication</p>
+                    <p className="font-medium">{t('title')}</p>
                     <Badge variant={isTwoFactorEnabled ? 'default' : 'secondary'}>
-                        {isTwoFactorEnabled ? 'Enabled' : 'Disabled'}
+                        {isTwoFactorEnabled ? t('enabled') : t('disabled')}
                     </Badge>
                 </div>
                 <p className="text-muted-foreground text-xs">
-                    Add an extra layer of security to your account
+                    {t('description')}
                 </p>
             </div>
 
             {isTwoFactorEnabled ? (
                 <Button onClick={handleSetting2FA} size="sm">
-                    Setting 2FA
+                    {t('settings')}
                 </Button>
             ) : (
                 <Button onClick={handleSetup2FA} size="sm">
-                    Enable 2FA
+                    {t('enable')}
                 </Button>
             )}
         </div>

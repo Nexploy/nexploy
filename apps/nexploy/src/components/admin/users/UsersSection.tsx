@@ -11,11 +11,13 @@ import {
     CardTitle,
 } from '@workspace/ui/components/card';
 import { Mail, Users } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 
 export async function UsersSection() {
     const session = await getUserSession();
     const users = await getUsers();
     const invitations = await getInvitations();
+    const t = await getTranslations('admin');
 
     const isAdmin = session?.user.role === 'admin';
 
@@ -26,10 +28,10 @@ export async function UsersSection() {
                     <div>
                         <CardTitle className="flex items-center gap-2">
                             <Users className="size-5" />
-                            Users ({users.length})
+                            {t('users')} ({users.length})
                         </CardTitle>
                         <CardDescription>
-                            Manage user accounts and their permissions
+                            {t('manageUsersDescription')}
                         </CardDescription>
                     </div>
                     {isAdmin && <AddUserButton />}
@@ -44,9 +46,9 @@ export async function UsersSection() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Mail className="size-5" />
-                            Pending Invitations ({invitations.length})
+                            {t('pendingInvitations')} ({invitations.length})
                         </CardTitle>
-                        <CardDescription>Manage pending user invitations</CardDescription>
+                        <CardDescription>{t('managePendingInvitations')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <InvitationsTable invitations={invitations} />

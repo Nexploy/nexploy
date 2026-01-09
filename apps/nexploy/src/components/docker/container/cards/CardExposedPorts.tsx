@@ -11,6 +11,7 @@ import { PortFormProps } from '@workspace/typescript-interface/docker/docker.por
 import { cn } from '@workspace/ui/lib/utils';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+import { useTranslations } from 'next-intl';
 
 function getPortUrl(port: number) {
     if (typeof window === 'undefined') return `http://localhost:${port}`;
@@ -22,13 +23,13 @@ export function CardExposedPorts() {
     const container = useContainerStore((state) => state.container);
     const { openDialog } = useConfirmationDialogStore();
     const portChanges = useContainerChangesStore((state) => state.portChanges);
+    const t = useTranslations('docker.containerPorts');
 
     const handleAddPort = () =>
         openDialog({
             closeOnBackground: true,
-            title: 'Ajouter un port',
-            description:
-                'Le conteneur doit être arrêté pour ajouter un port. Il sera recréé avec la nouvelle configuration.',
+            title: t('addTitle'),
+            description: t('addDescription'),
             props: {
                 className: 'sm:max-w-[425px]',
             },
@@ -41,9 +42,8 @@ export function CardExposedPorts() {
     ) =>
         openDialog({
             closeOnBackground: true,
-            title: 'Modifier un port',
-            description:
-                'Le conteneur doit être arrêté pour modifier un port. Il sera recréé avec la nouvelle configuration.',
+            title: t('editTitle'),
+            description: t('editDescription'),
             props: {
                 className: 'sm:max-w-[425px]',
             },
@@ -90,7 +90,7 @@ export function CardExposedPorts() {
         <Card className={'flex flex-1 flex-col'}>
             <CardHeader>
                 <div className="flex items-center justify-between gap-3">
-                    <CardHeaderWithIcon as={'div'} icon={Network} title={'Ports exposés'} />
+                    <CardHeaderWithIcon as={'div'} icon={Network} title={t('title')} />
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button
@@ -98,11 +98,11 @@ export function CardExposedPorts() {
                                 icon={Plus}
                                 onClick={handleAddPort}
                             >
-                                <span className={'hidden xl:flex'}>Add port</span>
+                                <span className={'hidden xl:flex'}>{t('addPort')}</span>
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent className={'flex xl:hidden'}>
-                            <span>Add port</span>
+                            <span>{t('addPort')}</span>
                         </TooltipContent>
                     </Tooltip>
                 </div>
@@ -144,7 +144,7 @@ export function CardExposedPorts() {
                                                             </a>
                                                         </TooltipTrigger>
                                                         <TooltipContent>
-                                                            Ouvrir le port {displayPort.publicPort}
+                                                            {t('openPort', { port: displayPort.publicPort })}
                                                         </TooltipContent>
                                                     </Tooltip>
                                                 ) : (
@@ -177,7 +177,7 @@ export function CardExposedPorts() {
                                                         <Pencil />
                                                     </Button>
                                                 </TooltipTrigger>
-                                                <TooltipContent>Modifier</TooltipContent>
+                                                <TooltipContent>{t('edit')}</TooltipContent>
                                             </Tooltip>
                                         </div>
                                     );
@@ -206,7 +206,7 @@ export function CardExposedPorts() {
                                                             </a>
                                                         </TooltipTrigger>
                                                         <TooltipContent>
-                                                            Ouvrir le port {change.publicPort}
+                                                            {t('openPort', { port: change.publicPort })}
                                                         </TooltipContent>
                                                     </Tooltip>
                                                 ) : (
@@ -240,7 +240,7 @@ export function CardExposedPorts() {
                                                             <Pencil />
                                                         </Button>
                                                     </TooltipTrigger>
-                                                    <TooltipContent>Modifier</TooltipContent>
+                                                    <TooltipContent>{t('edit')}</TooltipContent>
                                                 </Tooltip>
                                             </div>
                                         </div>
@@ -250,7 +250,7 @@ export function CardExposedPorts() {
                         ) : (
                             <div className="mb-16 flex flex-1 items-center justify-center">
                                 <p className="text-muted-foreground text-center">
-                                    Aucun port exposé
+                                    {t('noPorts')}
                                 </p>
                             </div>
                         )}

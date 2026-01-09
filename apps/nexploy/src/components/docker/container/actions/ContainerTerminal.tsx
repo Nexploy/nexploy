@@ -22,6 +22,7 @@ import { Terminal } from 'lucide-react';
 import { useTerminalStore } from '@/stores/useTerminalStore';
 import { useLocalStorage } from 'usehooks-ts';
 import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
+import { useTranslations } from 'next-intl';
 
 interface ContainerTerminalProps {
     children: (props: { openConsole: () => void }) => ReactNode;
@@ -38,6 +39,7 @@ const shellOptions = [
 export function ContainerTerminal({ children }: ContainerTerminalProps) {
     const [open, setOpen] = useState(false);
     const [selectedShell, setSelectedShell] = useLocalStorage('terminal-selectedShell', 'auto');
+    const t = useTranslations('docker.containerTerminal');
 
     const container = useContainerStore((state) => state.container);
     const selectedEnvironmentId = useEnvironmentStore((state) => state.selectedEnvironmentId);
@@ -90,7 +92,7 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                                 <div className="flex size-4 items-center">
                                     <Terminal />
                                 </div>
-                                Console — {container?.name}
+                                {t('title', { name: container?.name })}
                                 <Status
                                     className="rounded-none bg-transparent"
                                     status={currentStatus.status}
@@ -105,11 +107,11 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                         <div className="flex flex-row items-center gap-2">
                             <Select value={selectedShell} onValueChange={onValueChange}>
                                 <SelectTrigger className="!h-7 bg-white/10 text-white/90">
-                                    <SelectValue placeholder="auto, sh, bash, ash..." />
+                                    <SelectValue placeholder={t('shellPlaceholder')} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectLabel>Shell cmd</SelectLabel>
+                                        <SelectLabel>{t('shellLabel')}</SelectLabel>
                                         {shellOptions.map((option, index) => (
                                             <SelectItem key={index} value={option.value}>
                                                 {option.label}
@@ -125,7 +127,7 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                                 variant="white"
                                 size="sm"
                             >
-                                Reconnect
+                                {t('reconnect')}
                             </Button>
                             <Separator
                                 orientation="vertical"
@@ -137,7 +139,7 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                                 variant="white"
                                 size="sm"
                             >
-                                Close
+                                {t('close')}
                             </Button>
                         </div>
                     </DialogHeader>

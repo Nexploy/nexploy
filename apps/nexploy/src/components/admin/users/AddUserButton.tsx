@@ -5,17 +5,19 @@ import { UserPlus } from 'lucide-react';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { CreateUserForm } from '@/components/admin/forms/CreateUserForm';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 export function AddUserButton() {
     const { openDialog, closeDialog } = useConfirmationDialogStore();
+    const t = useTranslations('admin');
 
     const handleAddUser = async () => {
         openDialog({
-            title: 'Add User',
-            description: 'The user has been added successfully.',
+            title: t('addUser'),
+            description: t('addUserDescription'),
             content: <CreateUserForm />,
             onSuccess: () => {
-                toast.success('User added successfully');
+                toast.success(t('userAddedSuccess'));
                 closeDialog();
             },
         });
@@ -24,7 +26,7 @@ export function AddUserButton() {
     return (
         <Button onClick={handleAddUser}>
             <UserPlus />
-            Add User
+            {t('addUser')}
         </Button>
     );
 }

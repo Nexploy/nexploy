@@ -6,6 +6,7 @@ import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { ArrowUp, Bot, ChevronLeft, Loader2, StopCircle, User } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface AICommandChatProps {
     initialInput?: string;
@@ -17,6 +18,7 @@ export function AICommandChat({ initialInput = '', onBack }: AICommandChatProps)
         api: '/api/chat',
         initialInput,
     });
+    const t = useTranslations('ai.chat');
 
     const scrollRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -39,12 +41,12 @@ export function AICommandChat({ initialInput = '', onBack }: AICommandChatProps)
             <div className="flex items-center justify-between border-b p-2">
                 <Button variant="ghost" size="sm" onClick={onBack} className="gap-2">
                     <ChevronLeft className="h-4 w-4" />
-                    Back to Commands
+                    {t('backToCommands')}
                 </Button>
                 {isLoading && (
                     <Button variant="ghost" size="sm" onClick={() => stop()}>
                         <StopCircle className="mr-2 h-4 w-4" />
-                        Stop generating
+                        {t('stopGenerating')}
                     </Button>
                 )}
             </div>
@@ -53,9 +55,9 @@ export function AICommandChat({ initialInput = '', onBack }: AICommandChatProps)
                 <div className="flex flex-col gap-4 pb-4">
                     {messages.length === 0 && (
                         <div className="text-muted-foreground mt-10 text-center">
-                            <p>How can I help you with your Docker infrastructure today?</p>
+                            <p>{t('helpMessage')}</p>
                             <p className="mt-2 text-xs">
-                                Try: &quot;Create a redis container named cache&quot;
+                                {t('helpExample')}
                             </p>
                         </div>
                     )}
@@ -109,7 +111,7 @@ export function AICommandChat({ initialInput = '', onBack }: AICommandChatProps)
                                 <Bot className="h-4 w-4" />
                             </div>
                             <div className="bg-muted flex items-center rounded-lg p-3 text-sm">
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Thinking...
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t('thinking')}
                             </div>
                         </div>
                     )}
@@ -121,7 +123,7 @@ export function AICommandChat({ initialInput = '', onBack }: AICommandChatProps)
                     ref={inputRef}
                     value={input}
                     onChange={handleInputChange}
-                    placeholder="Describe what you want to do..."
+                    placeholder={t('inputPlaceholder')}
                     className="flex-1"
                 />
                 <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>

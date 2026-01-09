@@ -25,6 +25,7 @@ import { useTranslations } from 'next-intl';
 
 export function SignInForm() {
     const t = useTranslations('validation');
+    const tAuth = useTranslations('auth.signIn');
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onSignInAction,
@@ -45,8 +46,8 @@ export function SignInForm() {
         <div className="flex min-h-screen items-center justify-center p-4">
             <Card className="w-full max-w-md">
                 <CardHeader>
-                    <CardTitle className="text-2xl">Connexion</CardTitle>
-                    <CardDescription>Connectez-vous à votre compte pour continuer</CardDescription>
+                    <CardTitle className="text-2xl">{tAuth('title')}</CardTitle>
+                    <CardDescription>{tAuth('description')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <Form {...form}>
@@ -56,12 +57,12 @@ export function SignInForm() {
                                 name="email"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Email</FormLabel>
+                                        <FormLabel>{tAuth('emailLabel')}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 {...field}
                                                 type="email"
-                                                placeholder="vous@exemple.com"
+                                                placeholder={tAuth('emailPlaceholder')}
                                                 disabled={isSubmitting}
                                             />
                                         </FormControl>
@@ -74,12 +75,12 @@ export function SignInForm() {
                                 name="password"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Mot de passe</FormLabel>
+                                        <FormLabel>{tAuth('passwordLabel')}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 {...field}
                                                 type="password"
-                                                placeholder="••••••••"
+                                                placeholder={tAuth('passwordPlaceholder')}
                                                 disabled={isSubmitting}
                                             />
                                         </FormControl>
@@ -98,7 +99,7 @@ export function SignInForm() {
                                 isLoading={isSubmitting}
                                 disabled={isSubmitting}
                             >
-                                {isSubmitting ? 'Connexion...' : 'Se connecter'}
+                                {isSubmitting ? tAuth('submitLoading') : tAuth('submit')}
                             </Button>
                         </form>
                     </Form>

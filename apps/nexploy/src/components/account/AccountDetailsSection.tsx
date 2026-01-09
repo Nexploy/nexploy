@@ -13,9 +13,11 @@ import { LanguageSwitcher } from '@/components/account/LanguageSwitcher';
 import { NotificationSwitch } from '@/components/account/NotificationSwitch';
 import { getUserSession } from '@/services/auth/auth.service';
 import { Label } from '@workspace/ui/components/label';
+import { getTranslations } from 'next-intl/server';
 
 export async function AccountDetailsSection() {
     const session = await getUserSession();
+    const t = await getTranslations('account');
 
     return (
         <div className="flex flex-col gap-5">
@@ -25,10 +27,10 @@ export async function AccountDetailsSection() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Shield className="size-5" />
-                        Security Settings
+                        {t('securitySettings.title')}
                     </CardTitle>
                     <CardDescription>
-                        Manage your account security and authentication preferences
+                        {t('securitySettings.description')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -36,13 +38,13 @@ export async function AccountDetailsSection() {
                         <TwoFactorAuth user={session?.user} />
                         <div className="flex items-center justify-between rounded-md border p-3">
                             <div>
-                                <p>Password</p>
+                                <p>{t('securitySettings.password')}</p>
                                 <p className="text-muted-foreground text-xs">
-                                    Last changed 30 days ago
+                                    {t('securitySettings.lastChanged', { days: 30 })}
                                 </p>
                             </div>
                             <Button variant="outline" size="sm">
-                                Change
+                                {t('securitySettings.change')}
                             </Button>
                         </div>
                     </div>
@@ -53,16 +55,16 @@ export async function AccountDetailsSection() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Bell className="size-5" />
-                        Notification Preferences
+                        {t('notifications.title')}
                     </CardTitle>
                     <CardDescription>
-                        Control how and when you receive notifications
+                        {t('notifications.description')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <NotificationSwitch
-                        label="Docker Alerts"
-                        description="Container status changes"
+                        label={t('alerts.dockerAlerts')}
+                        description={t('alerts.containerStatusChanges')}
                     />
                 </CardContent>
             </Card>
@@ -71,16 +73,16 @@ export async function AccountDetailsSection() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Globe className="size-5" />
-                        Regional Settings
+                        {t('regional.title')}
                     </CardTitle>
                     <CardDescription>
-                        Configure your language and timezone preferences
+                        {t('regional.description')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div className="space-y-2">
-                            <Label className="text-sm font-medium">Language</Label>
+                            <Label className="text-sm font-medium">{t('regional.language')}</Label>
                             <LanguageSwitcher />
                         </div>
                     </div>
@@ -91,19 +93,19 @@ export async function AccountDetailsSection() {
                 <CardHeader className="">
                     <CardTitle className="text-destructive flex items-center gap-2">
                         <AlertTriangle className="size-5" />
-                        Danger Zone
+                        {t('dangerZone.title')}
                     </CardTitle>
-                    <CardDescription>Irreversible and destructive actions</CardDescription>
+                    <CardDescription>{t('dangerZone.description')}</CardDescription>
                 </CardHeader>
                 <CardContent className={'flex flex-col gap-4'}>
                     <div className="border-destructive/50 flex items-center justify-between rounded-md border p-3">
                         <div className="space-y-1">
                             <div className="flex items-center gap-2">
                                 <LogOut className="text-destructive size-4" />
-                                <p className="font-medium">Sign Out</p>
+                                <p className="font-medium">{t('dangerZone.signOut')}</p>
                             </div>
                             <p className="text-muted-foreground text-sm">
-                                End your current session and return to the login page
+                                {t('dangerZone.signOutDescription')}
                             </p>
                         </div>
                     </div>
@@ -112,14 +114,14 @@ export async function AccountDetailsSection() {
                         <div className="space-y-1">
                             <div className="flex items-center gap-2">
                                 <Trash2 className="text-destructive size-4" />
-                                <p className="font-medium">Clear All Sessions</p>
+                                <p className="font-medium">{t('dangerZone.clearAllSessions')}</p>
                             </div>
                             <p className="text-muted-foreground text-sm">
-                                Sign out from all devices except this one
+                                {t('dangerZone.clearAllSessionsDescription')}
                             </p>
                         </div>
                         <Button variant="destructive" size="sm" className="shrink-0">
-                            Clear
+                            {t('dangerZone.clear')}
                         </Button>
                     </div>
                 </CardContent>

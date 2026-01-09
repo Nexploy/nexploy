@@ -26,8 +26,14 @@ import {
 } from '@workspace/ui/components/select';
 import { Button } from '@workspace/ui/components/button';
 import { DockerEventData } from '@workspace/typescript-interface/docker/docker.events';
+import { useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 
 export default function EventsPage() {
+    const t = useTranslations('docker');
+    const tCommon = useTranslations('common');
+    const locale = useLocale();
+
     const {
         filteredEvents,
         lastUpdate,
@@ -107,7 +113,7 @@ export default function EventsPage() {
     };
 
     const getLocaleDate = (timestamp: number) => {
-        return new Date(timestamp).toLocaleString('fr-FR', {
+        return new Date(timestamp).toLocaleString(locale === 'fr' ? 'fr-FR' : 'en-US', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',
@@ -131,12 +137,12 @@ export default function EventsPage() {
                 </div>
                 <div className={'flex flex-col'}>
                     <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                        Docker Events
+                        Docker {t('eventsTitle')}
                     </h1>
                     <p className="text-muted-foreground text-sm">
                         {eventsReceived > 0
-                            ? `${eventsReceived} événements reçus`
-                            : "En attente d'événements..."}
+                            ? t('eventsReceived', { count: eventsReceived })
+                            : t('waitingForEvents')}
                     </p>
                 </div>
             </div>
@@ -145,22 +151,22 @@ export default function EventsPage() {
                     <div className={'mx-5 flex justify-between gap-3'}>
                         <Input
                             className={'w-1/4 shadow-xs'}
-                            placeholder="Rechercher par nom, action..."
+                            placeholder={t('searchByNameAction')}
                             value={searchQuery}
                             onChange={(e) => handleSearchChange(e.target.value)}
                         />
                         <Select value={typeFilter} onValueChange={handleTypeFilterChange}>
                             <SelectTrigger className="w-40">
-                                <SelectValue placeholder="Type" />
+                                <SelectValue placeholder={t('type')} />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectLabel>Type</SelectLabel>
-                                    <SelectItem value="all">Tous</SelectItem>
-                                    <SelectItem value="container">Container</SelectItem>
-                                    <SelectItem value="image">Image</SelectItem>
-                                    <SelectItem value="network">Network</SelectItem>
-                                    <SelectItem value="volume">Volume</SelectItem>
+                                    <SelectLabel>{t('type')}</SelectLabel>
+                                    <SelectItem value="all">{t('all')}</SelectItem>
+                                    <SelectItem value="container">{t('container')}</SelectItem>
+                                    <SelectItem value="image">{t('image')}</SelectItem>
+                                    <SelectItem value="network">{t('network')}</SelectItem>
+                                    <SelectItem value="volume">{t('volume')}</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
@@ -170,10 +176,10 @@ export default function EventsPage() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Timestamp</TableHead>
-                                    <TableHead>Type</TableHead>
-                                    <TableHead>Action</TableHead>
-                                    <TableHead>Nom / ID</TableHead>
+                                    <TableHead>{t('timestamp')}</TableHead>
+                                    <TableHead>{t('type')}</TableHead>
+                                    <TableHead>{t('action')}</TableHead>
+                                    <TableHead>{t('nameId')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -192,8 +198,8 @@ export default function EventsPage() {
                                     <TableRow>
                                         <TableCell colSpan={4} className="py-6 text-center">
                                             {filteredEvents.length === 0 && eventsReceived === 0
-                                                ? "En attente d'événements Docker..."
-                                                : 'Aucun événement ne correspond aux filtres.'}
+                                                ? t('waitingForEvents')
+                                                : t('noMatchingEvents')}
                                         </TableCell>
                                     </TableRow>
                                 ) : (
@@ -235,7 +241,7 @@ export default function EventsPage() {
                         <div className={'mx-5 flex items-center justify-between'}>
                             <div className={'flex items-center gap-2'}>
                                 <span className="text-muted-foreground text-sm">
-                                    Événements par page :
+                                    {t('eventsPerPage')}:
                                 </span>
                                 <Select
                                     value={pageSize === 'all' ? 'all' : String(pageSize)}
@@ -249,17 +255,17 @@ export default function EventsPage() {
                                     }}
                                 >
                                     <SelectTrigger size={'sm'} className="w-24">
-                                        <SelectValue placeholder="Events per page" />
+                                        <SelectValue placeholder={t('eventsPerPage')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectLabel>Taille</SelectLabel>
+                                            <SelectLabel>{t('size')}</SelectLabel>
                                             {[10, 25, 50, 100].map((size) => (
                                                 <SelectItem key={size} value={`${size}`}>
                                                     {size}
                                                 </SelectItem>
                                             ))}
-                                            <SelectItem value="all">Tous</SelectItem>
+                                            <SelectItem value="all">{t('all')}</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -268,7 +274,10 @@ export default function EventsPage() {
                             {!isShowingAll && (
                                 <div className={'flex items-center gap-2'}>
                                     <span className="text-muted-foreground text-sm">
-                                        Page {currentPage + 1} sur {totalPages}
+                                        {t('pageOf', {
+                                            current: currentPage + 1,
+                                            total: totalPages,
+                                        })}
                                     </span>
                                     <div className={'flex gap-2'}>
                                         <Button
@@ -280,7 +289,7 @@ export default function EventsPage() {
                                             disabled={currentPage === 0}
                                         >
                                             <ChevronLeft className={'h-4 w-4'} />
-                                            Précédent
+                                            {tCommon('previous')}
                                         </Button>
                                         <Button
                                             variant={'outline'}
@@ -292,7 +301,7 @@ export default function EventsPage() {
                                             }
                                             disabled={currentPage >= totalPages - 1}
                                         >
-                                            Suivant
+                                            {tCommon('next')}
                                             <ChevronRight className={'h-4 w-4'} />
                                         </Button>
                                     </div>

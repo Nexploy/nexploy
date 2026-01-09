@@ -6,19 +6,21 @@ import { Button } from '@workspace/ui/components/button';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
 import { Copy, Eye, EyeOff, Users, Crown } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 export function JoinTokenCards() {
     const { swarmInfo, isSwarmActive } = useSwarmStore();
     const [showWorkerToken, setShowWorkerToken] = useState(false);
     const [showManagerToken, setShowManagerToken] = useState(false);
+    const t = useTranslations('swarm');
 
     if (!isSwarmActive || !swarmInfo) {
         return null;
     }
 
-    const copyToClipboard = (text: string, label: string) => {
+    const copyToClipboard = (text: string, toastKey: 'workerCommandCopied' | 'managerCommandCopied') => {
         navigator.clipboard.writeText(text);
-        toast.success(`${label} copied to clipboard`);
+        toast.success(t(toastKey));
     };
 
     const formatToken = (token: string, show: boolean) => {
@@ -38,7 +40,7 @@ export function JoinTokenCards() {
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="flex items-center gap-2 text-sm font-medium">
                         <Users className="size-4" />
-                        Worker Join Token
+                        {t('workerJoinToken')}
                     </CardTitle>
                     <div className="flex gap-1">
                         <Button
@@ -60,7 +62,7 @@ export function JoinTokenCards() {
                             onClick={() =>
                                 copyToClipboard(
                                     getJoinCommand(swarmInfo.joinTokens.worker, 'worker'),
-                                    'Worker join command',
+                                    'workerCommandCopied',
                                 )
                             }
                         >
@@ -73,7 +75,7 @@ export function JoinTokenCards() {
                         {formatToken(swarmInfo.joinTokens.worker, showWorkerToken)}
                     </code>
                     <p className="text-muted-foreground mt-2 text-xs">
-                        Use this token to join new worker nodes to the swarm.
+                        {t('useTokenToJoinWorker')}
                     </p>
                 </CardContent>
             </Card>
@@ -82,7 +84,7 @@ export function JoinTokenCards() {
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="flex items-center gap-2 text-sm font-medium">
                         <Crown className="size-4" />
-                        Manager Join Token
+                        {t('managerJoinToken')}
                     </CardTitle>
                     <div className="flex gap-1">
                         <Button
@@ -104,7 +106,7 @@ export function JoinTokenCards() {
                             onClick={() =>
                                 copyToClipboard(
                                     getJoinCommand(swarmInfo.joinTokens.manager, 'manager'),
-                                    'Manager join command',
+                                    'managerCommandCopied',
                                 )
                             }
                         >
@@ -117,7 +119,7 @@ export function JoinTokenCards() {
                         {formatToken(swarmInfo.joinTokens.manager, showManagerToken)}
                     </code>
                     <p className="text-muted-foreground mt-2 text-xs">
-                        Use this token to join new manager nodes to the swarm.
+                        {t('useTokenToJoinManager')}
                     </p>
                 </CardContent>
             </Card>

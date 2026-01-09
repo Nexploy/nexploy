@@ -4,10 +4,12 @@ import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { getUserSession, listAccount } from '@/services/auth/auth.service';
 import { getCloudflareCredentialInfo } from '@/services/cloudflare.service';
 import { Cloud, GitBranch, Github, Gitlab, Plug } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 
 export default async function IntegrationsPage() {
     const accounts = await listAccount();
     const session = await getUserSession();
+    const t = await getTranslations('integrations');
 
     const cloudflareInfo = session
         ? await getCloudflareCredentialInfo(session.user.id)
@@ -19,14 +21,14 @@ export default async function IntegrationsPage() {
     const gitProviders = [
         {
             provider: 'github',
-            name: 'GitHub',
-            description: 'Importez vos dépôts et déployez automatiquement.',
+            name: t('github.title'),
+            description: t('github.description'),
             icon: <Github className="size-5" />,
         },
         {
             provider: 'gitlab',
-            name: 'GitLab',
-            description: 'Accédez à vos projets et pipelines CI/CD.',
+            name: t('gitlab.title'),
+            description: t('gitlab.description'),
             icon: <Gitlab className="size-5" />,
         },
     ];
@@ -40,11 +42,9 @@ export default async function IntegrationsPage() {
                     </div>
                     <div className="flex flex-col">
                         <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                            Intégrations
+                            {t('title')}
                         </h1>
-                        <p className="text-muted-foreground text-sm">
-                            Connectez vos services externes
-                        </p>
+                        <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
                 </div>
 
@@ -53,7 +53,7 @@ export default async function IntegrationsPage() {
                         <section className="space-y-3">
                             <div className="flex items-center gap-2">
                                 <GitBranch className="text-muted-foreground size-4" />
-                                <h2 className="text-sm font-medium">Providers Git</h2>
+                                <h2 className="text-sm font-medium">{t('gitProviders')}</h2>
                             </div>
                             <div className="space-y-2">
                                 {gitProviders.map((p) => (
@@ -72,7 +72,7 @@ export default async function IntegrationsPage() {
                         <section className="space-y-3">
                             <div className="flex items-center gap-2">
                                 <Cloud className="text-muted-foreground size-4" />
-                                <h2 className="text-sm font-medium">Cloud & Infrastructure</h2>
+                                <h2 className="text-sm font-medium">{t('cloudInfrastructure')}</h2>
                             </div>
                             <div className="space-y-2">
                                 <CloudflareIntegrationCard

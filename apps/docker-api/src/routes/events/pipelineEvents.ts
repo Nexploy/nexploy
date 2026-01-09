@@ -3,6 +3,7 @@ import { getImagesStateManager } from '@/managers/imagesStateManager';
 import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
 import { getCurrentDockerClient, getCurrentEnvironmentId } from '@/lib/dockerContext';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import DockerodeCompose from 'dockerode-compose';
 import path from 'path';
 import fs from 'fs';
@@ -15,7 +16,12 @@ import {
     getExplicitContainerNames,
 } from '@/utils/composeBuildParser';
 import { buildComposeServices, cleanupPartialBuild } from '@/utils/composeBuildService';
+import {
+    transformBindMountsForRemote,
+    getTransformationSummary,
+} from '@/utils/composeVolumeTransformer';
 import type { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
+import type { VolumeTransformationResult } from '@workspace/typescript-interface/docker/docker.compose.volume';
 
 const app = new Hono();
 
@@ -61,6 +67,7 @@ app.post('/stream/compose', async (c) => {
         let isClientDisconnected = false;
         let envFileWritten = false;
         let modifiedComposeFile: string | null = null;
+        let volumeTransformResult: VolumeTransformationResult | null = null;
         const builtImageNames: string[] = [];
         const abortController = new AbortController();
 
@@ -107,7 +114,70 @@ app.post('/stream/compose', async (c) => {
                 composeYamlContent = substituteEnvVars(composeYamlContent, envVars);
             }
 
-            const composeContent = yaml.parse(composeYamlContent) as ComposeContent;
+            let composeContent = yaml.parse(composeYamlContent) as ComposeContent;
+
+            const envConfig = environmentId
+                ? dockerClientRegistry.getEnvironmentConfig(environmentId)
+                : null;
+            const isRemoteEnvironment =
+                envConfig?.connectionType === 'TCP' || envConfig?.connectionType === 'TCP_TLS';
+
+            if (isRemoteEnvironment) {
+                sendLog('Remote Docker environment detected - transforming bind mounts...');
+
+                const initialBuildConfigs = parseComposeBuildConfigs(
+                    composeContent,
+                    projectName,
+                    workDir,
+                );
+                volumeTransformResult = transformBindMountsForRemote(
+                    composeContent,
+                    workDir,
+                    projectName,
+                    initialBuildConfigs,
+                );
+
+                for (const warning of volumeTransformResult.warnings) {
+                    sendLog(`WARNING: ${warning}`);
+                }
+
+                const summary = getTransformationSummary(volumeTransformResult);
+                for (const line of summary) {
+                    sendLog(line);
+                }
+
+                composeContent = volumeTransformResult.modifiedComposeContent as ComposeContent;
+
+                for (const [serviceName, dockerfileContent] of volumeTransformResult.generatedDockerfiles) {
+                    const dockerfilePath = path.join(workDir, `.nexploy-${serviceName}.Dockerfile`);
+                    fs.writeFileSync(dockerfilePath, dockerfileContent, 'utf8');
+                    sendLog(`Generated Dockerfile for service: ${serviceName}`);
+                }
+
+                if (volumeTransformResult.volumesToCreate.length > 0) {
+                    sendLog(
+                        `Creating ${volumeTransformResult.volumesToCreate.length} named volume(s)...`,
+                    );
+                    for (const volumeName of volumeTransformResult.volumesToCreate) {
+                        try {
+                            await dockerClient.createVolume({ Name: volumeName });
+                            sendLog(`  Created volume: ${volumeName}`);
+                        } catch (err: unknown) {
+                            const errorMessage =
+                                err instanceof Error ? err.message : String(err);
+                            if (!errorMessage.includes('already exists')) {
+                                throw err;
+                            }
+                            sendLog(`  Volume exists: ${volumeName}`);
+                        }
+                    }
+                }
+
+                if (volumeTransformResult.transformations.length > 0) {
+                    sendLog('Bind mount transformation complete');
+                }
+            }
+
             const buildConfigs = parseComposeBuildConfigs(composeContent, projectName, workDir);
             const servicesToPull = getServicesToPull(composeContent);
 
@@ -324,6 +394,26 @@ app.post('/stream/compose', async (c) => {
                         { path: modifiedComposeFile, error: e },
                         'Failed to cleanup temporary compose file',
                     );
+                }
+            }
+
+            if (volumeTransformResult) {
+                for (const serviceName of volumeTransformResult.generatedDockerfiles.keys()) {
+                    const dockerfilePath = path.join(workDir, `.nexploy-${serviceName}.Dockerfile`);
+                    try {
+                        if (fs.existsSync(dockerfilePath)) {
+                            fs.unlinkSync(dockerfilePath);
+                            logger.info(
+                                { path: dockerfilePath },
+                                'Cleaned up generated Dockerfile',
+                            );
+                        }
+                    } catch (e) {
+                        logger.warn(
+                            { path: dockerfilePath, error: e },
+                            'Failed to cleanup generated Dockerfile',
+                        );
+                    }
                 }
             }
         }

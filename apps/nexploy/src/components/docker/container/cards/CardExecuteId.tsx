@@ -2,9 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/componen
 import { Cpu } from 'lucide-react';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
+import { useTranslations } from 'next-intl';
 
 export function CardExecuteId() {
     const container = useContainerStore((state) => state.container);
+    const t = useTranslations('docker.containerExecId');
 
     if (!container) {
         return <Skeleton className={'h-100 flex-1'} />;
@@ -17,7 +19,7 @@ export function CardExecuteId() {
                     <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
                         <Cpu className="text-primary size-4" />
                     </div>
-                    <CardTitle>IDs d'exécution ({container.execIds?.length})</CardTitle>
+                    <CardTitle>{t('title')} ({container.execIds?.length})</CardTitle>
                 </div>
             </CardHeader>
             <CardContent>

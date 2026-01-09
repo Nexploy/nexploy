@@ -5,34 +5,36 @@ import dayjs from 'dayjs';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+import { useTranslations } from 'next-intl';
 
 export function CardInfoDetail() {
     const container = useContainerStore((state) => state.container);
+    const t = useTranslations('docker.containerDetails');
 
     if (!container) {
         return <Skeleton className={'h-90 flex-2'} />;
     }
 
     const fields = [
-        { label: 'ID complet', value: container.id },
-        { label: 'Nom', value: container.name },
+        { label: t('fullId'), value: container.id },
+        { label: t('name'), value: container.name },
         { label: 'Image', value: container.image },
-        { label: 'Plateforme', value: container.platform },
+        { label: t('platform'), value: container.platform },
         { label: 'Driver', value: container.driver },
-        { label: 'État', value: container.state },
-        { label: 'Statut', value: container.status },
-        { label: 'En cours', value: container.running ? 'Oui' : 'Non' },
-        { label: 'En pause', value: container.paused ? 'Oui' : 'Non' },
-        { label: 'Redémarrage', value: container.restarting ? 'Oui' : 'Non' },
-        { label: 'Mort', value: container.dead ? 'Oui' : 'Non' },
-        ...(container.health ? [{ label: 'Santé', value: container.health.status }] : []),
+        { label: 'State', value: container.state },
+        { label: 'Status', value: container.status },
+        { label: t('isRunning'), value: container.running ? t('yes') : t('no') },
+        { label: t('isPaused'), value: container.paused ? t('yes') : t('no') },
+        { label: 'Restarting', value: container.restarting ? t('yes') : t('no') },
+        { label: t('isDead'), value: container.dead ? t('yes') : t('no') },
+        ...(container.health ? [{ label: t('health'), value: container.health.status }] : []),
         ...(container.exitCode !== undefined
-            ? [{ label: 'Code de sortie', value: container.exitCode }]
+            ? [{ label: t('exitCode'), value: container.exitCode }]
             : []),
-        { label: 'Nb. redémarrages', value: container.restartCount },
-        { label: 'Créé le', value: dayjs(container.createdAt).format('DD/MM/YYYY HH:mm:ss') },
+        { label: t('restartCount'), value: container.restartCount },
+        { label: t('createdAt'), value: dayjs(container.createdAt).format('DD/MM/YYYY HH:mm:ss') },
         {
-            label: 'Démarré le',
+            label: t('startedAt'),
             value: container.startedAt
                 ? dayjs(container.startedAt).format('DD/MM/YYYY HH:mm:ss')
                 : '—',
@@ -40,20 +42,20 @@ export function CardInfoDetail() {
         ...(container.finishedAt
             ? [
                   {
-                      label: 'Terminé le',
+                      label: t('finishedAt'),
                       value: dayjs(container.finishedAt).format('DD/MM/YYYY HH:mm:ss'),
                   },
               ]
             : []),
         {
-            label: 'Dernière mise à jour',
+            label: t('lastUpdated'),
             value: dayjs(container.timestamp).format('DD/MM/YYYY HH:mm:ss'),
         },
     ];
 
     return (
         <Card className={'flex-2'}>
-            <CardHeaderWithIcon icon={Box} title={'Informations détaillées'} />
+            <CardHeaderWithIcon icon={Box} title={t('detailedInfo')} />
             <CardContent className={'px-0'}>
                 <ScrollAreaWithShadow
                     colorShadow={'from-card via-card/50'}

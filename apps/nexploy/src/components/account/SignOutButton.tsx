@@ -6,6 +6,7 @@ import { useRouter } from '@/i18n/navigation';
 import { ComponentPropsWithoutRef, ElementType, ReactNode } from 'react';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
 import { cn } from '@workspace/ui/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface SignInButtonBaseProps {
     children?: ReactNode;
@@ -22,6 +23,7 @@ export function SignOutButton<T extends ElementType = typeof DropdownMenuItem>({
     ...props
 }: SignInButtonProps<T>) {
     const router = useRouter();
+    const t = useTranslations('account.dangerZone');
 
     const Component = as || DropdownMenuItem;
 
@@ -42,7 +44,7 @@ export function SignOutButton<T extends ElementType = typeof DropdownMenuItem>({
             {...props}
         >
             <LogOut />
-            Log Out
+            {t('logOut')}
         </Component>
     );
 }

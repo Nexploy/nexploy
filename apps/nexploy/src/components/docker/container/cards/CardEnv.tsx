@@ -10,18 +10,9 @@ import { EnvForm } from '@/components/docker/container/forms/EnvForm';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import { Badge } from '@workspace/ui/components/badge';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+import { useTranslations } from 'next-intl';
 
 type EnvVar = { key: string; value: string };
-
-const DIALOG_CONFIG = {
-    closeOnBackground: true,
-    title: 'Add environment variable',
-    description:
-        'The container must be stopped to add an environment variable. It will be recreated with the new configuration.',
-    props: {
-        className: 'sm:max-w-[425px]',
-    },
-} as const;
 
 function parseEnvString(envString: string): EnvVar {
     const [key, ...valueParts] = envString.split('=');
@@ -38,6 +29,7 @@ interface EnvVarItemProps {
 }
 
 function EnvVarItem({ env, isEdited, isDeleted, isNew, displayEnvVar, onEdit }: EnvVarItemProps) {
+    const t = useTranslations('docker.containerEnv');
     const statusIndicator = isNew ? (
         <span className="text-green-500">+</span>
     ) : isEdited ? (
@@ -52,7 +44,7 @@ function EnvVarItem({ env, isEdited, isDeleted, isNew, displayEnvVar, onEdit }: 
                 <span className="text-primary shrink-0 text-xs font-semibold">
                     {displayEnvVar.key}:
                 </span>
-                <span className="text-xs break-all">{displayEnvVar.value || '(vide)'}</span>
+                <span className="text-xs break-all">{displayEnvVar.value || t('empty')}</span>
                 {statusIndicator}
             </code>
             <Tooltip>
@@ -66,7 +58,7 @@ function EnvVarItem({ env, isEdited, isDeleted, isNew, displayEnvVar, onEdit }: 
                         <Pencil />
                     </Button>
                 </TooltipTrigger>
-                <TooltipContent>Modifier</TooltipContent>
+                <TooltipContent>{t('edit')}</TooltipContent>
             </Tooltip>
         </div>
     );
@@ -76,10 +68,16 @@ export function CardEnv() {
     const container = useContainerStore((state) => state.container);
     const { openDialog } = useConfirmationDialogStore();
     const envVarChanges = useContainerChangesStore((state) => state.envVarChanges);
+    const t = useTranslations('docker.containerEnv');
 
     const handleOpenDialog = (mode: 'add' | 'edit', envVar?: EnvVar, originalEnvVar?: EnvVar) => {
         openDialog({
-            ...DIALOG_CONFIG,
+            closeOnBackground: true,
+            title: mode === 'add' ? t('addTitle') : t('editTitle'),
+            description: mode === 'add' ? t('addDescription') : t('editDescription'),
+            props: {
+                className: 'sm:max-w-[425px]',
+            },
             content: <EnvForm mode={mode} defaultEnvVar={envVar} originalEnvVar={originalEnvVar} />,
         });
     };
@@ -117,7 +115,7 @@ export function CardEnv() {
         <Card>
             <CardHeader>
                 <div className="flex items-center justify-between gap-3">
-                    <CardHeaderWithIcon as={'div'} icon={Key} title={"Variables d'environnement"}>
+                    <CardHeaderWithIcon as={'div'} icon={Key} title={t('title')}>
                         <Badge variant={'secondary'}>
                             {container.env.length + addedEnvVars.length}
                         </Badge>
@@ -129,11 +127,11 @@ export function CardEnv() {
                                 icon={Plus}
                                 onClick={() => handleOpenDialog('add')}
                             >
-                                <span className="hidden md:flex">Add variable</span>
+                                <span className="hidden md:flex">{t('addVariable')}</span>
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent className="flex xl:hidden">
-                            <span>Add variable</span>
+                            <span>{t('addVariable')}</span>
                         </TooltipContent>
                     </Tooltip>
                 </div>
@@ -179,7 +177,7 @@ export function CardEnv() {
                     </ScrollAreaWithShadow>
                 ) : (
                     <div className="flex h-72 items-center justify-center pb-24 font-semibold">
-                        Aucune variables d'environnement
+                        {t('noVariables')}
                     </div>
                 )}
             </CardContent>

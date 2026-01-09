@@ -30,12 +30,15 @@ import { Kbd } from '@workspace/ui/components/kbd';
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { Dialog, DialogContent } from '@workspace/ui/components/dialog';
 import { AICommandChat } from '@/components/ai/AICommandChat';
+import { useTranslations } from 'next-intl';
 
 export function AICommand() {
     const [open, setOpen] = React.useState(false);
     const [view, setView] = React.useState<'command' | 'chat'>('command');
     const [inputValue, setInputValue] = React.useState('');
     const router = useRouter();
+    const t = useTranslations('ai.command');
+    const tNav = useTranslations('ai.commandGroups');
 
     React.useEffect(() => {
         const down = (e: KeyboardEvent) => {
@@ -77,7 +80,7 @@ export function AICommand() {
                 onClick={openCloseDialog}
                 className="hover:bg-muted hover:text-foreground text-muted-foreground flex h-8 flex-1 justify-between !pr-2 text-sm font-normal shadow-none md:flex-none"
             >
-                <span className={'truncate'}>Tapez une commande ou recherchez...</span>
+                <span className={'truncate'}>{t('searchPlaceholder')}</span>
                 <Kbd className={'px-1'}>⌘K</Kbd>
             </Button>
             <Dialog open={open} onOpenChange={setOpen}>
@@ -85,7 +88,7 @@ export function AICommand() {
                     {view === 'command' ? (
                         <Command className="[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
                             <CommandInput
-                                placeholder="Tapez une commande ou recherchez..."
+                                placeholder={t('searchPlaceholder')}
                                 value={inputValue}
                                 onValueChange={setInputValue}
                             />
@@ -97,20 +100,20 @@ export function AICommand() {
                                         onClick={handleChatSelect}
                                     >
                                         <Sparkles className="mr-2 h-4 w-4" />
-                                        Ask AI: {inputValue}
+                                        {t('askAi', { query: inputValue })}
                                     </Button>
                                 </CommandEmpty>
                                 <ScrollArea className="flex max-h-72 flex-col overflow-y-auto">
                                     {inputValue && (
-                                        <CommandGroup heading="AI Assistant">
+                                        <CommandGroup heading={t('aiAssistant')}>
                                             <CommandItem onSelect={handleChatSelect}>
                                                 <Sparkles className="mr-2 h-4 w-4" />
-                                                <span>Ask AI: {inputValue}</span>
+                                                <span>{t('askAi', { query: inputValue })}</span>
                                             </CommandItem>
                                         </CommandGroup>
                                     )}
 
-                                    <CommandGroup heading="Navigation">
+                                    <CommandGroup heading={tNav('navigation')}>
                                         <CommandItem
                                             onSelect={() =>
                                                 runCommand(() => router.push('/docker/containers'))
@@ -142,7 +145,7 @@ export function AICommand() {
 
                                     <CommandSeparator />
 
-                                    <CommandGroup heading="Actions rapides">
+                                    <CommandGroup heading={t('quickActions')}>
                                         <CommandItem
                                             onSelect={() =>
                                                 runCommand(() =>
@@ -153,7 +156,7 @@ export function AICommand() {
                                             }
                                         >
                                             <Container className="mr-2 h-4 w-4" />
-                                            <span>Créer un conteneur</span>
+                                            <span>{t('createContainer')}</span>
                                         </CommandItem>
                                         <CommandItem
                                             onSelect={() =>
@@ -163,7 +166,7 @@ export function AICommand() {
                                             }
                                         >
                                             <FileIcon className="mr-2 h-4 w-4" />
-                                            <span>Pull une image</span>
+                                            <span>{t('pullImage')}</span>
                                         </CommandItem>
                                         <CommandItem
                                             onSelect={() =>
@@ -171,20 +174,20 @@ export function AICommand() {
                                             }
                                         >
                                             <Database className="mr-2 h-4 w-4" />
-                                            <span>Créer un volume</span>
+                                            <span>{t('createVolume')}</span>
                                         </CommandItem>
                                     </CommandGroup>
 
                                     <CommandSeparator />
 
-                                    <CommandGroup heading="Conteneurs">
+                                    <CommandGroup heading={tNav('containers')}>
                                         <CommandItem
                                             onSelect={() =>
                                                 runCommand(() => console.log('Start all'))
                                             }
                                         >
                                             <Play className="mr-2 h-4 w-4" />
-                                            <span>Démarrer tous les conteneurs</span>
+                                            <span>{t('startAll')}</span>
                                         </CommandItem>
                                         <CommandItem
                                             onSelect={() =>
@@ -192,7 +195,7 @@ export function AICommand() {
                                             }
                                         >
                                             <Square className="mr-2 h-4 w-4" />
-                                            <span>Arrêter tous les conteneurs</span>
+                                            <span>{t('stopAll')}</span>
                                         </CommandItem>
                                         <CommandItem
                                             onSelect={() =>
@@ -200,33 +203,33 @@ export function AICommand() {
                                             }
                                         >
                                             <Trash2 className="mr-2 h-4 w-4" />
-                                            <span>Supprimer les conteneurs arrêtés</span>
+                                            <span>{t('removeStopped')}</span>
                                         </CommandItem>
                                     </CommandGroup>
 
                                     <CommandSeparator />
 
-                                    <CommandGroup heading="Stacks">
+                                    <CommandGroup heading={tNav('stacks')}>
                                         <CommandItem
                                             onSelect={() =>
                                                 runCommand(() => console.log('View stacks'))
                                             }
                                         >
                                             <Layers className="mr-2 h-4 w-4" />
-                                            <span>Voir les stacks</span>
+                                            <span>{t('viewStacks')}</span>
                                         </CommandItem>
                                     </CommandGroup>
 
                                     <CommandSeparator />
 
-                                    <CommandGroup heading="Système">
+                                    <CommandGroup heading={t('system')}>
                                         <CommandItem
                                             onSelect={() =>
                                                 runCommand(() => console.log('Settings'))
                                             }
                                         >
                                             <Settings className="mr-2 h-4 w-4" />
-                                            <span>Paramètres</span>
+                                            <span>{t('settings')}</span>
                                             <CommandShortcut>⌘,</CommandShortcut>
                                         </CommandItem>
                                         <CommandItem
@@ -235,7 +238,7 @@ export function AICommand() {
                                             }
                                         >
                                             <Terminal className="mr-2 h-4 w-4" />
-                                            <span>Ouvrir le terminal</span>
+                                            <span>{t('openTerminal')}</span>
                                             <CommandShortcut>⌘T</CommandShortcut>
                                         </CommandItem>
                                     </CommandGroup>

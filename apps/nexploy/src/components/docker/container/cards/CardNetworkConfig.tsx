@@ -3,9 +3,11 @@ import { Network } from 'lucide-react';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { useTranslations } from 'next-intl';
 
 export function CardNetworkConfig() {
     const container = useContainerStore((state) => state.container);
+    const t = useTranslations('docker.containerNetworkConfig');
 
     if (!container) {
         return <Skeleton className={'h-80 flex-2'} />;
@@ -18,7 +20,7 @@ export function CardNetworkConfig() {
                     <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
                         <Network className="text-primary size-4" />
                     </div>
-                    <CardTitle>Configuration réseau</CardTitle>
+                    <CardTitle>{t('title')}</CardTitle>
                 </div>
             </CardHeader>
             <CardContent className={'px-0'}>
@@ -30,7 +32,7 @@ export function CardNetworkConfig() {
                     <div className="space-y-3">
                         {container.network.mode && (
                             <div className="flex items-center justify-between border-b pb-2">
-                                <span className="text-muted-foreground text-sm">Mode réseau</span>
+                                <span className="text-muted-foreground text-sm">{t('networkMode')}</span>
                                 <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
                                     {container.network.mode}
                                 </code>
@@ -38,7 +40,7 @@ export function CardNetworkConfig() {
                         )}
                         {container.network.ipAddress && (
                             <div className="flex items-center justify-between border-b pb-2">
-                                <span className="text-muted-foreground text-sm">Adresse IP</span>
+                                <span className="text-muted-foreground text-sm">{t('ipAddress')}</span>
                                 <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
                                     {container.network.ipAddress}
                                 </code>
@@ -46,7 +48,7 @@ export function CardNetworkConfig() {
                         )}
                         {container.network.gateway && (
                             <div className="flex items-center justify-between border-b pb-2">
-                                <span className="text-muted-foreground text-sm">Passerelle</span>
+                                <span className="text-muted-foreground text-sm">{t('gateway')}</span>
                                 <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
                                     {container.network.gateway}
                                 </code>
@@ -54,7 +56,7 @@ export function CardNetworkConfig() {
                         )}
                         {container.network.macAddress && (
                             <div className="flex items-center justify-between border-b pb-2">
-                                <span className="text-muted-foreground text-sm">Adresse MAC</span>
+                                <span className="text-muted-foreground text-sm">{t('macAddress')}</span>
                                 <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
                                     {container.network.macAddress}
                                 </code>
@@ -62,7 +64,7 @@ export function CardNetworkConfig() {
                         )}
                         {container.network.bridge && (
                             <div className="flex items-center justify-between border-b pb-2">
-                                <span className="text-muted-foreground text-sm">Bridge</span>
+                                <span className="text-muted-foreground text-sm">{t('bridge')}</span>
                                 <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
                                     {container.network.bridge}
                                 </code>
@@ -70,7 +72,7 @@ export function CardNetworkConfig() {
                         )}
                         {container.network.sandboxId && (
                             <div className="flex items-center justify-between border-b pb-2">
-                                <span className="text-muted-foreground text-sm">Sandbox ID</span>
+                                <span className="text-muted-foreground text-sm">{t('sandboxId')}</span>
                                 <code className="bg-muted/50 truncate rounded-md px-2 py-1 text-xs">
                                     {container.network.sandboxId}
                                 </code>
@@ -78,7 +80,7 @@ export function CardNetworkConfig() {
                         )}
                         {container.network.endpointId && (
                             <div className="flex items-center justify-between">
-                                <span className="text-muted-foreground text-sm">Endpoint ID</span>
+                                <span className="text-muted-foreground text-sm">{t('endpointId')}</span>
                                 <code className="bg-muted/50 truncate rounded-md px-2 py-1 text-xs">
                                     {container.network.endpointId}
                                 </code>

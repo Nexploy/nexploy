@@ -20,6 +20,7 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 
 export function TwoFactorEnabledForm() {
     const tValidation = useTranslations('validation');
+    const t = useTranslations('account.twoFactor');
     const { onSuccess } = useConfirmationDialogStore();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
@@ -47,12 +48,12 @@ export function TwoFactorEnabledForm() {
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel htmlFor="enable-password">Password</FormLabel>
+                            <FormLabel htmlFor="enable-password">{t('password')}</FormLabel>
                             <FormControl>
                                 <Input
                                     id="enable-password"
                                     type="password"
-                                    placeholder="Enter your password"
+                                    placeholder={t('passwordPlaceholder')}
                                     className="w-full"
                                     {...field}
                                 />
@@ -68,7 +69,7 @@ export function TwoFactorEnabledForm() {
                     disabled={action.isPending || !form.formState.isDirty}
                     className="w-full"
                 >
-                    Enable 2FA
+                    {t('enable')}
                 </Button>
             </form>
         </Form>

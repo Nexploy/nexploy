@@ -1,9 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { Activity } from 'lucide-react';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
+import { useTranslations } from 'next-intl';
 
 export function CardError() {
     const container = useContainerStore((state) => state.container);
+    const t = useTranslations('docker.containerError');
 
     if (!container?.error) return null;
 
@@ -14,7 +16,7 @@ export function CardError() {
                     <div className="bg-destructive/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
                         <Activity className="text-destructive size-4" />
                     </div>
-                    <CardTitle className="text-destructive">Erreur</CardTitle>
+                    <CardTitle className="text-destructive">{t('title')}</CardTitle>
                 </div>
             </CardHeader>
             <CardContent>

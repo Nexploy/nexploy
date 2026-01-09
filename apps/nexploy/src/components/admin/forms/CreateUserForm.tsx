@@ -27,6 +27,7 @@ import { Plus } from 'lucide-react';
 
 export function CreateUserForm() {
     const tValidation = useTranslations('validation');
+    const t = useTranslations('admin');
     const { onSuccess } = useConfirmationDialogStore();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
@@ -58,9 +59,9 @@ export function CreateUserForm() {
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Name</FormLabel>
+                            <FormLabel>{t('name')}</FormLabel>
                             <FormControl>
-                                <Input placeholder={'Name'} {...field} />
+                                <Input placeholder={t('name')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -72,9 +73,9 @@ export function CreateUserForm() {
                     name="email"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel>{t('email')}</FormLabel>
                             <FormControl>
-                                <Input type="email" placeholder={'Email'} {...field} />
+                                <Input type="email" placeholder={t('email')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -86,9 +87,9 @@ export function CreateUserForm() {
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <FormLabel>{t('password')}</FormLabel>
                             <FormControl>
-                                <Input type="password" placeholder={'Password'} {...field} />
+                                <Input type="password" placeholder={t('password')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -100,11 +101,11 @@ export function CreateUserForm() {
                     name="confirmPassword"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Confirm Password</FormLabel>
+                            <FormLabel>{t('confirmPassword')}</FormLabel>
                             <FormControl>
                                 <Input
                                     type="password"
-                                    placeholder={'Confirm Password'}
+                                    placeholder={t('confirmPassword')}
                                     {...field}
                                 />
                             </FormControl>
@@ -118,16 +119,16 @@ export function CreateUserForm() {
                     name="role"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Rôle</FormLabel>
+                            <FormLabel>{t('role')}</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue placeholder={'Rôle'} />
+                                        <SelectValue placeholder={t('role')} />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value="user">User</SelectItem>
-                                    <SelectItem value="admin">Admin</SelectItem>
+                                    <SelectItem value="user">{t('userRole')}</SelectItem>
+                                    <SelectItem value="admin">{t('adminRole')}</SelectItem>
                                 </SelectContent>
                             </Select>
                             <FormMessage />
@@ -142,7 +143,7 @@ export function CreateUserForm() {
                         disabled={action.isPending}
                         type="submit"
                     >
-                        Créer
+                        {t('createUser')}
                     </Button>
                 </div>
             </form>

@@ -11,6 +11,7 @@ import { Terminal } from 'lucide-react';
 import { statusMap } from '@/utils/statusMap';
 import { useTerminalStore } from '@/stores/useTerminalStore';
 import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
+import { useTranslations } from 'next-intl';
 
 interface ContainerAttachProps {
     children: (props: { openAttach: () => void }) => React.ReactNode;
@@ -20,6 +21,7 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
     const [open, setOpen] = useState(false);
     const container = useContainerStore((state) => state.container);
     const selectedEnvironmentId = useEnvironmentStore((state) => state.selectedEnvironmentId);
+    const t = useTranslations('docker.containerAttach');
 
     const { connectionState, connect, disconnect, terminalRef } = useTerminalStore();
 
@@ -62,7 +64,7 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
                                 <div className="flex size-4 items-center">
                                     <Terminal />
                                 </div>
-                                Attach — {container?.name}
+                                {t('title', { name: container?.name })}
                                 <Status
                                     className="rounded-none bg-transparent"
                                     status={currentStatus.status}
@@ -82,7 +84,7 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
                                 variant="white"
                                 size="sm"
                             >
-                                Reconnect
+                                {t('reconnect')}
                             </Button>
                             <Button
                                 onClick={handleClose}
@@ -90,7 +92,7 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
                                 variant="white"
                                 size="sm"
                             >
-                                Close
+                                {t('close')}
                             </Button>
                         </div>
                     </DialogHeader>

@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 
 export function TwoFactorDisableForm() {
     const tValidation = useTranslations('validation');
+    const t = useTranslations('account.twoFactor');
     const { onSuccess } = useConfirmationDialogStore();
     const router = useRouter();
 
@@ -47,7 +48,7 @@ export function TwoFactorDisableForm() {
                                 <Input
                                     id="enable-password"
                                     type="password"
-                                    placeholder="Enter your password"
+                                    placeholder={t('passwordPlaceholder')}
                                     className="w-full"
                                     {...field}
                                 />
@@ -63,7 +64,7 @@ export function TwoFactorDisableForm() {
                         isLoading={action.isPending}
                         disabled={action.isPending || !form.formState.isDirty}
                     >
-                        Disable 2FA
+                        {t('disable')}
                     </Button>
                 </DialogFooter>
             </form>

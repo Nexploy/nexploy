@@ -23,10 +23,11 @@ import { RunBuildButton } from '@/components/repositories/RunBuildButton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import React from 'react';
 import { Separator } from '@workspace/ui/components/separator';
+import { getTranslations } from 'next-intl/server';
 
 export const metadata: Metadata = {
     title: 'Repositories',
-    description: 'Gérez vos repositories Docker',
+    description: 'Manage your Docker repositories',
 };
 
 const getGitIcon = (provider: string) => {
@@ -38,6 +39,7 @@ const getGitIcon = (provider: string) => {
 
 export default async function RepositoriesPage() {
     const repositories = await getRepositories();
+    const t = await getTranslations('repository');
 
     return (
         <div className="flex h-full flex-1 flex-col pt-5">
@@ -49,10 +51,10 @@ export default async function RepositoriesPage() {
                         </div>
                         <div className={'flex flex-col'}>
                             <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                                Repositories
+                                {t('title')}
                             </h1>
                             <p className="text-muted-foreground text-sm">
-                                Gérez et organisez vos repositories
+                                {t('manageRepositories')}
                             </p>
                         </div>
                     </div>
@@ -67,9 +69,9 @@ export default async function RepositoriesPage() {
                                     <EmptyMedia variant="icon" className="bg-primary/10">
                                         <Folder className="text-primary" />
                                     </EmptyMedia>
-                                    <EmptyTitle>Aucun Repository</EmptyTitle>
+                                    <EmptyTitle>{t('noRepositories')}</EmptyTitle>
                                     <EmptyDescription>
-                                        Ajouté votre repository pour commencer.
+                                        {t('noRepositoriesDescription')}
                                     </EmptyDescription>
                                 </EmptyHeader>
                             </Empty>
@@ -136,7 +138,9 @@ export default async function RepositoriesPage() {
                                                                 repositoryId={repository.id}
                                                             />
                                                         </TooltipTrigger>
-                                                        <TooltipContent>Run build</TooltipContent>
+                                                        <TooltipContent>
+                                                            {t('runBuild')}
+                                                        </TooltipContent>
                                                     </Tooltip>
                                                 </CardFooter>
                                             </Card>

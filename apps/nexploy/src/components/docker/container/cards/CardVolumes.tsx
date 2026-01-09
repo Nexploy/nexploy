@@ -10,6 +10,7 @@ import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStor
 import { VolumeForm } from '@/components/docker/container/forms/VolumeForm';
 import { Badge } from '@workspace/ui/components/badge';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+import { useTranslations } from 'next-intl';
 
 type Mount = {
     type: string;
@@ -19,16 +20,6 @@ type Mount = {
     name?: string;
     driver?: string;
 };
-
-const DIALOG_CONFIG = {
-    closeOnBackground: true,
-    title: 'Add volume',
-    description:
-        'The container must be stopped to add a volume. It will be recreated with the new configuration.',
-    props: {
-        className: 'sm:max-w-[425px]',
-    },
-} as const;
 
 interface VolumeItemProps {
     mount: Mount;
@@ -40,6 +31,7 @@ interface VolumeItemProps {
 }
 
 function VolumeItem({ isDeleted, isNew, displayMount, onDelete, onCancelDelete }: VolumeItemProps) {
+    const t = useTranslations('docker.containerVolumes');
     const statusIndicator = isNew ? (
         <span className="text-green-500">+</span>
     ) : isDeleted ? (
@@ -73,7 +65,7 @@ function VolumeItem({ isDeleted, isNew, displayMount, onDelete, onCancelDelete }
                                 <X />
                             </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Annuler la suppression</TooltipContent>
+                        <TooltipContent>{t('cancelDelete')}</TooltipContent>
                     </Tooltip>
                 ) : (
                     <Tooltip>
@@ -87,22 +79,22 @@ function VolumeItem({ isDeleted, isNew, displayMount, onDelete, onCancelDelete }
                                 <Trash2 />
                             </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Supprimer</TooltipContent>
+                        <TooltipContent>{t('delete')}</TooltipContent>
                     </Tooltip>
                 )}
             </div>
             <div className="space-y-1 text-xs">
                 <div className="flex gap-2">
-                    <span className="text-muted-foreground">Source:</span>
+                    <span className="text-muted-foreground">{t('source')}</span>
                     <code className="break-all">{displayMount.source}</code>
                 </div>
                 <div className="flex gap-2">
-                    <span className="text-muted-foreground">Destination:</span>
+                    <span className="text-muted-foreground">{t('destination')}</span>
                     <code className="break-all">{displayMount.destination}</code>
                 </div>
                 {displayMount.driver && (
                     <div className="flex gap-2">
-                        <span className="text-muted-foreground">Driver:</span>
+                        <span className="text-muted-foreground">{t('driver')}</span>
                         <code>{displayMount.driver}</code>
                     </div>
                 )}
@@ -115,11 +107,16 @@ export function CardVolumes() {
     const container = useContainerStore((state) => state.container);
     const { openDialog } = useConfirmationDialogStore();
     const { volumeChanges, onVolumeChange } = useContainerChangesStore();
+    const t = useTranslations('docker.containerVolumes');
 
     const handleOpenDialog = () => {
         openDialog({
-            ...DIALOG_CONFIG,
-            title: 'Add volume',
+            closeOnBackground: true,
+            title: t('addTitle'),
+            description: t('addDescription'),
+            props: {
+                className: 'sm:max-w-[425px]',
+            },
             content: <VolumeForm />,
         });
     };
@@ -168,7 +165,7 @@ export function CardVolumes() {
         <Card>
             <CardHeader>
                 <div className="flex items-center justify-between gap-3">
-                    <CardHeaderWithIcon as={'div'} icon={Database} title={'Volumes montés'}>
+                    <CardHeaderWithIcon as={'div'} icon={Database} title={t('title')}>
                         <Badge variant={'secondary'}>
                             {container.mounts.length + addedVolumes.length}
                         </Badge>
@@ -178,7 +175,7 @@ export function CardVolumes() {
                         icon={Plus}
                         onClick={() => handleOpenDialog()}
                     >
-                        <span className="hidden md:flex">Add volume</span>
+                        <span className="hidden md:flex">{t('addVolume')}</span>
                     </Button>
                 </div>
             </CardHeader>
@@ -252,7 +249,7 @@ export function CardVolumes() {
                     </ScrollAreaWithShadow>
                 ) : (
                     <div className="flex h-64 items-center justify-center pb-24 font-semibold">
-                        Aucun volume monté
+                        {t('noVolumes')}
                     </div>
                 )}
             </CardContent>

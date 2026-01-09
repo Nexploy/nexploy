@@ -20,10 +20,12 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 export function CloudflareConnectForm() {
     const [isDetectingIp, setIsDetectingIp] = useState(false);
     const { closeDialog } = useConfirmationDialogStore();
+    const t = useTranslations('integrations.cloudflare');
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         connectCloudflareAction,
@@ -37,7 +39,7 @@ export function CloudflareConnectForm() {
             },
             actionProps: {
                 onSuccess: () => {
-                    toast.success('Cloudflare connecté avec succès');
+                    toast.success(t('connectedSuccess'));
                     closeDialog();
                 },
             },
@@ -50,12 +52,12 @@ export function CloudflareConnectForm() {
             const result = await detectPublicIpAction();
             if (result?.data?.ip) {
                 form.setValue('serverIp', result.data.ip);
-                toast.success(`IP détectée : ${result.data.ip}`);
+                toast.success(t('ipDetected', { ip: result.data.ip }));
             } else if (result?.serverError) {
                 toast.error(result.serverError);
             }
         } catch {
-            toast.error("Échec de la détection automatique de l'IP");
+            toast.error(t('ipDetectionFailed'));
         } finally {
             setIsDetectingIp(false);
         }
@@ -80,7 +82,7 @@ export function CloudflareConnectForm() {
                             <FormControl>
                                 <Input
                                     type="password"
-                                    placeholder="Votre API Token Cloudflare"
+                                    placeholder={t('apiTokenPlaceholder')}
                                     {...field}
                                 />
                             </FormControl>
@@ -94,10 +96,10 @@ export function CloudflareConnectForm() {
                     name="serverIp"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>IP publique du serveur</FormLabel>
+                            <FormLabel>{t('serverIp')}</FormLabel>
                             <div className="flex gap-2">
                                 <FormControl>
-                                    <Input type="text" placeholder="xxx.xxx.xxx.xxx" {...field} />
+                                    <Input type="text" placeholder={t('serverIpPlaceholder')} {...field} />
                                 </FormControl>
                                 <Button
                                     type="button"
@@ -107,11 +109,11 @@ export function CloudflareConnectForm() {
                                     isLoading={isDetectingIp}
                                     icon={RefreshCw}
                                 >
-                                    Détecter
+                                    {t('detect')}
                                 </Button>
                             </div>
                             <p className="text-muted-foreground text-xs">
-                                Utilisée pour créer les enregistrements DNS de type A
+                                {t('serverIpDescription')}
                             </p>
                             <FormMessage />
                         </FormItem>
@@ -125,7 +127,7 @@ export function CloudflareConnectForm() {
                         isLoading={isSubmitting}
                         className="w-full"
                     >
-                        Connecter
+                        {t('connect')}
                     </Button>
                 </DialogFooter>
             </form>

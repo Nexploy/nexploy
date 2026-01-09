@@ -1,3 +1,5 @@
+import type { ComposeVolumeConfig } from './docker.compose.volume';
+
 export interface ComposeService {
     image?: string;
     build?:
@@ -13,6 +15,7 @@ export interface ComposeService {
               extra_hosts?: string[];
           };
     container_name?: string;
+    volumes?: (string | ComposeVolumeConfig)[];
     [key: string]: unknown;
 }
 

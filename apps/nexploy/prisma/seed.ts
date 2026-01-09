@@ -1,5 +1,5 @@
 import { PrismaClient } from '../generated/client';
-import { auth } from '../src/lib/auth/auth';
+import { auth } from '@/lib/auth/auth';
 
 const prisma = new PrismaClient();
 
@@ -31,7 +31,6 @@ async function seedEnvironment() {
 }
 
 async function seedDockerApiKey() {
-
     const existingKey = await prisma.apikey.findFirst({
         where: { name: DOCKER_API_KEY_NAME },
     });
@@ -52,7 +51,7 @@ async function seedDockerApiKey() {
                 name: 'Docker API System',
                 email: 'docker-api@nexploy.local',
                 emailVerified: true,
-                role: 'admin',
+                role: 'system',
             },
         });
         console.log('Created system user:', systemUser.name);

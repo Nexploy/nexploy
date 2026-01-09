@@ -2,13 +2,16 @@ import { Users } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { UsersSection } from '@/components/admin/users/UsersSection';
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
 export const metadata: Metadata = {
     title: 'Users',
     description: 'Manage users, invitations and permissions',
 };
 
-export default function UsersPage() {
+export default async function UsersPage() {
+    const t = await getTranslations('admin');
+
     return (
         <div className="flex h-full flex-1 flex-col pt-5">
             <div className="flex flex-col gap-5 overflow-hidden">
@@ -18,10 +21,10 @@ export default function UsersPage() {
                     </div>
                     <div className={'flex flex-col'}>
                         <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                            Users
+                            {t('users')}
                         </h1>
                         <p className="text-muted-foreground text-sm">
-                            Manage users, invitations and permissions
+                            {t('manageUsersDescription')}
                         </p>
                     </div>
                 </div>

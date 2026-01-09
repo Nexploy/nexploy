@@ -1,7 +1,10 @@
+'use client';
+
 import CopyButton from '@/components/utils/CopyButton';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { Button } from '@workspace/ui/components/button';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import { useTranslations } from 'next-intl';
 
 interface TwoFactorAuthBackupCodesProps {
     backupCodes: string[];
@@ -9,6 +12,7 @@ interface TwoFactorAuthBackupCodesProps {
 
 export function TwoFactorAuthBackupCodes({ backupCodes }: TwoFactorAuthBackupCodesProps) {
     const { closeDialog } = useConfirmationDialogStore();
+    const t = useTranslations('account.twoFactor');
 
     const downloadBackupCodes = () => {
         const data = backupCodes.join('\n');
@@ -43,9 +47,9 @@ export function TwoFactorAuthBackupCodes({ backupCodes }: TwoFactorAuthBackupCod
             </div>
             <DialogFooter>
                 <Button variant={'outline'} onClick={closeDialog}>
-                    Close
+                    {t('close')}
                 </Button>
-                <Button onClick={downloadBackupCodes}>Download codes</Button>
+                <Button onClick={downloadBackupCodes}>{t('downloadCodes')}</Button>
             </DialogFooter>
         </div>
     );

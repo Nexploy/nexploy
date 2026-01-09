@@ -18,8 +18,7 @@ import { Label } from '@workspace/ui/components/label';
 import { LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 import { onSwarmLeaveAction } from '@/actions/docker/swarm/leave.action';
-
-const DOCKER_API_URL = process.env.NEXT_PUBLIC_DOCKER_API_URL || 'http://localhost:3300';
+import { useTranslations } from 'next-intl';
 
 interface LeaveSwarmDialogProps {
     trigger?: React.ReactNode;
@@ -29,12 +28,14 @@ interface LeaveSwarmDialogProps {
 export function LeaveSwarmDialog({ trigger, isManager }: LeaveSwarmDialogProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [force, setForce] = useState(false);
+    const t = useTranslations('swarm');
+    const tCommon = useTranslations('common');
 
     const handleLeave = async () => {
         setIsLoading(true);
         try {
             await onSwarmLeaveAction({ force });
-            toast.success('Left swarm successfully');
+            toast.success(t('leftSwarmSuccess'));
         } finally {
             setIsLoading(false);
         }
@@ -46,26 +47,15 @@ export function LeaveSwarmDialog({ trigger, isManager }: LeaveSwarmDialogProps) 
                 {trigger || (
                     <Button variant="destructive" size="sm">
                         <LogOut className="mr-2 size-4" />
-                        Leave Swarm
+                        {t('leaveSwarm')}
                     </Button>
                 )}
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Leave Docker Swarm</AlertDialogTitle>
+                    <AlertDialogTitle>{t('leaveSwarmConfirmTitle')}</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {isManager ? (
-                            <>
-                                This node is a <strong>manager</strong>. Leaving the swarm may affect
-                                cluster availability. Make sure there are other managers available
-                                before proceeding.
-                            </>
-                        ) : (
-                            <>
-                                This will remove this node from the swarm cluster. All tasks running
-                                on this node will be stopped.
-                            </>
-                        )}
+                        {t('leaveSwarmConfirmDescription')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
 
@@ -76,18 +66,18 @@ export function LeaveSwarmDialog({ trigger, isManager }: LeaveSwarmDialogProps) 
                         onCheckedChange={(checked) => setForce(checked === true)}
                     />
                     <Label htmlFor="force" className="text-sm">
-                        Force leave (even if this is the last manager)
+                        {t('forceLeave')}
                     </Label>
                 </div>
 
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleLeave}
                         disabled={isLoading}
                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     >
-                        {isLoading ? 'Leaving...' : 'Leave Swarm'}
+                        {isLoading ? t('leaving') : t('leaveSwarm')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

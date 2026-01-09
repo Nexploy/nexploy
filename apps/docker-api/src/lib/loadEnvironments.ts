@@ -7,13 +7,13 @@ export async function loadEnvironmentsFromAPI(): Promise<EnvironmentConfig[]> {
 
         logger.info({ apiUrl }, 'Loading environments from nexploy API');
 
-        if (!process.env.INTERNAL_API_KEY) {
+        if (!process.env.NEXPLOY_API_KEY) {
             throw new Error('INTERNAL_API_KEY environment variable is required');
         }
 
         const response = await fetch(apiUrl, {
             headers: {
-                'x-api-key': process.env.INTERNAL_API_KEY,
+                'x-api-key': process.env.NEXPLOY_API_KEY,
             },
         });
 
@@ -51,13 +51,13 @@ export async function loadEnvironmentByIdFromAPI(
 
         logger.info({ apiUrl, environmentId }, 'Loading specific environment from nexploy API');
 
-        if (!process.env.INTERNAL_API_KEY) {
+        if (!process.env.NEXPLOY_API_KEY) {
             throw new Error('INTERNAL_API_KEY environment variable is required');
         }
 
         const response = await fetch(apiUrl, {
             headers: {
-                'x-api-key': process.env.INTERNAL_API_KEY,
+                'x-api-key': process.env.NEXPLOY_API_KEY,
             },
         });
 

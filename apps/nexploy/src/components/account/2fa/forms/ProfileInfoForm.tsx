@@ -34,6 +34,7 @@ interface ProfileInfoFormProps {
 
 export function ProfileInfoForm({ user }: ProfileInfoFormProps) {
     const tValidation = useTranslations('validation');
+    const t = useTranslations('account.profileInfo');
     const router = useRouter();
 
     const { form, handleSubmitWithAction } = useHookFormAction(
@@ -47,7 +48,7 @@ export function ProfileInfoForm({ user }: ProfileInfoFormProps) {
             },
             actionProps: {
                 onSuccess: ({ input }) => {
-                    toast.success('Username updated successfully');
+                    toast.success(t('profileUpdated'));
                     router.refresh();
                     form.reset({
                         newName: input.newName,
@@ -62,10 +63,10 @@ export function ProfileInfoForm({ user }: ProfileInfoFormProps) {
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <User className="size-5" />
-                    Profile Information
+                    {t('title')}
                 </CardTitle>
                 <CardDescription>
-                    Manage your personal information and account details
+                    {t('description')}
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -77,7 +78,7 @@ export function ProfileInfoForm({ user }: ProfileInfoFormProps) {
                                 name="newName"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Username</FormLabel>
+                                        <FormLabel>{t('username')}</FormLabel>
                                         <FormControl>
                                             <Input {...field} />
                                         </FormControl>
@@ -86,7 +87,7 @@ export function ProfileInfoForm({ user }: ProfileInfoFormProps) {
                                 )}
                             />
                             <FormItem>
-                                <FormLabel>Email</FormLabel>
+                                <FormLabel>{t('email')}</FormLabel>
                                 <FormControl>
                                     <InputGroup>
                                         <InputGroupInput defaultValue={user?.email} readOnly />
@@ -100,7 +101,7 @@ export function ProfileInfoForm({ user }: ProfileInfoFormProps) {
                             disabled={!form.formState.isDirty}
                             className={'self-end'}
                         >
-                            Update profile
+                            {t('updateProfile')}
                         </Button>
                     </form>
                 </Form>

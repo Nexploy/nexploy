@@ -6,8 +6,10 @@ import { HardDrive, LayoutList, Tag } from 'lucide-react';
 import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';
 import { Skeleton } from '@workspace/ui/components/skeleton';
+import { useTranslations } from 'next-intl';
 
 export function CardInfoImages() {
+    const t = useTranslations('docker');
     const images = useImageStore((state) => state.images);
     const lastUpdate = useImageStore((state) => state.lastUpdate);
 
@@ -32,25 +34,28 @@ export function CardInfoImages() {
 
     const imageInfos = [
         {
-            title: 'Total Images',
+            title: t('totalImages'),
             icon: LayoutList,
             content: totalImages,
-            description: `${totalImages - activeImagesCount} images non utilisée`,
+            description: t('unusedImages', { count: totalImages - activeImagesCount }),
         },
         {
-            title: 'Espace Utilisé',
+            title: t('spaceUsed'),
             icon: HardDrive,
             content: formatBytes(totalSizeImages),
-            description: `${percentUsed.toFixed(1)}% de ${formatBytes(totalDiskCapacity)} utilisés`,
+            description: t('percentUsed', {
+                percent: percentUsed.toFixed(1),
+                total: formatBytes(totalDiskCapacity),
+            }),
         },
         {
-            title: 'Images Actives',
+            title: t('activeImages'),
             icon: Tag,
             content: activeImagesCount,
-            description: `${activeImagesCount} utilisées par des conteneurs`,
+            description: t('usedByContainers', { count: activeImagesCount }),
         },
         {
-            title: 'Last Image',
+            title: t('lastImage'),
             icon: LayoutList,
             content: lastUpdatedLabel,
             description: lastUpdatedName,

@@ -10,6 +10,7 @@ import { disconnectCloudflareAction } from '@/actions/cloudflare/disconnect.acti
 import { toast } from 'sonner';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { CloudflareConnectForm } from '@/components/cloudflare/CloudflareConnectForm';
+import { useTranslations } from 'next-intl';
 
 interface CloudflareIntegrationCardProps {
     isConnected: boolean;
@@ -18,14 +19,16 @@ interface CloudflareIntegrationCardProps {
 export function CloudflareIntegrationCard({ isConnected }: CloudflareIntegrationCardProps) {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const t = useTranslations('integrations');
+    const tNotifications = useTranslations('notifications');
 
     const { openDialog } = useConfirmationDialogStore();
 
     const handleOpenDialog = () => {
         openDialog({
             closeOnBackground: true,
-            title: 'Connecter Cloudflare',
-            description: 'Entrez votre API Token Cloudflare avec les permissions suivantes :',
+            title: t('cloudflare.connectTitle'),
+            description: t('cloudflare.connectDescription'),
             props: {
                 className: 'sm:max-w-[425px]',
             },
@@ -40,11 +43,11 @@ export function CloudflareIntegrationCard({ isConnected }: CloudflareIntegration
             if (result?.serverError) {
                 toast.error(result.serverError);
             } else {
-                toast.success('Cloudflare déconnecté');
+                toast.success(t('cloudflare.disconnectedSuccess'));
                 router.refresh();
             }
         } catch {
-            toast.error('Échec de la déconnexion');
+            toast.error(tNotifications('operationFailed'));
         } finally {
             setIsLoading(false);
         }
@@ -58,18 +61,18 @@ export function CloudflareIntegrationCard({ isConnected }: CloudflareIntegration
                 </div>
                 <div className="flex flex-col gap-0.5">
                     <div className="flex items-center gap-2">
-                        <span className="font-medium">Cloudflare</span>
+                        <span className="font-medium">{t('cloudflare.title')}</span>
                         <Status
                             status={statusMap[isConnected ? 'connected' : 'disconnected'].status}
                         >
                             <StatusIndicator />
                             <StatusLabel>
-                                {statusMap[isConnected ? 'connected' : 'disconnected'].label}
+                                {isConnected ? t('connected') : t('notConnected')}
                             </StatusLabel>
                         </Status>
                     </div>
                     <p className="text-muted-foreground text-sm">
-                        Gérez vos DNS et domaines automatiquement
+                        {t('cloudflare.description')}
                     </p>
                 </div>
             </div>
@@ -82,11 +85,11 @@ export function CloudflareIntegrationCard({ isConnected }: CloudflareIntegration
                     disabled={isLoading}
                     isLoading={isLoading}
                 >
-                    Déconnecter
+                    {t('disconnect')}
                 </Button>
             ) : (
                 <Button icon={Plus} onClick={handleOpenDialog}>
-                    Connecter
+                    {t('connect')}
                 </Button>
             )}
         </div>

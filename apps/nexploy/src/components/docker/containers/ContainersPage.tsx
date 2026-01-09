@@ -18,8 +18,12 @@ import { ContainersStandalone } from '@/components/docker/containers/ContainersS
 import { useContainersStore } from '@/stores/docker/useContainersStore';
 import Link from 'next/link';
 import { Button } from '@workspace/ui/components/button';
+import { useTranslations } from 'next-intl';
 
 export default function ContainersPage() {
+    const t = useTranslations('docker');
+    const tNav = useTranslations('navigation');
+
     const lastUpdate = useContainersStore((state) => state.lastUpdate);
     const containers = useContainersStore((state) => state.containers);
     const stacksSize = useContainersStore((state) => state.getOrganizedContainers)().stacks.size;
@@ -31,19 +35,19 @@ export default function ContainersPage() {
     const tabs = [
         {
             id: 'all',
-            label: 'Tout',
+            label: t('all'),
             icon: LayoutGrid,
             count: numberOfStackAndStandaloneContainer,
         },
         {
             id: 'stacks',
-            label: 'Stacks',
+            label: tNav('stacks'),
             icon: Layers,
             count: stacksSize,
         },
         {
             id: 'containers',
-            label: 'Conteneurs',
+            label: tNav('containers'),
             icon: Container,
             count: standaloneContainersLenght,
         },
@@ -61,13 +65,13 @@ export default function ContainersPage() {
                     </div>
                     <div>
                         <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                            Docker Containers
+                            Docker {tNav('containers')}
                         </h1>
                         {isLoading ? (
                             <Skeleton className={'my-1 h-3 w-40'} />
                         ) : (
                             <p className="text-muted-foreground text-sm">
-                                {standaloneContainersLenght} conteneur
+                                {standaloneContainersLenght} {t('container').toLowerCase()}
                                 {stacksSize > 0 && ` · ${stacksSize} stack`}
                             </p>
                         )}
@@ -76,7 +80,7 @@ export default function ContainersPage() {
                 <Button asChild>
                     <Link href={'/docker/containers/create-container'}>
                         <Plus />
-                        Ajouter un conteneur
+                        {t('createContainer')}
                     </Link>
                 </Button>
             </div>
@@ -95,16 +99,14 @@ export default function ContainersPage() {
                         <EmptyMedia variant="icon" className="bg-primary/10">
                             <IconContainer className="text-primary" />
                         </EmptyMedia>
-                        <EmptyTitle>Aucun conteneur</EmptyTitle>
-                        <EmptyDescription>
-                            Vous n’avez encore créé aucun conteneur.
-                        </EmptyDescription>
+                        <EmptyTitle>{t('noContainers')}</EmptyTitle>
+                        <EmptyDescription>{t('noContainersDescription')}</EmptyDescription>
                     </EmptyHeader>
                     <EmptyContent>
                         <Button asChild>
                             <Link href={'/docker/containers/create-container'}>
                                 <Plus />
-                                Ajouter un conteneur
+                                {t('createContainer')}
                             </Link>
                         </Button>
                     </EmptyContent>

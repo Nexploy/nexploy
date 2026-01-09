@@ -5,9 +5,11 @@ import { RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@workspace/ui/lib/utils';
 import { onDockerRefreshAction } from '@/actions/docker/dockerRefresh.action';
+import { useTranslations } from 'next-intl';
 
 export function RefreshDocker() {
     const [isLoading, setIsloading] = useState(false);
+    const t = useTranslations('docker');
 
     const onRefreshDocker = async (e: any) => {
         e.preventDefault();
@@ -26,7 +28,7 @@ export function RefreshDocker() {
                 />
             </TooltipTrigger>
             <TooltipContent>
-                <p>Actualiser Docker</p>
+                <p>{t('refreshDocker')}</p>
             </TooltipContent>
         </Tooltip>
     );

@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { getUserSession } from '@/services/auth/auth.service';
 import { AvatarDisplay } from '@/components/user/AvatarDisplay';
 import { ChangeTheme } from '@/components/sidebar/ChangeTheme';
+import { ChangeLanguage } from '@/components/sidebar/ChangeLanguage';
 
 export async function AccountMenu() {
     const session = await getUserSession();
@@ -47,6 +48,7 @@ export async function AccountMenu() {
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <ChangeTheme />
+                        <ChangeLanguage />
                     </DropdownMenuContent>
                 </DropdownMenu>
             </SidebarMenuItem>

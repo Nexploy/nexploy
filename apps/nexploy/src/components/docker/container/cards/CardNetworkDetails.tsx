@@ -10,16 +10,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import { NetworkForm } from '@/components/docker/container/forms/NetworkForm';
-
-const DIALOG_CONFIG = {
-    closeOnBackground: true,
-    title: 'Ajouter un réseau',
-    description:
-        'Le conteneur doit être arrêté pour ajouter un réseau. Il sera recréé avec la nouvelle configuration.',
-    props: {
-        className: 'sm:max-w-[425px]',
-    },
-} as const;
+import { useTranslations } from 'next-intl';
 
 interface NetworkItemProps {
     networkName: string;
@@ -46,6 +37,7 @@ function NetworkItem({
     onDelete,
     onCancelDelete,
 }: NetworkItemProps) {
+    const t = useTranslations('docker.containerNetworks');
     const statusIndicator = isNew ? (
         <span className="text-green-500">+</span>
     ) : isDeleted ? (
@@ -73,7 +65,7 @@ function NetworkItem({
                                 <X />
                             </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Annuler la suppression</TooltipContent>
+                        <TooltipContent>{t('cancelDisconnect')}</TooltipContent>
                     </Tooltip>
                 ) : (
                     <Tooltip>
@@ -87,32 +79,32 @@ function NetworkItem({
                                 <Trash2 />
                             </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Déconnecter</TooltipContent>
+                        <TooltipContent>{t('disconnect')}</TooltipContent>
                     </Tooltip>
                 )}
             </div>
             {networkInfo && (
                 <div className="grid grid-cols-2 gap-3 text-xs">
                     <div className="space-y-1">
-                        <span className="text-muted-foreground">Adresse IP:</span>
+                        <span className="text-muted-foreground">{t('ipAddress')}</span>
                         <code className="bg-background/50 block rounded px-2 py-1">
                             {networkInfo.ipAddress || '—'}
                         </code>
                     </div>
                     <div className="space-y-1">
-                        <span className="text-muted-foreground">Passerelle:</span>
+                        <span className="text-muted-foreground">{t('gateway')}</span>
                         <code className="bg-background/50 block rounded px-2 py-1">
                             {networkInfo.gateway || '—'}
                         </code>
                     </div>
                     <div className="space-y-1">
-                        <span className="text-muted-foreground">MAC Address:</span>
+                        <span className="text-muted-foreground">{t('macAddress')}</span>
                         <code className="bg-background/50 block rounded px-2 py-1">
                             {networkInfo.macAddress || '—'}
                         </code>
                     </div>
                     <div className="space-y-1">
-                        <span className="text-muted-foreground">Préfixe IP:</span>
+                        <span className="text-muted-foreground">{t('ipPrefix')}</span>
                         <code className="bg-background/50 block rounded px-2 py-1">
                             /{networkInfo.ipPrefixLen || 0}
                         </code>
@@ -120,13 +112,13 @@ function NetworkItem({
                     {networkInfo.globalIPv6Address && (
                         <>
                             <div className="col-span-2 space-y-1">
-                                <span className="text-muted-foreground">IPv6:</span>
+                                <span className="text-muted-foreground">{t('ipv6')}</span>
                                 <code className="bg-background/50 block rounded px-2 py-1 break-all">
                                     {networkInfo.globalIPv6Address}
                                 </code>
                             </div>
                             <div className="space-y-1">
-                                <span className="text-muted-foreground">Gateway IPv6:</span>
+                                <span className="text-muted-foreground">{t('gatewayIpv6')}</span>
                                 <code className="bg-background/50 block rounded px-2 py-1">
                                     {networkInfo.ipv6Gateway || '—'}
                                 </code>
@@ -134,7 +126,7 @@ function NetworkItem({
                         </>
                     )}
                     <div className="col-span-2 space-y-1">
-                        <span className="text-muted-foreground">Endpoint ID:</span>
+                        <span className="text-muted-foreground">{t('endpointId')}</span>
                         <code className="bg-background/50 block truncate rounded px-2 py-1">
                             {networkInfo.endpointId || '—'}
                         </code>
@@ -149,10 +141,16 @@ export function CardNetworkDetails() {
     const container = useContainerStore((state) => state.container);
     const { openDialog } = useConfirmationDialogStore();
     const { networkChanges, onNetworkChange } = useContainerChangesStore();
+    const t = useTranslations('docker.containerNetworks');
 
     const handleOpenDialog = () => {
         openDialog({
-            ...DIALOG_CONFIG,
+            closeOnBackground: true,
+            title: t('addTitle'),
+            description: t('addDescription'),
+            props: {
+                className: 'sm:max-w-[425px]',
+            },
             content: <NetworkForm />,
         });
     };
@@ -194,7 +192,7 @@ export function CardNetworkDetails() {
         <Card>
             <CardHeader>
                 <div className="flex items-center justify-between gap-3">
-                    <CardHeaderWithIcon as="div" icon={Network} title="Réseaux connectés">
+                    <CardHeaderWithIcon as="div" icon={Network} title={t('title')}>
                         <Badge variant="secondary">{networkCount}</Badge>
                     </CardHeaderWithIcon>
                     <Button
@@ -202,7 +200,7 @@ export function CardNetworkDetails() {
                         icon={Plus}
                         onClick={handleOpenDialog}
                     >
-                        <span className="hidden md:flex">Ajouter</span>
+                        <span className="hidden md:flex">{t('add')}</span>
                     </Button>
                 </div>
             </CardHeader>
@@ -252,7 +250,7 @@ export function CardNetworkDetails() {
                     </ScrollAreaWithShadow>
                 ) : (
                     <div className="flex h-90 items-center justify-center pb-24 font-semibold">
-                        Aucun réseau connecté
+                        {t('noNetworks')}
                     </div>
                 )}
             </CardContent>
