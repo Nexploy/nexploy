@@ -1,47 +1,47 @@
 {
-  "title": "Assistant IA",
-  "placeholder": "Posez-moi une question...",
-  "send": "Envoyer",
-  "thinking": "Réflexion...",
-  "commandGroups": {
-    "navigation": "Navigation",
-    "containers": "Conteneurs",
-    "stacks": "Stacks",
-    "repositories": "Dépôts",
-    "general": "Général"
-  },
-  "suggestions": {
-    "deployRepository": "Déployer un dépôt",
-    "checkContainerStatus": "Vérifier le statut des conteneurs",
-    "viewLogs": "Voir les logs",
-    "createNetwork": "Créer un réseau"
-  },
-  "errors": {
-    "failedToProcess": "Impossible de traiter votre demande",
-    "tryAgain": "Veuillez réessayer"
-  },
-  "command": {
-    "searchPlaceholder": "Tapez une commande ou recherchez...",
-    "askAi": "Demander à l'IA : {query}",
-    "aiAssistant": "Assistant IA",
-    "quickActions": "Actions rapides",
-    "system": "Système",
-    "createContainer": "Créer un conteneur",
-    "pullImage": "Pull une image",
-    "createVolume": "Créer un volume",
-    "startAll": "Démarrer tous les conteneurs",
-    "stopAll": "Arrêter tous les conteneurs",
-    "removeStopped": "Supprimer les conteneurs arrêtés",
-    "viewStacks": "Voir les stacks",
-    "settings": "Paramètres",
-    "openTerminal": "Ouvrir le terminal"
-  },
-  "chat": {
-    "backToCommands": "Retour aux commandes",
-    "stopGenerating": "Arrêter la génération",
-    "helpMessage": "Comment puis-je vous aider avec votre infrastructure Docker aujourd'hui ?",
-    "helpExample": "Essayez : « Créer un conteneur redis nommé cache »",
-    "inputPlaceholder": "Décrivez ce que vous souhaitez faire...",
-    "thinking": "Réflexion..."
-  }
+    "title": "Assistant IA",
+    "placeholder": "Posez-moi une question...",
+    "send": "Envoyer",
+    "thinking": "Réflexion...",
+    "commandGroups": {
+        "navigation": "Navigation",
+        "containers": "Conteneurs",
+        "stacks": "Stacks",
+        "repositories": "Dépôts",
+        "general": "Général"
+    },
+    "suggestions": {
+        "deployRepository": "Déployer un dépôt",
+        "checkContainerStatus": "Vérifier le statut des conteneurs",
+        "viewLogs": "Voir les logs",
+        "createNetwork": "Créer un réseau"
+    },
+    "errors": {
+        "failedToProcess": "Impossible de traiter votre demande",
+        "tryAgain": "Veuillez réessayer"
+    },
+    "command": {
+        "searchPlaceholder": "Tapez une commande ou recherchez...",
+        "askAi": "Demander à l'IA : {query}",
+        "aiAssistant": "Assistant IA",
+        "quickActions": "Actions rapides",
+        "system": "Système",
+        "createContainer": "Créer un conteneur",
+        "pullImage": "Pull une image",
+        "createVolume": "Créer un volume",
+        "startAll": "Démarrer tous les conteneurs",
+        "stopAll": "Arrêter tous les conteneurs",
+        "removeStopped": "Supprimer les conteneurs arrêtés",
+        "viewStacks": "Voir les stacks",
+        "settings": "Paramètres",
+        "openTerminal": "Ouvrir le terminal"
+    },
+    "chat": {
+        "backToCommands": "Retour aux commandes",
+        "stopGenerating": "Arrêter la génération",
+        "helpMessage": "Comment puis-je vous aider avec votre infrastructure Docker aujourd'hui ?",
+        "helpExample": "Essayez : « Créer un conteneur redis nommé cache »",
+        "inputPlaceholder": "Décrivez ce que vous souhaitez faire...",
+        "thinking": "Réflexion..."
+    }
 }

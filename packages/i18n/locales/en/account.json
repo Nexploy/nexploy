@@ -1,124 +1,124 @@
 {
-  "title": "Account",
-  "profile": "Profile",
-  "security": "Security",
-  "preferences": "Preferences",
-  "profileInfo": {
-    "title": "Profile Information",
-    "description": "Manage your personal information and account details",
-    "name": "Name",
-    "username": "Username",
-    "namePlaceholder": "Your name",
-    "email": "Email",
-    "emailPlaceholder": "your@email.com",
-    "updateProfile": "Update profile",
-    "updating": "Updating...",
-    "profileUpdated": "Username updated successfully"
-  },
-  "securitySettings": {
-    "title": "Security Settings",
-    "description": "Manage your account security and authentication preferences",
-    "password": "Password",
-    "lastChanged": "Last changed {days} days ago",
-    "change": "Change"
-  },
-  "notifications": {
-    "title": "Notification Preferences",
-    "description": "Control how and when you receive notifications"
-  },
-  "regional": {
-    "title": "Regional Settings",
-    "description": "Configure your language and timezone preferences",
-    "language": "Language"
-  },
-  "password": {
-    "title": "Change Password",
-    "currentPassword": "Current Password",
-    "newPassword": "New Password",
-    "confirmPassword": "Confirm Password",
-    "changePassword": "Change Password",
-    "changing": "Changing...",
-    "passwordChanged": "Password changed successfully"
-  },
-  "twoFactor": {
-    "title": "Two-Factor Authentication",
-    "description": "Add an extra layer of security to your account",
-    "enabled": "Enabled",
-    "disabled": "Disabled",
-    "enable": "Enable 2FA",
-    "disable": "Disable 2FA",
-    "settings": "Setting 2FA",
-    "settingsTitle": "Two-Factor Authentication Settings",
-    "settingsDescription": "Manage your two-factor authentication settings.",
-    "enableTitle": "Enable 2FA",
-    "enableDescription": "Secure your account by enabling two-factor authentication.",
-    "disableTitle": "Disable Two-Factor Authentication",
-    "disableDescription": "Are you sure you want to disable two-factor authentication? This will make your account less secure.",
-    "disableButton": "Disable Two-Factor Auth",
-    "enabling": "Enabling...",
-    "disabling": "Disabling...",
-    "scanQrCode": "Scan this QR code with your authenticator app",
-    "cantScan": "Can't scan? You can manually enter the secret key in your authenticator app",
-    "verifTotp": "Verif TOTP",
-    "verifTotpDescription": "Scan the QR code with your authenticator app to complete two-factor authentication setup.",
-    "enterVerificationCode": "Enter Verification Code:",
-    "enterCode": "Enter the verification code",
-    "codePlaceholder": "000000",
-    "verify": "Verify",
-    "verifying": "Verifying...",
-    "backupCodes": "Backup Codes",
-    "backupCodesDescription": "Keep these backup codes in a safe place. Each code can only be used once.",
-    "regenerateBackupCodes": "Regenerate Backup Codes",
-    "downloadCodes": "Download codes",
-    "close": "Close",
-    "useBackupCode": "Use a backup code",
-    "enterBackupCode": "Enter backup code",
-    "backupCodePlaceholder": "XXXX-XXXX",
-    "enterPassword": "Enter your password",
-    "password": "Password",
-    "passwordPlaceholder": "Enter your password"
-  },
-  "alerts": {
-    "title": "Alerts & Notifications",
-    "dockerAlerts": "Docker Alerts",
-    "containerStatusChanges": "Container status changes",
-    "buildNotifications": "Build Notifications",
-    "emailNotifications": "Email Notifications",
-    "enableEmailNotifications": "Enable email notifications"
-  },
-  "language": {
-    "title": "Language",
-    "selectLanguage": "Select a language",
-    "en": "English (US)",
-    "fr": "Français"
-  },
-  "theme": {
-    "title": "Theme",
-    "light": "Light",
-    "dark": "Dark",
-    "system": "System"
-  },
-  "dangerZone": {
-    "title": "Danger Zone",
-    "description": "Irreversible and destructive actions",
-    "signOut": "Sign Out",
-    "signOutDescription": "End your current session and return to the login page",
-    "logOut": "Log Out",
-    "clearAllSessions": "Clear All Sessions",
-    "clearAllSessionsDescription": "Sign out from all devices except this one",
-    "clear": "Clear",
-    "deleteAccount": "Delete Account",
-    "deleteAccountDescription": "Permanently delete your account and all associated data",
-    "confirmDelete": "Are you sure you want to delete your account? This action cannot be undone.",
-    "deleting": "Deleting..."
-  },
-  "sessions": {
-    "title": "Active Sessions",
-    "currentSession": "Current session",
-    "lastActive": "Last active",
-    "revokeSession": "Revoke",
-    "revokeAllSessions": "Revoke All Sessions",
-    "sessionRevoked": "Session revoked",
-    "allSessionsRevoked": "All sessions revoked"
-  }
+    "title": "Account",
+    "profile": "Profile",
+    "security": "Security",
+    "preferences": "Preferences",
+    "profileInfo": {
+        "title": "Profile Information",
+        "description": "Manage your personal information and account details",
+        "name": "Name",
+        "username": "Username",
+        "namePlaceholder": "Your name",
+        "email": "Email",
+        "emailPlaceholder": "your@email.com",
+        "updateProfile": "Update profile",
+        "updating": "Updating...",
+        "profileUpdated": "Username updated successfully"
+    },
+    "securitySettings": {
+        "title": "Security Settings",
+        "description": "Manage your account security and authentication preferences",
+        "password": "Password",
+        "lastChanged": "Last changed {days} days ago",
+        "change": "Change"
+    },
+    "notifications": {
+        "title": "Notification Preferences",
+        "description": "Control how and when you receive notifications"
+    },
+    "regional": {
+        "title": "Regional Settings",
+        "description": "Configure your language and timezone preferences",
+        "language": "Language"
+    },
+    "password": {
+        "title": "Change Password",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm Password",
+        "changePassword": "Change Password",
+        "changing": "Changing...",
+        "passwordChanged": "Password changed successfully"
+    },
+    "twoFactor": {
+        "title": "Two-Factor Authentication",
+        "description": "Add an extra layer of security to your account",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "enable": "Enable 2FA",
+        "disable": "Disable 2FA",
+        "settings": "Setting 2FA",
+        "settingsTitle": "Two-Factor Authentication Settings",
+        "settingsDescription": "Manage your two-factor authentication settings.",
+        "enableTitle": "Enable 2FA",
+        "enableDescription": "Secure your account by enabling two-factor authentication.",
+        "disableTitle": "Disable Two-Factor Authentication",
+        "disableDescription": "Are you sure you want to disable two-factor authentication? This will make your account less secure.",
+        "disableButton": "Disable Two-Factor Auth",
+        "enabling": "Enabling...",
+        "disabling": "Disabling...",
+        "scanQrCode": "Scan this QR code with your authenticator app",
+        "cantScan": "Can't scan? You can manually enter the secret key in your authenticator app",
+        "verifTotp": "Verif TOTP",
+        "verifTotpDescription": "Scan the QR code with your authenticator app to complete two-factor authentication setup.",
+        "enterVerificationCode": "Enter Verification Code:",
+        "enterCode": "Enter the verification code",
+        "codePlaceholder": "000000",
+        "verify": "Verify",
+        "verifying": "Verifying...",
+        "backupCodes": "Backup Codes",
+        "backupCodesDescription": "Keep these backup codes in a safe place. Each code can only be used once.",
+        "regenerateBackupCodes": "Regenerate Backup Codes",
+        "downloadCodes": "Download codes",
+        "close": "Close",
+        "useBackupCode": "Use a backup code",
+        "enterBackupCode": "Enter backup code",
+        "backupCodePlaceholder": "XXXX-XXXX",
+        "enterPassword": "Enter your password",
+        "password": "Password",
+        "passwordPlaceholder": "Enter your password"
+    },
+    "alerts": {
+        "title": "Alerts & Notifications",
+        "dockerAlerts": "Docker Alerts",
+        "containerStatusChanges": "Container status changes",
+        "buildNotifications": "Build Notifications",
+        "emailNotifications": "Email Notifications",
+        "enableEmailNotifications": "Enable email notifications"
+    },
+    "language": {
+        "title": "Language",
+        "selectLanguage": "Select a language",
+        "en": "English (US)",
+        "fr": "Français"
+    },
+    "theme": {
+        "title": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+    },
+    "dangerZone": {
+        "title": "Danger Zone",
+        "description": "Irreversible and destructive actions",
+        "signOut": "Sign Out",
+        "signOutDescription": "End your current session and return to the login page",
+        "logOut": "Log Out",
+        "clearAllSessions": "Clear All Sessions",
+        "clearAllSessionsDescription": "Sign out from all devices except this one",
+        "clear": "Clear",
+        "deleteAccount": "Delete Account",
+        "deleteAccountDescription": "Permanently delete your account and all associated data",
+        "confirmDelete": "Are you sure you want to delete your account? This action cannot be undone.",
+        "deleting": "Deleting..."
+    },
+    "sessions": {
+        "title": "Active Sessions",
+        "currentSession": "Current session",
+        "lastActive": "Last active",
+        "revokeSession": "Revoke",
+        "revokeAllSessions": "Revoke All Sessions",
+        "sessionRevoked": "Session revoked",
+        "allSessionsRevoked": "All sessions revoked"
+    }
 }

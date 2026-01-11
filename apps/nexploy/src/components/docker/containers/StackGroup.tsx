@@ -16,6 +16,7 @@ import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/k
 import { onComposesAction } from '@/actions/docker/composes/composeAction';
 import { ComposesAction } from '@workspace/typescript-interface/docker/docker.composeStack';
 import { Containers } from '@workspace/typescript-interface/docker/docker.containers';
+import { useTranslations } from 'next-intl';
 
 interface StackGroupProps {
     stackName: string;
@@ -24,6 +25,7 @@ interface StackGroupProps {
 
 export function StackGroup({ stackName, containers }: StackGroupProps) {
     const [isLoading, setIsloading] = useState(false);
+    const t = useTranslations('common');
 
     const runningCount = containers.filter((c) => c.state === 'running').length;
     const stoppedCount = containers.filter((c) => c.state === 'exited').length;
@@ -51,12 +53,12 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                             <div className="flex min-w-0 flex-col text-left">
                                 <h2 className="truncate text-base font-semibold">{stackName}</h2>
                                 <div className="text-muted-foreground flex items-center gap-2 text-xs">
-                                    <span>{containers.length} conteneur</span>
+                                    <span>{containers.length} {t('container')}</span>
                                     {runningCount > 0 && (
                                         <>
                                             <span>•</span>
                                             <span className="text-online font-medium">
-                                                {runningCount} actif
+                                                {runningCount} {t('active')}
                                             </span>
                                         </>
                                     )}
@@ -64,7 +66,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                                         <>
                                             <span>•</span>
                                             <span className="text-offline">
-                                                {stoppedCount} arrêté
+                                                {stoppedCount} {t('stopped')}
                                             </span>
                                         </>
                                     )}
@@ -78,7 +80,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                         >
                             <Status status={allRunning ? 'online' : 'offline'}>
                                 <StatusIndicator />
-                                <StatusLabel>{allRunning ? 'Up' : 'Down'}</StatusLabel>
+                                <StatusLabel>{allRunning ? t('up') : t('down')}</StatusLabel>
                             </Status>
 
                             <Separator orientation="vertical" className="!h-6" />
@@ -92,7 +94,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                                     icon={Play}
                                     size="icon"
                                 >
-                                    <span className="sr-only">Démarrer</span>
+                                    <span className="sr-only">{t('start')}</span>
                                 </Button>
 
                                 <Button
@@ -103,7 +105,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                                     icon={Square}
                                     size="icon"
                                 >
-                                    <span className="sr-only">Arrêter</span>
+                                    <span className="sr-only">{t('stop')}</span>
                                 </Button>
 
                                 <Button
@@ -114,7 +116,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                                     icon={RotateCw}
                                     size="icon"
                                 >
-                                    <span className="sr-only">Redémarrer</span>
+                                    <span className="sr-only">{t('restart')}</span>
                                 </Button>
                             </div>
                         </div>

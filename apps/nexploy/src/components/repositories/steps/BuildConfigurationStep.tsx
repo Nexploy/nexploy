@@ -24,10 +24,12 @@ import {
 import { Input } from '@workspace/ui/components/input';
 import { useFormContext } from 'react-hook-form';
 import { Hammer } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function BuildConfigurationStep() {
     const { control, watch } = useFormContext();
     const buildType = watch('buildType');
+    const t = useTranslations('repository.steps.buildConfig');
 
     return (
         <Card>
@@ -37,10 +39,8 @@ export function BuildConfigurationStep() {
                         <Hammer className="text-primary size-5" />
                     </div>
                     <div className={'flex flex-col'}>
-                        <CardTitle>Configuration de Build</CardTitle>
-                        <CardDescription>
-                            Comment votre application doit être construite
-                        </CardDescription>
+                        <CardTitle>{t('title')}</CardTitle>
+                        <CardDescription>{t('description')}</CardDescription>
                     </div>
                 </div>
             </CardHeader>
@@ -50,11 +50,11 @@ export function BuildConfigurationStep() {
                     name="buildType"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Type de build</FormLabel>
+                            <FormLabel>{t('buildType')}</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Sélectionner un type" />
+                                        <SelectValue placeholder={t('selectType')} />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
@@ -76,7 +76,7 @@ export function BuildConfigurationStep() {
                             name="dockerfilePath"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Chemin du Dockerfile</FormLabel>
+                                    <FormLabel>{t('dockerfilePath')}</FormLabel>
                                     <FormControl>
                                         <Input placeholder="Dockerfile" {...field} />
                                     </FormControl>
@@ -89,7 +89,7 @@ export function BuildConfigurationStep() {
                             name="contextPath"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Contexte de build</FormLabel>
+                                    <FormLabel>{t('contextPath')}</FormLabel>
                                     <FormControl>
                                         <Input placeholder="." {...field} />
                                     </FormControl>
@@ -107,7 +107,7 @@ export function BuildConfigurationStep() {
                             name="dockerComposePath"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Chemin du fichier Compose</FormLabel>
+                                    <FormLabel>{t('composePath')}</FormLabel>
                                     <FormControl>
                                         <Input placeholder="docker-compose.yml" {...field} />
                                     </FormControl>
@@ -120,7 +120,7 @@ export function BuildConfigurationStep() {
                             name="contextPath"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Contexte de build</FormLabel>
+                                    <FormLabel>{t('contextPath')}</FormLabel>
                                     <FormControl>
                                         <Input placeholder="." {...field} />
                                     </FormControl>

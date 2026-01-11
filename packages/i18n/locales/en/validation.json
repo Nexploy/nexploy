@@ -1,15 +1,15 @@
 {
-  "required": "This field is required",
-  "invalidEmail": "Invalid email address",
-  "invalidFormat": "Invalid format",
-  "passwordsMustMatch": "Passwords must match",
-  "passwordMin": "Password must be at least {min} characters long",
-  "passwordMax": "Password cannot exceed {max} characters",
-  "nameMin": "Name must be at least {min} characters long",
-  "nameMax": "Name cannot exceed {max} characters",
-  "minLength": "Must contain at least {min} characters",
-  "maxLength": "Cannot exceed {max} characters",
-  "invalidNumber": "Invalid number value",
-  "tooShort": "Too short",
-  "tooLong": "Too long"
+    "required": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "invalidFormat": "Invalid format",
+    "passwordsMustMatch": "Passwords must match",
+    "passwordMin": "Password must be at least {min} characters long",
+    "passwordMax": "Password cannot exceed {max} characters",
+    "nameMin": "Name must be at least {min} characters long",
+    "nameMax": "Name cannot exceed {max} characters",
+    "minLength": "Must contain at least {min} characters",
+    "maxLength": "Cannot exceed {max} characters",
+    "invalidNumber": "Invalid number value",
+    "tooShort": "Too short",
+    "tooLong": "Too long"
 }

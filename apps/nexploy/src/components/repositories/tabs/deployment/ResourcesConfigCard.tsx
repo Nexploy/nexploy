@@ -20,12 +20,15 @@ import {
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Separator } from '@workspace/ui/components/separator';
+import { useTranslations } from 'next-intl';
 
 interface ResourcesConfigCardProps {
     form: UseFormReturn<DeploymentSettingsForm>;
 }
 
 export function ResourcesConfigCard({ form }: ResourcesConfigCardProps) {
+    const t = useTranslations('repository.resources');
+
     return (
         <Card>
             <CardHeader>
@@ -34,8 +37,8 @@ export function ResourcesConfigCard({ form }: ResourcesConfigCardProps) {
                         <Cpu className="text-primary size-5" />
                     </div>
                     <div className="flex flex-col">
-                        <CardTitle>Ressources</CardTitle>
-                        <CardDescription>Limites et réservations CPU et mémoire</CardDescription>
+                        <CardTitle>{t('title')}</CardTitle>
+                        <CardDescription>{t('description')}</CardDescription>
                     </div>
                 </div>
             </CardHeader>
@@ -45,7 +48,7 @@ export function ResourcesConfigCard({ form }: ResourcesConfigCardProps) {
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
                         <Cpu className="size-4" />
-                        <h4 className="font-medium">CPU</h4>
+                        <h4 className="font-medium">{t('cpu')}</h4>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -54,14 +57,14 @@ export function ResourcesConfigCard({ form }: ResourcesConfigCardProps) {
                             name="cpuLimit"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Limite CPU</FormLabel>
+                                    <FormLabel>{t('cpuLimit')}</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"
                                             step="0.1"
                                             min="0.1"
                                             max="128"
-                                            placeholder="Non définie"
+                                            placeholder={t('notDefined')}
                                             value={field.value ?? ''}
                                             onChange={(e) =>
                                                 field.onChange(
@@ -73,7 +76,7 @@ export function ResourcesConfigCard({ form }: ResourcesConfigCardProps) {
                                         />
                                     </FormControl>
                                     <FormDescription>
-                                        Nombre de CPUs max (ex: 0.5, 1, 2)
+                                        {t('cpuLimitDescription')}
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
@@ -85,14 +88,14 @@ export function ResourcesConfigCard({ form }: ResourcesConfigCardProps) {
                             name="cpuReservation"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Réservation CPU</FormLabel>
+                                    <FormLabel>{t('cpuReservation')}</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"
                                             step="0.1"
                                             min="0.1"
                                             max="128"
-                                            placeholder="Non définie"
+                                            placeholder={t('notDefined')}
                                             value={field.value ?? ''}
                                             onChange={(e) =>
                                                 field.onChange(
@@ -103,7 +106,7 @@ export function ResourcesConfigCard({ form }: ResourcesConfigCardProps) {
                                             }
                                         />
                                     </FormControl>
-                                    <FormDescription>CPUs réservés garantis</FormDescription>
+                                    <FormDescription>{t('cpuReservationDescription')}</FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -117,7 +120,7 @@ export function ResourcesConfigCard({ form }: ResourcesConfigCardProps) {
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
                         <HardDrive className="size-4" />
-                        <h4 className="font-medium">Mémoire</h4>
+                        <h4 className="font-medium">{t('memory')}</h4>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -126,7 +129,7 @@ export function ResourcesConfigCard({ form }: ResourcesConfigCardProps) {
                             name="memoryLimit"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Limite mémoire</FormLabel>
+                                    <FormLabel>{t('memoryLimit')}</FormLabel>
                                     <FormControl>
                                         <Input
                                             placeholder="512M, 1G, 2G..."
@@ -137,7 +140,7 @@ export function ResourcesConfigCard({ form }: ResourcesConfigCardProps) {
                                         />
                                     </FormControl>
                                     <FormDescription>
-                                        Mémoire max (ex: 256M, 512M, 1G)
+                                        {t('memoryLimitDescription')}
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
@@ -149,7 +152,7 @@ export function ResourcesConfigCard({ form }: ResourcesConfigCardProps) {
                             name="memoryReservation"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Réservation mémoire</FormLabel>
+                                    <FormLabel>{t('memoryReservation')}</FormLabel>
                                     <FormControl>
                                         <Input
                                             placeholder="256M, 512M..."
@@ -159,7 +162,7 @@ export function ResourcesConfigCard({ form }: ResourcesConfigCardProps) {
                                             }
                                         />
                                     </FormControl>
-                                    <FormDescription>Mémoire réservée garantie</FormDescription>
+                                    <FormDescription>{t('memoryReservationDescription')}</FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}

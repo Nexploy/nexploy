@@ -12,26 +12,22 @@ import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStor
 import { LabelForm } from '@/components/docker/container/forms/LabelForm';
 import { Label } from '@workspace/typescript-interface/docker/docker.label';
 import { LabelItem } from '@/components/docker/container/cards/label/LabelItem';
-
-const DIALOG_CONFIG = {
-    closeOnBackground: true,
-    title: 'Ajouter un label',
-    description:
-        'Le conteneur doit être arrêté pour ajouter un label. Il sera recréé avec la nouvelle configuration.',
-    props: {
-        className: 'sm:max-w-[425px]',
-    },
-} as const;
+import { useTranslations } from 'next-intl';
 
 export function CardLabels() {
+    const t = useTranslations('docker.labels');
     const container = useContainerStore((state) => state.container);
     const { openDialog } = useConfirmationDialogStore();
     const labelChanges = useContainerChangesStore((state) => state.labelChanges);
 
     const handleOpenDialog = (mode: 'add' | 'edit', label?: Label, originalLabel?: Label) => {
         openDialog({
-            ...DIALOG_CONFIG,
-            title: mode === 'add' ? 'Ajouter un label' : 'Modifier un label',
+            closeOnBackground: true,
+            title: mode === 'add' ? t('addLabel') : t('editLabel'),
+            description: t('containerMustBeStopped'),
+            props: {
+                className: 'sm:max-w-[425px]',
+            },
             content: <LabelForm mode={mode} defaultLabel={label} originalLabel={originalLabel} />,
         });
     };
@@ -69,7 +65,7 @@ export function CardLabels() {
         <Card>
             <CardHeader>
                 <div className="flex items-center justify-between gap-3">
-                    <CardHeaderWithIcon as="div" icon={Tags} title="Labels">
+                    <CardHeaderWithIcon as="div" icon={Tags} title={t('title')}>
                         <Badge variant="secondary">{labelCount}</Badge>
                     </CardHeaderWithIcon>
                     <Tooltip>
@@ -79,11 +75,11 @@ export function CardLabels() {
                                 icon={Plus}
                                 onClick={() => handleOpenDialog('add')}
                             >
-                                <span className="hidden md:flex">Ajouter</span>
+                                <span className="hidden md:flex">{t('add')}</span>
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent className="flex xl:hidden">
-                            <span>Ajouter</span>
+                            <span>{t('add')}</span>
                         </TooltipContent>
                     </Tooltip>
                 </div>
@@ -129,7 +125,7 @@ export function CardLabels() {
                     </ScrollAreaWithShadow>
                 ) : (
                     <div className="flex h-50 items-center justify-center pb-24 font-semibold">
-                        Aucun label
+                        {t('noLabels')}
                     </div>
                 )}
             </CardContent>

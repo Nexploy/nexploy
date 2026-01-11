@@ -23,6 +23,7 @@ import {
 import { toast } from 'sonner';
 import type { SwarmNode } from '@workspace/typescript-interface/docker/swarm';
 import { onSwarmNodeAction } from '@/actions/docker/swarm/nodeAction.action';
+import { useTranslations } from 'next-intl';
 
 interface NodeActionsProps {
     node: SwarmNode;
@@ -31,6 +32,7 @@ interface NodeActionsProps {
 
 export function NodeActions({ node, onEditLabels }: NodeActionsProps) {
     const [isLoading, setIsLoading] = useState(false);
+    const t = useTranslations('swarm');
 
     const handleAction = async (
         action: 'promote' | 'demote' | 'drain' | 'activate' | 'pause' | 'remove',
@@ -38,7 +40,7 @@ export function NodeActions({ node, onEditLabels }: NodeActionsProps) {
         setIsLoading(true);
         try {
             await onSwarmNodeAction({ nodeId: node.id, action, force: false });
-            toast.success(`Node ${node.hostname} ${action}d successfully`);
+            toast.success(t('nodeActionSuccess', { hostname: node.hostname, action }));
         } finally {
             setIsLoading(false);
         }
@@ -52,18 +54,18 @@ export function NodeActions({ node, onEditLabels }: NodeActionsProps) {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Node Actions</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('nodeActions')}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
 
                 {node.role === 'worker' ? (
                     <DropdownMenuItem onClick={() => handleAction('promote')}>
                         <Crown className="mr-2 size-4" />
-                        Promote to Manager
+                        {t('promoteToManager')}
                     </DropdownMenuItem>
                 ) : (
                     <DropdownMenuItem onClick={() => handleAction('demote')}>
                         <Users className="mr-2 size-4" />
-                        Demote to Worker
+                        {t('demoteToWorker')}
                     </DropdownMenuItem>
                 )}
 
@@ -72,19 +74,19 @@ export function NodeActions({ node, onEditLabels }: NodeActionsProps) {
                 {node.availability !== 'active' && (
                     <DropdownMenuItem onClick={() => handleAction('activate')}>
                         <Play className="mr-2 size-4" />
-                        Activate
+                        {t('activate')}
                     </DropdownMenuItem>
                 )}
                 {node.availability !== 'pause' && (
                     <DropdownMenuItem onClick={() => handleAction('pause')}>
                         <Pause className="mr-2 size-4" />
-                        Pause
+                        {t('pause')}
                     </DropdownMenuItem>
                 )}
                 {node.availability !== 'drain' && (
                     <DropdownMenuItem onClick={() => handleAction('drain')}>
                         <AlertTriangle className="mr-2 size-4" />
-                        Drain
+                        {t('drain')}
                     </DropdownMenuItem>
                 )}
 
@@ -93,7 +95,7 @@ export function NodeActions({ node, onEditLabels }: NodeActionsProps) {
                 {onEditLabels && (
                     <DropdownMenuItem onClick={() => onEditLabels(node)}>
                         <Tag className="mr-2 size-4" />
-                        Edit Labels
+                        {t('editLabels')}
                     </DropdownMenuItem>
                 )}
 
@@ -104,7 +106,7 @@ export function NodeActions({ node, onEditLabels }: NodeActionsProps) {
                     className="text-destructive focus:text-destructive"
                 >
                     <Trash2 className="mr-2 size-4" />
-                    Remove from Swarm
+                    {t('removeFromSwarm')}
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

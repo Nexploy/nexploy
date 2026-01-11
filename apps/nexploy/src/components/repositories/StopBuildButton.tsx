@@ -7,6 +7,7 @@ import { onCancelBuild } from '@/actions/repository/builds/cancelBuild.action';
 import { ComponentProps } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface StopBuildButtonProps extends ComponentProps<typeof Button> {
     buildId: string;
@@ -15,14 +16,15 @@ interface StopBuildButtonProps extends ComponentProps<typeof Button> {
 
 export function StopBuildButton({ buildId, showText = true, ...props }: StopBuildButtonProps) {
     const router = useRouter();
+    const t = useTranslations('repository.builds');
 
     const { execute, isPending } = useAction(onCancelBuild, {
         onSuccess: () => {
-            toast.success('Build cancelled');
+            toast.success(t('buildCancelled'));
             router.refresh();
         },
         onError: () => {
-            toast.error('Failed to cancel build');
+            toast.error(t('failedToCancel'));
         },
     });
 
@@ -33,7 +35,7 @@ export function StopBuildButton({ buildId, showText = true, ...props }: StopBuil
     return (
         <Button variant="destructive" {...props} onClick={handleStop} disabled={isPending}>
             {isPending ? <Loader2 className="animate-spin" /> : <Square />}
-            {showText && (isPending ? 'Stopping...' : 'Stop')}
+            {showText && (isPending ? t('stopping') : t('stop'))}
         </Button>
     );
 }

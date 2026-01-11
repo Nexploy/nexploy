@@ -1,41 +1,41 @@
 {
-  "title": "Integrations",
-  "description": "Connect your external services",
-  "gitProviders": "Git Providers",
-  "cloudInfrastructure": "Cloud & Infrastructure",
-  "github": {
-    "title": "GitHub",
-    "description": "Connect your GitHub account to deploy repositories"
-  },
-  "gitlab": {
-    "title": "GitLab",
-    "description": "Connect your GitLab account to deploy repositories"
-  },
-  "cloudflare": {
-    "title": "Cloudflare",
-    "description": "Manage DNS records and tunnels with Cloudflare",
-    "apiTokenPlaceholder": "Your Cloudflare API Token",
-    "connectedSuccess": "Cloudflare connected successfully",
-    "disconnectedSuccess": "Cloudflare disconnected",
-    "ipDetected": "IP detected: {ip}",
-    "ipDetectionFailed": "Automatic IP detection failed",
-    "connectTitle": "Connect Cloudflare",
-    "connectDescription": "Enter your Cloudflare API Token with the following permissions:",
-    "serverIp": "Server Public IP",
-    "serverIpPlaceholder": "xxx.xxx.xxx.xxx",
-    "serverIpDescription": "Used to create A-type DNS records",
-    "detect": "Detect",
-    "connect": "Connect"
-  },
-  "connect": "Connect",
-  "disconnect": "Disconnect",
-  "connected": "Connected",
-  "notConnected": "Not connected",
-  "connecting": "Connecting...",
-  "disconnecting": "Disconnecting...",
-  "configure": "Configure",
-  "viewDetails": "View Details",
-  "lastSync": "Last sync",
-  "syncNow": "Sync Now",
-  "syncing": "Syncing..."
+    "title": "Integrations",
+    "description": "Connect your external services",
+    "gitProviders": "Git Providers",
+    "cloudInfrastructure": "Cloud & Infrastructure",
+    "github": {
+        "title": "GitHub",
+        "description": "Connect your GitHub account to deploy repositories"
+    },
+    "gitlab": {
+        "title": "GitLab",
+        "description": "Connect your GitLab account to deploy repositories"
+    },
+    "cloudflare": {
+        "title": "Cloudflare",
+        "description": "Manage DNS records and tunnels with Cloudflare",
+        "apiTokenPlaceholder": "Your Cloudflare API Token",
+        "connectedSuccess": "Cloudflare connected successfully",
+        "disconnectedSuccess": "Cloudflare disconnected",
+        "ipDetected": "IP detected: {ip}",
+        "ipDetectionFailed": "Automatic IP detection failed",
+        "connectTitle": "Connect Cloudflare",
+        "connectDescription": "Enter your Cloudflare API Token with the following permissions:",
+        "serverIp": "Server Public IP",
+        "serverIpPlaceholder": "xxx.xxx.xxx.xxx",
+        "serverIpDescription": "Used to create A-type DNS records",
+        "detect": "Detect",
+        "connect": "Connect"
+    },
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "connected": "Connected",
+    "notConnected": "Not connected",
+    "connecting": "Connecting...",
+    "disconnecting": "Disconnecting...",
+    "configure": "Configure",
+    "viewDetails": "View Details",
+    "lastSync": "Last sync",
+    "syncNow": "Sync Now",
+    "syncing": "Syncing..."
 }

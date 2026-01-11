@@ -17,6 +17,7 @@ import { Play } from 'lucide-react';
 import { toast } from 'sonner';
 import { onInitSwarmAction } from '@/actions/docker/swarm/init.action';
 import { onSwarmRefreshAction } from '@/actions/docker/swarm/refresh.action';
+import { useTranslations } from 'next-intl';
 
 interface InitSwarmDialogProps {
     trigger?: ReactNode;
@@ -28,10 +29,12 @@ export function InitSwarmDialog({ trigger, onInitSuccess }: InitSwarmDialogProps
     const [isLoading, setIsLoading] = useState(false);
     const [advertiseAddr, setAdvertiseAddr] = useState('');
     const [listenAddr, setListenAddr] = useState('0.0.0.0:2377');
+    const t = useTranslations('swarm');
+    const tCommon = useTranslations('common');
 
     const handleInit = async () => {
         if (!advertiseAddr) {
-            toast.error('Advertise address is required');
+            toast.error(t('advertiseAddressRequired'));
             return;
         }
 
@@ -42,7 +45,7 @@ export function InitSwarmDialog({ trigger, onInitSuccess }: InitSwarmDialogProps
                 advertiseAddr,
             });
 
-            toast.success('Swarm initialized successfully');
+            toast.success(t('swarmInitializedSuccess'));
             setOpen(false);
             resetForm();
 
@@ -66,52 +69,50 @@ export function InitSwarmDialog({ trigger, onInitSuccess }: InitSwarmDialogProps
                 {trigger || (
                     <Button>
                         <Play className="mr-2 size-4" />
-                        Initialize Swarm
+                        {t('initializeSwarm')}
                     </Button>
                 )}
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Initialize Docker Swarm</DialogTitle>
-                    <DialogDescription>
-                        Create a new swarm cluster with this node as the first manager.
-                    </DialogDescription>
+                    <DialogTitle>{t('initializeSwarmTitle')}</DialogTitle>
+                    <DialogDescription>{t('initializeSwarmDescription')}</DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
-                        <Label htmlFor="advertiseAddr">Advertise Address</Label>
+                        <Label htmlFor="advertiseAddr">{t('advertiseAddress')}</Label>
                         <Input
                             id="advertiseAddr"
                             value={advertiseAddr}
                             onChange={(e) => setAdvertiseAddr(e.target.value)}
-                            placeholder="192.168.1.100:2377"
+                            placeholder={t('advertiseAddressPlaceholder')}
                         />
                         <p className="text-muted-foreground text-xs">
-                            The address other nodes will use to connect to this manager.
+                            {t('advertiseAddressDescriptionInit')}
                         </p>
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="listenAddr">Listen Address</Label>
+                        <Label htmlFor="listenAddr">{t('listenAddress')}</Label>
                         <Input
                             id="listenAddr"
                             value={listenAddr}
                             onChange={(e) => setListenAddr(e.target.value)}
-                            placeholder="0.0.0.0:2377"
+                            placeholder={t('listenAddressPlaceholder')}
                         />
                         <p className="text-muted-foreground text-xs">
-                            The address this node listens on for swarm traffic.
+                            {t('listenAddressDescription')}
                         </p>
                     </div>
                 </div>
 
                 <DialogFooter>
                     <Button variant="outline" onClick={() => setOpen(false)}>
-                        Cancel
+                        {tCommon('cancel')}
                     </Button>
                     <Button onClick={handleInit} disabled={isLoading}>
-                        {isLoading ? 'Initializing...' : 'Initialize Swarm'}
+                        {isLoading ? t('initializing') : t('initializeSwarm')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

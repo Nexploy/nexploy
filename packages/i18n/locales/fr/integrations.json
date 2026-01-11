@@ -1,41 +1,41 @@
 {
-  "title": "Intégrations",
-  "description": "Connectez vos services externes",
-  "gitProviders": "Fournisseurs Git",
-  "cloudInfrastructure": "Cloud & Infrastructure",
-  "github": {
-    "title": "GitHub",
-    "description": "Connectez votre compte GitHub pour déployer vos dépôts"
-  },
-  "gitlab": {
-    "title": "GitLab",
-    "description": "Connectez votre compte GitLab pour déployer vos dépôts"
-  },
-  "cloudflare": {
-    "title": "Cloudflare",
-    "description": "Gérez les enregistrements DNS et les tunnels avec Cloudflare",
-    "apiTokenPlaceholder": "Votre API Token Cloudflare",
-    "connectedSuccess": "Cloudflare connecté avec succès",
-    "disconnectedSuccess": "Cloudflare déconnecté",
-    "ipDetected": "IP détectée : {ip}",
-    "ipDetectionFailed": "Échec de la détection automatique de l'IP",
-    "connectTitle": "Connecter Cloudflare",
-    "connectDescription": "Entrez votre API Token Cloudflare avec les permissions suivantes :",
-    "serverIp": "IP publique du serveur",
-    "serverIpPlaceholder": "xxx.xxx.xxx.xxx",
-    "serverIpDescription": "Utilisée pour créer les enregistrements DNS de type A",
-    "detect": "Détecter",
-    "connect": "Connecter"
-  },
-  "connect": "Connecter",
-  "disconnect": "Déconnecter",
-  "connected": "Connecté",
-  "notConnected": "Non connecté",
-  "connecting": "Connexion...",
-  "disconnecting": "Déconnexion...",
-  "configure": "Configurer",
-  "viewDetails": "Voir les détails",
-  "lastSync": "Dernière synchronisation",
-  "syncNow": "Synchroniser",
-  "syncing": "Synchronisation..."
+    "title": "Intégrations",
+    "description": "Connectez vos services externes",
+    "gitProviders": "Fournisseurs Git",
+    "cloudInfrastructure": "Cloud & Infrastructure",
+    "github": {
+        "title": "GitHub",
+        "description": "Connectez votre compte GitHub pour déployer vos dépôts"
+    },
+    "gitlab": {
+        "title": "GitLab",
+        "description": "Connectez votre compte GitLab pour déployer vos dépôts"
+    },
+    "cloudflare": {
+        "title": "Cloudflare",
+        "description": "Gérez les enregistrements DNS et les tunnels avec Cloudflare",
+        "apiTokenPlaceholder": "Votre API Token Cloudflare",
+        "connectedSuccess": "Cloudflare connecté avec succès",
+        "disconnectedSuccess": "Cloudflare déconnecté",
+        "ipDetected": "IP détectée : {ip}",
+        "ipDetectionFailed": "Échec de la détection automatique de l'IP",
+        "connectTitle": "Connecter Cloudflare",
+        "connectDescription": "Entrez votre API Token Cloudflare avec les permissions suivantes :",
+        "serverIp": "IP publique du serveur",
+        "serverIpPlaceholder": "xxx.xxx.xxx.xxx",
+        "serverIpDescription": "Utilisée pour créer les enregistrements DNS de type A",
+        "detect": "Détecter",
+        "connect": "Connecter"
+    },
+    "connect": "Connecter",
+    "disconnect": "Déconnecter",
+    "connected": "Connecté",
+    "notConnected": "Non connecté",
+    "connecting": "Connexion...",
+    "disconnecting": "Déconnexion...",
+    "configure": "Configurer",
+    "viewDetails": "Voir les détails",
+    "lastSync": "Dernière synchronisation",
+    "syncNow": "Synchroniser",
+    "syncing": "Synchronisation..."
 }

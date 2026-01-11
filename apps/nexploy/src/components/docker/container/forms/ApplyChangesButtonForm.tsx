@@ -5,8 +5,10 @@ import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStor
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { onContainerRecreateAction } from '@/actions/docker/container/containerRecreate.action';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export function ApplyChangesButtonForm() {
+    const t = useTranslations('common');
     const {
         portChanges,
         envVarChanges,
@@ -50,7 +52,7 @@ export function ApplyChangesButtonForm() {
                     : 'pointer-events-none scale-95 opacity-0'
             } `}
         >
-            Appliquer les changements
+            {t('applyChanges')}
         </Button>
     );
 }

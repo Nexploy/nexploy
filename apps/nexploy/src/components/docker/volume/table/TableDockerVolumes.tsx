@@ -18,8 +18,9 @@ import {
     TableHeader,
     TableRow,
 } from '@workspace/ui/components/table';
-import React, { useState } from 'react';
-import { columnsTableVolumes } from '@/components/docker/volume/table/ColumnsDockerVolumes';
+import React, { useMemo, useState } from 'react';
+import { getColumnsTableVolumes } from '@/components/docker/volume/table/ColumnsDockerVolumes';
+import { useTranslations } from 'next-intl';
 import { useVolumeStore } from '@/stores/docker/useVolumeStore';
 import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
 import { Input } from '@workspace/ui/components/input';
@@ -66,16 +67,22 @@ export function TableDockerVolumes() {
     const [rowSelection, setRowSelection] = useState({});
     const [pageSize, setPageSize] = useState<number | 'all'>(10);
 
+    const t = useTranslations('docker.tables');
+    const tDocker = useTranslations('docker');
+    const tCommon = useTranslations('common');
+
     const volumes = useVolumeStore((state) => state.volumes);
     const lastUpdate = useVolumeStore((state) => state.lastUpdate);
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
+
+    const columns = useMemo(() => getColumnsTableVolumes(t), [t]);
 
     const isLoading = !volumes.length && !lastUpdate;
     const isEmpty = !volumes.length && !!lastUpdate;
 
     const table = useReactTable({
         data: volumes,
-        columns: columnsTableVolumes,
+        columns,
         getRowId: (originalRow: Volume) => originalRow.name,
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
@@ -103,10 +110,10 @@ export function TableDockerVolumes() {
     const handleDeleteAction = () => {
         const volumeNames = Object.keys(rowSelection);
         openAlertDialog({
-            title: 'Supprimer les volumes',
-            description: `Êtes-vous sûr de vouloir supprimer ${volumeNames.length} volume(s) ?`,
-            cancelLabel: 'Annuler',
-            actionLabel: 'Supprimer',
+            title: t('deleteVolumes'),
+            description: t('confirmDeleteVolumes', { count: volumeNames.length }),
+            cancelLabel: tCommon('cancel'),
+            actionLabel: tCommon('remove'),
             onAction: async () => {
                 await onVolumeAction({ volumeNames, action: 'delete' });
                 table.resetRowSelection();
@@ -120,10 +127,10 @@ export function TableDockerVolumes() {
 
     const getUseTooltipContent = () => {
         if (numberOfSelectedRows === 0) {
-            return 'Please select volumes to delete';
+            return t('selectVolumesToDelete');
         }
         if (volumeUsed) {
-            return 'Déconnectez tous les conteneurs utilisant ce volume d’abord';
+            return t('disconnectContainersFirst');
         }
         return;
     };
@@ -133,7 +140,7 @@ export function TableDockerVolumes() {
             <div className={'flex justify-between'}>
                 <Input
                     className={'w-1/5 shadow-xs'}
-                    placeholder="Rechercher..."
+                    placeholder={tCommon('searchPlaceholder')}
                     value={globalFilter ?? ''}
                     onChange={(e) => setGlobalFilter(e.target.value)}
                 />
@@ -147,7 +154,7 @@ export function TableDockerVolumes() {
                                     disabled={!!isUseDisabled}
                                 >
                                     <Trash />
-                                    Supprimer{' '}
+                                    {tCommon('remove')}{' '}
                                     {!!numberOfSelectedRows && (
                                         <Badge variant={'secondary'} className={'rounded-full'}>
                                             {numberOfSelectedRows}
@@ -165,7 +172,7 @@ export function TableDockerVolumes() {
                     <Button asChild>
                         <Link href={'/docker/volumes/create-volume'}>
                             <Plus />
-                            Créer un volume
+                            {tDocker('createVolume')}
                         </Link>
                     </Button>
                 </div>
@@ -206,7 +213,7 @@ export function TableDockerVolumes() {
                                     colSpan={table.getAllColumns().length}
                                     className="py-6 text-center"
                                 >
-                                    Aucun volume trouvé.
+                                    {t('noVolumesFound')}
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -232,7 +239,7 @@ export function TableDockerVolumes() {
             </div>
             <div className={'flex items-center justify-between'}>
                 <div className={'flex items-center gap-2'}>
-                    <span className="text-muted-foreground text-sm">Volumes par page:</span>
+                    <span className="text-muted-foreground text-sm">{t('volumesPerPage')}:</span>
                     <Select
                         value={pageSize === 'all' ? 'all' : String(pageSize)}
                         onValueChange={(value) => {
@@ -247,17 +254,17 @@ export function TableDockerVolumes() {
                         }}
                     >
                         <SelectTrigger size={'sm'} className="w-24">
-                            <SelectValue placeholder="Volumes par page" />
+                            <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectLabel>Taille</SelectLabel>
+                                <SelectLabel>{tCommon('size')}</SelectLabel>
                                 {[10, 25, 50, 100].map((size) => (
                                     <SelectItem key={size} value={`${size}`}>
                                         {size}
                                     </SelectItem>
                                 ))}
-                                <SelectItem value="all">Tout</SelectItem>
+                                <SelectItem value="all">{tCommon('all')}</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -266,8 +273,10 @@ export function TableDockerVolumes() {
                 {!isShowingAll && (
                     <div className={'flex items-center gap-2'}>
                         <span className="text-muted-foreground text-sm">
-                            Page {table.getState().pagination.pageIndex + 1} of{' '}
-                            {table.getPageCount()}
+                            {tCommon('pageOf', {
+                                current: table.getState().pagination.pageIndex + 1,
+                                total: table.getPageCount(),
+                            })}
                         </span>
                         <div className={'flex gap-1'}>
                             <Button
@@ -277,7 +286,7 @@ export function TableDockerVolumes() {
                                 disabled={!table.getCanPreviousPage()}
                             >
                                 <ChevronLeft className={'h-4 w-4'} />
-                                Précédent
+                                {tCommon('previous')}
                             </Button>
                             <Button
                                 variant={'outline'}
@@ -285,7 +294,7 @@ export function TableDockerVolumes() {
                                 onClick={() => table.nextPage()}
                                 disabled={!table.getCanNextPage()}
                             >
-                                Suivant
+                                {tCommon('next')}
                                 <ChevronRight className={'h-4 w-4'} />
                             </Button>
                         </div>

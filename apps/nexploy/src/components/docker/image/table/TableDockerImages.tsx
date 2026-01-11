@@ -21,7 +21,8 @@ import {
     TableRow,
 } from '@workspace/ui/components/table';
 import React, { useMemo, useState } from 'react';
-import { columnsTableImages } from '@/components/docker/image/table/ColumnsDockerImages';
+import { getColumnsTableImages } from '@/components/docker/image/table/ColumnsDockerImages';
+import { useTranslations } from 'next-intl';
 import { useImageStore } from '@/stores/docker/useImageStore';
 import { Image, ImageRow } from '@workspace/typescript-interface/docker/docker.image';
 import { Input } from '@workspace/ui/components/input';
@@ -131,19 +132,23 @@ export function TableDockerImages() {
     const [expanded, setExpanded] = useState<ExpandedState>({});
 
     const router = useRouter();
+    const t = useTranslations('docker.tables');
+    const tDocker = useTranslations('docker');
+    const tCommon = useTranslations('common');
 
     const images = useImageStore((state) => state.images);
     const lastUpdate = useImageStore((state) => state.lastUpdate);
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
     const groupedImages = useMemo(() => groupImagesByRepository(images), [images]);
+    const columns = useMemo(() => getColumnsTableImages(t), [t]);
 
     const isLoading = !images.length && !lastUpdate;
     const isEmpty = !images.length && !!lastUpdate;
 
     const table = useReactTable({
         data: groupedImages,
-        columns: columnsTableImages,
+        columns,
         getRowId: (originalRow: ImageRow) => originalRow.id,
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
@@ -173,10 +178,10 @@ export function TableDockerImages() {
     const handleDeleteAction = () => {
         const imageIds = Object.keys(rowSelection);
         openAlertDialog({
-            title: 'Remove Images',
-            description: `Are you sure you want to remove ${imageIds.length} image?`,
-            cancelLabel: 'Cancel',
-            actionLabel: 'Remove',
+            title: t('removeImages'),
+            description: t('confirmRemoveImages', { count: imageIds.length }),
+            cancelLabel: tCommon('cancel'),
+            actionLabel: tCommon('remove'),
             onAction: async () => {
                 await onImageAction({ imageIds, action: 'delete' });
                 table.resetRowSelection();
@@ -193,13 +198,13 @@ export function TableDockerImages() {
 
     const getUseTooltipContent = () => {
         if (numberOfSelectedRows === 0) {
-            return 'Please select an image to use';
+            return t('selectImageToUse');
         }
         if (numberOfSelectedRows > 1) {
-            return 'Please select only one image';
+            return t('selectOnlyOneImage');
         }
         if (!selectedImage?.repoTags.length) {
-            return 'This image has no repository tags';
+            return t('noRepositoryTags');
         }
         return;
     };
@@ -209,7 +214,7 @@ export function TableDockerImages() {
             <div className={'flex justify-between'}>
                 <Input
                     className={'w-1/5 shadow-xs'}
-                    placeholder="Search..."
+                    placeholder={tCommon('searchPlaceholder')}
                     value={globalFilter ?? ''}
                     onChange={(e) => setGlobalFilter(e.target.value)}
                 />
@@ -220,7 +225,7 @@ export function TableDockerImages() {
                         disabled={!numberOfSelectedRows}
                     >
                         <Trash />
-                        Remove{' '}
+                        {tCommon('remove')}{' '}
                         {!!numberOfSelectedRows && (
                             <Badge variant={'secondary'} className={'rounded-full'}>
                                 {numberOfSelectedRows}
@@ -232,7 +237,7 @@ export function TableDockerImages() {
                             <div>
                                 <Button onClick={handleUseAction} disabled={isUseDisabled}>
                                     <Play />
-                                    Use
+                                    {t('use')}
                                 </Button>
                             </div>
                         </TooltipTrigger>
@@ -245,7 +250,7 @@ export function TableDockerImages() {
                     <Button asChild>
                         <Link href={'/docker/images/pull-image'}>
                             <Plus />
-                            Pull Image
+                            {tDocker('pullImage')}
                         </Link>
                     </Button>
                 </div>
@@ -286,7 +291,7 @@ export function TableDockerImages() {
                                     colSpan={table.getAllColumns().length}
                                     className="py-6 text-center"
                                 >
-                                    No images found.
+                                    {t('noImagesFound')}
                                 </TableCell>
                             </TableRow>
                         ) : !isLoading && table.getRowModel().rows.length === 0 ? (
@@ -295,7 +300,7 @@ export function TableDockerImages() {
                                     colSpan={table.getAllColumns().length}
                                     className="py-6 text-center"
                                 >
-                                    No images match your search.
+                                    {t('noImagesMatchSearch')}
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -321,7 +326,7 @@ export function TableDockerImages() {
             </div>
             <div className={'flex items-center justify-between'}>
                 <div className={'flex items-center gap-2'}>
-                    <span className="text-muted-foreground text-sm">Images per page:</span>
+                    <span className="text-muted-foreground text-sm">{t('imagesPerPage')}:</span>
                     <Select
                         value={pageSize === 'all' ? 'all' : String(pageSize)}
                         onValueChange={(value) => {
@@ -336,17 +341,17 @@ export function TableDockerImages() {
                         }}
                     >
                         <SelectTrigger size={'sm'} className="w-24">
-                            <SelectValue placeholder="Images per page" />
+                            <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectLabel>Size</SelectLabel>
+                                <SelectLabel>{tCommon('size')}</SelectLabel>
                                 {[10, 25, 50, 100].map((size) => (
                                     <SelectItem key={size} value={`${size}`}>
                                         {size}
                                     </SelectItem>
                                 ))}
-                                <SelectItem value="all">Tout</SelectItem>
+                                <SelectItem value="all">{tCommon('all')}</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -355,8 +360,10 @@ export function TableDockerImages() {
                 {!isShowingAll && (
                     <div className={'flex items-center gap-2'}>
                         <span className="text-muted-foreground text-sm">
-                            Page {table.getState().pagination.pageIndex + 1} of{' '}
-                            {table.getPageCount()}
+                            {tCommon('pageOf', {
+                                current: table.getState().pagination.pageIndex + 1,
+                                total: table.getPageCount(),
+                            })}
                         </span>
                         <div className={'flex gap-1'}>
                             <Button
@@ -366,7 +373,7 @@ export function TableDockerImages() {
                                 disabled={!table.getCanPreviousPage()}
                             >
                                 <ChevronLeft className={'h-4 w-4'} />
-                                Previous
+                                {tCommon('previous')}
                             </Button>
                             <Button
                                 variant={'outline'}
@@ -374,7 +381,7 @@ export function TableDockerImages() {
                                 onClick={() => table.nextPage()}
                                 disabled={!table.getCanNextPage()}
                             >
-                                Next
+                                {tCommon('next')}
                                 <ChevronRight className={'h-4 w-4'} />
                             </Button>
                         </div>

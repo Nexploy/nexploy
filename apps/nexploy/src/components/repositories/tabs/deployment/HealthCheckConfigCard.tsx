@@ -20,12 +20,14 @@ import {
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
+import { useTranslations } from 'next-intl';
 
 interface HealthCheckConfigCardProps {
     form: UseFormReturn<DeploymentSettingsForm>;
 }
 
 export function HealthCheckConfigCard({ form }: HealthCheckConfigCardProps) {
+    const t = useTranslations('repository.healthCheck');
     const healthCheckEnabled = form.watch('healthCheckEnabled');
 
     return (
@@ -36,9 +38,9 @@ export function HealthCheckConfigCard({ form }: HealthCheckConfigCardProps) {
                         <HeartPulse className="text-primary size-5" />
                     </div>
                     <div className="flex flex-col">
-                        <CardTitle>Health Check</CardTitle>
+                        <CardTitle>{t('title')}</CardTitle>
                         <CardDescription>
-                            Configuration des vérifications de santé du container
+                            {t('description')}
                         </CardDescription>
                     </div>
                 </div>
@@ -51,9 +53,9 @@ export function HealthCheckConfigCard({ form }: HealthCheckConfigCardProps) {
                     render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
-                                <FormLabel className="text-base">Activer le Health Check</FormLabel>
+                                <FormLabel className="text-base">{t('enable')}</FormLabel>
                                 <FormDescription>
-                                    Vérifier périodiquement la santé de votre application
+                                    {t('enableDescription')}
                                 </FormDescription>
                             </div>
                             <FormControl>
@@ -70,7 +72,7 @@ export function HealthCheckConfigCard({ form }: HealthCheckConfigCardProps) {
                             name="healthCheckCommand"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Commande</FormLabel>
+                                    <FormLabel>{t('command')}</FormLabel>
                                     <FormControl>
                                         <Input
                                             placeholder="CMD curl -f http://localhost/ || exit 1"
@@ -81,7 +83,7 @@ export function HealthCheckConfigCard({ form }: HealthCheckConfigCardProps) {
                                         />
                                     </FormControl>
                                     <FormDescription>
-                                        Commande exécutée pour vérifier la santé
+                                        {t('commandDescription')}
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
@@ -94,12 +96,12 @@ export function HealthCheckConfigCard({ form }: HealthCheckConfigCardProps) {
                                 name="healthCheckInterval"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Intervalle</FormLabel>
+                                        <FormLabel>{t('interval')}</FormLabel>
                                         <FormControl>
                                             <Input placeholder="30s" {...field} />
                                         </FormControl>
                                         <FormDescription>
-                                            Temps entre chaque vérification
+                                            {t('intervalDescription')}
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>
@@ -111,12 +113,12 @@ export function HealthCheckConfigCard({ form }: HealthCheckConfigCardProps) {
                                 name="healthCheckTimeout"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Timeout</FormLabel>
+                                        <FormLabel>{t('timeout')}</FormLabel>
                                         <FormControl>
                                             <Input placeholder="10s" {...field} />
                                         </FormControl>
                                         <FormDescription>
-                                            Temps max pour une vérification
+                                            {t('timeoutDescription')}
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>
@@ -128,7 +130,7 @@ export function HealthCheckConfigCard({ form }: HealthCheckConfigCardProps) {
                                 name="healthCheckRetries"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Essais</FormLabel>
+                                        <FormLabel>{t('retries')}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
@@ -141,7 +143,7 @@ export function HealthCheckConfigCard({ form }: HealthCheckConfigCardProps) {
                                             />
                                         </FormControl>
                                         <FormDescription>
-                                            Échecs avant unhealthy
+                                            {t('retriesDescription')}
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>
@@ -153,12 +155,12 @@ export function HealthCheckConfigCard({ form }: HealthCheckConfigCardProps) {
                                 name="healthCheckStartPeriod"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Période de démarrage</FormLabel>
+                                        <FormLabel>{t('startPeriod')}</FormLabel>
                                         <FormControl>
                                             <Input placeholder="0s" {...field} />
                                         </FormControl>
                                         <FormDescription>
-                                            Temps d'initialisation avant checks
+                                            {t('startPeriodDescription')}
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>

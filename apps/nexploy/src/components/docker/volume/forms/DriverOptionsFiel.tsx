@@ -13,6 +13,7 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Control, FieldValues, Path } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 
 interface DriverOptionsFieldProps<T extends FieldValues> {
     control: Control<T>;
@@ -23,6 +24,7 @@ export function DriverOptionsField<T extends FieldValues>({
     control,
     name,
 }: DriverOptionsFieldProps<T>) {
+    const t = useTranslations('docker.advancedConfig');
     const [optKey, setOptKey] = useState('');
     const [optValue, setOptValue] = useState('');
 
@@ -58,19 +60,19 @@ export function DriverOptionsField<T extends FieldValues>({
 
                 return (
                     <FormItem>
-                        <FormLabel>Options du driver</FormLabel>
+                        <FormLabel>{t('driverOptions')}</FormLabel>
                         <FormControl>
                             <div className="space-y-3">
                                 <div className="flex gap-2">
                                     <Input
-                                        placeholder="Clé (ex: type)"
+                                        placeholder={t('optionKeyPlaceholder')}
                                         value={optKey}
                                         onChange={(e) => setOptKey(e.target.value)}
                                         onKeyDown={handleKeyDown}
                                         className="flex-1"
                                     />
                                     <Input
-                                        placeholder="Valeur (ex: nfs)"
+                                        placeholder={t('optionValuePlaceholder')}
                                         value={optValue}
                                         onChange={(e) => setOptValue(e.target.value)}
                                         onKeyDown={handleKeyDown}
@@ -89,7 +91,7 @@ export function DriverOptionsField<T extends FieldValues>({
 
                                 {field.value && Object.keys(field.value).length > 0 && (
                                     <div className="space-y-2">
-                                        <p className="text-sm font-medium">Options ajoutées :</p>
+                                        <p className="text-sm font-medium">{t('optionsAdded')}</p>
                                         <div className="space-y-2">
                                             {Object.entries(
                                                 field.value as Record<string, string>,
@@ -127,7 +129,7 @@ export function DriverOptionsField<T extends FieldValues>({
                         </FormControl>
                         <FormMessage />
                         <FormDescription>
-                            Options spécifiques au driver. Exemples :{' '}
+                            {t('optionsDescription')}{' '}
                             <code className="bg-muted rounded px-1 py-0.5 text-xs">type=nfs</code>,{' '}
                             <code className="bg-muted rounded px-1 py-0.5 text-xs">
                                 o=addr=192.168.1.1

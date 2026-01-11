@@ -11,6 +11,7 @@ import { Trash2 } from 'lucide-react';
 import { onVolumeAction } from '@/actions/docker/volume/volumeAction.action';
 import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useTranslations } from 'next-intl';
 
 interface VolumeDropdownActionsProps {
     volume: Volume;
@@ -28,6 +29,7 @@ interface VolumeTool {
 
 export function VolumeDropdownActions({ volume }: VolumeDropdownActionsProps) {
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
+    const t = useTranslations('docker.dropdownActions');
 
     const volumeName = volume.name || '<none>';
     const isBuiltin = volumeName.startsWith('docker_');
@@ -39,21 +41,21 @@ export function VolumeDropdownActions({ volume }: VolumeDropdownActionsProps) {
     const volumeTools: VolumeTool[] = [
         {
             icon: Trash2,
-            label: 'Supprimer',
+            label: t('remove'),
             action: () =>
                 openAlertDialog({
-                    title: 'Supprimer le volume',
-                    description: `Êtes-vous sûr de vouloir supprimer le volume "${volumeName}" ?`,
-                    cancelLabel: 'Annuler',
-                    actionLabel: 'Supprimer',
+                    title: t('volume.removeTitle'),
+                    description: t('volume.removeDescription', { name: volumeName }),
+                    cancelLabel: t('cancel'),
+                    actionLabel: t('remove'),
                     onAction: () => handleAction('delete'),
                 }),
             disabled: isBuiltin || (volume.usageData?.RefCount || 0) > 0,
             variant: 'destructive',
             tooltipContent: isBuiltin
-                ? 'Impossible de supprimer un volume système'
+                ? t('volume.cannotRemoveSystem')
                 : (volume.usageData?.RefCount || 0) > 0
-                  ? 'Déconnectez tous les conteneurs utilisant ce volume d’abord'
+                  ? t('volume.disconnectContainersFirst')
                   : undefined,
         },
     ];

@@ -25,6 +25,7 @@ import { updateEnvironmentAction } from '@/actions/environment/updateEnvironment
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { Environment } from 'generated/client';
 import { decrypt } from '@/lib/encryption';
+import { useTranslations } from 'next-intl';
 
 interface EditEnvironmentFormProps {
     environment: Environment;
@@ -32,6 +33,7 @@ interface EditEnvironmentFormProps {
 
 export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
     const { onSuccess } = useConfirmationDialogStore();
+    const t = useTranslations('docker.environmentForm');
 
     const decryptedTlsCert = environment.tlsCert ? decrypt(environment.tlsCert) : undefined;
     const decryptedTlsKey = environment.tlsKey ? decrypt(environment.tlsKey) : undefined;
@@ -87,11 +89,11 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Environment name</FormLabel>
+                            <FormLabel>{t('environmentName')}</FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
-                                    placeholder="e.g. Production, Staging, Development..."
+                                    placeholder={t('environmentNamePlaceholder')}
                                     disabled={form.formState.isSubmitting}
                                 />
                             </FormControl>
@@ -105,11 +107,11 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                     name="description"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Description (optional)</FormLabel>
+                            <FormLabel>{t('description')}</FormLabel>
                             <FormControl>
                                 <Textarea
                                     {...field}
-                                    placeholder="Describe this environment..."
+                                    placeholder={t('descriptionPlaceholder')}
                                     disabled={form.formState.isSubmitting}
                                     rows={2}
                                 />
@@ -124,7 +126,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                     name="connectionType"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Connection type</FormLabel>
+                            <FormLabel>{t('connectionType')}</FormLabel>
                             <FormControl>
                                 <Select
                                     {...field}
@@ -133,15 +135,15 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                                     disabled={form.formState.isSubmitting}
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select connection type" />
+                                        <SelectValue placeholder={t('selectConnectionType')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="UNIX_SOCKET">
-                                            Unix Socket (Local)
+                                            {t('unixSocket')}
                                         </SelectItem>
-                                        <SelectItem value="TCP">TCP (Remote)</SelectItem>
+                                        <SelectItem value="TCP">{t('tcp')}</SelectItem>
                                         <SelectItem value="TCP_TLS">
-                                            TCP with TLS (Secure Remote)
+                                            {t('tcpTls')}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -157,7 +159,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                         name="socketPath"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Socket path</FormLabel>
+                                <FormLabel>{t('socketPath')}</FormLabel>
                                 <FormControl>
                                     <Input
                                         placeholder="/var/run/docker.sock"
@@ -166,7 +168,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                                     />
                                 </FormControl>
                                 <p className="text-muted-foreground text-xs">
-                                    Path to the Docker daemon socket file
+                                    {t('socketPathDescription')}
                                 </p>
                                 <FormMessage />
                             </FormItem>
@@ -182,10 +184,10 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                                 name="host"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Host</FormLabel>
+                                        <FormLabel>{t('host')}</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="e.g. localhost, 192.168.1.100"
+                                                placeholder={t('hostPlaceholder')}
                                                 {...field}
                                                 disabled={form.formState.isSubmitting}
                                             />
@@ -200,11 +202,11 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                                 name="port"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Port</FormLabel>
+                                        <FormLabel>{t('port')}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
-                                                placeholder="2375 or 2376"
+                                                placeholder={t('portPlaceholder')}
                                                 {...field}
                                                 onChange={(e) =>
                                                     field.onChange(e.target.valueAsNumber)
@@ -218,16 +220,16 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                             />
                         </div>
                         <p className="text-muted-foreground text-xs">
-                            Standard ports: 2375 (unencrypted), 2376 (TLS)
+                            {t('standardPorts')}
                         </p>
                     </>
                 )}
 
                 {connectionType === 'TCP_TLS' && (
                     <div className="space-y-4 rounded-lg border p-4">
-                        <h4 className="text-sm font-medium">TLS Certificates</h4>
+                        <h4 className="text-sm font-medium">{t('tlsCertificates')}</h4>
                         <p className="text-muted-foreground text-xs">
-                            Provide the TLS certificates for secure connection
+                            {t('tlsCertificatesDescription')}
                         </p>
 
                         <FormField
@@ -235,7 +237,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                             name="tlsCert"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Client Certificate</FormLabel>
+                                    <FormLabel>{t('clientCertificate')}</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
@@ -255,7 +257,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                             name="tlsKey"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Client Key</FormLabel>
+                                    <FormLabel>{t('clientKey')}</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
@@ -275,7 +277,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                             name="tlsCa"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>CA Certificate</FormLabel>
+                                    <FormLabel>{t('caCertificate')}</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
@@ -294,7 +296,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
 
                 <div className="flex justify-end gap-2 pt-4">
                     <Button type="submit" disabled={form.formState.isSubmitting}>
-                        {form.formState.isSubmitting ? 'Updating...' : 'Update environment'}
+                        {form.formState.isSubmitting ? t('updating') : t('updateEnvironment')}
                     </Button>
                 </div>
             </form>

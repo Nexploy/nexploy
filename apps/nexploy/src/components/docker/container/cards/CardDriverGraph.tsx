@@ -2,9 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/componen
 import { Database } from 'lucide-react';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
+import { useTranslations } from 'next-intl';
 
 export function CardDriverGraph() {
     const container = useContainerStore((state) => state.container);
+    const t = useTranslations('docker.containerCards');
 
     if (!container) {
         return <Skeleton className={'h-100 flex-1'} />;
@@ -17,20 +19,20 @@ export function CardDriverGraph() {
                     <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
                         <Database className="text-primary size-4" />
                     </div>
-                    <CardTitle>Driver de stockage</CardTitle>
+                    <CardTitle>{t('storageDriver')}</CardTitle>
                 </div>
             </CardHeader>
             <CardContent>
                 <div className="space-y-3">
                     <div className="flex items-center justify-between border-b pb-2">
-                        <span className="text-muted-foreground text-sm">Nom du driver</span>
+                        <span className="text-muted-foreground text-sm">{t('driverName')}</span>
                         <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
                             {container.graphDriver?.name}
                         </code>
                     </div>
                     {container.graphDriver?.data.deviceId && (
                         <div className="flex items-center justify-between border-b pb-2">
-                            <span className="text-muted-foreground text-sm">Device ID</span>
+                            <span className="text-muted-foreground text-sm">{t('deviceId')}</span>
                             <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
                                 {container.graphDriver?.data.deviceId}
                             </code>
@@ -38,7 +40,7 @@ export function CardDriverGraph() {
                     )}
                     {container.graphDriver?.data.deviceName && (
                         <div className="flex items-center justify-between border-b pb-2">
-                            <span className="text-muted-foreground text-sm">Device Name</span>
+                            <span className="text-muted-foreground text-sm">{t('deviceName')}</span>
                             <code className="bg-muted/50 truncate rounded-md px-2 py-1 text-xs">
                                 {container.graphDriver?.data.deviceName}
                             </code>
@@ -46,7 +48,7 @@ export function CardDriverGraph() {
                     )}
                     {container.graphDriver?.data.deviceSize && (
                         <div className="flex items-center justify-between">
-                            <span className="text-muted-foreground text-sm">Device Size</span>
+                            <span className="text-muted-foreground text-sm">{t('deviceSize')}</span>
                             <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
                                 {(
                                     parseInt(container.graphDriver?.data.deviceSize) /

@@ -14,7 +14,9 @@ import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/drop
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
-export const columnsTableNetworks: ColumnDef<Network>[] = [
+type TranslationFunction = (key: string) => string;
+
+export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Network>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -44,7 +46,7 @@ export const columnsTableNetworks: ColumnDef<Network>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             >
-                Nom
+                {t('name')}
                 <ArrowUpDown />
             </Button>
         ),
@@ -64,7 +66,7 @@ export const columnsTableNetworks: ColumnDef<Network>[] = [
                                 <StatusIndicator />
                             </TooltipTrigger>
                             <TooltipContent>
-                                {isBuiltin ? <p>Réseau système</p> : <p>Réseau personnalisé</p>}
+                                {isBuiltin ? <p>{t('systemNetwork')}</p> : <p>{t('customNetwork')}</p>}
                             </TooltipContent>
                         </Tooltip>
 
@@ -83,7 +85,7 @@ export const columnsTableNetworks: ColumnDef<Network>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             >
-                Driver
+                {t('driver')}
                 <ArrowUpDown />
             </Button>
         ),
@@ -98,7 +100,7 @@ export const columnsTableNetworks: ColumnDef<Network>[] = [
     },
     {
         accessorKey: 'scope',
-        header: 'Scope',
+        header: t('scope'),
         cell: ({ row }) => {
             const scope = row.original.scope;
             return <Badge variant="outline">{scope}</Badge>;
@@ -106,7 +108,7 @@ export const columnsTableNetworks: ColumnDef<Network>[] = [
     },
     {
         accessorKey: 'id',
-        header: 'Network ID',
+        header: t('networkId'),
         cell: ({ row }) => {
             const networkId = row.original.id;
             return (
@@ -129,7 +131,7 @@ export const columnsTableNetworks: ColumnDef<Network>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             >
-                Conteneurs
+                {t('containers')}
                 <ArrowUpDown />
             </Button>
         ),
@@ -156,7 +158,7 @@ export const columnsTableNetworks: ColumnDef<Network>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             >
-                Créé
+                {t('created')}
                 <ArrowUpDown />
             </Button>
         ),

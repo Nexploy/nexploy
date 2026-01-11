@@ -4,9 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/componen
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { containerDisplayState } from '@/utils/containerDisplayState';
 import { Skeleton } from '@workspace/ui/components/skeleton';
+import { useTranslations } from 'next-intl';
 
 export function CardInfoContainer() {
     const container = useContainerStore((state) => state.container);
+    const t = useTranslations('docker.containerCards');
 
     if (!container) {
         return (
@@ -20,7 +22,7 @@ export function CardInfoContainer() {
 
     const containerInfoCards = [
         {
-            title: 'État',
+            title: t('state'),
             icon: Activity,
             content: container!.state,
             render: () => (
@@ -37,24 +39,24 @@ export function CardInfoContainer() {
             ),
         },
         {
-            title: 'Image',
+            title: t('image'),
             icon: Box,
             content: container!.image.split(':')[0],
-            description: `version : ${container!.image.split(':')[1] || 'latest'}`,
+            description: `${t('version')} ${container!.image.split(':')[1] || 'latest'}`,
         },
         {
-            title: 'Ports',
+            title: t('ports'),
             icon: Network,
             content: container!.network.ports.length,
             description: container!.network.ports.length
-                ? 'port(s) exposé(s)'
-                : 'Aucun port exposé',
+                ? t('exposedPorts')
+                : t('noExposedPorts'),
         },
         {
-            title: 'Env',
+            title: t('env'),
             icon: Key,
             content: container!.env.length,
-            description: "Variable(s) d'environnement",
+            description: t('envVariables'),
         },
     ];
 

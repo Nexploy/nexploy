@@ -50,12 +50,13 @@ import {
 } from '@workspace/ui/components/search-command';
 import { Optional } from '@workspace/ui/components/utils/Optional';
 import { cn } from '@workspace/ui/lib/utils';
+import { useTranslations } from 'next-intl';
 
 const CONTAINER_TEMPLATES = [
     {
         name: 'PostgreSQL',
         icon: Database,
-        description: 'Base de données relationnelle',
+        descriptionKey: 'templatePostgres' as const,
         category: 'Database',
         config: {
             name: 'postgres',
@@ -79,7 +80,7 @@ const CONTAINER_TEMPLATES = [
     {
         name: 'Redis',
         icon: Circle,
-        description: 'Cache et base de données en mémoire',
+        descriptionKey: 'templateRedis' as const,
         category: 'Cache',
         config: {
             name: 'redis',
@@ -93,7 +94,7 @@ const CONTAINER_TEMPLATES = [
     {
         name: 'MySQL',
         icon: MySQL,
-        description: 'Base de données relationnelle',
+        descriptionKey: 'templateMysql' as const,
         category: 'Database',
         config: {
             name: 'mysql',
@@ -112,7 +113,7 @@ const CONTAINER_TEMPLATES = [
     {
         name: 'MongoDB',
         icon: Leaf,
-        description: 'Base de données NoSQL',
+        descriptionKey: 'templateMongodb' as const,
         category: 'Database',
         config: {
             name: 'mongodb',
@@ -134,6 +135,7 @@ interface CreateContainerProps {
 
 export default function CreateContainer({ listImages }: CreateContainerProps) {
     const router = useRouter();
+    const t = useTranslations('docker.createContainer');
 
     const searchParams = useSearchParams();
     const imageFromUrl = searchParams.get('image') || '';
@@ -202,10 +204,10 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                     </div>
                     <div>
                         <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                            Nouveau conteneur
+                            {t('title')}
                         </h1>
                         <p className="text-muted-foreground text-sm">
-                            Créer et configurer un nouveau conteneur Docker
+                            {t('description')}
                         </p>
                     </div>
                 </div>
@@ -218,7 +220,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                         onClick={router.back}
                         disabled={isSubmitting}
                     >
-                        Retour
+                        {t('back')}
                     </Button>
                     <Button
                         type="submit"
@@ -227,7 +229,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                         disabled={isSubmitting}
                         onClick={handleSubmitWithAction}
                     >
-                        {isSubmitting ? 'Création en cours...' : 'Créer le conteneur'}
+                        {isSubmitting ? t('creating') : t('createButton')}
                     </Button>
                 </div>
             </div>
@@ -237,9 +239,9 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                     <div className="space-y-5 px-5 pb-5">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Templates</CardTitle>
+                                <CardTitle>{t('templates')}</CardTitle>
                                 <CardDescription>
-                                    Cliquez sur une template pour pré-remplir le formulaire
+                                    {t('templatesDescription')}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -283,7 +285,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                                     {template.name}
                                                 </h3>
                                                 <p className="text-muted-foreground line-clamp-1 text-xs">
-                                                    {template.description}
+                                                    {t(template.descriptionKey)}
                                                 </p>
                                             </div>
                                         </CardContent>
@@ -294,9 +296,9 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
 
                         <Card>
                             <CardHeader>
-                                <CardTitle>Configuration de base</CardTitle>
+                                <CardTitle>{t('basicConfig')}</CardTitle>
                                 <CardDescription>
-                                    Informations principales du conteneur
+                                    {t('basicConfigDescription')}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
@@ -305,12 +307,12 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                     name="name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Nom du conteneur</FormLabel>
+                                            <FormLabel>{t('containerName')}</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="mon-conteneur" {...field} />
+                                                <Input placeholder={t('containerNamePlaceholder')} {...field} />
                                             </FormControl>
                                             <FormDescription>
-                                                Un nom unique pour identifier le conteneur
+                                                {t('containerNameDescription')}
                                             </FormDescription>
                                             <FormMessage />
                                         </FormItem>
@@ -322,18 +324,18 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                     name="image"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Image Docker</FormLabel>
+                                            <FormLabel>{t('dockerImage')}</FormLabel>
                                             <FormControl>
                                                 <InputAutoComplete
                                                     options={listImages}
-                                                    heading={'Available images'}
+                                                    heading={t('availableImages')}
                                                     autoComplete="off"
                                                     placeholder="postgres:latest"
                                                     {...field}
                                                 />
                                             </FormControl>
                                             <FormDescription>
-                                                L'image Docker à utiliser (ex: postgres:15)
+                                                {t('dockerImageDescription')}
                                             </FormDescription>
                                             <FormMessage />
                                         </FormItem>
@@ -347,7 +349,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    Hostname <Optional />
+                                                    {t('hostname')} <Optional />
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input placeholder="mon-app" {...field} />
@@ -363,7 +365,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    Réseau <Optional />
+                                                    {t('network')} <Optional />
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input placeholder="bridge" {...field} />
@@ -379,24 +381,24 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                     name="restart"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Politique de redémarrage</FormLabel>
+                                            <FormLabel>{t('restartPolicy')}</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="Sélectionner une politique" />
+                                                        <SelectValue placeholder={t('selectPolicy')} />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    <SelectItem value="no">Jamais</SelectItem>
-                                                    <SelectItem value="always">Toujours</SelectItem>
+                                                    <SelectItem value="no">{t('restartNever')}</SelectItem>
+                                                    <SelectItem value="always">{t('restartAlways')}</SelectItem>
                                                     <SelectItem value="on-failure">
-                                                        En cas d'échec
+                                                        {t('restartOnFailure')}
                                                     </SelectItem>
                                                     <SelectItem value="unless-stopped">
-                                                        Sauf arrêt manuel
+                                                        {t('restartUnlessStopped')}
                                                     </SelectItem>
                                                 </SelectContent>
                                             </Select>
@@ -414,11 +416,10 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                                 <Label className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
                                                     <div className="flex flex-col gap-0.5">
                                                         <span className="text-base">
-                                                            Suppression automatique
+                                                            {t('autoRemove')}
                                                         </span>
                                                         <FormDescription className="m-0">
-                                                            Supprimer le conteneur automatiquement
-                                                            après arrêt
+                                                            {t('autoRemoveDescription')}
                                                         </FormDescription>
                                                     </div>
                                                     <FormControl>
@@ -440,11 +441,10 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                                 <Label className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
                                                     <div className="flex flex-col gap-0.5">
                                                         <span className="text-base">
-                                                            Mode privilégié
+                                                            {t('privilegedMode')}
                                                         </span>
                                                         <FormDescription className="m-0">
-                                                            Donner des privilèges étendus au
-                                                            conteneur
+                                                            {t('privilegedModeDescription')}
                                                         </FormDescription>
                                                     </div>
                                                     <FormControl>
@@ -465,9 +465,9 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                             <CardHeader>
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <CardTitle>Ports</CardTitle>
+                                        <CardTitle>{t('ports')}</CardTitle>
                                         <CardDescription>
-                                            Mappage des ports entre l'hôte et le conteneur
+                                            {t('portsDescription')}
                                         </CardDescription>
                                     </div>
                                     <Button
@@ -483,14 +483,14 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                         variant="outline"
                                     >
                                         <Plus className="mr-2 h-4 w-4" />
-                                        Ajouter un port
+                                        {t('addPort')}
                                     </Button>
                                 </div>
                             </CardHeader>
                             <CardContent>
                                 {portsFields.length === 0 ? (
                                     <p className="text-muted-foreground py-8 text-center text-sm">
-                                        Aucun port configuré
+                                        {t('noPortsConfigured')}
                                     </p>
                                 ) : (
                                     <div className="space-y-3">
@@ -503,7 +503,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                                         <FormItem className="flex-1">
                                                             <FormControl>
                                                                 <Input
-                                                                    placeholder="Port hôte"
+                                                                    placeholder={t('hostPort')}
                                                                     {...field}
                                                                 />
                                                             </FormControl>
@@ -519,7 +519,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                                         <FormItem className="flex-1">
                                                             <FormControl>
                                                                 <Input
-                                                                    placeholder="Port conteneur"
+                                                                    placeholder={t('containerPort')}
                                                                     {...field}
                                                                 />
                                                             </FormControl>
@@ -572,9 +572,9 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                             <CardHeader>
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <CardTitle>Variables d'environnement</CardTitle>
+                                        <CardTitle>{t('envVars')}</CardTitle>
                                         <CardDescription>
-                                            Variables à injecter dans le conteneur
+                                            {t('envVarsDescription')}
                                         </CardDescription>
                                     </div>
                                     <Button
@@ -584,14 +584,14 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                         variant="outline"
                                     >
                                         <Plus className="mr-2 h-4 w-4" />
-                                        Ajouter une variable
+                                        {t('addVariable')}
                                     </Button>
                                 </div>
                             </CardHeader>
                             <CardContent>
                                 {envVarsFields.length === 0 ? (
                                     <p className="text-muted-foreground py-8 text-center text-sm">
-                                        Aucune variable d'environnement configurée
+                                        {t('noEnvVarsConfigured')}
                                     </p>
                                 ) : (
                                     <div className="space-y-3">
@@ -604,7 +604,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                                         <FormItem className="flex-1">
                                                             <FormControl>
                                                                 <Input
-                                                                    placeholder="CLÉ"
+                                                                    placeholder={t('keyPlaceholder')}
                                                                     {...field}
                                                                 />
                                                             </FormControl>
@@ -620,7 +620,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                                         <FormItem className="flex-1">
                                                             <FormControl>
                                                                 <Input
-                                                                    placeholder="valeur"
+                                                                    placeholder={t('valuePlaceholder')}
                                                                     {...field}
                                                                 />
                                                             </FormControl>
@@ -647,9 +647,9 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                             <CardHeader>
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <CardTitle>Volumes</CardTitle>
+                                        <CardTitle>{t('volumes')}</CardTitle>
                                         <CardDescription>
-                                            Montage de volumes entre l'hôte et le conteneur
+                                            {t('volumesDescription')}
                                         </CardDescription>
                                     </div>
                                     <Button
@@ -665,14 +665,14 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                         variant="outline"
                                     >
                                         <Plus className="mr-2 h-4 w-4" />
-                                        Ajouter un volume
+                                        {t('addVolume')}
                                     </Button>
                                 </div>
                             </CardHeader>
                             <CardContent>
                                 {volumesFields.length === 0 ? (
                                     <p className="text-muted-foreground py-8 text-center text-sm">
-                                        Aucun volume configuré
+                                        {t('noVolumesConfigured')}
                                     </p>
                                 ) : (
                                     <div className="space-y-3">
@@ -685,7 +685,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                                         <FormItem className="flex-1">
                                                             <FormControl>
                                                                 <Input
-                                                                    placeholder="/chemin/hôte"
+                                                                    placeholder={t('hostPath')}
                                                                     {...field}
                                                                 />
                                                             </FormControl>
@@ -701,7 +701,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                                         <FormItem className="flex-1">
                                                             <FormControl>
                                                                 <Input
-                                                                    placeholder="/chemin/conteneur"
+                                                                    placeholder={t('containerPath')}
                                                                     {...field}
                                                                 />
                                                             </FormControl>
@@ -723,7 +723,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                                                         }
                                                                     />
                                                                     <Label className="text-xs">
-                                                                        RO
+                                                                        {t('readOnly')}
                                                                     </Label>
                                                                 </div>
                                                             </FormControl>

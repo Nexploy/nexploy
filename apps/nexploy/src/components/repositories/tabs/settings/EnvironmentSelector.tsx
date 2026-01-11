@@ -14,6 +14,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
+import { useTranslations } from 'next-intl';
 
 interface EnvironmentSelectorProps {
     repository: Repository & { environment?: Environment | null };
@@ -21,6 +22,7 @@ interface EnvironmentSelectorProps {
 
 export function EnvironmentSelector({ repository }: EnvironmentSelectorProps) {
     const { environments } = useEnvironmentStore();
+    const t = useTranslations('repository.settings');
 
     const bindUpdateEnvironmentAction = updateEnvironmentAction.bind(null, repository.id);
     const { form, action } = useHookFormAction(
@@ -36,12 +38,12 @@ export function EnvironmentSelector({ repository }: EnvironmentSelectorProps) {
                 onSuccess: ({ data }) => {
                     if (data) {
                         form.reset({ environmentId: data.environmentId });
-                        toast.success(`Environnement changé vers "${data.environmentName}"`);
+                        toast.success(t('environmentChangedTo', { name: data.environmentName }));
                     }
                 },
                 onError: () => {
                     form.setValue('environmentId', repository.environmentId);
-                    toast.error("Erreur lors du changement d'environnement");
+                    toast.error(t('environmentChangeError'));
                 },
             },
         },
@@ -60,9 +62,9 @@ export function EnvironmentSelector({ repository }: EnvironmentSelectorProps) {
     return (
         <div className="flex items-center justify-between rounded-lg border p-4">
             <div className="flex flex-col gap-0.5">
-                <span className="text-base">Environnement</span>
+                <span className="text-base">{t('environment')}</span>
                 <p className="text-muted-foreground text-sm">
-                    Environnement Docker cible pour le déploiement
+                    {t('environmentDescription')}
                 </p>
             </div>
             <Select
@@ -72,9 +74,9 @@ export function EnvironmentSelector({ repository }: EnvironmentSelectorProps) {
             >
                 <SelectTrigger className="w-48">
                     {isLoading ? (
-                        <span className="text-muted-foreground">Chargement...</span>
+                        <span className="text-muted-foreground">{t('loading')}</span>
                     ) : (
-                        <SelectValue placeholder="Sélectionner" />
+                        <SelectValue placeholder={t('select')} />
                     )}
                 </SelectTrigger>
                 <SelectContent>
@@ -83,7 +85,7 @@ export function EnvironmentSelector({ repository }: EnvironmentSelectorProps) {
                             <div className="flex items-center gap-2">
                                 <span>{env.name}</span>
                                 {env.isDefault && (
-                                    <span className="text-muted-foreground text-xs">(défaut)</span>
+                                    <span className="text-muted-foreground text-xs">{t('default')}</span>
                                 )}
                             </div>
                         </SelectItem>

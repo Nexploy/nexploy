@@ -9,6 +9,7 @@ import { onStartBuild } from '@/actions/repository/builds/startBuild.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { BuildOptionsDialog } from './BuildOptionsDialog';
 import { ButtonGroup } from '@workspace/ui/components/button-group';
+import { useTranslations } from 'next-intl';
 
 interface DeployButtonProps extends ComponentProps<typeof Button> {
     repositoryId: string;
@@ -24,9 +25,11 @@ export function RunBuildButton({
     mode = 'all',
     ...props
 }: DeployButtonProps) {
+    const t = useTranslations('repository.builds');
+
     const { execute, isPending } = useAction(onStartBuild, {
         onSuccess: () => {
-            toast.success('Build started successfully');
+            toast.success(t('startSuccess'));
         },
     });
 
@@ -39,8 +42,8 @@ export function RunBuildButton({
 
     const handleOpenBuildOptions = () => {
         openDialog({
-            title: 'Options de build',
-            description: 'Configurez les paramètres de build',
+            title: t('buildOptions'),
+            description: t('buildOptionsDescription'),
             content: (
                 <BuildOptionsDialog
                     onSubmit={({ commitHash }) => {
@@ -58,7 +61,7 @@ export function RunBuildButton({
         <ButtonGroup className="flex items-center gap-0.5">
             <Button {...props} onClick={(e) => handleDeploy(e)} disabled={isPending}>
                 {isPending ? <Loader2 className="animate-spin" /> : <Rocket />}
-                {showText && (isPending ? 'Building...' : 'Run build')}
+                {showText && (isPending ? t('building') : t('runBuild'))}
             </Button>
             {mode === 'all' && (
                 <Button
@@ -67,7 +70,7 @@ export function RunBuildButton({
                     className="px-2"
                     disabled={isPending}
                     size={'icon'}
-                    aria-label="Build options"
+                    aria-label={t('buildOptions')}
                 >
                     <Settings className="size-4" />
                 </Button>

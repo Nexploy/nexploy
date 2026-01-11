@@ -26,12 +26,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
+import { useTranslations } from 'next-intl';
 
 export function NetworkForm() {
     const { closeDialog } = useConfirmationDialogStore();
     const { onNetworkChange, networkChanges } = useContainerChangesStore();
     const networks = useNetworkStore((state) => state.networks);
     const container = useContainerStore((state) => state.container);
+    const t = useTranslations('docker.forms');
 
     const form = useForm<ContainerNetworkForm>({
         resolver: zodResolver(containerNetworkSchema),
@@ -72,11 +74,11 @@ export function NetworkForm() {
                     name="networkName"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Réseau</FormLabel>
+                            <FormLabel>{t('network.network')}</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Sélectionner un réseau" />
+                                        <SelectValue placeholder={t('network.selectNetwork')} />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
@@ -100,7 +102,7 @@ export function NetworkForm() {
                 <DialogFooter className="flex !justify-between pt-4">
                     <div className="flex flex-1 flex-row justify-end gap-2">
                         <DialogClose asChild>
-                            <Button variant="outline">Annuler</Button>
+                            <Button variant="outline">{t('cancel')}</Button>
                         </DialogClose>
                         <Button
                             className="flex-1 sm:flex-0"
@@ -108,7 +110,7 @@ export function NetworkForm() {
                             disabled={!form.formState.isDirty}
                             icon={Plus}
                         >
-                            Ajouter
+                            {t('add')}
                         </Button>
                     </div>
                 </DialogFooter>

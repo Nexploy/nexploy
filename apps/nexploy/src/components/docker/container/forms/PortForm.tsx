@@ -27,10 +27,12 @@ import { DialogClose, DialogFooter } from '@workspace/ui/components/dialog';
 import { Plus, Save, Trash } from 'lucide-react';
 import { PortFormProps } from '@workspace/typescript-interface/docker/docker.port';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
+import { useTranslations } from 'next-intl';
 
 export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
     const { closeDialog } = useConfirmationDialogStore();
     const { onPortChange } = useContainerChangesStore();
+    const t = useTranslations('docker.forms');
 
     const form = useForm<ContainerPortForm>({
         resolver: zodResolver(containerPortSchema),
@@ -89,7 +91,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                     name="privatePort"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Port conteneur *</FormLabel>
+                            <FormLabel>{t('port.containerPort')}</FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
@@ -111,7 +113,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                     name="publicPort"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Port hôte</FormLabel>
+                            <FormLabel>{t('port.hostPort')}</FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
@@ -125,8 +127,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                                 />
                             </FormControl>
                             <FormDescription className="text-xs">
-                                Optionnel. Laissez vide pour exposer uniquement dans le réseau
-                                Docker.
+                                {t('port.hostPortDescription')}
                             </FormDescription>
                             <FormMessage />
                         </FormItem>
@@ -138,11 +139,11 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                     name="type"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Protocole</FormLabel>
+                            <FormLabel>{t('port.protocol')}</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Sélectionner un protocole" />
+                                        <SelectValue placeholder={t('port.selectProtocol')} />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
@@ -168,7 +169,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                     )}
                     <div className="flex flex-1 flex-row justify-end gap-2">
                         <DialogClose asChild>
-                            <Button variant="outline">Annuler</Button>
+                            <Button variant="outline">{t('cancel')}</Button>
                         </DialogClose>
                         <Button
                             className="flex-1 sm:flex-0"
@@ -176,7 +177,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                             disabled={!form.formState.isDirty}
                             icon={mode === 'add' ? Plus : Save}
                         >
-                            {mode === 'add' ? 'Ajouter' : 'Modifier'}
+                            {mode === 'add' ? t('add') : t('edit')}
                         </Button>
                     </div>
                 </DialogFooter>

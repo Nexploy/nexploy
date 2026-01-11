@@ -22,16 +22,18 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import { Repository } from 'generated/client';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+import { useTranslations } from 'next-intl';
 
 interface DangerZoneProps {
     repository: Repository;
 }
 export function DangerZone({ repository }: DangerZoneProps) {
     const [confirmName, setConfirmName] = useState('');
+    const t = useTranslations('repository.settings.dangerZone');
 
     const deleteRepository = useAction(deleteRepositoryAction, {
         onError: ({ error }) => {
-            toast.error(error.serverError || 'Erreur lors de la suppression');
+            toast.error(error.serverError || t('deleteError'));
         },
     });
 
@@ -46,27 +48,26 @@ export function DangerZone({ repository }: DangerZoneProps) {
             <CardHeaderWithIcon
                 isDestructive
                 icon={Trash2}
-                title={'Zone de danger'}
-                description={'Actions irréversibles sur ce repository'}
+                title={t('title')}
+                description={t('description')}
             />
             <CardContent>
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
-                        <Button variant="destructive">Supprimer le repository</Button>
+                        <Button variant="destructive">{t('deleteButton')}</Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                         <AlertDialogHeader>
-                            <AlertDialogTitle>Supprimer le repository ?</AlertDialogTitle>
+                            <AlertDialogTitle>{t('deleteTitle')}</AlertDialogTitle>
                             <AlertDialogDescription>
-                                Cette action est irréversible. Tous les builds, logs et
-                                configurations seront supprimés définitivement.
+                                {t('deleteDescription')}
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <div className="py-4">
                             <Label htmlFor="confirm-name">
-                                Tapez{' '}
-                                <span className="font-mono font-semibold">{repository.name}</span>{' '}
-                                pour confirmer
+                                {t.rich('confirmLabel', {
+                                    name: repository.name,
+                                })}
                             </Label>
                             <Input
                                 id="confirm-name"
@@ -78,7 +79,7 @@ export function DangerZone({ repository }: DangerZoneProps) {
                         </div>
                         <AlertDialogFooter>
                             <AlertDialogCancel onClick={() => setConfirmName('')}>
-                                Annuler
+                                {t('cancel')}
                             </AlertDialogCancel>
                             <AlertDialogAction
                                 onClick={handleDelete}
@@ -93,7 +94,7 @@ export function DangerZone({ repository }: DangerZoneProps) {
                                 ) : (
                                     <Trash2 />
                                 )}
-                                Supprimer
+                                {t('delete')}
                             </AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>

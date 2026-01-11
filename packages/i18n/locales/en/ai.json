@@ -1,47 +1,47 @@
 {
-  "title": "AI Assistant",
-  "placeholder": "Ask me anything...",
-  "send": "Send",
-  "thinking": "Thinking...",
-  "commandGroups": {
-    "navigation": "Navigation",
-    "containers": "Containers",
-    "stacks": "Stacks",
-    "repositories": "Repositories",
-    "general": "General"
-  },
-  "suggestions": {
-    "deployRepository": "Deploy a repository",
-    "checkContainerStatus": "Check container status",
-    "viewLogs": "View logs",
-    "createNetwork": "Create a network"
-  },
-  "errors": {
-    "failedToProcess": "Failed to process your request",
-    "tryAgain": "Please try again"
-  },
-  "command": {
-    "searchPlaceholder": "Type a command or search...",
-    "askAi": "Ask AI: {query}",
-    "aiAssistant": "AI Assistant",
-    "quickActions": "Quick Actions",
-    "system": "System",
-    "createContainer": "Create a container",
-    "pullImage": "Pull an image",
-    "createVolume": "Create a volume",
-    "startAll": "Start all containers",
-    "stopAll": "Stop all containers",
-    "removeStopped": "Remove stopped containers",
-    "viewStacks": "View stacks",
-    "settings": "Settings",
-    "openTerminal": "Open terminal"
-  },
-  "chat": {
-    "backToCommands": "Back to Commands",
-    "stopGenerating": "Stop generating",
-    "helpMessage": "How can I help you with your Docker infrastructure today?",
-    "helpExample": "Try: \"Create a redis container named cache\"",
-    "inputPlaceholder": "Describe what you want to do...",
-    "thinking": "Thinking..."
-  }
+    "title": "AI Assistant",
+    "placeholder": "Ask me anything...",
+    "send": "Send",
+    "thinking": "Thinking...",
+    "commandGroups": {
+        "navigation": "Navigation",
+        "containers": "Containers",
+        "stacks": "Stacks",
+        "repositories": "Repositories",
+        "general": "General"
+    },
+    "suggestions": {
+        "deployRepository": "Deploy a repository",
+        "checkContainerStatus": "Check container status",
+        "viewLogs": "View logs",
+        "createNetwork": "Create a network"
+    },
+    "errors": {
+        "failedToProcess": "Failed to process your request",
+        "tryAgain": "Please try again"
+    },
+    "command": {
+        "searchPlaceholder": "Type a command or search...",
+        "askAi": "Ask AI: {query}",
+        "aiAssistant": "AI Assistant",
+        "quickActions": "Quick Actions",
+        "system": "System",
+        "createContainer": "Create a container",
+        "pullImage": "Pull an image",
+        "createVolume": "Create a volume",
+        "startAll": "Start all containers",
+        "stopAll": "Stop all containers",
+        "removeStopped": "Remove stopped containers",
+        "viewStacks": "View stacks",
+        "settings": "Settings",
+        "openTerminal": "Open terminal"
+    },
+    "chat": {
+        "backToCommands": "Back to Commands",
+        "stopGenerating": "Stop generating",
+        "helpMessage": "How can I help you with your Docker infrastructure today?",
+        "helpExample": "Try: \"Create a redis container named cache\"",
+        "inputPlaceholder": "Describe what you want to do...",
+        "thinking": "Thinking..."
+    }
 }

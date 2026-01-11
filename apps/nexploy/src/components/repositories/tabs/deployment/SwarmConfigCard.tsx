@@ -30,12 +30,14 @@ import { Separator } from '@workspace/ui/components/separator';
 import { Button } from '@workspace/ui/components/button';
 import { useState } from 'react';
 import { Badge } from '@workspace/ui/components/badge';
+import { useTranslations } from 'next-intl';
 
 interface SwarmConfigCardProps {
     form: UseFormReturn<DeploymentSettingsForm>;
 }
 
 export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
+    const t = useTranslations('repository.swarmConfig');
     const [newConstraint, setNewConstraint] = useState('');
     const constraints = form.watch('placementConstraints');
 
@@ -61,9 +63,9 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                         <Settings2 className="text-primary size-5" />
                     </div>
                     <div className="flex flex-col">
-                        <CardTitle>Configuration Swarm</CardTitle>
+                        <CardTitle>{t('title')}</CardTitle>
                         <CardDescription>
-                            Paramètres de réplication, mise à jour et redémarrage
+                            {t('description')}
                         </CardDescription>
                     </div>
                 </div>
@@ -76,7 +78,7 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                     name="replicas"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Nombre de réplicas</FormLabel>
+                            <FormLabel>{t('replicas')}</FormLabel>
                             <FormControl>
                                 <Input
                                     type="number"
@@ -87,7 +89,7 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                                 />
                             </FormControl>
                             <FormDescription>
-                                Nombre d'instances de votre application à exécuter
+                                {t('replicasDescription')}
                             </FormDescription>
                             <FormMessage />
                         </FormItem>
@@ -100,7 +102,7 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
                         <RefreshCw className="size-4" />
-                        <h4 className="font-medium">Configuration des mises à jour</h4>
+                        <h4 className="font-medium">{t('updateSection')}</h4>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -109,7 +111,7 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                             name="updateParallelism"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Parallélisme</FormLabel>
+                                    <FormLabel>{t('parallelism')}</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"
@@ -122,7 +124,7 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                                         />
                                     </FormControl>
                                     <FormDescription>
-                                        Nombre de tâches mises à jour simultanément
+                                        {t('simultaneousTasksDescription')}
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
@@ -134,11 +136,11 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                             name="updateDelay"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Délai</FormLabel>
+                                    <FormLabel>{t('delay')}</FormLabel>
                                     <FormControl>
                                         <Input placeholder="10s" {...field} />
                                     </FormControl>
-                                    <FormDescription>Délai entre chaque mise à jour</FormDescription>
+                                    <FormDescription>{t('delayBetweenUpdates')}</FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -149,7 +151,7 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                             name="updateFailureAction"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Action en cas d'échec</FormLabel>
+                                    <FormLabel>{t('failureAction')}</FormLabel>
                                     <Select onValueChange={field.onChange} value={field.value}>
                                         <FormControl>
                                             <SelectTrigger>
@@ -157,9 +159,9 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            <SelectItem value="PAUSE">Pause</SelectItem>
-                                            <SelectItem value="CONTINUE">Continuer</SelectItem>
-                                            <SelectItem value="ROLLBACK">Rollback</SelectItem>
+                                            <SelectItem value="PAUSE">{t('pause')}</SelectItem>
+                                            <SelectItem value="CONTINUE">{t('continue')}</SelectItem>
+                                            <SelectItem value="ROLLBACK">{t('rollback')}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
@@ -172,7 +174,7 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                             name="updateOrder"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Ordre de mise à jour</FormLabel>
+                                    <FormLabel>{t('updateOrder')}</FormLabel>
                                     <Select onValueChange={field.onChange} value={field.value}>
                                         <FormControl>
                                             <SelectTrigger>
@@ -181,10 +183,10 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                                         </FormControl>
                                         <SelectContent>
                                             <SelectItem value="STOP_FIRST">
-                                                Arrêter d'abord
+                                                {t('stopFirst')}
                                             </SelectItem>
                                             <SelectItem value="START_FIRST">
-                                                Démarrer d'abord
+                                                {t('startFirst')}
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
@@ -201,7 +203,7 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
                         <RotateCcw className="size-4" />
-                        <h4 className="font-medium">Configuration du rollback</h4>
+                        <h4 className="font-medium">{t('rollbackSection')}</h4>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -210,7 +212,7 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                             name="rollbackParallelism"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Parallélisme</FormLabel>
+                                    <FormLabel>{t('parallelism')}</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"
@@ -232,7 +234,7 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                             name="rollbackDelay"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Délai</FormLabel>
+                                    <FormLabel>{t('delay')}</FormLabel>
                                     <FormControl>
                                         <Input placeholder="10s" {...field} />
                                     </FormControl>
@@ -246,7 +248,7 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                             name="rollbackFailureAction"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Action en cas d'échec</FormLabel>
+                                    <FormLabel>{t('failureAction')}</FormLabel>
                                     <Select onValueChange={field.onChange} value={field.value}>
                                         <FormControl>
                                             <SelectTrigger>
@@ -254,8 +256,8 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            <SelectItem value="PAUSE">Pause</SelectItem>
-                                            <SelectItem value="CONTINUE">Continuer</SelectItem>
+                                            <SelectItem value="PAUSE">{t('pause')}</SelectItem>
+                                            <SelectItem value="CONTINUE">{t('continue')}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
@@ -269,7 +271,7 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
 
                 {/* Restart Policy */}
                 <div className="space-y-4">
-                    <h4 className="font-medium">Politique de redémarrage</h4>
+                    <h4 className="font-medium">{t('restartPolicy')}</h4>
 
                     <div className="grid grid-cols-2 gap-4">
                         <FormField
@@ -277,7 +279,7 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                             name="restartCondition"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Condition</FormLabel>
+                                    <FormLabel>{t('condition')}</FormLabel>
                                     <Select onValueChange={field.onChange} value={field.value}>
                                         <FormControl>
                                             <SelectTrigger>
@@ -285,9 +287,9 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            <SelectItem value="NONE">Jamais</SelectItem>
-                                            <SelectItem value="ON_FAILURE">En cas d'échec</SelectItem>
-                                            <SelectItem value="ANY">Toujours</SelectItem>
+                                            <SelectItem value="NONE">{t('never')}</SelectItem>
+                                            <SelectItem value="ON_FAILURE">{t('onFailure')}</SelectItem>
+                                            <SelectItem value="ANY">{t('always')}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
@@ -300,7 +302,7 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                             name="restartDelay"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Délai</FormLabel>
+                                    <FormLabel>{t('delay')}</FormLabel>
                                     <FormControl>
                                         <Input placeholder="5s" {...field} />
                                     </FormControl>
@@ -314,7 +316,7 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                             name="restartMaxAttempts"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Tentatives max</FormLabel>
+                                    <FormLabel>{t('maxAttempts')}</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"
@@ -336,7 +338,7 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
                             name="restartWindow"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Fenêtre de temps</FormLabel>
+                                    <FormLabel>{t('timeWindow')}</FormLabel>
                                     <FormControl>
                                         <Input placeholder="120s" {...field} />
                                     </FormControl>
@@ -351,9 +353,9 @@ export function SwarmConfigCard({ form }: SwarmConfigCardProps) {
 
                 {/* Placement Constraints */}
                 <div className="space-y-4">
-                    <h4 className="font-medium">Contraintes de placement</h4>
+                    <h4 className="font-medium">{t('placementConstraints')}</h4>
                     <FormDescription>
-                        Contraintes pour le placement des tâches (ex: node.role==manager)
+                        {t('placementConstraintsDescription')}
                     </FormDescription>
 
                     <div className="flex gap-2">

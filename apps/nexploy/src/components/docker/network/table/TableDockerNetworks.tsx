@@ -18,8 +18,8 @@ import {
     TableHeader,
     TableRow,
 } from '@workspace/ui/components/table';
-import React, { useState } from 'react';
-import { columnsTableNetworks } from '@/components/docker/network/table/ColumnsDockerNetworks';
+import React, { useMemo, useState } from 'react';
+import { getColumnsTableNetworks } from '@/components/docker/network/table/ColumnsDockerNetworks';
 import { useNetworkStore } from '@/stores/docker/useNetworkStore';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
 import { Input } from '@workspace/ui/components/input';
@@ -40,6 +40,7 @@ import {
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 const globalFilterFn: FilterFn<Network> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -69,13 +70,18 @@ export function TableDockerNetworks() {
     const networks = useNetworkStore((state) => state.networks);
     const lastUpdate = useNetworkStore((state) => state.lastUpdate);
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
+    const t = useTranslations('docker.tables');
+    const tDocker = useTranslations('docker');
+    const tCommon = useTranslations('common');
+
+    const columns = useMemo(() => getColumnsTableNetworks(t), [t]);
 
     const isLoading = !networks.length && !lastUpdate;
     const isEmpty = !networks.length && !!lastUpdate;
 
     const table = useReactTable({
         data: networks,
-        columns: columnsTableNetworks,
+        columns,
         getRowId: (originalRow: Network) => originalRow.id,
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
@@ -108,10 +114,10 @@ export function TableDockerNetworks() {
     const handleDeleteAction = () => {
         const networkIds = Object.keys(rowSelection);
         openAlertDialog({
-            title: 'Remove Networks',
-            description: `Are you sure you want to remove ${networkIds.length} network(s)?`,
-            cancelLabel: 'Cancel',
-            actionLabel: 'Remove',
+            title: tDocker('deleteNetwork'),
+            description: tDocker('confirmDeleteNetwork'),
+            cancelLabel: tCommon('cancel'),
+            actionLabel: tCommon('remove'),
             onAction: async () => {
                 await onNetworkAction({ networkIds, action: 'delete' });
                 table.resetRowSelection();
@@ -124,10 +130,10 @@ export function TableDockerNetworks() {
 
     const getUseTooltipContent = () => {
         if (hasBuiltinSelected) {
-            return 'Cannot remove built-in network';
+            return tCommon('cannotRemoveBuiltinNetwork');
         }
         if ((selectedNetwork?.containers?.length || 0) > 0) {
-            return 'Disconnect all containers first';
+            return tCommon('disconnectContainersFirst');
         }
         return;
     };
@@ -137,7 +143,7 @@ export function TableDockerNetworks() {
             <div className={'flex justify-between'}>
                 <Input
                     className={'w-1/5 shadow-xs'}
-                    placeholder="Search..."
+                    placeholder={tCommon('searchPlaceholder')}
                     value={globalFilter ?? ''}
                     onChange={(e) => setGlobalFilter(e.target.value)}
                 />
@@ -151,7 +157,7 @@ export function TableDockerNetworks() {
                                     disabled={isDeleteDisabled}
                                 >
                                     <Trash />
-                                    Remove{' '}
+                                    {tCommon('remove')}{' '}
                                     {!!numberOfSelectedRows && (
                                         <Badge variant={'secondary'} className={'rounded-full'}>
                                             {numberOfSelectedRows}
@@ -169,7 +175,7 @@ export function TableDockerNetworks() {
                     <Button asChild>
                         <Link href={'/docker/networks/create-network'}>
                             <Plus />
-                            Create Network
+                            {tDocker('createNetwork')}
                         </Link>
                     </Button>
                 </div>
@@ -210,7 +216,7 @@ export function TableDockerNetworks() {
                                     colSpan={table.getAllColumns().length}
                                     className="py-6 text-center"
                                 >
-                                    No networks found.
+                                    {tDocker('noNetworks')}
                                 </TableCell>
                             </TableRow>
                         ) : !isLoading && table.getRowModel().rows.length === 0 ? (
@@ -219,7 +225,7 @@ export function TableDockerNetworks() {
                                     colSpan={table.getAllColumns().length}
                                     className="py-6 text-center"
                                 >
-                                    No networks match your search.
+                                    {tCommon('noMatchSearch')}
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -245,7 +251,9 @@ export function TableDockerNetworks() {
             </div>
             <div className={'flex items-center justify-between'}>
                 <div className={'flex items-center gap-2'}>
-                    <span className="text-muted-foreground text-sm">Networks per page:</span>
+                    <span className="text-muted-foreground text-sm">
+                        {tDocker('network')} {tCommon('perPage')}:
+                    </span>
                     <Select
                         value={pageSize === 'all' ? 'all' : String(pageSize)}
                         onValueChange={(value) => {
@@ -260,17 +268,17 @@ export function TableDockerNetworks() {
                         }}
                     >
                         <SelectTrigger size={'sm'} className="w-24">
-                            <SelectValue placeholder="Networks per page" />
+                            <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectLabel>Size</SelectLabel>
+                                <SelectLabel>{tCommon('size')}</SelectLabel>
                                 {[10, 25, 50, 100].map((size) => (
                                     <SelectItem key={size} value={`${size}`}>
                                         {size}
                                     </SelectItem>
                                 ))}
-                                <SelectItem value="all">All</SelectItem>
+                                <SelectItem value="all">{tCommon('all')}</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -279,8 +287,10 @@ export function TableDockerNetworks() {
                 {!isShowingAll && (
                     <div className={'flex items-center gap-2'}>
                         <span className="text-muted-foreground text-sm">
-                            Page {table.getState().pagination.pageIndex + 1} of{' '}
-                            {table.getPageCount()}
+                            {tCommon('pageOf', {
+                                current: table.getState().pagination.pageIndex + 1,
+                                total: table.getPageCount(),
+                            })}
                         </span>
                         <div className={'flex gap-1'}>
                             <Button
@@ -290,7 +300,7 @@ export function TableDockerNetworks() {
                                 disabled={!table.getCanPreviousPage()}
                             >
                                 <ChevronLeft className={'h-4 w-4'} />
-                                Previous
+                                {tCommon('previous')}
                             </Button>
                             <Button
                                 variant={'outline'}
@@ -298,7 +308,7 @@ export function TableDockerNetworks() {
                                 onClick={() => table.nextPage()}
                                 disabled={!table.getCanNextPage()}
                             >
-                                Next
+                                {tCommon('next')}
                                 <ChevronRight className={'h-4 w-4'} />
                             </Button>
                         </div>

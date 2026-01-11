@@ -28,12 +28,14 @@ import { branchSchema } from '@workspace/schemas-zod/repository/branch.schema';
 import { updateBranchAction } from '@/actions/repository/settings/updateBranch.action';
 import { useEffect } from 'react';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+import { useTranslations } from 'next-intl';
 
 interface ChangeBranchProps {
     repository: Repository;
 }
 
 export function ChangeBranch({ repository }: ChangeBranchProps) {
+    const t = useTranslations('repository.settings.branch');
     const { data: branches, isLoading: isLoadingBranches } = useSWR<GitBranch[]>(
         `/api/git/branches?provider=${repository.gitProvider}&repoId=${repository.gitId}&owner=${repository.name.split('/')[0]}&repoName=${repository.name.split('/')[1]}`,
         fetcherApi,
@@ -72,8 +74,8 @@ export function ChangeBranch({ repository }: ChangeBranchProps) {
         <Card>
             <CardHeaderWithIcon
                 icon={GitBranchIcon}
-                title={'Branche de déploiement'}
-                description={'Modifiez la branche utilisée pour les builds et déploiements'}
+                title={t('title')}
+                description={t('description')}
             />
             <CardContent>
                 <Form {...form}>
@@ -83,7 +85,7 @@ export function ChangeBranch({ repository }: ChangeBranchProps) {
                             name="branch"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Branche</FormLabel>
+                                    <FormLabel>{t('label')}</FormLabel>
                                     <Select
                                         {...field}
                                         onValueChange={field.onChange}
@@ -93,7 +95,7 @@ export function ChangeBranch({ repository }: ChangeBranchProps) {
                                             <SelectTrigger className={'min-w-32'}>
                                                 {isLoadingBranches ? (
                                                     <span className="text-muted-foreground">
-                                                        Chargement...
+                                                        {t('loading')}
                                                     </span>
                                                 ) : (
                                                     <SelectValue />
@@ -120,7 +122,7 @@ export function ChangeBranch({ repository }: ChangeBranchProps) {
                                     action.isPending || isLoadingBranches || !form.formState.isDirty
                                 }
                             >
-                                {action.isPending ? 'Enregistrement...' : 'Enregistrer'}
+                                {action.isPending ? t('saving') : t('save')}
                             </Button>
                         </div>
                     </form>

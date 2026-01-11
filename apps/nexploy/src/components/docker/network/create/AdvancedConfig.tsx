@@ -18,12 +18,14 @@ import { Button } from '@workspace/ui/components/button';
 import { useKeyValueState } from '@/hooks/useKeyValueState';
 import { UseFormReturn } from 'react-hook-form';
 import { NetworkCreateForm } from '@workspace/schemas-zod/docker/network/networkAction.schema';
+import { useTranslations } from 'next-intl';
 
 interface AdvancedConfigProps {
     form: UseFormReturn<NetworkCreateForm>;
 }
 
 export function AdvancedConfig({ form }: AdvancedConfigProps) {
+    const t = useTranslations('docker.advancedConfig');
     const optionState = useKeyValueState();
     const labelState = useKeyValueState();
 
@@ -64,8 +66,8 @@ export function AdvancedConfig({ form }: AdvancedConfigProps) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Configuration avancée</CardTitle>
-                <CardDescription>Options et métadonnées supplémentaires</CardDescription>
+                <CardTitle>{t('title')}</CardTitle>
+                <CardDescription>{t('description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 <FormField
@@ -73,7 +75,7 @@ export function AdvancedConfig({ form }: AdvancedConfigProps) {
                     name="options"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Options du driver</FormLabel>
+                            <FormLabel>{t('driverOptions')}</FormLabel>
                             <FormControl>
                                 <div className="space-y-3">
                                     <KeyValueInput
@@ -81,8 +83,8 @@ export function AdvancedConfig({ form }: AdvancedConfigProps) {
                                         value={optionState.value}
                                         onKeyChange={optionState.setKey}
                                         onValueChange={optionState.setValue}
-                                        keyPlaceholder="Clé (ex: com.docker.network.bridge.name)"
-                                        valuePlaceholder="Valeur (ex: docker0)"
+                                        keyPlaceholder={t('optionKeyPlaceholder')}
+                                        valuePlaceholder={t('optionValuePlaceholder')}
                                     />
                                     <Button
                                         type="button"
@@ -92,18 +94,18 @@ export function AdvancedConfig({ form }: AdvancedConfigProps) {
                                             !optionState.key.trim() || !optionState.value.trim()
                                         }
                                     >
-                                        Ajouter option
+                                        {t('addOption')}
                                     </Button>
                                     <KeyValueList
                                         items={field.value}
                                         onRemove={handleRemoveOption}
-                                        title="Options ajoutées :"
+                                        title={t('optionsAdded')}
                                     />
                                 </div>
                             </FormControl>
                             <FormMessage />
                             <FormDescription>
-                                Options spécifiques au driver. Exemples :{' '}
+                                {t('optionsDescription')}{' '}
                                 <code className="bg-muted rounded px-1 py-0.5 text-xs">
                                     com.docker.network.bridge.name=br0
                                 </code>
@@ -117,7 +119,7 @@ export function AdvancedConfig({ form }: AdvancedConfigProps) {
                     name="labels"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Labels</FormLabel>
+                            <FormLabel>{t('labels')}</FormLabel>
                             <FormControl>
                                 <div className="space-y-3">
                                     <KeyValueInput
@@ -125,8 +127,8 @@ export function AdvancedConfig({ form }: AdvancedConfigProps) {
                                         value={labelState.value}
                                         onKeyChange={labelState.setKey}
                                         onValueChange={labelState.setValue}
-                                        keyPlaceholder="Clé"
-                                        valuePlaceholder="Valeur"
+                                        keyPlaceholder={t('labels')}
+                                        valuePlaceholder={t('labels')}
                                     />
                                     <Button
                                         type="button"
@@ -136,18 +138,18 @@ export function AdvancedConfig({ form }: AdvancedConfigProps) {
                                             !labelState.key.trim() || !labelState.value.trim()
                                         }
                                     >
-                                        Ajouter label
+                                        {t('addLabel')}
                                     </Button>
                                     <KeyValueList
                                         items={field.value}
                                         onRemove={handleRemoveLabel}
-                                        title="Labels ajoutés :"
+                                        title={t('labelsAdded')}
                                     />
                                 </div>
                             </FormControl>
                             <FormMessage />
                             <FormDescription>
-                                Métadonnées pour organiser et identifier le réseau. Exemples :{' '}
+                                {t('labelsDescription')}{' '}
                                 <code className="bg-muted rounded px-1 py-0.5 text-xs">
                                     env=production
                                 </code>

@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { onRemoveBuild } from '@/actions/repository/builds/removeBuild.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
+import { useTranslations } from 'next-intl';
 
 interface RemoveBuildButtonProps extends ComponentProps<typeof Button> {
     buildId: string;
@@ -22,21 +23,22 @@ export function RemoveBuildButton({
     ...props
 }: RemoveBuildButtonProps) {
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
+    const t = useTranslations('repository.builds');
+    const tCommon = useTranslations('common');
 
     const { executeAsync } = useAction(onRemoveBuild, {
         onSuccess: () => {
-            toast.success('Build removed successfully');
+            toast.success(t('removeSuccess'));
             if (onSuccess) onSuccess();
         },
     });
 
     const handleRemove = () => {
         openAlertDialog({
-            title: 'Supprimer le build',
-            description:
-                'Êtes-vous sûr de vouloir supprimer ce build ? Cette action est irréversible.',
-            cancelLabel: 'Annuler',
-            actionLabel: 'Supprimer',
+            title: t('removeTitle'),
+            description: t('removeDescription'),
+            cancelLabel: tCommon('cancel'),
+            actionLabel: tCommon('delete'),
             onAction: async () => {
                 await executeAsync({ buildId });
             },
@@ -54,7 +56,7 @@ export function RemoveBuildButton({
                 className="text-destructive hover:[&_svg:not([class*='text-'])]:text-destructive [&_svg:not([class*='text-'])]:text-destructive focus:text-destructive"
             >
                 <Trash2 />
-                Remove
+                {t('remove')}
             </DropdownMenuItem>
         );
     }

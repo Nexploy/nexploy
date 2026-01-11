@@ -18,6 +18,7 @@ import {
     ContainerLabelForm,
     containerLabelSchema,
 } from '@workspace/schemas-zod/docker/container/containerLabel.schema';
+import { useTranslations } from 'next-intl';
 
 type Label = { key: string; value: string };
 
@@ -30,6 +31,7 @@ interface LabelFormProps {
 export function LabelForm({ mode, defaultLabel, originalLabel }: LabelFormProps) {
     const { closeDialog } = useConfirmationDialogStore();
     const { onLabelChange } = useContainerChangesStore();
+    const t = useTranslations('docker.forms');
 
     const form = useForm<ContainerLabelForm>({
         resolver: zodResolver(containerLabelSchema),
@@ -82,9 +84,9 @@ export function LabelForm({ mode, defaultLabel, originalLabel }: LabelFormProps)
                     name="key"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Clé</FormLabel>
+                            <FormLabel>{t('label.key')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder="com.example.label" />
+                                <Input {...field} placeholder={t('label.keyPlaceholder')} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -96,9 +98,9 @@ export function LabelForm({ mode, defaultLabel, originalLabel }: LabelFormProps)
                     name="value"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Valeur</FormLabel>
+                            <FormLabel>{t('label.value')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder="value" />
+                                <Input {...field} placeholder={t('valuePlaceholder')} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -117,7 +119,7 @@ export function LabelForm({ mode, defaultLabel, originalLabel }: LabelFormProps)
                     )}
                     <div className="flex flex-1 flex-row justify-end gap-2">
                         <DialogClose asChild>
-                            <Button variant="outline">Annuler</Button>
+                            <Button variant="outline">{t('cancel')}</Button>
                         </DialogClose>
                         <Button
                             className="flex-1 sm:flex-0"
@@ -125,7 +127,7 @@ export function LabelForm({ mode, defaultLabel, originalLabel }: LabelFormProps)
                             disabled={!form.formState.isDirty}
                             icon={mode === 'add' ? Plus : Save}
                         >
-                            {mode === 'add' ? 'Ajouter' : 'Modifier'}
+                            {mode === 'add' ? t('add') : t('edit')}
                         </Button>
                     </div>
                 </DialogFooter>

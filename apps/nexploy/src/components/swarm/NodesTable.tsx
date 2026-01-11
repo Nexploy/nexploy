@@ -17,6 +17,7 @@ import type {
     SwarmNodeAvailability,
     SwarmNodeState,
 } from '@workspace/typescript-interface/docker/swarm';
+import { useTranslations } from 'next-intl';
 
 function formatBytes(bytes: number): string {
     if (bytes === 0) return '0 B';
@@ -62,6 +63,7 @@ function getAvailabilityBadgeVariant(
 
 export function NodesTable() {
     const { nodes, isSwarmActive } = useSwarmStore();
+    const t = useTranslations('swarm');
 
     if (!isSwarmActive) {
         return null;
@@ -72,9 +74,9 @@ export function NodesTable() {
             <div className="px-5">
                 <div className="bg-muted/50 rounded-lg border p-8 text-center">
                     <Server className="text-muted-foreground mx-auto mb-4 size-12" />
-                    <h3 className="text-lg font-semibold">No nodes found</h3>
+                    <h3 className="text-lg font-semibold">{t('noNodesFound')}</h3>
                     <p className="text-muted-foreground text-sm">
-                        No nodes are currently part of this swarm.
+                        {t('noNodesDescription')}
                     </p>
                 </div>
             </div>
@@ -87,14 +89,14 @@ export function NodesTable() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Hostname</TableHead>
-                            <TableHead>Role</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Availability</TableHead>
-                            <TableHead>Address</TableHead>
-                            <TableHead>Engine</TableHead>
-                            <TableHead>Resources</TableHead>
-                            <TableHead>Labels</TableHead>
+                            <TableHead>{t('hostname')}</TableHead>
+                            <TableHead>{t('role')}</TableHead>
+                            <TableHead>{t('status')}</TableHead>
+                            <TableHead>{t('availability')}</TableHead>
+                            <TableHead>{t('address')}</TableHead>
+                            <TableHead>{t('engine')}</TableHead>
+                            <TableHead>{t('resources')}</TableHead>
+                            <TableHead>{t('labels')}</TableHead>
                             <TableHead className="w-[50px]"></TableHead>
                         </TableRow>
                     </TableHeader>

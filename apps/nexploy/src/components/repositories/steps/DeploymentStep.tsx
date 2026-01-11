@@ -1,3 +1,5 @@
+'use client';
+
 import {
     Card,
     CardContent,
@@ -24,10 +26,12 @@ import { Switch } from '@workspace/ui/components/switch';
 import { useFormContext } from 'react-hook-form';
 import { Rocket } from 'lucide-react';
 import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
+import { useTranslations } from 'next-intl';
 
 export function DeploymentStep() {
     const { control } = useFormContext();
     const { environments } = useEnvironmentStore();
+    const t = useTranslations('repository.steps.deployment');
 
     return (
         <Card>
@@ -37,8 +41,8 @@ export function DeploymentStep() {
                         <Rocket className="text-primary size-5" />
                     </div>
                     <div className={'flex flex-col'}>
-                        <CardTitle>Déploiement</CardTitle>
-                        <CardDescription>Paramètres de déploiement</CardDescription>
+                        <CardTitle>{t('title')}</CardTitle>
+                        <CardDescription>{t('description')}</CardDescription>
                     </div>
                 </div>
             </CardHeader>
@@ -48,15 +52,11 @@ export function DeploymentStep() {
                     name="environmentId"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Environnement</FormLabel>
+                            <FormLabel>{t('environment')}</FormLabel>
                             <Select {...field} onValueChange={field.onChange}>
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue
-                                            placeholder={
-                                                'Sélectionner un environnement (optionnel)'
-                                            }
-                                        />
+                                        <SelectValue placeholder={t('selectEnvironment')} />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
@@ -67,9 +67,7 @@ export function DeploymentStep() {
                                     ))}
                                 </SelectContent>
                             </Select>
-                            <FormDescription>
-                                Choisissez l'environnement Docker où ce repository sera déployé
-                            </FormDescription>
+                            <FormDescription>{t('environmentDescription')}</FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -81,9 +79,9 @@ export function DeploymentStep() {
                         <FormItem>
                             <FormLabel className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
                                 <div className="flex flex-col gap-0.5">
-                                    <span className="text-base">Déploiement automatique</span>
+                                    <span className="text-base">{t('autoDeploy')}</span>
                                     <FormDescription className="m-0">
-                                        Déployer automatiquement lors d'un push sur la branche
+                                        {t('autoDeployDescription')}
                                     </FormDescription>
                                 </div>
                                 <FormControl>

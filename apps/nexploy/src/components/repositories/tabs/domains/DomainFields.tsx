@@ -10,6 +10,7 @@ import {
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
 import { CloudflareDomainSelector } from '@/components/repositories/tabs/domains/CloudflareDomainSelector';
+import { useTranslations } from 'next-intl';
 
 interface DomainFieldsProps<T extends FieldValues> {
     form: UseFormReturn<T>;
@@ -22,6 +23,7 @@ export function DomainFields<T extends FieldValues>({
     index,
     isCloudflareConnected,
 }: DomainFieldsProps<T>) {
+    const t = useTranslations('repository.settings.domains');
     const cloudflareZoneId = form.watch(`domains.${index}.cloudflareZoneId` as Path<T>);
 
     return (
@@ -38,7 +40,7 @@ export function DomainFields<T extends FieldValues>({
                     name={`domains.${index}.host` as Path<T>}
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Host</FormLabel>
+                            <FormLabel>{t('host')}</FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
@@ -51,7 +53,7 @@ export function DomainFields<T extends FieldValues>({
                             </FormControl>
                             {cloudflareZoneId ? (
                                 <FormDescription>
-                                    Géré par la sélection de zone Cloudflare
+                                    {t('managedByCloudflare')}
                                 </FormDescription>
                             ) : (
                                 <FormMessage />
@@ -65,7 +67,7 @@ export function DomainFields<T extends FieldValues>({
                     name={`domains.${index}.path` as Path<T>}
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Path</FormLabel>
+                            <FormLabel>{t('path')}</FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
@@ -86,7 +88,7 @@ export function DomainFields<T extends FieldValues>({
                     name={`domains.${index}.internalPath` as Path<T>}
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Chemin interne</FormLabel>
+                            <FormLabel>{t('internalPath')}</FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
@@ -96,7 +98,7 @@ export function DomainFields<T extends FieldValues>({
                                 />
                             </FormControl>
                             <FormDescription>
-                                Le chemin où votre application attend les requêtes en interne
+                                {t('internalPathDescription')}
                             </FormDescription>
                         </FormItem>
                     )}
@@ -107,7 +109,7 @@ export function DomainFields<T extends FieldValues>({
                     name={`domains.${index}.containerPort` as Path<T>}
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Port du conteneur</FormLabel>
+                            <FormLabel>{t('containerPort')}</FormLabel>
                             <FormControl>
                                 <Input
                                     type="number"
@@ -124,7 +126,7 @@ export function DomainFields<T extends FieldValues>({
                                 />
                             </FormControl>
                             <FormDescription>
-                                Le port où votre application s'exécute dans le conteneur
+                                {t('containerPortDescription')}
                             </FormDescription>
                         </FormItem>
                     )}
@@ -144,9 +146,9 @@ export function DomainFields<T extends FieldValues>({
                                 />
                             </FormControl>
                             <div>
-                                <FormLabel className="cursor-pointer">Strip Path</FormLabel>
+                                <FormLabel className="cursor-pointer">{t('stripPath')}</FormLabel>
                                 <FormDescription>
-                                    Retirer le chemin externe de la requête avant de la transférer
+                                    {t('stripPathDescription')}
                                 </FormDescription>
                             </div>
                         </FormItem>
@@ -165,9 +167,9 @@ export function DomainFields<T extends FieldValues>({
                                 />
                             </FormControl>
                             <div>
-                                <FormLabel className="cursor-pointer">HTTPS</FormLabel>
+                                <FormLabel className="cursor-pointer">{t('https')}</FormLabel>
                                 <FormDescription>
-                                    Provisionner automatiquement un certificat SSL
+                                    {t('httpsDescription')}
                                 </FormDescription>
                             </div>
                         </FormItem>

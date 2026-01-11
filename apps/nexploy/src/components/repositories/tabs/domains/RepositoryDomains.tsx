@@ -21,6 +21,7 @@ import Link from 'next/link';
 import { DomainFields } from '@/components/repositories/tabs/domains/DomainFields';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface RepositoryDomainsProps {
     repositoryId: string;
@@ -45,6 +46,7 @@ export function RepositoryDomains({
     isCloudflareConnected,
 }: RepositoryDomainsProps) {
     const router = useRouter();
+    const t = useTranslations('repository.settings.domains');
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
     const bindManageDomains = manageDomains.bind(null, repositoryId);
@@ -60,7 +62,7 @@ export function RepositoryDomains({
             },
             actionProps: {
                 onSuccess: ({ data }) => {
-                    toast.success('Domaines mis à jour avec succès');
+                    toast.success(t('updated'));
                     setExpandedIds(new Set());
                     router.refresh();
                     form.reset({
@@ -152,8 +154,8 @@ export function RepositoryDomains({
                     <CardHeaderWithIcon
                         as={'div'}
                         icon={Globe}
-                        title={'Domaines'}
-                        description={'Configurez les domaines et le routage pour votre application'}
+                        title={t('title')}
+                        description={t('description')}
                     />
                     <div className="flex gap-2">
                         {hasChanges && (
@@ -163,12 +165,12 @@ export function RepositoryDomains({
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? <Loader2 className="animate-spin" /> : <Save />}
-                                Enregistrer
+                                {t('save')}
                             </Button>
                         )}
                         <Button variant="outline" size="sm" onClick={handleAddNew}>
                             <Plus />
-                            Ajouter
+                            {t('add')}
                         </Button>
                     </div>
                 </div>
@@ -179,8 +181,7 @@ export function RepositoryDomains({
                         <div className="space-y-3">
                             {activeDomains.length === 0 ? (
                                 <div className="text-muted-foreground py-8 text-center text-sm">
-                                    Aucun domaine configuré. Ajoutez un domaine pour exposer votre
-                                    application.
+                                    {t('noDomains')}
                                 </div>
                             ) : (
                                 activeDomains.map((domain, displayIndex) => {
@@ -267,7 +268,7 @@ export function RepositoryDomains({
                                                 {isNew && (
                                                     <div className="flex items-center justify-between p-3">
                                                         <span className="text-muted-foreground text-sm font-medium">
-                                                            Nouveau domaine
+                                                            {t('newDomain')}
                                                         </span>
                                                         <Button
                                                             type="button"
@@ -304,7 +305,7 @@ export function RepositoryDomains({
                             {deletedDomains.length > 0 && (
                                 <div className="border-t pt-4">
                                     <p className="text-muted-foreground mb-2 text-sm">
-                                        Suppression en attente (enregistrez pour confirmer) :
+                                        {t('pendingDeletion')}
                                     </p>
                                     <div className={'flex flex-col gap-2'}>
                                         {deletedDomains.map((domain) => (
@@ -323,7 +324,7 @@ export function RepositoryDomains({
                                                         domain.id && handleUndoDelete(domain.id)
                                                     }
                                                 >
-                                                    Annuler
+                                                    {t('cancel')}
                                                 </Button>
                                             </div>
                                         ))}

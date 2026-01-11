@@ -21,10 +21,12 @@ import {
 } from '@workspace/schemas-zod/docker/container/containerVolume.schema';
 import { Label } from '@workspace/ui/components/label';
 import { Switch } from '@workspace/ui/components/switch';
+import { useTranslations } from 'next-intl';
 
 export function VolumeForm() {
     const { closeDialog } = useConfirmationDialogStore();
     const { onVolumeChange } = useContainerChangesStore();
+    const t = useTranslations('docker.forms');
 
     const form = useForm<ContainerVolumeForm>({
         resolver: zodResolver(containerVolumeSchema),
@@ -54,7 +56,7 @@ export function VolumeForm() {
                     name="hostPath"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Chemin hôte</FormLabel>
+                            <FormLabel>{t('volume.hostPath')}</FormLabel>
                             <FormControl>
                                 <Input {...field} placeholder="/path/on/host" />
                             </FormControl>
@@ -68,7 +70,7 @@ export function VolumeForm() {
                     name="containerPath"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Chemin conteneur</FormLabel>
+                            <FormLabel>{t('volume.containerPath')}</FormLabel>
                             <FormControl>
                                 <Input {...field} placeholder="/path/in/container" />
                             </FormControl>
@@ -84,9 +86,9 @@ export function VolumeForm() {
                         <FormItem>
                             <Label className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
                                 <div className="flex flex-col">
-                                    <span>Lecture seule</span>
+                                    <span>{t('volume.readOnly')}</span>
                                     <FormDescription className="text-xs">
-                                        Le volume sera monté en lecture seule
+                                        {t('volume.readOnlyDescription')}
                                     </FormDescription>
                                 </div>
                                 <FormControl>
@@ -103,7 +105,7 @@ export function VolumeForm() {
                 <DialogFooter className="flex !justify-between pt-4">
                     <div className="flex flex-1 flex-row justify-end gap-2">
                         <DialogClose asChild>
-                            <Button variant="outline">Annuler</Button>
+                            <Button variant="outline">{t('cancel')}</Button>
                         </DialogClose>
                         <Button
                             className="flex-1 sm:flex-0"
@@ -111,7 +113,7 @@ export function VolumeForm() {
                             disabled={!form.formState.isDirty}
                             icon={Plus}
                         >
-                            Ajouter
+                            {t('add')}
                         </Button>
                     </div>
                 </DialogFooter>

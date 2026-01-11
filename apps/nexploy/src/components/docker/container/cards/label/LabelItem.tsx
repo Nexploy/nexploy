@@ -2,6 +2,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { Button } from '@workspace/ui/components/button';
 import { Pencil } from 'lucide-react';
 import { Label } from '@workspace/typescript-interface/docker/docker.label';
+import { useTranslations } from 'next-intl';
 
 interface LabelItemProps {
     label: Label;
@@ -20,6 +21,7 @@ export function LabelItem({
     displayLabel,
     onEdit,
 }: LabelItemProps) {
+    const t = useTranslations('docker.labels');
     const statusIndicator = isNew ? (
         <span className="text-green-500">+</span>
     ) : isEdited ? (
@@ -41,7 +43,7 @@ export function LabelItem({
                     {displayLabel.value ? (
                         displayLabel.value
                     ) : (
-                        <span className="text-muted-foreground italic">(vide)</span>
+                        <span className="text-muted-foreground italic">{t('empty')}</span>
                     )}
                 </span>
                 {statusIndicator}
@@ -57,7 +59,7 @@ export function LabelItem({
                         <Pencil />
                     </Button>
                 </TooltipTrigger>
-                <TooltipContent>Modifier</TooltipContent>
+                <TooltipContent>{t('edit')}</TooltipContent>
             </Tooltip>
         </div>
     );

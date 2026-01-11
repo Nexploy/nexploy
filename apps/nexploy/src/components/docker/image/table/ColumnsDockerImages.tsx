@@ -16,7 +16,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { cn } from '@workspace/ui/lib/utils';
 import { ImageRow } from '@workspace/typescript-interface/docker/docker.image';
 
-export const columnsTableImages: ColumnDef<ImageRow>[] = [
+type TranslationFunction = (key: string) => string;
+
+export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRow>[] => [
     {
         id: 'select',
         header: ({ table }) => {
@@ -69,7 +71,7 @@ export const columnsTableImages: ColumnDef<ImageRow>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             >
-                Repository
+                {t('repository')}
                 <ArrowUpDown />
             </Button>
         ),
@@ -106,7 +108,7 @@ export const columnsTableImages: ColumnDef<ImageRow>[] = [
                                     <StatusIndicator />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    {containersUsed ? <p>Image Used</p> : <p>Image Unused</p>}
+                                    {containersUsed ? <p>{t('imageUsed')}</p> : <p>{t('imageUnused')}</p>}
                                 </TooltipContent>
                             </Tooltip>
                             <StatusLabel className="truncate font-medium text-current">
@@ -132,7 +134,7 @@ export const columnsTableImages: ColumnDef<ImageRow>[] = [
                                 <StatusIndicator />
                             </TooltipTrigger>
                             <TooltipContent>
-                                {containersUsed ? <p>Image Used</p> : <p>Image Unused</p>}
+                                {containersUsed ? <p>{t('imageUsed')}</p> : <p>{t('imageUnused')}</p>}
                             </TooltipContent>
                         </Tooltip>
 
@@ -151,7 +153,7 @@ export const columnsTableImages: ColumnDef<ImageRow>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             >
-                Version
+                {t('version')}
                 <ArrowUpDown />
             </Button>
         ),
@@ -164,7 +166,7 @@ export const columnsTableImages: ColumnDef<ImageRow>[] = [
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Badge variant="outline" className="text-xs">
-                                    {tags.length} versions
+                                    {tags.length} {t('versions')}
                                 </Badge>
                             </TooltipTrigger>
                             <TooltipContent className={'flex max-w-xs flex-col gap-1 p-2 text-sm'}>
@@ -188,7 +190,7 @@ export const columnsTableImages: ColumnDef<ImageRow>[] = [
     },
     {
         accessorKey: 'id',
-        header: 'Image ID',
+        header: t('imageId'),
         cell: ({ row }) => {
             const isGroup = row.original.isGroup;
             if (isGroup) {
@@ -215,7 +217,7 @@ export const columnsTableImages: ColumnDef<ImageRow>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             >
-                Créé
+                {t('created')}
                 <ArrowUpDown />
             </Button>
         ),
@@ -235,7 +237,7 @@ export const columnsTableImages: ColumnDef<ImageRow>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             >
-                Taille
+                {t('size')}
                 <ArrowUpDown />
             </Button>
         ),

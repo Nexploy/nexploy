@@ -15,7 +15,9 @@ import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/drop
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
-export const columnsTableVolumes: ColumnDef<Volume>[] = [
+type TranslationFunction = (key: string) => string;
+
+export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -45,7 +47,7 @@ export const columnsTableVolumes: ColumnDef<Volume>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             >
-                Nom
+                {t('name')}
                 <ArrowUpDown />
             </Button>
         ),
@@ -67,7 +69,7 @@ export const columnsTableVolumes: ColumnDef<Volume>[] = [
                                 <StatusIndicator />
                             </TooltipTrigger>
                             <TooltipContent>
-                                {volumeUsed ? <p>Volume Used</p> : <p>Volume Unused</p>}
+                                {volumeUsed ? <p>{t('volumeUsed')}</p> : <p>{t('volumeUnused')}</p>}
                             </TooltipContent>
                         </Tooltip>
 
@@ -86,7 +88,7 @@ export const columnsTableVolumes: ColumnDef<Volume>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             >
-                Driver
+                {t('driver')}
                 <ArrowUpDown />
             </Button>
         ),
@@ -101,7 +103,7 @@ export const columnsTableVolumes: ColumnDef<Volume>[] = [
     },
     {
         accessorKey: 'mountpoint',
-        header: 'Mountpoint',
+        header: t('mountpoint'),
         cell: ({ row }) => {
             const mountpoint = row.original.mountpoint;
             return (
@@ -124,7 +126,7 @@ export const columnsTableVolumes: ColumnDef<Volume>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             >
-                Créé
+                {t('created')}
                 <ArrowUpDown />
             </Button>
         ),
@@ -144,7 +146,7 @@ export const columnsTableVolumes: ColumnDef<Volume>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             >
-                Taille
+                {t('size')}
                 <ArrowUpDown />
             </Button>
         ),

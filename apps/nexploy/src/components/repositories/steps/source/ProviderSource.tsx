@@ -22,12 +22,14 @@ import { capitalizeFirstLetter } from '@/utils/capitalize';
 import Link from 'next/link';
 import { SocialAccount } from '@workspace/typescript-interface/auth/social-account';
 import { GitBranch, GitRepository } from '@workspace/typescript-interface/git/git';
+import { useTranslations } from 'next-intl';
 
 interface ProviderSourceProps {
     accounts?: SocialAccount[] | null;
 }
 
 export function ProviderSource({ accounts }: ProviderSourceProps) {
+    const t = useTranslations('repository.settings.source');
     const { control, watch, setValue } = useFormContext();
 
     const gitProvider = watch('gitProvider');
@@ -53,10 +55,10 @@ export function ProviderSource({ accounts }: ProviderSourceProps) {
         return (
             <div className="text-muted-foreground flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-8 text-center">
                 <div className="text-sm">
-                    Vous n&apos;avez pas connecté de compte {capitalizeFirstLetter(gitProvider)}
+                    {t('notConnected', { provider: capitalizeFirstLetter(gitProvider) })}
                 </div>
                 <Button asChild>
-                    <Link href="/integrations">Connecter {capitalizeFirstLetter(gitProvider)}</Link>
+                    <Link href="/integrations">{t('connect', { provider: capitalizeFirstLetter(gitProvider) })}</Link>
                 </Button>
             </div>
         );
@@ -69,7 +71,7 @@ export function ProviderSource({ accounts }: ProviderSourceProps) {
                 name="repo"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Dépôt</FormLabel>
+                        <FormLabel>{t('repository')}</FormLabel>
                         <Select
                             onValueChange={(value) => {
                                 const repo = repos?.find((r) => r.id === value);
@@ -87,8 +89,8 @@ export function ProviderSource({ accounts }: ProviderSourceProps) {
                                     <SelectValue
                                         placeholder={
                                             isLoadingRepos
-                                                ? 'Chargement...'
-                                                : 'Sélectionner un dépôt'
+                                                ? t('loading')
+                                                : t('selectRepository')
                                         }
                                     />
                                 </SelectTrigger>
@@ -111,7 +113,7 @@ export function ProviderSource({ accounts }: ProviderSourceProps) {
                 name="branch"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Branche</FormLabel>
+                        <FormLabel>{t('branch')}</FormLabel>
                         <Select
                             {...field}
                             value={branches && selectedRepo ? field.value : ''}

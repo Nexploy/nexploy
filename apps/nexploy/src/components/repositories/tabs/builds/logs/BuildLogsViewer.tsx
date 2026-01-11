@@ -16,6 +16,7 @@ import { useLocalStorage } from 'usehooks-ts';
 import { Label } from '@workspace/ui/components/label';
 import { Switch } from '@workspace/ui/components/switch';
 import { getLogLevelColor, getLogLevelColorGradiant, parseAnsiColors } from '@/utils/color';
+import { useTranslations } from 'next-intl';
 
 type BuildToken = NonNullable<Awaited<ReturnType<typeof onGetTokenBuildIdAction>>['data']>;
 type BuildMessage = Realtime.Subscribe.Token.InferMessage<BuildToken>;
@@ -38,6 +39,7 @@ export function BuildLogsViewer({
     initialLogs,
     createdAt,
 }: BuildLogsViewerProps) {
+    const t = useTranslations('repository.builds.logs');
     const [autoScroll, setAutoScroll] = useState(true);
     const logsEndRef = useRef<HTMLDivElement>(null);
     const logsContainerRef = useRef<HTMLDivElement>(null);
@@ -113,13 +115,13 @@ export function BuildLogsViewer({
                 <div className="flex items-center gap-4">
                     {getStatusBadge(status)}
                     <span className="text-muted-foreground text-sm">
-                        Started {dayjs(createdAt).format('DD/MM/YYYY HH:mm:ss')}
+                        {t('started')} {dayjs(createdAt).format('DD/MM/YYYY HH:mm:ss')}
                     </span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="flex items-center space-x-2">
                         <Label htmlFor="log-showTimestamp" className={'cursor-pointer text-xs'}>
-                            Show Date
+                            {t('showDate')}
                         </Label>
                         <Switch
                             id="log-showTimestamp"
@@ -131,7 +133,7 @@ export function BuildLogsViewer({
                     {logs.length > 0 && (
                         <Button size="sm" onClick={downloadLogs}>
                             <Download />
-                            Download
+                            {t('download')}
                         </Button>
                     )}
                     <Button
@@ -140,13 +142,13 @@ export function BuildLogsViewer({
                         variant={autoScroll ? 'default' : 'white'}
                         onClick={() => setAutoScroll((prevState) => !prevState)}
                     >
-                        {autoScroll ? 'Auto' : 'Manual'}
+                        {autoScroll ? t('auto') : t('manual')}
                     </Button>
                 </div>
             </div>
             {logs.length === 0 ? (
                 <div className="bg-muted/30 text-muted-foreground flex flex-1 items-center justify-center pb-12 font-mono text-sm">
-                    <span>No logs available</span>
+                    <span>{t('noLogs')}</span>
                 </div>
             ) : (
                 <ScrollAreaWithShadow

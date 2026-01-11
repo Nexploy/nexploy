@@ -24,35 +24,21 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { BuildType, buildTypeSchema } from '@workspace/schemas-zod/repository/buildType.schema';
 import { updateBuildTypeAction } from '@/actions/repository/settings/updateBuildType.action';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+import { useTranslations } from 'next-intl';
 
 interface ChangeBuildTypeProps {
     repository: Repository;
 }
 
-const buildTypeOptions: { value: BuildType; label: string; description: string }[] = [
-    {
-        value: 'DOCKERFILE',
-        label: 'Dockerfile',
-        description: 'Utiliser un Dockerfile existant',
-    },
-    {
-        value: 'DOCKER_COMPOSE',
-        label: 'Docker Compose',
-        description: 'Utiliser un fichier docker-compose.yml',
-    },
-    {
-        value: 'NIXPACKS',
-        label: 'Nixpacks',
-        description: 'Build automatique avec Nixpacks',
-    },
-    {
-        value: 'BUILDPACKS',
-        label: 'Buildpacks',
-        description: 'Build automatique avec Cloud Native Buildpacks',
-    },
-];
+const buildTypeValues: BuildType[] = ['DOCKERFILE', 'DOCKER_COMPOSE', 'NIXPACKS', 'BUILDPACKS'];
 
 export function ChangeBuildType({ repository }: ChangeBuildTypeProps) {
+    const t = useTranslations('repository.settings.buildType');
+
+    const buildTypeOptions = buildTypeValues.map((value) => ({
+        value,
+        label: t(value === 'DOCKERFILE' ? 'dockerfile' : value === 'DOCKER_COMPOSE' ? 'dockerCompose' : value === 'NIXPACKS' ? 'nixpacks' : 'buildpacks'),
+    }));
     const bindUpdateBuildTypeAction = updateBuildTypeAction.bind(null, repository.id);
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         bindUpdateBuildTypeAction,
@@ -75,8 +61,8 @@ export function ChangeBuildType({ repository }: ChangeBuildTypeProps) {
         <Card>
             <CardHeaderWithIcon
                 icon={Hammer}
-                title={'Type de build'}
-                description={'Choisissez la méthode de build pour votre application'}
+                title={t('title')}
+                description={t('description')}
             />
             <CardContent>
                 <Form {...form}>
@@ -86,11 +72,11 @@ export function ChangeBuildType({ repository }: ChangeBuildTypeProps) {
                             name="buildType"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Type de build</FormLabel>
+                                    <FormLabel>{t('label')}</FormLabel>
                                     <Select value={field.value} onValueChange={field.onChange}>
                                         <FormControl>
                                             <SelectTrigger className="min-w-48">
-                                                <SelectValue placeholder="Sélectionner un type" />
+                                                <SelectValue placeholder={t('selectType')} />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
@@ -111,7 +97,7 @@ export function ChangeBuildType({ repository }: ChangeBuildTypeProps) {
                                 icon={Save}
                                 disabled={action.isPending || !form.formState.isDirty}
                             >
-                                {action.isPending ? 'Enregistrement...' : 'Enregistrer'}
+                                {action.isPending ? t('saving') : t('save')}
                             </Button>
                         </div>
                     </form>

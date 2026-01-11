@@ -23,9 +23,11 @@ import {
 } from '@workspace/ui/components/form';
 import { createEnvironmentAction } from '@/actions/environment/createEnvironment.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import { useTranslations } from 'next-intl';
 
 export function CreateEnvironmentForm() {
     const { onSuccess } = useConfirmationDialogStore();
+    const t = useTranslations('docker.environmentForm');
 
     const { form, handleSubmitWithAction } = useHookFormAction(
         createEnvironmentAction,
@@ -76,11 +78,11 @@ export function CreateEnvironmentForm() {
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Environment name</FormLabel>
+                            <FormLabel>{t('environmentName')}</FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
-                                    placeholder="e.g. Production, Staging, Development..."
+                                    placeholder={t('environmentNamePlaceholder')}
                                     disabled={form.formState.isSubmitting}
                                 />
                             </FormControl>
@@ -94,11 +96,11 @@ export function CreateEnvironmentForm() {
                     name="description"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Description (optional)</FormLabel>
+                            <FormLabel>{t('description')}</FormLabel>
                             <FormControl>
                                 <Textarea
                                     {...field}
-                                    placeholder="Describe this environment..."
+                                    placeholder={t('descriptionPlaceholder')}
                                     disabled={form.formState.isSubmitting}
                                     value={field.value === '' ? undefined : field.value}
                                     rows={2}
@@ -114,7 +116,7 @@ export function CreateEnvironmentForm() {
                     name="connectionType"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Connection type</FormLabel>
+                            <FormLabel>{t('connectionType')}</FormLabel>
                             <FormControl>
                                 <Select
                                     {...field}
@@ -123,15 +125,15 @@ export function CreateEnvironmentForm() {
                                     disabled={form.formState.isSubmitting}
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select connection type" />
+                                        <SelectValue placeholder={t('selectConnectionType')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="UNIX_SOCKET">
-                                            Unix Socket (Local)
+                                            {t('unixSocket')}
                                         </SelectItem>
-                                        <SelectItem value="TCP">TCP (Remote)</SelectItem>
+                                        <SelectItem value="TCP">{t('tcp')}</SelectItem>
                                         <SelectItem value="TCP_TLS">
-                                            TCP with TLS (Secure Remote)
+                                            {t('tcpTls')}
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -147,7 +149,7 @@ export function CreateEnvironmentForm() {
                         name="socketPath"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Socket path</FormLabel>
+                                <FormLabel>{t('socketPath')}</FormLabel>
                                 <FormControl>
                                     <Input
                                         placeholder="/var/run/docker.sock"
@@ -156,7 +158,7 @@ export function CreateEnvironmentForm() {
                                     />
                                 </FormControl>
                                 <p className="text-muted-foreground text-xs">
-                                    Path to the Docker daemon socket file
+                                    {t('socketPathDescription')}
                                 </p>
                                 <FormMessage />
                             </FormItem>
@@ -172,10 +174,10 @@ export function CreateEnvironmentForm() {
                                 name="host"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Host</FormLabel>
+                                        <FormLabel>{t('host')}</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="e.g. localhost, 192.168.1.100"
+                                                placeholder={t('hostPlaceholder')}
                                                 {...field}
                                                 disabled={form.formState.isSubmitting}
                                             />
@@ -190,11 +192,11 @@ export function CreateEnvironmentForm() {
                                 name="port"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Port</FormLabel>
+                                        <FormLabel>{t('port')}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
-                                                placeholder="2375 or 2376"
+                                                placeholder={t('portPlaceholder')}
                                                 {...field}
                                                 onChange={(e) =>
                                                     field.onChange(e.target.valueAsNumber)
@@ -208,16 +210,16 @@ export function CreateEnvironmentForm() {
                             />
                         </div>
                         <p className="text-muted-foreground text-xs">
-                            Standard ports: 2375 (unencrypted), 2376 (TLS)
+                            {t('standardPorts')}
                         </p>
                     </>
                 )}
 
                 {connectionType === 'TCP_TLS' && (
                     <div className="space-y-4 rounded-lg border p-4">
-                        <h4 className="text-sm font-medium">TLS Certificates</h4>
+                        <h4 className="text-sm font-medium">{t('tlsCertificates')}</h4>
                         <p className="text-muted-foreground text-xs">
-                            Provide the TLS certificates for secure connection
+                            {t('tlsCertificatesDescription')}
                         </p>
 
                         <FormField
@@ -225,7 +227,7 @@ export function CreateEnvironmentForm() {
                             name="tlsCert"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Client Certificate</FormLabel>
+                                    <FormLabel>{t('clientCertificate')}</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
@@ -245,7 +247,7 @@ export function CreateEnvironmentForm() {
                             name="tlsKey"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Client Key</FormLabel>
+                                    <FormLabel>{t('clientKey')}</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
@@ -265,7 +267,7 @@ export function CreateEnvironmentForm() {
                             name="tlsCa"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>CA Certificate</FormLabel>
+                                    <FormLabel>{t('caCertificate')}</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
@@ -284,7 +286,7 @@ export function CreateEnvironmentForm() {
 
                 <div className="flex justify-end gap-2 pt-4">
                     <Button type="submit" disabled={form.formState.isSubmitting}>
-                        {form.formState.isSubmitting ? 'Adding...' : 'Adding environment'}
+                        {form.formState.isSubmitting ? t('adding') : t('addEnvironment')}
                     </Button>
                 </div>
             </form>

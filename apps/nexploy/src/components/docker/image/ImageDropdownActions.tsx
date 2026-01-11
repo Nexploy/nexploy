@@ -10,6 +10,7 @@ import { onImageAction } from '@/actions/docker/image/imageAction.action';
 import { Image, ImageAction, ImageTool } from '@workspace/typescript-interface/docker/docker.image';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface ImageDropdownActionsProps {
     image: Image;
@@ -18,6 +19,7 @@ interface ImageDropdownActionsProps {
 export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const router = useRouter();
+    const t = useTranslations('docker.dropdownActions');
 
     const imageName = image.name ? image.name : ['<none>'];
 
@@ -28,23 +30,23 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
     const containerTools: ImageTool[] = [
         {
             icon: Play,
-            label: 'Use',
+            label: t('use'),
             onClick: () =>
                 router.push(`/docker/containers/create-container?image=${image.repoTags[0]}`),
             disabled: !image.repoTags.length,
             tooltipContent: !image.repoTags.length
-                ? 'This image has no repository tags'
+                ? t('image.noRepositoryTags')
                 : undefined,
         },
         {
             icon: Trash,
-            label: 'Remove',
+            label: t('remove'),
             onClick: () =>
                 openAlertDialog({
-                    title: 'Remove Images',
-                    description: `Are you sure you want to remove ${imageName.join(',')} image?`,
-                    cancelLabel: 'Cancel',
-                    actionLabel: 'Remove',
+                    title: t('image.removeTitle'),
+                    description: t('image.removeDescription', { name: imageName.join(',') }),
+                    cancelLabel: t('cancel'),
+                    actionLabel: t('remove'),
                     onAction: () => handleAction('delete'),
                 }),
             disabled: !image.id,

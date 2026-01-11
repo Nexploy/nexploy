@@ -19,10 +19,12 @@ import {
     ContainerEnvForm,
     containerEnvSchema,
 } from '@workspace/schemas-zod/docker/container/containerEnv.schema';
+import { useTranslations } from 'next-intl';
 
 export function EnvForm({ mode, defaultEnvVar, originalEnvVar }: EnvFormProps) {
     const { closeDialog } = useConfirmationDialogStore();
     const { onEnvVarChange } = useContainerChangesStore();
+    const t = useTranslations('docker.forms');
 
     const form = useForm<ContainerEnvForm>({
         resolver: zodResolver(containerEnvSchema),
@@ -75,9 +77,9 @@ export function EnvForm({ mode, defaultEnvVar, originalEnvVar }: EnvFormProps) {
                     name="key"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Clé</FormLabel>
+                            <FormLabel>{t('env.key')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder="key" />
+                                <Input {...field} placeholder={t('keyPlaceholder')} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -89,9 +91,9 @@ export function EnvForm({ mode, defaultEnvVar, originalEnvVar }: EnvFormProps) {
                     name="value"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Valeur</FormLabel>
+                            <FormLabel>{t('env.value')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder="value" />
+                                <Input {...field} placeholder={t('valuePlaceholder')} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -110,7 +112,7 @@ export function EnvForm({ mode, defaultEnvVar, originalEnvVar }: EnvFormProps) {
                     )}
                     <div className={'flex flex-1 flex-row justify-end gap-2'}>
                         <DialogClose asChild>
-                            <Button variant={'outline'}>Annuler</Button>
+                            <Button variant={'outline'}>{t('cancel')}</Button>
                         </DialogClose>
                         <Button
                             className={'flex-1 sm:flex-0'}
@@ -118,7 +120,7 @@ export function EnvForm({ mode, defaultEnvVar, originalEnvVar }: EnvFormProps) {
                             disabled={!form.formState.isDirty}
                             icon={mode === 'add' ? Plus : Save}
                         >
-                            {mode === 'add' ? 'Ajouter' : 'Modifier'}
+                            {mode === 'add' ? t('add') : t('edit')}
                         </Button>
                     </div>
                 </DialogFooter>

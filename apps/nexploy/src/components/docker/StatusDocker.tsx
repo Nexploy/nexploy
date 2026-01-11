@@ -11,6 +11,7 @@ import type { ComponentProps } from 'react';
 import { cn } from '@workspace/ui/lib/utils';
 import { DockerStatus } from '@workspace/typescript-interface/docker/docker.status';
 import { useDockerStore } from '@/stores/docker/useDockerStore';
+import { useTranslations } from 'next-intl';
 
 interface StatusDockerProps extends ComponentProps<typeof Badge> {
     disabledLabel?: boolean;
@@ -19,23 +20,24 @@ interface StatusDockerProps extends ComponentProps<typeof Badge> {
 
 export function StatusDocker(props: StatusDockerProps) {
     const status = useDockerStore((state) => state.status);
+    const t = useTranslations('docker.status');
 
-    const statusMap: Record<DockerStatus, { status: StatusProps['status']; label: string }> = {
+    const statusMap: Record<DockerStatus, { status: StatusProps['status']; labelKey: string }> = {
         connected: {
             status: 'online',
-            label: 'Connected',
+            labelKey: 'connected',
         },
         connecting: {
             status: 'degraded',
-            label: 'Connecting...',
+            labelKey: 'connecting',
         },
         disconnected: {
             status: 'offline',
-            label: 'Disconnected',
+            labelKey: 'disconnected',
         },
         error: {
             status: 'offline',
-            label: 'Error',
+            labelKey: 'error',
         },
     };
 
@@ -46,7 +48,7 @@ export function StatusDocker(props: StatusDockerProps) {
             status={statusMap[status].status}
         >
             <StatusIndicator />
-            {props.mode !== 'icon' && <StatusLabel>{statusMap[status].label}</StatusLabel>}
+            {props.mode !== 'icon' && <StatusLabel>{t(statusMap[status].labelKey)}</StatusLabel>}
         </Status>
     );
 }

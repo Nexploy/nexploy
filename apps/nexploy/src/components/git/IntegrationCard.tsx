@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { statusMap } from '@/utils/statusMap';
+import { useTranslations } from 'next-intl';
 
 interface IntegrationCardProps {
     provider: string;
@@ -30,6 +31,7 @@ export function IntegrationCard({
 }: IntegrationCardProps) {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const t = useTranslations('common');
 
     const handleConnect = async () => {
         setIsLoading(true);
@@ -86,7 +88,7 @@ export function IntegrationCard({
                     disabled={isLoading}
                     isLoading={isLoading}
                 >
-                    Déconnecter
+                    {t('disconnect')}
                 </Button>
             ) : (
                 <Button
@@ -95,7 +97,7 @@ export function IntegrationCard({
                     disabled={isLoading}
                     isLoading={isLoading}
                 >
-                    Connecter
+                    {t('connect')}
                 </Button>
             )}
         </div>

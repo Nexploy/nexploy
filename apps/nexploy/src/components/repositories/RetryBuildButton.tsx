@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
+import { useTranslations } from 'next-intl';
 
 interface RetryBuildButtonProps extends ComponentProps<typeof Button> {
     buildId: string;
@@ -26,10 +27,11 @@ export function RetryBuildButton({
 }: RetryBuildButtonProps) {
     const router = useRouter();
     const { selectedEnvironmentId } = useEnvironmentStore();
+    const t = useTranslations('repository.builds');
 
     const { execute, isPending } = useAction(onRetryBuild, {
         onSuccess: () => {
-            toast.success('Build restarted successfully');
+            toast.success(t('retrySuccess'));
             if (onSuccess) {
                 onSuccess();
             } else {
@@ -52,7 +54,7 @@ export function RetryBuildButton({
                 }}
             >
                 <RotateCcw />
-                Retry
+                {t('retry')}
             </DropdownMenuItem>
         );
     }
@@ -65,7 +67,7 @@ export function RetryBuildButton({
             onClick={handleRetry}
             disabled={isPending}
         >
-            {showText && (isPending ? 'Retrying...' : 'Retry')}
+            {showText && (isPending ? t('retrying') : t('retry'))}
         </Button>
     );
 }

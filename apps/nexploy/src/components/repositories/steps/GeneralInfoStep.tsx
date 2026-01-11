@@ -1,3 +1,5 @@
+'use client';
+
 import {
     Card,
     CardContent,
@@ -17,15 +19,17 @@ import { Input } from '@workspace/ui/components/input';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { Optional } from '@workspace/ui/components/utils/Optional';
 import { useFormContext } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 
 export function GeneralInfoStep() {
     const { control } = useFormContext();
+    const t = useTranslations('repository.steps.generalInfo');
 
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Informations générales</CardTitle>
-                <CardDescription>Détails de base de votre projet</CardDescription>
+                <CardTitle>{t('title')}</CardTitle>
+                <CardDescription>{t('description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 <FormField
@@ -33,13 +37,11 @@ export function GeneralInfoStep() {
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Nom du projet</FormLabel>
+                            <FormLabel>{t('projectName')}</FormLabel>
                             <FormControl>
-                                <Input placeholder="mon-super-projet" {...field} />
+                                <Input placeholder={t('projectNamePlaceholder')} {...field} />
                             </FormControl>
-                            <FormDescription>
-                                Un nom unique pour identifier votre projet
-                            </FormDescription>
+                            <FormDescription>{t('projectNameDescription')}</FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -51,11 +53,11 @@ export function GeneralInfoStep() {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>
-                                Description <Optional />
+                                {t('descriptionLabel')} <Optional />
                             </FormLabel>
                             <FormControl>
                                 <Textarea
-                                    placeholder="Une courte description de votre projet..."
+                                    placeholder={t('descriptionPlaceholder')}
                                     className="resize-none"
                                     {...field}
                                 />

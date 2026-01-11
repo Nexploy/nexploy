@@ -13,6 +13,7 @@ import { onEnvVariableAction } from '@/actions/repository/envVariable.action';
 import { envVariableSchema } from '@workspace/schemas-zod/repository/envVariable.schema';
 import { toast } from 'sonner';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+import { useTranslations } from 'next-intl';
 
 interface EnvVariable {
     id?: string;
@@ -35,6 +36,7 @@ export function RepositoryEnv({
     envVariables: initialEnvVariables,
 }: RepositoryEnvTabProps) {
     const router = useRouter();
+    const t = useTranslations('repository.settings.envVars');
     const [showValues, setShowValues] = useState<Record<string, boolean>>({});
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
@@ -50,7 +52,7 @@ export function RepositoryEnv({
             },
             actionProps: {
                 onSuccess: () => {
-                    toast.success('Environment variables updated');
+                    toast.success(t('updated'));
                     router.refresh();
 
                     form.reset({
@@ -60,7 +62,7 @@ export function RepositoryEnv({
                     });
                 },
                 onError: ({ error }) => {
-                    toast.error(error.serverError || 'Failed to update environment variables');
+                    toast.error(error.serverError || t('updateError'));
                 },
             },
         },
@@ -121,8 +123,8 @@ export function RepositoryEnv({
                     <CardHeaderWithIcon
                         as={'div'}
                         icon={Key}
-                        title={'Environment Variables'}
-                        description={'Configure environment variables'}
+                        title={t('title')}
+                        description={t('description')}
                     />
                     <div className="flex gap-2">
                         {hasChanges && (
@@ -132,12 +134,12 @@ export function RepositoryEnv({
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? <Loader2 className="animate-spin" /> : <Save />}
-                                Save Changes
+                                {t('saveChanges')}
                             </Button>
                         )}
                         <Button variant="outline" size="sm" onClick={handleAddNew}>
                             <Plus />
-                            Add Variable
+                            {t('addVariable')}
                         </Button>
                     </div>
                 </div>
@@ -147,7 +149,7 @@ export function RepositoryEnv({
                     <form onSubmit={handleSubmitWithAction} className="space-y-2">
                         {envVariables.length === 0 ? (
                             <div className="text-muted-foreground py-8 text-center text-sm">
-                                No environment variables configured.
+                                {t('noVariables')}
                             </div>
                         ) : (
                             envVariables.map((env, index) => (
@@ -225,7 +227,7 @@ export function RepositoryEnv({
                         {deletedEnvs.length > 0 && (
                             <div className="border-t pt-4">
                                 <p className="text-muted-foreground mb-2 text-sm">
-                                    Pending deletion (save to confirm):
+                                    {t('pendingDeletion')}
                                 </p>
                                 {deletedEnvs.map((env) => (
                                     <div
@@ -241,7 +243,7 @@ export function RepositoryEnv({
                                             type="button"
                                             onClick={() => handleUndoDelete(env.id)}
                                         >
-                                            Undo
+                                            {t('undo')}
                                         </Button>
                                     </div>
                                 ))}

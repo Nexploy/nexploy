@@ -13,6 +13,7 @@ import { containerDisplayState } from '@/utils/containerDisplayState';
 import { Badge } from '@workspace/ui/components/badge';
 import { Carousel, CarouselContent, CarouselItem } from '@workspace/ui/components/carousel';
 import Autoplay from 'embla-carousel-autoplay';
+import { useTranslations } from 'next-intl';
 
 interface ContainerCardProps {
     container: Containers;
@@ -20,6 +21,7 @@ interface ContainerCardProps {
 
 export function ContainerCard({ container }: ContainerCardProps) {
     const [isPending] = useTransition();
+    const t = useTranslations('docker.containerCard');
 
     const containerName = container.name;
     const containerState = container.state;
@@ -64,7 +66,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
 
                 <CardContent className="flex flex-col gap-4">
                     <div className="flex items-center justify-between gap-2 truncate">
-                        <span className="font-medium">Image :</span>
+                        <span className="font-medium">{t('image')}</span>
                         <code className="bg-muted/50 truncate rounded-md px-3 py-1 text-sm">
                             {container.image}
                         </code>
@@ -72,7 +74,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
 
                     <div className={'flex flex-col gap-2'}>
                         <div className={'flex items-center justify-between'}>
-                            <p>Ports exposés :</p>
+                            <p>{t('exposedPorts')}</p>
                             <Badge>{container.ports.length}</Badge>
                         </div>{' '}
                         {container.ports.length ? (
@@ -99,7 +101,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
                                 </CarouselContent>
                             </Carousel>
                         ) : (
-                            <span className="text-muted-foreground">Aucun port exposé</span>
+                            <span className="text-muted-foreground">{t('noExposedPorts')}</span>
                         )}
                     </div>
                 </CardContent>

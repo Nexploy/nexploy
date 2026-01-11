@@ -9,6 +9,7 @@ import { Trash } from 'lucide-react';
 import { onNetworkAction } from '@/actions/docker/network/networkAction.action';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useTranslations } from 'next-intl';
 
 interface NetworkDropdownActionsProps {
     network: Network;
@@ -26,6 +27,7 @@ interface NetworkTool {
 
 export function NetworkDropdownActions({ network }: NetworkDropdownActionsProps) {
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
+    const t = useTranslations('docker.dropdownActions');
 
     const networkName = network.name || '<none>';
     const isBuiltin = ['bridge', 'host', 'none'].includes(network.name);
@@ -37,21 +39,21 @@ export function NetworkDropdownActions({ network }: NetworkDropdownActionsProps)
     const networkTools: NetworkTool[] = [
         {
             icon: Trash,
-            label: 'Remove',
+            label: t('remove'),
             action: () =>
                 openAlertDialog({
-                    title: 'Remove Network',
-                    description: `Are you sure you want to remove ${networkName} network?`,
-                    cancelLabel: 'Cancel',
-                    actionLabel: 'Remove',
+                    title: t('network.removeTitle'),
+                    description: t('network.removeDescription', { name: networkName }),
+                    cancelLabel: t('cancel'),
+                    actionLabel: t('remove'),
                     onAction: () => handleAction('delete'),
                 }),
             disabled: isBuiltin || (network.containers?.length || 0) > 0,
             variant: 'destructive',
             tooltipContent: isBuiltin
-                ? 'Cannot remove built-in network'
+                ? t('network.cannotRemoveBuiltin')
                 : (network.containers?.length || 0) > 0
-                  ? 'Disconnect all containers first'
+                  ? t('network.disconnectContainersFirst')
                   : undefined,
         },
     ];

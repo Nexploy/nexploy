@@ -15,6 +15,7 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 import { DialogClose, DialogFooter } from '@workspace/ui/components/dialog';
 import { Rocket } from 'lucide-react';
 import { z } from 'zod';
+import { useTranslations } from 'next-intl';
 
 const buildOptionsSchema = z.object({
     commitHash: z.string().optional(),
@@ -28,6 +29,8 @@ interface BuildOptionsDialogProps {
 
 export function BuildOptionsDialog({ onSubmit }: BuildOptionsDialogProps) {
     const { closeDialog } = useConfirmationDialogStore();
+    const t = useTranslations('repository.builds');
+    const tCommon = useTranslations('common');
 
     const form = useForm<BuildOptionsForm>({
         resolver: zodResolver(buildOptionsSchema),
@@ -49,17 +52,15 @@ export function BuildOptionsDialog({ onSubmit }: BuildOptionsDialogProps) {
                     name="commitHash"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Commit Hash (optionnel)</FormLabel>
+                            <FormLabel>{t('commitHash')}</FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
-                                    placeholder="abc123..."
+                                    placeholder={t('commitHashPlaceholder')}
                                     className="font-mono text-sm"
                                 />
                             </FormControl>
-                            <FormDescription>
-                                Laissez vide pour builder le dernier commit de la branche
-                            </FormDescription>
+                            <FormDescription>{t('commitHashDescription')}</FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -68,12 +69,12 @@ export function BuildOptionsDialog({ onSubmit }: BuildOptionsDialogProps) {
                 <DialogFooter>
                     <DialogClose asChild>
                         <Button type="button" variant="outline">
-                            Annuler
+                            {tCommon('cancel')}
                         </Button>
                     </DialogClose>
                     <Button type="submit">
                         <Rocket className="size-4" />
-                        Lancer le build
+                        {t('startBuild')}
                     </Button>
                 </DialogFooter>
             </form>

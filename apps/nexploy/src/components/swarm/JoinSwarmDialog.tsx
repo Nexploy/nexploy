@@ -18,6 +18,7 @@ import { UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 import { onSwarmJoinAction } from '@/actions/docker/swarm/join.action';
 import { onSwarmRefreshAction } from '@/actions/docker/swarm/refresh.action';
+import { useTranslations } from 'next-intl';
 
 interface JoinSwarmDialogProps {
     trigger?: React.ReactNode;
@@ -30,14 +31,16 @@ export function JoinSwarmDialog({ trigger, onJoinSuccess }: JoinSwarmDialogProps
     const [joinToken, setJoinToken] = useState('');
     const [remoteAddrs, setRemoteAddrs] = useState('');
     const [advertiseAddr, setAdvertiseAddr] = useState('');
+    const t = useTranslations('swarm');
+    const tCommon = useTranslations('common');
 
     const handleJoin = async () => {
         if (!joinToken) {
-            toast.error('Join token is required');
+            toast.error(t('joinTokenRequired'));
             return;
         }
         if (!remoteAddrs) {
-            toast.error('At least one manager address is required');
+            toast.error(t('managerAddressRequired'));
             return;
         }
 
@@ -47,7 +50,7 @@ export function JoinSwarmDialog({ trigger, onJoinSuccess }: JoinSwarmDialogProps
             .filter((a) => a);
 
         if (addrs.length === 0) {
-            toast.error('At least one manager address is required');
+            toast.error(t('managerAddressRequired'));
             return;
         }
 
@@ -58,7 +61,7 @@ export function JoinSwarmDialog({ trigger, onJoinSuccess }: JoinSwarmDialogProps
                 remoteAddrs: addrs,
                 advertiseAddr: advertiseAddr || undefined,
             });
-            toast.success('Joined swarm successfully');
+            toast.success(t('joinedSwarmSuccess'));
             setOpen(false);
             resetForm();
 
@@ -81,35 +84,33 @@ export function JoinSwarmDialog({ trigger, onJoinSuccess }: JoinSwarmDialogProps
                 {trigger || (
                     <Button variant="outline">
                         <UserPlus className="mr-2 size-4" />
-                        Join Swarm
+                        {t('joinSwarm')}
                     </Button>
                 )}
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Join Docker Swarm</DialogTitle>
-                    <DialogDescription>
-                        Join an existing swarm cluster as a worker or manager node.
-                    </DialogDescription>
+                    <DialogTitle>{t('joinSwarmTitle')}</DialogTitle>
+                    <DialogDescription>{t('joinSwarmDescription')}</DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
-                        <Label htmlFor="joinToken">Join Token</Label>
+                        <Label htmlFor="joinToken">{t('joinToken')}</Label>
                         <Input
                             id="joinToken"
                             value={joinToken}
                             onChange={(e) => setJoinToken(e.target.value)}
-                            placeholder="SWMTKN-1-..."
+                            placeholder={t('joinTokenPlaceholder')}
                             className="font-mono text-sm"
                         />
                         <p className="text-muted-foreground text-xs">
-                            The worker or manager token from the swarm you want to join.
+                            {t('joinTokenDescription')}
                         </p>
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="remoteAddrs">Manager Addresses</Label>
+                        <Label htmlFor="remoteAddrs">{t('managerAddresses')}</Label>
                         <Textarea
                             id="remoteAddrs"
                             value={remoteAddrs}
@@ -119,32 +120,33 @@ export function JoinSwarmDialog({ trigger, onJoinSuccess }: JoinSwarmDialogProps
                             className="font-mono text-sm"
                         />
                         <p className="text-muted-foreground text-xs">
-                            One or more manager addresses (one per line).
+                            {t('managerAddressesDescription')}
                         </p>
                     </div>
 
                     <div className="grid gap-2">
                         <Label htmlFor="advertiseAddr">
-                            Advertise Address <span className="text-muted-foreground">(optional)</span>
+                            {t('advertiseAddress')}{' '}
+                            <span className="text-muted-foreground">{t('optional')}</span>
                         </Label>
                         <Input
                             id="advertiseAddr"
                             value={advertiseAddr}
                             onChange={(e) => setAdvertiseAddr(e.target.value)}
-                            placeholder="192.168.1.102:2377"
+                            placeholder={t('advertiseAddressPlaceholder')}
                         />
                         <p className="text-muted-foreground text-xs">
-                            The address this node advertises to other nodes.
+                            {t('advertiseAddressDescription')}
                         </p>
                     </div>
                 </div>
 
                 <DialogFooter>
                     <Button variant="outline" onClick={() => setOpen(false)}>
-                        Cancel
+                        {tCommon('cancel')}
                     </Button>
                     <Button onClick={handleJoin} disabled={isLoading}>
-                        {isLoading ? 'Joining...' : 'Join Swarm'}
+                        {isLoading ? t('joining') : t('joinSwarm')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

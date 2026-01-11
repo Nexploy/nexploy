@@ -15,6 +15,7 @@ import { Cloud, Loader2 } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
 import useSWR from 'swr';
 import { fetcherApi } from '@/lib/api/fetcherApi';
+import { useTranslations } from 'next-intl';
 
 interface CloudflareDomainSelectorProps<T extends FieldValues> {
     form: UseFormReturn<T>;
@@ -27,6 +28,7 @@ export function CloudflareDomainSelector<T extends FieldValues>({
     index,
     isCloudflareConnected,
 }: CloudflareDomainSelectorProps<T>) {
+    const t = useTranslations('repository.settings.cloudflare');
     const { data: zones, isLoading } = useSWR<CloudflareZone[]>(
         isCloudflareConnected ? '/api/cloudflare/zone' : null,
         fetcherApi,
@@ -96,7 +98,7 @@ export function CloudflareDomainSelector<T extends FieldValues>({
             <div className="bg-muted/50 flex items-center gap-2 rounded-lg border border-dashed p-3">
                 <Loader2 className="text-muted-foreground size-4 animate-spin" />
                 <span className="text-muted-foreground text-sm">
-                    Chargement des zones Cloudflare...
+                    {t('loading')}
                 </span>
             </div>
         );
@@ -106,27 +108,27 @@ export function CloudflareDomainSelector<T extends FieldValues>({
         <div className="bg-muted/30 space-y-4 rounded-lg border p-4">
             <div className="flex items-center gap-2">
                 <Cloud className="size-4 text-orange-500" />
-                <span className="text-sm font-medium">Configuration Cloudflare</span>
+                <span className="text-sm font-medium">{t('title')}</span>
                 <Badge variant="secondary" className="text-xs">
-                    DNS automatique
+                    {t('automaticDns')}
                 </Badge>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                    <FormLabel>Zone Cloudflare</FormLabel>
+                    <FormLabel>{t('zone')}</FormLabel>
                     <Select onValueChange={handleZoneChange} value={selectedZoneId || 'manual'}>
                         <SelectTrigger>
-                            <SelectValue placeholder="Sélectionner une zone" />
+                            <SelectValue placeholder={t('selectZone')} />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="manual">
-                                <span className="text-muted-foreground">Saisie manuelle</span>
+                                <span className="text-muted-foreground">{t('manualEntry')}</span>
                             </SelectItem>
                             {isOrphanedZone && (
                                 <SelectItem value={selectedZoneId}>
                                     <span className="text-muted-foreground">
-                                        {selectedZoneName} (zone non trouvée)
+                                        {selectedZoneName} ({t('zoneNotFound')})
                                     </span>
                                 </SelectItem>
                             )}
@@ -139,14 +141,14 @@ export function CloudflareDomainSelector<T extends FieldValues>({
                     </Select>
                     <FormDescription>
                         {isOrphanedZone
-                            ? "La zone d'origine n'est plus disponible. Sélectionnez une autre zone ou passez en saisie manuelle."
-                            : 'Sélectionnez une zone pour créer automatiquement le DNS'}
+                            ? t('zoneUnavailable')
+                            : t('selectZoneForDns')}
                     </FormDescription>
                 </div>
 
                 {(selectedZoneId || selectedZoneName) && (
                     <FormItem>
-                        <FormLabel>Sous-domaine</FormLabel>
+                        <FormLabel>{t('subdomain')}</FormLabel>
                         <div className="flex items-center gap-2">
                             <Input
                                 placeholder="app"
@@ -158,7 +160,7 @@ export function CloudflareDomainSelector<T extends FieldValues>({
                                 .{displayZoneName}
                             </span>
                         </div>
-                        <FormDescription>Laissez vide pour le domaine racine</FormDescription>
+                        <FormDescription>{t('emptyForRoot')}</FormDescription>
                     </FormItem>
                 )}
             </div>

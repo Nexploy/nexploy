@@ -8,12 +8,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toggleAutoDeployAction } from '@/actions/repository/settings/toggleAutoDeploy.action';
 import { toggleAutoDeploySchema } from '@workspace/schemas-zod/repository/settings/toggleAutoDeploy.schema';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
+import { useTranslations } from 'next-intl';
 
 interface AutoDeployToggleProps {
     repository: Repository;
 }
 
 export function AutoDeployToggle({ repository }: AutoDeployToggleProps) {
+    const t = useTranslations('repository.settings.autoDeploy');
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         toggleAutoDeployAction,
         zodResolver(toggleAutoDeploySchema),
@@ -26,7 +28,7 @@ export function AutoDeployToggle({ repository }: AutoDeployToggleProps) {
             },
             actionProps: {
                 onSuccess: ({ data }) => {
-                    toast.success(data?.autoDeploy ? 'Auto-deploy activé' : 'Auto-deploy désactivé');
+                    toast.success(data?.autoDeploy ? t('enabled') : t('disabled'));
                 },
                 onError: () => {
                     form.setValue('autoDeploy', !form.getValues('autoDeploy'));
@@ -46,9 +48,9 @@ export function AutoDeployToggle({ repository }: AutoDeployToggleProps) {
         <form onSubmit={handleSubmitWithAction}>
             <Label className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
                 <div className="flex flex-col gap-0.5">
-                    <span className="text-base">Déploiement automatique</span>
+                    <span className="text-base">{t('title')}</span>
                     <p className="text-muted-foreground text-sm">
-                        Déployer automatiquement lors d'un push sur la branche
+                        {t('description')}
                     </p>
                 </div>
                 <Switch

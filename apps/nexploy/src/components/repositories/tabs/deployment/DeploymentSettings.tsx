@@ -14,6 +14,7 @@ import { Button } from '@workspace/ui/components/button';
 import { Loader2, Save } from 'lucide-react';
 import { Form } from '@workspace/ui/components/form';
 import { SSEProvider } from '@/providers/SSEProviders';
+import { useTranslations } from 'next-intl';
 
 interface DeploymentSettingsProps {
     repository: Pick<
@@ -48,6 +49,7 @@ interface DeploymentSettingsProps {
 }
 
 export function DeploymentSettings({ repository }: DeploymentSettingsProps) {
+    const t = useTranslations('repository.settings.deployment');
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         deploymentSettingsAction,
         zodResolver(deploymentSettingsSchema),
@@ -83,10 +85,10 @@ export function DeploymentSettings({ repository }: DeploymentSettingsProps) {
             },
             actionProps: {
                 onSuccess: () => {
-                    toast.success('Paramètres de déploiement mis à jour');
+                    toast.success(t('updated'));
                 },
                 onError: ({ error }) => {
-                    toast.error(error.serverError || 'Erreur lors de la mise à jour');
+                    toast.error(error.serverError || t('updateError'));
                 },
             },
         },
@@ -114,7 +116,7 @@ export function DeploymentSettings({ repository }: DeploymentSettingsProps) {
                     <div className="flex justify-end">
                         <Button type="submit" disabled={isExecuting}>
                             {isExecuting ? <Loader2 className="animate-spin" /> : <Save />}
-                            Enregistrer
+                            {t('save')}
                         </Button>
                     </div>
                 </form>

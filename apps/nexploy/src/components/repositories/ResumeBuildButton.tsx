@@ -20,6 +20,7 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { BUILD_STEPS_ORDER, BuildStep } from '@workspace/typescript-interface/inngest/build';
 import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
+import { useTranslations } from 'next-intl';
 
 interface ResumeBuildButtonProps extends ComponentProps<typeof Button> {
     buildId: string;
@@ -28,16 +29,16 @@ interface ResumeBuildButtonProps extends ComponentProps<typeof Button> {
     onSuccess?: () => void;
 }
 
-const STEP_LABELS: Record<BuildStep, string> = {
-    'clone-repository': 'Clone Repository',
-    'prepare-dockerfile': 'Prepare Dockerfile',
-    'prepare-compose': 'Prepare Docker Compose',
-    'write-env-file': 'Write Env File',
-    'build-docker-image': 'Build Docker Image',
-    'deploy-container': 'Deploy Container',
-    'deploy-compose': 'Deploy Docker Compose',
-    cleanup: 'Cleanup',
-    'finalize-logs': 'Finalize',
+const STEP_KEYS: Record<BuildStep, string> = {
+    'clone-repository': 'cloneRepository',
+    'prepare-dockerfile': 'prepareDockerfile',
+    'prepare-compose': 'prepareCompose',
+    'write-env-file': 'writeEnvFile',
+    'build-docker-image': 'buildDockerImage',
+    'deploy-container': 'deployContainer',
+    'deploy-compose': 'deployCompose',
+    cleanup: 'cleanup',
+    'finalize-logs': 'finalizeLogs',
 };
 
 export function ResumeBuildButton({
@@ -49,10 +50,11 @@ export function ResumeBuildButton({
 }: ResumeBuildButtonProps) {
     const router = useRouter();
     const { selectedEnvironmentId } = useEnvironmentStore();
+    const t = useTranslations('repository.builds');
 
     const { execute, isPending } = useAction(onResumeBuild, {
         onSuccess: () => {
-            toast.success('Build resumed successfully');
+            toast.success(t('resumeSuccess'));
             if (onSuccess) {
                 onSuccess();
             } else {
@@ -93,9 +95,11 @@ export function ResumeBuildButton({
                 }}
                 className="flex items-center justify-between gap-2"
             >
-                <span>{STEP_LABELS[step]}</span>
-                {isCompleted && <span className="text-muted-foreground text-xs">(completed)</span>}
-                {isNext && <span className="text-xs text-green-500">(next)</span>}
+                <span>{t(`steps.${STEP_KEYS[step]}`)}</span>
+                {isCompleted && (
+                    <span className="text-muted-foreground text-xs">{t('completedStep')}</span>
+                )}
+                {isNext && <span className="text-xs text-green-500">{t('nextStep')}</span>}
             </DropdownMenuItem>
         );
     });
@@ -105,10 +109,10 @@ export function ResumeBuildButton({
             <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                     <Play className="size-4" />
-                    Resume
+                    {t('resume')}
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
-                    <DropdownMenuLabel>Resume from step</DropdownMenuLabel>
+                    <DropdownMenuLabel>{t('resumeFromStep')}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {stepsMenu}
                 </DropdownMenuSubContent>
@@ -125,7 +129,7 @@ export function ResumeBuildButton({
                 className="rounded-r-none"
             >
                 {isPending ? <Loader2 className="animate-spin" /> : <Play className="size-4" />}
-                {isPending ? 'Resuming...' : 'Resume'}
+                {isPending ? t('resuming') : t('resume')}
             </Button>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -139,7 +143,7 @@ export function ResumeBuildButton({
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Resume from step</DropdownMenuLabel>
+                    <DropdownMenuLabel>{t('resumeFromStep')}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {stepsMenu}
                 </DropdownMenuContent>
