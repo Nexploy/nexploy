@@ -20,6 +20,7 @@
     "userRoleUpdateFailed": "Échec de la mise à jour du rôle",
     "userDeleteFailed": "Échec de la suppression de l'utilisateur",
     "userBanUpdateFailed": "Échec de la mise à jour du statut de bannissement",
+    "cannotBanYourself": "Vous ne pouvez pas vous bannir vous-même",
     "confirmDeleteUser": "Êtes-vous sûr de vouloir supprimer {name} ? Cette action est irréversible.",
     "confirmBanUser": "Êtes-vous sûr de vouloir bannir {name} ? Il ne pourra plus accéder à la plateforme.",
     "confirmUnbanUser": "Êtes-vous sûr de vouloir débannir {name} ?",

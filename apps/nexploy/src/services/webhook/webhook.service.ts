@@ -1,4 +1,4 @@
-import { WebhookConfig } from '@workspace/schemas-zod/repository/webhook.schema';
+import { WebhookConfig } from '@workspace/typescript-interface/websocket';
 import { drinoGitlab } from '@/lib/api/drinoGitlab';
 import { drinoGithub } from '@/lib/api/drinoGithub';
 import {

@@ -65,9 +65,7 @@ export function ProfileInfoForm({ user }: ProfileInfoFormProps) {
                     <User className="size-5" />
                     {t('title')}
                 </CardTitle>
-                <CardDescription>
-                    {t('description')}
-                </CardDescription>
+                <CardDescription>{t('description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 <Form {...form}>
@@ -89,8 +87,12 @@ export function ProfileInfoForm({ user }: ProfileInfoFormProps) {
                             <FormItem>
                                 <FormLabel>{t('email')}</FormLabel>
                                 <FormControl>
-                                    <InputGroup>
-                                        <InputGroupInput defaultValue={user?.email} readOnly />
+                                    <InputGroup className={'cursor-not-allowed'}>
+                                        <InputGroupInput
+                                            disabled
+                                            defaultValue={user?.email}
+                                            readOnly
+                                        />
                                     </InputGroup>
                                 </FormControl>
                                 <FormMessage />

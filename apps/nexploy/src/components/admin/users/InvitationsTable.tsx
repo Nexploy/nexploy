@@ -1,10 +1,17 @@
 'use client';
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@workspace/ui/components/table';
 import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
 import { Clock, Copy, Shield, ShieldOff, X } from 'lucide-react';
-import { revokeInvitation } from '@/actions/auth/users.action';
+import { revokeInvitation } from '@/actions/user/revokeInvitation.action';
 import { useAction } from 'next-safe-action/hooks';
 import { toast } from 'sonner';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';

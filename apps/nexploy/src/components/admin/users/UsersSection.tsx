@@ -1,5 +1,5 @@
-import { getInvitations, getUsers } from '@/actions/auth/users.action';
 import { getUserSession } from '@/services/auth/auth.service';
+import { getInvitations, getUsers } from '@/services/user.service';
 import { UsersTable } from '@/components/admin/users/UsersTable';
 import { InvitationsTable } from '@/components/admin/users/InvitationsTable';
 import {
@@ -13,10 +13,11 @@ import { Mail } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 export async function UsersSection() {
+    const t = await getTranslations('admin');
+
     const session = await getUserSession();
     const users = await getUsers();
     const invitations = await getInvitations();
-    const t = await getTranslations('admin');
 
     const isAdmin = session?.user.role === 'admin';
 

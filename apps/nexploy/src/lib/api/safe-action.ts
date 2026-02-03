@@ -1,9 +1,11 @@
 import { createMiddleware, createSafeActionClient } from 'next-safe-action';
 import { HttpErrorResponse } from 'drino';
 import { getUserSession } from '@/services/auth/auth.service';
+import { Session } from '@/lib/auth/auth';
 import { redirect } from 'next/navigation';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { cookies } from 'next/headers';
+import { getTranslations } from 'next-intl/server';
 
 export const actionServer = createSafeActionClient({
     handleServerError(error) {
@@ -29,6 +31,32 @@ export const authActionServer = actionServer.use(async ({ next }) => {
     }
 
     return next({ ctx: { session } });
+});
+
+export const adminOnly = createMiddleware<{ ctx: { session: Session } }>().define(
+    async ({ ctx, next }) => {
+        if (ctx.session.user.role !== 'admin') {
+            throw new Error('Only admins can perform this action');
+        }
+
+        return next({ ctx });
+    },
+);
+
+export const preventSelfAction = createMiddleware<{
+    ctx: { session: Session };
+}>().define(async ({ ctx, clientInput, next }) => {
+    const input = clientInput as { userId?: string };
+    const tAdmin = await getTranslations('admin');
+
+    if (input.userId && input.userId === ctx.session.user.id) {
+        await setToastServer({
+            type: 'error',
+            message: tAdmin('cannotBanYourself'),
+        });
+    }
+
+    return next({ ctx });
 });
 
 export const injectDockerApiCookie = createMiddleware().define(async ({ ctx, next }) => {

@@ -20,6 +20,7 @@
     "userRoleUpdateFailed": "Failed to update role",
     "userDeleteFailed": "Failed to delete user",
     "userBanUpdateFailed": "Failed to update ban status",
+    "cannotBanYourself": "You cannot ban yourself",
     "confirmDeleteUser": "Are you sure you want to delete {name}? This action cannot be undone.",
     "confirmBanUser": "Are you sure you want to ban {name}? They will no longer be able to access the platform.",
     "confirmUnbanUser": "Are you sure you want to unban {name}?",

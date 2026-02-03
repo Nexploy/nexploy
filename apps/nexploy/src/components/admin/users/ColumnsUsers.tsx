@@ -1,9 +1,17 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, Ban, CheckCircle, Lock, MoreHorizontal, Shield, ShieldOff, Trash2 } from 'lucide-react';
+import {
+    ArrowUpDown,
+    Ban,
+    CheckCircle,
+    Lock,
+    MoreHorizontal,
+    Shield,
+    ShieldOff,
+    Trash2,
+} from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
-import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Badge } from '@workspace/ui/components/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar';
 import {
@@ -64,49 +72,18 @@ export const getColumnsUsers = (
     t: TranslationFunction,
     options: ColumnsOptions,
 ): ColumnDef<UserRow>[] => {
-    const { currentUserId, isAdmin, isUpdatingRole, isDeleting, isBanning, onRoleChange, onDelete, onBan } = options;
+    const {
+        currentUserId,
+        isAdmin,
+        isUpdatingRole,
+        isDeleting,
+        isBanning,
+        onRoleChange,
+        onDelete,
+        onBan,
+    } = options;
 
     const columns: ColumnDef<UserRow>[] = [
-        {
-            id: 'select',
-            header: ({ table }) => {
-                const allRows = table.getRowModel().flatRows;
-                const selectableRows = allRows.filter(
-                    (row) => !isSystemUser(row.original) && row.original.id !== currentUserId,
-                );
-                const allSelected =
-                    selectableRows.length > 0 && selectableRows.every((row) => row.getIsSelected());
-                const someSelected = selectableRows.some((row) => row.getIsSelected());
-
-                return (
-                    <Checkbox
-                        checked={allSelected || (someSelected && 'indeterminate')}
-                        onCheckedChange={(value) => {
-                            selectableRows.forEach((row) => row.toggleSelected(!!value));
-                        }}
-                        aria-label="Select all"
-                        disabled={selectableRows.length === 0}
-                    />
-                );
-            },
-            cell: ({ row }) => {
-                const user = row.original;
-                const isSystem = isSystemUser(user);
-                const isCurrentUser = user.id === currentUserId;
-                const canSelect = !isSystem && !isCurrentUser;
-
-                return (
-                    <Checkbox
-                        checked={row.getIsSelected()}
-                        onCheckedChange={(value) => row.toggleSelected(!!value)}
-                        aria-label="Select row"
-                        disabled={!canSelect}
-                    />
-                );
-            },
-            enableSorting: false,
-            enableHiding: false,
-        },
         {
             accessorKey: 'name',
             header: ({ column }) => (
@@ -127,7 +104,9 @@ export const getColumnsUsers = (
                     <div className="flex items-center gap-3">
                         <Avatar className="size-8">
                             <AvatarImage src={user.image || undefined} />
-                            <AvatarFallback className="text-xs">{getInitials(user.name)}</AvatarFallback>
+                            <AvatarFallback className="text-xs">
+                                {getInitials(user.name)}
+                            </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">
                             <div className="flex items-center gap-2">
@@ -162,9 +141,7 @@ export const getColumnsUsers = (
                     <ArrowUpDown className="ml-2 size-4" />
                 </Button>
             ),
-            cell: ({ row }) => (
-                <span className="text-muted-foreground">{row.original.email}</span>
-            ),
+            cell: ({ row }) => <span className="text-muted-foreground">{row.original.email}</span>,
         },
         {
             accessorKey: 'role',
@@ -185,7 +162,10 @@ export const getColumnsUsers = (
 
                 if (isSystem) {
                     return (
-                        <Badge variant="outline" className="border-amber-500/50 bg-amber-500/10 text-amber-600">
+                        <Badge
+                            variant="outline"
+                            className="border-amber-500/50 bg-amber-500/10 text-amber-600"
+                        >
                             <Lock className="mr-1 size-3" />
                             {t('systemRole')}
                         </Badge>
@@ -196,7 +176,9 @@ export const getColumnsUsers = (
                     return (
                         <Select
                             value={user.role || 'user'}
-                            onValueChange={(value: 'admin' | 'user') => onRoleChange(user.id, value)}
+                            onValueChange={(value: 'admin' | 'user') =>
+                                onRoleChange(user.id, value)
+                            }
                             disabled={isUpdatingRole}
                         >
                             <SelectTrigger className="w-32">
@@ -241,7 +223,10 @@ export const getColumnsUsers = (
 
                 if (isSystem) {
                     return (
-                        <Badge variant="outline" className="border-amber-500/50 bg-amber-500/10 text-amber-600">
+                        <Badge
+                            variant="outline"
+                            className="border-amber-500/50 bg-amber-500/10 text-amber-600"
+                        >
                             <Lock className="mr-1 size-3" />
                             {t('protected')}
                         </Badge>
