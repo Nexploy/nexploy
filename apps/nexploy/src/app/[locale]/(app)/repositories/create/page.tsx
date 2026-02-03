@@ -14,8 +14,10 @@ import { GitSourceStep } from '@/components/repositories/steps/source/GitSourceS
 import { BuildConfigurationStep } from '@/components/repositories/steps/BuildConfigurationStep';
 import { DeploymentStep } from '@/components/repositories/steps/DeploymentStep';
 import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
+import { useTranslations } from 'next-intl';
 
 export default function AddRepositoryPage() {
+    const t = useTranslations('repository.create');
     const router = useRouter();
     const selectedEnvironmentId = useEnvironmentStore((state) => state.selectedEnvironmentId);
 
@@ -64,10 +66,10 @@ export default function AddRepositoryPage() {
                     </div>
                     <div>
                         <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                            Nouveau projet
+                            {t('title')}
                         </h1>
                         <p className="text-muted-foreground text-sm">
-                            Créer et déployer une nouvelle application depuis Git
+                            {t('description')}
                         </p>
                     </div>
                 </div>
@@ -80,7 +82,7 @@ export default function AddRepositoryPage() {
                         onClick={router.back}
                         disabled={isSubmitting}
                     >
-                        Retour
+                        {t('back')}
                     </Button>
                     <Button
                         type="submit"
@@ -89,7 +91,7 @@ export default function AddRepositoryPage() {
                         disabled={isSubmitting}
                         onClick={handleSubmitWithAction}
                     >
-                        {isSubmitting ? 'Création en cours...' : 'Créer le projet'}
+                        {isSubmitting ? t('creating') : t('createProject')}
                     </Button>
                 </div>
             </div>

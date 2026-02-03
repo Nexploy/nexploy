@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
 import { VolumeState } from '@workspace/typescript-interface/stores/docker/volumesStore';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
+import { toastT } from '@/lib/i18n/toastTranslations';
 
 export const useVolumeStore = create<VolumeState>((set, get) => ({
     volumes: [],
@@ -100,7 +101,7 @@ export const useVolumeStore = create<VolumeState>((set, get) => ({
                     if (!data.volume) return;
 
                     get().addVolume(data.volume);
-                    toast.success(`Volume ${data.volume.name} ajouté`);
+                    toast.success(toastT('toasts.volumeAdded', { name: data.volume.name }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -122,7 +123,7 @@ export const useVolumeStore = create<VolumeState>((set, get) => ({
                     if (!data.volumeName) return;
 
                     get().removeVolume(data.volumeName);
-                    toast.success(`Volume ${data.volumeName} supprimé`);
+                    toast.success(toastT('toasts.volumeRemoved', { name: data.volumeName }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );

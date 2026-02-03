@@ -5,12 +5,13 @@ import {
     CardHeader,
     CardTitle,
 } from '@workspace/ui/components/card';
-import { Button } from '@workspace/ui/components/button';
-import { AlertTriangle, Bell, Globe, LogOut, Shield, Trash2 } from 'lucide-react';
+import { AlertTriangle, Bell, Globe, LogOut, Shield } from 'lucide-react';
 import { TwoFactorAuth } from '@/components/account/2fa/TwoFactorAuth';
 import { ProfileInfoForm } from '@/components/account/2fa/forms/ProfileInfoForm';
 import { LanguageSwitcher } from '@/components/account/LanguageSwitcher';
 import { NotificationSwitch } from '@/components/account/NotificationSwitch';
+import { SignOutButton } from '@/components/account/SignOutButton';
+import { ChangePassword } from '@/components/account/ChangePassword';
 import { getUserSession } from '@/services/auth/auth.service';
 import { Label } from '@workspace/ui/components/label';
 import { getTranslations } from 'next-intl/server';
@@ -29,24 +30,12 @@ export async function AccountDetailsSection() {
                         <Shield className="size-5" />
                         {t('securitySettings.title')}
                     </CardTitle>
-                    <CardDescription>
-                        {t('securitySettings.description')}
-                    </CardDescription>
+                    <CardDescription>{t('securitySettings.description')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <TwoFactorAuth user={session?.user} />
-                        <div className="flex items-center justify-between rounded-md border p-3">
-                            <div>
-                                <p>{t('securitySettings.password')}</p>
-                                <p className="text-muted-foreground text-xs">
-                                    {t('securitySettings.lastChanged', { days: 30 })}
-                                </p>
-                            </div>
-                            <Button variant="outline" size="sm">
-                                {t('securitySettings.change')}
-                            </Button>
-                        </div>
+                        <ChangePassword />
                     </div>
                 </CardContent>
             </Card>
@@ -57,9 +46,7 @@ export async function AccountDetailsSection() {
                         <Bell className="size-5" />
                         {t('notifications.title')}
                     </CardTitle>
-                    <CardDescription>
-                        {t('notifications.description')}
-                    </CardDescription>
+                    <CardDescription>{t('notifications.description')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <NotificationSwitch
@@ -75,9 +62,7 @@ export async function AccountDetailsSection() {
                         <Globe className="size-5" />
                         {t('regional.title')}
                     </CardTitle>
-                    <CardDescription>
-                        {t('regional.description')}
-                    </CardDescription>
+                    <CardDescription>{t('regional.description')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -108,21 +93,12 @@ export async function AccountDetailsSection() {
                                 {t('dangerZone.signOutDescription')}
                             </p>
                         </div>
-                    </div>
-
-                    <div className="border-destructive/50 flex items-center justify-between rounded-md border p-3">
-                        <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                                <Trash2 className="text-destructive size-4" />
-                                <p className="font-medium">{t('dangerZone.clearAllSessions')}</p>
-                            </div>
-                            <p className="text-muted-foreground text-sm">
-                                {t('dangerZone.clearAllSessionsDescription')}
-                            </p>
-                        </div>
-                        <Button variant="destructive" size="sm" className="shrink-0">
-                            {t('dangerZone.clear')}
-                        </Button>
+                        <SignOutButton
+                            variant={'button'}
+                            buttonVariant="destructive"
+                            className="shrink-0"
+                            showIcon={false}
+                        />
                     </div>
                 </CardContent>
             </Card>

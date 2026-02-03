@@ -2,13 +2,19 @@ import { User } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { AccountDetailsSection } from '@/components/account/AccountDetailsSection';
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = {
-    title: 'Account',
-    description: 'Gérez votre profil utilisateur et préférences avec Nexploy',
-};
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations('account');
+    return {
+        title: t('title'),
+        description: t('description'),
+    };
+}
 
-export default function AccountPage() {
+export default async function AccountPage() {
+    const t = await getTranslations('account');
+
     return (
         <div className="flex h-full flex-1 flex-col pt-5">
             <div className="flex flex-col gap-5 overflow-hidden">
@@ -18,10 +24,10 @@ export default function AccountPage() {
                     </div>
                     <div className={'flex flex-col'}>
                         <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                            Account
+                            {t('title')}
                         </h1>
                         <p className="text-muted-foreground text-sm">
-                            Gérez votre profil utilisateur et préférences
+                            {t('description')}
                         </p>
                     </div>
                 </div>

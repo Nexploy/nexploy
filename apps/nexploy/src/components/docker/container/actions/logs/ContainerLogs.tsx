@@ -25,6 +25,7 @@ interface ContainerLogsProps {
 export function ContainerLogs({ children }: ContainerLogsProps) {
     const container = useContainerStore((state) => state.container);
     const t = useTranslations('docker.containerLogs');
+    const tStatus = useTranslations('docker.status');
 
     const {
         logs,
@@ -113,7 +114,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                                     <div className="flex size-4 items-center">
                                         <FileText />
                                     </div>
-                                    {t('title', { name: container?.name })}
+                                    {t('title', { name: container?.name ?? 'Unknown Container' })}
                                 </DialogTitle>
                                 <Status
                                     className="rounded-none bg-transparent"
@@ -121,7 +122,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                                 >
                                     <StatusIndicator />
                                     <StatusLabel className={currentStatus.text}>
-                                        {currentStatus.label}
+                                        {tStatus(currentStatus.labelKey)}
                                         {messageEnd && `: ${messageEnd}`}
                                     </StatusLabel>
                                 </Status>
@@ -195,9 +196,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                                         <div className="mt-1">{error.message}</div>
                                     </div>
                                 ) : logs.length === 0 ? (
-                                    <div className="text-secondary-foreground">
-                                        {t('noLogs')}
-                                    </div>
+                                    <div className="text-secondary-foreground">{t('noLogs')}</div>
                                 ) : (
                                     <>
                                         {logs.map((log, index) => (

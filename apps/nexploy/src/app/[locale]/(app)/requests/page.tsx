@@ -26,8 +26,11 @@ import {
 } from '@workspace/ui/components/select';
 import { Button } from '@workspace/ui/components/button';
 import { SSEProvider } from '@/providers/SSEProviders';
+import { useLocale, useTranslations } from 'next-intl';
 
 export default function RequestsPage() {
+    const t = useTranslations('requests');
+    const locale = useLocale();
     const {
         filteredRequests,
         requests,
@@ -98,7 +101,7 @@ export default function RequestsPage() {
     };
 
     const getLocaleDate = (timestamp: string) => {
-        return new Date(timestamp).toLocaleString('fr-FR', {
+        return new Date(timestamp).toLocaleString(locale === 'fr' ? 'fr-FR' : 'en-US', {
             day: '2-digit',
             month: '2-digit',
             hour: '2-digit',
@@ -115,12 +118,14 @@ export default function RequestsPage() {
 
     const getRequestsStatusText = () => {
         if (isLoading) {
-            return 'En attente de requêtes...';
+            return t('waitingForRequests');
         }
         if (requests.length === 0) {
-            return 'Aucune requête';
+            return t('noRequests');
         }
-        return `${requests.length} requête${requests.length > 1 ? 's' : ''} capturée${requests.length > 1 ? 's' : ''}`;
+        return requests.length > 1
+            ? t('requestsCapturedPlural', { count: requests.length })
+            : t('requestsCaptured', { count: requests.length });
     };
 
     return (
@@ -132,7 +137,7 @@ export default function RequestsPage() {
                     </div>
                     <div className="flex flex-col">
                         <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                            Requests
+                            {t('title')}
                         </h1>
                         <p className="text-muted-foreground text-sm">{getRequestsStatusText()}</p>
                     </div>
@@ -142,7 +147,7 @@ export default function RequestsPage() {
                         <div className="mx-5 flex justify-between gap-3">
                             <Input
                                 className="w-1/4 shadow-xs"
-                                placeholder="Rechercher par path, host..."
+                                placeholder={t('searchPlaceholder')}
                                 value={searchQuery}
                                 onChange={(e) => handleSearchChange(e.target.value)}
                             />
@@ -152,12 +157,12 @@ export default function RequestsPage() {
                                     onValueChange={handleMethodFilterChange}
                                 >
                                     <SelectTrigger className="w-32">
-                                        <SelectValue placeholder="Méthode" />
+                                        <SelectValue placeholder={t('method')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectLabel>Méthode</SelectLabel>
-                                            <SelectItem value="all">Toutes</SelectItem>
+                                            <SelectLabel>{t('method')}</SelectLabel>
+                                            <SelectItem value="all">{t('allMethods')}</SelectItem>
                                             <SelectItem value="GET">GET</SelectItem>
                                             <SelectItem value="POST">POST</SelectItem>
                                             <SelectItem value="PUT">PUT</SelectItem>
@@ -171,16 +176,20 @@ export default function RequestsPage() {
                                     onValueChange={handleStatusFilterChange}
                                 >
                                     <SelectTrigger className="w-32">
-                                        <SelectValue placeholder="Status" />
+                                        <SelectValue placeholder={t('status')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectLabel>Status</SelectLabel>
-                                            <SelectItem value="all">Tous</SelectItem>
-                                            <SelectItem value="2xx">2xx Success</SelectItem>
-                                            <SelectItem value="3xx">3xx Redirect</SelectItem>
-                                            <SelectItem value="4xx">4xx Client Error</SelectItem>
-                                            <SelectItem value="5xx">5xx Server Error</SelectItem>
+                                            <SelectLabel>{t('status')}</SelectLabel>
+                                            <SelectItem value="all">{t('allStatuses')}</SelectItem>
+                                            <SelectItem value="2xx">{t('success2xx')}</SelectItem>
+                                            <SelectItem value="3xx">{t('redirect3xx')}</SelectItem>
+                                            <SelectItem value="4xx">
+                                                {t('clientError4xx')}
+                                            </SelectItem>
+                                            <SelectItem value="5xx">
+                                                {t('serverError5xx')}
+                                            </SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -191,13 +200,17 @@ export default function RequestsPage() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead className="w-36">Timestamp</TableHead>
-                                        <TableHead className="w-20">Method</TableHead>
-                                        <TableHead>Path</TableHead>
-                                        <TableHead className="w-20">Status</TableHead>
-                                        <TableHead className="w-24">Duration</TableHead>
-                                        <TableHead className="w-20">Size</TableHead>
-                                        <TableHead>Service</TableHead>
+                                        <TableHead className="w-36">
+                                            {t('table.timestamp')}
+                                        </TableHead>
+                                        <TableHead className="w-20">{t('table.method')}</TableHead>
+                                        <TableHead>{t('table.path')}</TableHead>
+                                        <TableHead className="w-20">{t('table.status')}</TableHead>
+                                        <TableHead className="w-24">
+                                            {t('table.duration')}
+                                        </TableHead>
+                                        <TableHead className="w-20">{t('table.size')}</TableHead>
+                                        <TableHead>{t('table.service')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -216,8 +229,8 @@ export default function RequestsPage() {
                                         <TableRow>
                                             <TableCell colSpan={7} className="py-6 text-center">
                                                 {requests.length === 0
-                                                    ? 'Aucune requête'
-                                                    : 'Aucune requête ne correspond aux filtres.'}
+                                                    ? t('noRequests')
+                                                    : t('noMatchingRequests')}
                                             </TableCell>
                                         </TableRow>
                                     ) : (
@@ -268,7 +281,7 @@ export default function RequestsPage() {
                             <div className="mx-5 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <span className="text-muted-foreground text-sm">
-                                        Requêtes par page :
+                                        {t('requestsPerPage')}
                                     </span>
                                     <Select
                                         value={pageSize === 'all' ? 'all' : String(pageSize)}
@@ -282,17 +295,17 @@ export default function RequestsPage() {
                                         }}
                                     >
                                         <SelectTrigger size="sm" className="w-24">
-                                            <SelectValue placeholder="Per page" />
+                                            <SelectValue placeholder={t('perPage')} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
-                                                <SelectLabel>Taille</SelectLabel>
+                                                <SelectLabel>{t('sizeLabel')}</SelectLabel>
                                                 {[10, 25, 50, 100].map((size) => (
                                                     <SelectItem key={size} value={`${size}`}>
                                                         {size}
                                                     </SelectItem>
                                                 ))}
-                                                <SelectItem value="all">Tous</SelectItem>
+                                                <SelectItem value="all">{t('all')}</SelectItem>
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
@@ -301,7 +314,10 @@ export default function RequestsPage() {
                                 {!isShowingAll && (
                                     <div className="flex items-center gap-2">
                                         <span className="text-muted-foreground text-sm">
-                                            Page {currentPage + 1} sur {totalPages}
+                                            {t('pageOf', {
+                                                current: currentPage + 1,
+                                                total: totalPages,
+                                            })}
                                         </span>
                                         <div className="flex gap-2">
                                             <Button
@@ -313,7 +329,7 @@ export default function RequestsPage() {
                                                 disabled={currentPage === 0}
                                             >
                                                 <ChevronLeft className="h-4 w-4" />
-                                                Précédent
+                                                {t('previous')}
                                             </Button>
                                             <Button
                                                 variant="outline"
@@ -325,7 +341,7 @@ export default function RequestsPage() {
                                                 }
                                                 disabled={currentPage >= totalPages - 1}
                                             >
-                                                Suivant
+                                                {t('next')}
                                                 <ChevronRight className="h-4 w-4" />
                                             </Button>
                                         </div>

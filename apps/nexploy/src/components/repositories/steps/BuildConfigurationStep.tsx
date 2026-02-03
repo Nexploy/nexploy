@@ -78,7 +78,7 @@ export function BuildConfigurationStep() {
                                 <FormItem>
                                     <FormLabel>{t('dockerfilePath')}</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Dockerfile" {...field} />
+                                        <Input placeholder={t('dockerfilePathPlaceholder')} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -91,7 +91,7 @@ export function BuildConfigurationStep() {
                                 <FormItem>
                                     <FormLabel>{t('contextPath')}</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="." {...field} />
+                                        <Input placeholder={t('contextPathPlaceholder')} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -109,7 +109,7 @@ export function BuildConfigurationStep() {
                                 <FormItem>
                                     <FormLabel>{t('composePath')}</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="docker-compose.yml" {...field} />
+                                        <Input placeholder={t('composePathPlaceholder')} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -122,7 +122,7 @@ export function BuildConfigurationStep() {
                                 <FormItem>
                                     <FormLabel>{t('contextPath')}</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="." {...field} />
+                                        <Input placeholder={t('contextPathPlaceholder')} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

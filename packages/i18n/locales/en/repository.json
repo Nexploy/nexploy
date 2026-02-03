@@ -5,23 +5,54 @@
     "manageRepositories": "Manage and organize your repositories",
     "addRepository": "Add Repository",
     "importRepository": "Import Repository",
+    "create": {
+        "title": "New Project",
+        "description": "Create and deploy a new application from Git",
+        "back": "Back",
+        "creating": "Creating...",
+        "createProject": "Create Project"
+    },
     "selectRepository": "Select a repository",
     "searchRepositories": "Search repositories...",
     "runBuild": "Run build",
     "cancelBuild": "Cancel build",
     "viewBuilds": "View builds",
     "settings": "Settings",
+    "tabs": {
+        "builds": "Builds",
+        "versions": "Versions",
+        "environments": "Environments",
+        "domains": "Domains",
+        "deployment": "Deployment",
+        "settings": "Settings"
+    },
     "delete": "Delete",
     "confirmDelete": "Are you sure you want to delete this repository?",
     "deleteSuccess": "Repository deleted successfully",
     "importSuccess": "Repository imported successfully",
+    "pendingBuild": "Pending build",
+    "versions": {
+        "title": "Versions",
+        "noVersions": "No versions available. Versions are created after a successful build.",
+        "deployed": "Deployed",
+        "deploy": "Deploy",
+        "deploySuccess": "Version deployed successfully"
+    },
     "deployment": {
         "title": "Deployment",
+        "description": "Deployment settings",
         "mode": "Deployment Mode",
+        "modeDescription": "Choose how to deploy your application",
         "container": "Container",
         "containerDescription": "Deploy as a single Docker container",
+        "singleContainer": "A single Docker container",
         "swarm": "Swarm",
         "swarmDescription": "Deploy as a Docker Swarm service with replicas",
+        "swarmWithReplicas": "Service with replicas and orchestration",
+        "swarmNotActive": "Swarm is not active.",
+        "initializeSwarm": "Initialize a Swarm",
+        "dockerComposeMode": "Docker Compose Mode",
+        "dockerComposeModeDescription": "Deployment mode is defined in your docker-compose.yml file. Use the deploy section to configure Swarm mode with replicas and orchestration.",
         "buildType": "Build Type",
         "dockerfile": "Dockerfile",
         "dockerfileDescription": "Build using a Dockerfile in your repository",
@@ -75,6 +106,7 @@
         "branch": "Branch",
         "triggeredBy": "Triggered by",
         "noBuilds": "No builds yet",
+        "noBuild": "No Build",
         "startedAt": "Started at",
         "finishedAt": "Finished at",
         "stop": "Stop",
@@ -179,6 +211,10 @@
         "startPeriodDescription": "Initialization time before checks"
     },
     "steps": {
+        "gitSource": {
+            "title": "Git Source",
+            "description": "Source repository configuration"
+        },
         "generalInfo": {
             "title": "General Information",
             "description": "Basic details of your project",

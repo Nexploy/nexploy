@@ -50,6 +50,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
     const [open, setOpen] = useState(false);
     const [refreshRate, setRefreshRate] = useLocalStorage('stats-refreshRate', '5000');
     const t = useTranslations('docker.containerStats');
+    const tStatus = useTranslations('docker.status');
 
     const container = useContainerStore((state) => state.container);
     const { connectionState, history, exportStats, stats } = useContainerStatsStore(
@@ -221,14 +222,14 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                                     <div className="flex size-4 items-center">
                                         <Activity />
                                     </div>
-                                    {t('title', { name: container?.name })}
+                                    {t('title', { name: container?.name ?? 'Unknown container' })}
                                     <Status
                                         className="rounded-none bg-transparent"
                                         status={currentStatus.status}
                                     >
                                         <StatusIndicator />
                                         <StatusLabel className={currentStatus.text}>
-                                            {currentStatus.label}
+                                            {tStatus(currentStatus.labelKey)}
                                         </StatusLabel>
                                     </Status>
                                 </DialogTitle>

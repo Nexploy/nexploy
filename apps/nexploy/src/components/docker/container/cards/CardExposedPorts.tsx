@@ -131,22 +131,15 @@ export function CardExposedPorts() {
                                         >
                                             <code className="flex items-center gap-2 text-sm leading-none">
                                                 {hasPublicPort ? (
-                                                    <Tooltip>
-                                                        <TooltipTrigger asChild>
-                                                            <a
-                                                                href={getPortUrl(displayPort.publicPort!)}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="text-primary inline-flex items-center gap-1 font-semibold hover:underline"
-                                                            >
-                                                                {displayPort.publicPort}
-                                                                <ExternalLink className="h-3 w-3" />
-                                                            </a>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent>
-                                                            {t('openPort', { port: displayPort.publicPort })}
-                                                        </TooltipContent>
-                                                    </Tooltip>
+                                                    <a
+                                                        href={getPortUrl(displayPort.publicPort!)}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-primary inline-flex items-center gap-1 font-semibold hover:underline"
+                                                    >
+                                                        {displayPort.publicPort}
+                                                        <ExternalLink className="h-3 w-3" />
+                                                    </a>
                                                 ) : (
                                                     <span className="text-muted-foreground font-semibold">
                                                         —
@@ -196,7 +189,9 @@ export function CardExposedPorts() {
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <a
-                                                                href={getPortUrl(change.publicPort!)}
+                                                                href={getPortUrl(
+                                                                    change.publicPort!,
+                                                                )}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
                                                                 className="text-primary inline-flex items-center gap-1 font-semibold hover:underline"
@@ -206,7 +201,11 @@ export function CardExposedPorts() {
                                                             </a>
                                                         </TooltipTrigger>
                                                         <TooltipContent>
-                                                            {t('openPort', { port: change.publicPort })}
+                                                            {t('openPort', {
+                                                                port:
+                                                                    change.publicPort ??
+                                                                    'Unknown Port',
+                                                            })}
                                                         </TooltipContent>
                                                     </Tooltip>
                                                 ) : (
@@ -249,9 +248,7 @@ export function CardExposedPorts() {
                             </div>
                         ) : (
                             <div className="mb-16 flex flex-1 items-center justify-center">
-                                <p className="text-muted-foreground text-center">
-                                    {t('noPorts')}
-                                </p>
+                                <p className="text-muted-foreground text-center">{t('noPorts')}</p>
                             </div>
                         )}
                     </div>

@@ -24,9 +24,11 @@ import { ContainerStats } from '@/components/docker/container/actions/ContainerS
 import { CardExecuteId } from '@/components/docker/container/cards/CardExecuteId';
 import { ApplyChangesButtonForm } from '@/components/docker/container/forms/ApplyChangesButtonForm';
 import { CardLabels } from '@/components/docker/container/cards/label/CardLabels';
+import { useTranslations } from 'next-intl';
 
 export function ContainerDetailPage() {
     const container = useContainerStore((state) => state.container);
+    const t = useTranslations('docker.containerDetail');
 
     return (
         <div className="relative flex h-full flex-1 flex-col gap-5 pt-5">
@@ -43,7 +45,7 @@ export function ContainerDetailPage() {
                         </h1>
                     )}
                     <p className="text-muted-foreground text-sm">
-                        Détails et informations du conteneur Docker
+                        {t('description')}
                     </p>
                 </div>
                 <ApplyChangesButtonForm />
@@ -61,7 +63,7 @@ export function ContainerDetailPage() {
                                         {({ openLogs }) => (
                                             <Button variant="outline" onClick={openLogs}>
                                                 <FileText className="hidden lg:block" />
-                                                Logs
+                                                {t('logs')}
                                             </Button>
                                         )}
                                     </ContainerLogs>
@@ -69,7 +71,7 @@ export function ContainerDetailPage() {
                                         {({ openStats }) => (
                                             <Button variant="outline" onClick={openStats}>
                                                 <Activity className="hidden lg:block" />
-                                                Stats
+                                                {t('stats')}
                                             </Button>
                                         )}
                                     </ContainerStats>
@@ -77,7 +79,7 @@ export function ContainerDetailPage() {
                                         {({ openConsole }) => (
                                             <Button variant="outline" onClick={openConsole}>
                                                 <Terminal className="hidden lg:block" />
-                                                Console
+                                                {t('console')}
                                             </Button>
                                         )}
                                     </ContainerTerminal>
@@ -85,7 +87,7 @@ export function ContainerDetailPage() {
                                         {({ openAttach }) => (
                                             <Button variant="outline" onClick={openAttach}>
                                                 <Terminal className="hidden lg:block" />
-                                                Attach
+                                                {t('attach')}
                                             </Button>
                                         )}
                                     </ContainerAttach>

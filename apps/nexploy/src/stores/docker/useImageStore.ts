@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { ImageState } from '@workspace/typescript-interface/stores/docker/imagesStore';
+import { toastT } from '@/lib/i18n/toastTranslations';
 
 export const useImageStore = create<ImageState>((set, get) => ({
     images: [],
@@ -129,7 +130,7 @@ export const useImageStore = create<ImageState>((set, get) => ({
 
                     get().addImage(data.image);
                     const imageName = data.image.repoTags?.[0] || data.image.id.substring(0, 12);
-                    toast.success(`Image ${imageName} added`);
+                    toast.success(toastT('toasts.imageAdded', { name: imageName }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -152,7 +153,7 @@ export const useImageStore = create<ImageState>((set, get) => ({
 
                     get().removeImage(data.imageId);
                     const imageName = data.image?.repoTags?.[0] || data.imageId.substring(0, 12);
-                    toast.success(`Image ${imageName} removed`);
+                    toast.success(toastT('toasts.imageRemoved', { name: imageName }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );

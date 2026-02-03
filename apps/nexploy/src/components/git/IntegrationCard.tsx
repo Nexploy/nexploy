@@ -32,6 +32,7 @@ export function IntegrationCard({
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const t = useTranslations('common');
+    const tStatus = useTranslations('docker.status');
 
     const handleConnect = async () => {
         setIsLoading(true);
@@ -73,7 +74,7 @@ export function IntegrationCard({
                         >
                             <StatusIndicator />
                             <StatusLabel>
-                                {statusMap[isConnected ? 'connected' : 'disconnected'].label}
+                                {tStatus(statusMap[isConnected ? 'connected' : 'disconnected'].labelKey)}
                             </StatusLabel>
                         </Status>
                     </div>

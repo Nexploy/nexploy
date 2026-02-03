@@ -5,6 +5,7 @@ import { ResumeBuildButton } from '@/components/repositories/ResumeBuildButton';
 import { RemoveBuildButton } from '@/components/repositories/RemoveBuildButton';
 import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
 import { RetryBuildButton } from '@/components/repositories/RetryBuildButton';
+import { useTranslations } from 'next-intl';
 
 interface BaseBuildAction {
     id: string;
@@ -46,6 +47,7 @@ export function useBuildActions({
     onRetrySuccess,
     onRemoveSuccess,
 }: UseBuildActionsProps): BuildAction[] {
+    const t = useTranslations('repository.builds');
     const isBuilding = status === 'QUEUED' || status === 'BUILDING';
     const canResume = status === 'FAILED';
     const canRetry = status === 'CANCELLED';
@@ -58,7 +60,7 @@ export function useBuildActions({
             type: 'button',
             id: 'stop',
             icon: Square,
-            label: 'Stop',
+            label: t('stop'),
             onClick: () => onCancelBuild({ buildId }),
             variant: 'destructive',
         });

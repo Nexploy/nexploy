@@ -7,6 +7,7 @@ import { onContainerPauseAction } from '@/actions/docker/container/containerPaus
 import { onContainerRestartAction } from '@/actions/docker/container/containerRestart.action';
 import { onContainerRemoveAction } from '@/actions/docker/container/containerRemove.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useTranslations } from 'next-intl';
 
 interface UseContainerActionsProps {
     containerId: string;
@@ -19,6 +20,7 @@ export function useContainerActions({
     containerName,
     isPaused,
 }: UseContainerActionsProps) {
+    const t = useTranslations('docker.containerActions');
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
     const containerTools: ContainerTool[] = [
@@ -26,7 +28,7 @@ export function useContainerActions({
             ? {
                   id: 'unpause',
                   icon: Play,
-                  label: 'Reprendre',
+                  label: t('resume'),
                   onClick: () => onContainerUnpauseAction({ containerId }),
                   disabledStates: [],
                   variant: 'outline',
@@ -34,7 +36,7 @@ export function useContainerActions({
             : {
                   id: 'start',
                   icon: Play,
-                  label: 'Démarrer',
+                  label: t('start'),
                   onClick: () => onContainerStartAction({ containerId }),
                   disabledStates: ['running', 'restarting', 'paused'],
                   variant: 'outline',
@@ -42,7 +44,7 @@ export function useContainerActions({
         {
             id: 'stop',
             icon: Square,
-            label: 'Arrêter',
+            label: t('stop'),
             onClick: () => onContainerStopAction({ containerId }),
             disabledStates: ['exited', 'created', 'dead'],
             variant: 'outline',
@@ -50,7 +52,7 @@ export function useContainerActions({
         {
             id: 'pause',
             icon: Pause,
-            label: 'Pause',
+            label: t('pause'),
             onClick: () => onContainerPauseAction({ containerId }),
             disabledStates: ['paused', 'exited', 'dead', 'created'],
             variant: 'outline',
@@ -58,7 +60,7 @@ export function useContainerActions({
         {
             id: 'restart',
             icon: RotateCw,
-            label: 'Redémarrer',
+            label: t('restart'),
             onClick: () => onContainerRestartAction({ containerId }),
             disabledStates: ['created', 'dead'],
             variant: 'outline',
@@ -66,14 +68,14 @@ export function useContainerActions({
         {
             id: 'destroy',
             icon: Trash2,
-            label: 'Delete',
+            label: t('delete'),
             onClick: () =>
                 new Promise((resolve, reject) => {
                     openAlertDialog({
-                        title: 'Remove Container',
-                        description: `Are you sure you want to remove ${containerName} container?`,
-                        cancelLabel: 'Cancel',
-                        actionLabel: 'Remove',
+                        title: t('removeTitle'),
+                        description: t('removeDescription', { name: containerName }),
+                        cancelLabel: t('cancel'),
+                        actionLabel: t('remove'),
                         onAction: async () => {
                             try {
                                 const result = await onContainerRemoveAction({ containerId });

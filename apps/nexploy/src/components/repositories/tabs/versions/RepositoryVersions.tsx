@@ -11,6 +11,7 @@ import { Separator } from '@workspace/ui/components/separator';
 import { onDeployVersion } from '@/actions/repository/builds/deployVersion.action';
 import { Badge } from '@workspace/ui/components/badge';
 import { Image } from '@workspace/typescript-interface/docker/docker.image';
+import { useTranslations } from 'next-intl';
 
 interface RepositoryVersionsProps {
     repositoryId: string;
@@ -25,11 +26,12 @@ export function RepositoryVersions({
     images,
     containerImageUsed,
 }: RepositoryVersionsProps) {
+    const t = useTranslations('repository.versions');
     const router = useRouter();
 
     const { execute, isPending } = useAction(onDeployVersion, {
         onSuccess: () => {
-            toast.success('Version deployed successfully');
+            toast.success(t('deploySuccess'));
             router.refresh();
         },
     });
@@ -50,11 +52,11 @@ export function RepositoryVersions({
 
     return (
         <div className="flex flex-col gap-4 px-5">
-            <h2 className="text-xl font-semibold">Versions</h2>
+            <h2 className="text-xl font-semibold">{t('title')}</h2>
             <div className="rounded-md border">
                 {deployedVersions.length === 0 ? (
                     <div className="text-muted-foreground p-8 text-center text-sm">
-                        Aucune version disponible. Les versions sont créées après un build réussi.
+                        {t('noVersions')}
                     </div>
                 ) : (
                     <div className="divide-y">
@@ -124,7 +126,7 @@ export function RepositoryVersions({
                                         ) : (
                                             <Rocket className="size-4" />
                                         )}
-                                        {isCurrent ? 'Déployée' : 'Déployer'}
+                                        {isCurrent ? t('deployed') : t('deploy')}
                                     </Button>
                                 </div>
                             );

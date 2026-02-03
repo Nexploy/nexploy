@@ -1,38 +1,52 @@
-import { Badge } from '@workspace/ui/components/badge';
-import { CheckCircle2, Clock, Loader2, XCircle } from 'lucide-react';
-import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
+'use client';
 
-export const getStatusBadge = (status?: BuildStatus | string) => {
+import { Badge } from '@workspace/ui/components/badge';
+import { BuildStatus } from 'generated/client';
+import { CheckCircle2, Clock, Hourglass, Loader2, XCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+
+interface StatusBadgeProps {
+    status?: BuildStatus | string;
+}
+
+export function StatusBadge({ status }: StatusBadgeProps) {
+    const t = useTranslations('repository.builds');
+
     switch (status) {
         case 'COMPLETED':
             return (
                 <Badge variant="default" className="gap-1">
                     <CheckCircle2 className="size-3" />
-                    Success
+                    {t('completed')}
                 </Badge>
             );
         case 'FAILED':
             return (
                 <Badge variant="destructive" className="gap-1">
                     <XCircle className="size-3" />
-                    Failed
+                    {t('failed')}
                 </Badge>
             );
         case 'BUILDING':
             return (
                 <Badge variant="warning">
                     <Loader2 className="size-3 animate-spin" />
-                    Building
+                    {t('building')}
                 </Badge>
             );
         case 'QUEUED':
             return (
                 <Badge variant="secondary" className="gap-1">
                     <Clock className="size-3" />
-                    Queued
+                    {t('queued')}
                 </Badge>
             );
         default:
-            return <Badge variant="outline">{status}</Badge>;
+            return (
+                <Badge variant="outline">
+                    <Hourglass className="size-3" />
+                    {t('noBuild')}
+                </Badge>
+            );
     }
-};
+}

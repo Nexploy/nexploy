@@ -57,7 +57,7 @@ const CONTAINER_TEMPLATES = [
         name: 'PostgreSQL',
         icon: Database,
         descriptionKey: 'templatePostgres' as const,
-        category: 'Database',
+        categoryKey: 'categoryDatabase' as const,
         config: {
             name: 'postgres',
             image: 'postgres:16',
@@ -81,7 +81,7 @@ const CONTAINER_TEMPLATES = [
         name: 'Redis',
         icon: Circle,
         descriptionKey: 'templateRedis' as const,
-        category: 'Cache',
+        categoryKey: 'categoryCache' as const,
         config: {
             name: 'redis',
             image: 'redis:7-alpine',
@@ -95,7 +95,7 @@ const CONTAINER_TEMPLATES = [
         name: 'MySQL',
         icon: MySQL,
         descriptionKey: 'templateMysql' as const,
-        category: 'Database',
+        categoryKey: 'categoryDatabase' as const,
         config: {
             name: 'mysql',
             image: 'mysql:8',
@@ -114,7 +114,7 @@ const CONTAINER_TEMPLATES = [
         name: 'MongoDB',
         icon: Leaf,
         descriptionKey: 'templateMongodb' as const,
-        category: 'Database',
+        categoryKey: 'categoryDatabase' as const,
         config: {
             name: 'mongodb',
             image: 'mongo:7',
@@ -274,7 +274,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                                     <template.icon className="text-primary size-5" />
                                                 </div>
                                                 <span className="text-muted-foreground bg-muted rounded px-2 py-1 text-xs">
-                                                    {template.category}
+                                                    {t(template.categoryKey)}
                                                 </span>
                                             </div>
                                         </CardHeader>
@@ -352,7 +352,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                                     {t('hostname')} <Optional />
                                                 </FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="mon-app" {...field} />
+                                                    <Input placeholder={t('hostnamePlaceholder')} {...field} />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -368,7 +368,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                                     {t('network')} <Optional />
                                                 </FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="bridge" {...field} />
+                                                    <Input placeholder={t('networkPlaceholder')} {...field} />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>

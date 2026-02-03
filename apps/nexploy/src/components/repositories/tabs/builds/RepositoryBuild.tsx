@@ -7,7 +7,7 @@ import { Clock, GitBranch } from 'lucide-react';
 import dayjs from 'dayjs';
 import { Build } from 'generated/client';
 import { Separator } from '@workspace/ui/components/separator';
-import { getStatusBadge } from '@/components/utils/StatusBadge';
+import { StatusBadge } from '@/components/utils/StatusBadge';
 import { BuildDropdownActions } from '@/components/repositories/BuildDropdownActions';
 import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
 
@@ -38,7 +38,7 @@ export function RepositoryBuild({ repositoryId, build, index }: BuildLogsProps) 
         >
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
-                    {getStatusBadge(status)}
+                    <StatusBadge status={status} />
                     <span className="line-clamp-1 text-sm font-medium">
                         #{index} {build.commitMessage ?? `#${build.id}`}
                     </span>

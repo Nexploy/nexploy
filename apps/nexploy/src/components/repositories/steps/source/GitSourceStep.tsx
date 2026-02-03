@@ -15,9 +15,11 @@ import useSWR from 'swr';
 import { authClient } from '@/lib/auth/auth-client';
 import { ProviderSource } from '@/components/repositories/steps/source/ProviderSource';
 import { SocialAccount } from '@workspace/typescript-interface/auth/social-account';
+import { useTranslations } from 'next-intl';
 
 export function GitSourceStep() {
     const { control, setValue } = useFormContext();
+    const t = useTranslations('repository.steps.gitSource');
 
     const { data: accounts } = useSWR<SocialAccount[] | null>(
         'auth/listAccounts',
@@ -32,8 +34,8 @@ export function GitSourceStep() {
                         <GitBranch className="text-primary size-5" />
                     </div>
                     <div className={'flex flex-col'}>
-                        <CardTitle>Source Git</CardTitle>
-                        <CardDescription>Configuration du dépôt source</CardDescription>
+                        <CardTitle>{t('title')}</CardTitle>
+                        <CardDescription>{t('description')}</CardDescription>
                     </div>
                 </div>
             </CardHeader>

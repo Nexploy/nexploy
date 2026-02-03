@@ -6,6 +6,7 @@ import {
 import { toast } from 'sonner';
 import { ContainerState } from '@workspace/typescript-interface/stores/docker/containersStore';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
+import { toastT } from '@/lib/i18n/toastTranslations';
 
 export const useContainersStore = create<ContainerState>((set, get) => ({
     containers: [],
@@ -113,7 +114,7 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
                     if (!data.container) return;
 
                     get().addContainer(data.container);
-                    toast.success(`Container ${data.container.name} added`, {
+                    toast.success(toastT('toasts.containerAdded', { name: data.container.name }), {
                         className: 'container-toast',
                     });
                     set({ lastUpdate: data.timestamp });
@@ -132,11 +133,11 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
                     get().updateContainer(container);
 
                     if (action === 'die') {
-                        toast.error(`Container ${name} die unexpectedly`, {
+                        toast.error(toastT('toasts.containerDied', { name }), {
                             className: 'container-toast',
                         });
                     } else {
-                        toast.success(`Container ${name} (action: ${action})`, {
+                        toast.success(toastT('toasts.containerAction', { name, action: action || '' }), {
                             className: 'container-toast',
                         });
                     }
@@ -151,7 +152,7 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
                     if (!data.containerId) return;
 
                     get().removeContainer(data.containerId);
-                    toast.success(`Container ${data.oldState?.name} removed`, {
+                    toast.success(toastT('toasts.containerRemoved', { name: data.oldState?.name || '' }), {
                         className: 'container-toast',
                     });
                     set({ lastUpdate: data.timestamp });

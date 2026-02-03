@@ -22,6 +22,7 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
     const container = useContainerStore((state) => state.container);
     const selectedEnvironmentId = useEnvironmentStore((state) => state.selectedEnvironmentId);
     const t = useTranslations('docker.containerAttach');
+    const tStatus = useTranslations('docker.status');
 
     const { connectionState, connect, disconnect, terminalRef } = useTerminalStore();
 
@@ -64,14 +65,14 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
                                 <div className="flex size-4 items-center">
                                     <Terminal />
                                 </div>
-                                {t('title', { name: container?.name })}
+                                {t('title', { name: container?.name ?? 'Unknown Container' })}
                                 <Status
                                     className="rounded-none bg-transparent"
                                     status={currentStatus.status}
                                 >
                                     <StatusIndicator />
                                     <StatusLabel className={currentStatus.text}>
-                                        {currentStatus.label}
+                                        {tStatus(currentStatus.labelKey)}
                                     </StatusLabel>
                                 </Status>
                             </DialogTitle>

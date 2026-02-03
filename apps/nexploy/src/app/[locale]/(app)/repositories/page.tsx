@@ -18,7 +18,7 @@ import {
     CardTitle,
 } from '@workspace/ui/components/card';
 import { getRepositories } from '@/services/repository.service';
-import { getStatusBadge } from '@/components/utils/StatusBadge';
+import { StatusBadge } from '@/components/utils/StatusBadge';
 import { RunBuildButton } from '@/components/repositories/RunBuildButton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import React from 'react';
@@ -81,6 +81,8 @@ export default async function RepositoriesPage() {
                                     const lastDeployment = repository.build?.[0];
                                     const Icon = getGitIcon(repository.gitProvider);
 
+                                    console.log(lastDeployment?.status);
+
                                     return (
                                         <Link
                                             href={`/repositories/${repository.id}`}
@@ -122,9 +124,7 @@ export default async function RepositoriesPage() {
                                                     </div>
                                                 </CardHeader>
                                                 <CardFooter className="bg-muted/40 text-muted-foreground flex h-14 justify-between border-t !p-3">
-                                                    {getStatusBadge(
-                                                        lastDeployment?.status ?? 'Pending build',
-                                                    )}
+                                                    <StatusBadge status={lastDeployment?.status} />
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <RunBuildButton

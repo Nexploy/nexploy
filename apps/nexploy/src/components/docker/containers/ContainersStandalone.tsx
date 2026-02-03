@@ -11,12 +11,14 @@ import {
 } from '@workspace/ui/components/empty';
 import { Container as IconContainer } from 'lucide-react';
 import { useContainersStore } from '@/stores/docker/useContainersStore';
+import { useTranslations } from 'next-intl';
 
 interface ContainersStandaloneProps {
     keepEmpty?: boolean;
 }
 
 export function ContainersStandalone({ keepEmpty = false }: ContainersStandaloneProps) {
+    const t = useTranslations('docker');
     const standaloneContainers = useContainersStore((state) => state.getOrganizedContainers)()
         .standaloneContainers;
 
@@ -24,7 +26,7 @@ export function ContainersStandalone({ keepEmpty = false }: ContainersStandalone
         return (
             <div className={'space-y-3 px-5'}>
                 <div className="flex items-center gap-2 px-1">
-                    <span className="text-lg font-semibold">Conteneurs</span>
+                    <span className="text-lg font-semibold">{t('containers')}</span>
                     <Badge variant={'secondary'}>{standaloneContainers.length}</Badge>
                 </div>
                 <div
@@ -45,8 +47,8 @@ export function ContainersStandalone({ keepEmpty = false }: ContainersStandalone
                     <EmptyMedia variant="icon" className={'bg-primary/10'}>
                         <IconContainer className="text-primary" />
                     </EmptyMedia>
-                    <EmptyTitle>Aucun conteneur</EmptyTitle>
-                    <EmptyDescription>Vous n’avez encore créé aucun conteneur.</EmptyDescription>
+                    <EmptyTitle>{t('noContainers')}</EmptyTitle>
+                    <EmptyDescription>{t('noContainersDescription')}</EmptyDescription>
                 </EmptyHeader>
             </Empty>
         )

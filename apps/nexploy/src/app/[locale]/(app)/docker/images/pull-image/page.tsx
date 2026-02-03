@@ -44,123 +44,38 @@ import { imagePullSchema } from '@workspace/schemas-zod/docker/image/imagePullAc
 import { Alert, AlertTitle } from '@workspace/ui/components/alert';
 import { toast } from 'sonner';
 import { cn } from '@workspace/ui/lib/utils';
+import { useTranslations } from 'next-intl';
+import { LucideIcon } from 'lucide-react';
 
-const SUGGESTED_IMAGES = [
-    {
-        name: 'postgres:latest',
-        title: 'PostgreSQL',
-        description: 'Base de données relationnelle open source',
-        icon: Database,
-        category: 'Database',
-    },
-    {
-        name: 'redis:latest',
-        title: 'Redis',
-        description: 'Base de données en mémoire pour caching et messagerie',
-        icon: Database,
-        category: 'Cache',
-    },
-    {
-        name: 'mongo:latest',
-        title: 'MongoDB',
-        description: 'Base de données NoSQL orientée documents',
-        icon: Database,
-        category: 'Database',
-    },
-    {
-        name: 'mysql:latest',
-        title: 'MySQL',
-        description: 'Base de données relationnelle populaire',
-        icon: Database,
-        category: 'Database',
-    },
-    {
-        name: 'minio/minio:latest',
-        title: 'MinIO',
-        description: 'Stockage objet compatible S3',
-        icon: Cloud,
-        category: 'Storage',
-    },
-    {
-        name: 'rabbitmq:latest',
-        title: 'RabbitMQ',
-        description: 'Système de messagerie et broker AMQP',
-        icon: MessageSquare,
-        category: 'Messaging',
-    },
-    {
-        name: 'kibana:latest',
-        title: 'Kibana',
-        description: 'Interface d’analyse et visualisation pour Elasticsearch',
-        icon: BarChart,
-        category: 'Analytics',
-    },
-    {
-        name: 'grafana/grafana:latest',
-        title: 'Grafana',
-        description: 'Plateforme de surveillance et tableaux de bord',
-        icon: LineChart,
-        category: 'Monitoring',
-    },
-    {
-        name: 'prom/prometheus:latest',
-        title: 'Prometheus',
-        description: 'Système de monitoring et d’alerte pour applications',
-        icon: Activity,
-        category: 'Monitoring',
-    },
-    {
-        name: 'node:latest',
-        title: 'Node.js',
-        description: 'Environnement d’exécution JavaScript côté serveur',
-        icon: Code,
-        category: 'Runtime',
-    },
-    {
-        name: 'python:latest',
-        title: 'Python',
-        description: 'Langage de programmation polyvalent',
-        icon: Code,
-        category: 'Runtime',
-    },
-    {
-        name: 'golang:latest',
-        title: 'Golang',
-        description: 'Langage compilé rapide pour backend et systèmes',
-        icon: Code,
-        category: 'Runtime',
-    },
-    {
-        name: 'busybox:latest',
-        title: 'BusyBox',
-        description: 'Petite suite d’outils Unix pour conteneurs légers',
-        icon: Terminal,
-        category: 'Utility',
-    },
-    {
-        name: 'alpine:latest',
-        title: 'Alpine',
-        description: 'Image Linux minimaliste pour conteneurs',
-        icon: Mountain,
-        category: 'Base Image',
-    },
-    {
-        name: 'ubuntu:latest',
-        title: 'Ubuntu',
-        description: 'Distribution Linux populaire et stable',
-        icon: Cpu,
-        category: 'Base Image',
-    },
-    {
-        name: 'n8nio/n8n:latest',
-        title: 'N8N',
-        description: "Plateforme d'automatisation de workflows",
-        icon: Workflow,
-        category: 'Automation',
-    },
+interface SuggestedImage {
+    name: string;
+    title: string;
+    descriptionKey: string;
+    icon: LucideIcon;
+    category: string;
+}
+
+const SUGGESTED_IMAGES: SuggestedImage[] = [
+    { name: 'postgres:latest', title: 'PostgreSQL', descriptionKey: 'postgres', icon: Database, category: 'Database' },
+    { name: 'redis:latest', title: 'Redis', descriptionKey: 'redis', icon: Database, category: 'Cache' },
+    { name: 'mongo:latest', title: 'MongoDB', descriptionKey: 'mongo', icon: Database, category: 'Database' },
+    { name: 'mysql:latest', title: 'MySQL', descriptionKey: 'mysql', icon: Database, category: 'Database' },
+    { name: 'minio/minio:latest', title: 'MinIO', descriptionKey: 'minio', icon: Cloud, category: 'Storage' },
+    { name: 'rabbitmq:latest', title: 'RabbitMQ', descriptionKey: 'rabbitmq', icon: MessageSquare, category: 'Messaging' },
+    { name: 'kibana:latest', title: 'Kibana', descriptionKey: 'kibana', icon: BarChart, category: 'Analytics' },
+    { name: 'grafana/grafana:latest', title: 'Grafana', descriptionKey: 'grafana', icon: LineChart, category: 'Monitoring' },
+    { name: 'prom/prometheus:latest', title: 'Prometheus', descriptionKey: 'prometheus', icon: Activity, category: 'Monitoring' },
+    { name: 'node:latest', title: 'Node.js', descriptionKey: 'node', icon: Code, category: 'Runtime' },
+    { name: 'python:latest', title: 'Python', descriptionKey: 'python', icon: Code, category: 'Runtime' },
+    { name: 'golang:latest', title: 'Golang', descriptionKey: 'golang', icon: Code, category: 'Runtime' },
+    { name: 'busybox:latest', title: 'BusyBox', descriptionKey: 'busybox', icon: Terminal, category: 'Utility' },
+    { name: 'alpine:latest', title: 'Alpine', descriptionKey: 'alpine', icon: Mountain, category: 'Base Image' },
+    { name: 'ubuntu:latest', title: 'Ubuntu', descriptionKey: 'ubuntu', icon: Cpu, category: 'Base Image' },
+    { name: 'n8nio/n8n:latest', title: 'N8N', descriptionKey: 'n8n', icon: Workflow, category: 'Automation' },
 ];
 
 export default function AddImagePage() {
+    const t = useTranslations('docker.pullImagePage');
     const router = useRouter();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
@@ -174,7 +89,7 @@ export default function AddImagePage() {
             },
             actionProps: {
                 onExecute: ({ input }) => {
-                    toast.loading(`Téléchargement de l'image ${input.imageName} en cours...`);
+                    toast.loading(t('downloadingImage', { name: input.imageName }));
                 },
                 onSettled: () => {
                     toast.dismiss();
@@ -203,10 +118,10 @@ export default function AddImagePage() {
                             </div>
                             <div>
                                 <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                                    Nouvelle image
+                                    {t('title')}
                                 </h1>
                                 <p className="text-muted-foreground text-sm">
-                                    Télécharger une nouvelle image Docker
+                                    {t('description')}
                                 </p>
                             </div>
                         </div>
@@ -218,11 +133,11 @@ export default function AddImagePage() {
                                 disabled={isSubmitting}
                             >
                                 <ArrowLeft />
-                                Retour
+                                {t('back')}
                             </Button>
                             <Button type="submit" disabled={isSubmitting}>
                                 <Download />
-                                {isSubmitting ? 'Téléchargement...' : "Télécharger l'image"}
+                                {isSubmitting ? t('downloading') : t('downloadButton')}
                             </Button>
                         </div>
                     </div>
@@ -230,7 +145,7 @@ export default function AddImagePage() {
                     <Alert variant={'info'} className={'mx-5 mt-5 mb-4 w-auto'}>
                         <Info />
                         <AlertTitle>
-                            Jusqu'à 100 pulls par période de 6 heures en anonyme via Docker Hub
+                            {t('rateLimitInfo')}
                         </AlertTitle>
                     </Alert>
 
@@ -238,9 +153,9 @@ export default function AddImagePage() {
                         <div className="space-y-4 overflow-hidden px-5 pb-6">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Configuration</CardTitle>
+                                    <CardTitle>{t('configuration')}</CardTitle>
                                     <CardDescription>
-                                        Saisissez le nom d'une image Docker spécifique
+                                        {t('configDescription')}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
@@ -249,14 +164,13 @@ export default function AddImagePage() {
                                         name="imageName"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Nom de l'image</FormLabel>
+                                                <FormLabel>{t('imageName')}</FormLabel>
                                                 <FormControl>
-                                                    <Input {...field} placeholder="image:tag" />
+                                                    <Input {...field} placeholder={t('imageNamePlaceholder')} />
                                                 </FormControl>
                                                 <FormMessage />
                                                 <FormDescription>
-                                                    Le nom de l'image Docker à télécharger (ex:
-                                                    nginx:latest, postgres:15, redis:alpine)
+                                                    {t('imageNameDescription')}
                                                 </FormDescription>
                                             </FormItem>
                                         )}
@@ -265,9 +179,9 @@ export default function AddImagePage() {
                             </Card>
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Images populaires</CardTitle>
+                                    <CardTitle>{t('popularImages')}</CardTitle>
                                     <CardDescription>
-                                        Sélectionnez une image parmi nos suggestions
+                                        {t('popularImagesDescription')}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
@@ -302,7 +216,7 @@ export default function AddImagePage() {
                                                                 {image.title}
                                                             </h3>
                                                             <p className="text-muted-foreground line-clamp-2 text-xs">
-                                                                {image.description}
+                                                                {t(`images.${image.descriptionKey}`)}
                                                             </p>
                                                         </div>
                                                     </CardContent>

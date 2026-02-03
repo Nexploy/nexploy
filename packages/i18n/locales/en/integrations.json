@@ -14,7 +14,10 @@
     "cloudflare": {
         "title": "Cloudflare",
         "description": "Manage DNS records and tunnels with Cloudflare",
+        "apiTokenLabel": "API Token",
         "apiTokenPlaceholder": "Your Cloudflare API Token",
+        "permissionZoneRead": "Zone.Zone: Read",
+        "permissionDnsEdit": "Zone.DNS: Edit",
         "connectedSuccess": "Cloudflare connected successfully",
         "disconnectedSuccess": "Cloudflare disconnected",
         "ipDetected": "IP detected: {ip}",

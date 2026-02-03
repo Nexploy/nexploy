@@ -8,7 +8,7 @@ import { BuildStatus } from 'generated/client';
 import dayjs from 'dayjs';
 import { BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { getStatusBadge } from '@/components/utils/StatusBadge';
+import { StatusBadge } from '@/components/utils/StatusBadge';
 import { cn } from '@workspace/ui/lib/utils';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { Realtime } from '@inngest/realtime';
@@ -113,7 +113,7 @@ export function BuildLogsViewer({
         <div className="flex flex-1 flex-col overflow-hidden">
             <div className="flex items-center justify-between border-b p-3">
                 <div className="flex items-center gap-4">
-                    {getStatusBadge(status)}
+                    <StatusBadge status={status} />
                     <span className="text-muted-foreground text-sm">
                         {t('started')} {dayjs(createdAt).format('DD/MM/YYYY HH:mm:ss')}
                     </span>

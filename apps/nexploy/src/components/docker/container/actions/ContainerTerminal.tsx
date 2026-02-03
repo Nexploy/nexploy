@@ -28,18 +28,13 @@ interface ContainerTerminalProps {
     children: (props: { openConsole: () => void }) => ReactNode;
 }
 
-const shellOptions = [
-    { value: 'auto', label: 'Auto (bash > ash > dash > sh)' },
-    { value: 'bash', label: 'Bash' },
-    { value: 'sh', label: 'Shell (sh)' },
-    { value: 'ash', label: 'Ash (Alpine)' },
-    { value: 'dash', label: 'Dash (Debian)' },
-];
+const shellKeys = ['auto', 'bash', 'sh', 'ash', 'dash'] as const;
 
 export function ContainerTerminal({ children }: ContainerTerminalProps) {
     const [open, setOpen] = useState(false);
     const [selectedShell, setSelectedShell] = useLocalStorage('terminal-selectedShell', 'auto');
     const t = useTranslations('docker.containerTerminal');
+    const tStatus = useTranslations('docker.status');
 
     const container = useContainerStore((state) => state.container);
     const selectedEnvironmentId = useEnvironmentStore((state) => state.selectedEnvironmentId);
@@ -92,14 +87,14 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                                 <div className="flex size-4 items-center">
                                     <Terminal />
                                 </div>
-                                {t('title', { name: container?.name })}
+                                {t('title', { name: container?.name ?? 'Unknown Container' })}
                                 <Status
                                     className="rounded-none bg-transparent"
                                     status={currentStatus.status}
                                 >
                                     <StatusIndicator />
                                     <StatusLabel className={currentStatus.text}>
-                                        {currentStatus.label}
+                                        {tStatus(currentStatus.labelKey)}
                                     </StatusLabel>
                                 </Status>
                             </DialogTitle>
@@ -112,9 +107,9 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                                 <SelectContent>
                                     <SelectGroup>
                                         <SelectLabel>{t('shellLabel')}</SelectLabel>
-                                        {shellOptions.map((option, index) => (
-                                            <SelectItem key={index} value={option.value}>
-                                                {option.label}
+                                        {shellKeys.map((shell) => (
+                                            <SelectItem key={shell} value={shell}>
+                                                {t(`shells.${shell}`)}
                                             </SelectItem>
                                         ))}
                                     </SelectGroup>

@@ -1,5 +1,6 @@
 {
     "title": "Account",
+    "description": "Manage your user profile and preferences",
     "profile": "Profile",
     "security": "Security",
     "preferences": "Preferences",
@@ -19,6 +20,7 @@
         "title": "Security Settings",
         "description": "Manage your account security and authentication preferences",
         "password": "Password",
+        "passwordDescription": "Change your password to keep your account secure",
         "lastChanged": "Last changed {days} days ago",
         "change": "Change"
     },
@@ -33,12 +35,14 @@
     },
     "password": {
         "title": "Change Password",
+        "description": "Enter your current password and choose a new password",
         "currentPassword": "Current Password",
         "newPassword": "New Password",
         "confirmPassword": "Confirm Password",
         "changePassword": "Change Password",
         "changing": "Changing...",
-        "passwordChanged": "Password changed successfully"
+        "passwordChanged": "Password changed successfully",
+        "changeFailed": "Failed to change password"
     },
     "twoFactor": {
         "title": "Two-Factor Authentication",
@@ -103,6 +107,7 @@
         "description": "Irreversible and destructive actions",
         "signOut": "Sign Out",
         "signOutDescription": "End your current session and return to the login page",
+        "confirmSignOut": "Are you sure you want to sign out? You will need to log in again to access your account.",
         "logOut": "Log Out",
         "clearAllSessions": "Clear All Sessions",
         "clearAllSessionsDescription": "Sign out from all devices except this one",

@@ -34,6 +34,28 @@ export const changeUsernameFormSchema = (t: any) =>
 
 export type TypeChangeUsernameFormSchema = z.infer<ReturnType<typeof changeUsernameFormSchema>>;
 
+export const changePasswordFormSchema = (t: any) =>
+    z
+        .object({
+            currentPassword: z
+                .string({
+                    error: t('required'),
+                })
+                .min(1, { message: t('required') }),
+            newPassword: password(t),
+            confirmPassword: z
+                .string({
+                    error: t('required'),
+                })
+                .min(1, { message: t('required') }),
+        })
+        .refine((data) => data.newPassword === data.confirmPassword, {
+            message: t('passwordsMustMatch'),
+            path: ['confirmPassword'],
+        });
+
+export type TypeChangePasswordFormSchema = z.infer<ReturnType<typeof changePasswordFormSchema>>;
+
 export const createUserFormSchema = (t: any) =>
     z
         .object({

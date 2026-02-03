@@ -1,13 +1,13 @@
 export const statusMap = {
     connecting: {
-        label: 'Connecting...',
+        labelKey: 'connecting',
         status: 'maintenance' as const,
         text: 'text-maintenance',
     },
-    connected: { label: 'Connected', status: 'online' as const, text: 'text-online' },
-    error: { label: 'Error', status: 'degraded' as const, text: 'text-degraded' },
+    connected: { labelKey: 'connected', status: 'online' as const, text: 'text-online' },
+    error: { labelKey: 'error', status: 'degraded' as const, text: 'text-degraded' },
     disconnected: {
-        label: 'Disconnected',
+        labelKey: 'disconnected',
         status: 'offline' as const,
         text: 'text-offline',
     },

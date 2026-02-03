@@ -1,0 +1,33 @@
+{
+    "title": "Requêtes",
+    "waitingForRequests": "En attente de requêtes...",
+    "noRequests": "Aucune requête",
+    "requestsCaptured": "{count} requête capturée",
+    "requestsCapturedPlural": "{count} requêtes capturées",
+    "searchPlaceholder": "Rechercher par path, host...",
+    "method": "Méthode",
+    "allMethods": "Toutes",
+    "status": "Status",
+    "allStatuses": "Tous",
+    "success2xx": "2xx Succès",
+    "redirect3xx": "3xx Redirection",
+    "clientError4xx": "4xx Erreur client",
+    "serverError5xx": "5xx Erreur serveur",
+    "table": {
+        "timestamp": "Horodatage",
+        "method": "Méthode",
+        "path": "Chemin",
+        "status": "Status",
+        "duration": "Durée",
+        "size": "Taille",
+        "service": "Service"
+    },
+    "noMatchingRequests": "Aucune requête ne correspond aux filtres.",
+    "requestsPerPage": "Requêtes par page :",
+    "sizeLabel": "Taille",
+    "perPage": "Par page",
+    "all": "Tous",
+    "pageOf": "Page {current} sur {total}",
+    "previous": "Précédent",
+    "next": "Suivant"
+}

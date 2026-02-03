@@ -69,8 +69,8 @@ export function CloudflareConnectForm() {
         <Form {...form}>
             <form onSubmit={handleSubmitWithAction} className="space-y-4">
                 <ul className="text-muted-foreground list-disc pl-5 text-sm">
-                    <li>Zone.Zone: Read</li>
-                    <li>Zone.DNS: Edit</li>
+                    <li>{t('permissionZoneRead')}</li>
+                    <li>{t('permissionDnsEdit')}</li>
                 </ul>
 
                 <FormField
@@ -78,7 +78,7 @@ export function CloudflareConnectForm() {
                     name="apiToken"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>API Token</FormLabel>
+                            <FormLabel>{t('apiTokenLabel')}</FormLabel>
                             <FormControl>
                                 <Input
                                     type="password"

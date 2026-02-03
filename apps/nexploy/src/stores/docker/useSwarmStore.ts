@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { toast } from 'sonner';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
+import { toastT } from '@/lib/i18n/toastTranslations';
 import type { SwarmState } from '@workspace/typescript-interface/stores/docker/swarmStore';
 import type {
     SwarmEvent,
@@ -148,7 +149,7 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 sseMultiplexer.subscribe('swarm', 'node-added', (e) => {
                     const data = JSON.parse(e.data) as SwarmNodeAddedEvent;
                     get().addNode(data.node);
-                    toast.success(`Node ${data.node.hostname} joined the swarm`);
+                    toast.success(toastT('toasts.nodeJoined', { hostname: data.node.hostname }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -160,22 +161,28 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
 
                     if (data.changes.role) {
                         toast.info(
-                            `Node ${data.node.hostname} role changed to ${data.changes.role.to}`,
+                            toastT('toasts.nodeRoleChanged', {
+                                hostname: data.node.hostname,
+                                role: data.changes.role.to,
+                            }),
                         );
                     }
                     if (data.changes.availability) {
                         toast.info(
-                            `Node ${data.node.hostname} is now ${data.changes.availability.to}`,
+                            toastT('toasts.nodeAvailabilityChanged', {
+                                hostname: data.node.hostname,
+                                availability: data.changes.availability.to,
+                            }),
                         );
                     }
                     if (data.changes.state) {
                         if (data.changes.state.to === 'down') {
-                            toast.error(`Node ${data.node.hostname} is down`);
+                            toast.error(toastT('toasts.nodeDown', { hostname: data.node.hostname }));
                         } else if (
                             data.changes.state.to === 'ready' &&
                             data.changes.state.from === 'down'
                         ) {
-                            toast.success(`Node ${data.node.hostname} is back online`);
+                            toast.success(toastT('toasts.nodeBackOnline', { hostname: data.node.hostname }));
                         }
                     }
 
@@ -187,7 +194,7 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 sseMultiplexer.subscribe('swarm', 'node-removed', (e) => {
                     const data = JSON.parse(e.data) as SwarmNodeRemovedEvent;
                     get().removeNode(data.nodeId);
-                    toast.info(`Node ${data.previousNode.hostname} left the swarm`);
+                    toast.info(toastT('toasts.nodeLeft', { hostname: data.previousNode.hostname }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -196,7 +203,7 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 sseMultiplexer.subscribe('swarm', 'service-added', (e) => {
                     const data = JSON.parse(e.data) as SwarmServiceAddedEvent;
                     get().addService(data.service);
-                    toast.success(`Service ${data.service.name} created`);
+                    toast.success(toastT('toasts.serviceCreated', { name: data.service.name }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -213,7 +220,7 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 sseMultiplexer.subscribe('swarm', 'service-removed', (e) => {
                     const data = JSON.parse(e.data) as SwarmServiceRemovedEvent;
                     get().removeService(data.serviceId);
-                    toast.info(`Service ${data.previousService.name} removed`);
+                    toast.info(toastT('toasts.serviceRemoved', { name: data.previousService.name }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -233,7 +240,10 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
 
                     if (data.changes.state?.to === 'failed') {
                         toast.error(
-                            `Task ${data.task.id.slice(0, 12)} failed: ${data.task.error || 'Unknown error'}`,
+                            toastT('toasts.taskFailed', {
+                                id: data.task.id.slice(0, 12),
+                                error: data.task.error || 'Unknown error',
+                            }),
                         );
                     }
 

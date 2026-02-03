@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
 import { NetworkState } from '@workspace/typescript-interface/stores/docker/networksStore';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
+import { toastT } from '@/lib/i18n/toastTranslations';
 
 export const useNetworkStore = create<NetworkState>((set, get) => ({
     networks: [],
@@ -131,7 +132,7 @@ export const useNetworkStore = create<NetworkState>((set, get) => ({
                     if (!data.network) return;
 
                     get().addNetwork(data.network);
-                    toast.success(`Network ${data.network.name} added`);
+                    toast.success(toastT('toasts.networkAdded', { name: data.network.name }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -154,7 +155,7 @@ export const useNetworkStore = create<NetworkState>((set, get) => ({
 
                     get().removeNetwork(data.networkId);
                     const networkName = data.oldState?.name || data.networkId.substring(0, 12);
-                    toast.success(`Network ${networkName} removed`);
+                    toast.success(toastT('toasts.networkRemoved', { name: networkName }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );

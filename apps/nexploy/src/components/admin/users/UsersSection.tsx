@@ -2,7 +2,6 @@ import { getInvitations, getUsers } from '@/actions/auth/users.action';
 import { getUserSession } from '@/services/auth/auth.service';
 import { UsersTable } from '@/components/admin/users/UsersTable';
 import { InvitationsTable } from '@/components/admin/users/InvitationsTable';
-import { AddUserButton } from '@/components/admin/users/AddUserButton';
 import {
     Card,
     CardContent,
@@ -10,7 +9,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@workspace/ui/components/card';
-import { Mail, Users } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 export async function UsersSection() {
@@ -23,23 +22,7 @@ export async function UsersSection() {
 
     return (
         <div className="flex flex-col gap-5">
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <div>
-                        <CardTitle className="flex items-center gap-2">
-                            <Users className="size-5" />
-                            {t('users')} ({users.length})
-                        </CardTitle>
-                        <CardDescription>
-                            {t('manageUsersDescription')}
-                        </CardDescription>
-                    </div>
-                    {isAdmin && <AddUserButton />}
-                </CardHeader>
-                <CardContent>
-                    <UsersTable users={users} currentUserId={session?.user.id} isAdmin={isAdmin} />
-                </CardContent>
-            </Card>
+            <UsersTable users={users} currentUserId={session?.user.id} isAdmin={isAdmin} />
 
             {isAdmin && invitations.length > 0 && (
                 <Card>

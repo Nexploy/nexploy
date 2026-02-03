@@ -5,23 +5,54 @@
     "manageRepositories": "Gérez et organisez vos dépôts",
     "addRepository": "Ajouter un dépôt",
     "importRepository": "Importer un dépôt",
+    "create": {
+        "title": "Nouveau projet",
+        "description": "Créer et déployer une nouvelle application depuis Git",
+        "back": "Retour",
+        "creating": "Création en cours...",
+        "createProject": "Créer le projet"
+    },
     "selectRepository": "Sélectionner un dépôt",
     "searchRepositories": "Rechercher des dépôts...",
     "runBuild": "Lancer le build",
     "cancelBuild": "Annuler le build",
     "viewBuilds": "Voir les builds",
     "settings": "Paramètres",
+    "tabs": {
+        "builds": "Builds",
+        "versions": "Versions",
+        "environments": "Environnements",
+        "domains": "Domaines",
+        "deployment": "Déploiement",
+        "settings": "Paramètres"
+    },
     "delete": "Supprimer",
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce dépôt ?",
     "deleteSuccess": "Dépôt supprimé avec succès",
     "importSuccess": "Dépôt importé avec succès",
+    "pendingBuild": "Build en attente",
+    "versions": {
+        "title": "Versions",
+        "noVersions": "Aucune version disponible. Les versions sont créées après un build réussi.",
+        "deployed": "Déployée",
+        "deploy": "Déployer",
+        "deploySuccess": "Version déployée avec succès"
+    },
     "deployment": {
         "title": "Déploiement",
+        "description": "Paramètres de déploiement",
         "mode": "Mode de déploiement",
+        "modeDescription": "Choisissez comment déployer votre application",
         "container": "Conteneur",
         "containerDescription": "Déployer en tant que conteneur Docker unique",
+        "singleContainer": "Un seul conteneur Docker",
         "swarm": "Swarm",
         "swarmDescription": "Déployer en tant que service Docker Swarm avec réplicas",
+        "swarmWithReplicas": "Service avec réplicas et orchestration",
+        "swarmNotActive": "Swarm n'est pas actif.",
+        "initializeSwarm": "Initialiser un Swarm",
+        "dockerComposeMode": "Mode Docker Compose",
+        "dockerComposeModeDescription": "Le mode de déploiement est défini dans votre fichier docker-compose.yml. Utilisez la section deploy pour configurer le mode Swarm avec les réplicas et l'orchestration.",
         "buildType": "Type de build",
         "dockerfile": "Dockerfile",
         "dockerfileDescription": "Build avec un Dockerfile dans votre dépôt",
@@ -75,6 +106,7 @@
         "branch": "Branche",
         "triggeredBy": "Déclenché par",
         "noBuilds": "Aucun build",
+        "noBuild": "Aucun build",
         "startedAt": "Démarré le",
         "finishedAt": "Terminé le",
         "stop": "Arrêter",
@@ -179,6 +211,10 @@
         "startPeriodDescription": "Temps d'initialisation avant checks"
     },
     "steps": {
+        "gitSource": {
+            "title": "Source Git",
+            "description": "Configuration du dépôt source"
+        },
         "generalInfo": {
             "title": "Informations générales",
             "description": "Détails de base de votre projet",
@@ -194,8 +230,11 @@
             "buildType": "Type de build",
             "selectType": "Sélectionner un type",
             "dockerfilePath": "Chemin du Dockerfile",
+            "dockerfilePathPlaceholder": "Dockerfile",
             "contextPath": "Contexte de build",
-            "composePath": "Chemin du fichier Compose"
+            "contextPathPlaceholder": ".",
+            "composePath": "Chemin du fichier Compose",
+            "composePathPlaceholder": "docker-compose.yml"
         },
         "deployment": {
             "title": "Déploiement",

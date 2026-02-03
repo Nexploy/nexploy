@@ -136,6 +136,12 @@ export function CreateUserForm() {
                     )}
                 />
 
+                {form.formState.errors.root?.message && (
+                    <span className={'text-destructive mb-4 flex text-sm'}>
+                        {form.formState.errors.root?.message}
+                    </span>
+                )}
+
                 <div className="flex justify-end gap-2 pt-4">
                     <Button
                         icon={Plus}

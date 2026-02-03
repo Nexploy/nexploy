@@ -35,23 +35,13 @@ import { onVolumeCreateAction } from '@/actions/docker/volume/volumeCreate.actio
 import { Alert, AlertTitle } from '@workspace/ui/components/alert';
 import { toast } from 'sonner';
 import { volumeCreateSchema } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
+import { useTranslations } from 'next-intl';
 
-const VOLUME_DRIVERS = [
-    {
-        value: 'local',
-        label: 'Local',
-    },
-    {
-        value: 'nfs',
-        label: 'NFS',
-    },
-    {
-        value: 'cifs',
-        label: 'CIFS',
-    },
-];
+const VOLUME_DRIVERS = ['local', 'nfs', 'cifs'] as const;
 
 export default function CreateVolumePage() {
+    const t = useTranslations('docker.createVolumePage');
+    const tDrivers = useTranslations('docker.volumeDrivers');
     const router = useRouter();
     const [driverOptKey, setDriverOptKey] = useState('');
     const [driverOptValue, setDriverOptValue] = useState('');
@@ -72,7 +62,7 @@ export default function CreateVolumePage() {
             },
             actionProps: {
                 onExecute: ({ input }) => {
-                    toast.loading(`Création du volume ${input.name} en cours...`);
+                    toast.loading(t('creatingVolume', { name: input.name }));
                 },
                 onSuccess: () => {
                     toast.dismiss();
@@ -134,10 +124,10 @@ export default function CreateVolumePage() {
                             </div>
                             <div>
                                 <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                                    Nouveau volume
+                                    {t('title')}
                                 </h1>
                                 <p className="text-muted-foreground text-sm">
-                                    Créer un nouveau volume Docker
+                                    {t('description')}
                                 </p>
                             </div>
                         </div>
@@ -149,11 +139,11 @@ export default function CreateVolumePage() {
                                 disabled={isSubmitting}
                             >
                                 <ArrowLeft />
-                                Retour
+                                {t('back')}
                             </Button>
                             <Button type="submit" disabled={isSubmitting}>
                                 <Plus />
-                                {isSubmitting ? 'Création...' : 'Créer le volume'}
+                                {isSubmitting ? t('creating') : t('createButton')}
                             </Button>
                         </div>
                     </div>
@@ -161,8 +151,7 @@ export default function CreateVolumePage() {
                     <Alert variant={'info'} className={'mx-5 mt-5 mb-4 w-auto'}>
                         <Info />
                         <AlertTitle>
-                            Les volumes persistent les données même après la suppression des
-                            conteneurs
+                            {t('volumesPersist')}
                         </AlertTitle>
                     </Alert>
 
@@ -170,9 +159,9 @@ export default function CreateVolumePage() {
                         <div className="space-y-4 overflow-hidden px-5 pb-5">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Configuration</CardTitle>
+                                    <CardTitle>{t('configuration')}</CardTitle>
                                     <CardDescription>
-                                        Configurez les paramètres du nouveau volume
+                                        {t('configureParams')}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
@@ -181,14 +170,13 @@ export default function CreateVolumePage() {
                                         name="name"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Nom du volume</FormLabel>
+                                                <FormLabel>{t('volumeName')}</FormLabel>
                                                 <FormControl>
-                                                    <Input {...field} placeholder="mon-volume" />
+                                                    <Input {...field} placeholder={t('volumeNamePlaceholder')} />
                                                 </FormControl>
                                                 <FormMessage />
                                                 <FormDescription>
-                                                    Un nom unique pour identifier le volume (ex:
-                                                    postgres-data, app-logs)
+                                                    {t('volumeNameDescription')}
                                                 </FormDescription>
                                             </FormItem>
                                         )}
@@ -199,30 +187,30 @@ export default function CreateVolumePage() {
                                         name="driver"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Driver</FormLabel>
+                                                <FormLabel>{t('driver')}</FormLabel>
                                                 <Select
                                                     onValueChange={field.onChange}
                                                     defaultValue={field.value}
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger className={'min-w-30'}>
-                                                            <SelectValue placeholder="Sélectionner un driver" />
+                                                            <SelectValue placeholder={t('selectDriver')} />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
                                                         {VOLUME_DRIVERS.map((driver) => (
                                                             <SelectItem
-                                                                key={driver.value}
-                                                                value={driver.value}
+                                                                key={driver}
+                                                                value={driver}
                                                             >
-                                                                {driver.label}
+                                                                {tDrivers(driver)}
                                                             </SelectItem>
                                                         ))}
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage />
                                                 <FormDescription>
-                                                    Le driver de stockage pour ce volume
+                                                    {t('driverDescription')}
                                                 </FormDescription>
                                             </FormItem>
                                         )}
@@ -233,12 +221,12 @@ export default function CreateVolumePage() {
                                         name="driverOpts"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Options du driver</FormLabel>
+                                                <FormLabel>{t('driverOptions')}</FormLabel>
                                                 <FormControl>
                                                     <div className="space-y-3">
                                                         <div className="flex gap-2">
                                                             <Input
-                                                                placeholder="Clé (ex: type)"
+                                                                placeholder={t('keyPlaceholder')}
                                                                 value={driverOptKey}
                                                                 onChange={(e) =>
                                                                     setDriverOptKey(e.target.value)
@@ -252,7 +240,7 @@ export default function CreateVolumePage() {
                                                                 className="flex-1"
                                                             />
                                                             <Input
-                                                                placeholder="Valeur (ex: nfs)"
+                                                                placeholder={t('valuePlaceholder')}
                                                                 value={driverOptValue}
                                                                 onChange={(e) =>
                                                                     setDriverOptValue(
@@ -284,7 +272,7 @@ export default function CreateVolumePage() {
                                                             Object.keys(field.value).length > 0 && (
                                                                 <code className="space-y-2">
                                                                     <p className="text-sm font-medium">
-                                                                        Options ajoutées :
+                                                                        {t('optionsAdded')}
                                                                     </p>
                                                                     <div className="space-y-2">
                                                                         {Object.entries(
@@ -331,7 +319,7 @@ export default function CreateVolumePage() {
                                                 </FormControl>
                                                 <FormMessage />
                                                 <FormDescription>
-                                                    Options spécifiques au driver. Exemples :{' '}
+                                                    {t('driverOptionsDescription')}{' '}
                                                     <code className="bg-muted rounded px-1 py-0.5 text-xs">
                                                         type=nfs
                                                     </code>
@@ -353,12 +341,12 @@ export default function CreateVolumePage() {
                                         name="labels"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Labels</FormLabel>
+                                                <FormLabel>{t('labels')}</FormLabel>
                                                 <FormControl>
                                                     <div className="space-y-3">
                                                         <div className="flex gap-2">
                                                             <Input
-                                                                placeholder="Clé"
+                                                                placeholder={t('keyPlaceholder')}
                                                                 value={labelKey}
                                                                 onChange={(e) =>
                                                                     setLabelKey(e.target.value)
@@ -372,7 +360,7 @@ export default function CreateVolumePage() {
                                                                 className="flex-1"
                                                             />
                                                             <Input
-                                                                placeholder="Valeur"
+                                                                placeholder={t('valuePlaceholder')}
                                                                 value={labelValue}
                                                                 onChange={(e) =>
                                                                     setLabelValue(e.target.value)
@@ -402,7 +390,7 @@ export default function CreateVolumePage() {
                                                             Object.keys(field.value).length > 0 && (
                                                                 <div className="space-y-2">
                                                                     <p className="text-sm font-medium">
-                                                                        Labels ajoutés :
+                                                                        {t('labelsAdded')}
                                                                     </p>
                                                                     <div className="space-y-2">
                                                                         {Object.entries(
@@ -449,8 +437,7 @@ export default function CreateVolumePage() {
                                                 </FormControl>
                                                 <FormMessage />
                                                 <FormDescription>
-                                                    Métadonnées pour organiser et identifier le
-                                                    volume. Exemples :{' '}
+                                                    {t('labelsDescription')}{' '}
                                                     <code className="bg-muted rounded px-1 py-0.5 text-xs">
                                                         env=production
                                                     </code>

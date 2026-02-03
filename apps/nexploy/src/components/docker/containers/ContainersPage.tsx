@@ -72,7 +72,7 @@ export default function ContainersPage() {
                         ) : (
                             <p className="text-muted-foreground text-sm">
                                 {standaloneContainersLenght} {t('container').toLowerCase()}
-                                {stacksSize > 0 && ` · ${stacksSize} stack`}
+                                {stacksSize > 0 && ` · ${stacksSize} ${t('stack')}`}
                             </p>
                         )}
                     </div>
@@ -80,7 +80,7 @@ export default function ContainersPage() {
                 <Button asChild>
                     <Link href={'/docker/containers/create-container'}>
                         <Plus />
-                        {t('createContainer')}
+                        {t('createContainer.create')}
                     </Link>
                 </Button>
             </div>
@@ -106,7 +106,7 @@ export default function ContainersPage() {
                         <Button asChild>
                             <Link href={'/docker/containers/create-container'}>
                                 <Plus />
-                                {t('createContainer')}
+                                {t('createContainer.create')}
                             </Link>
                         </Button>
                     </EmptyContent>

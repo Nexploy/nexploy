@@ -4,6 +4,7 @@ import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker
 import { isToastT } from '@/utils/isToastT';
 import { DockerState } from '@workspace/typescript-interface/stores/docker/dockerStore';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
+import { toastT } from '@/lib/i18n/toastTranslations';
 
 export const useDockerStore = create<DockerState>((set, get) => ({
     status: 'connecting',
@@ -118,7 +119,7 @@ export const useDockerStore = create<DockerState>((set, get) => ({
                 lastUpdate: Date.now(),
             });
 
-            toast.error('Failed to connect to Docker service');
+            toast.error(toastT('toasts.dockerConnectionFailed'));
         }
     },
 

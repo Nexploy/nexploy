@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/componen
 import { Globe, Hammer, Key, Rocket, Settings, Tag } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { ReactNode, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 const VALID_TABS = ['overview', 'versions', 'env', 'domain', 'deployment', 'setting'] as const;
 type TabValue = (typeof VALID_TABS)[number];
@@ -21,6 +22,7 @@ interface RepositoryTabsProps {
 }
 
 export function RepositoryTabs({ children }: RepositoryTabsProps) {
+    const t = useTranslations('repository.tabs');
     const [tab, setTab] = useQueryState(
         'tab',
         parseAsStringLiteral(VALID_TABS).withDefault('overview'),
@@ -43,30 +45,30 @@ export function RepositoryTabs({ children }: RepositoryTabsProps) {
                     <div className={'flex gap-2'}>
                         <TabsTrigger value="overview">
                             <Hammer />
-                            Builds
+                            {t('builds')}
                         </TabsTrigger>
                         <TabsTrigger value="versions">
                             <Tag />
-                            Versions
+                            {t('versions')}
                         </TabsTrigger>
                         <TabsTrigger value="env">
                             <Key />
-                            Environments
+                            {t('environments')}
                         </TabsTrigger>
                         <TabsTrigger value="domain">
                             <Globe />
-                            Domains
+                            {t('domains')}
                         </TabsTrigger>
                         <TabsTrigger value="deployment">
                             <Rocket />
-                            Deployment
+                            {t('deployment')}
                         </TabsTrigger>
                     </div>
                 </TabsList>
                 <TabsList className="mx-5 mb-2">
                     <TabsTrigger value="setting">
                         <Settings />
-                        Settings
+                        {t('settings')}
                     </TabsTrigger>
                 </TabsList>
             </div>

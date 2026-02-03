@@ -1,5 +1,6 @@
 {
     "title": "Compte",
+    "description": "Gérez votre profil utilisateur et préférences",
     "profile": "Profil",
     "security": "Sécurité",
     "preferences": "Préférences",
@@ -19,6 +20,7 @@
         "title": "Paramètres de sécurité",
         "description": "Gérez la sécurité de votre compte et vos préférences d'authentification",
         "password": "Mot de passe",
+        "passwordDescription": "Modifiez votre mot de passe pour sécuriser votre compte",
         "lastChanged": "Modifié il y a {days} jours",
         "change": "Modifier"
     },
@@ -33,12 +35,14 @@
     },
     "password": {
         "title": "Changer le mot de passe",
+        "description": "Entrez votre mot de passe actuel et choisissez un nouveau mot de passe",
         "currentPassword": "Mot de passe actuel",
         "newPassword": "Nouveau mot de passe",
         "confirmPassword": "Confirmer le mot de passe",
         "changePassword": "Changer le mot de passe",
         "changing": "Changement...",
-        "passwordChanged": "Mot de passe changé avec succès"
+        "passwordChanged": "Mot de passe changé avec succès",
+        "changeFailed": "Échec du changement de mot de passe"
     },
     "twoFactor": {
         "title": "Authentification à deux facteurs",
@@ -103,6 +107,7 @@
         "description": "Actions irréversibles et destructives",
         "signOut": "Se déconnecter",
         "signOutDescription": "Terminer votre session actuelle et retourner à la page de connexion",
+        "confirmSignOut": "Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à votre compte.",
         "logOut": "Déconnexion",
         "clearAllSessions": "Effacer toutes les sessions",
         "clearAllSessionsDescription": "Se déconnecter de tous les appareils sauf celui-ci",

@@ -1,6 +1,16 @@
 'use client';
 
 import {
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    SortingState,
+    useReactTable,
+    FilterFn,
+} from '@tanstack/react-table';
+import {
     Table,
     TableBody,
     TableCell,
@@ -8,51 +18,56 @@ import {
     TableHeader,
     TableRow,
 } from '@workspace/ui/components/table';
-import { Badge } from '@workspace/ui/components/badge';
+import { useMemo, useState } from 'react';
+import { getColumnsUsers, UserRow } from '@/components/admin/users/ColumnsUsers';
+import { useTranslations } from 'next-intl';
+import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu';
+import { ChevronLeft, ChevronRight, Ban, Trash2 } from 'lucide-react';
+import { Badge } from '@workspace/ui/components/badge';
+import { Skeleton } from '@workspace/ui/components/skeleton';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import { Ban, CheckCircle, MoreHorizontal, Shield, ShieldOff, Trash2 } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar';
+import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { banUser, deleteUser, updateUserRole } from '@/actions/auth/users.action';
 import { useAction } from 'next-safe-action/hooks';
 import { toast } from 'sonner';
-import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
-import { useTranslations } from 'next-intl';
-
-interface User {
-    id: string;
-    name: string;
-    email: string;
-    role: string | null;
-    banned: boolean | null;
-    banReason: string | null;
-    createdAt: Date;
-    image: string | null;
-}
 
 interface UsersTableProps {
-    users: User[];
+    users: UserRow[];
     currentUserId?: string;
     isAdmin?: boolean;
 }
 
+const globalFilterFn: FilterFn<UserRow> = (row, _, value) => {
+    const search = value.toLowerCase();
+    const { name, email, role } = row.original;
+
+    return (
+        name.toLowerCase().includes(search) ||
+        email.toLowerCase().includes(search) ||
+        (role?.toLowerCase().includes(search) ?? false)
+    );
+};
+
+const isSystemUser = (user: UserRow) => user.role === 'system';
+
 export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
-    const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const [globalFilter, setGlobalFilter] = useState<string>('');
+    const [rowSelection, setRowSelection] = useState({});
+    const [pageSize, setPageSize] = useState<number | 'all'>(10);
+
     const t = useTranslations('admin');
+    const tCommon = useTranslations('common');
+    const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
     const { execute: executeUpdateRole, isPending: isUpdatingRole } = useAction(updateUserRole, {
         onSuccess: () => toast.success(t('userRoleUpdated')),
@@ -60,12 +75,16 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
     });
 
     const { execute: executeDelete, isPending: isDeleting } = useAction(deleteUser, {
-        onSuccess: () => toast.success(t('userDeletedSuccess')),
+        onSuccess: () => {
+            toast.success(t('userDeletedSuccess'));
+            table.resetRowSelection();
+        },
         onError: ({ error }) => toast.error(error.serverError || t('userDeleteFailed')),
     });
 
     const { execute: executeBan, isPending: isBanning } = useAction(banUser, {
-        onSuccess: ({ data }) => toast.success(data?.user.banned ? t('userBannedSuccess') : t('userUnbannedSuccess')),
+        onSuccess: ({ data }) =>
+            toast.success(data?.user.banned ? t('userBannedSuccess') : t('userUnbannedSuccess')),
         onError: ({ error }) => toast.error(error.serverError || t('userBanUpdateFailed')),
     });
 
@@ -73,7 +92,7 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
         executeUpdateRole({ userId, role });
     };
 
-    const handleDelete = (user: User) => {
+    const handleDelete = (user: UserRow) => {
         openAlertDialog({
             title: t('deleteUser'),
             description: t('confirmDeleteUser', { name: user.name }),
@@ -85,7 +104,7 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
         });
     };
 
-    const handleBan = (user: User) => {
+    const handleBan = (user: UserRow) => {
         const isBanned = user.banned;
         openAlertDialog({
             title: isBanned ? t('unbanUser') : t('banUser'),
@@ -100,150 +119,261 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
         });
     };
 
-    const getInitials = (name: string) => {
-        return name
-            .split(' ')
-            .map((n) => n[0])
-            .join('')
-            .toUpperCase()
-            .slice(0, 2);
+    const handleBulkDelete = () => {
+        const selectedUsers = table
+            .getSelectedRowModel()
+            .rows.filter((row) => !isSystemUser(row.original) && row.original.id !== currentUserId);
+        const userIds = selectedUsers.map((row) => row.original.id);
+
+        openAlertDialog({
+            title: t('deleteUser'),
+            description: t('confirmDeleteUsers', { count: userIds.length }),
+            cancelLabel: t('cancel'),
+            actionLabel: t('deleteUser'),
+            onAction: async () => {
+                for (const userId of userIds) {
+                    await executeDelete({ userId });
+                }
+                table.resetRowSelection();
+            },
+        });
     };
 
+    const handleBulkBan = () => {
+        const selectedUsers = table
+            .getSelectedRowModel()
+            .rows.filter((row) => !isSystemUser(row.original) && row.original.id !== currentUserId);
+        const userIds = selectedUsers.map((row) => row.original.id);
+        const anyNotBanned = selectedUsers.some((row) => !row.original.banned);
+
+        openAlertDialog({
+            title: anyNotBanned ? t('banUser') : t('unbanUser'),
+            description: anyNotBanned
+                ? t('confirmBanUsers', { count: userIds.length })
+                : t('confirmUnbanUsers', { count: userIds.length }),
+            cancelLabel: t('cancel'),
+            actionLabel: anyNotBanned ? t('banUser') : t('unbanUser'),
+            onAction: async () => {
+                for (const userId of userIds) {
+                    await executeBan({ userId, ban: anyNotBanned });
+                }
+                table.resetRowSelection();
+            },
+        });
+    };
+
+    const columns = useMemo(
+        () =>
+            getColumnsUsers(t, {
+                currentUserId,
+                isAdmin,
+                isUpdatingRole,
+                isDeleting,
+                isBanning,
+                onRoleChange: handleRoleChange,
+                onDelete: handleDelete,
+                onBan: handleBan,
+            }),
+        [t, currentUserId, isAdmin, isUpdatingRole, isDeleting, isBanning],
+    );
+
+    const table = useReactTable({
+        data: users,
+        columns,
+        getRowId: (row) => row.id,
+        getCoreRowModel: getCoreRowModel(),
+        onSortingChange: setSorting,
+        onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn,
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        onRowSelectionChange: setRowSelection,
+        state: {
+            sorting,
+            globalFilter,
+            rowSelection,
+        },
+    });
+
+    const numberOfSelectedRows = Object.keys(rowSelection).length;
+    const isShowingAll = pageSize === 'all';
+    const isLoading = false;
+    const isEmpty = users.length === 0;
+
     return (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    <TableHead>{t('user')}</TableHead>
-                    <TableHead>{t('email')}</TableHead>
-                    <TableHead>{t('role')}</TableHead>
-                    <TableHead>{t('status')}</TableHead>
-                    <TableHead>{t('createdAt')}</TableHead>
-                    {isAdmin && <TableHead className="w-12"></TableHead>}
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {users.map((user) => {
-                    const isCurrentUser = user.id === currentUserId;
-                    return (
-                        <TableRow key={user.id}>
-                            <TableCell>
-                                <div className="flex items-center gap-3">
-                                    <Avatar className="size-8">
-                                        <AvatarImage src={user.image || undefined} />
-                                        <AvatarFallback className="text-xs">
-                                            {getInitials(user.name)}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div className="flex flex-col">
-                                        <span className="font-medium">{user.name}</span>
-                                        {isCurrentUser && (
-                                            <span className="text-muted-foreground text-xs">
-                                                {t('you')}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                            </TableCell>
-                            <TableCell className="text-muted-foreground">{user.email}</TableCell>
-                            <TableCell>
-                                {isAdmin && !isCurrentUser ? (
-                                    <Select
-                                        value={user.role || 'user'}
-                                        onValueChange={(value: 'admin' | 'user') =>
-                                            handleRoleChange(user.id, value)
-                                        }
-                                        disabled={isUpdatingRole}
-                                    >
-                                        <SelectTrigger className="w-24">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="admin">
-                                                <div className="flex items-center gap-2">
-                                                    <Shield className="size-3" />
-                                                    {t('adminRole')}
-                                                </div>
-                                            </SelectItem>
-                                            <SelectItem value="user">
-                                                <div className="flex items-center gap-2">
-                                                    <ShieldOff className="size-3" />
-                                                    {t('userRole')}
-                                                </div>
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                ) : (
-                                    <Badge
-                                        variant={user.role === 'admin' ? 'default' : 'secondary'}
-                                    >
-                                        {user.role === 'admin' ? (
-                                            <Shield className="mr-1 size-3" />
-                                        ) : (
-                                            <ShieldOff className="mr-1 size-3" />
-                                        )}
-                                        {user.role === 'admin' ? t('adminRole') : t('userRole')}
-                                    </Badge>
-                                )}
-                            </TableCell>
-                            <TableCell>
-                                {user.banned ? (
-                                    <Badge variant="destructive">
-                                        <Ban className="mr-1 size-3" />
-                                        {t('banned')}
-                                    </Badge>
-                                ) : (
-                                    <Badge variant="outline" className="text-green-600">
-                                        <CheckCircle className="mr-1 size-3" />
-                                        {t('active')}
-                                    </Badge>
-                                )}
-                            </TableCell>
-                            <TableCell className="text-muted-foreground">
-                                {new Date(user.createdAt).toLocaleDateString()}
-                            </TableCell>
-                            {isAdmin && (
-                                <TableCell>
-                                    {!isCurrentUser && (
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" size="icon">
-                                                    <MoreHorizontal className="size-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
-                                                <DropdownMenuSeparator />
-                                                <DropdownMenuItem
-                                                    onClick={() => handleBan(user)}
-                                                    disabled={isBanning}
-                                                >
-                                                    <Ban className="mr-2 size-4" />
-                                                    {user.banned ? t('unbanUser') : t('banUser')}
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem
-                                                    onClick={() => handleDelete(user)}
-                                                    disabled={isDeleting}
-                                                    className="text-destructive"
-                                                >
-                                                    <Trash2 className="mr-2 size-4" />
-                                                    {t('deleteUser')}
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    )}
-                                </TableCell>
+        <div className="space-y-3">
+            <div className="flex justify-between">
+                <Input
+                    className="w-1/4 shadow-xs"
+                    placeholder={tCommon('searchPlaceholder')}
+                    value={globalFilter ?? ''}
+                    onChange={(e) => setGlobalFilter(e.target.value)}
+                />
+                {isAdmin && (
+                    <div className="flex gap-3">
+                        <Button
+                            variant="outline"
+                            onClick={handleBulkBan}
+                            disabled={!numberOfSelectedRows || isBanning}
+                        >
+                            <Ban />
+                            {t('banUser')}
+                            {!!numberOfSelectedRows && (
+                                <Badge variant="secondary" className="rounded-full">
+                                    {numberOfSelectedRows}
+                                </Badge>
                             )}
-                        </TableRow>
-                    );
-                })}
-                {users.length === 0 && (
-                    <TableRow>
-                        <TableCell colSpan={6} className="py-6 text-center">
-                            {t('noUsers')}
-                        </TableCell>
-                    </TableRow>
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={handleBulkDelete}
+                            disabled={!numberOfSelectedRows || isDeleting}
+                        >
+                            <Trash2 />
+                            {t('deleteUser')}
+                            {!!numberOfSelectedRows && (
+                                <Badge variant="secondary" className="rounded-full">
+                                    {numberOfSelectedRows}
+                                </Badge>
+                            )}
+                        </Button>
+                    </div>
                 )}
-            </TableBody>
-        </Table>
+            </div>
+            <div className="bg-card overflow-hidden rounded-md border shadow-sm">
+                <Table>
+                    <TableHeader>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <TableRow key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => (
+                                    <TableHead key={header.id}>
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                  header.column.columnDef.header,
+                                                  header.getContext(),
+                                              )}
+                                    </TableHead>
+                                ))}
+                            </TableRow>
+                        ))}
+                    </TableHeader>
+                    <TableBody>
+                        {isLoading &&
+                            Array.from({ length: 5 }).map((_, rowIndex) => (
+                                <TableRow key={rowIndex} className="h-12">
+                                    {table.getAllColumns().map((column) => (
+                                        <TableCell key={column.id}>
+                                            <Skeleton className="h-6 w-full" />
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))}
+
+                        {!isLoading && isEmpty ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={table.getAllColumns().length}
+                                    className="py-6 text-center"
+                                >
+                                    {t('noUsers')}
+                                </TableCell>
+                            </TableRow>
+                        ) : !isLoading && table.getRowModel().rows.length === 0 ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={table.getAllColumns().length}
+                                    className="py-6 text-center"
+                                >
+                                    {t('noUsersMatchSearch')}
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            table.getRowModel().rows.map((row) => (
+                                <TableRow
+                                    key={row.id}
+                                    className="h-12"
+                                    data-state={row.getIsSelected() && 'selected'}
+                                >
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext(),
+                                            )}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))
+                        )}
+                    </TableBody>
+                </Table>
+            </div>
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <span className="text-muted-foreground text-sm">{t('usersPerPage')}:</span>
+                    <Select
+                        value={pageSize === 'all' ? 'all' : String(pageSize)}
+                        onValueChange={(value) => {
+                            if (value === 'all') {
+                                setPageSize('all');
+                                table.setPageSize(users.length);
+                            } else {
+                                const size = Number(value);
+                                setPageSize(size);
+                                table.setPageSize(size);
+                            }
+                        }}
+                    >
+                        <SelectTrigger size="sm" className="w-24">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>{tCommon('size')}</SelectLabel>
+                                {[10, 25, 50, 100].map((size) => (
+                                    <SelectItem key={size} value={`${size}`}>
+                                        {size}
+                                    </SelectItem>
+                                ))}
+                                <SelectItem value="all">{tCommon('all')}</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {!isShowingAll && (
+                    <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground text-sm">
+                            {tCommon('pageOf', {
+                                current: table.getState().pagination.pageIndex + 1,
+                                total: table.getPageCount(),
+                            })}
+                        </span>
+                        <div className="flex gap-1">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => table.previousPage()}
+                                disabled={!table.getCanPreviousPage()}
+                            >
+                                <ChevronLeft className="h-4 w-4" />
+                                {tCommon('previous')}
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => table.nextPage()}
+                                disabled={!table.getCanNextPage()}
+                            >
+                                {tCommon('next')}
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 }

@@ -12,9 +12,12 @@ import { getUserSession } from '@/services/auth/auth.service';
 import { AvatarDisplay } from '@/components/user/AvatarDisplay';
 import { ChangeTheme } from '@/components/sidebar/ChangeTheme';
 import { ChangeLanguage } from '@/components/sidebar/ChangeLanguage';
+import { getTranslations } from 'next-intl/server';
 
 export async function AccountMenu() {
     const session = await getUserSession();
+    const tAccount = await getTranslations('account');
+    const tIntegrations = await getTranslations('integrations');
 
     return (
         <SidebarMenu>
@@ -34,7 +37,7 @@ export async function AccountMenu() {
                                 href={'/account'}
                             >
                                 <User />
-                                <span>Account</span>
+                                <span>{tAccount('title')}</span>
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
@@ -43,7 +46,7 @@ export async function AccountMenu() {
                                 href={'/integrations'}
                             >
                                 <Plug />
-                                <span>Integrations</span>
+                                <span>{tIntegrations('title')}</span>
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
