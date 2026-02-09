@@ -81,8 +81,6 @@ export default async function RepositoriesPage() {
                                     const lastDeployment = repository.build?.[0];
                                     const Icon = getGitIcon(repository.gitProvider);
 
-                                    console.log(lastDeployment?.status);
-
                                     return (
                                         <Link
                                             href={`/repositories/${repository.id}`}

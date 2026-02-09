@@ -13,7 +13,6 @@ import {
     LayoutList,
     Network,
     Send,
-    Settings,
     Users,
 } from 'lucide-react';
 import {
@@ -33,45 +32,15 @@ import {
     CollapsibleTrigger,
 } from '@workspace/ui/components/collapsible';
 import Link from 'next/link';
-import { ElementType } from 'react';
 import { RefreshDocker } from '@/components/sidebar/RefreshDocker';
+import { usePermissions } from '@/contexts/PermissionContext';
+import type {
+    SidebarNavGroup,
+    SidebarNavProps,
+    SidebarNavTranslations,
+} from '@workspace/typescript-interface/sidebar/sidebarNav';
 
-interface SidebarNavProps {
-    translations: {
-        home: string;
-        repositories: string;
-        monitoring: string;
-        docker: string;
-        containers: string;
-        images: string;
-        volumes: string;
-        networks: string;
-        events: string;
-        swarm: string;
-        requests: string;
-        admin: string;
-        users: string;
-        backups: string;
-        preferences: string;
-    };
-}
-
-interface Group {
-    titleKey: keyof SidebarNavProps['translations'];
-    children: SidebarItem[];
-}
-
-interface SidebarItem {
-    titleKey: keyof SidebarNavProps['translations'];
-    icon: ElementType;
-    href: string;
-    className?: string;
-    hasActionIcon?: boolean;
-    enableCollapsible?: boolean;
-    children?: SidebarItem[];
-}
-
-const groups: Group[] = [
+const groups: SidebarNavGroup[] = [
     {
         titleKey: 'home',
         children: [
@@ -108,24 +77,30 @@ const groups: Group[] = [
         children: [
             { titleKey: 'users', href: '/admin/users', icon: Users },
             { titleKey: 'backups', href: '/admin/backups', icon: Database },
-            { titleKey: 'preferences', href: '/settings/preferences', icon: Settings },
         ],
     },
 ];
 
 export function SidebarNav({ translations }: SidebarNavProps) {
-    const t = (key: keyof SidebarNavProps['translations']) => translations[key];
+    const t = (key: keyof SidebarNavTranslations) => translations[key];
+    const { isAdmin } = usePermissions();
+
+    const filteredGroups = groups.filter((group) => {
+        return !(group.titleKey === 'admin' && !isAdmin);
+    });
 
     return (
         <>
-            {groups.map((group) => (
+            {filteredGroups.map((group) => (
                 <SidebarGroup key={group.titleKey}>
                     <SidebarGroupLabel>{t(group.titleKey)}</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {group.children.map((item) => {
                                 const title = t(item.titleKey);
-                                const actionIcon = item.hasActionIcon ? <RefreshDocker /> : undefined;
+                                const actionIcon = item.hasActionIcon ? (
+                                    <RefreshDocker />
+                                ) : undefined;
 
                                 if (!item.enableCollapsible || !item.children) {
                                     return (

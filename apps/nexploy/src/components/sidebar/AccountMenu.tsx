@@ -12,6 +12,7 @@ import { getUserSession } from '@/services/auth/auth.service';
 import { AvatarDisplay } from '@/components/user/AvatarDisplay';
 import { ChangeTheme } from '@/components/sidebar/ChangeTheme';
 import { ChangeLanguage } from '@/components/sidebar/ChangeLanguage';
+import { SignOutButton } from '@/components/account/SignOutButton';
 import { getTranslations } from 'next-intl/server';
 
 export async function AccountMenu() {
@@ -27,9 +28,10 @@ export async function AccountMenu() {
                         <AvatarDisplay session={session} />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
-                        className="w-[var(--radix-dropdown-menu-trigger-width)]"
-                        align="end"
-                        side="top"
+                        className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-56 rounded-lg"
+                        align="start"
+                        side="bottom"
+                        sideOffset={4}
                     >
                         <DropdownMenuItem asChild>
                             <Link
@@ -52,6 +54,8 @@ export async function AccountMenu() {
                         <DropdownMenuSeparator />
                         <ChangeTheme />
                         <ChangeLanguage />
+                        <DropdownMenuSeparator />
+                        <SignOutButton />
                     </DropdownMenuContent>
                 </DropdownMenu>
             </SidebarMenuItem>

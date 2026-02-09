@@ -29,7 +29,6 @@
     "advertiseAddressRequired": "Advertise address is required",
     "joinTokenRequired": "Join token is required",
     "managerAddressRequired": "At least one manager address is required",
-    "connectingToSwarm": "Connecting to Swarm...",
     "notInSwarmMode": "Not in Swarm Mode",
     "hostname": "Hostname",
     "role": "Role",

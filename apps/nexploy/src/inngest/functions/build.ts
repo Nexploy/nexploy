@@ -36,7 +36,6 @@ export const buildFunction = inngest.createFunction(
         const { buildId, config } = event.data as { buildId: string; config: BuildConfig };
 
         return await runWithEnvironmentContextAsync(config.environmentId, async () => {
-            console.log({ environmentId: config.environmentId });
             const buildChannel = createBuildChannel(buildId);
 
             const publishLog = async (stepName: string, message: string, level: LogLevel) => {

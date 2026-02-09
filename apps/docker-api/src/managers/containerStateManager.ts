@@ -1,4 +1,3 @@
-import { docker } from '@/utils/dockerClient';
 import { ContainerInspectInfo } from 'dockerode';
 import {
     Container,
@@ -121,20 +120,26 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
 
     private parseContainerInspect(container: ContainerInspectInfo): Container {
         const portsMap: ContainerPorts[] = [];
-        const ports = container.HostConfig.PortBindings || {};
+        const networkPorts = container.HostConfig.PortBindings || {};
 
-        for (const [portAndProtocol, bindings] of Object.entries(ports)) {
-            const [privatePortStr, type = 'tcp'] = portAndProtocol.split('/');
+        for (const [portKey, bindings] of Object.entries(networkPorts)) {
+            const [privatePortStr, type = 'tcp'] = portKey.split('/');
             const privatePort = parseInt(privatePortStr, 10);
 
-            for (const binding of bindings as any) {
-                const publicPort = parseInt(binding.HostPort, 10);
-                const hostIp = binding.HostIp || '0.0.0.0';
-
+            if (bindings && Array.isArray(bindings) && bindings.length > 0) {
+                for (const binding of bindings) {
+                    portsMap.push({
+                        privatePort,
+                        publicPort: binding.HostPort ? parseInt(binding.HostPort, 10) : undefined,
+                        hostIps: binding.HostIp ? [binding.HostIp] : [],
+                        type: type as PortType,
+                    });
+                }
+            } else {
                 portsMap.push({
                     privatePort,
-                    publicPort,
-                    hostIps: [hostIp],
+                    publicPort: undefined,
+                    hostIps: [],
                     type: type as PortType,
                 });
             }

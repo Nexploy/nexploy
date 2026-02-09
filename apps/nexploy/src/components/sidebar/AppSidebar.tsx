@@ -33,7 +33,6 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
         admin: t('admin'),
         users: t('users'),
         backups: t('backups'),
-        preferences: t('preferences'),
     };
 
     return (

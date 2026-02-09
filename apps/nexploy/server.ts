@@ -1,5 +1,5 @@
 import { createServer, IncomingMessage, ServerResponse } from 'http';
-import httpProxy from 'http-proxy';
+import { createProxyMiddleware, Options } from 'http-proxy-middleware';
 import next from 'next';
 import { terminalSchema } from '@workspace/schemas-zod/websocket/terminal.schema';
 import { Socket } from 'net';
@@ -19,24 +19,24 @@ const app = next({
 
 const handle = app.getRequestHandler();
 
-const proxy = httpProxy.createProxyServer({
+const proxyOptions: Options = {
     target: 'http://localhost:3300',
-    ws: true,
     changeOrigin: true,
-    xfwd: true,
-});
+    ws: true,
+    on: {
+        error: (err) => {
+            console.error('❌ Proxy error:', err.message);
+        },
+        proxyReq: (_, req) => {
+            console.log('📡 Proxying HTTP:', req.method, req.url);
+        },
+        proxyReqWs: (_, req) => {
+            console.log('🔌 Proxying WebSocket:', req.url);
+        },
+    },
+};
 
-proxy.on('error', (err) => {
-    console.error('❌ Proxy error:', err.message);
-});
-
-proxy.on('proxyReq', (_, req) => {
-    console.log('📡 Proxying HTTP:', req.method, req.url);
-});
-
-proxy.on('proxyReqWs', (_, req) => {
-    console.log('🔌 Proxying WebSocket:', req.url);
-});
+const proxy = createProxyMiddleware(proxyOptions);
 
 interface WSRouteConfig {
     prefix: string;
@@ -138,7 +138,7 @@ app.prepare().then(() => {
                 const queryString = parsedUrl.search;
                 req.url = result.url! + queryString;
                 console.log('🔌 Proxying WebSocket:', result.original, '→', req.url);
-                proxy.ws(req, socket, head);
+                proxy.upgrade(req, socket, head);
                 return;
             }
 
@@ -164,7 +164,6 @@ app.prepare().then(() => {
 
     const shutdown = (signal: string) => {
         console.log(`\n${signal} received, closing server gracefully...`);
-        proxy.close();
         server.close(() => {
             console.log('✅ Server closed');
             process.exit(0);

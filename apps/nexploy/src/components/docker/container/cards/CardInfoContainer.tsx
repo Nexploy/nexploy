@@ -5,6 +5,7 @@ import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { containerDisplayState } from '@/utils/containerDisplayState';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 
 export function CardInfoContainer() {
     const container = useContainerStore((state) => state.container);
@@ -41,16 +42,23 @@ export function CardInfoContainer() {
         {
             title: t('image'),
             icon: Box,
-            content: container!.image.split(':')[0],
             description: `${t('version')} ${container!.image.split(':')[1] || 'latest'}`,
+            render: () => (
+                <Link href={`/docker/images/${container.image}`} className="group">
+                    <div className="truncate text-2xl font-semibold group-hover:underline">
+                        {container.image}
+                    </div>
+                    <p className="text-muted-foreground truncate text-xs">
+                        {`${t('version')} ${container!.image.split(':')[1] || 'latest'}`}
+                    </p>
+                </Link>
+            ),
         },
         {
             title: t('ports'),
             icon: Network,
             content: container!.network.ports.length,
-            description: container!.network.ports.length
-                ? t('exposedPorts')
-                : t('noExposedPorts'),
+            description: container!.network.ports.length ? t('exposedPorts') : t('noExposedPorts'),
         },
         {
             title: t('env'),

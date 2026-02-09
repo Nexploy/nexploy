@@ -54,6 +54,42 @@ export interface ImageStateChanges {
     };
 }
 
+export interface ImageDetail extends Image {
+    dockerVersion: string;
+    author: string;
+    comment: string;
+    config: {
+        hostname: string;
+        user: string;
+        env: string[];
+        cmd: string[] | null;
+        entrypoint: string[] | null;
+        workingDir: string;
+        exposedPorts: Record<string, object>;
+        volumes: Record<string, object> | null;
+        labels: Record<string, string>;
+        shell: string[] | null;
+        stopSignal: string;
+    };
+    rootFS: {
+        type: string;
+        layers: string[];
+    };
+    graphDriver: {
+        name: string;
+        data: Record<string, string>;
+    };
+}
+
+export interface ImageHistoryEntry {
+    id: string;
+    created: number;
+    createdBy: string;
+    size: number;
+    comment: string;
+    tags: string[] | null;
+}
+
 export type ImageRow = Image & {
     isGroup?: boolean;
     groupName?: string;

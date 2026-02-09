@@ -29,7 +29,6 @@
     "advertiseAddressRequired": "L'adresse d'annonce est requise",
     "joinTokenRequired": "Le jeton de connexion est requis",
     "managerAddressRequired": "Au moins une adresse de manager est requise",
-    "connectingToSwarm": "Connexion au Swarm...",
     "notInSwarmMode": "Mode Swarm non actif",
     "hostname": "Nom d'hôte",
     "role": "Rôle",

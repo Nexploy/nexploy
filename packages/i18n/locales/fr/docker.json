@@ -58,7 +58,6 @@
     "searchByNameAction": "Rechercher par nom, action...",
     "all": "Tous",
     "container": "Conteneur",
-    "stack": "stack",
     "image": "Image",
     "network": "Réseau",
     "volume": "Volume",
@@ -67,6 +66,7 @@
     "eventsReceived": "{count} événements reçus",
     "waitingForEvents": "En attente d'événements...",
     "noMatchingEvents": "Aucun événement ne correspond aux filtres.",
+    "size": "Taille",
     "pageOf": "Page {current} sur {total}",
     "totalImages": "Total des images",
     "unusedImages": "{count} images non utilisées",
@@ -149,7 +149,6 @@
     "environment": "Environnement",
     "mounts": "Montages",
     "createdAt": "Créé le",
-    "size": "Taille",
     "tags": "Tags",
     "inUse": "Utilisé",
     "unused": "Non utilisé",
@@ -169,6 +168,37 @@
     "swarmScope": "swarm",
     "localScope": "local",
     "globalScope": "global",
+    "imageDetail": {
+        "description": "Détails et informations de l'image Docker",
+        "deleteImage": "Supprimer cette image",
+        "exportImage": "Exporter cette image"
+    },
+    "imageDetails": {
+        "title": "Détails de l'image",
+        "id": "ID",
+        "size": "Taille",
+        "created": "Créée le",
+        "build": "Build",
+        "labels": "Labels",
+        "noLabels": "Aucun label",
+        "buildValue": "Docker sur {os}, {architecture}"
+    },
+    "imageConfig": {
+        "title": "Détails du Dockerfile",
+        "cmd": "CMD",
+        "entrypoint": "ENTRYPOINT",
+        "env": "ENV",
+        "noCmd": "Aucune commande définie",
+        "noEntrypoint": "Aucun entrypoint défini",
+        "noEnv": "Aucune variable d'environnement"
+    },
+    "imageLayers": {
+        "title": "Layers de l'image",
+        "order": "Ordre",
+        "size": "Taille",
+        "layer": "Layer",
+        "noLayers": "Aucun historique de layers"
+    },
     "containerDetails": {
         "fullId": "ID complet",
         "name": "Nom",
@@ -519,8 +549,8 @@
     },
     "containerCard": {
         "image": "Image :",
-        "exposedPorts": "Ports exposés :",
-        "noExposedPorts": "Aucun port exposé"
+        "ports": "Ports :",
+        "noPorts": "Aucun port"
     },
     "environmentForm": {
         "environmentName": "Nom de l'environnement",
@@ -726,6 +756,12 @@
         "local": "Local",
         "global": "Global",
         "swarm": "Swarm"
+    },
+    "stack": {
+        "title": "stack",
+        "removeTitle": "Supprimer la stack",
+        "removeDescription": "Êtes-vous sûr de vouloir supprimer la stack « {name} » ? Tous les conteneurs de cette stack seront arrêtés et supprimés.",
+        "removed": "Stack supprimée"
     },
     "volumeDrivers": {
         "local": "Local",

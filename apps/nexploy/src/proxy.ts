@@ -8,6 +8,8 @@ const handleI18nRouting = createMiddleware(routing);
 
 const PUBLIC_ROUTES = ['/signin', '/2fa', '/2fa/backup-codes', '/setup'];
 
+const ADMIN_ROUTES = ['/admin'];
+
 const SIMPLE_REDIRECTS: Record<string, string> = {
     '/': '/repositories',
     '/docker': '/docker/containers',
@@ -16,25 +18,20 @@ const SIMPLE_REDIRECTS: Record<string, string> = {
 async function getRedirectUrl(request: NextRequest): Promise<string | null> {
     const path = request.nextUrl.pathname;
 
-    if (SIMPLE_REDIRECTS[path]) {
-        return SIMPLE_REDIRECTS[path];
-    }
+    if (SIMPLE_REDIRECTS[path]) return SIMPLE_REDIRECTS[path];
 
-    const hasAdmin = await isAdminExist();
-    const session = await auth.api.getSession({ headers: request.headers });
-    const isPublicRoute = PUBLIC_ROUTES.some((route) => path.startsWith(route));
+    const [hasAdmin, session] = await Promise.all([
+        isAdminExist(),
+        auth.api.getSession({ headers: request.headers }),
+    ]);
 
-    if (!hasAdmin) {
-        return path.startsWith('/setup') ? null : '/setup';
-    }
+    const isNoAuthRoute = PUBLIC_ROUTES.some((route) => path.startsWith(route));
+    const isAdminRoute = ADMIN_ROUTES.some((route) => path.startsWith(route));
 
-    if (!session) {
-        return isPublicRoute ? null : '/signin';
-    }
-
-    if (isPublicRoute) {
-        return '/';
-    }
+    if (!hasAdmin) return path.startsWith('/setup') ? null : '/setup';
+    if (!session) return isNoAuthRoute ? null : '/signin';
+    if (isNoAuthRoute) return '/';
+    if (isAdminRoute && session.user.role !== 'admin') return '/';
 
     return null;
 }

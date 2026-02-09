@@ -3,7 +3,7 @@ export function DotsBounceIcon({
     color = 'currentColor',
     strokeWidth = 2,
     fill = 'none',
-    gap = 8, // <<< nouveau prop
+    gap = 8,
     className,
     ...props
 }: React.SVGProps<SVGSVGElement> & {

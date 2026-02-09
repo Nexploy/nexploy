@@ -17,7 +17,6 @@
     "runBuild": "Lancer le build",
     "cancelBuild": "Annuler le build",
     "viewBuilds": "Voir les builds",
-    "settings": "Paramètres",
     "tabs": {
         "builds": "Builds",
         "versions": "Versions",
@@ -247,6 +246,7 @@
         }
     },
     "settings": {
+        "title": "Paramètres",
         "environment": "Environnement",
         "environmentDescription": "Environnement Docker cible pour le déploiement",
         "environmentChangedTo": "Environnement changé vers \"{name}\"",

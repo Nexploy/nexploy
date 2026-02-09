@@ -316,6 +316,26 @@ app.post('/stream/compose', async (c) => {
                 } catch (removeError) {}
             }
 
+            if (composeContent.networks) {
+                for (const networkName of Object.keys(composeContent.networks)) {
+                    const fullNetworkName = `${projectName}_${networkName}`;
+                    try {
+                        const network = dockerClient.getNetwork(fullNetworkName);
+                        const networkInfo = await network.inspect();
+
+                        const connectedContainers = networkInfo.Containers || {};
+                        for (const containerId of Object.keys(connectedContainers)) {
+                            try {
+                                await network.disconnect({ Container: containerId, Force: true });
+                            } catch {}
+                        }
+
+                        await network.remove();
+                        sendLog(`Removed existing network: ${fullNetworkName}`);
+                    } catch {}
+                }
+            }
+
             sendLog('Starting services...');
             const upResult = await compose.up({ verbose: true });
             sendLog('Services started successfully');

@@ -15,6 +15,7 @@ import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/k
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { cn } from '@workspace/ui/lib/utils';
 import { ImageRow } from '@workspace/typescript-interface/docker/docker.image';
+import Link from 'next/link';
 
 type TranslationFunction = (key: string) => string;
 
@@ -108,7 +109,11 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                                     <StatusIndicator />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    {containersUsed ? <p>{t('imageUsed')}</p> : <p>{t('imageUnused')}</p>}
+                                    {containersUsed ? (
+                                        <p>{t('imageUsed')}</p>
+                                    ) : (
+                                        <p>{t('imageUnused')}</p>
+                                    )}
                                 </TooltipContent>
                             </Tooltip>
                             <StatusLabel className="truncate font-medium text-current">
@@ -120,8 +125,9 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             }
 
             return (
-                <div
-                    className="flex items-start gap-2"
+                <Link
+                    href={`/docker/images/${row.original.id}`}
+                    className="flex items-start gap-2 hover:opacity-80"
                     style={{ paddingLeft: depth > 0 ? `${depth * 24 + 8}px` : undefined }}
                 >
                     <Status
@@ -134,15 +140,19 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                                 <StatusIndicator />
                             </TooltipTrigger>
                             <TooltipContent>
-                                {containersUsed ? <p>{t('imageUsed')}</p> : <p>{t('imageUnused')}</p>}
+                                {containersUsed ? (
+                                    <p>{t('imageUsed')}</p>
+                                ) : (
+                                    <p>{t('imageUnused')}</p>
+                                )}
                             </TooltipContent>
                         </Tooltip>
 
-                        <StatusLabel className="truncate font-medium text-current">
+                        <StatusLabel className="truncate font-medium text-current hover:underline">
                             {nameJoin}
                         </StatusLabel>
                     </Status>
-                </div>
+                </Link>
             );
         },
     },

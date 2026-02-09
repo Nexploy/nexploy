@@ -17,7 +17,6 @@
     "runBuild": "Run build",
     "cancelBuild": "Cancel build",
     "viewBuilds": "View builds",
-    "settings": "Settings",
     "tabs": {
         "builds": "Builds",
         "versions": "Versions",
@@ -225,13 +224,16 @@
             "descriptionPlaceholder": "A short description of your project..."
         },
         "buildConfig": {
-            "title": "Build Configuration",
+            "title": "Build configuration",
             "description": "How your application should be built",
-            "buildType": "Build Type",
+            "buildType": "Build type",
             "selectType": "Select a type",
-            "dockerfilePath": "Dockerfile Path",
-            "contextPath": "Build Context",
-            "composePath": "Compose File Path"
+            "dockerfilePath": "Dockerfile path",
+            "dockerfilePathPlaceholder": "Dockerfile",
+            "contextPath": "Build context",
+            "contextPathPlaceholder": ".",
+            "composePath": "Compose file path",
+            "composePathPlaceholder": "docker-compose.yml"
         },
         "deployment": {
             "title": "Deployment",
@@ -244,6 +246,7 @@
         }
     },
     "settings": {
+        "title": "Settings",
         "environment": "Environment",
         "environmentDescription": "Target Docker environment for deployment",
         "environmentChangedTo": "Environment changed to \"{name}\"",

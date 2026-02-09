@@ -162,11 +162,17 @@ export class ContainersStateManager extends BaseStateManager {
     ): Promise<void> {
         try {
             if (!this.getDockerStatusManager().isConnected()) {
-                logger.debug({ containerId }, 'Skipping container state update: Docker not connected');
+                logger.debug(
+                    { containerId },
+                    'Skipping container state update: Docker not connected',
+                );
                 return;
             }
         } catch (err) {
-            logger.debug({ containerId }, 'Skipping container state update: Docker status manager not available');
+            logger.debug(
+                { containerId },
+                'Skipping container state update: Docker status manager not available',
+            );
             return;
         }
 
@@ -477,10 +483,19 @@ export class ContainersStateManager extends BaseStateManager {
             ? Object.entries(options.envVars).map(([key, value]) => `${key}=${value}`)
             : [];
 
+        let imageExposedPorts: Record<string, Record<string, never>> = {};
+        try {
+            const imageInfo = await this.docker.getImage(imageName).inspect();
+            imageExposedPorts = imageInfo.Config?.ExposedPorts || {};
+        } catch (err) {
+            logger.warn({ err, imageName }, 'Failed to inspect image for exposed ports');
+        }
+
         const containerConfig: ContainerCreateOptions = {
             name: containerName,
             Image: imageName,
             Env: envArray,
+            ...(Object.keys(imageExposedPorts).length > 0 && { ExposedPorts: imageExposedPorts }),
             HostConfig: {
                 RestartPolicy: { Name: 'unless-stopped' },
                 ...(traefikNetworkExist && { NetworkMode: 'nexploy_traefik_network' }),

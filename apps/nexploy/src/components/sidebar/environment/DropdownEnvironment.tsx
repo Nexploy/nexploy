@@ -31,6 +31,7 @@ interface DropdownEnvironment {
 
 export function DropdownEnvironment({ environments }: DropdownEnvironment) {
     const router = useRouter();
+
     useMemo(() => initializeEnvironmentStore(environments), []);
 
     const {

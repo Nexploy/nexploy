@@ -177,7 +177,8 @@ export function CardExposedPorts() {
                                 })}
 
                                 {addedPorts.map((change, idx) => {
-                                    const hasPublicPort = change.publicPort != null;
+                                    const effectivePublicPort =
+                                        change.publicPort ?? change.privatePort!;
 
                                     return (
                                         <div
@@ -185,34 +186,24 @@ export function CardExposedPorts() {
                                             className="group bg-muted/60 relative flex items-center justify-between gap-2 rounded-md px-3 py-2"
                                         >
                                             <code className="flex items-center gap-2 text-sm leading-none">
-                                                {hasPublicPort ? (
-                                                    <Tooltip>
-                                                        <TooltipTrigger asChild>
-                                                            <a
-                                                                href={getPortUrl(
-                                                                    change.publicPort!,
-                                                                )}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="text-primary inline-flex items-center gap-1 font-semibold hover:underline"
-                                                            >
-                                                                {change.publicPort}
-                                                                <ExternalLink className="h-3 w-3" />
-                                                            </a>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent>
-                                                            {t('openPort', {
-                                                                port:
-                                                                    change.publicPort ??
-                                                                    'Unknown Port',
-                                                            })}
-                                                        </TooltipContent>
-                                                    </Tooltip>
-                                                ) : (
-                                                    <span className="text-muted-foreground font-semibold">
-                                                        —
-                                                    </span>
-                                                )}
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <a
+                                                            href={getPortUrl(effectivePublicPort)}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-primary inline-flex items-center gap-1 font-semibold hover:underline"
+                                                        >
+                                                            {effectivePublicPort}
+                                                            <ExternalLink className="h-3 w-3" />
+                                                        </a>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        {t('openPort', {
+                                                            port: effectivePublicPort,
+                                                        })}
+                                                    </TooltipContent>
+                                                </Tooltip>
                                                 <span className="text-muted-foreground">→</span>
                                                 <span>{change.privatePort}</span>
                                                 <span className="text-muted-foreground">

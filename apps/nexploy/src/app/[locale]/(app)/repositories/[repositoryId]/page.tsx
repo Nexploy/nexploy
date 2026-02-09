@@ -5,13 +5,14 @@ import { RepositoryEnvTab } from '@/components/repositories/tabs/envs/Repository
 import { RepositoryDomainsTab } from '@/components/repositories/tabs/domains/RepositoryDomainsTab';
 import { RepositorySettingsTab } from '@/components/repositories/tabs/settings/RepositorySettingsTab';
 import { RepositoryVersionsTab } from '@/components/repositories/tabs/versions/RepositoryVersionsTab';
-import { GitBranch, Github, Gitlab, Link2, Server } from 'lucide-react';
+import { ExternalLink, GitBranch, Github, Gitlab, Link2, Server } from 'lucide-react';
 import { RepositoryBuildsTab } from '@/components/repositories/tabs/builds/RepositoryBuildsTab';
 import { RepositoryDeploymentTab } from '@/components/repositories/tabs/deployment/RepositoryDeploymentTab';
 import { getRepositorieById } from '@/services/repository.service';
 import { Separator } from '@workspace/ui/components/separator';
 import { capitalizeFirstLetter, toDisplayLabel } from '@/utils/capitalize';
 import React from 'react';
+import Link from 'next/link';
 
 interface RepositoryIdPageProps {
     params: Promise<{
@@ -42,9 +43,20 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                             <GitIcon className="text-primary size-7" />
                         </div>
                         <div className="flex flex-col">
-                            <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                                {repository.name}
-                            </h1>
+                            <Link
+                                href={repository.repositoryUrl}
+                                className={'group flex items-center gap-1'}
+                                target="_blank"
+                            >
+                                <h1 className="text-3xl leading-none font-semibold tracking-tight group-hover:underline">
+                                    {repository.name}
+                                </h1>
+                                <ExternalLink
+                                    className={
+                                        'size-4 opacity-0 transition-opacity group-hover:opacity-100'
+                                    }
+                                />
+                            </Link>
                             <div
                                 className={'text-muted-foreground flex items-center gap-2 text-sm'}
                             >
@@ -64,10 +76,12 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                             </div>
                         </div>
                     </div>
-                    <RunBuildButton
-                        repositoryId={repository.id}
-                        environmentId={repository.environmentId}
-                    />
+                    <div className="flex shrink-0 items-center gap-2">
+                        <RunBuildButton
+                            repositoryId={repository.id}
+                            environmentId={repository.environmentId}
+                        />
+                    </div>
                 </div>
 
                 <RepositoryTabs>

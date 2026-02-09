@@ -50,6 +50,24 @@ app.post(
     }),
 );
 
+app.get(
+    '/:id',
+    handleAsync(async (c) => {
+        const id = c.req.param('id');
+        const image = docker.getImage(id);
+        return await image.inspect();
+    }),
+);
+
+app.get(
+    '/:id/history',
+    handleAsync(async (c) => {
+        const id = c.req.param('id');
+        const image = docker.getImage(id);
+        return await image.history();
+    }),
+);
+
 app.post(
     '/:id/tag',
     handleAsync(async (c) => {

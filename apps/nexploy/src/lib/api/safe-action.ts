@@ -30,6 +30,14 @@ export const authActionServer = actionServer.use(async ({ next }) => {
         redirect('/');
     }
 
+    if (session.user.banned) {
+        await setToastServer({
+            type: 'error',
+            message: 'Your account has been banned',
+        });
+        redirect('/');
+    }
+
     return next({ ctx: { session } });
 });
 

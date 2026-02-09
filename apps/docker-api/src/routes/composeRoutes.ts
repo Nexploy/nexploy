@@ -21,7 +21,10 @@ async function controlComposeStack(projectName: string, action: ComposesAction) 
             if (action === 'pause') await container.pause();
             if (action === 'unpause') await container.unpause();
             if (action === 'restart') await container.restart();
-            if (action === 'remove') await container.remove();
+            if (action === 'remove') {
+                if (containerInfo.State === 'running') await container.stop();
+                await container.remove();
+            }
         } catch (error: any) {
             if (error?.message?.includes('already')) {
                 logger.debug(`Container ${containerInfo.Names[0]}: ${error.message}`);

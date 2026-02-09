@@ -72,7 +72,7 @@ export default function ContainersPage() {
                         ) : (
                             <p className="text-muted-foreground text-sm">
                                 {standaloneContainersLenght} {t('container').toLowerCase()}
-                                {stacksSize > 0 && ` · ${stacksSize} ${t('stack')}`}
+                                {stacksSize > 0 && ` · ${stacksSize} ${t('stack.title')}`}
                             </p>
                         )}
                     </div>

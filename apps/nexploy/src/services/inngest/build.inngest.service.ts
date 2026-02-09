@@ -38,7 +38,7 @@ export async function startBuildRepositoryInngest(
         commitHash,
     );
 
-    const build = await createBuildInngest({
+    const build = await createBuild({
         repositoryId: repository.id,
         branch: repository.branch,
         commitHash: commit?.hash,
@@ -86,7 +86,7 @@ export async function removeBuild(buildId: string) {
     }
 }
 
-export async function createBuildInngest({
+export async function createBuild({
     repositoryId,
     branch,
     commitMessage,

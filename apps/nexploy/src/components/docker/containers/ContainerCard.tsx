@@ -74,7 +74,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
 
                     <div className={'flex flex-col gap-2'}>
                         <div className={'flex items-center justify-between'}>
-                            <p>{t('exposedPorts')}</p>
+                            <p>{t('ports')}</p>
                             <Badge>{container.ports.length}</Badge>
                         </div>{' '}
                         {container.ports.length ? (
@@ -91,7 +91,8 @@ export function ContainerCard({ container }: ContainerCardProps) {
                                     {container.ports.map((p, idx) => (
                                         <CarouselItem key={idx}>
                                             <code className="bg-muted/50 flex shrink-0 gap-2 rounded-md px-3 py-2 text-start text-xs leading-none">
-                                                {p.publicPort ?? '—'} → {p.privatePort}
+                                                {p.publicPort !== 0 ? p.publicPort : '—'} →{' '}
+                                                {p.privatePort}
                                                 <span className="text-muted-foreground">
                                                     ({p.type})
                                                 </span>
@@ -101,7 +102,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
                                 </CarouselContent>
                             </Carousel>
                         ) : (
-                            <span className="text-muted-foreground">{t('noExposedPorts')}</span>
+                            <span className="text-muted-foreground">{t('noPorts')}</span>
                         )}
                     </div>
                 </CardContent>

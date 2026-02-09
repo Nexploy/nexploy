@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import {
     Command,
     CommandEmpty,
@@ -31,16 +30,17 @@ import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { Dialog, DialogContent } from '@workspace/ui/components/dialog';
 import { AICommandChat } from '@/components/ai/AICommandChat';
 import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useState } from 'react';
 
 export function AICommand() {
-    const [open, setOpen] = React.useState(false);
-    const [view, setView] = React.useState<'command' | 'chat'>('command');
-    const [inputValue, setInputValue] = React.useState('');
+    const [open, setOpen] = useState(false);
+    const [view, setView] = useState<'command' | 'chat'>('command');
+    const [inputValue, setInputValue] = useState('');
     const router = useRouter();
     const t = useTranslations('ai.command');
     const tNav = useTranslations('ai.commandGroups');
 
-    React.useEffect(() => {
+    useEffect(() => {
         const down = (e: KeyboardEvent) => {
             if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
                 e.preventDefault();
@@ -54,7 +54,7 @@ export function AICommand() {
         return () => document.removeEventListener('keydown', down);
     }, []);
 
-    const runCommand = React.useCallback((command: () => void) => {
+    const runCommand = useCallback((command: () => void) => {
         setOpen(false);
         command();
     }, []);

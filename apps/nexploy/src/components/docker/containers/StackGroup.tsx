@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { MouseEvent, useState } from 'react';
 import { ContainerCard } from '@/components/docker/containers/ContainerCard';
-import { ChevronDownIcon, Layers, Play, RotateCw, Square } from 'lucide-react';
+import { ChevronDownIcon, Layers, Play, RotateCw, Square, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
 import {
@@ -16,6 +16,7 @@ import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/k
 import { onComposesAction } from '@/actions/docker/composes/composeAction';
 import { ComposesAction } from '@workspace/typescript-interface/docker/docker.composeStack';
 import { Containers } from '@workspace/typescript-interface/docker/docker.containers';
+import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
 
 interface StackGroupProps {
@@ -26,6 +27,8 @@ interface StackGroupProps {
 export function StackGroup({ stackName, containers }: StackGroupProps) {
     const [isLoading, setIsloading] = useState(false);
     const t = useTranslations('common');
+    const tDocker = useTranslations('docker');
+    const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
     const runningCount = containers.filter((c) => c.state === 'running').length;
     const stoppedCount = containers.filter((c) => c.state === 'exited').length;
@@ -38,6 +41,22 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
         setIsloading(true);
         await onComposesAction({ stackName, action });
         setIsloading(false);
+    };
+
+    const handleRemove = (event: MouseEvent) => {
+        event.stopPropagation();
+
+        openAlertDialog({
+            title: tDocker('stack.removeTitle'),
+            description: tDocker('stack.removeDescription', { name: stackName }),
+            cancelLabel: t('cancel'),
+            actionLabel: t('delete'),
+            onAction: async () => {
+                setIsloading(true);
+                await onComposesAction({ stackName, action: 'remove' });
+                setIsloading(false);
+            },
+        });
     };
 
     return (
@@ -53,7 +72,9 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                             <div className="flex min-w-0 flex-col text-left">
                                 <h2 className="truncate text-base font-semibold">{stackName}</h2>
                                 <div className="text-muted-foreground flex items-center gap-2 text-xs">
-                                    <span>{containers.length} {t('container')}</span>
+                                    <span>
+                                        {containers.length} {t('container')}
+                                    </span>
                                     {runningCount > 0 && (
                                         <>
                                             <span>•</span>
@@ -117,6 +138,19 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                                     size="icon"
                                 >
                                     <span className="sr-only">{t('restart')}</span>
+                                </Button>
+
+                                <Separator orientation="vertical" className="!h-6" />
+
+                                <Button
+                                    onClick={handleRemove}
+                                    disabled={isLoading}
+                                    isLoading={isLoading}
+                                    variant={'destructive'}
+                                    icon={Trash2}
+                                    size="icon"
+                                >
+                                    <span className="sr-only">{t('delete')}</span>
                                 </Button>
                             </div>
                         </div>
