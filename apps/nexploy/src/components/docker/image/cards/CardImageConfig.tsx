@@ -5,9 +5,7 @@ import { List } from 'lucide-react';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
-import { getImageDetail } from '@/actions/docker/image/imageDetail.action';
-import { ImageDetail } from '@workspace/typescript-interface/docker/docker.image';
+import { useImageStore } from '@/stores/docker/useImageStore';
 
 interface CardImageConfigProps {
     imageId: string;
@@ -15,25 +13,15 @@ interface CardImageConfigProps {
 
 export function CardImageConfig({ imageId }: CardImageConfigProps) {
     const t = useTranslations('docker.imageConfig');
-    const [imageDetail, setImageDetail] = useState<ImageDetail | null>(null);
-    const [loading, setLoading] = useState(true);
+    const image = useImageStore((state) => state.getImage(imageId));
 
-    useEffect(() => {
-        getImageDetail({ imageId }).then((result) => {
-            if (result?.data) setImageDetail(result.data);
-            setLoading(false);
-        });
-    }, [imageId]);
+    if (!image) return <Skeleton className="h-60" />;
 
-    if (loading) {
+    const config = image.config;
+
+    if (!config) {
         return <Skeleton className="h-60" />;
     }
-
-    if (!imageDetail) {
-        return null;
-    }
-
-    const { config } = imageDetail;
 
     const envVars = (config.env || []).map((env) => {
         const eqIndex = env.indexOf('=');
@@ -46,17 +34,12 @@ export function CardImageConfig({ imageId }: CardImageConfigProps) {
             <CardHeaderWithIcon icon={List} title={t('title')} />
             <CardContent>
                 <div className="space-y-4">
-                    {/* CMD */}
                     <div className="flex items-center gap-4 border-b pb-3">
                         <span className="text-muted-foreground w-32 shrink-0 text-sm font-medium">
                             {t('cmd')}
                         </span>
-                        <code className="text-sm">
-                            {config.cmd?.join(' ') || t('noCmd')}
-                        </code>
+                        <code className="text-sm">{config.cmd?.join(' ') || t('noCmd')}</code>
                     </div>
-
-                    {/* ENTRYPOINT */}
                     <div className="flex items-center gap-4 border-b pb-3">
                         <span className="text-muted-foreground w-32 shrink-0 text-sm font-medium">
                             {t('entrypoint')}
@@ -65,8 +48,6 @@ export function CardImageConfig({ imageId }: CardImageConfigProps) {
                             {config.entrypoint?.join(' ') || t('noEntrypoint')}
                         </code>
                     </div>
-
-                    {/* ENV as table */}
                     <div className="flex gap-4">
                         <span className="text-muted-foreground w-32 shrink-0 pt-1 text-sm font-medium">
                             {t('env')}
@@ -89,9 +70,7 @@ export function CardImageConfig({ imageId }: CardImageConfigProps) {
                                 </table>
                             </div>
                         ) : (
-                            <span className="text-muted-foreground pt-1 text-sm">
-                                {t('noEnv')}
-                            </span>
+                            <span className="text-muted-foreground pt-1 text-sm">{t('noEnv')}</span>
                         )}
                     </div>
                 </div>

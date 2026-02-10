@@ -1,5 +1,17 @@
 import { DropdownActionTool } from '../commun';
 
+export interface ImageConfig {
+    cmd: string[] | null;
+    entrypoint: string[] | null;
+    env: string[];
+    workingDir: string;
+    exposedPorts: Record<string, object>;
+    volumes: Record<string, object> | null;
+    user: string;
+    shell: string[] | null;
+    stopSignal: string;
+}
+
 export interface Image {
     id: string;
     fullId: string;
@@ -16,6 +28,7 @@ export interface Image {
     parent?: string;
     architecture?: string;
     os?: string;
+    config?: ImageConfig;
     timestamp: number;
 }
 

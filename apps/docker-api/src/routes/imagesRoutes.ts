@@ -13,9 +13,9 @@ app.post(
 );
 
 app.get(
-    '/',
+    '/:id',
     handleAsync(async (c) => {
-        const name = c.req.query('name');
+        const name = c.req.query('id');
 
         if (name) {
             return imagesStateManager.getByName(name);
@@ -47,15 +47,6 @@ app.post(
         });
 
         return { imageName };
-    }),
-);
-
-app.get(
-    '/:id',
-    handleAsync(async (c) => {
-        const id = c.req.param('id');
-        const image = docker.getImage(id);
-        return await image.inspect();
     }),
 );
 

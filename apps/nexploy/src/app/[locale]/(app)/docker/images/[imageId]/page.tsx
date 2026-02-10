@@ -1,15 +1,20 @@
-'use client';
-
-import { use } from 'react';
 import { ImageDetailPage } from '@/components/docker/image/ImageDetailPage';
-import { useImageStore } from '@/stores/docker/useImageStore';
+import { SSEProvider } from '@/providers/SSEProviders';
+import { kyDocker } from '@/lib/api/kyDocker';
 import { notFound } from 'next/navigation';
 
-export default function ImagePage({ params }: { params: Promise<{ imageId: string }> }) {
-    const { imageId } = use(params);
-    const image = useImageStore((state) => state.getImage(imageId));
+export default async function ImagePage({ params }: { params: Promise<{ imageId: string }> }) {
+    const { imageId } = await params;
 
-    if (!image) notFound();
+    try {
+        await kyDocker.get(`images/${imageId}`).json();
+    } catch {
+        notFound();
+    }
 
-    return <ImageDetailPage imageId={imageId} />;
+    return (
+        <SSEProvider connections={['images']}>
+            <ImageDetailPage imageId={imageId} />;
+        </SSEProvider>
+    );
 }

@@ -199,6 +199,23 @@
         "layer": "Layer",
         "noLayers": "No layer history"
     },
+    "volumeDetail": {
+        "description": "Details and information about the Docker volume",
+        "deleteVolume": "Delete this volume",
+        "cannotDeleteInUse": "Cannot delete a volume in use by containers"
+    },
+    "volumeDetails": {
+        "title": "Volume details",
+        "name": "Name",
+        "driver": "Driver",
+        "mountpoint": "Mountpoint",
+        "scope": "Scope",
+        "created": "Created",
+        "size": "Size",
+        "refCount": "Containers using",
+        "labels": "Labels",
+        "noLabels": "No labels"
+    },
     "containerDetails": {
         "fullId": "Full ID",
         "name": "Name",

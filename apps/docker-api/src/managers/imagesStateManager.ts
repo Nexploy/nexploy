@@ -50,7 +50,7 @@ export class ImagesStateManager extends BaseStateManager {
             const images = await this.docker.listImages({ all: true });
 
             for (const image of images) {
-                const state = this.parseImageInfo(image);
+                const state = await this.parseImageInfo(image);
                 this.images.set(state.id, state);
             }
 
@@ -96,7 +96,7 @@ export class ImagesStateManager extends BaseStateManager {
             const images = await this.docker.listImages({ all: true });
 
             for (const image of images) {
-                const newState = this.parseImageInfo(image);
+                const newState = await this.parseImageInfo(image);
                 const oldState = this.images.get(newState.id);
 
                 if (!oldState) return;
@@ -135,7 +135,6 @@ export class ImagesStateManager extends BaseStateManager {
             const imageUsageMap = new Map<string, number>();
 
             for (const container of containers) {
-
                 let imageId = container.ImageID;
                 if (imageId.includes(':')) {
                     imageId = imageId.split(':')[1];
@@ -248,7 +247,7 @@ export class ImagesStateManager extends BaseStateManager {
     private async refreshImageState(imageId: string): Promise<void> {
         const image = this.docker.getImage(imageId);
         const info = await image.inspect();
-        const newState = this.parseImageInfo(info);
+        const newState = await this.parseImageInfo(info);
 
         const oldState = this.images.get(newState.id);
         this.images.set(newState.id, newState);
@@ -275,13 +274,23 @@ export class ImagesStateManager extends BaseStateManager {
         return 'Config' in image || 'Architecture' in image;
     }
 
-    private parseImageInfo(image: ImageInfo | ImageInspectInfo): Image {
+    private async parseImageInfo(image: ImageInfo | ImageInspectInfo): Promise<Image> {
         const isInspect = this.isImageInspectInfo(image);
 
         const name = image.RepoTags?.map((tag) => tag.split(':')[0]);
         const tag = image.RepoTags?.map((tag) => tag.split(':')[1]);
 
         const id = image.Id.split(':')[1];
+
+        let inspectData: ImageInspectInfo | null = isInspect ? image : null;
+        if (!isInspect) {
+            try {
+                const img = this.docker.getImage(image.Id);
+                inspectData = await img.inspect();
+            } catch {}
+        }
+
+        const cfg = inspectData?.Config;
 
         return {
             id,
@@ -294,13 +303,30 @@ export class ImagesStateManager extends BaseStateManager {
             size: image.Size,
             virtualSize: image.VirtualSize,
             sharedSize: isInspect ? 0 : (image as ImageInfo).SharedSize || 0,
-            labels: isInspect ? image.Config?.Labels || {} : (image as ImageInfo).Labels || {},
+            labels: cfg?.Labels || (image as ImageInfo).Labels || {},
             containersUsed: (image as ImageInfo).Containers || 0,
-            ...(isInspect && {
-                parent: image.Parent,
-                architecture: image.Architecture,
-                os: image.Os,
+            ...(inspectData && {
+                parent: inspectData.Parent,
+                architecture: inspectData.Architecture,
+                os: inspectData.Os,
             }),
+            config: cfg
+                ? {
+                      cmd: cfg.Cmd || null,
+                      entrypoint: Array.isArray(cfg.Entrypoint)
+                          ? cfg.Entrypoint
+                          : cfg.Entrypoint
+                            ? [cfg.Entrypoint]
+                            : null,
+                      env: cfg.Env || [],
+                      workingDir: cfg.WorkingDir || '',
+                      exposedPorts: cfg.ExposedPorts || {},
+                      volumes: cfg.Volumes || null,
+                      user: cfg.User || '',
+                      shell: (cfg as any).Shell || null,
+                      stopSignal: (cfg as any).StopSignal || '',
+                  }
+                : undefined,
             timestamp: Date.now(),
         };
     }
@@ -355,7 +381,7 @@ export class ImagesStateManager extends BaseStateManager {
             const newImageMap = new Map<string, Image>();
 
             for (const image of images) {
-                const state = this.parseImageInfo(image);
+                const state = await this.parseImageInfo(image);
                 newImageMap.set(state.id, state);
             }
 

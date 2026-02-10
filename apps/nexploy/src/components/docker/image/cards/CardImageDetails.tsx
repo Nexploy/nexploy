@@ -6,20 +6,19 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import CopyButton from '@/components/utils/CopyButton';
 import { useTranslations } from 'next-intl';
-import { Image } from '@workspace/typescript-interface/docker/docker.image';
 import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';
+import { useImageStore } from '@/stores/docker/useImageStore';
 
 interface CardImageDetailsProps {
-    image: Image | undefined;
+    imageId: string;
 }
 
-export function CardImageDetails({ image }: CardImageDetailsProps) {
+export function CardImageDetails({ imageId }: CardImageDetailsProps) {
     const t = useTranslations('docker.imageDetails');
+    const image = useImageStore((state) => state.getImage(imageId));
 
-    if (!image) {
-        return <Skeleton className="h-80" />;
-    }
+    if (!image) return <Skeleton className="h-80" />;
 
     const labels = image.labels || {};
     const labelEntries = Object.entries(labels);
@@ -29,7 +28,6 @@ export function CardImageDetails({ image }: CardImageDetailsProps) {
             <CardHeaderWithIcon icon={List} title={t('title')} />
             <CardContent>
                 <div className="space-y-4">
-                    {/* ID */}
                     <div className="flex items-center justify-between gap-4 border-b pb-3">
                         <span className="text-muted-foreground shrink-0 text-sm font-medium">
                             {t('id')}
@@ -46,16 +44,12 @@ export function CardImageDetails({ image }: CardImageDetailsProps) {
                             />
                         </div>
                     </div>
-
-                    {/* Size */}
                     <div className="flex items-center gap-4 border-b pb-3">
                         <span className="text-muted-foreground w-24 shrink-0 text-sm font-medium">
                             {t('size')}
                         </span>
                         <span className="text-sm">{formatBytes(image.size)}</span>
                     </div>
-
-                    {/* Created */}
                     <div className="flex items-center gap-4 border-b pb-3">
                         <span className="text-muted-foreground w-24 shrink-0 text-sm font-medium">
                             {t('created')}
@@ -64,8 +58,6 @@ export function CardImageDetails({ image }: CardImageDetailsProps) {
                             {dayjs.unix(image.created).format('YYYY-MM-DD HH:mm:ss')}
                         </span>
                     </div>
-
-                    {/* Build */}
                     <div className="flex items-center gap-4 border-b pb-3">
                         <span className="text-muted-foreground w-24 shrink-0 text-sm font-medium">
                             {t('build')}
@@ -77,8 +69,6 @@ export function CardImageDetails({ image }: CardImageDetailsProps) {
                             })}
                         </span>
                     </div>
-
-                    {/* Labels */}
                     <div className="flex gap-4">
                         <span className="text-muted-foreground w-24 shrink-0 pt-1 text-sm font-medium">
                             {t('labels')}

@@ -26,9 +26,7 @@ export function CardImageLayers({ imageId }: CardImageLayersProps) {
         });
     }, [imageId]);
 
-    if (loading) {
-        return <Skeleton className="h-80" />;
-    }
+    if (loading) return <Skeleton className="h-80" />;
 
     return (
         <Card>
@@ -53,7 +51,7 @@ export function CardImageLayers({ imageId }: CardImageLayersProps) {
                             {history.map((entry, index) => (
                                 <tr key={index} className="border-b last:border-b-0">
                                     <td className="w-16 px-2 py-2 text-sm">{index + 1}</td>
-                                    <td className="text-muted-foreground w-24 whitespace-nowrap px-2 py-2 text-sm">
+                                    <td className="text-muted-foreground w-24 px-2 py-2 text-sm whitespace-nowrap">
                                         {formatBytes(entry.size)}
                                     </td>
                                     <td className="max-w-0 px-2 py-2">

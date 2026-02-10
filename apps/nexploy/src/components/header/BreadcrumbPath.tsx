@@ -59,13 +59,13 @@ export function BreadcrumbPath() {
 
     if (paths.length <= MAX_ITEMS_BEFORE_COLLAPSE) {
         return (
-            <Breadcrumb className="hidden cursor-pointer pl-1 md:flex">
-                <BreadcrumbList>
+            <Breadcrumb className="hidden pl-1 md:flex">
+                <BreadcrumbList className="flex-nowrap">
                     {paths.map(({ name, href, isLast, isLoading }) => (
                         <Fragment key={href}>
                             <BreadcrumbItem>
                                 {isLast ? (
-                                    <BreadcrumbPage>
+                                    <BreadcrumbPage className="line-clamp-1 break-all">
                                         {isLoading ? <SkeletonStyled /> : name}
                                     </BreadcrumbPage>
                                 ) : (
@@ -89,8 +89,8 @@ export function BreadcrumbPath() {
     const middleItems = paths.slice(ITEMS_TO_DISPLAY, -1);
 
     return (
-        <Breadcrumb className="hidden cursor-pointer pl-1 md:flex">
-            <BreadcrumbList>
+        <Breadcrumb className="hidden min-w-0 flex-1 cursor-pointer overflow-hidden pl-1 md:flex">
+            <BreadcrumbList className="flex-nowrap">
                 {firstItems.map(({ name, href, isLoading }) => (
                     <Fragment key={href}>
                         <BreadcrumbItem>
@@ -118,7 +118,7 @@ export function BreadcrumbPath() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                    <BreadcrumbPage>
+                    <BreadcrumbPage className="line-clamp-1 break-all">
                         {lastItem.isLoading ? <SkeletonStyled /> : lastItem.name}
                     </BreadcrumbPage>
                 </BreadcrumbItem>
