@@ -1,10 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { Activity } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import dayjs from 'dayjs';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { useTranslations } from 'next-intl';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+import { Badge } from '@workspace/ui/components/badge';
 
 export function CardHealthDetails() {
     const container = useContainerStore((state) => state.container);
@@ -16,14 +18,9 @@ export function CardHealthDetails() {
 
     return (
         <Card>
-            <CardHeader>
-                <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
-                        <Activity className="text-primary size-4" />
-                    </div>
-                    <CardTitle>{t('title')} ({container.health?.logs.length})</CardTitle>
-                </div>
-            </CardHeader>
+            <CardHeaderWithIcon icon={Activity} title={t('title')}>
+                <Badge variant="secondary">{container.health?.logs.length}</Badge>
+            </CardHeaderWithIcon>
             <CardContent>
                 <div className="mb-3 flex gap-4">
                     <div className="flex items-center gap-2">
@@ -33,7 +30,9 @@ export function CardHealthDetails() {
                         </code>
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground text-sm">{t('consecutiveFailures')}</span>
+                        <span className="text-muted-foreground text-sm">
+                            {t('consecutiveFailures')}
+                        </span>
                         <code className="bg-muted/50 rounded px-2 py-1 text-xs">
                             {container.health?.failingStreak}
                         </code>

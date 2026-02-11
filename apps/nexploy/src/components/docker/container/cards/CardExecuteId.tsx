@@ -1,8 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { Cpu } from 'lucide-react';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { useTranslations } from 'next-intl';
+import { Badge } from '@workspace/ui/components/badge';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 
 export function CardExecuteId() {
     const container = useContainerStore((state) => state.container);
@@ -14,14 +16,9 @@ export function CardExecuteId() {
 
     return (
         <Card>
-            <CardHeader>
-                <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
-                        <Cpu className="text-primary size-4" />
-                    </div>
-                    <CardTitle>{t('title')} ({container.execIds?.length})</CardTitle>
-                </div>
-            </CardHeader>
+            <CardHeaderWithIcon icon={Cpu} title={t('title')}>
+                <Badge variant="secondary">{container.execIds?.length}</Badge>
+            </CardHeaderWithIcon>
             <CardContent>
                 <div className="space-y-2">
                     {container.execIds?.map((execId, idx) => (

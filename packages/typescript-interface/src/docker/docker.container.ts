@@ -40,6 +40,7 @@ export interface Container {
     id: string;
     name: string;
     image: string;
+    imageId: string;
     platform: string;
     driver: string;
     createdAt: string;

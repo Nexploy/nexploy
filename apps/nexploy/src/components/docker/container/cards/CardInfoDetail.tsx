@@ -20,7 +20,7 @@ export function CardInfoDetail() {
     const fields: { label: string; value: ReactNode; href?: string }[] = [
         { label: t('fullId'), value: container.id },
         { label: t('name'), value: container.name },
-        { label: t('image'), value: container.image, href: '/docker/images' },
+        { label: t('image'), value: container.image, href: `/docker/images/${container.imageId}` },
         { label: t('platform'), value: container.platform },
         { label: t('driver'), value: container.driver },
         { label: t('state'), value: container.state },

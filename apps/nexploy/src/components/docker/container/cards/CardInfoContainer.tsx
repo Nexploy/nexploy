@@ -44,7 +44,7 @@ export function CardInfoContainer() {
             icon: Box,
             description: `${t('version')} ${container!.image.split(':')[1] || 'latest'}`,
             render: () => (
-                <Link href={`/docker/images/${container.image}`} className="group">
+                <Link href={`/docker/images/${container.imageId}`} className="group">
                     <div className="truncate text-2xl font-semibold group-hover:underline">
                         {container.image}
                     </div>

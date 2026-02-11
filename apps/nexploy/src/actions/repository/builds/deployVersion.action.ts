@@ -32,18 +32,29 @@ export const onDeployVersion = authActionServer
                 throw new Error('Build does not belong to this repository');
             }
 
-            const imageName = `${repositoryId}:${buildId}`;
-
             const envVariables: Record<string, string> = {};
             for (const envVar of build.repository.envVariables) {
                 envVariables[envVar.key] = decrypt(envVar.value);
+            }
+
+            if (build.repository.buildType === 'DOCKER_COMPOSE') {
+                return await kyDocker
+                    .post('pipeline/deploy-compose', {
+                        json: {
+                            repositoryId,
+                            buildId,
+                            projectName: `nexploy-${repositoryId}`,
+                            envVars: envVariables,
+                        },
+                    })
+                    .json();
             }
 
             return await kyDocker
                 .post('pipeline/deploy', {
                     json: {
                         repositoryId,
-                        imageName,
+                        imageName: `${repositoryId}:${buildId}`,
                         options: {
                             envVars: envVariables,
                         },

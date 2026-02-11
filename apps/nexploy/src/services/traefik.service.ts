@@ -2,7 +2,11 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as yaml from 'yaml';
 import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
-import { getContainerByProjectName } from '@/services/docker/container.service';
+import {
+    getContainerByProjectName,
+    getContainerPortMappings,
+} from '@/services/docker/container.service';
+import { getRepositorieById } from '@/services/repository.service';
 
 const TRAEFIK_SERVICE_DIR = path.join(process.cwd(), '..', '..', 'infra', 'traefik', 'service');
 
@@ -22,6 +26,12 @@ export async function generateTraefikConfigForRepository(
     const projectName = `nexploy-${repositoryId}`;
 
     const containers = await getContainerByProjectName(projectName);
+
+    const repository = await getRepositorieById(repositoryId);
+    const environment = repository?.environment;
+    const isRemote =
+        environment?.connectionType === 'TCP' || environment?.connectionType === 'TCP_TLS';
+    const remoteHost = environment?.host;
 
     const config: {
         http: {
@@ -102,17 +112,39 @@ export async function generateTraefikConfigForRepository(
             ? matchedContainer.Names[0]?.replace(/^\//, '')
             : projectName;
 
-        config.http.services[serviceName] = {
-            loadBalancer: {
-                servers: [
-                    {
-                        url: `http://${containerName}:${domain.containerPort}`,
-                    },
-                ],
-            },
-        };
+        if (isRemote && remoteHost) {
+            let hostPort: number | undefined;
+            if (matchedContainer) {
+                const portMappings = await getContainerPortMappings(
+                    matchedContainer.Id,
+                    environment.id,
+                );
+                hostPort = portMappings[domain.containerPort];
+            }
+
+            config.http.services[serviceName] = {
+                loadBalancer: {
+                    servers: [
+                        {
+                            url: `http://${remoteHost}:${hostPort ?? domain.containerPort}`,
+                        },
+                    ],
+                },
+            };
+        } else {
+            config.http.services[serviceName] = {
+                loadBalancer: {
+                    servers: [
+                        {
+                            url: `http://${containerName}:${domain.containerPort}`,
+                        },
+                    ],
+                },
+            };
+        }
 
         config['x-nexploy-domains'][routerName] = {
+            containerPort: domain.containerPort,
             cloudflare: domain.cloudflareZoneId && {
                 zoneId: domain.cloudflareZoneId,
                 zoneName: domain.cloudflareZoneName,
@@ -163,6 +195,12 @@ export async function getDomainsFromTraefikConfig(repositoryId: string): Promise
             const domainMeta = nexployDomains[routerName] ?? {};
             const cloudflare = domainMeta.cloudflare;
 
+            const containerPort = domainMeta.containerPort
+                ? Number(domainMeta.containerPort)
+                : portMatch
+                  ? parseInt(portMatch[1])
+                  : 3000;
+
             return {
                 id: routerName,
                 host: hostMatch?.[1] ?? '',
@@ -171,7 +209,7 @@ export async function getDomainsFromTraefikConfig(repositoryId: string): Promise
                     middlewares[`addprefix-${repositoryId}-${hostFromRouter}`]?.addPrefix?.prefix ??
                     '/',
                 stripPath: !!middlewares[`strip-${repositoryId}-${hostFromRouter}`],
-                containerPort: portMatch ? parseInt(portMatch[1]) : 3000,
+                containerPort,
                 https: !!router.tls,
                 cloudflareZoneId: cloudflare?.zoneId,
                 cloudflareZoneName: cloudflare?.zoneName,

@@ -29,6 +29,8 @@ export function ContainerCard({ container }: ContainerCardProps) {
 
     const containerStatus = container.status;
 
+    console.log(container);
+
     return (
         <Link href={`/docker/containers/${containerId}`}>
             <Card className="relative cursor-pointer rounded-xl border transition-all duration-300 hover:scale-[1.03] hover:shadow-xl">

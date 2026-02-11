@@ -13,9 +13,9 @@ app.post(
 );
 
 app.get(
-    '/:id',
+    '/',
     handleAsync(async (c) => {
-        const name = c.req.query('id');
+        const name = c.req.query('name');
 
         if (name) {
             return imagesStateManager.getByName(name);

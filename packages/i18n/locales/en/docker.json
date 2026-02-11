@@ -485,7 +485,7 @@
             "value": "Value"
         },
         "port": {
-            "containerPort": "Container port *",
+            "containerPort": "Container port",
             "hostPort": "Host port",
             "hostPortDescription": "Optional. Leave empty to expose only in Docker network.",
             "protocol": "Protocol",

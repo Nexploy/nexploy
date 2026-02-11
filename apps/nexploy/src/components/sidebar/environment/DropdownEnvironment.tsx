@@ -19,7 +19,7 @@ import { CreateEnvironmentForm } from '@/components/sidebar/environment/CreateEn
 import { EditEnvironmentForm } from '@/components/sidebar/environment/EditEnvironmentForm';
 import { Environment } from 'generated/client';
 import { deleteEnvironmentAction } from '@/actions/environment/deleteEnvironment.action';
-import { setDefaultEnvironmentAction } from '@/actions/environment/setDefaultEnvironment.action';
+// import { setDefaultEnvironmentAction } from '@/actions/environment/setDefaultEnvironment.action';
 import { useRouter } from 'next/navigation';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
@@ -57,7 +57,6 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
             content: <CreateEnvironmentForm />,
             onSuccess: async (environment) => {
                 addEnvironment(environment);
-                await setDefaultEnvironmentAction({ environmentId: environment.id });
                 router.refresh();
                 closeDialog();
             },
@@ -68,7 +67,6 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
         if (environmentId === selectedEnvironmentId) return;
 
         selectEnvironment(environmentId);
-        await setDefaultEnvironmentAction({ environmentId });
         router.refresh();
     };
 
@@ -101,7 +99,6 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
                     if (remainingEnvironments.length) {
                         const firstEnv = remainingEnvironments[0];
                         selectEnvironment(firstEnv!.id);
-                        await setDefaultEnvironmentAction({ environmentId: firstEnv!.id });
                     }
                 }
 

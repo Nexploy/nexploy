@@ -86,6 +86,7 @@ export function parseComposeBuildConfigs(
     composeContent: ComposeContent,
     projectName: string,
     workDir: string,
+    buildId?: string,
 ): ParsedBuildConfig[] {
     const configs: ParsedBuildConfig[] = [];
 
@@ -94,7 +95,8 @@ export function parseComposeBuildConfigs(
             continue;
         }
 
-        const imageName = service.image || `${projectName}_${serviceName}`;
+        const baseImageName = service.image || `${projectName}_${serviceName}`;
+        const imageName = buildId ? `${baseImageName}:${buildId}` : baseImageName;
 
         let contextPath: string;
         let dockerfile = 'Dockerfile';

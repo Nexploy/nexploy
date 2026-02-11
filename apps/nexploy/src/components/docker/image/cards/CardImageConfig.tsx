@@ -6,6 +6,7 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import { useImageStore } from '@/stores/docker/useImageStore';
+import { Table, TableBody, TableCell, TableRow } from '@workspace/ui/components/table';
 
 interface CardImageConfigProps {
     imageId: string;
@@ -33,47 +34,47 @@ export function CardImageConfig({ imageId }: CardImageConfigProps) {
         <Card>
             <CardHeaderWithIcon icon={List} title={t('title')} />
             <CardContent>
-                <div className="space-y-4">
-                    <div className="flex items-center gap-4 border-b pb-3">
-                        <span className="text-muted-foreground w-32 shrink-0 text-sm font-medium">
-                            {t('cmd')}
-                        </span>
-                        <code className="text-sm">{config.cmd?.join(' ') || t('noCmd')}</code>
-                    </div>
-                    <div className="flex items-center gap-4 border-b pb-3">
-                        <span className="text-muted-foreground w-32 shrink-0 text-sm font-medium">
-                            {t('entrypoint')}
-                        </span>
-                        <code className="text-sm">
-                            {config.entrypoint?.join(' ') || t('noEntrypoint')}
-                        </code>
-                    </div>
-                    <div className="flex gap-4">
-                        <span className="text-muted-foreground w-32 shrink-0 pt-1 text-sm font-medium">
-                            {t('env')}
-                        </span>
-                        {envVars.length ? (
-                            <div className="flex-1 overflow-hidden">
-                                <table className="w-full">
-                                    <tbody>
+                <Table>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell className="text-muted-foreground w-32 font-medium">
+                                {t('cmd')}
+                            </TableCell>
+                            <TableCell className={'max-w-0 truncate'}>
+                                <code>{config.cmd?.join(' ') || t('noCmd')}</code>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell className="text-muted-foreground w-32 font-medium">
+                                {t('entrypoint')}
+                            </TableCell>
+                            <TableCell className={'max-w-0 truncate'}>
+                                <code>{config.entrypoint?.join(' ') || t('noEntrypoint')}</code>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell className="text-muted-foreground w-32 align-top font-medium">
+                                {t('env')}
+                            </TableCell>
+                            <TableCell className={'max-w-0'}>
+                                {envVars.length ? (
+                                    <div className="flex flex-col gap-1">
                                         {envVars.map(({ key, value }) => (
-                                            <tr key={key} className="border-b last:border-b-0">
-                                                <td className="text-muted-foreground w-48 truncate py-2 pr-4 font-mono text-sm">
+                                            <div key={key} className="flex gap-2 font-mono text-sm">
+                                                <span className="text-muted-foreground shrink-0">
                                                     {key}
-                                                </td>
-                                                <td className="truncate py-2 font-mono text-sm">
-                                                    {value}
-                                                </td>
-                                            </tr>
+                                                </span>
+                                                <span className="truncate">{value}</span>
+                                            </div>
                                         ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        ) : (
-                            <span className="text-muted-foreground pt-1 text-sm">{t('noEnv')}</span>
-                        )}
-                    </div>
-                </div>
+                                    </div>
+                                ) : (
+                                    <span className="text-muted-foreground">{t('noEnv')}</span>
+                                )}
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
             </CardContent>
         </Card>
     );

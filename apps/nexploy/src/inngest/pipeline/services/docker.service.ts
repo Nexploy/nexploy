@@ -50,10 +50,12 @@ class DockerService {
         signal: AbortSignal,
         onLog: (message: string) => Promise<void>,
         environmentId?: string,
+        buildId?: string,
+        repositoryId?: string,
     ): Promise<{ success: boolean; containers?: string[] }> {
         return this.streamSSERequest<{ success: boolean; containers?: string[] }>(
             'pipeline/events/stream/compose',
-            { workDir, projectName, composePath, envVars },
+            { workDir, projectName, composePath, envVars, buildId, repositoryId },
             signal,
             onLog,
             environmentId,

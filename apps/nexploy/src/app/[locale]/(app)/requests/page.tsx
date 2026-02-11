@@ -27,10 +27,13 @@ import {
 import { Button } from '@workspace/ui/components/button';
 import { SSEProvider } from '@/providers/SSEProviders';
 import { useLocale, useTranslations } from 'next-intl';
+import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 
 export default function RequestsPage() {
     const t = useTranslations('requests');
     const locale = useLocale();
+
+    const getSelectedEnvironment = useEnvironmentStore((s) => s.getSelectedEnvironment());
     const {
         filteredRequests,
         requests,
@@ -129,7 +132,10 @@ export default function RequestsPage() {
     };
 
     return (
-        <SSEProvider connections={['traefik']}>
+        <SSEProvider
+            connections={['traefik']}
+            params={{ traefik: { environmentId: 'cmk5p1e1h0000ynqhf8h5ogi0' } }}
+        >
             <div className="flex h-full flex-1 flex-col gap-4 pt-5">
                 <div className="flex gap-3 px-5">
                     <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
@@ -198,21 +204,29 @@ export default function RequestsPage() {
 
                         <div className="bg-card mx-5 overflow-hidden rounded-md border shadow-sm">
                             <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="w-36">
-                                            {t('table.timestamp')}
-                                        </TableHead>
-                                        <TableHead className="w-20">{t('table.method')}</TableHead>
-                                        <TableHead>{t('table.path')}</TableHead>
-                                        <TableHead className="w-20">{t('table.status')}</TableHead>
-                                        <TableHead className="w-24">
-                                            {t('table.duration')}
-                                        </TableHead>
-                                        <TableHead className="w-20">{t('table.size')}</TableHead>
-                                        <TableHead>{t('table.service')}</TableHead>
-                                    </TableRow>
-                                </TableHeader>
+                                {requests.length ? (
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-36">
+                                                {t('table.timestamp')}
+                                            </TableHead>
+                                            <TableHead className="w-20">
+                                                {t('table.method')}
+                                            </TableHead>
+                                            <TableHead>{t('table.path')}</TableHead>
+                                            <TableHead className="w-20">
+                                                {t('table.status')}
+                                            </TableHead>
+                                            <TableHead className="w-24">
+                                                {t('table.duration')}
+                                            </TableHead>
+                                            <TableHead className="w-20">
+                                                {t('table.size')}
+                                            </TableHead>
+                                            <TableHead>{t('table.service')}</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                ) : null}
                                 <TableBody>
                                     {isLoading &&
                                         Array.from({ length: 10 }).map((_, rowIndex) => (
@@ -228,9 +242,16 @@ export default function RequestsPage() {
                                     {!isLoading && !paginatedRequests.length ? (
                                         <TableRow>
                                             <TableCell colSpan={7} className="py-6 text-center">
-                                                {requests.length === 0
-                                                    ? t('noRequests')
-                                                    : t('noMatchingRequests')}
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <div className="bg-muted flex size-10 items-center justify-center rounded-full">
+                                                        <Send className="text-muted-foreground size-5" />
+                                                    </div>
+                                                    <p className="text-muted-foreground text-sm">
+                                                        {requests.length === 0
+                                                            ? t('noRequests')
+                                                            : t('noMatchingRequests')}
+                                                    </p>
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ) : (

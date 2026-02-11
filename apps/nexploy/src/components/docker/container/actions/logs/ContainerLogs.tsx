@@ -196,7 +196,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                                         <div className="mt-1">{error.message}</div>
                                     </div>
                                 ) : logs.length === 0 ? (
-                                    <div className="text-secondary-foreground">{t('noLogs')}</div>
+                                    <div className="text-secondary">{t('noLogs')}</div>
                                 ) : (
                                     <>
                                         {logs.map((log, index) => (

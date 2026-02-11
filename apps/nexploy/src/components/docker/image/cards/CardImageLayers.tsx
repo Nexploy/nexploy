@@ -9,6 +9,14 @@ import { useEffect, useState } from 'react';
 import { getImageHistory } from '@/actions/docker/image/imageDetail.action';
 import { ImageHistoryEntry } from '@workspace/typescript-interface/docker/docker.image';
 import { formatBytes } from '@/utils/formatBytes';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@workspace/ui/components/table';
 
 interface CardImageLayersProps {
     imageId: string;
@@ -33,36 +41,30 @@ export function CardImageLayers({ imageId }: CardImageLayersProps) {
             <CardHeaderWithIcon icon={List} title={t('title')} />
             <CardContent>
                 {history.length ? (
-                    <table className="w-full">
-                        <thead>
-                            <tr className="border-b">
-                                <th className="text-muted-foreground px-2 py-2 text-left text-sm font-medium">
-                                    {t('order')}
-                                </th>
-                                <th className="text-muted-foreground px-2 py-2 text-left text-sm font-medium">
-                                    {t('size')}
-                                </th>
-                                <th className="text-muted-foreground px-2 py-2 text-left text-sm font-medium">
-                                    {t('layer')}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-16">{t('order')}</TableHead>
+                                <TableHead className="w-24">{t('size')}</TableHead>
+                                <TableHead>{t('layer')}</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
                             {history.map((entry, index) => (
-                                <tr key={index} className="border-b last:border-b-0">
-                                    <td className="w-16 px-2 py-2 text-sm">{index + 1}</td>
-                                    <td className="text-muted-foreground w-24 px-2 py-2 text-sm whitespace-nowrap">
+                                <TableRow key={index}>
+                                    <TableCell className="w-16">{index + 1}</TableCell>
+                                    <TableCell className="text-muted-foreground w-24">
                                         {formatBytes(entry.size)}
-                                    </td>
-                                    <td className="max-w-0 px-2 py-2">
+                                    </TableCell>
+                                    <TableCell className="max-w-0">
                                         <code className="text-muted-foreground block truncate text-sm">
                                             {entry.createdBy || '—'}
                                         </code>
-                                    </td>
-                                </tr>
+                                    </TableCell>
+                                </TableRow>
                             ))}
-                        </tbody>
-                    </table>
+                        </TableBody>
+                    </Table>
                 ) : (
                     <div className="flex items-center justify-center py-8">
                         <p className="text-muted-foreground text-center text-sm">{t('noLayers')}</p>

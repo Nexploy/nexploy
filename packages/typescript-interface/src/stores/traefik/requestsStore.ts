@@ -28,7 +28,7 @@ export interface RequestsState {
     setLastUpdate: (timestamp: number) => void;
     applyFilter: () => void;
 
-    connect: () => void;
+    connect: (params?: { environmentId?: string }) => void;
     disconnect: () => void;
     reset: () => void;
 }

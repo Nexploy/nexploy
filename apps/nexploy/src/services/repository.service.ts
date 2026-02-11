@@ -85,7 +85,7 @@ export function getRepositories() {
                 environment: true,
             },
             orderBy: {
-                updatedAt: 'desc',
+                name: 'asc',
             },
         });
     } catch (error: unknown) {

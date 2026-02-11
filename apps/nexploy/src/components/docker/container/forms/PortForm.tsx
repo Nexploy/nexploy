@@ -88,28 +88,6 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                     control={form.control}
-                    name="privatePort"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>{t('port.containerPort')}</FormLabel>
-                            <FormControl>
-                                <Input
-                                    {...field}
-                                    type="number"
-                                    placeholder="80"
-                                    value={field.value || ''}
-                                    onChange={(e) =>
-                                        field.onChange(parseInt(e.target.value) || undefined)
-                                    }
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
                     name="publicPort"
                     render={({ field }) => (
                         <FormItem>
@@ -129,6 +107,28 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                             <FormDescription className="text-xs">
                                 {t('port.hostPortDescription')}
                             </FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="privatePort"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('port.containerPort')}</FormLabel>
+                            <FormControl>
+                                <Input
+                                    {...field}
+                                    type="number"
+                                    placeholder="80"
+                                    value={field.value || ''}
+                                    onChange={(e) =>
+                                        field.onChange(parseInt(e.target.value) || undefined)
+                                    }
+                                />
+                            </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}

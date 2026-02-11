@@ -93,9 +93,7 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
             description: t('confirmDeleteUser', { name: user.name }),
             cancelLabel: t('cancel'),
             actionLabel: t('deleteUser'),
-            onAction: async () => {
-                await executeDelete({ userId: user.id });
-            },
+            onAction: async () => executeDelete({ userId: user.id }),
         });
     };
 
@@ -108,9 +106,8 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
                 : t('confirmBanUser', { name: user.name }),
             cancelLabel: t('cancel'),
             actionLabel: isBanned ? t('unbanUser') : t('banUser'),
-            onAction: async () => {
-                executeBan({ userId: user.id, action: isBanned ? 'unban' : 'ban' });
-            },
+            onAction: async () =>
+                executeBan({ userId: user.id, action: isBanned ? 'unban' : 'ban' }),
         });
     };
 
@@ -185,7 +182,6 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
                                     ))}
                                 </TableRow>
                             ))}
-
                         {!isLoading && isEmpty ? (
                             <TableRow>
                                 <TableCell

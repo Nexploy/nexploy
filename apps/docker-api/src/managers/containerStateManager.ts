@@ -120,7 +120,7 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
 
     private parseContainerInspect(container: ContainerInspectInfo): Container {
         const portsMap: ContainerPorts[] = [];
-        const networkPorts = container.HostConfig.PortBindings || {};
+        const networkPorts = container.NetworkSettings.Ports || {};
 
         for (const [portKey, bindings] of Object.entries(networkPorts)) {
             const [privatePortStr, type = 'tcp'] = portKey.split('/');
@@ -128,20 +128,36 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
 
             if (bindings && Array.isArray(bindings) && bindings.length > 0) {
                 for (const binding of bindings) {
+                    const publicPort = binding.HostPort
+                        ? parseInt(binding.HostPort, 10)
+                        : undefined;
+
+                    const exists = portsMap.some(
+                        (p) => p.privatePort === privatePort && p.publicPort === publicPort,
+                    );
+
+                    if (!exists) {
+                        portsMap.push({
+                            privatePort,
+                            publicPort,
+                            hostIps: binding.HostIp ? [binding.HostIp] : [],
+                            type: type as PortType,
+                        });
+                    }
+                }
+            } else {
+                const exists = portsMap.some(
+                    (p) => p.privatePort === privatePort && p.publicPort === undefined,
+                );
+
+                if (!exists) {
                     portsMap.push({
                         privatePort,
-                        publicPort: binding.HostPort ? parseInt(binding.HostPort, 10) : undefined,
-                        hostIps: binding.HostIp ? [binding.HostIp] : [],
+                        publicPort: undefined,
+                        hostIps: [],
                         type: type as PortType,
                     });
                 }
-            } else {
-                portsMap.push({
-                    privatePort,
-                    publicPort: undefined,
-                    hostIps: [],
-                    type: type as PortType,
-                });
             }
         }
 
@@ -178,7 +194,8 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
         return {
             id: container.Id,
             name,
-            image: container.Config?.Image || container.Image,
+            image: container.Config?.Image,
+            imageId: container.Image.split(':')[1],
             platform: container.Platform,
             driver: container.Driver,
             createdAt: container.Created,
@@ -213,7 +230,7 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
                 bridge: container.NetworkSettings.Bridge,
                 sandboxId: container.NetworkSettings.SandboxID,
                 endpointId: container.NetworkSettings.EndpointID,
-                ports: Array.from(portsMap.values()),
+                ports: portsMap,
                 networks: Object.fromEntries(
                     Object.entries(networks).map(([name, n]) => [
                         name,

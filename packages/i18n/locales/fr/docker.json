@@ -485,7 +485,7 @@
             "value": "Valeur"
         },
         "port": {
-            "containerPort": "Port conteneur *",
+            "containerPort": "Port conteneur",
             "hostPort": "Port hôte",
             "hostPortDescription": "Optionnel. Laissez vide pour exposer uniquement dans le réseau Docker.",
             "protocol": "Protocole",

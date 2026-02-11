@@ -95,11 +95,10 @@ export class TraefikLogsManager extends BaseStateManager {
     }
 
     async fullStateSync(): Promise<void> {
-
         if (!this.traefikExists) {
             this.traefikExists = await this.checkTraefikExists();
             if (!this.traefikExists) {
-                return; // Still doesn't exist, skip
+                return;
             }
         }
 
@@ -170,7 +169,6 @@ export class TraefikLogsManager extends BaseStateManager {
     }
 
     private stopLogStream(): void {
-
         if (this.reconnectTimeout) {
             clearTimeout(this.reconnectTimeout);
             this.reconnectTimeout = null;
@@ -208,7 +206,6 @@ export class TraefikLogsManager extends BaseStateManager {
             this.reconnectTimeout = null;
             logger.debug('Attempting to reconnect to Traefik logs...');
             this.reconnectLogStream().catch((err) => {
-
                 if ((err as any).statusCode !== 404) {
                     logger.error({ err }, 'Failed to reconnect log stream');
                 }

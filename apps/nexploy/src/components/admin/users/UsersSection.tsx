@@ -24,7 +24,6 @@ export async function UsersSection() {
     return (
         <div className="flex flex-col gap-5">
             <UsersTable users={users} currentUserId={session?.user.id} isAdmin={isAdmin} />
-
             {isAdmin && invitations.length > 0 && (
                 <Card>
                     <CardHeader>

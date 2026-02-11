@@ -14,6 +14,7 @@ import { PipelineContext } from './context';
 import { dockerfileStrategy } from '@/inngest/pipeline/strategies/dockerfile.strategy';
 import { dockerComposeStrategy } from '@/inngest/pipeline/strategies/compose.strategy';
 import { gitService } from '@/inngest/pipeline/services/git.service';
+import { prisma } from '../../../prisma/prisma';
 
 function formatErrorDetails(error: unknown): string {
     if (error instanceof Error) {
@@ -66,6 +67,29 @@ export class PipelineOrchestrator implements IPipelineOrchestrator {
         return stepIndex >= startIndex;
     }
 
+    private startCancellationWatcher(
+        buildId: string,
+        context: PipelineContext,
+        intervalMs = 2000,
+    ): NodeJS.Timeout {
+        return setInterval(async () => {
+            if (context.isAborted()) return;
+
+            try {
+                const build = await prisma.build.findUnique({
+                    where: { id: buildId },
+                    select: { status: true },
+                });
+
+                if (build?.status === 'CANCELLED') {
+                    context.abort();
+                }
+            } catch {
+                /* empty */
+            }
+        }, intervalMs);
+    }
+
     async execute(
         buildId: string,
         config: BuildConfig,
@@ -82,6 +106,8 @@ export class PipelineOrchestrator implements IPipelineOrchestrator {
         const steps = strategy.getSteps();
         const stepIds = steps.map((s) => s.metadata.id);
         const completedSteps: StepId[] = [];
+
+        const cancellationWatcher = this.startCancellationWatcher(buildId, context);
 
         try {
             await inngestStep.run('pipeline-init', async () => {
@@ -106,6 +132,11 @@ export class PipelineOrchestrator implements IPipelineOrchestrator {
                 }
 
                 const stepResult = await inngestStep.run(stepId, async () => {
+                    // Check if already cancelled before starting the step
+                    if (context.isAborted()) {
+                        throw new DOMException('Build cancelled', 'AbortError');
+                    }
+
                     const stepContext = context.createStepContext();
 
                     try {
@@ -211,6 +242,8 @@ export class PipelineOrchestrator implements IPipelineOrchestrator {
             }
 
             throw error;
+        } finally {
+            clearInterval(cancellationWatcher);
         }
     }
 }

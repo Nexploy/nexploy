@@ -172,9 +172,9 @@ export function BackupsTable({ backups }: BackupsTableProps) {
                                     colSpan={table.getAllColumns().length}
                                     className="py-12 text-center"
                                 >
-                                    <div className="flex flex-col items-center gap-3">
-                                        <div className="bg-muted flex size-12 items-center justify-center rounded-full">
-                                            <Database className="text-muted-foreground size-6" />
+                                    <div className="flex flex-col items-center gap-2">
+                                        <div className="bg-muted flex size-10 items-center justify-center rounded-full">
+                                            <Database className="text-muted-foreground size-5" />
                                         </div>
                                         <p className="text-muted-foreground text-sm">
                                             {t('noBackups')}

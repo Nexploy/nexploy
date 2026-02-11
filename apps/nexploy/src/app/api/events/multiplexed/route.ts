@@ -180,12 +180,22 @@ export const GET = route.use(authRouteServer).handler(async (request: Request) =
                 }
 
                 const endpointTemplate = CHANNEL_ENDPOINTS[config.channel];
-                const endpoint = buildEndpointUrl(endpointTemplate, config.params);
+
+                const channelEnvironment = config.params?.environment;
+                const effectiveEnvironment = channelEnvironment ?? environment;
+
+                let buildParams = config.params;
+                if (buildParams?.environment) {
+                    const { environment: _, ...rest } = buildParams;
+                    buildParams = Object.keys(rest).length > 0 ? rest : undefined;
+                }
+
+                const endpoint = buildEndpointUrl(endpointTemplate, buildParams);
                 let url = `${serverUrl}${endpoint}`;
 
-                if (environment) {
+                if (effectiveEnvironment) {
                     const separator = url.includes('?') ? '&' : '?';
-                    url += `${separator}environment=${encodeURIComponent(environment)}`;
+                    url += `${separator}environment=${encodeURIComponent(effectiveEnvironment)}`;
                 }
 
                 try {
@@ -199,7 +209,6 @@ export const GET = route.use(authRouteServer).handler(async (request: Request) =
                     });
 
                     if (!response.ok) {
-
                         if (response.status === 404) {
                             try {
                                 const errorData = await response.json();
@@ -282,7 +291,7 @@ export const GET = route.use(authRouteServer).handler(async (request: Request) =
                                         })}\n\n`,
                                     ),
                                 );
-                            } catch (err) {
+                            } catch {
                                 cleanup();
                                 return;
                             }
@@ -307,7 +316,6 @@ export const GET = route.use(authRouteServer).handler(async (request: Request) =
                     try {
                         const parsed = JSON.parse(errorData);
                         if (parsed.code === 'ENVIRONMENT_NOT_FOUND') {
-
                             shouldRetry = false;
                             errorData = JSON.stringify(parsed);
                         }

@@ -94,7 +94,7 @@ export const useRequestsStore = create<RequestsState>((set, get) => ({
         set({ filteredRequests: filtered });
     },
 
-    connect: () => {
+    connect: (params) => {
         const state = get();
 
         if (state.eventSource) {
@@ -103,13 +103,16 @@ export const useRequestsStore = create<RequestsState>((set, get) => ({
 
         try {
             const unsubscribers: (() => void)[] = [];
+            const channelParams = params?.environmentId
+                ? { environment: params.environmentId }
+                : undefined;
 
             unsubscribers.push(
                 sseMultiplexer.subscribe('traefik', 'initial-state', (e) => {
                     const data: TraefikRequestEvent = JSON.parse(e.data);
                     get().setRequests(data.requests || []);
                     set({ lastUpdate: data.timestamp, error: null });
-                }),
+                }, channelParams),
             );
 
             unsubscribers.push(
@@ -118,21 +121,21 @@ export const useRequestsStore = create<RequestsState>((set, get) => ({
                     if (data.request) {
                         get().addRequest(data.request);
                     }
-                }),
+                }, channelParams),
             );
 
             unsubscribers.push(
                 sseMultiplexer.subscribe('traefik', 'clear', (e) => {
                     const data: TraefikRequestEvent = JSON.parse(e.data);
                     get().setRequests(data.requests || []);
-                }),
+                }, channelParams),
             );
 
             unsubscribers.push(
                 sseMultiplexer.subscribe('traefik', 'heartbeat', (e) => {
                     const data: TraefikRequestEvent = JSON.parse(e.data);
                     set({ lastUpdate: data.timestamp });
-                }),
+                }, channelParams),
             );
 
             set({

@@ -11,7 +11,6 @@ import { RepositoryDeploymentTab } from '@/components/repositories/tabs/deployme
 import { getRepositorieById } from '@/services/repository.service';
 import { Separator } from '@workspace/ui/components/separator';
 import { capitalizeFirstLetter, toDisplayLabel } from '@/utils/capitalize';
-import React from 'react';
 import Link from 'next/link';
 
 interface RepositoryIdPageProps {
@@ -87,7 +86,12 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                 <RepositoryTabs>
                     {{
                         overview: <RepositoryBuildsTab repositoryId={repository.id} />,
-                        versions: <RepositoryVersionsTab repositoryId={repository.id} />,
+                        versions: (
+                            <RepositoryVersionsTab
+                                repositoryId={repository.id}
+                                buildType={repository.buildType}
+                            />
+                        ),
                         env: <RepositoryEnvTab repositoryId={repository.id} />,
                         domain: <RepositoryDomainsTab repositoryId={repository.id} />,
                         deployment: <RepositoryDeploymentTab repositoryId={repository.id} />,

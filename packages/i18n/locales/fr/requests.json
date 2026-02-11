@@ -1,5 +1,6 @@
 {
     "title": "Requêtes",
+    "environment": "Environnement",
     "waitingForRequests": "En attente de requêtes...",
     "noRequests": "Aucune requête",
     "requestsCaptured": "{count} requête capturée",

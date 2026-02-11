@@ -7,7 +7,11 @@ export default async function ImagePage({ params }: { params: Promise<{ imageId:
     const { imageId } = await params;
 
     try {
-        await kyDocker.get(`images/${imageId}`).json();
+        await kyDocker
+            .get(`images`, {
+                searchParams: { name: imageId },
+            })
+            .json();
     } catch {
         notFound();
     }

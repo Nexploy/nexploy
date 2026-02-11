@@ -87,6 +87,8 @@ class DeployComposeStep extends BaseStep {
                 ctx.context.abortController.signal,
                 onLog,
                 config.environmentId,
+                ctx.context.buildId,
+                config.repositoryId,
             );
 
             await ctx.logger.info(

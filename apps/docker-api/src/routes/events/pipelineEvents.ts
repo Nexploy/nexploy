@@ -11,14 +11,14 @@ import yaml from 'yaml';
 import type { Readable } from 'stream';
 import { substituteEnvVars } from '@/utils/composePreprocessor';
 import {
-    parseComposeBuildConfigs,
-    getServicesToPull,
     getExplicitContainerNames,
+    getServicesToPull,
+    parseComposeBuildConfigs,
 } from '@/utils/composeBuildParser';
 import { buildComposeServices, cleanupPartialBuild } from '@/utils/composeBuildService';
 import {
-    transformBindMountsForRemote,
     getTransformationSummary,
+    transformBindMountsForRemote,
 } from '@/utils/composeVolumeTransformer';
 import type { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
 import type { VolumeTransformationResult } from '@workspace/typescript-interface/docker/docker.compose.volume';
@@ -53,12 +53,15 @@ function cleanupEnvFile(workDir: string): void {
 }
 
 app.post('/stream/compose', async (c) => {
-    const { workDir, projectName, composePath, envVars } = await c.req.json<{
-        workDir: string;
-        projectName: string;
-        composePath?: string;
-        envVars?: Record<string, string>;
-    }>();
+    const { workDir, projectName, composePath, envVars, buildId, repositoryId } =
+        await c.req.json<{
+            workDir: string;
+            projectName: string;
+            composePath?: string;
+            envVars?: Record<string, string>;
+            buildId?: string;
+            repositoryId?: string;
+        }>();
 
     const dockerClient = getCurrentDockerClient();
     const environmentId = getCurrentEnvironmentId();
@@ -129,6 +132,7 @@ app.post('/stream/compose', async (c) => {
                     composeContent,
                     projectName,
                     workDir,
+                    buildId,
                 );
                 volumeTransformResult = transformBindMountsForRemote(
                     composeContent,
@@ -148,7 +152,10 @@ app.post('/stream/compose', async (c) => {
 
                 composeContent = volumeTransformResult.modifiedComposeContent as ComposeContent;
 
-                for (const [serviceName, dockerfileContent] of volumeTransformResult.generatedDockerfiles) {
+                for (const [
+                    serviceName,
+                    dockerfileContent,
+                ] of volumeTransformResult.generatedDockerfiles) {
                     const dockerfilePath = path.join(workDir, `.nexploy-${serviceName}.Dockerfile`);
                     fs.writeFileSync(dockerfilePath, dockerfileContent, 'utf8');
                     sendLog(`Generated Dockerfile for service: ${serviceName}`);
@@ -163,8 +170,7 @@ app.post('/stream/compose', async (c) => {
                             await dockerClient.createVolume({ Name: volumeName });
                             sendLog(`  Created volume: ${volumeName}`);
                         } catch (err: unknown) {
-                            const errorMessage =
-                                err instanceof Error ? err.message : String(err);
+                            const errorMessage = err instanceof Error ? err.message : String(err);
                             if (!errorMessage.includes('already exists')) {
                                 throw err;
                             }
@@ -178,14 +184,10 @@ app.post('/stream/compose', async (c) => {
                 }
             }
 
-            const buildConfigs = parseComposeBuildConfigs(composeContent, projectName, workDir);
+            const buildConfigs = parseComposeBuildConfigs(composeContent, projectName, workDir, buildId);
             const servicesToPull = getServicesToPull(composeContent);
 
-            const initialCompose = new DockerodeCompose(
-                dockerClient,
-                composeFilePath,
-                projectName,
-            );
+            const initialCompose = new DockerodeCompose(dockerClient, composeFilePath, projectName);
 
             if (servicesToPull.length > 0) {
                 sendLog(`Pulling images for ${servicesToPull.length} service(s)...`);
@@ -206,10 +208,7 @@ app.post('/stream/compose', async (c) => {
                                         const readable = pullStream as Readable;
 
                                         readable.on('data', (chunk) => {
-                                            if (
-                                                isClientDisconnected ||
-                                                c.req.raw.signal.aborted
-                                            ) {
+                                            if (isClientDisconnected || c.req.raw.signal.aborted) {
                                                 readable.destroy();
                                                 return;
                                             }
@@ -290,6 +289,94 @@ app.post('/stream/compose', async (c) => {
                 sendLog('Created processed compose file for deployment');
             }
 
+            if (buildId && repositoryId && buildConfigs.length > 0) {
+                sendLog('Creating version manifest image...');
+                const manifestTag = `${repositoryId}:${buildId}`;
+                const composeConfigB64 = Buffer.from(
+                    yaml.stringify(composeContent),
+                ).toString('base64');
+
+                const tmpDir = path.join(workDir, '.nexploy-manifest');
+                fs.mkdirSync(tmpDir, { recursive: true });
+                fs.writeFileSync(
+                    path.join(tmpDir, 'Dockerfile'),
+                    'FROM scratch\nLABEL nexploy.manifest=true\n',
+                    'utf8',
+                );
+
+                try {
+                    const tarStream = (await import('tar-fs')).pack(tmpDir);
+                    const buildStream = await dockerClient.buildImage(tarStream as any, {
+                        t: manifestTag,
+                        labels: {
+                            'nexploy.compose.config': composeConfigB64,
+                            'nexploy.buildType': 'DOCKER_COMPOSE',
+                            'nexploy.projectName': projectName,
+                        },
+                    });
+
+                    await new Promise<void>((resolve, reject) => {
+                        dockerClient.modem.followProgress(
+                            buildStream,
+                            (err: any) => (err ? reject(err) : resolve()),
+                        );
+                    });
+
+                    sendLog(`Manifest image created: ${manifestTag}`);
+                } catch (manifestErr) {
+                    sendLog(
+                        `Warning: Failed to create manifest image: ${manifestErr instanceof Error ? manifestErr.message : 'Unknown error'}`,
+                    );
+                } finally {
+                    try {
+                        fs.rmSync(tmpDir, { recursive: true, force: true });
+                    } catch {}
+                }
+            }
+
+            if (isRemoteEnvironment) {
+                let portsAdded = false;
+                sendLog('Ensuring container ports are published on remote host...');
+                for (const [serviceName, service] of Object.entries(
+                    composeContent.services || {},
+                )) {
+                    const servicePorts = service.ports as string[] | undefined;
+                    if (!servicePorts || servicePorts.length === 0) {
+                        const imageName = service.image;
+                        if (imageName) {
+                            try {
+                                const imageInfo = await dockerClient.getImage(imageName).inspect();
+                                const exposedPorts = Object.keys(
+                                    imageInfo.Config?.ExposedPorts || {},
+                                );
+                                if (exposedPorts.length > 0) {
+                                    const portMappings = exposedPorts.map((p) => {
+                                        const port = p.split('/')[0];
+                                        return `0:${port}`;
+                                    });
+                                    (service as Record<string, unknown>).ports = portMappings;
+                                    sendLog(
+                                        `  Added port mappings for service ${serviceName}: ${portMappings.join(', ')}`,
+                                    );
+                                    portsAdded = true;
+                                }
+                            } catch {
+                                sendLog(
+                                    `  Warning: Could not inspect image for service ${serviceName} to determine ports`,
+                                );
+                            }
+                        }
+                    }
+                }
+
+                if (portsAdded) {
+                    modifiedComposeFile =
+                        modifiedComposeFile || path.join(workDir, '.nexploy-compose-processed.yml');
+                    fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
+                    sendLog('Updated compose file with port mappings for remote environment');
+                }
+            }
+
             const deployComposeFile = modifiedComposeFile || composeFilePath;
             const compose = new DockerodeCompose(dockerClient, deployComposeFile, projectName);
 
@@ -340,9 +427,7 @@ app.post('/stream/compose', async (c) => {
             const upResult = await compose.up({ verbose: true });
             sendLog('Services started successfully');
 
-            const containerIds = upResult.services.map(
-                (container: { id: string }) => container.id,
-            );
+            const containerIds = upResult.services.map((container: { id: string }) => container.id);
 
             sendLog(`Connecting ${containerIds.length} containers to Traefik network...`);
             for (const containerId of containerIds) {
@@ -405,10 +490,7 @@ app.post('/stream/compose', async (c) => {
             if (modifiedComposeFile && fs.existsSync(modifiedComposeFile)) {
                 try {
                     fs.unlinkSync(modifiedComposeFile);
-                    logger.info(
-                        { path: modifiedComposeFile },
-                        'Cleaned up temporary compose file',
-                    );
+                    logger.info({ path: modifiedComposeFile }, 'Cleaned up temporary compose file');
                 } catch (e) {
                     logger.warn(
                         { path: modifiedComposeFile, error: e },

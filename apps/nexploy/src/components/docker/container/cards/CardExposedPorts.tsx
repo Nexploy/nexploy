@@ -12,15 +12,19 @@ import { cn } from '@workspace/ui/lib/utils';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 
 function getPortUrl(port: number) {
-    if (typeof window === 'undefined') return `http://localhost:${port}`;
-    const { protocol, hostname } = window.location;
-    return `${protocol}//${hostname}:${port}`;
+    const environment = useEnvironmentStore.getState().getSelectedEnvironment();
+
+    const { hostname } = window.location;
+    return `http://${environment?.host ?? hostname}:${port}`;
 }
 
 export function CardExposedPorts() {
     const container = useContainerStore((state) => state.container);
+
     const { openDialog } = useConfirmationDialogStore();
     const portChanges = useContainerChangesStore((state) => state.portChanges);
     const t = useTranslations('docker.containerPorts');
@@ -131,15 +135,14 @@ export function CardExposedPorts() {
                                         >
                                             <code className="flex items-center gap-2 text-sm leading-none">
                                                 {hasPublicPort ? (
-                                                    <a
+                                                    <Link
                                                         href={getPortUrl(displayPort.publicPort!)}
                                                         target="_blank"
-                                                        rel="noopener noreferrer"
                                                         className="text-primary inline-flex items-center gap-1 font-semibold hover:underline"
                                                     >
                                                         {displayPort.publicPort}
                                                         <ExternalLink className="h-3 w-3" />
-                                                    </a>
+                                                    </Link>
                                                 ) : (
                                                     <span className="text-muted-foreground font-semibold">
                                                         —

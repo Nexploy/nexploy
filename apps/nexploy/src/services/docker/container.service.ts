@@ -1,6 +1,6 @@
 import { Container } from '@workspace/typescript-interface/docker/docker.container';
-import { ContainerInfo } from 'dockerode';
-import { kyDocker } from '@/lib/api/kyDocker';
+import { ContainerInfo, ContainerInspectInfo } from 'dockerode';
+import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 
 export async function getContainerByName(repositoryId: string): Promise<Container[]> {
     try {
@@ -21,5 +21,32 @@ export async function getContainerByProjectName(projectName: string): Promise<Co
         return await kyDocker.get(`composes/${projectName}/list`).json<ContainerInfo[]>();
     } catch {
         return [];
+    }
+}
+
+export async function getContainerPortMappings(
+    containerNameOrId: string,
+    environmentId?: string,
+): Promise<Record<number, number>> {
+    try {
+        const inspectInfo = await kyDocker
+            .get(`container/${containerNameOrId}/info`, {
+                environmentId,
+            } as KyDockerOptions)
+            .json<ContainerInspectInfo>();
+
+        const mappings: Record<number, number> = {};
+        const ports = inspectInfo.NetworkSettings?.Ports || {};
+
+        for (const [portKey, bindings] of Object.entries(ports)) {
+            const containerPort = parseInt(portKey.split('/')[0] ?? '0');
+            if (bindings?.[0]?.HostPort) {
+                mappings[containerPort] = parseInt(bindings[0].HostPort);
+            }
+        }
+
+        return mappings;
+    } catch {
+        return {};
     }
 }

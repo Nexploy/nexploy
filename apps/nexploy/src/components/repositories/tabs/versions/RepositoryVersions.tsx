@@ -41,12 +41,17 @@ export function RepositoryVersions({
     };
 
     const deployedTags = images.flatMap((img) => img.tag);
-    const deployedVersions = deployedTags
-        .map((tag) => {
-            return versions.find((v) => v.id === tag || tag.includes(v.id) || v.id.includes(tag));
-        })
-        .filter((v): v is Build => v !== undefined)
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    const deployedVersions = Array.from(
+        deployedTags
+            .map((tag) => {
+                return versions.find(
+                    (v) => v.id === tag || tag.includes(v.id) || v.id.includes(tag),
+                );
+            })
+            .filter((v): v is Build => v !== undefined)
+            .reduce((map, v) => map.set(v.id, v), new Map<string, Build>())
+            .values(),
+    ).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     const isCurrentVersion = (buildId: string) => buildId === containerImageUsed?.split(':')[1];
 
