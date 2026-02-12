@@ -27,7 +27,7 @@ export async function generateTraefikConfigForRepository(
 
     const containers = await getContainerByProjectName(projectName);
 
-    const repository = await getRepositorieById(repositoryId);
+    const repository = await getRepositorieById(repositoryId, { environment: true });
     const environment = repository?.environment;
     const isRemote =
         environment?.connectionType === 'TCP' || environment?.connectionType === 'TCP_TLS';

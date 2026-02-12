@@ -1,5 +1,5 @@
 import { BaseStep } from './base.step';
-import { StepExecutionContext, StepMetadata, StepResult } from '../types';
+import { StepExecutionContext, StepMetadata, StepResult } from '@/types/pipeline.type';
 
 export class FinalizeStep extends BaseStep {
     readonly metadata: StepMetadata = {

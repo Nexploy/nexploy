@@ -5,7 +5,10 @@ import {
     getCloudflareCredentialInfo,
     updateCloudflareDnsRecord,
 } from '@/services/cloudflare.service';
-import { generateTraefikConfigForRepository, getDomainsFromTraefikConfig, } from '@/services/traefik.service';
+import {
+    generateTraefikConfigForRepository,
+    getDomainsFromTraefikConfig,
+} from '@/services/traefik.service';
 import { ApplyDomainOperationsInput } from '@workspace/typescript-interface/domain';
 
 export async function applyDomainOperations({
@@ -63,7 +66,7 @@ async function handleDeletions(
                     domain.cloudflareDnsRecordId,
                 );
             } catch (error) {
-                console.error(`Échec de suppression DNS Cloudflare pour ${domain.host}:`, error);
+                console.error(`Failed to delete Cloudflare DNS for ${domain.host}:`, error);
             }
         }
     }
@@ -82,7 +85,7 @@ async function handleEdit({
 }): Promise<Domain> {
     const originalDomain = existingDomains.find((d) => d.id === domain.id);
     if (!originalDomain) {
-        throw new Error(`Domaine original non trouvé pour l'ID: ${domain.id}`);
+        throw new Error(`Original domain not found for ID: ${domain.id}`);
     }
 
     if (!cloudflareInfo.isConnected) {
@@ -108,7 +111,7 @@ async function handleEdit({
             );
             cloudflareDnsRecordId = undefined;
         } catch (error) {
-            console.error('Échec de suppression DNS Cloudflare:', error);
+            console.error('Failed to delete Cloudflare DNS:', error);
         }
     } else if (
         !wasCloudflare &&
@@ -126,7 +129,7 @@ async function handleEdit({
             );
             cloudflareDnsRecordId = record.id;
         } catch (error) {
-            throw new Error(`Échec de création DNS pour ${domain.host}: ${error}`);
+            throw new Error(`Failed to create DNS for ${domain.host}: ${error}`);
         }
     } else if (zoneChanged && domain.cloudflareZoneId && domain.cloudflareZoneName) {
         if (originalDomain.cloudflareDnsRecordId) {
@@ -137,7 +140,7 @@ async function handleEdit({
                     originalDomain.cloudflareDnsRecordId,
                 );
             } catch (error) {
-                console.error('Échec de suppression ancien DNS:', error);
+                console.error('Failed to delete old DNS:', error);
             }
         }
 
@@ -151,7 +154,7 @@ async function handleEdit({
             );
             cloudflareDnsRecordId = record.id;
         } catch (error) {
-            throw new Error(`Échec de création DNS pour ${domain.host}: ${error}`);
+            throw new Error(`Failed to create DNS for ${domain.host}: ${error}`);
         }
     } else if (
         hostChanged &&
@@ -170,7 +173,7 @@ async function handleEdit({
                 domain.cloudflareZoneName,
             );
         } catch (error) {
-            throw new Error(`Échec de mise à jour DNS pour ${domain.host}: ${error}`);
+            throw new Error(`Failed to update DNS for ${domain.host}: ${error}`);
         }
     }
 
@@ -195,7 +198,7 @@ export function classifyDomainOperations(
     for (const domain of domains) {
         const cleanedDomain = {
             ...domain,
-            host: domain.host.replace(/^https?:\/\//, ''),
+            host: domain.host.replace(/^https?:\/\//, '').replace(/^@\./, ''),
         };
 
         if (!domain.id) {
@@ -266,7 +269,7 @@ async function handleAdd({
             );
             cloudflareDnsRecordId = record.id;
         } catch (error) {
-            throw new Error(`Échec de création DNS pour ${domain.host}: ${error}`);
+            throw new Error(`Failed to create DNS for ${domain.host}: ${error}`);
         }
     }
 

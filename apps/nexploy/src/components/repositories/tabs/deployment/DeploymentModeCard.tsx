@@ -21,7 +21,7 @@ import { useTranslations } from 'next-intl';
 
 interface DeploymentModeCardProps {
     form: UseFormReturn<DeploymentSettingsForm>;
-    buildType: BuildType;
+    buildType?: BuildType;
 }
 
 export function DeploymentModeCard({ form, buildType }: DeploymentModeCardProps) {
@@ -101,7 +101,9 @@ export function DeploymentModeCard({ form, buildType }: DeploymentModeCardProps)
                                                 )}
                                             />
                                             <div className="flex flex-col gap-1">
-                                                <span className="font-semibold">{t('container')}</span>
+                                                <span className="font-semibold">
+                                                    {t('container')}
+                                                </span>
                                                 <span className="text-muted-foreground text-sm">
                                                     {t('singleContainer')}
                                                 </span>

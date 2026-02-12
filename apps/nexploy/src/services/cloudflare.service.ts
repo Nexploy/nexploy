@@ -117,7 +117,7 @@ export async function createCloudflareDnsRecord(
         const apiToken = await getCloudflareApiToken(userId);
         const serverIp = await getServerIp(userId);
 
-        const fullHostname = subdomain ? `${subdomain}.${zoneName}` : zoneName;
+        const fullHostname = subdomain && subdomain !== '@' ? `${subdomain}.${zoneName}` : zoneName;
 
         return await tokenCloudflareStorage.run({ apiToken }, async () => {
             return (
@@ -173,7 +173,7 @@ export async function updateCloudflareDnsRecord(
         const apiToken = await getCloudflareApiToken(userId);
         const serverIp = await getServerIp(userId);
 
-        const fullHostname = subdomain ? `${subdomain}.${zoneName}` : zoneName;
+        const fullHostname = subdomain && subdomain !== '@' ? `${subdomain}.${zoneName}` : zoneName;
 
         return await tokenCloudflareStorage.run({ apiToken }, async () => {
             return (

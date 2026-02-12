@@ -1,7 +1,7 @@
 'use client';
 
 import { toast } from 'sonner';
-import { Environment, Repository } from 'generated/client';
+import { Repository } from 'generated/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { updateEnvironmentAction } from '@/actions/repository/settings/updateEnvironment.action';
 import { updateEnvironmentSchema } from '@workspace/schemas-zod/repository/settings/updateEnvironment.schema';
@@ -17,21 +17,21 @@ import {
 import { useTranslations } from 'next-intl';
 
 interface EnvironmentSelectorProps {
-    repository: Repository & { environment?: Environment | null };
+    repository: Repository | null;
 }
 
 export function EnvironmentSelector({ repository }: EnvironmentSelectorProps) {
     const { environments } = useEnvironmentStore();
     const t = useTranslations('repository.settings');
 
-    const bindUpdateEnvironmentAction = updateEnvironmentAction.bind(null, repository.id);
+    const bindUpdateEnvironmentAction = updateEnvironmentAction.bind(null, repository!.id);
     const { form, action } = useHookFormAction(
         bindUpdateEnvironmentAction,
         zodResolver(updateEnvironmentSchema),
         {
             formProps: {
                 defaultValues: {
-                    environmentId: repository.environmentId,
+                    environmentId: repository?.environmentId,
                 },
             },
             actionProps: {
@@ -42,7 +42,7 @@ export function EnvironmentSelector({ repository }: EnvironmentSelectorProps) {
                     }
                 },
                 onError: () => {
-                    form.setValue('environmentId', repository.environmentId);
+                    form.setValue('environmentId', repository!.environmentId);
                     toast.error(t('environmentChangeError'));
                 },
             },
@@ -63,9 +63,7 @@ export function EnvironmentSelector({ repository }: EnvironmentSelectorProps) {
         <div className="flex items-center justify-between rounded-lg border p-4">
             <div className="flex flex-col gap-0.5">
                 <span className="text-base">{t('environment')}</span>
-                <p className="text-muted-foreground text-sm">
-                    {t('environmentDescription')}
-                </p>
+                <p className="text-muted-foreground text-sm">{t('environmentDescription')}</p>
             </div>
             <Select
                 value={form.watch('environmentId')}
@@ -85,7 +83,9 @@ export function EnvironmentSelector({ repository }: EnvironmentSelectorProps) {
                             <div className="flex items-center gap-2">
                                 <span>{env.name}</span>
                                 {env.isDefault && (
-                                    <span className="text-muted-foreground text-xs">{t('default')}</span>
+                                    <span className="text-muted-foreground text-xs">
+                                        {t('default')}
+                                    </span>
                                 )}
                             </div>
                         </SelectItem>

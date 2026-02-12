@@ -37,7 +37,15 @@ export function ChangeBuildType({ repository }: ChangeBuildTypeProps) {
 
     const buildTypeOptions = buildTypeValues.map((value) => ({
         value,
-        label: t(value === 'DOCKERFILE' ? 'dockerfile' : value === 'DOCKER_COMPOSE' ? 'dockerCompose' : value === 'NIXPACKS' ? 'nixpacks' : 'buildpacks'),
+        label: t(
+            value === 'DOCKERFILE'
+                ? 'dockerfile'
+                : value === 'DOCKER_COMPOSE'
+                  ? 'dockerCompose'
+                  : value === 'NIXPACKS'
+                    ? 'nixpacks'
+                    : 'buildpacks',
+        ),
     }));
     const bindUpdateBuildTypeAction = updateBuildTypeAction.bind(null, repository.id);
     const { form, action, handleSubmitWithAction } = useHookFormAction(
@@ -59,11 +67,7 @@ export function ChangeBuildType({ repository }: ChangeBuildTypeProps) {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={Hammer}
-                title={t('title')}
-                description={t('description')}
-            />
+            <CardHeaderWithIcon icon={Hammer} title={t('title')} description={t('description')} />
             <CardContent>
                 <Form {...form}>
                     <form onSubmit={handleSubmitWithAction} className="space-y-4">

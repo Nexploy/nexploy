@@ -1,5 +1,5 @@
 import { BaseStep } from './base.step';
-import { StepExecutionContext, StepMetadata, StepResult } from '../types';
+import { StepExecutionContext, StepMetadata, StepResult } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 
 export interface CloneStepResult {

@@ -84,7 +84,6 @@ export interface IBuildStrategy {
 }
 
 export interface IPipelineOrchestrator {
-
     registerStrategy(strategy: IBuildStrategy): void;
 
     execute(

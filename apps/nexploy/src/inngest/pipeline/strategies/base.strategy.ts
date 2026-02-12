@@ -1,5 +1,5 @@
 import { BuildConfig, BuildType } from '@workspace/typescript-interface/inngest/build';
-import { IBuildStrategy, IPipelineStep } from '../types';
+import { IBuildStrategy, IPipelineStep } from '@/types/pipeline.type';
 import { finalizeStep } from '@/inngest/pipeline/steps/finalize.step';
 import { cleanupStep } from '@/inngest/pipeline/steps/cleanup.step';
 import { envStep } from '@/inngest/pipeline/steps/env.step';

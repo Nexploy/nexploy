@@ -6,7 +6,7 @@ import {
     StepExecutionContext,
     StepId,
     StepResult,
-} from './types';
+} from '@/types/pipeline.type';
 
 export class PipelineContext implements PipelineContextData {
     public buildId: string;

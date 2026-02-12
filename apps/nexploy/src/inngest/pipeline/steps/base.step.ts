@@ -1,5 +1,5 @@
 import { BuildType } from '@workspace/typescript-interface/inngest/build';
-import { IPipelineStep, StepExecutionContext, StepMetadata, StepResult } from '../types';
+import { IPipelineStep, StepExecutionContext, StepMetadata, StepResult } from '@/types/pipeline.type';
 
 export abstract class BaseStep implements IPipelineStep {
     abstract readonly metadata: StepMetadata;

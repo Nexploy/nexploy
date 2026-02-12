@@ -9,7 +9,7 @@ import {
     PipelineStatus,
     StatusReporter,
     StepId,
-} from './types';
+} from '@/types/pipeline.type';
 import { PipelineContext } from './context';
 import { dockerfileStrategy } from '@/inngest/pipeline/strategies/dockerfile.strategy';
 import { dockerComposeStrategy } from '@/inngest/pipeline/strategies/compose.strategy';

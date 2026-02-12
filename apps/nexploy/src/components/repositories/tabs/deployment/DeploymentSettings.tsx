@@ -17,35 +17,7 @@ import { SSEProvider } from '@/providers/SSEProviders';
 import { useTranslations } from 'next-intl';
 
 interface DeploymentSettingsProps {
-    repository: Pick<
-        Repository,
-        | 'id'
-        | 'buildType'
-        | 'deploymentMode'
-        | 'replicas'
-        | 'updateParallelism'
-        | 'updateDelay'
-        | 'updateFailureAction'
-        | 'updateOrder'
-        | 'rollbackParallelism'
-        | 'rollbackDelay'
-        | 'rollbackFailureAction'
-        | 'restartCondition'
-        | 'restartDelay'
-        | 'restartMaxAttempts'
-        | 'restartWindow'
-        | 'cpuLimit'
-        | 'cpuReservation'
-        | 'memoryLimit'
-        | 'memoryReservation'
-        | 'placementConstraints'
-        | 'healthCheckEnabled'
-        | 'healthCheckCommand'
-        | 'healthCheckInterval'
-        | 'healthCheckTimeout'
-        | 'healthCheckRetries'
-        | 'healthCheckStartPeriod'
-    >;
+    repository: Repository;
 }
 
 export function DeploymentSettings({ repository }: DeploymentSettingsProps) {
@@ -57,30 +29,7 @@ export function DeploymentSettings({ repository }: DeploymentSettingsProps) {
             formProps: {
                 defaultValues: {
                     repositoryId: repository.id,
-                    deploymentMode: repository.deploymentMode,
-                    replicas: repository.replicas,
-                    updateParallelism: repository.updateParallelism,
-                    updateDelay: repository.updateDelay,
-                    updateFailureAction: repository.updateFailureAction,
-                    updateOrder: repository.updateOrder,
-                    rollbackParallelism: repository.rollbackParallelism,
-                    rollbackDelay: repository.rollbackDelay,
-                    rollbackFailureAction: repository.rollbackFailureAction,
-                    restartCondition: repository.restartCondition,
-                    restartDelay: repository.restartDelay,
-                    restartMaxAttempts: repository.restartMaxAttempts,
-                    restartWindow: repository.restartWindow,
-                    cpuLimit: repository.cpuLimit,
-                    cpuReservation: repository.cpuReservation,
-                    memoryLimit: repository.memoryLimit,
-                    memoryReservation: repository.memoryReservation,
-                    placementConstraints: repository.placementConstraints,
-                    healthCheckEnabled: repository.healthCheckEnabled,
-                    healthCheckCommand: repository.healthCheckCommand,
-                    healthCheckInterval: repository.healthCheckInterval,
-                    healthCheckTimeout: repository.healthCheckTimeout,
-                    healthCheckRetries: repository.healthCheckRetries,
-                    healthCheckStartPeriod: repository.healthCheckStartPeriod,
+                    ...repository,
                 },
             },
             actionProps: {

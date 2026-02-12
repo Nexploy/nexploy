@@ -10,7 +10,7 @@ import {
     updateStatusBuildInngest,
 } from '@/services/inngest/build.inngest.service';
 import { createLogInngest } from '@/services/inngest/log.inngest.service';
-import { LogLevel, PipelineStatus, StepId } from '@/inngest/pipeline/types';
+import { LogLevel, PipelineStatus, StepId } from '@/types/pipeline.type';
 import {
     createPipelineLogger,
     createStatusReporter,

@@ -3,7 +3,7 @@ import { access, mkdir, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 import { getValidToken } from '@/services/api/gitProvider.service';
-import { ProgressCallback } from '../types';
+import { ProgressCallback } from '@/types/pipeline.type';
 
 class GitService {
     private async exec(

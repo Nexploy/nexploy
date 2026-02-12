@@ -11,7 +11,8 @@ import {
     setupWebhookForRepository,
 } from '@/services/webhook/webhook.service';
 import { decrypt, encrypt } from '@/lib/encryption';
-import { BuildType } from 'generated/client';
+import { BuildType, Prisma } from 'generated/client';
+import { RepositoryPayload } from '@/types/repository.type';
 
 export async function createRepository(
     { repo, ...restRepositoryCreate }: RepositoryCreateForm,
@@ -57,16 +58,16 @@ export async function createRepository(
     }
 }
 
-export async function getRepositorieById(repositoryId: string) {
+export async function getRepositorieById<
+    T extends Prisma.RepositoryInclude | undefined = undefined,
+>(repositoryId: string, include?: T): Promise<RepositoryPayload<T> | null> {
     try {
-        return await prisma.repository.findUnique({
+        return (await prisma.repository.findUnique({
             where: {
                 id: repositoryId,
             },
-            include: {
-                environment: true,
-            },
-        });
+            ...(include && { include }),
+        })) as RepositoryPayload<T> | null;
     } catch (error: unknown) {
         throw new Error('Failed to get repository');
     }

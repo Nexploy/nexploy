@@ -1,7 +1,7 @@
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 import { BaseStrategy } from './base.strategy';
 import { BaseStep } from '../steps/base.step';
-import { IPipelineStep, StepExecutionContext, StepMetadata, StepResult } from '../types';
+import { IPipelineStep, StepExecutionContext, StepMetadata, StepResult } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 

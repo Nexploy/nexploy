@@ -138,14 +138,29 @@ export function RepositoryDomains({
     const activeDomains = domains.filter((d) => !d.id || !deletedIdsSet.has(d.id));
     const deletedDomains = domainsConfig.filter((d) => d.id && deletedIdsSet.has(d.id));
 
+    const hasNewDomains = activeDomains.some((d) => !d.id);
     const newDomainsValid = activeDomains
         .filter((d) => !d.id)
         .every((d) => d.host && d.host.trim() !== '');
 
+    const hasEditedDomains = activeDomains
+        .filter((d) => !!d.id)
+        .some((d) => {
+            const original = domainsConfig.find((o) => o.id === d.id);
+            if (!original) return true;
+            return (
+                d.host !== original.host ||
+                d.path !== original.path ||
+                d.internalPath !== original.internalPath ||
+                d.stripPath !== original.stripPath ||
+                d.containerPort !== original.containerPort ||
+                d.https !== original.https ||
+                d.cloudflareZoneId !== original.cloudflareZoneId
+            );
+        });
+
     const hasChanges =
-        (form.formState.isDirty &&
-            (activeDomains.filter((d) => !d.id).length === 0 || newDomainsValid)) ||
-        deletedIdsSet.size > 0;
+        (hasNewDomains && newDomainsValid) || deletedIdsSet.size > 0 || hasEditedDomains;
 
     return (
         <Card className="mx-5">
@@ -185,7 +200,6 @@ export function RepositoryDomains({
                                 </div>
                             ) : (
                                 activeDomains.map((domain, displayIndex) => {
-
                                     const actualIndex = domains.findIndex((d) => d === domain);
                                     const isNew = !domain.id;
                                     const isExpanded = expandedIds.has(`domain-${actualIndex}`);
@@ -204,7 +218,6 @@ export function RepositoryDomains({
                                                     isNew && 'border-dashed',
                                                 )}
                                             >
-                                                {/* Header pour domaines existants */}
                                                 {!isNew && (
                                                     <CollapsibleTrigger asChild>
                                                         <div className="hover:bg-muted/50 flex cursor-pointer items-center justify-between p-3">
@@ -263,8 +276,6 @@ export function RepositoryDomains({
                                                         </div>
                                                     </CollapsibleTrigger>
                                                 )}
-
-                                                {/* Header pour nouveaux domaines */}
                                                 {isNew && (
                                                     <div className="flex items-center justify-between p-3">
                                                         <span className="text-muted-foreground text-sm font-medium">
@@ -282,8 +293,6 @@ export function RepositoryDomains({
                                                         </Button>
                                                     </div>
                                                 )}
-
-                                                {/* Contenu du formulaire */}
                                                 <CollapsibleContent>
                                                     <div className="border-t border-dashed p-4">
                                                         <DomainFields
@@ -300,8 +309,6 @@ export function RepositoryDomains({
                                     );
                                 })
                             )}
-
-                            {/* Liste des domaines supprimés */}
                             {deletedDomains.length > 0 && (
                                 <div className="border-t pt-4">
                                     <p className="text-muted-foreground mb-2 text-sm">

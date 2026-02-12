@@ -28,7 +28,7 @@ const getGitIcon = (provider: string) => {
 
 export default async function RepositoryIdPage({ params }: RepositoryIdPageProps) {
     const { repositoryId } = await params;
-    const repository = await getRepositorieById(repositoryId);
+    const repository = await getRepositorieById(repositoryId, { environment: true });
     if (!repository) notFound();
 
     const GitIcon = getGitIcon(repository.gitProvider);

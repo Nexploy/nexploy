@@ -97,9 +97,7 @@ export function CloudflareDomainSelector<T extends FieldValues>({
         return (
             <div className="bg-muted/50 flex items-center gap-2 rounded-lg border border-dashed p-3">
                 <Loader2 className="text-muted-foreground size-4 animate-spin" />
-                <span className="text-muted-foreground text-sm">
-                    {t('loading')}
-                </span>
+                <span className="text-muted-foreground text-sm">{t('loading')}</span>
             </div>
         );
     }
@@ -140,9 +138,7 @@ export function CloudflareDomainSelector<T extends FieldValues>({
                         </SelectContent>
                     </Select>
                     <FormDescription>
-                        {isOrphanedZone
-                            ? t('zoneUnavailable')
-                            : t('selectZoneForDns')}
+                        {isOrphanedZone ? t('zoneUnavailable') : t('selectZoneForDns')}
                     </FormDescription>
                 </div>
 
