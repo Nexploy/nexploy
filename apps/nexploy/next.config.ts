@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
         appVersion: rootPackage.version,
     },
     reactStrictMode: false,
-    transpilePackages: ['@workspace/ui', '@workspace/i18n'],
+    transpilePackages: ['@workspace/ui', '@workspace/i18n', '@workspace/shared'],
 };
 
 const withNextIntl = createNextIntlPlugin();

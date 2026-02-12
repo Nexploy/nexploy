@@ -1,7 +1,7 @@
 import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { containersStateManager } from '@/managers/containersStateManager';
-import { filterNexployContainers } from '@/utils/nexployFilter';
+import { filterNexployContainers } from '@workspace/shared/nexployFilter';
 
 const app = new Hono();
 

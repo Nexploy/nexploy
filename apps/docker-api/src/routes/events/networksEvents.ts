@@ -3,7 +3,7 @@ import { streamSSE } from 'hono/streaming';
 import { getNetworksStateManager } from '@/managers/networksStateManager';
 import { logger } from '@/utils/logger';
 import { NetworkEvent } from '@workspace/typescript-interface/docker/docker.network';
-import { filterNexployNetworks, isNexployInfrastructureNetwork } from '@/utils/nexployFilter';
+import { filterNexployNetworks, isNexployInfrastructureNetwork } from '@workspace/shared/nexployFilter';
 
 const app = new Hono();
 

@@ -13,6 +13,7 @@ import { NetworkDropdownActions } from '@/components/docker/network/NetworkDropd
 import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import Link from 'next/link';
 
 type TranslationFunction = (key: string) => string;
 
@@ -50,12 +51,22 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
                 <ArrowUpDown />
             </Button>
         ),
+        sortingFn: (rowA, rowB) => {
+            const builtinNames = ['bridge', 'host', 'none'];
+            const aBuiltin = builtinNames.includes(rowA.original.name) ? 0 : 1;
+            const bBuiltin = builtinNames.includes(rowB.original.name) ? 0 : 1;
+            if (aBuiltin !== bBuiltin) return aBuiltin - bBuiltin;
+            return rowA.original.name.localeCompare(rowB.original.name);
+        },
         cell: ({ row }) => {
             const name = row.original.name;
             const isBuiltin = ['bridge', 'host', 'none'].includes(name);
 
             return (
-                <div className="flex items-start gap-2">
+                <Link
+                    href={`/docker/networks/${row.original.id}`}
+                    className="flex items-start gap-2"
+                >
                     <Status
                         className={'max-w-60 truncate border-0 text-sm'}
                         status={isBuiltin ? 'maintenance' : 'online'}
@@ -70,11 +81,11 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
                             </TooltipContent>
                         </Tooltip>
 
-                        <StatusLabel className="truncate font-medium text-current">
+                        <StatusLabel className="truncate font-medium text-current hover:underline">
                             {name}
                         </StatusLabel>
                     </Status>
-                </div>
+                </Link>
             );
         },
     },

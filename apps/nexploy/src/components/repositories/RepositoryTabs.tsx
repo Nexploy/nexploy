@@ -6,13 +6,14 @@ import { Globe, Hammer, Key, Rocket, Settings, Tag } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { ReactNode, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 
-const VALID_TABS = ['overview', 'versions', 'env', 'domain', 'deployment', 'setting'] as const;
+const VALID_TABS = ['builds', 'versions', 'env', 'domain', 'deployment', 'setting'] as const;
 type TabValue = (typeof VALID_TABS)[number];
 
 interface RepositoryTabsProps {
     children: {
-        overview: ReactNode;
+        builds: ReactNode;
         versions: ReactNode;
         env: ReactNode;
         domain: ReactNode;
@@ -23,16 +24,18 @@ interface RepositoryTabsProps {
 
 export function RepositoryTabs({ children }: RepositoryTabsProps) {
     const t = useTranslations('repository.tabs');
+    const searchParams = useSearchParams();
     const [tab, setTab] = useQueryState(
         'tab',
-        parseAsStringLiteral(VALID_TABS).withDefault('overview'),
+        parseAsStringLiteral(VALID_TABS).withDefault('builds'),
     );
 
     useEffect(() => {
-        return () => {
-            setTab('overview');
-        };
-    }, []);
+        const urlTab = searchParams.get('tab') as TabValue | null;
+        if (urlTab && VALID_TABS.includes(urlTab) && urlTab !== tab) {
+            setTab(urlTab);
+        }
+    }, [searchParams]);
 
     return (
         <Tabs
@@ -43,7 +46,7 @@ export function RepositoryTabs({ children }: RepositoryTabsProps) {
             <div className={'flex justify-between'}>
                 <TabsList className="mx-5 mb-2">
                     <div className={'flex gap-2'}>
-                        <TabsTrigger value="overview">
+                        <TabsTrigger value="builds">
                             <Hammer />
                             {t('builds')}
                         </TabsTrigger>
@@ -74,8 +77,8 @@ export function RepositoryTabs({ children }: RepositoryTabsProps) {
             </div>
             <ScrollAreaWithShadow className="h-full overflow-hidden">
                 <div className="pb-5">
-                    <TabsContent value="overview" className="mt-0">
-                        {children.overview}
+                    <TabsContent value="builds" className="mt-0">
+                        {children.builds}
                     </TabsContent>
                     <TabsContent value="versions" className="mt-0">
                         {children.versions}

@@ -85,7 +85,7 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
 
                 <RepositoryTabs>
                     {{
-                        overview: <RepositoryBuildsTab repositoryId={repository.id} />,
+                        builds: <RepositoryBuildsTab repositoryId={repository.id} />,
                         versions: (
                             <RepositoryVersionsTab
                                 repositoryId={repository.id}

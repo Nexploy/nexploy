@@ -2,6 +2,7 @@
 
 import { ButtonGroup } from '@workspace/ui/components/button-group';
 import { Button } from '@workspace/ui/components/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { useContainerActions } from '@/hooks/useContainerActions';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { ReactNode } from 'react';
@@ -28,6 +29,22 @@ export function ContainerActionButtons() {
         return result;
     };
 
+    const renderButton = (action: (typeof containerActions)[0], index: number) => (
+        <Tooltip key={index}>
+            <TooltipTrigger asChild>
+                <Button
+                    onClick={() => handleActionClick(action)}
+                    disabled={action.disabledStates.includes(container!.state)}
+                    variant={action.variant}
+                >
+                    <action.icon />
+                    <span className={'sm:hidden xl:block'}>{action.label}</span>
+                </Button>
+            </TooltipTrigger>
+            <TooltipContent className="hidden sm:block xl:hidden">{action.label}</TooltipContent>
+        </Tooltip>
+    );
+
     const groups: ReactNode[] = [];
     let currentGroup: ReactNode[] = [];
 
@@ -39,29 +56,10 @@ export function ContainerActionButtons() {
             }
 
             groups.push(
-                <ButtonGroup key={`sep-${index}`}>
-                    <Button
-                        onClick={() => handleActionClick(action)}
-                        disabled={action.disabledStates.includes(container!.state)}
-                        variant={action.variant}
-                    >
-                        <action.icon className={'hidden lg:block'} />
-                        {action.label}
-                    </Button>
-                </ButtonGroup>,
+                <ButtonGroup key={`sep-${index}`}>{renderButton(action, index)}</ButtonGroup>,
             );
         } else {
-            currentGroup.push(
-                <Button
-                    key={index}
-                    onClick={() => handleActionClick(action)}
-                    disabled={action.disabledStates.includes(container!.state)}
-                    variant={action.variant}
-                >
-                    <action.icon className={'hidden lg:block'} />
-                    {action.label}
-                </Button>,
-            );
+            currentGroup.push(renderButton(action, index));
         }
     });
 

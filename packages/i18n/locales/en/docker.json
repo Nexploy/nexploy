@@ -10,7 +10,8 @@
         "logs": "Logs",
         "stats": "Stats",
         "console": "Console",
-        "attach": "Attach"
+        "attach": "Attach",
+        "domains": "Domains"
     },
     "environmentDisconnected": {
         "title": "Environment Not Connected",
@@ -198,6 +199,39 @@
         "size": "Size",
         "layer": "Layer",
         "noLayers": "No layer history"
+    },
+    "networkDetail": {
+        "description": "Details and information about the Docker network",
+        "deleteNetwork": "Delete this network",
+        "cannotDeleteBuiltin": "Cannot delete a built-in network",
+        "cannotDeleteConnected": "Disconnect all containers before deleting"
+    },
+    "networkDetails": {
+        "title": "Network details",
+        "id": "ID",
+        "name": "Name",
+        "driver": "Driver",
+        "scope": "Scope",
+        "internal": "Internal",
+        "attachable": "Attachable",
+        "ingress": "Ingress",
+        "enableIPv6": "IPv6",
+        "created": "Created",
+        "containers": "Containers",
+        "ipam": "IPAM",
+        "subnet": "Subnet",
+        "gateway": "Gateway",
+        "ipRange": "IP Range",
+        "options": "Options",
+        "labels": "Labels",
+        "noOptions": "No options",
+        "noLabels": "No labels",
+        "yes": "Yes",
+        "no": "No"
+    },
+    "networkContainers": {
+        "title": "Connected Containers",
+        "noContainers": "No containers connected to this network"
     },
     "volumeDetail": {
         "description": "Details and information about the Docker volume",

@@ -62,7 +62,7 @@ const globalFilterFn: FilterFn<Network> = (row, _, value) => {
 };
 
 export function TableDockerNetworks() {
-    const [sorting, setSorting] = useState<SortingState>([]);
+    const [sorting, setSorting] = useState<SortingState>([{ id: 'name', desc: false }]);
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [rowSelection, setRowSelection] = useState({});
     const [pageSize, setPageSize] = useState<number | 'all'>(10);

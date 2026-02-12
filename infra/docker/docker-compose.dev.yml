@@ -1,3 +1,4 @@
+name: nexploy_dev
 services:
   postgres:
     image: postgres:18.0
@@ -12,7 +13,7 @@ services:
       - POSTGRES_USER=nexploy
       - POSTGRES_PASSWORD=nexploy
     volumes:
-      - nexploy_db:/var/lib/postgresql
+      - db:/var/lib/postgresql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U $POSTGRES_USER" ]
       interval: 60s
@@ -46,7 +47,7 @@ services:
       - "80:80"
       - "8080:8080"
     networks:
-      - traefik_network
+      - nexploy_network
     labels:
       - "traefik.enable=true"
     healthcheck:
@@ -56,11 +57,9 @@ services:
       retries: 3
 
 volumes:
-  nexploy_db:
+  db:
 
 networks:
   nexploy_network:
-    driver: bridge
-  traefik_network:
-    name: nexploy_traefik_network
+    name: nexploy_network
     driver: bridge

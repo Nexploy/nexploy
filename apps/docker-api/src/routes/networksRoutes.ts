@@ -2,7 +2,7 @@ import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { networksStateManager } from '@/managers/networksStateManager';
-import { filterNexployNetworks } from '@/utils/nexployFilter';
+import { filterNexployNetworks } from '@workspace/shared/nexployFilter';
 
 const app = new Hono();
 

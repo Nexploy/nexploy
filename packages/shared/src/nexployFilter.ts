@@ -1,19 +1,13 @@
 import { Containers } from '@workspace/typescript-interface/docker/docker.containers';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
 
-const NEXPLOY_INFRASTRUCTURE_CONTAINERS = [
+export const NEXPLOY_INFRASTRUCTURE_CONTAINERS = [
     'nexploy_traefik',
     'nexploy_postgres',
     'nexploy_inngest',
 ];
 
-const NEXPLOY_INFRASTRUCTURE_NETWORKS = [
-    'nexploy_traefik_network',
-    'nexploy_network',
-    'bridge',
-    'host',
-    'none',
-];
+export const NEXPLOY_INFRASTRUCTURE_NETWORKS = ['nexploy_network'];
 
 export function isNexployInfrastructureContainer(container: Containers): boolean {
     const name = container.name.replace(/^\//, '');
@@ -22,6 +16,10 @@ export function isNexployInfrastructureContainer(container: Containers): boolean
 
 export function isNexployInfrastructureNetwork(network: Network): boolean {
     return NEXPLOY_INFRASTRUCTURE_NETWORKS.includes(network.name);
+}
+
+export function isNexployInfrastructureNetworkName(networkName: string): boolean {
+    return NEXPLOY_INFRASTRUCTURE_NETWORKS.includes(networkName);
 }
 
 export function filterNexployContainers(containers: Containers[]): Containers[] {

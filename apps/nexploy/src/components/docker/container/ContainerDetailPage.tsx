@@ -1,6 +1,13 @@
 'use client';
 
-import { Activity, Container as IconContainer, FileText, Terminal } from 'lucide-react';
+import {
+    Activity,
+    Container as IconContainer,
+    FileText,
+    Globe,
+    LucideIcon,
+    Terminal,
+} from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { CardInfoDetail } from '@/components/docker/container/cards/CardInfoDetail';
@@ -18,6 +25,7 @@ import { Button } from '@workspace/ui/components/button';
 import { ContainerTerminal } from '@/components/docker/container/actions/ContainerTerminal';
 import { ContainerAttach } from '@/components/docker/container/actions/ContainerAttach';
 import { ButtonGroup } from '@workspace/ui/components/button-group';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { ContainerLogs } from '@/components/docker/container/actions/logs/ContainerLogs';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ContainerStats } from '@/components/docker/container/actions/ContainerStats';
@@ -25,14 +33,43 @@ import { CardExecuteId } from '@/components/docker/container/cards/CardExecuteId
 import { ApplyChangesButtonForm } from '@/components/docker/container/forms/ApplyChangesButtonForm';
 import { CardLabels } from '@/components/docker/container/cards/label/CardLabels';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+import { z } from 'zod';
+
+function ToolbarButton({
+    icon: Icon,
+    label,
+    onClick,
+}: {
+    icon: LucideIcon;
+    label: string;
+    onClick: () => void;
+}) {
+    return (
+        <Tooltip>
+            <TooltipTrigger asChild>
+                <Button variant="outline" onClick={onClick}>
+                    <Icon />
+                    <span className="sm:hidden md:block">{label}</span>
+                </Button>
+            </TooltipTrigger>
+            <TooltipContent className="hidden sm:block md:hidden">{label}</TooltipContent>
+        </Tooltip>
+    );
+}
 
 export function ContainerDetailPage() {
     const container = useContainerStore((state) => state.container);
     const t = useTranslations('docker.containerDetail');
 
+    const repositoryId = (() => {
+        const id = container?.name?.replace(/^nexploy-/, '');
+        return id && id !== container?.name && z.string().cuid().safeParse(id).success ? id : null;
+    })();
+
     return (
         <div className="relative flex h-full flex-1 flex-col gap-5 pt-5">
-            <div className="flex gap-3 px-5">
+            <div className="flex items-center gap-3 px-5">
                 <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
                     <IconContainer className="text-primary size-7" />
                 </div>
@@ -40,13 +77,11 @@ export function ContainerDetailPage() {
                     {!container ? (
                         <Skeleton className="h-6 w-40" />
                     ) : (
-                        <h1 className="text-3xl leading-none font-semibold tracking-tight">
+                        <h1 className="truncate text-3xl leading-none font-semibold tracking-tight">
                             {container.name}
                         </h1>
                     )}
-                    <p className="text-muted-foreground text-sm">
-                        {t('description')}
-                    </p>
+                    <p className="text-muted-foreground text-sm">{t('description')}</p>
                 </div>
                 <ApplyChangesButtonForm />
             </div>
@@ -57,46 +92,69 @@ export function ContainerDetailPage() {
                         {!container ? (
                             <Skeleton className="h-9 flex-1" />
                         ) : (
-                            <div className={'flex justify-between gap-2'}>
+                            <div className={'flex flex-col gap-2 sm:flex-row sm:justify-between'}>
                                 <ButtonGroup>
                                     <ContainerLogs>
                                         {({ openLogs }) => (
-                                            <Button variant="outline" onClick={openLogs}>
-                                                <FileText className="hidden lg:block" />
-                                                {t('logs')}
-                                            </Button>
+                                            <ToolbarButton
+                                                icon={FileText}
+                                                label={t('logs')}
+                                                onClick={openLogs}
+                                            />
                                         )}
                                     </ContainerLogs>
                                     <ContainerStats>
                                         {({ openStats }) => (
-                                            <Button variant="outline" onClick={openStats}>
-                                                <Activity className="hidden lg:block" />
-                                                {t('stats')}
-                                            </Button>
+                                            <ToolbarButton
+                                                icon={Activity}
+                                                label={t('stats')}
+                                                onClick={openStats}
+                                            />
                                         )}
                                     </ContainerStats>
                                     <ContainerTerminal>
                                         {({ openConsole }) => (
-                                            <Button variant="outline" onClick={openConsole}>
-                                                <Terminal className="hidden lg:block" />
-                                                {t('console')}
-                                            </Button>
+                                            <ToolbarButton
+                                                icon={Terminal}
+                                                label={t('console')}
+                                                onClick={openConsole}
+                                            />
                                         )}
                                     </ContainerTerminal>
                                     <ContainerAttach>
                                         {({ openAttach }) => (
-                                            <Button variant="outline" onClick={openAttach}>
-                                                <Terminal className="hidden lg:block" />
-                                                {t('attach')}
-                                            </Button>
+                                            <ToolbarButton
+                                                icon={Terminal}
+                                                label={t('attach')}
+                                                onClick={openAttach}
+                                            />
                                         )}
                                     </ContainerAttach>
+                                    {repositoryId && (
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button variant="outline" asChild>
+                                                    <Link
+                                                        href={`/repositories/${repositoryId}?tab=domain`}
+                                                    >
+                                                        <Globe />
+                                                        <span className="sm:hidden md:block">
+                                                            {t('domains')}
+                                                        </span>
+                                                    </Link>
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent className="hidden sm:block md:hidden">
+                                                {t('domains')}
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    )}
                                 </ButtonGroup>
                                 <ContainerActionButtons />
                             </div>
                         )}
                         <CardError />
-                        <div className={'flex gap-5'}>
+                        <div className={'flex flex-col gap-5 md:flex-row'}>
                             <CardInfoDetail />
                             <CardExposedPorts />
                         </div>

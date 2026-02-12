@@ -6,7 +6,7 @@ import { getContainersStateManager } from '@/managers/containersStateManager';
 import {
     filterNexployContainers,
     isNexployInfrastructureContainer,
-} from '@/utils/nexployFilter';
+} from '@workspace/shared/nexployFilter';
 
 const app = new Hono();
 
