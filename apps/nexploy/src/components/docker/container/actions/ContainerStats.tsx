@@ -313,13 +313,16 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                                                             tickMargin={8}
                                                         />
                                                         <ChartTooltip
-                                                            content={
+                                                            content={(props) => (
                                                                 <ChartTooltipContent
+                                                                    {...(props as React.ComponentProps<
+                                                                        typeof ChartTooltipContent
+                                                                    >)}
                                                                     formatter={(value) =>
                                                                         stat.formatValue(value)
                                                                     }
                                                                 />
-                                                            }
+                                                            )}
                                                         />
                                                         <defs>
                                                             {stat.areas.map((area) => (

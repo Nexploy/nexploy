@@ -2,9 +2,9 @@
 
 import { authActionServer } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
-import { HttpErrorResponse } from 'drino';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { networkCreateSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';
+import { HTTPError } from 'ky';
 
 export const onNetworkCreateAction = authActionServer
     .inputSchema(networkCreateSchema)
@@ -19,10 +19,10 @@ export const onNetworkCreateAction = authActionServer
 
             return response;
         } catch (err: unknown) {
-            if (err instanceof HttpErrorResponse) {
+            if (err instanceof HTTPError) {
                 await setToastServer({
                     type: 'error',
-                    message: err.error.message as string,
+                    message: err.message as string,
                 });
             }
             throw err;

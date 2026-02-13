@@ -1,7 +1,7 @@
 import { updateGitProviderToken } from '@/services/git/git.service';
 import { GitLabCommit, GitProviderToken } from '@workspace/typescript-interface/git/git';
-import { drinoGithub } from '@/lib/api/drinoGithub';
-import { drinoGitlab } from '@/lib/api/drinoGitlab';
+import { kyGithub } from '@/lib/api/drinoGithub';
+import { kyGitlab } from '@/lib/api/drinoGitlab';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 
 interface GitHubCommit {
@@ -73,21 +73,19 @@ async function getGitLabCommit(
     try {
         return await tokenGitStorage.run(token, async () => {
             const endpoint = commitHash
-                ? `/v4/projects/${encodedRepositoryPath}/repository/commits/${commitHash}`
-                : `/v4/projects/${encodedRepositoryPath}/repository/commits`;
+                ? `v4/projects/${encodedRepositoryPath}/repository/commits/${commitHash}`
+                : `v4/projects/${encodedRepositoryPath}/repository/commits`;
 
-            const options = commitHash
+            const searchParams = commitHash
                 ? undefined
                 : {
-                      queryParams: {
-                          ref_name: branch,
-                          per_page: 1,
-                      },
+                      ref_name: branch,
+                      per_page: '1',
                   };
 
-            const response = await drinoGitlab
-                .get<GitLabCommit | GitLabCommit[]>(endpoint, options)
-                .consume();
+            const response = await kyGitlab
+                .get(endpoint, { searchParams })
+                .json<GitLabCommit | GitLabCommit[]>();
 
             const commit = Array.isArray(response) ? response[0] : response;
 
@@ -121,13 +119,13 @@ async function getGitHubCommit(
         };
 
         return await tokenGitStorage.run(token, async () => {
-            const commit = await drinoGithub
-                .get<GitHubCommit>(`/repos/${repoPath}/commits/${ref}`, {
+            const commit = await kyGithub
+                .get(`repos/${repoPath}/commits/${ref}`, {
                     headers: {
                         Accept: 'application/vnd.github.v3+json',
                     },
                 })
-                .consume();
+                .json<GitHubCommit>();
 
             return {
                 hash: commit.sha.substring(0, 8),

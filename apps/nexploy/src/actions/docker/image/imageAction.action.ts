@@ -2,9 +2,9 @@
 
 import { authActionServer } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
-import { HttpErrorResponse } from 'drino';
 import { imageActionsSchema } from '@workspace/schemas-zod/docker/image/imageAction.schema';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { HTTPError } from 'ky';
 
 export const onImageAction = authActionServer
     .inputSchema(imageActionsSchema)
@@ -12,10 +12,10 @@ export const onImageAction = authActionServer
         try {
             return await kyDocker.post(`images/${action}`, { json: { imageIds } }).json();
         } catch (err: unknown) {
-            if (err instanceof HttpErrorResponse) {
+            if (err instanceof HTTPError) {
                 await setToastServer({
                     type: 'error',
-                    message: err.error.message as string,
+                    message: err.message as string,
                 });
             }
         }

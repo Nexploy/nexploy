@@ -2,7 +2,7 @@
 
 import { authActionServer } from '@/lib/api/safe-action';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
-import { HttpErrorResponse } from 'drino';
+import { HTTPError } from 'ky';
 import { startBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { startBuildRepositoryInngest } from '@/services/inngest/build.inngest.service';
 import { revalidatePath } from 'next/cache';
@@ -15,10 +15,10 @@ export const onStartBuild = authActionServer
 
             revalidatePath('/[locale]/repositories', 'page');
         } catch (err: unknown) {
-            if (err instanceof HttpErrorResponse) {
+            if (err instanceof HTTPError) {
                 await setToastServer({
                     type: 'error',
-                    message: err.error.message || 'Failed to start build',
+                    message: err.message || 'Failed to start build',
                 });
             }
         }

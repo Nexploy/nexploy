@@ -33,7 +33,9 @@ export default function RequestsPage() {
     const t = useTranslations('requests');
     const locale = useLocale();
 
-    const getSelectedEnvironment = useEnvironmentStore((s) => s.getSelectedEnvironment());
+    const environments = useEnvironmentStore((s) => s.environments);
+    const defaultLocalEnvironment = environments.find((env) => env.isDefault);
+
     const {
         filteredRequests,
         requests,
@@ -134,7 +136,7 @@ export default function RequestsPage() {
     return (
         <SSEProvider
             connections={['traefik']}
-            params={{ traefik: { environmentId: 'cmk5p1e1h0000ynqhf8h5ogi0' } }}
+            params={{ traefik: { environmentId: defaultLocalEnvironment?.id } }}
         >
             <div className="flex h-full flex-1 flex-col gap-4 pt-5">
                 <div className="flex gap-3 px-5">

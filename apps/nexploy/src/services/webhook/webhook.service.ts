@@ -1,6 +1,6 @@
 import { WebhookConfig } from '@workspace/typescript-interface/websocket';
-import { drinoGitlab } from '@/lib/api/drinoGitlab';
-import { drinoGithub } from '@/lib/api/drinoGithub';
+import { kyGitlab } from '@/lib/api/drinoGitlab';
+import { kyGithub } from '@/lib/api/drinoGithub';
 import {
     createGitLabWebhook,
     extractGitLabProjectId,
@@ -49,15 +49,15 @@ export async function removeWebhookForRepository(repositoryId: string): Promise<
         if (repository.gitProvider === 'gitlab') {
             const projectId = extractGitLabProjectId(repository.repositoryUrl);
 
-            await drinoGitlab
-                .delete(`/v4/projects/${projectId}/hooks/${repository.webhookId}`)
-                .consume();
+            await kyGitlab
+                .delete(`v4/projects/${projectId}/hooks/${repository.webhookId}`)
+                .json();
         } else if (repository.gitProvider === 'github') {
             const { owner, repo } = extractGitHubRepo(repository.repositoryUrl);
 
-            await drinoGithub
-                .delete(`/repos/${owner}/${repo}/hooks/${repository.webhookId}`)
-                .consume();
+            await kyGithub
+                .delete(`repos/${owner}/${repo}/hooks/${repository.webhookId}`)
+                .json();
         }
     } catch (error: unknown) {
         throw new Error('Failed to delete webhook');

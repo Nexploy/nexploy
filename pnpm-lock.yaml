@@ -161,9 +161,6 @@ importers:
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
-      drino:
-        specifier: ^2.0.0
-        version: 2.0.0(thror@1.0.3)
       embla-carousel-autoplay:
         specifier: ^8.6.0
         version: 8.6.0(embla-carousel@8.6.0)
@@ -4125,12 +4122,6 @@ packages:
     resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
     engines: {node: '>=12'}
 
-  drino@2.0.0:
-    resolution: {integrity: sha512-PuUUYvjxotvnpV/rPnqCqdEx5TnMaXUYozwR8Mtezovfl2s6Ft7YpxFceDYgyYBobGNDBHPeukoaUlmXhvsr3Q==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      thror: ^1.0.3
-
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
     engines: {node: '>= 0.4'}
@@ -6631,10 +6622,6 @@ packages:
 
   thread-stream@3.1.0:
     resolution: {integrity: sha512-OqyPZ9u96VohAyMfJykzmivOrY2wfMSf3C5TtFJVgN+Hm6aj+voFhlK+kZEIv2FBh1X6Xp3DlnCOfEQ3B2J86A==}
-
-  thror@1.0.3:
-    resolution: {integrity: sha512-/5DVS1O4ubVPwNPwjfmAwdx0SvkT2jjsCzYbQqH4GJ5/h7rq3+t9bYDmUfSKIQqE+lFgvVHpqIGQjPNIgGDAIQ==}
-    engines: {node: '>=18'}
 
   throttleit@2.1.0:
     resolution: {integrity: sha512-nt6AMGKW1p/70DF/hGBdJB57B8Tspmbp5gfJ8ilhLnt7kkr2ye7hzD6NVG8GGErk2HWF34igrL2CXmNIkzKqKw==}
@@ -10969,10 +10956,6 @@ snapshots:
 
   dotenv@17.2.3: {}
 
-  drino@2.0.0(thror@1.0.3):
-    dependencies:
-      thror: 1.0.3
-
   dunder-proto@1.0.1:
     dependencies:
       call-bind-apply-helpers: 1.0.2
@@ -13856,8 +13839,6 @@ snapshots:
   thread-stream@3.1.0:
     dependencies:
       real-require: 0.2.0
-
-  thror@1.0.3: {}
 
   throttleit@2.1.0: {}
 

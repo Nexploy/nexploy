@@ -1,5 +1,5 @@
 import { createMiddleware, createSafeActionClient } from 'next-safe-action';
-import { HttpErrorResponse } from 'drino';
+import { HTTPError } from 'ky';
 import { getUserSession } from '@/services/auth/auth.service';
 import { Session } from '@/lib/auth/auth';
 import { redirect } from 'next/navigation';
@@ -11,8 +11,8 @@ export const actionServer = createSafeActionClient({
     handleServerError(error) {
         console.error(`[ACTION ERROR] ${error.message}`, error);
 
-        if (error instanceof HttpErrorResponse) {
-            return error.error.message;
+        if (error instanceof HTTPError) {
+            return error.message;
         }
 
         return error.message || 'Error occurred';

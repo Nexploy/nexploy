@@ -2,7 +2,7 @@
 
 import { authActionServer } from '@/lib/api/safe-action';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
-import { HttpErrorResponse } from 'drino';
+import { HTTPError } from 'ky';
 import { getSubscriptionToken } from '@inngest/realtime';
 import { inngest } from '@/inngest/client';
 import { tokenBuildIdSchema } from '@workspace/schemas-zod/inngest/token.schema';
@@ -16,10 +16,10 @@ export const onGetTokenBuildIdAction = authActionServer
                 topics,
             });
         } catch (err: unknown) {
-            if (err instanceof HttpErrorResponse) {
+            if (err instanceof HTTPError) {
                 await setToastServer({
                     type: 'error',
-                    message: err.error.message as string,
+                    message: err.message as string,
                 });
             }
         }

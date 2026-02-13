@@ -65,7 +65,6 @@
         "dockerode": "^4.0.9",
         "dockerode-compose": "^1.4.0",
         "dotenv": "^17.2.3",
-        "drino": "^2.0.0",
         "embla-carousel-autoplay": "^8.6.0",
         "embla-carousel-react": "^8.6.0",
         "hono": "4.11.7",

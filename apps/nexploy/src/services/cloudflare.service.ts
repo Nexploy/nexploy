@@ -6,7 +6,7 @@ import {
     CloudflareDnsRecord,
     CloudflareZone,
 } from '@workspace/typescript-interface/cloudflare/cloudflare';
-import { drinoCloudflare } from '@/lib/api/drinoCloudflare';
+import { kyCloudflare } from '@/lib/api/drinoCloudflare';
 import { tokenCloudflareStorage } from '@/lib/storage/token-cloudlfare-storage';
 
 export async function saveCloudflareCredential(
@@ -16,7 +16,7 @@ export async function saveCloudflareCredential(
 ): Promise<CloudflareCredentialInfo> {
     try {
         return await tokenCloudflareStorage.run({ apiToken }, async () => {
-            await drinoCloudflare.get<CloudflareZone[]>('/zones').consume();
+            await kyCloudflare.get('zones').json<CloudflareZone[]>();
 
             const encryptedToken = encrypt(apiToken);
 
@@ -97,9 +97,9 @@ export async function listCloudflareZones(userId: string): Promise<CloudflareZon
 
         return await tokenCloudflareStorage.run({ apiToken }, async () => {
             return (
-                await drinoCloudflare
-                    .get<CloudflareApiResponse<CloudflareZone[]>>('/zones')
-                    .consume()
+                await kyCloudflare
+                    .get('zones')
+                    .json<CloudflareApiResponse<CloudflareZone[]>>()
             ).result;
         });
     } catch (error: unknown) {
@@ -121,18 +121,17 @@ export async function createCloudflareDnsRecord(
 
         return await tokenCloudflareStorage.run({ apiToken }, async () => {
             return (
-                await drinoCloudflare
-                    .post<CloudflareApiResponse<CloudflareDnsRecord>>(
-                        `/zones/${zoneId}/dns_records`,
-                        {
+                await kyCloudflare
+                    .post(`zones/${zoneId}/dns_records`, {
+                        json: {
                             type: 'A',
                             name: fullHostname,
                             content: serverIp,
                             proxied: true,
                             ttl: 1,
                         },
-                    )
-                    .consume()
+                    })
+                    .json<CloudflareApiResponse<CloudflareDnsRecord>>()
             ).result;
         });
     } catch (error: unknown) {
@@ -150,11 +149,9 @@ export async function deleteCloudflareDnsRecord(
 
         await tokenCloudflareStorage.run({ apiToken }, async () => {
             return (
-                await drinoCloudflare
-                    .delete<
-                        CloudflareApiResponse<{ id: string }>
-                    >(`/zones/${zoneId}/dns_records/${dnsRecordId}`)
-                    .consume()
+                await kyCloudflare
+                    .delete(`zones/${zoneId}/dns_records/${dnsRecordId}`)
+                    .json<CloudflareApiResponse<{ id: string }>>()
             ).result;
         });
     } catch (error: unknown) {
@@ -177,18 +174,17 @@ export async function updateCloudflareDnsRecord(
 
         return await tokenCloudflareStorage.run({ apiToken }, async () => {
             return (
-                await drinoCloudflare
-                    .patch<CloudflareApiResponse<CloudflareDnsRecord>>(
-                        `/zones/${zoneId}/dns_records/${dnsRecordId}`,
-                        {
+                await kyCloudflare
+                    .patch(`zones/${zoneId}/dns_records/${dnsRecordId}`, {
+                        json: {
                             type: 'A',
                             name: fullHostname,
                             content: serverIp,
                             proxied: true,
                             ttl: 1,
                         },
-                    )
-                    .consume()
+                    })
+                    .json<CloudflareApiResponse<CloudflareDnsRecord>>()
             ).result;
         });
     } catch (error: unknown) {

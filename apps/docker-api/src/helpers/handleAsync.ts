@@ -21,7 +21,8 @@ export const handleAsync = <C extends Context = Context>(
             logger.error({ err, path: c.req.url, method: c.req.method }, 'handler error');
 
             const message = err.message;
-            const status = err && err.status ? err.status : 500;
+            const status = err.statusCode || err.status;
+
             return c.json({ message }, status);
         }
     };

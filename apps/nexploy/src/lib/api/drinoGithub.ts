@@ -1,13 +1,14 @@
-import drino from 'drino';
+import ky from 'ky';
 import { getTokenGitStorage } from '@/lib/storage/token-git-storage';
 
-export const drinoGithub = drino.create({
-    baseUrl: 'https://api.github.com',
-    interceptors: {
-        beforeConsume: ({ req }) => {
-            const token = getTokenGitStorage();
-
-            req.headers.set('Authorization', `Bearer ${token.accessToken}`);
-        },
+export const kyGithub = ky.create({
+    prefixUrl: 'https://api.github.com',
+    hooks: {
+        beforeRequest: [
+            (request) => {
+                const token = getTokenGitStorage();
+                request.headers.set('Authorization', `Bearer ${token.accessToken}`);
+            },
+        ],
     },
 });

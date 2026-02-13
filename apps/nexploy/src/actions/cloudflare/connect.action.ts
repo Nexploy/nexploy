@@ -3,7 +3,7 @@
 import { authActionServer } from '@/lib/api/safe-action';
 import { cloudflareConnectSchema } from '@workspace/schemas-zod/cloudflare/cloudflare.schema';
 import { saveCloudflareCredential } from '@/services/cloudflare.service';
-import { HttpErrorResponse } from 'drino';
+import { HTTPError } from 'ky';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { revalidatePath } from 'next/cache';
 
@@ -15,10 +15,10 @@ export const connectCloudflareAction = authActionServer
             await saveCloudflareCredential(ctx.session.user.id, apiToken, serverIp);
             revalidatePath('/integrations');
         } catch (err: unknown) {
-            if (err instanceof HttpErrorResponse) {
+            if (err instanceof HTTPError) {
                 await setToastServer({
                     type: 'error',
-                    message: err.error.message as string,
+                    message: err.message as string,
                 });
             }
         }

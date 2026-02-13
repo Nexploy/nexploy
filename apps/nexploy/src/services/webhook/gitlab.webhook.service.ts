@@ -1,4 +1,4 @@
-import { drinoGitlab } from '@/lib/api/drinoGitlab';
+import { kyGitlab } from '@/lib/api/drinoGitlab';
 import { WebhookPayload } from '@workspace/typescript-interface/webhook';
 
 export function extractGitLabProjectId(repositoryUrl: string): string {
@@ -37,14 +37,16 @@ export async function createGitLabWebhook(
     const projectId = extractGitLabProjectId(repositoryUrl);
 
     try {
-        const data = await drinoGitlab
-            .post<{ id: number }>(`/v4/projects/${projectId}/hooks`, {
-                url: webhookUrl,
-                push_events: true,
-                token: userId,
-                enable_ssl_verification: true,
+        const data = await kyGitlab
+            .post(`v4/projects/${projectId}/hooks`, {
+                json: {
+                    url: webhookUrl,
+                    push_events: true,
+                    token: userId,
+                    enable_ssl_verification: true,
+                },
             })
-            .consume();
+            .json<{ id: number }>();
 
         return { webhookId: String(data.id), webhookSecret: userId };
     } catch (error: any) {

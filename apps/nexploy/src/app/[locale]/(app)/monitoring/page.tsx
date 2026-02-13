@@ -236,13 +236,14 @@ export default function MonitoringPage() {
                                                         tickMargin={8}
                                                     />
                                                     <ChartTooltip
-                                                        content={
+                                                        content={(props) => (
                                                             <ChartTooltipContent
+                                                                {...(props as React.ComponentProps<typeof ChartTooltipContent>)}
                                                                 formatter={(value) =>
                                                                     chart.formatValue(value)
                                                                 }
                                                             />
-                                                        }
+                                                        )}
                                                     />
                                                     <defs>
                                                         {chart.areas.map((area) => (

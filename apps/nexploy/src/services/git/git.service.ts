@@ -6,9 +6,9 @@ import {
     GitRepository,
 } from '@workspace/typescript-interface/git/git';
 import { getValidToken } from '@/services/api/gitProvider.service';
-import { drinoGithub } from '@/lib/api/drinoGithub';
+import { kyGithub } from '@/lib/api/drinoGithub';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
-import { drinoGitlab } from '@/lib/api/drinoGitlab';
+import { kyGitlab } from '@/lib/api/drinoGitlab';
 import { GithubRepo } from '@workspace/typescript-interface/git/repository/github.repository';
 import { GitlabRepo } from '@workspace/typescript-interface/git/repository/gitlab.repository';
 import { GitlabBranch } from '@workspace/typescript-interface/git/branch/gitlab.branch';
@@ -55,13 +55,13 @@ export async function getRepositories(provider: string, userId: string): Promise
     switch (provider) {
         case 'github': {
             const repositories = await tokenGitStorage.run(token, async () => {
-                return await drinoGithub
-                    .get<GithubRepo[]>('/user/repos', {
+                return await kyGithub
+                    .get('user/repos', {
                         headers: {
                             Accept: 'application/vnd.github+json',
                         },
                     })
-                    .consume();
+                    .json<GithubRepo[]>();
             });
 
             return repositories.map((repo: GithubRepo) => ({
@@ -77,14 +77,14 @@ export async function getRepositories(provider: string, userId: string): Promise
         case 'gitlab': {
             try {
                 const repositories = await tokenGitStorage.run(token, async () => {
-                    return await drinoGitlab
-                        .get<GitlabRepo[]>('/v4/projects', {
-                            queryParams: {
-                                membership: true,
+                    return await kyGitlab
+                        .get('v4/projects', {
+                            searchParams: {
+                                membership: 'true',
                                 order_by: 'updated_at',
                             },
                         })
-                        .consume();
+                        .json<GitlabRepo[]>();
                 });
 
                 return repositories.map((repo: GitlabRepo) => ({
@@ -118,13 +118,13 @@ export async function getBranches(
         case 'github': {
             try {
                 const branchs = await tokenGitStorage.run(token, async () => {
-                    return await drinoGithub
-                        .get<GithubBranch[]>(`/repos/${owner}/${repoName}/branches`, {
+                    return await kyGithub
+                        .get(`repos/${owner}/${repoName}/branches`, {
                             headers: {
                                 Accept: 'application/vnd.github+json',
                             },
                         })
-                        .consume();
+                        .json<GithubBranch[]>();
                 });
 
                 return branchs.map((branch: GithubBranch) => ({
@@ -138,9 +138,9 @@ export async function getBranches(
         case 'gitlab': {
             try {
                 const branchs = await tokenGitStorage.run(token, async () => {
-                    return await drinoGitlab
-                        .get<GitlabBranch[]>(`/v4/projects/${repoId}/repository/branches`)
-                        .consume();
+                    return await kyGitlab
+                        .get(`v4/projects/${repoId}/repository/branches`)
+                        .json<GitlabBranch[]>();
                 });
 
                 return branchs.map((branch: GitlabBranch) => ({
