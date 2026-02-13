@@ -19,7 +19,6 @@ import { CreateEnvironmentForm } from '@/components/sidebar/environment/CreateEn
 import { EditEnvironmentForm } from '@/components/sidebar/environment/EditEnvironmentForm';
 import { Environment } from 'generated/client';
 import { deleteEnvironmentAction } from '@/actions/environment/deleteEnvironment.action';
-// import { setDefaultEnvironmentAction } from '@/actions/environment/setDefaultEnvironment.action';
 import { useRouter } from 'next/navigation';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';

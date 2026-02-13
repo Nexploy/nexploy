@@ -30,6 +30,8 @@ export default function TailwindBreakpointIndicator() {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    if (process.env.NODE_ENV !== 'development') return null;
+
     return (
         <div className="fixed -bottom-1 -left-1 z-50 rounded-tr-2xl bg-black px-2 py-1 font-mono text-sm text-white dark:bg-white dark:text-black">
             {size}

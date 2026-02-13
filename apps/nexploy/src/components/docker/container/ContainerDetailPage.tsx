@@ -63,8 +63,16 @@ export function ContainerDetailPage() {
     const t = useTranslations('docker.containerDetail');
 
     const repositoryId = (() => {
-        const id = container?.name?.replace(/^nexploy-/, '');
-        return id && id !== container?.name && z.string().cuid().safeParse(id).success ? id : null;
+        const fromName = container?.name?.replace(/^nexploy-/, '');
+        if (fromName && fromName !== container?.name && z.cuid().safeParse(fromName).success) {
+            return fromName;
+        }
+        const projectLabel = container?.labels?.['com.docker.compose.project'];
+        const fromStack = projectLabel?.replace(/^nexploy-/, '');
+        if (fromStack && fromStack !== projectLabel && z.cuid().safeParse(fromStack).success) {
+            return fromStack;
+        }
+        return null;
     })();
 
     return (

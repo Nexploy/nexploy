@@ -97,27 +97,19 @@ class DockerClientRegistry {
         switch (config.connectionType) {
             case 'UNIX_SOCKET':
                 return new Docker({ socketPath: config.socketPath });
-
             case 'TCP':
                 return new Docker({
                     host: config.host,
                     port: config.port,
                 });
-
             case 'TCP_TLS':
-
-                const cert = this.decryptValue(config.tlsCert!);
-                const key = this.decryptValue(config.tlsKey!);
-                const ca = this.decryptValue(config.tlsCa!);
-
                 return new Docker({
                     host: config.host,
                     port: config.port,
-                    ca: ca,
-                    cert: cert,
-                    key: key,
+                    ca: config.tlsCa,
+                    cert: config.tlsCert,
+                    key: config.tlsKey,
                 });
-
             default:
                 throw new Error(`Unknown connection type: ${config.connectionType}`);
         }
@@ -217,12 +209,6 @@ class DockerClientRegistry {
 
         this.clients.clear();
         this.configs.clear();
-    }
-
-    private decryptValue(encryptedValue: string): string {
-
-        logger.warn('TLS credential decryption not yet implemented');
-        return encryptedValue;
     }
 }
 

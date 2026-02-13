@@ -48,7 +48,6 @@ import {
     InputAutoComplete,
     InputAutoCompleteOption,
 } from '@workspace/ui/components/search-command';
-import { Optional } from '@workspace/ui/components/utils/Optional';
 import { cn } from '@workspace/ui/lib/utils';
 import { useTranslations } from 'next-intl';
 
@@ -136,6 +135,7 @@ interface CreateContainerProps {
 export default function CreateContainer({ listImages }: CreateContainerProps) {
     const router = useRouter();
     const t = useTranslations('docker.createContainer');
+    const tCommon = useTranslations('common');
 
     const searchParams = useSearchParams();
     const imageFromUrl = searchParams.get('image') || '';
@@ -206,9 +206,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                         <h1 className="text-3xl leading-none font-semibold tracking-tight">
                             {t('title')}
                         </h1>
-                        <p className="text-muted-foreground text-sm">
-                            {t('description')}
-                        </p>
+                        <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
                 </div>
 
@@ -240,9 +238,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                         <Card>
                             <CardHeader>
                                 <CardTitle>{t('templates')}</CardTitle>
-                                <CardDescription>
-                                    {t('templatesDescription')}
-                                </CardDescription>
+                                <CardDescription>{t('templatesDescription')}</CardDescription>
                             </CardHeader>
                             <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                                 {CONTAINER_TEMPLATES.map((template) => (
@@ -297,9 +293,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                         <Card>
                             <CardHeader>
                                 <CardTitle>{t('basicConfig')}</CardTitle>
-                                <CardDescription>
-                                    {t('basicConfigDescription')}
-                                </CardDescription>
+                                <CardDescription>{t('basicConfigDescription')}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <FormField
@@ -309,7 +303,10 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                         <FormItem>
                                             <FormLabel>{t('containerName')}</FormLabel>
                                             <FormControl>
-                                                <Input placeholder={t('containerNamePlaceholder')} {...field} />
+                                                <Input
+                                                    placeholder={t('containerNamePlaceholder')}
+                                                    {...field}
+                                                />
                                             </FormControl>
                                             <FormDescription>
                                                 {t('containerNameDescription')}
@@ -349,10 +346,16 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    {t('hostname')} <Optional />
+                                                    {t('hostname')}{' '}
+                                                    <span className="text-muted-foreground text-xs">
+                                                        {tCommon('optional')}
+                                                    </span>
                                                 </FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder={t('hostnamePlaceholder')} {...field} />
+                                                    <Input
+                                                        placeholder={t('hostnamePlaceholder')}
+                                                        {...field}
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -365,10 +368,16 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    {t('network')} <Optional />
+                                                    {t('network')}{' '}
+                                                    <span className="text-muted-foreground text-xs">
+                                                        {tCommon('optional')}
+                                                    </span>
                                                 </FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder={t('networkPlaceholder')} {...field} />
+                                                    <Input
+                                                        placeholder={t('networkPlaceholder')}
+                                                        {...field}
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -388,12 +397,18 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                             >
                                                 <FormControl>
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder={t('selectPolicy')} />
+                                                        <SelectValue
+                                                            placeholder={t('selectPolicy')}
+                                                        />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    <SelectItem value="no">{t('restartNever')}</SelectItem>
-                                                    <SelectItem value="always">{t('restartAlways')}</SelectItem>
+                                                    <SelectItem value="no">
+                                                        {t('restartNever')}
+                                                    </SelectItem>
+                                                    <SelectItem value="always">
+                                                        {t('restartAlways')}
+                                                    </SelectItem>
                                                     <SelectItem value="on-failure">
                                                         {t('restartOnFailure')}
                                                     </SelectItem>
@@ -466,9 +481,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <CardTitle>{t('ports')}</CardTitle>
-                                        <CardDescription>
-                                            {t('portsDescription')}
-                                        </CardDescription>
+                                        <CardDescription>{t('portsDescription')}</CardDescription>
                                     </div>
                                     <Button
                                         type="button"
@@ -573,9 +586,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <CardTitle>{t('envVars')}</CardTitle>
-                                        <CardDescription>
-                                            {t('envVarsDescription')}
-                                        </CardDescription>
+                                        <CardDescription>{t('envVarsDescription')}</CardDescription>
                                     </div>
                                     <Button
                                         type="button"
@@ -604,7 +615,9 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                                         <FormItem className="flex-1">
                                                             <FormControl>
                                                                 <Input
-                                                                    placeholder={t('keyPlaceholder')}
+                                                                    placeholder={t(
+                                                                        'keyPlaceholder',
+                                                                    )}
                                                                     {...field}
                                                                 />
                                                             </FormControl>
@@ -620,7 +633,9 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                                         <FormItem className="flex-1">
                                                             <FormControl>
                                                                 <Input
-                                                                    placeholder={t('valuePlaceholder')}
+                                                                    placeholder={t(
+                                                                        'valuePlaceholder',
+                                                                    )}
                                                                     {...field}
                                                                 />
                                                             </FormControl>
@@ -648,9 +663,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <CardTitle>{t('volumes')}</CardTitle>
-                                        <CardDescription>
-                                            {t('volumesDescription')}
-                                        </CardDescription>
+                                        <CardDescription>{t('volumesDescription')}</CardDescription>
                                     </div>
                                     <Button
                                         type="button"

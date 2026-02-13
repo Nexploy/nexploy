@@ -47,7 +47,7 @@ services:
       - "80:80"
       - "8080:8080"
     networks:
-      - nexploy_network
+      - traefik_network
     labels:
       - "traefik.enable=true"
     healthcheck:
@@ -62,4 +62,8 @@ volumes:
 networks:
   nexploy_network:
     name: nexploy_network
+    driver: bridge
+#    internal: true
+  traefik_network:
+    name: nexploy_traefik_network
     driver: bridge

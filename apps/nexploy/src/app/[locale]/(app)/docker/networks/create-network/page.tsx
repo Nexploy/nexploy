@@ -116,9 +116,7 @@ export default function CreateNetworkPage() {
                                 <h1 className="text-3xl leading-none font-semibold tracking-tight">
                                     {t('title')}
                                 </h1>
-                                <p className="text-muted-foreground text-sm">
-                                    {t('description')}
-                                </p>
+                                <p className="text-muted-foreground text-sm">{t('description')}</p>
                             </div>
                         </div>
                         <div className="flex gap-3">
@@ -143,9 +141,7 @@ export default function CreateNetworkPage() {
                             <Card>
                                 <CardHeader>
                                     <CardTitle>{t('basicConfig')}</CardTitle>
-                                    <CardDescription>
-                                        {t('configureParams')}
-                                    </CardDescription>
+                                    <CardDescription>{t('configureParams')}</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <FormField
@@ -155,7 +151,10 @@ export default function CreateNetworkPage() {
                                             <FormItem>
                                                 <FormLabel>{t('networkName')}</FormLabel>
                                                 <FormControl>
-                                                    <Input {...field} placeholder={t('networkNamePlaceholder')} />
+                                                    <Input
+                                                        {...field}
+                                                        placeholder={t('networkNamePlaceholder')}
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                                 <FormDescription>
@@ -184,16 +183,16 @@ export default function CreateNetworkPage() {
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger className="min-w-30">
-                                                            <SelectValue placeholder={t('selectDriver')} />
+                                                            <SelectValue
+                                                                placeholder={t('selectDriver')}
+                                                            />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
                                                         {NETWORK_DRIVERS.map((driver) => (
-                                                            <SelectItem
-                                                                key={driver}
-                                                                value={driver}
-                                                            >
-                                                                {driver.charAt(0).toUpperCase() + driver.slice(1)}
+                                                            <SelectItem key={driver} value={driver}>
+                                                                {driver.charAt(0).toUpperCase() +
+                                                                    driver.slice(1)}
                                                             </SelectItem>
                                                         ))}
                                                     </SelectContent>
@@ -218,15 +217,14 @@ export default function CreateNetworkPage() {
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger className="min-w-30">
-                                                            <SelectValue placeholder={t('selectScope')} />
+                                                            <SelectValue
+                                                                placeholder={t('selectScope')}
+                                                            />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
                                                         {NETWORK_SCOPES.map((scope) => (
-                                                            <SelectItem
-                                                                key={scope}
-                                                                value={scope}
-                                                            >
+                                                            <SelectItem key={scope} value={scope}>
                                                                 {tScopes(scope)}
                                                             </SelectItem>
                                                         ))}
@@ -284,9 +282,7 @@ export default function CreateNetworkPage() {
                             <Card>
                                 <CardHeader>
                                     <CardTitle>{t('ipamConfig')}</CardTitle>
-                                    <CardDescription>
-                                        {t('ipamConfigDescription')}
-                                    </CardDescription>
+                                    <CardDescription>{t('ipamConfigDescription')}</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <FormField

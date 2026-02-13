@@ -21,6 +21,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@workspace/ui/components/form';
+import { TlsCertificateField } from './TlsCertificateField';
 import { updateEnvironmentAction } from '@/actions/environment/updateEnvironment.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { Environment } from 'generated/client';
@@ -232,64 +233,28 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                             {t('tlsCertificatesDescription')}
                         </p>
 
-                        <FormField
-                            control={form.control}
+                        <TlsCertificateField
+                            form={form}
                             name="tlsCert"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('clientCertificate')}</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
-                                            {...field}
-                                            disabled={form.formState.isSubmitting}
-                                            rows={4}
-                                            className="font-mono text-xs"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label={t('clientCertificate')}
+                            placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
+                            disabled={form.formState.isSubmitting}
                         />
 
-                        <FormField
-                            control={form.control}
+                        <TlsCertificateField
+                            form={form}
                             name="tlsKey"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('clientKey')}</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
-                                            {...field}
-                                            disabled={form.formState.isSubmitting}
-                                            rows={4}
-                                            className="font-mono text-xs"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label={t('clientKey')}
+                            placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
+                            disabled={form.formState.isSubmitting}
                         />
 
-                        <FormField
-                            control={form.control}
+                        <TlsCertificateField
+                            form={form}
                             name="tlsCa"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('caCertificate')}</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
-                                            {...field}
-                                            disabled={form.formState.isSubmitting}
-                                            rows={4}
-                                            className="font-mono text-xs"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label={t('caCertificate')}
+                            placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
+                            disabled={form.formState.isSubmitting}
                         />
                     </div>
                 )}

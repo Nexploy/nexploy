@@ -14,7 +14,7 @@ export async function getUserEnvironments() {
                 OR: [{ userId: session?.user.id }, { userId: null }],
                 isActive: true,
             },
-            orderBy: { createdAt: 'desc' },
+            orderBy: { createdAt: 'asc' },
         });
     } catch {
         throw new Error('Failed to get user environments');

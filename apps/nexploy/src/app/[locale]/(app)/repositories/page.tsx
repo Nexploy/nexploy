@@ -21,7 +21,6 @@ import { getRepositories } from '@/services/repository.service';
 import { StatusBadge } from '@/components/utils/StatusBadge';
 import { RunBuildButton } from '@/components/repositories/RunBuildButton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
-import React from 'react';
 import { Separator } from '@workspace/ui/components/separator';
 import { getTranslations } from 'next-intl/server';
 
@@ -76,7 +75,7 @@ export default async function RepositoriesPage() {
                                 </EmptyHeader>
                             </Empty>
                         ) : (
-                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                                 {repositories.map((repository) => {
                                     const lastDeployment = repository.build?.[0];
                                     const Icon = getGitIcon(repository.gitProvider);
@@ -93,17 +92,19 @@ export default async function RepositoriesPage() {
                                                             <Icon className="size-5" />
                                                         </div>
                                                         <div className="flex min-w-0 flex-1 flex-col gap-1">
-                                                            <CardTitle className="text-base leading-none font-semibold">
+                                                            <CardTitle className="truncate text-base leading-none font-semibold">
                                                                 {repository.name}
                                                             </CardTitle>
                                                             <CardDescription className="text-muted-foreground/80 flex items-center gap-2 truncate font-mono text-xs">
                                                                 <div
                                                                     className={
-                                                                        'flex items-center gap-1'
+                                                                        'flex min-w-0 items-center gap-1 truncate'
                                                                     }
                                                                 >
-                                                                    <GitBranch className="size-3" />
-                                                                    {repository.branch}
+                                                                    <GitBranch className="size-3 shrink-0" />
+                                                                    <span className={'truncate'}>
+                                                                        {repository.branch}
+                                                                    </span>
                                                                 </div>
                                                                 <Separator
                                                                     orientation={'vertical'}
@@ -111,11 +112,16 @@ export default async function RepositoriesPage() {
                                                                 />
                                                                 <div
                                                                     className={
-                                                                        'flex items-center gap-1'
+                                                                        'flex min-w-0 items-center gap-1'
                                                                     }
                                                                 >
-                                                                    <Server className="size-3" />
-                                                                    {repository.environment?.name}
+                                                                    <Server className="size-3 shrink-0" />
+                                                                    <span className={'truncate'}>
+                                                                        {
+                                                                            repository.environment
+                                                                                ?.name
+                                                                        }
+                                                                    </span>
                                                                 </div>
                                                             </CardDescription>
                                                         </div>

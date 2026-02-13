@@ -17,7 +17,6 @@ import {
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Textarea } from '@workspace/ui/components/textarea';
-import { Optional } from '@workspace/ui/components/utils/Optional';
 import { useFormContext } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 
@@ -53,7 +52,8 @@ export function GeneralInfoStep() {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>
-                                {t('descriptionLabel')} <Optional />
+                                {t('descriptionLabel')}{' '}
+                                <span className="text-muted-foreground text-xs">(optionnel)</span>
                             </FormLabel>
                             <FormControl>
                                 <Textarea

@@ -21,6 +21,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@workspace/ui/components/form';
+import { TlsCertificateField } from './TlsCertificateField';
 import { createEnvironmentAction } from '@/actions/environment/createEnvironment.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
@@ -90,7 +91,6 @@ export function CreateEnvironmentForm() {
                         </FormItem>
                     )}
                 />
-
                 <FormField
                     control={form.control}
                     name="description"
@@ -110,7 +110,6 @@ export function CreateEnvironmentForm() {
                         </FormItem>
                     )}
                 />
-
                 <FormField
                     control={form.control}
                     name="connectionType"
@@ -132,9 +131,7 @@ export function CreateEnvironmentForm() {
                                             {t('unixSocket')}
                                         </SelectItem>
                                         <SelectItem value="TCP">{t('tcp')}</SelectItem>
-                                        <SelectItem value="TCP_TLS">
-                                            {t('tcpTls')}
-                                        </SelectItem>
+                                        <SelectItem value="TCP_TLS">{t('tcpTls')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </FormControl>
@@ -142,7 +139,6 @@ export function CreateEnvironmentForm() {
                         </FormItem>
                     )}
                 />
-
                 {connectionType === 'UNIX_SOCKET' && (
                     <FormField
                         control={form.control}
@@ -165,7 +161,6 @@ export function CreateEnvironmentForm() {
                         )}
                     />
                 )}
-
                 {(connectionType === 'TCP' || connectionType === 'TCP_TLS') && (
                     <>
                         <div className="grid grid-cols-2 gap-4">
@@ -186,7 +181,6 @@ export function CreateEnvironmentForm() {
                                     </FormItem>
                                 )}
                             />
-
                             <FormField
                                 control={form.control}
                                 name="port"
@@ -209,12 +203,9 @@ export function CreateEnvironmentForm() {
                                 )}
                             />
                         </div>
-                        <p className="text-muted-foreground text-xs">
-                            {t('standardPorts')}
-                        </p>
+                        <p className="text-muted-foreground text-xs">{t('standardPorts')}</p>
                     </>
                 )}
-
                 {connectionType === 'TCP_TLS' && (
                     <div className="space-y-4 rounded-lg border p-4">
                         <h4 className="text-sm font-medium">{t('tlsCertificates')}</h4>
@@ -222,70 +213,37 @@ export function CreateEnvironmentForm() {
                             {t('tlsCertificatesDescription')}
                         </p>
 
-                        <FormField
-                            control={form.control}
+                        <TlsCertificateField
+                            form={form}
                             name="tlsCert"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('clientCertificate')}</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
-                                            {...field}
-                                            disabled={form.formState.isSubmitting}
-                                            rows={4}
-                                            className="font-mono text-xs"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label={t('clientCertificate')}
+                            placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
+                            disabled={form.formState.isSubmitting}
                         />
 
-                        <FormField
-                            control={form.control}
+                        <TlsCertificateField
+                            form={form}
                             name="tlsKey"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('clientKey')}</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
-                                            {...field}
-                                            disabled={form.formState.isSubmitting}
-                                            rows={4}
-                                            className="font-mono text-xs"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label={t('clientKey')}
+                            placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
+                            disabled={form.formState.isSubmitting}
                         />
 
-                        <FormField
-                            control={form.control}
+                        <TlsCertificateField
+                            form={form}
                             name="tlsCa"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('caCertificate')}</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
-                                            {...field}
-                                            disabled={form.formState.isSubmitting}
-                                            rows={4}
-                                            className="font-mono text-xs"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label={t('caCertificate')}
+                            placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
+                            disabled={form.formState.isSubmitting}
                         />
                     </div>
                 )}
-
                 <div className="flex justify-end gap-2 pt-4">
-                    <Button type="submit" disabled={form.formState.isSubmitting}>
+                    <Button
+                        type="submit"
+                        isLoading={form.formState.isSubmitting}
+                        disabled={form.formState.isSubmitting}
+                    >
                         {form.formState.isSubmitting ? t('adding') : t('addEnvironment')}
                     </Button>
                 </div>
