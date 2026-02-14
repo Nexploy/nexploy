@@ -1,4 +1,5 @@
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
+import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
 import { BaseStrategy } from './base.strategy';
 import { BaseStep } from '../steps/base.step';
 import { IPipelineStep, StepExecutionContext, StepMetadata, StepResult } from '@/types/pipeline.type';
@@ -78,6 +79,17 @@ class DeployComposeStep extends BaseStep {
             await ctx.logger.info(this.metadata.id, message);
         };
 
+        const labels: Record<string, string> = {
+            [NEXPLOY_LABELS.version]: 'true',
+            [NEXPLOY_LABELS.repositoryId]: config.repositoryId,
+            [NEXPLOY_LABELS.buildId]: ctx.context.buildId,
+            [NEXPLOY_LABELS.buildType]: config.buildType,
+            [NEXPLOY_LABELS.imageTag]: config.imageTag,
+            [NEXPLOY_LABELS.branch]: config.gitBranch,
+            ...(config.gitCommitHash && { [NEXPLOY_LABELS.commitHash]: config.gitCommitHash }),
+            ...(config.gitCommitMessage && { [NEXPLOY_LABELS.commitMessage]: config.gitCommitMessage }),
+        };
+
         try {
             const result = await dockerService.deployCompose(
                 workDir,
@@ -89,6 +101,7 @@ class DeployComposeStep extends BaseStep {
                 config.environmentId,
                 ctx.context.buildId,
                 config.repositoryId,
+                labels,
             );
 
             await ctx.logger.info(

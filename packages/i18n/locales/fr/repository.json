@@ -35,7 +35,12 @@
         "noVersions": "Aucune version disponible. Les versions sont créées après un build réussi.",
         "deployed": "Déployée",
         "deploy": "Déployer",
-        "deploySuccess": "Version déployée avec succès"
+        "deploySuccess": "Version déployée avec succès",
+        "delete": "Supprimer",
+        "deleteTitle": "Supprimer la version",
+        "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette version ? L'image Docker sera définitivement supprimée.",
+        "deleteSuccess": "Version supprimée avec succès",
+        "deleteError": "Échec de la suppression de la version"
     },
     "deployment": {
         "title": "Déploiement",

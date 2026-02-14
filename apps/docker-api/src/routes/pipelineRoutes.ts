@@ -82,7 +82,6 @@ app.post(
                 logger.debug({ projectName }, 'No existing compose stack to remove');
             }
 
-            // Force-remove any remaining compose containers by project label
             const existingContainers = await dockerClient.listContainers({
                 all: true,
                 filters: {
@@ -99,7 +98,6 @@ app.post(
                 } catch {}
             }
 
-            // Remove containers with explicit container_name from compose config
             if (composeContent.services) {
                 for (const service of Object.values(composeContent.services) as any[]) {
                     if (service.container_name) {
@@ -136,9 +134,7 @@ app.post(
             }
 
             const upResult = await compose.up({ verbose: true });
-            const containerIds = upResult.services.map(
-                (container: { id: string }) => container.id,
-            );
+            const containerIds = upResult.services.map((container: { id: string }) => container.id);
 
             for (const containerId of containerIds) {
                 try {

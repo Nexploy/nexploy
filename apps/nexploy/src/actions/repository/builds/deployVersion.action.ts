@@ -3,48 +3,37 @@
 import { authActionServer } from '@/lib/api/safe-action';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { deployVersionSchema } from '@workspace/schemas-zod/inngest/build.schema';
-import { prisma } from '../../../../prisma/prisma';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { decrypt } from '@/lib/encryption';
 import { getTranslations } from 'next-intl/server';
+import { getRepositorieWithEnv } from '@/services/repository.service';
 
 export const onDeployVersion = authActionServer
     .inputSchema(deployVersionSchema)
     .action(async ({ parsedInput }) => {
         try {
             const t = await getTranslations('repository');
-            const { buildId, repositoryId } = parsedInput;
+            const { imageTag, repositoryId } = parsedInput;
 
-            const build = await prisma.build.findUnique({
-                where: { id: buildId },
-                include: {
-                    repository: {
-                        include: {
-                            envVariables: true,
-                        },
-                    },
-                },
-            });
+            const repository = await getRepositorieWithEnv(repositoryId);
 
-            if (!build || build.status !== 'COMPLETED') {
-                throw new Error(t('builds.buildNotCompleted'));
-            }
-
-            if (build.repositoryId !== repositoryId) {
-                throw new Error(t('builds.buildNotFromRepository'));
+            if (!repository) {
+                throw new Error(t('builds.buildNotFound'));
             }
 
             const envVariables: Record<string, string> = {};
-            for (const envVar of build.repository.envVariables) {
+            for (const envVar of repository.envVariables) {
                 envVariables[envVar.key] = decrypt(envVar.value);
             }
 
-            if (build.repository.buildType === 'DOCKER_COMPOSE') {
+            const imageName = `${repositoryId}:${imageTag}`;
+
+            if (repository.buildType === 'DOCKER_COMPOSE') {
                 return await kyDocker
                     .post('pipeline/deploy-compose', {
                         json: {
                             repositoryId,
-                            buildId,
+                            buildId: imageTag,
                             projectName: `nexploy-${repositoryId}`,
                             envVars: envVariables,
                         },
@@ -56,7 +45,7 @@ export const onDeployVersion = authActionServer
                 .post('pipeline/deploy', {
                     json: {
                         repositoryId,
-                        imageName: `${repositoryId}:${buildId}`,
+                        imageName,
                         options: {
                             envVars: envVariables,
                         },

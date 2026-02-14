@@ -4,12 +4,19 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { removeBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { removeBuild } from '@/services/inngest/build.inngest.service';
+import { revalidatePath } from 'next/cache';
+import { getTranslations } from 'next-intl/server';
 
 export const onRemoveBuild = authActionServer
     .inputSchema(removeBuildSchema)
     .action(async ({ parsedInput: { buildId } }) => {
         try {
-            return await removeBuild(buildId);
+            await removeBuild(buildId);
+
+            const t = await getTranslations('repository.builds');
+            await setToastServer({ type: 'success', message: t('removeSuccess') });
+
+            revalidatePath('/[locale]/repositories', 'page');
         } catch (error: unknown) {
             if (error instanceof Error) {
                 await setToastServer({

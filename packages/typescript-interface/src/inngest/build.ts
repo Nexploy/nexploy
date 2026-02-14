@@ -56,6 +56,7 @@ export interface BuildConfig extends GitProviderToken {
     dockerComposePath?: string;
     imageName: string;
     imageTag: string;
+    gitCommitMessage?: string;
     autoDeploy: boolean;
     startFromStep?: BuildStep;
     environmentId?: string;

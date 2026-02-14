@@ -33,7 +33,7 @@ export const kyDocker = ky.create({
                         request.headers.set('Accept-Language', acceptLanguage);
                     }
                 } catch {
-                    // Not in a request context (e.g. during build)
+                    /* empty */
                 }
             },
         ],

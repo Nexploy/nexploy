@@ -3,7 +3,7 @@
 import { useInngestSubscription } from '@inngest/realtime/hooks';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import Link from 'next/link';
-import { Clock, GitBranch } from 'lucide-react';
+import { Clock, GitBranch, GitCommit } from 'lucide-react';
 import dayjs from 'dayjs';
 import { Build } from 'generated/client';
 import { Separator } from '@workspace/ui/components/separator';
@@ -50,11 +50,14 @@ export function RepositoryBuild({ repositoryId, build, index }: BuildLogsProps) 
                     </span>
                     {build.commitHash && (
                         <>
-                            <Separator orientation={'vertical'} className={'!h-4 w-1'} />
-                            <span>#{build.commitHash}</span>
+                            <Separator orientation={'vertical'} className={'!h-3 w-1'} />
+                            <span className="flex items-center gap-1 font-mono">
+                                <GitCommit className="size-3" />
+                                {build.commitHash}
+                            </span>
                         </>
                     )}
-                    <Separator orientation={'vertical'} className={'!h-4 w-1'} />
+                    <Separator orientation={'vertical'} className={'!h-3 w-1'} />
                     <span className="flex shrink-0 items-center gap-1">
                         <GitBranch className="size-3" />
                         {build.branch}

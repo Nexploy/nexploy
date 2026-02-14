@@ -8,10 +8,11 @@ class DockerService {
         signal: AbortSignal,
         onLog: (message: string) => Promise<void>,
         environmentId?: string,
+        labels?: Record<string, string>,
     ): Promise<{ imageId?: string }> {
         return this.streamSSERequest<{ imageId?: string }>(
             'pipeline/events/stream/build',
-            { workDir, imageName },
+            { workDir, imageName, labels },
             signal,
             onLog,
             environmentId,
@@ -52,10 +53,11 @@ class DockerService {
         environmentId?: string,
         buildId?: string,
         repositoryId?: string,
+        labels?: Record<string, string>,
     ): Promise<{ success: boolean; containers?: string[] }> {
         return this.streamSSERequest<{ success: boolean; containers?: string[] }>(
             'pipeline/events/stream/compose',
-            { workDir, projectName, composePath, envVars, buildId, repositoryId },
+            { workDir, projectName, composePath, envVars, buildId, repositoryId, labels },
             signal,
             onLog,
             environmentId,

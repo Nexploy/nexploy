@@ -4,7 +4,6 @@ import { useAction } from 'next-safe-action/hooks';
 import { Button } from '@workspace/ui/components/button';
 import { Trash2 } from 'lucide-react';
 import { ComponentProps } from 'react';
-import { toast } from 'sonner';
 import { onRemoveBuild } from '@/actions/repository/builds/removeBuild.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
@@ -26,12 +25,7 @@ export function RemoveBuildButton({
     const t = useTranslations('repository.builds');
     const tCommon = useTranslations('common');
 
-    const { executeAsync } = useAction(onRemoveBuild, {
-        onSuccess: () => {
-            toast.success(t('removeSuccess'));
-            if (onSuccess) onSuccess();
-        },
-    });
+    const { executeAsync } = useAction(onRemoveBuild);
 
     const handleRemove = () => {
         openAlertDialog({

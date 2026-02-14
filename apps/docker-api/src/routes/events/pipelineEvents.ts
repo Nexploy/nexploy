@@ -53,7 +53,7 @@ function cleanupEnvFile(workDir: string): void {
 }
 
 app.post('/stream/compose', async (c) => {
-    const { workDir, projectName, composePath, envVars, buildId, repositoryId } =
+    const { workDir, projectName, composePath, envVars, buildId, repositoryId, labels } =
         await c.req.json<{
             workDir: string;
             projectName: string;
@@ -61,6 +61,7 @@ app.post('/stream/compose', async (c) => {
             envVars?: Record<string, string>;
             buildId?: string;
             repositoryId?: string;
+            labels?: Record<string, string>;
         }>();
 
     const dockerClient = getCurrentDockerClient();
@@ -192,6 +193,8 @@ app.post('/stream/compose', async (c) => {
             if (servicesToPull.length > 0) {
                 sendLog(`Pulling images for ${servicesToPull.length} service(s)...`);
 
+                const failedPulls: { serviceName: string; error: string }[] = [];
+
                 for (const serviceName of servicesToPull) {
                     if (abortController.signal.aborted) break;
 
@@ -213,25 +216,32 @@ app.post('/stream/compose', async (c) => {
                                                 return;
                                             }
 
-                                            try {
-                                                const data = JSON.parse(chunk.toString());
-                                                let message = '';
+                                            const raw = chunk.toString();
+                                            const lines = raw.split('\n').filter((l: string) => l.trim());
 
-                                                if (data.status) {
-                                                    message = data.status;
-                                                    if (data.id) {
-                                                        message = `[${data.id}] ${message}`;
+                                            for (const line of lines) {
+                                                try {
+                                                    const data = JSON.parse(line);
+                                                    let message = '';
+
+                                                    if (data.status) {
+                                                        message = data.status;
+                                                        if (data.id) {
+                                                            message = `[${data.id}] ${message}`;
+                                                        }
+                                                        if (data.progress) {
+                                                            message += ` ${data.progress}`;
+                                                        }
                                                     }
-                                                    if (data.progress) {
-                                                        message += ` ${data.progress}`;
+
+                                                    if (message) {
+                                                        sendLog(message);
+                                                    }
+                                                } catch {
+                                                    if (line.trim()) {
+                                                        sendLog(line.trim());
                                                     }
                                                 }
-
-                                                if (message) {
-                                                    sendLog(message);
-                                                }
-                                            } catch (parseError) {
-                                                sendLog(chunk.toString());
                                             }
                                         });
 
@@ -245,11 +255,22 @@ app.post('/stream/compose', async (c) => {
                             }
                         }
                     } catch (pullError) {
-                        sendLog(
-                            `Warning: Failed to pull image for ${serviceName}: ${pullError instanceof Error ? pullError.message : 'Unknown error'}`,
-                        );
+                        const errorMsg =
+                            pullError instanceof Error ? pullError.message : 'Unknown error';
+                        sendLog(`Failed to pull image for service "${serviceName}": ${errorMsg}`);
+                        failedPulls.push({ serviceName, error: errorMsg });
                     }
                 }
+
+                if (failedPulls.length > 0) {
+                    const failedList = failedPulls
+                        .map((f) => `${f.serviceName}: ${f.error}`)
+                        .join(', ');
+                    throw new Error(
+                        `Failed to pull required images: ${failedList}. Check that the image names and tags are correct.`,
+                    );
+                }
+
                 sendLog('Images pulled successfully');
             } else if (buildConfigs.length === 0) {
                 sendLog('No images to pull or build');
@@ -312,6 +333,7 @@ app.post('/stream/compose', async (c) => {
                             'nexploy.compose.config': composeConfigB64,
                             'nexploy.buildType': 'DOCKER_COMPOSE',
                             'nexploy.projectName': projectName,
+                            ...labels,
                         },
                     });
 
@@ -523,9 +545,10 @@ app.post('/stream/compose', async (c) => {
 });
 
 app.post('/stream/build', async (c) => {
-    const { workDir, imageName } = await c.req.json<{
+    const { workDir, imageName, labels } = await c.req.json<{
         workDir: string;
         imageName: string;
+        labels?: Record<string, string>;
     }>();
 
     const manager = getImagesStateManager();
@@ -562,6 +585,7 @@ app.post('/stream/build', async (c) => {
                 imageName,
                 onLog,
                 abortController.signal,
+                labels,
             );
 
             if (!isClientDisconnected && !c.req.raw.signal.aborted) {

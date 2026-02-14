@@ -6,6 +6,8 @@ import {
     ImageEvent,
     ImageStateChanges,
 } from '@workspace/typescript-interface/docker/docker.image';
+import type { Version } from '@workspace/typescript-interface/docker/docker.version';
+import { NEXPLOY_LABELS } from '@/utils/nexployLabels';
 import { BaseStateManager } from '@/lib/BaseStateManager';
 import * as tar from 'tar-fs';
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
@@ -355,6 +357,63 @@ export class ImagesStateManager extends BaseStateManager {
         return changes;
     }
 
+    getVersionsByRepository(repositoryId: string): Version[] {
+        const versions: Version[] = [];
+
+        for (const image of this.images.values()) {
+            const labels = image.labels || {};
+
+            if (
+                labels[NEXPLOY_LABELS.version] === 'true' &&
+                labels[NEXPLOY_LABELS.repositoryId] === repositoryId
+            ) {
+                // Extract the actual Docker tag from repoTags rather than using the label,
+                // because compose manifests are tagged repositoryId:fullBuildId while
+                // the label stores the sliced imageTag
+                const matchingRepoTag = image.repoTags.find((t) => t.startsWith(`${repositoryId}:`));
+                const actualTag = matchingRepoTag
+                    ? matchingRepoTag.split(':')[1]
+                    : labels[NEXPLOY_LABELS.imageTag] || image.tag[0] || '';
+
+                versions.push({
+                    imageTag: actualTag,
+                    repositoryId: labels[NEXPLOY_LABELS.repositoryId],
+                    buildId: labels[NEXPLOY_LABELS.buildId] || '',
+                    commitHash: labels[NEXPLOY_LABELS.commitHash],
+                    commitMessage: labels[NEXPLOY_LABELS.commitMessage],
+                    branch: labels[NEXPLOY_LABELS.branch],
+                    buildType: (labels[NEXPLOY_LABELS.buildType]) || 'DOCKERFILE',
+                    createdAt: image.created,
+                    imageId: image.id,
+                    imageFullName: matchingRepoTag || image.repoTags[0] || `${image.id}`,
+                });
+                continue;
+            }
+
+            // Fallback: match images by name pattern repositoryId:* (retro-compat)
+            const matchesName =
+                image.name.some((n) => n === repositoryId) ||
+                image.repoTags.some((t) => t.startsWith(`${repositoryId}:`));
+
+            if (matchesName && !labels[NEXPLOY_LABELS.version]) {
+                const tag = image.repoTags.find((t) => t.startsWith(`${repositoryId}:`));
+                const imageTag = tag ? tag.split(':')[1] : image.tag[0] || '';
+
+                versions.push({
+                    imageTag,
+                    repositoryId,
+                    buildId: imageTag,
+                    buildType: (labels[NEXPLOY_LABELS.buildType]) || 'DOCKERFILE',
+                    createdAt: image.created,
+                    imageId: image.id,
+                    imageFullName: tag || `${repositoryId}:${imageTag}`,
+                });
+            }
+        }
+
+        return versions.sort((a, b) => b.createdAt - a.createdAt);
+    }
+
     getAllImages(): Image[] {
         return Array.from(this.images.values());
     }
@@ -435,6 +494,7 @@ export class ImagesStateManager extends BaseStateManager {
         imageName: string,
         onLog: (log: string) => void,
         signal?: AbortSignal,
+        labels?: Record<string, string>,
     ): Promise<{ imageId?: string }> {
         logger.info({ workDir, imageName }, 'Starting Docker build');
 
@@ -453,6 +513,7 @@ export class ImagesStateManager extends BaseStateManager {
                     rm: true,
                     forcerm: true,
                     abortSignal: signal,
+                    ...(labels && { labels }),
                 },
                 (err: any, stream: Readable) => {
                     if (err) {
