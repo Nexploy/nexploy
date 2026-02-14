@@ -4,16 +4,19 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { prisma } from '../../../prisma/prisma';
 import { revalidatePath } from 'next/cache';
 import { deleteUserSchema } from '@workspace/schemas-zod/user/deleteUser.schema';
+import { getTranslations } from 'next-intl/server';
 
 export const deleteUser = authActionServer
     .inputSchema(deleteUserSchema)
     .action(async ({ parsedInput: { userId }, ctx: { session } }) => {
+        const t = await getTranslations('admin');
+
         if (session.user.role !== 'admin') {
-            throw new Error('Only admins can delete users');
+            throw new Error(t('errors.adminOnly'));
         }
 
         if (userId === session.user.id) {
-            throw new Error('You cannot delete your own account');
+            throw new Error(t('errors.cannotDeleteOwnAccount'));
         }
 
         await prisma.user.delete({

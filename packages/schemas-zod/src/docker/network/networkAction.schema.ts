@@ -46,4 +46,5 @@ export type NetworkCreateForm = z.infer<typeof networkCreateSchema>;
 export const networkActionsSchema = z.object({
     networkIds: z.array(z.string()),
     action: z.enum(['delete', 'prune']),
+    force: z.boolean().optional(),
 });

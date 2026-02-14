@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { swarmStateManager } from '@/managers/swarmStateManager';
+import { getTranslations } from '@/middleware/locale.middleware';
 
 const app = new Hono();
 
@@ -19,7 +20,8 @@ app.get(
         const node = swarmStateManager.getNode(nodeId);
 
         if (!node) {
-            return c.json({ error: 'Node not found' }, 404);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.nodeNotFound') }, 404);
         }
 
         const tasks = swarmStateManager.getTasksByNode(nodeId);
@@ -82,7 +84,8 @@ app.post(
         const nodeInfo = await node.inspect();
 
         if (nodeInfo.Spec.Role === 'manager') {
-            return c.json({ error: 'Node is already a manager' }, 400);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.nodeAlreadyManager') }, 400);
         }
 
         node.update({
@@ -107,7 +110,8 @@ app.post(
         const nodeInfo = await node.inspect();
 
         if (nodeInfo.Spec.Role === 'worker') {
-            return c.json({ error: 'Node is already a worker' }, 400);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.nodeAlreadyWorker') }, 400);
         }
 
         node.update({

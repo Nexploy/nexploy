@@ -3,6 +3,7 @@ import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { networksStateManager } from '@/managers/networksStateManager';
 import { filterNexployNetworks } from '@workspace/shared/nexployFilter';
+import { getTranslations } from '@/middleware/locale.middleware';
 
 const app = new Hono();
 
@@ -27,11 +28,15 @@ app.post(
         const { name, driver = 'bridge', ...options } = await c.req.json();
 
         if (!name) {
-            return c.json({ error: 'Network name is required' }, 400);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.networkNameRequired') }, 400);
         }
 
         const networkExists = networksStateManager.getByName(name);
-        if (networkExists) throw new Error(`Le réseau ${name} existe déjà.`);
+        if (networkExists) {
+            const t = getTranslations(c, 'docker');
+            throw new Error(t('errors.networkAlreadyExists', { name }));
+        }
 
         const network = await docker.createNetwork({
             Name: name,
@@ -53,7 +58,8 @@ app.post(
         const networkId = c.req.param('id');
 
         if (!containerId) {
-            return c.json({ error: 'Container ID is required' }, 400);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.containerIdRequired') }, 400);
         }
 
         const network = docker.getNetwork(networkId);
@@ -74,7 +80,8 @@ app.post(
         const networkId = c.req.param('id');
 
         if (!containerId) {
-            return c.json({ error: 'Container ID is required' }, 400);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.containerIdRequired') }, 400);
         }
 
         const network = docker.getNetwork(networkId);
@@ -104,20 +111,50 @@ app.get(
 app.post(
     '/delete',
     handleAsync(async (c) => {
-        const { networkIds } = await c.req.json();
+        const { networkIds, force = false } = await c.req.json();
 
         if (!networkIds || networkIds.length === 0) {
-            return c.json({ error: 'No networkIds provided' }, 400);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.noNetworkIdsProvided') }, 400);
         }
 
-        await Promise.all(
-            networkIds.map(async (networkId: string) => {
-                const network = docker.getNetwork(networkId);
-                return await network.remove();
-            }),
-        );
+        const BUILTIN_NETWORKS = ['bridge', 'host', 'none'];
+        const deleted: string[] = [];
+        const skipped: { id: string; name: string; reason: string }[] = [];
 
-        return { deleted: networkIds };
+        for (const networkId of networkIds) {
+            const network = docker.getNetwork(networkId);
+            const info = await network.inspect();
+
+            if (BUILTIN_NETWORKS.includes(info.Name)) {
+                skipped.push({ id: networkId, name: info.Name, reason: 'builtin' });
+                continue;
+            }
+
+            if (!force) {
+                const isComposeNetwork = !!info.Labels?.['com.docker.compose.project'];
+                if (isComposeNetwork) {
+                    skipped.push({ id: networkId, name: info.Name, reason: 'compose_stack' });
+                    continue;
+                }
+
+                const connectedContainers = Object.keys(info.Containers || {});
+                if (connectedContainers.length > 0) {
+                    skipped.push({ id: networkId, name: info.Name, reason: 'has_containers' });
+                    continue;
+                }
+            } else {
+                const connectedContainers = Object.keys(info.Containers || {});
+                for (const containerId of connectedContainers) {
+                    await network.disconnect({ Container: containerId, Force: true });
+                }
+            }
+
+            await network.remove();
+            deleted.push(networkId);
+        }
+
+        return { deleted, skipped };
     }),
 );
 

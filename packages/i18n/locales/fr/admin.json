@@ -113,5 +113,12 @@
     "buildWorkersDescription": "Nombre de builds simultanés autorisés (1-10). Les changements prennent effet après le redémarrage du serveur.",
     "buildWorkersUpdated": "Workers de build mis à jour avec succès",
     "buildWorkersUpdateFailed": "Échec de la mise à jour des workers de build",
-    "save": "Enregistrer"
+    "save": "Enregistrer",
+    "errors": {
+        "adminOnly": "Seuls les administrateurs peuvent effectuer cette action",
+        "cannotChangeOwnRole": "Vous ne pouvez pas modifier votre propre rôle",
+        "cannotDeleteOwnAccount": "Vous ne pouvez pas supprimer votre propre compte",
+        "userAlreadyExists": "Un utilisateur avec cet email existe déjà",
+        "invitationAlreadyExists": "Une invitation active pour cet email existe déjà"
+    }
 }

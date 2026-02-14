@@ -4,7 +4,7 @@ import {
     initializeEnvironmentStore,
     useEnvironmentStore,
 } from '@/stores/environment/useEnvironmentStore';
-import { useMemo } from 'react';
+import { useEffect } from 'react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -31,7 +31,7 @@ interface DropdownEnvironment {
 export function DropdownEnvironment({ environments }: DropdownEnvironment) {
     const router = useRouter();
 
-    useMemo(() => initializeEnvironmentStore(environments), []);
+    useEffect(() => initializeEnvironmentStore(environments), []);
 
     const {
         environments: storeEnvironments,

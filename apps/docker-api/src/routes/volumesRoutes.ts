@@ -2,6 +2,7 @@ import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { volumesStateManager } from '@/managers/volumesStateManager';
+import { getTranslations } from '@/middleware/locale.middleware';
 
 const app = new Hono();
 
@@ -26,7 +27,8 @@ app.post(
 
         const volumeExists = volumesStateManager.getState(name);
         if (volumeExists) {
-            throw new Error(`Le volume ${name} existe déjà.`);
+            const t = getTranslations(c, 'docker');
+            throw new Error(t('errors.volumeAlreadyExists', { name }));
         }
 
         const volume = await docker.createVolume({
@@ -56,7 +58,8 @@ app.post(
         const { volumeNames } = await c.req.json();
 
         if (!volumeNames || volumeNames.length === 0) {
-            return c.json({ error: 'No volumeNames provided' }, 400);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.noVolumeNamesProvided') }, 400);
         }
 
         const force = c.req.query('force') === 'true';

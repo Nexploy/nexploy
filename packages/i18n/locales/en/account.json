@@ -16,6 +16,9 @@
         "updating": "Updating...",
         "profileUpdated": "Username updated successfully"
     },
+    "errors": {
+        "failedToCreateApiKey": "Failed to create API key"
+    },
     "securitySettings": {
         "title": "Security Settings",
         "description": "Manage your account security and authentication preferences",

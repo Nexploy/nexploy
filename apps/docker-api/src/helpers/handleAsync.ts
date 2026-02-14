@@ -1,6 +1,7 @@
 import type { Context } from 'hono';
 import { logger } from '@/utils/logger';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
+import { getTranslations } from '@/middleware/locale.middleware';
 
 export const handleAsync = <C extends Context = Context>(
     fn: (c: C) => Promise<any>,
@@ -9,10 +10,11 @@ export const handleAsync = <C extends Context = Context>(
     const status = opts?.status ?? 200;
     return async (c: C) => {
         try {
+            const t = getTranslations(c as any, 'docker');
             const result = await Promise.race([
                 fn(c),
                 new Promise((_, rej) =>
-                    setTimeout(() => rej(new Error('request timeout')), Number(3_600_000)),
+                    setTimeout(() => rej(new Error(t('errors.requestTimeout'))), Number(3_600_000)),
                 ),
             ]);
             logger.debug({ path: c.req.url });

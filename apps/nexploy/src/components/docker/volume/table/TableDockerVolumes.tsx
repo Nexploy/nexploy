@@ -49,16 +49,12 @@ const globalFilterFn: FilterFn<Volume> = (row, _, value) => {
 
     const size = formatBytes(row.original.usageData?.Size || 0);
 
-    if (
+    return (
         name.toLowerCase().includes(search) ||
         driver.toLowerCase().includes(search) ||
         mountpoint.toLowerCase().includes(search) ||
         size.toLowerCase().includes(search)
-    ) {
-        return true;
-    }
-
-    return false;
+    );
 };
 
 export function TableDockerVolumes() {

@@ -11,8 +11,8 @@ const translations: Record<Locale, typeof enDocker> = {
 export function getLocale(): Locale {
     if (typeof window === 'undefined') return 'en';
 
-    const path = window.location.pathname;
-    if (path.startsWith('/fr')) return 'fr';
+    const match = document.cookie.match(/(?:^|;\s*)NEXT_LOCALE=(\w+)/);
+    if (match && match[1] === 'fr') return 'fr';
     return 'en';
 }
 

@@ -2,5 +2,10 @@
     "name": "@workspace/i18n",
     "version": "1.0.0",
     "private": true,
-    "main": "index.ts"
+    "type": "module",
+    "main": "index.ts",
+    "exports": {
+        ".": "./index.ts",
+        "./locales/*": "./locales/*"
+    }
 }

@@ -6,11 +6,13 @@ import { deployVersionSchema } from '@workspace/schemas-zod/inngest/build.schema
 import { prisma } from '../../../../prisma/prisma';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { decrypt } from '@/lib/encryption';
+import { getTranslations } from 'next-intl/server';
 
 export const onDeployVersion = authActionServer
     .inputSchema(deployVersionSchema)
     .action(async ({ parsedInput }) => {
         try {
+            const t = await getTranslations('repository');
             const { buildId, repositoryId } = parsedInput;
 
             const build = await prisma.build.findUnique({
@@ -25,11 +27,11 @@ export const onDeployVersion = authActionServer
             });
 
             if (!build || build.status !== 'COMPLETED') {
-                throw new Error('Build not found or not completed');
+                throw new Error(t('builds.buildNotCompleted'));
             }
 
             if (build.repositoryId !== repositoryId) {
-                throw new Error('Build does not belong to this repository');
+                throw new Error(t('builds.buildNotFromRepository'));
             }
 
             const envVariables: Record<string, string> = {};
@@ -65,7 +67,7 @@ export const onDeployVersion = authActionServer
             if (err instanceof Error) {
                 await setToastServer({
                     type: 'error',
-                    message: err.message || 'Failed to deploy version',
+                    message: err.message || (await getTranslations('repository'))('builds.failedToDeploy'),
                 });
             }
             throw err;

@@ -18,7 +18,7 @@ import {
     TableHeader,
     TableRow,
 } from '@workspace/ui/components/table';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { getColumnsTableNetworks } from '@/components/docker/network/table/ColumnsDockerNetworks';
 import { useNetworkStore } from '@/stores/docker/useNetworkStore';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
@@ -38,7 +38,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import { Switch } from '@workspace/ui/components/switch';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
@@ -48,17 +48,13 @@ const globalFilterFn: FilterFn<Network> = (row, _, value) => {
 
     const date = new Date(row.original.created * 1000).toLocaleDateString();
 
-    if (
+    return (
         name?.toLowerCase().includes(search) ||
         driver?.toLowerCase().includes(search) ||
         scope?.toLowerCase().includes(search) ||
         id.toLowerCase().includes(search) ||
         date.toLowerCase().includes(search)
-    ) {
-        return true;
-    }
-
-    return false;
+    );
 };
 
 export function TableDockerNetworks() {
@@ -98,45 +94,52 @@ export function TableDockerNetworks() {
         },
     });
 
-    const selectedRows = table.getSelectedRowModel().rows;
-    const selectedRow = selectedRows[0];
-    const selectedNetwork = selectedRow?.original;
-
     const numberOfSelectedRows = Object.keys(rowSelection).length;
+    const forceRef = useRef(false);
 
-    const hasBuiltinSelected = selectedRows.some((row) =>
-        ['bridge', 'host', 'none'].includes(row.original.name),
-    );
-    const hasConnectedNetworks = selectedRows.some(
-        (row) => (row.original.containers?.length || 0) > 0,
-    );
-
-    const handleDeleteAction = () => {
+    const handleDeleteAction = useCallback(() => {
         const networkIds = Object.keys(rowSelection);
+        forceRef.current = false;
         openAlertDialog({
             title: tDocker('deleteNetwork'),
-            description: tDocker('confirmDeleteNetwork'),
+            description: (
+                <div className={'space-y-4'}>
+                    <p>{tDocker('confirmDeleteNetwork')}</p>
+                    <label
+                        htmlFor={'force-delete'}
+                        className={
+                            'bg-muted/50 flex cursor-pointer items-center justify-between rounded-lg border p-3'
+                        }
+                    >
+                        <div className={'space-y-0.5'}>
+                            <p className={'text-sm font-medium'}>{tDocker('errors.forceDelete')}</p>
+                            <p className={'text-muted-foreground text-xs'}>
+                                {tDocker('errors.forceDeleteDescription')}
+                            </p>
+                        </div>
+                        <Switch
+                            id={'force-delete'}
+                            onCheckedChange={(checked) => {
+                                forceRef.current = checked;
+                            }}
+                        />
+                    </label>
+                </div>
+            ),
             cancelLabel: tCommon('cancel'),
             actionLabel: tCommon('remove'),
             onAction: async () => {
-                await onNetworkAction({ networkIds, action: 'delete' });
+                await onNetworkAction({
+                    networkIds,
+                    action: 'delete',
+                    force: forceRef.current,
+                });
                 table.resetRowSelection();
             },
         });
-    };
+    }, [rowSelection, openAlertDialog, tDocker, tCommon, table]);
 
     const isShowingAll = pageSize === 'all';
-    const isDeleteDisabled = !numberOfSelectedRows || hasBuiltinSelected || hasConnectedNetworks;
-
-    const getUseTooltipContent = () => {
-        if (hasBuiltinSelected) {
-            return tCommon('cannotRemoveBuiltinNetwork');
-        }
-        if ((selectedNetwork?.containers?.length || 0) > 0) {
-            return tCommon('disconnectContainersFirst');
-        }
-        return;
-    };
 
     return (
         <div className={'mx-5 space-y-3'}>
@@ -148,30 +151,19 @@ export function TableDockerNetworks() {
                     onChange={(e) => setGlobalFilter(e.target.value)}
                 />
                 <div className={'flex gap-3'}>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <div>
-                                <Button
-                                    variant={'destructive'}
-                                    onClick={handleDeleteAction}
-                                    disabled={isDeleteDisabled}
-                                >
-                                    <Trash />
-                                    {tCommon('remove')}{' '}
-                                    {!!numberOfSelectedRows && (
-                                        <Badge variant={'secondary'} className={'rounded-full'}>
-                                            {numberOfSelectedRows}
-                                        </Badge>
-                                    )}
-                                </Button>
-                            </div>
-                        </TooltipTrigger>
-                        {getUseTooltipContent() && (
-                            <TooltipContent>
-                                <p>{getUseTooltipContent()}</p>
-                            </TooltipContent>
+                    <Button
+                        variant={'destructive'}
+                        onClick={handleDeleteAction}
+                        disabled={!numberOfSelectedRows}
+                    >
+                        <Trash />
+                        {tCommon('remove')}{' '}
+                        {!!numberOfSelectedRows && (
+                            <Badge variant={'secondary'} className={'rounded-full'}>
+                                {numberOfSelectedRows}
+                            </Badge>
                         )}
-                    </Tooltip>
+                    </Button>
                     <Button asChild>
                         <Link href={'/docker/networks/create-network'}>
                             <Plus />
@@ -259,7 +251,7 @@ export function TableDockerNetworks() {
                         onValueChange={(value) => {
                             if (value === 'all') {
                                 setPageSize('all');
-                                table.setPageSize(table.getRowModel().rows.length);
+                                table.setPageSize(networks.length);
                             } else {
                                 const size = Number(value);
                                 setPageSize(size);

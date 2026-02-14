@@ -1,14 +1,9 @@
 import { auth } from '@/lib/auth/auth';
-import { z } from 'zod';
 import { authActionServer } from '@/lib/api/safe-action';
-
-const createDockerApiKeySchema = z.object({
-    userId: z.string(),
-});
+import { getTranslations } from 'next-intl/server';
 
 export const createDockerApiKeyAction = authActionServer.action(async ({ ctx }) => {
     try {
-
         const apiKey = await auth.api.createApiKey({
             body: {
                 name: 'docker-api-internal-key',
@@ -29,6 +24,7 @@ export const createDockerApiKeyAction = authActionServer.action(async ({ ctx }) 
             keyId: apiKey.id,
         };
     } catch (error) {
-        throw new Error('Failed to create API key');
+        const t = await getTranslations('account');
+        throw new Error(t('errors.failedToCreateApiKey'));
     }
 });

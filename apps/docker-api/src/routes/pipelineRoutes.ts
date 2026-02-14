@@ -5,6 +5,7 @@ import { DeployOptions } from '@workspace/typescript-interface/inngest/deploy';
 import { getCurrentDockerClient } from '@/lib/dockerContext';
 import DockerodeCompose from 'dockerode-compose';
 import { substituteEnvVars } from '@/utils/composePreprocessor';
+import { getTranslations } from '@/middleware/locale.middleware';
 import yaml from 'yaml';
 import fs from 'fs';
 import path from 'path';
@@ -43,7 +44,8 @@ app.post(
         const configB64 = imageInfo.Config?.Labels?.['nexploy.compose.config'];
 
         if (!configB64) {
-            throw new Error('Manifest image does not contain compose config');
+            const t = getTranslations(c, 'docker');
+            throw new Error(t('errors.manifestNoComposeConfig'));
         }
 
         let composeYaml = Buffer.from(configB64, 'base64').toString('utf8');

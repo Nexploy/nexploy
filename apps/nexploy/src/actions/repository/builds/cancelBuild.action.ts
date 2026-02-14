@@ -4,6 +4,7 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { cancelBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { cancelBuildInngest } from '@/services/inngest/build.inngest.service';
+import { getTranslations } from 'next-intl/server';
 
 export const onCancelBuild = authActionServer
     .inputSchema(cancelBuildSchema)
@@ -12,7 +13,8 @@ export const onCancelBuild = authActionServer
             const { buildId } = parsedInput;
             await cancelBuildInngest(buildId);
         } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : 'Failed to cancel build';
+            const t = await getTranslations('repository');
+            const message = err instanceof Error ? err.message : t('builds.failedToCancel');
             await setToastServer({
                 type: 'error',
                 message,

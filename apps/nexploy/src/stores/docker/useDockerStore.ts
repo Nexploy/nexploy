@@ -58,7 +58,7 @@ export const useDockerStore = create<DockerState>((set, get) => ({
                         if (loadingToast && message?.level === 'loading') return;
                         if (loadingToast) toast.dismiss();
 
-                        toast[message?.level](message.text);
+                        toast[message?.level](toastT(message.key));
                     }
                     set({ status, lastUpdate: timestamp });
                 }),
@@ -69,7 +69,11 @@ export const useDockerStore = create<DockerState>((set, get) => ({
                     const reconnectInfo = JSON.parse(e.data);
 
                     toast.warning(
-                        `Reconnecting to Docker service... (Attempt ${reconnectInfo.attempt}/${reconnectInfo.maxAttempts}), ${reconnectInfo.delay}ms`,
+                        toastT('reconnecting', {
+                            attempt: reconnectInfo.attempt,
+                            maxAttempts: reconnectInfo.maxAttempts,
+                            delay: reconnectInfo.delay,
+                        }),
                     );
 
                     set({

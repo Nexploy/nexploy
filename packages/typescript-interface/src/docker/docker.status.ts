@@ -24,7 +24,7 @@ export type MessageLevel = 'success' | 'info' | 'warning' | 'error' | 'loading';
 
 export interface DockerStatusEventWithMessage extends DockerStatusEventBase {
     message: {
-        text: string;
+        key: string;
         level: MessageLevel;
     };
 }

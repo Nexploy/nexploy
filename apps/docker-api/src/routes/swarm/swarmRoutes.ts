@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { swarmStateManager } from '@/managers/swarmStateManager';
+import { getTranslations } from '@/middleware/locale.middleware';
 
 const app = new Hono();
 
@@ -41,7 +42,8 @@ app.post(
         const { advertiseAddr, listenAddr, forceNewCluster } = await c.req.json();
 
         if (!advertiseAddr) {
-            return c.json({ error: 'advertiseAddr is required' }, 400);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.advertiseAddrRequired') }, 400);
         }
 
         const result = await docker.swarmInit({
@@ -62,10 +64,12 @@ app.post(
         const { advertiseAddr, listenAddr, remoteAddrs, joinToken } = await c.req.json();
 
         if (!remoteAddrs || remoteAddrs.length === 0) {
-            return c.json({ error: 'remoteAddrs is required' }, 400);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.remoteAddrsRequired') }, 400);
         }
         if (!joinToken) {
-            return c.json({ error: 'joinToken is required' }, 400);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.joinTokenRequired') }, 400);
         }
 
         await docker.swarmJoin({

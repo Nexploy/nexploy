@@ -6,6 +6,7 @@ import { HTTPError } from 'ky';
 import { startBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { startBuildRepositoryInngest } from '@/services/inngest/build.inngest.service';
 import { revalidatePath } from 'next/cache';
+import { getTranslations } from 'next-intl/server';
 
 export const onStartBuild = authActionServer
     .inputSchema(startBuildSchema)
@@ -16,9 +17,10 @@ export const onStartBuild = authActionServer
             revalidatePath('/[locale]/repositories', 'page');
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
+                const t = await getTranslations('repository');
                 await setToastServer({
                     type: 'error',
-                    message: err.message || 'Failed to start build',
+                    message: err.message || t('builds.failedToStart'),
                 });
             }
         }

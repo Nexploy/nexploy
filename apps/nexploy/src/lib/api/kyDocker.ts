@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import ky, { type Options } from 'ky';
 import { getCurrentEnvironmentId } from '@/lib/environmentContext';
 
@@ -24,6 +24,16 @@ export const kyDocker = ky.create({
 
                 if (environmentId) {
                     request.headers.set('X-Docker-Environment', environmentId);
+                }
+
+                try {
+                    const headerStore = await headers();
+                    const acceptLanguage = headerStore.get('Accept-Language');
+                    if (acceptLanguage) {
+                        request.headers.set('Accept-Language', acceptLanguage);
+                    }
+                } catch {
+                    // Not in a request context (e.g. during build)
                 }
             },
         ],

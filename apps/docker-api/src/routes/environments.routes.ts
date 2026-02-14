@@ -10,6 +10,7 @@ import {
 import { handleAsync } from '@/helpers/handleAsync';
 import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
 import { createDockerClient } from '@/utils/dockerClient';
+import { getTranslations } from '@/middleware/locale.middleware';
 
 const app = new Hono();
 
@@ -26,9 +27,10 @@ app.post(
 
         logger.info('Environment validation successful');
 
+        const t = getTranslations(c, 'docker');
         return {
             valid: true,
-            message: 'Docker connection successful',
+            message: t('errors.dockerConnectionSuccess'),
         };
     }),
 );
@@ -47,9 +49,10 @@ app.post(
 
             logger.info({ environmentId: config.id }, 'Environment registered successfully');
 
+            const t = getTranslations(c, 'docker');
             return {
                 success: true,
-                message: 'Environment registered successfully',
+                message: t('errors.environmentRegistered'),
                 environmentId: config.id,
             };
         } catch (err: any) {
@@ -79,9 +82,10 @@ app.delete(
 
         logger.info({ environmentId }, 'Environment unregistered successfully');
 
+        const t = getTranslations(c, 'docker');
         return {
             success: true,
-            message: 'Environment unregistered successfully',
+            message: t('errors.environmentUnregistered'),
         };
     }),
 );
@@ -97,7 +101,8 @@ app.patch(
         logger.info({ environmentId, name: config.name }, 'Updating environment configuration');
 
         if (environmentId !== config.id) {
-            const error: any = new Error('Environment ID mismatch');
+            const t = getTranslations(c, 'docker');
+            const error: any = new Error(t('errors.environmentIdMismatch'));
             error.status = 400;
             throw error;
         }
@@ -111,9 +116,10 @@ app.patch(
 
         logger.info({ environmentId }, 'Environment updated successfully');
 
+        const t = getTranslations(c, 'docker');
         return {
             success: true,
-            message: 'Environment updated successfully',
+            message: t('errors.environmentUpdated'),
             environmentId,
         };
     }),

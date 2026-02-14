@@ -16,6 +16,9 @@
         "updating": "Mise à jour...",
         "profileUpdated": "Nom d'utilisateur mis à jour avec succès"
     },
+    "errors": {
+        "failedToCreateApiKey": "Échec de la création de la clé API"
+    },
     "securitySettings": {
         "title": "Paramètres de sécurité",
         "description": "Gérez la sécurité de votre compte et vos préférences d'authentification",

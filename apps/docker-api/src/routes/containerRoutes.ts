@@ -6,6 +6,7 @@ import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import { ContainerCreateForm } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { ContainerCreateOptions } from 'dockerode';
 import { logger } from '@/utils/logger';
+import { getTranslations } from '@/middleware/locale.middleware';
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 import { PortType } from '@workspace/typescript-interface/docker/docker.port';
 
@@ -315,7 +316,8 @@ app.get(
             return await container.inspect();
         } catch (error: any) {
             if (error.statusCode === 404) {
-                const err = new Error(`Container '${id}' not found`);
+                const t = getTranslations(c, 'docker');
+                const err = new Error(t('errors.containerNotFound', { id }));
                 (err as any).status = 404;
                 throw err;
             }
@@ -345,7 +347,8 @@ app.get(
         const container = containersStateManager.getContainer(id);
 
         if (!container) {
-            throw new Error('Container not found');
+            const t = getTranslations(c, 'docker');
+            throw new Error(t('errors.containerNotFound', { id }));
         }
 
         return {

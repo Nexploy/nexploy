@@ -113,5 +113,12 @@
     "buildWorkersDescription": "Number of concurrent builds allowed (1-10). Changes take effect after server restart.",
     "buildWorkersUpdated": "Build workers updated successfully",
     "buildWorkersUpdateFailed": "Failed to update build workers",
-    "save": "Save"
+    "save": "Save",
+    "errors": {
+        "adminOnly": "Only admins can perform this action",
+        "cannotChangeOwnRole": "You cannot change your own role",
+        "cannotDeleteOwnAccount": "You cannot delete your own account",
+        "userAlreadyExists": "A user with this email already exists",
+        "invitationAlreadyExists": "An active invitation for this email already exists"
+    }
 }

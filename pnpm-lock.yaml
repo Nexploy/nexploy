@@ -416,7 +416,11 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
 
-  apps/docker-api: {}
+  apps/docker-api:
+    dependencies:
+      '@workspace/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
 
   apps/nexploy: {}
 

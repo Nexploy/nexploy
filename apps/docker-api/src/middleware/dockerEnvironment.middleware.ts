@@ -4,6 +4,7 @@ import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { runWithDockerContext } from '@/lib/dockerContext';
 import { loadEnvironmentByIdFromAPI } from '@/lib/loadEnvironments';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
+import { getTranslations } from '@/middleware/locale.middleware';
 
 export async function dockerEnvironmentMiddleware(c: Context, next: Next) {
     if (c.req.path.startsWith('/api/environments')) {
@@ -21,7 +22,8 @@ export async function dockerEnvironmentMiddleware(c: Context, next: Next) {
             });
         } else {
             logger.error('No Docker environment configured');
-            return c.json({ error: 'No Docker environment configured' }, 500);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.noDockerEnvironment') }, 500);
         }
     }
 
@@ -42,9 +44,10 @@ export async function dockerEnvironmentMiddleware(c: Context, next: Next) {
 
             if (!environmentConfig) {
                 logger.warn({ environmentId }, 'Environment not found in database');
+                const t = getTranslations(c, 'docker');
                 return c.json(
                     {
-                        error: `Environment not found: ${environmentId}`,
+                        error: t('errors.environmentNotFound', { id: environmentId }),
                         code: 'ENVIRONMENT_NOT_FOUND',
                         environmentId,
                     },
@@ -74,9 +77,10 @@ export async function dockerEnvironmentMiddleware(c: Context, next: Next) {
                 { err: registerErr, environmentId },
                 'Failed to register environment on-demand',
             );
+            const t = getTranslations(c, 'docker');
             return c.json(
                 {
-                    error: `Environment unavailable: ${environmentId}. ${registerErr.message}`,
+                    error: t('errors.environmentUnavailable', { id: environmentId, message: registerErr.message }),
                     code: 'ENVIRONMENT_UNAVAILABLE',
                     environmentId,
                 },

@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { swarmStateManager } from '@/managers/swarmStateManager';
+import { getTranslations } from '@/middleware/locale.middleware';
 
 const app = new Hono();
 
@@ -19,7 +20,8 @@ app.get(
         const service = swarmStateManager.getService(serviceId);
 
         if (!service) {
-            return c.json({ error: 'Service not found' }, 404);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.serviceNotFound') }, 404);
         }
 
         const tasks = swarmStateManager.getTasksByService(serviceId);
@@ -49,7 +51,8 @@ app.post(
         } = await c.req.json();
 
         if (!name || !image) {
-            return c.json({ error: 'Name and image are required' }, 400);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.nameAndImageRequired') }, 400);
         }
 
         const portConfigs = ports.map((p: any) => ({
@@ -236,14 +239,16 @@ app.post(
         const { replicas } = await c.req.json();
 
         if (typeof replicas !== 'number' || replicas < 0) {
-            return c.json({ error: 'Invalid replicas count' }, 400);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.invalidReplicasCount') }, 400);
         }
 
         const service = docker.getService(serviceId);
         const serviceInfo = await service.inspect();
 
         if (!serviceInfo.Spec.Mode.Replicated) {
-            return c.json({ error: 'Cannot scale a global service' }, 400);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.cannotScaleGlobalService') }, 400);
         }
 
         await service.update({
@@ -270,7 +275,8 @@ app.post(
         const serviceInfo = await service.inspect();
 
         if (!serviceInfo.PreviousSpec) {
-            return c.json({ error: 'No previous version to rollback to' }, 400);
+            const t = getTranslations(c, 'docker');
+            return c.json({ error: t('errors.noPreviousVersion') }, 400);
         }
 
         await service.update({

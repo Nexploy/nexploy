@@ -5,6 +5,7 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
 import { networkCreateSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';
 import { HTTPError } from 'ky';
+import { getTranslations } from 'next-intl/server';
 
 export const onNetworkCreateAction = authActionServer
     .inputSchema(networkCreateSchema)
@@ -12,9 +13,10 @@ export const onNetworkCreateAction = authActionServer
         try {
             const response = await kyDocker.post('networks/create', { json: parsedInput }).json();
 
+            const t = await getTranslations('docker');
             await setToastServer({
                 type: 'success',
-                message: `Network ${parsedInput.name} créé avec succès`,
+                message: t('networkCreatedSuccess'),
             });
 
             return response;

@@ -5,6 +5,7 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
 import { volumeCreateSchema } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { getTranslations } from 'next-intl/server';
 
 export const onVolumeCreateAction = authActionServer
     .inputSchema(volumeCreateSchema)
@@ -12,9 +13,10 @@ export const onVolumeCreateAction = authActionServer
         try {
             const response = await kyDocker.post('volumes/create', { json: parsedInput }).json();
 
+            const t = await getTranslations('docker');
             await setToastServer({
                 type: 'success',
-                message: `Volume ${parsedInput.name} créé avec succès`,
+                message: t('volumeCreatedSuccess'),
             });
 
             return response;
