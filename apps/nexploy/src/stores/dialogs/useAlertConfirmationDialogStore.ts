@@ -5,8 +5,10 @@ import { AlertDialogContentProps } from '@radix-ui/react-alert-dialog';
 export interface AlertConfirmationDialogState {
     isOpen: boolean;
     title?: string;
+    asTitleDesc?: boolean;
     props?: AlertDialogContentProps;
     description?: ReactElement | string;
+    asChildDesc?: boolean;
     cancelLabel?: string | null;
     actionLabel?: string | null;
     isPending: boolean;
@@ -27,7 +29,9 @@ export type AlertConfirmationDialogStore = AlertConfirmationDialogState &
 const defaultAlertState: AlertConfirmationDialogState = {
     isOpen: false,
     title: undefined,
+    asTitleDesc: false,
     description: undefined,
+    asChildDesc: false,
     props: undefined,
     cancelLabel: null,
     actionLabel: null,

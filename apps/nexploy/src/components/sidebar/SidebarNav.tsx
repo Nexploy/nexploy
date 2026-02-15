@@ -2,6 +2,7 @@
 
 import {
     Activity,
+    Bot,
     Box,
     Bug,
     ChevronRight,
@@ -9,6 +10,7 @@ import {
     Database,
     EthernetPort,
     Folder,
+    Hammer,
     HardDrive,
     LayoutList,
     Network,
@@ -34,11 +36,8 @@ import {
 import Link from 'next/link';
 import { RefreshDocker } from '@/components/sidebar/RefreshDocker';
 import { usePermissions } from '@/contexts/PermissionContext';
-import type {
-    SidebarNavGroup,
-    SidebarNavProps,
-    SidebarNavTranslations,
-} from '@workspace/typescript-interface/sidebar/sidebarNav';
+import type { SidebarNavGroup } from '@workspace/typescript-interface/sidebar/sidebarNav';
+import { useTranslations } from 'next-intl';
 
 const groups: SidebarNavGroup[] = [
     {
@@ -77,12 +76,14 @@ const groups: SidebarNavGroup[] = [
         children: [
             { titleKey: 'users', href: '/admin/users', icon: Users },
             { titleKey: 'backups', href: '/admin/backups', icon: Database },
+            { titleKey: 'ai', href: '/admin/ai', icon: Bot },
+            { titleKey: 'tools', href: '/admin/tools', icon: Hammer },
         ],
     },
 ];
 
-export function SidebarNav({ translations }: SidebarNavProps) {
-    const t = (key: keyof SidebarNavTranslations) => translations[key];
+export function SidebarNav() {
+    const t = useTranslations('navigation');
     const { isAdmin } = usePermissions();
 
     const filteredGroups = groups.filter((group) => {

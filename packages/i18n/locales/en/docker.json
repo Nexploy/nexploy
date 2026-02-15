@@ -871,7 +871,7 @@
         "dockerConnecting": "Connecting...",
         "dockerReconnecting": "Docker daemon is reconnecting...",
         "forceDelete": "Force delete",
-        "forceDeleteDescription": "Disconnect containers and ignore protection.",
+        "forceDeleteDescription": "Force deletion by disconnecting containers.",
         "networkSkipBuiltin": "Network \"{name}\" is a system network and cannot be deleted.",
         "networkSkipCompose": "Network \"{name}\" belongs to a Docker Compose stack and cannot be deleted.",
         "networkSkipContainers": "Network \"{name}\" has connected containers and cannot be deleted.",

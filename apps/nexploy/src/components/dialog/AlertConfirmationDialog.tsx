@@ -15,7 +15,9 @@ export function AlertConfirmationDialog() {
     const {
         isOpen,
         title,
+        asTitleDesc,
         description,
+        asChildDesc,
         cancelLabel,
         actionLabel,
         isPending,
@@ -30,8 +32,10 @@ export function AlertConfirmationDialog() {
         <AlertDialog open={isOpen} onOpenChange={closeAlertDialog}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>{title}</AlertDialogTitle>
-                    <AlertDialogDescription>{description}</AlertDialogDescription>
+                    <AlertDialogTitle asChild={asTitleDesc}>{title}</AlertDialogTitle>
+                    <AlertDialogDescription asChild={asChildDesc}>
+                        {description}
+                    </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     {!disableCancelButton && (

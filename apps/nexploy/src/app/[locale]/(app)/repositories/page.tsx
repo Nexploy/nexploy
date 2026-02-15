@@ -75,7 +75,7 @@ export default async function RepositoriesPage() {
                                 </EmptyHeader>
                             </Empty>
                         ) : (
-                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
                                 {repositories.map((repository) => {
                                     const lastDeployment = repository.build?.[0];
                                     const Icon = getGitIcon(repository.gitProvider);

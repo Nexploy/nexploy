@@ -155,7 +155,7 @@ export function BuildLogsViewer({
                     ref={logsContainerRef}
                     className="bg-muted/30 flex h-full font-mono text-sm"
                 >
-                    <div className="space-y-0.5 py-1 pr-2 pl-0">
+                    <div className="space-y-0.5 pt-1 pr-2 pl-0">
                         {logs.map((log, index) => (
                             <div
                                 key={index}

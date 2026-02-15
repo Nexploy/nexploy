@@ -37,22 +37,16 @@ export function CardInfoImages() {
             title: t('totalImages'),
             icon: LayoutList,
             content: totalImages,
-            description: t('unusedImages', { count: totalImages - activeImagesCount }),
         },
         {
             title: t('spaceUsed'),
             icon: HardDrive,
             content: formatBytes(totalSizeImages),
-            description: t('percentUsed', {
-                percent: percentUsed.toFixed(1),
-                total: formatBytes(totalDiskCapacity),
-            }),
         },
         {
             title: t('activeImages'),
             icon: Tag,
             content: activeImagesCount,
-            description: t('usedByContainers', { count: activeImagesCount }),
         },
         {
             title: t('lastImage'),

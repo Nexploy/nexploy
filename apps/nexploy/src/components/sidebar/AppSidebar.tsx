@@ -9,32 +9,12 @@ import { AccountMenu } from '@/components/sidebar/AccountMenu';
 import { NexployLogo } from '@/components/sidebar/NexployLogo';
 import { Environment } from '@/components/sidebar/environment/Environment';
 import { SidebarNav } from '@/components/sidebar/SidebarNav';
-import { getTranslations } from 'next-intl/server';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset';
 }
 
 export async function AppSidebar({ variant }: AppSidebarProps) {
-    const t = await getTranslations('navigation');
-
-    const translations = {
-        home: t('home'),
-        repositories: t('repositories'),
-        monitoring: t('monitoring'),
-        docker: t('docker'),
-        containers: t('containers'),
-        images: t('images'),
-        volumes: t('volumes'),
-        networks: t('networks'),
-        events: t('events'),
-        swarm: t('swarm'),
-        requests: t('requests'),
-        admin: t('admin'),
-        users: t('users'),
-        backups: t('backups'),
-    };
-
     return (
         <Sidebar
             className="z-50 whitespace-nowrap transition-all duration-300 ease-in-out"
@@ -60,7 +40,7 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
                 <Environment />
             </SidebarHeader>
             <SidebarContent>
-                <SidebarNav translations={translations} />
+                <SidebarNav />
             </SidebarContent>
             <SidebarFooter>
                 <AccountMenu />

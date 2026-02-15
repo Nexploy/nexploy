@@ -15,10 +15,8 @@ export interface SidebarNavTranslations {
     admin: string;
     users: string;
     backups: string;
-}
-
-export interface SidebarNavProps {
-    translations: SidebarNavTranslations;
+    ai: string;
+    tools: string;
 }
 
 export interface SidebarNavGroup {

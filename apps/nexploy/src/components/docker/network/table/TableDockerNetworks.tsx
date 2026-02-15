@@ -102,26 +102,26 @@ export function TableDockerNetworks() {
         forceRef.current = false;
         openAlertDialog({
             title: tDocker('deleteNetwork'),
+            asChildDesc: true,
             description: (
                 <div className={'space-y-4'}>
                     <p>{tDocker('confirmDeleteNetwork')}</p>
                     <label
                         htmlFor={'force-delete'}
                         className={
-                            'bg-muted/50 flex cursor-pointer items-center justify-between rounded-lg border p-3'
+                            'bg-muted/50 border-destructive flex cursor-pointer items-center justify-between rounded-lg border p-3'
                         }
                     >
                         <div className={'space-y-0.5'}>
-                            <p className={'text-sm font-medium'}>{tDocker('errors.forceDelete')}</p>
-                            <p className={'text-muted-foreground text-xs'}>
-                                {tDocker('errors.forceDeleteDescription')}
+                            <p className={'text-destructive text-sm font-medium'}>
+                                {tDocker('errors.forceDelete')}
                             </p>
+                            <p className={'text-xs'}>{tDocker('errors.forceDeleteDescription')}</p>
                         </div>
                         <Switch
                             id={'force-delete'}
-                            onCheckedChange={(checked) => {
-                                forceRef.current = checked;
-                            }}
+                            className={'data-[state=checked]:!bg-destructive'}
+                            onCheckedChange={(checked) => (forceRef.current = checked)}
                         />
                     </label>
                 </div>
