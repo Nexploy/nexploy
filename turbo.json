@@ -1,18 +1,32 @@
 {
     "$schema": "https://v2-8-3.turborepo.dev/schema.json",
     "ui": "tui",
+    "globalEnv": [
+        "NODE_ENV",
+        "DATABASE_URL",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "DOCKER_API_URL",
+        "ENCRYPTION_KEY",
+        "DEPLOYER_WORK_DIR",
+        "INNGEST_EVENT_KEY",
+        "INNGEST_SIGNING_KEY",
+        "NEXPLOY_API_KEY",
+        "NEXPLOY_API_URL",
+        "DOCKER_SOCKET",
+        "LOG_LEVEL",
+        "PORT",
+        "AI_KEY",
+        "GITHUB_CLIENT_ID",
+        "GITHUB_CLIENT_SECRET",
+        "GITLAB_CLIENT_ID",
+        "GITLAB_CLIENT_SECRET"
+    ],
     "tasks": {
         "build": {
             "dependsOn": ["^build"],
             "inputs": ["$TURBO_DEFAULT$", ".env*"],
-            "outputs": [".next/**", "!.next/cache/**", "dist/**"],
-            "env": [
-                "GITHUB_CLIENT_ID",
-                "GITHUB_CLIENT_SECRET",
-                "GITLAB_CLIENT_ID",
-                "GITLAB_CLIENT_SECRET",
-                "SSE_SERVER_URL"
-            ]
+            "outputs": [".next/**", "!.next/cache/**", "dist/**"]
         },
         "lint": {
             "dependsOn": ["^lint"]

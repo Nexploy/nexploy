@@ -20,7 +20,7 @@ const app = next({
 const handle = app.getRequestHandler();
 
 const proxyOptions: Options = {
-    target: 'http://localhost:3300',
+    target: process.env.DOCKER_API_URL || 'http://localhost:3300',
     changeOrigin: true,
     ws: true,
     on: {

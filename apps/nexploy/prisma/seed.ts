@@ -36,8 +36,8 @@ async function seedDockerApiKey() {
     });
 
     if (existingKey) {
-        console.log('Docker API key already exists');
-        return;
+        await prisma.apikey.delete({ where: { id: existingKey.id } });
+        console.log('Deleted existing Docker API key (will recreate)');
     }
 
     let systemUser = await prisma.user.findUnique({
@@ -74,8 +74,6 @@ async function seedDockerApiKey() {
     console.log('='.repeat(60));
     console.log('Docker API Key created successfully!');
     console.log('='.repeat(60));
-    console.log('');
-    console.log('Add this to your docker-api .env file:');
     console.log('');
     console.log(`NEXPLOY_API_KEY=${apiKey.key}`);
     console.log('');

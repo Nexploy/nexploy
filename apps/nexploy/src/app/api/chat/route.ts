@@ -1,11 +1,11 @@
 import { openai } from '@ai-sdk/openai';
-import { streamText, tool } from 'ai';
-import { drinoDocker } from '@/lib/api/drinoDocker';
+import { streamText } from 'ai';
 import { getUserSession } from '@/services/auth/auth.service';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { networkCreateSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';
 import { volumeCreateSchema } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 import { imagePullSchema } from '@workspace/schemas-zod/docker/image/imagePullAction.schema';
+import { kyDocker } from '@/lib/api/kyDocker';
 
 export const maxDuration = 60;
 
@@ -32,14 +32,14 @@ export async function POST(req: Request) {
     - You can support commands like "Create a postgres container with env test=test".
     `,
         tools: {
-            createContainer: tool({
+            createContainer: {
                 description: 'Create a new Docker container',
-                parameters: containerCreateFormSchema,
+                inputSchema: containerCreateFormSchema,
                 execute: async (params) => {
                     try {
-                        const response = await drinoDocker
-                            .post<{ id: string }>(`/container/create`, params)
-                            .consume();
+                        const response = await kyDocker
+                            .post('container/create', { json: params })
+                            .json<{ id: string }>();
                         return {
                             success: true,
                             data: response,
@@ -52,13 +52,13 @@ export async function POST(req: Request) {
                         };
                     }
                 },
-            }),
-            createNetwork: tool({
+            },
+            createNetwork: {
                 description: 'Create a Docker network',
-                parameters: networkCreateSchema,
+                inputSchema: networkCreateSchema,
                 execute: async (params) => {
                     try {
-                        await drinoDocker.post('/networks/create', params).consume();
+                        await kyDocker.post('networks/create', { json: params }).json();
                         return { success: true, message: `Network ${params.name} created` };
                     } catch (error: any) {
                         return {
@@ -67,13 +67,13 @@ export async function POST(req: Request) {
                         };
                     }
                 },
-            }),
-            createVolume: tool({
+            },
+            createVolume: {
                 description: 'Create a Docker volume',
-                parameters: volumeCreateSchema,
+                inputSchema: volumeCreateSchema,
                 execute: async (params) => {
                     try {
-                        await drinoDocker.post('/volumes/create', params).consume();
+                        await kyDocker.post('volumes/create', { json: params }).json();
                         return { success: true, message: `Volume ${params.name} created` };
                     } catch (error: any) {
                         return {
@@ -82,13 +82,13 @@ export async function POST(req: Request) {
                         };
                     }
                 },
-            }),
-            pullImage: tool({
+            },
+            pullImage: {
                 description: 'Pull a Docker image from a registry',
-                parameters: imagePullSchema,
+                inputSchema: imagePullSchema,
                 execute: async (params) => {
                     try {
-                        await drinoDocker.post('/images/pull', params).consume();
+                        await kyDocker.post('images/pull', { json: params }).json();
                         return {
                             success: true,
                             message: `Started pulling image ${params.imageName}. This may take a while.`,
@@ -100,9 +100,9 @@ export async function POST(req: Request) {
                         };
                     }
                 },
-            }),
+            },
         },
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
 }
