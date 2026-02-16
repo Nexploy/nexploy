@@ -13,12 +13,14 @@ export default async function DockerLayout({
     children: ReactNode;
 }>) {
     const cookieStore = await cookies();
+
+    const hasCookieSidebar = cookieStore.has('sidebar_state');
     const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true';
     const session = await getUserSession();
 
     return (
         <PermissionProvider role={session?.user.role}>
-            <SidebarProvider defaultOpen={defaultOpen}>
+            <SidebarProvider defaultOpen={hasCookieSidebar ? defaultOpen : true}>
                 <AppSidebar variant={'inset'} />
                 <div className={'flex h-screen w-full flex-col'}>
                     <Header />

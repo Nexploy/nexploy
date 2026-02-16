@@ -6,9 +6,9 @@ import {
     GitRepository,
 } from '@workspace/typescript-interface/git/git';
 import { getValidToken } from '@/services/api/gitProvider.service';
-import { kyGithub } from '@/lib/api/drinoGithub';
+import { kyGithub } from '@/lib/api/kyGithub';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
-import { kyGitlab } from '@/lib/api/drinoGitlab';
+import { kyGitlab } from '@/lib/api/kyGitlab';
 import { GithubRepo } from '@workspace/typescript-interface/git/repository/github.repository';
 import { GitlabRepo } from '@workspace/typescript-interface/git/repository/gitlab.repository';
 import { GitlabBranch } from '@workspace/typescript-interface/git/branch/gitlab.branch';

@@ -36,8 +36,8 @@ async function seedDockerApiKey() {
     });
 
     if (existingKey) {
-        await prisma.apikey.delete({ where: { id: existingKey.id } });
-        console.log('Deleted existing Docker API key (will recreate)');
+        console.log('Docker API key already exists');
+        return;
     }
 
     let systemUser = await prisma.user.findUnique({

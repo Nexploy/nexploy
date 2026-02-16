@@ -16,11 +16,7 @@
         "DOCKER_SOCKET",
         "LOG_LEVEL",
         "PORT",
-        "AI_KEY",
-        "GITHUB_CLIENT_ID",
-        "GITHUB_CLIENT_SECRET",
-        "GITLAB_CLIENT_ID",
-        "GITLAB_CLIENT_SECRET"
+        "AI_KEY"
     ],
     "tasks": {
         "build": {

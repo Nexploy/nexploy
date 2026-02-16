@@ -16,18 +16,6 @@ export const auth = betterAuth({
             trustedProviders: ['github', 'gitlab'],
         },
     },
-    socialProviders: {
-        github: {
-            clientId: process.env.GITHUB_CLIENT_ID as string,
-            clientSecret: process.env.GITHUB_CLIENT_SECRET,
-            scope: ['user:email', 'read:user', 'repo'],
-        },
-        gitlab: {
-            clientId: process.env.GITLAB_CLIENT_ID as string,
-            clientSecret: process.env.GITLAB_CLIENT_SECRET,
-            scope: ['read_user', 'read_repository', 'api'],
-        },
-    },
     emailAndPassword: {
         enabled: true,
     },

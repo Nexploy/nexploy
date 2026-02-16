@@ -61,7 +61,7 @@ export function IntegrationCard({
     };
 
     return (
-        <div className="bg-muted/40 flex items-center justify-between rounded-lg border p-4">
+        <div className="flex items-center justify-between rounded-lg border p-4">
             <div className="flex items-center gap-3">
                 <div className="bg-muted flex size-10 items-center justify-center rounded-lg">
                     {icon}
@@ -74,7 +74,9 @@ export function IntegrationCard({
                         >
                             <StatusIndicator />
                             <StatusLabel>
-                                {tStatus(statusMap[isConnected ? 'connected' : 'disconnected'].labelKey)}
+                                {tStatus(
+                                    statusMap[isConnected ? 'connected' : 'disconnected'].labelKey,
+                                )}
                             </StatusLabel>
                         </Status>
                     </div>

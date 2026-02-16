@@ -10,7 +10,7 @@ BOLD='\033[1m'
 NC='\033[0m'
 
 ENV_FILE=".env.production"
-COMPOSE_FILE="infra/docker/docker-compose.prod.yml"
+COMPOSE_FILE="infra/docker/docker-compose.pre-prod.yml"
 
 echo ""
 echo -e "${BOLD}${CYAN}╔══════════════════════════════════════════╗${NC}"
@@ -72,18 +72,6 @@ if [ "$SKIP_ENV" != "true" ]; then
         exit 1
     fi
 
-    echo ""
-    echo -e "${BOLD}GitHub OAuth (optional - press Enter to skip)${NC}"
-    read -p "  GitHub Client ID: " GITHUB_CLIENT_ID
-    read -p "  GitHub Client Secret: " GITHUB_CLIENT_SECRET
-
-    echo ""
-    echo -e "${BOLD}GitLab OAuth (optional - press Enter to skip)${NC}"
-    read -p "  GitLab Client ID: " GITLAB_CLIENT_ID
-    read -p "  GitLab Client Secret: " GITLAB_CLIENT_SECRET
-
-    echo ""
-
     # ---- Write .env ----
     cat > "$ENV_FILE" <<EOF
 # =============================================================================
@@ -102,14 +90,6 @@ BETTER_AUTH_URL=https://${DOMAIN}
 
 # ---- Encryption ----
 ENCRYPTION_KEY=${ENCRYPTION_KEY}
-
-# ---- GitHub OAuth ----
-GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
-GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
-
-# ---- GitLab OAuth ----
-GITLAB_CLIENT_ID=${GITLAB_CLIENT_ID}
-GITLAB_CLIENT_SECRET=${GITLAB_CLIENT_SECRET}
 
 # ---- Docker API ----
 LOG_LEVEL=info

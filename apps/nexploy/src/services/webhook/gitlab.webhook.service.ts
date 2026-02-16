@@ -1,4 +1,4 @@
-import { kyGitlab } from '@/lib/api/drinoGitlab';
+import { kyGitlab } from '@/lib/api/kyGitlab';
 import { WebhookPayload } from '@workspace/typescript-interface/webhook';
 
 export function extractGitLabProjectId(repositoryUrl: string): string {

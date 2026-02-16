@@ -17,6 +17,7 @@ export interface SidebarNavTranslations {
     backups: string;
     ai: string;
     tools: string;
+    integrations: string;
 }
 
 export interface SidebarNavGroup {

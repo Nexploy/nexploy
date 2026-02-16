@@ -1,0 +1,162 @@
+import { prisma } from '../../prisma/prisma';
+import { encrypt, decrypt } from '@/lib/encryption';
+
+export interface GitProviderInfo {
+    id: string;
+    displayName: string;
+    isConfigured: boolean;
+    appName?: string;
+    maskedClientId?: string;
+}
+
+export interface GitProviderCredentials {
+    clientId: string;
+    clientSecret: string;
+    privateKey?: string;
+    appId?: string;
+}
+
+export async function getGitProvidersByType(provider: string): Promise<GitProviderInfo[]> {
+    const records = await prisma.gitProvider.findMany({
+        where: { provider, enabled: true },
+        select: { id: true, displayName: true, clientId: true, appName: true, enabled: true },
+        orderBy: { createdAt: 'asc' },
+    });
+
+    return records
+        .filter((r) => r.clientId)
+        .map((record) => {
+            const decryptedClientId = decrypt(record.clientId!);
+            const masked =
+                decryptedClientId.length > 8
+                    ? decryptedClientId.slice(0, 4) + '...' + decryptedClientId.slice(-4)
+                    : '****';
+
+            return {
+                id: record.id,
+                displayName: record.displayName,
+                isConfigured: true,
+                appName: record.appName ?? undefined,
+                maskedClientId: masked,
+            };
+        });
+}
+
+export async function getGitProviderInfo(id: string): Promise<GitProviderInfo | null> {
+    const record = await prisma.gitProvider.findUnique({
+        where: { id },
+        select: { id: true, displayName: true, clientId: true, appName: true, enabled: true },
+    });
+
+    if (!record || !record.enabled || !record.clientId) {
+        return null;
+    }
+
+    const decryptedClientId = decrypt(record.clientId);
+    const masked =
+        decryptedClientId.length > 8
+            ? decryptedClientId.slice(0, 4) + '...' + decryptedClientId.slice(-4)
+            : '****';
+
+    return {
+        id: record.id,
+        displayName: record.displayName,
+        isConfigured: true,
+        appName: record.appName ?? undefined,
+        maskedClientId: masked,
+    };
+}
+
+export async function getAllGitProviders(): Promise<{
+    github: GitProviderInfo[];
+    gitlab: GitProviderInfo[];
+}> {
+    const [github, gitlab] = await Promise.all([
+        getGitProvidersByType('github'),
+        getGitProvidersByType('gitlab'),
+    ]);
+    return { github, gitlab };
+}
+
+export async function getGitProviderCredentials(
+    provider: string,
+): Promise<GitProviderCredentials | null> {
+    const record = await prisma.gitProvider.findFirst({
+        where: { provider, enabled: true },
+        orderBy: { createdAt: 'asc' },
+    });
+
+    if (!record || !record.clientId || !record.clientSecret) {
+        return null;
+    }
+
+    return {
+        clientId: decrypt(record.clientId),
+        clientSecret: decrypt(record.clientSecret),
+        privateKey: record.privateKey ? decrypt(record.privateKey) : undefined,
+        appId: record.appId ?? undefined,
+    };
+}
+
+export async function getGitProviderCredentialsById(
+    id: string,
+): Promise<GitProviderCredentials | null> {
+    const record = await prisma.gitProvider.findUnique({
+        where: { id, enabled: true },
+    });
+
+    if (!record || !record.clientId || !record.clientSecret) {
+        return null;
+    }
+
+    return {
+        clientId: decrypt(record.clientId),
+        clientSecret: decrypt(record.clientSecret),
+        privateKey: record.privateKey ? decrypt(record.privateKey) : undefined,
+        appId: record.appId ?? undefined,
+    };
+}
+
+export async function saveGitHubApp(data: {
+    displayName: string;
+    appId: string;
+    appName: string;
+    clientId: string;
+    clientSecret: string;
+    webhookSecret: string;
+    privateKey: string;
+}): Promise<void> {
+    await prisma.gitProvider.create({
+        data: {
+            provider: 'github',
+            displayName: data.displayName,
+            appId: data.appId,
+            appName: data.appName,
+            clientId: encrypt(data.clientId),
+            clientSecret: encrypt(data.clientSecret),
+            webhookSecret: encrypt(data.webhookSecret),
+            privateKey: encrypt(data.privateKey),
+        },
+    });
+}
+
+export async function saveGitLabProvider(
+    displayName: string,
+    clientId: string,
+    clientSecret: string,
+): Promise<void> {
+    await prisma.gitProvider.create({
+        data: {
+            provider: 'gitlab',
+            displayName,
+            clientId: encrypt(clientId),
+            clientSecret: encrypt(clientSecret),
+        },
+    });
+}
+
+export async function deleteGitProvider(id: string): Promise<void> {
+    await prisma.gitProvider.delete({
+        where: { id },
+    });
+}

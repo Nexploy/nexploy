@@ -1,0 +1,16 @@
+model GitProvider {
+  id            String   @id @default(cuid())
+  provider      String // "github" | "gitlab"
+  displayName   String // e.g. "My Org GitHub", "Work GitLab"
+  appId         String? // GitHub App ID
+  appName       String? // GitHub App slug/name
+  clientId      String? // Encrypted - OAuth Client ID
+  clientSecret  String? // Encrypted - OAuth Client Secret
+  webhookSecret String? // Encrypted - Webhook secret
+  privateKey    String? // Encrypted - PEM private key (GitHub App)
+  enabled       Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("git_provider")
+}

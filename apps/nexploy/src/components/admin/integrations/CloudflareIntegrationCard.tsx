@@ -9,8 +9,8 @@ import { statusMap } from '@/utils/statusMap';
 import { disconnectCloudflareAction } from '@/actions/cloudflare/disconnect.action';
 import { toast } from 'sonner';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { CloudflareConnectForm } from '@/components/cloudflare/CloudflareConnectForm';
 import { useTranslations } from 'next-intl';
+import { CloudflareConnectForm } from '@/components/admin/integrations/CloudflareConnectForm';
 
 interface CloudflareIntegrationCardProps {
     isConnected: boolean;
@@ -71,9 +71,7 @@ export function CloudflareIntegrationCard({ isConnected }: CloudflareIntegration
                             </StatusLabel>
                         </Status>
                     </div>
-                    <p className="text-muted-foreground text-sm">
-                        {t('cloudflare.description')}
-                    </p>
+                    <p className="text-muted-foreground text-sm">{t('cloudflare.description')}</p>
                 </div>
             </div>
 
