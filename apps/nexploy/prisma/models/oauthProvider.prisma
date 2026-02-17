@@ -4,6 +4,8 @@ model GitProvider {
   displayName   String
   appId         String?
   appName       String?
+  ownerName     String?
+  ownerType     OwnerType?
   clientId      String?
   clientSecret  String?
   webhookSecret String?
@@ -34,4 +36,9 @@ model GitAccount {
   @@unique([userId, gitProviderId])
   @@index([userId, provider])
   @@map("git_account")
+}
+
+enum OwnerType {
+  USER
+  ORGANIZATION
 }

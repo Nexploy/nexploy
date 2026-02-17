@@ -1,26 +1,20 @@
 import { NextResponse } from 'next/server';
-import { getUserSession } from '@/services/auth/auth.service';
 import { generateOAuthState } from '@/lib/oauth-state';
 import { prisma } from '@/../prisma/prisma';
 import { decrypt } from '@/lib/encryption';
 import { getBaseUrl } from '@/lib/getBaseUrl';
+import { route, authRouteServer } from '@/lib/api/nextRoute';
 
-export async function GET(request: Request) {
-    const session = await getUserSession();
-    if (!session) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
+export const GET = route.use(authRouteServer).handler(async (request, { ctx }: any) => {
     const { searchParams } = new URL(request.url);
-    const provider = searchParams.get('provider');
+    const gitProviderId = searchParams.get('gitProviderId');
 
-    if (!provider || !['github', 'gitlab'].includes(provider)) {
-        return NextResponse.json({ error: 'Invalid provider' }, { status: 400 });
+    if (!gitProviderId) {
+        return NextResponse.json({ error: 'Missing gitProviderId' }, { status: 400 });
     }
 
-    const gitProvider = await prisma.gitProvider.findFirst({
-        where: { provider, enabled: true },
-        orderBy: { createdAt: 'asc' },
+    const gitProvider = await prisma.gitProvider.findUnique({
+        where: { id: gitProviderId, enabled: true },
     });
 
     if (!gitProvider || !gitProvider.clientId || !gitProvider.clientSecret) {
@@ -29,8 +23,8 @@ export async function GET(request: Request) {
 
     const clientId = decrypt(gitProvider.clientId);
     const state = generateOAuthState({
-        userId: session.user.id,
-        provider,
+        userId: ctx.session.user.id,
+        provider: gitProvider.provider,
         gitProviderId: gitProvider.id,
     });
 
@@ -39,7 +33,7 @@ export async function GET(request: Request) {
 
     let authUrl: string;
 
-    if (provider === 'github') {
+    if (gitProvider.provider === 'github') {
         const params = new URLSearchParams({ state });
         authUrl = `https://github.com/apps/${gitProvider.appName}/installations/new?${params.toString()}`;
     } else {
@@ -54,4 +48,4 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.redirect(authUrl);
-}
+});

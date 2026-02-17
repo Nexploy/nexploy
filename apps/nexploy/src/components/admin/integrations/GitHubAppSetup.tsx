@@ -3,7 +3,6 @@
 import { useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Github } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
@@ -18,19 +17,10 @@ import {
 } from '@workspace/ui/components/form';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
-
-const githubSetupSchema = z
-    .object({
-        displayName: z.string({ error: 'Display name is required' }),
-        forOrg: z.boolean(),
-        orgName: z.string(),
-    })
-    .refine((data) => !data.forOrg || data.orgName.length > 0, {
-        path: ['orgName'],
-        message: 'Organization name is required',
-    });
-
-type GitHubSetupValues = z.infer<typeof githubSetupSchema>;
+import {
+    githubSetupSchema,
+    type GitHubSetupValues,
+} from '@workspace/schemas-zod/git/githubSetup.schema';
 
 function buildManifest(appUrl: string) {
     return {
@@ -53,7 +43,7 @@ function buildManifest(appUrl: string) {
 }
 
 export function GitHubAppSetup() {
-    const hiddenFormRef = useRef<HTMLFormElement>(null);
+    const manifestFormRef = useRef<HTMLFormElement>(null);
     const { closeDialog } = useConfirmationDialogStore();
     const t = useTranslations('integrations.oauth.guide.github');
     const tOAuth = useTranslations('integrations.oauth');
@@ -63,6 +53,7 @@ export function GitHubAppSetup() {
     const form = useForm<GitHubSetupValues>({
         resolver: zodResolver(githubSetupSchema),
         defaultValues: {
+            displayName: '',
             forOrg: false,
             orgName: '',
         },
@@ -85,14 +76,13 @@ export function GitHubAppSetup() {
 
     const handleCreate = () => {
         document.cookie = `github_app_display_name=${encodeURIComponent(effectiveDisplayName)}; path=/; max-age=600; SameSite=Lax`;
-        hiddenFormRef.current?.setAttribute('action', target);
-        hiddenFormRef.current?.submit();
+        manifestFormRef.current?.submit();
         closeDialog();
     };
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleCreate)} className="space-y-4">
+            <div className="space-y-4">
                 <FormField
                     control={form.control}
                     name="displayName"
@@ -141,16 +131,19 @@ export function GitHubAppSetup() {
                     />
                 )}
 
-                <form ref={hiddenFormRef} action={target} method="post" className="hidden">
+                <form ref={manifestFormRef} action={target} method="post">
                     <input type="hidden" name="manifest" value={manifestJson} />
+                    <div className="flex justify-end">
+                        <Button
+                            type="button"
+                            icon={Github}
+                            onClick={form.handleSubmit(handleCreate)}
+                        >
+                            {t('createApp')}
+                        </Button>
+                    </div>
                 </form>
-
-                <div className="flex justify-end">
-                    <Button type="submit" icon={Github}>
-                        {t('createApp')}
-                    </Button>
-                </div>
-            </form>
+            </div>
         </Form>
     );
 }

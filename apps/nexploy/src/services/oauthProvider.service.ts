@@ -6,6 +6,8 @@ export interface GitProviderInfo {
     displayName: string;
     isConfigured: boolean;
     appName?: string;
+    ownerName?: string;
+    ownerType?: string;
     maskedClientId?: string;
 }
 
@@ -19,7 +21,7 @@ export interface GitProviderCredentials {
 export async function getGitProvidersByType(provider: string): Promise<GitProviderInfo[]> {
     const records = await prisma.gitProvider.findMany({
         where: { provider, enabled: true },
-        select: { id: true, displayName: true, clientId: true, appName: true, enabled: true },
+        select: { id: true, displayName: true, clientId: true, appName: true, ownerName: true, ownerType: true, enabled: true },
         orderBy: { createdAt: 'asc' },
     });
 
@@ -37,6 +39,8 @@ export async function getGitProvidersByType(provider: string): Promise<GitProvid
                 displayName: record.displayName,
                 isConfigured: true,
                 appName: record.appName ?? undefined,
+                ownerName: record.ownerName ?? undefined,
+                ownerType: record.ownerType ?? undefined,
                 maskedClientId: masked,
             };
         });
@@ -125,6 +129,8 @@ export async function saveGitHubApp(data: {
     clientSecret: string;
     webhookSecret: string;
     privateKey: string;
+    ownerName?: string;
+    ownerType?: string;
 }): Promise<void> {
     await prisma.gitProvider.create({
         data: {
@@ -132,6 +138,8 @@ export async function saveGitHubApp(data: {
             displayName: data.displayName,
             appId: data.appId,
             appName: data.appName,
+            ownerName: data.ownerName,
+            ownerType: data.ownerType,
             clientId: encrypt(data.clientId),
             clientSecret: encrypt(data.clientSecret),
             webhookSecret: encrypt(data.webhookSecret),

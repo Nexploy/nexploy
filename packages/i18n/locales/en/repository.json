@@ -226,7 +226,11 @@
     "steps": {
         "gitSource": {
             "title": "Git Source",
-            "description": "Source repository configuration"
+            "description": "Source repository configuration",
+            "account": "Git Account",
+            "selectAccount": "Select an account",
+            "noAccounts": "No Git accounts connected. Connect one from your account settings.",
+            "connectAccount": "Connect an account"
         },
         "generalInfo": {
             "title": "General Information",

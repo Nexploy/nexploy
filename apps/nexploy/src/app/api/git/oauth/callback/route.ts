@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { getUserSession } from '@/services/auth/auth.service';
 import { verifyOAuthState } from '@/lib/oauth-state';
 import { prisma } from '@/../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
 import { getBaseUrl } from '@/lib/getBaseUrl';
+import { route, authRouteServer } from '@/lib/api/nextRoute';
 
-export async function GET(request: Request) {
+export const GET = route.use(authRouteServer).handler(async (request, { ctx }: any) => {
     const { searchParams } = new URL(request.url);
     const code = searchParams.get('code');
     const state = searchParams.get('state');
@@ -23,8 +23,7 @@ export async function GET(request: Request) {
         return NextResponse.redirect(`${accountUrl}?error=invalid_state`);
     }
 
-    const session = await getUserSession();
-    if (!session || session.user.id !== payload.userId) {
+    if (ctx.session.user.id !== payload.userId) {
         return NextResponse.redirect(`${accountUrl}?error=unauthorized`);
     }
 
@@ -142,4 +141,4 @@ export async function GET(request: Request) {
         console.error('[OAuth Callback Error]', error);
         return NextResponse.redirect(`${accountUrl}?error=connect_failed`);
     }
-}
+});

@@ -64,7 +64,7 @@ export function ProviderInstanceCard({
             </div>
 
             <Button
-                variant="outline"
+                variant="destructiveOutline"
                 size="icon"
                 onClick={handleRemove}
                 icon={Trash2}

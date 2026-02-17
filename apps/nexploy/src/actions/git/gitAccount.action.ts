@@ -5,17 +5,19 @@ import { prisma } from '@/../prisma/prisma';
 import { z } from 'zod';
 
 const disconnectSchema = z.object({
-    provider: z.enum(['github', 'gitlab']),
+    gitProviderId: z.string(),
 });
 
 export const disconnectGitAccountAction = authActionServer
     .inputSchema(disconnectSchema)
     .action(async ({ parsedInput, ctx }) => {
-        const { provider } = parsedInput;
+        const { gitProviderId } = parsedInput;
         const userId = ctx.session.user.id;
 
-        const gitAccount = await prisma.gitAccount.findFirst({
-            where: { userId, provider },
+        const gitAccount = await prisma.gitAccount.findUnique({
+            where: {
+                userId_gitProviderId: { userId, gitProviderId },
+            },
         });
 
         if (!gitAccount) {

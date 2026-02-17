@@ -226,7 +226,11 @@
     "steps": {
         "gitSource": {
             "title": "Source Git",
-            "description": "Configuration du dépôt source"
+            "description": "Configuration du dépôt source",
+            "account": "Compte Git",
+            "selectAccount": "Sélectionner un compte",
+            "noAccounts": "Aucun compte Git connecté. Connectez-en un depuis les paramètres de votre compte.",
+            "connectAccount": "Connecter un compte"
         },
         "generalInfo": {
             "title": "Informations générales",

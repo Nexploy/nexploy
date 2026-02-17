@@ -59,14 +59,38 @@ export async function getRepositories(provider: string, userId: string): Promise
 
     switch (provider) {
         case 'github': {
-            const repositories = await tokenGitStorage.run(token, async () => {
-                return await kyGithub
-                    .get('user/repos', {
-                        headers: {
-                            Accept: 'application/vnd.github+json',
-                        },
+            const allRepos = await tokenGitStorage.run(token, async () => {
+                // Get all installations accessible to this user token
+                const installationsRes = await kyGithub
+                    .get('user/installations', {
+                        headers: { Accept: 'application/vnd.github+json' },
                     })
-                    .json<GithubRepo[]>();
+                    .json<{ installations: { id: number }[] }>();
+
+                console.log(installationsRes);
+
+                // Fetch repos from each installation (includes org repos)
+                const repoPromises = installationsRes.installations.map((inst) =>
+                    kyGithub
+                        .get(`user/installations/${inst.id}/repositories`, {
+                            headers: { Accept: 'application/vnd.github+json' },
+                            searchParams: { per_page: '100' },
+                        })
+                        .json<{ repositories: GithubRepo[] }>()
+                        .then((res) => res.repositories),
+                );
+
+                const results = await Promise.all(repoPromises);
+                return results.flat();
+            });
+
+            // Deduplicate by repo id
+            const seen = new Set<string>();
+            const repositories = allRepos.filter((repo) => {
+                const id = String(repo.id);
+                if (seen.has(id)) return false;
+                seen.add(id);
+                return true;
             });
 
             return repositories.map((repo: GithubRepo) => ({
@@ -207,6 +231,13 @@ export async function listGitAccounts(userId: string) {
                 gitProviderId: true,
                 createdAt: true,
                 updatedAt: true,
+                gitProvider: {
+                    select: {
+                        displayName: true,
+                        ownerName: true,
+                        ownerType: true,
+                    },
+                },
             },
         });
     } catch (error: unknown) {
