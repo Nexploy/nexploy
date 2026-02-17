@@ -10,7 +10,7 @@ import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { repositoryCreateFormSchema } from '@workspace/schemas-zod/repository/repositoryCreate.schema';
 import { onRepositoryCreateAction } from '@/actions/repository/repositoryCreate.action';
-import { GitSourceStep } from '@/components/repositories/steps/source/GitSourceStep';
+import { GitSourceStep } from '@/components/repositories/steps/GitSourceStep';
 import { BuildConfigurationStep } from '@/components/repositories/steps/BuildConfigurationStep';
 import { DeploymentStep } from '@/components/repositories/steps/DeploymentStep';
 import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';

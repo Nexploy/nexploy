@@ -71,7 +71,16 @@
         "port": "Port",
         "portPlaceholder": "3000",
         "replicas": "Replicas",
-        "replicasDescription": "Number of container replicas to run"
+        "replicasDescription": "Number of container replicas to run",
+        "environment": "Environment",
+        "environmentDescription": "Target Docker environment for deployment",
+        "selectEnvironment": "Select an environment",
+        "loading": "Loading...",
+        "default": "default",
+        "autoDeploy": "Automatic Deployment",
+        "autoDeployDescription": "Automatically deploy on push to the branch",
+        "save": "Save",
+        "saving": "Saving..."
     },
     "environment": {
         "title": "Environment",

@@ -156,14 +156,37 @@ export async function updateBranchRepository(newBranch: string, repositoryId: st
     }
 }
 
-export async function updateBuildTypeRepository(buildType: BuildType, repositoryId: string) {
+export async function updateBuildTypeRepository(
+    data: {
+        buildType: BuildType;
+        dockerfilePath: string;
+        dockerComposePath: string;
+        contextPath: string;
+        buildArgs?: string;
+    },
+    repositoryId: string,
+) {
     try {
         return await prisma.repository.update({
             where: { id: repositoryId },
-            data: { buildType },
+            data,
         });
     } catch (error: unknown) {
         throw new Error('Failed to update build type repository');
+    }
+}
+
+export async function updateDeploymentRepository(
+    data: { environmentId: string; autoDeploy: boolean },
+    repositoryId: string,
+) {
+    try {
+        return await prisma.repository.update({
+            where: { id: repositoryId },
+            data,
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to update deployment settings');
     }
 }
 
