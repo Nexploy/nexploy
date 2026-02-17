@@ -367,10 +367,9 @@ export class ImagesStateManager extends BaseStateManager {
                 labels[NEXPLOY_LABELS.version] === 'true' &&
                 labels[NEXPLOY_LABELS.repositoryId] === repositoryId
             ) {
-                // Extract the actual Docker tag from repoTags rather than using the label,
-                // because compose manifests are tagged repositoryId:fullBuildId while
-                // the label stores the sliced imageTag
-                const matchingRepoTag = image.repoTags.find((t) => t.startsWith(`${repositoryId}:`));
+                const matchingRepoTag = image.repoTags.find((t) =>
+                    t.startsWith(`${repositoryId}:`),
+                );
                 const actualTag = matchingRepoTag
                     ? matchingRepoTag.split(':')[1]
                     : labels[NEXPLOY_LABELS.imageTag] || image.tag[0] || '';
@@ -382,7 +381,7 @@ export class ImagesStateManager extends BaseStateManager {
                     commitHash: labels[NEXPLOY_LABELS.commitHash],
                     commitMessage: labels[NEXPLOY_LABELS.commitMessage],
                     branch: labels[NEXPLOY_LABELS.branch],
-                    buildType: (labels[NEXPLOY_LABELS.buildType]) || 'DOCKERFILE',
+                    buildType: labels[NEXPLOY_LABELS.buildType] || 'DOCKERFILE',
                     createdAt: image.created,
                     imageId: image.id,
                     imageFullName: matchingRepoTag || image.repoTags[0] || `${image.id}`,
@@ -403,7 +402,7 @@ export class ImagesStateManager extends BaseStateManager {
                     imageTag,
                     repositoryId,
                     buildId: imageTag,
-                    buildType: (labels[NEXPLOY_LABELS.buildType]) || 'DOCKERFILE',
+                    buildType: labels[NEXPLOY_LABELS.buildType] || 'DOCKERFILE',
                     createdAt: image.created,
                     imageId: image.id,
                     imageFullName: tag || `${repositoryId}:${imageTag}`,

@@ -1,17 +1,21 @@
 import { Github, Gitlab } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
-import { listAccount } from '@/services/auth/auth.service';
 import { IntegrationCard } from '@/components/git/IntegrationCard';
 import { getAllGitProviders } from '@/services/oauthProvider.service';
+import { listGitAccounts } from '@/services/git/git.service';
+import { getUserSession } from '@/services/auth/auth.service';
 
 export async function AcountIntegrations() {
-    const accounts = await listAccount();
+    const session = await getUserSession();
+    if (!session) return null;
+
+    const accounts = await listGitAccounts(session.user.id);
     const t = await getTranslations('integrations');
 
     const providers = await getAllGitProviders();
 
-    const getAccount = (provider: string) =>
-        accounts.find((a) => a.providerId === provider) ?? null;
+    const hasAccount = (provider: string) =>
+        accounts.some((a) => a.provider === provider);
 
     const hasGithub = providers.github.length > 0;
     const hasGitlab = providers.gitlab.length > 0;
@@ -58,7 +62,7 @@ export async function AcountIntegrations() {
                     name={git.name}
                     description={git.description}
                     icon={git.icon}
-                    isConnected={!!getAccount(git.provider)}
+                    isConnected={hasAccount(git.provider)}
                 />
             ))}
         </div>

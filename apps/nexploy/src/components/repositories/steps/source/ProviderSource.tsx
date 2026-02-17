@@ -20,22 +20,19 @@ import useSWR from 'swr';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { capitalizeFirstLetter } from '@/utils/capitalize';
 import Link from 'next/link';
-import { SocialAccount } from '@workspace/typescript-interface/auth/social-account';
 import { GitBranch, GitRepository } from '@workspace/typescript-interface/git/git';
 import { useTranslations } from 'next-intl';
 
 interface ProviderSourceProps {
-    accounts?: SocialAccount[] | null;
+    connectedProviders: string[];
 }
 
-export function ProviderSource({ accounts }: ProviderSourceProps) {
+export function ProviderSource({ connectedProviders }: ProviderSourceProps) {
     const t = useTranslations('repository.settings.source');
     const { control, watch, setValue } = useFormContext();
 
     const gitProvider = watch('gitProvider');
     const selectedRepo = watch('repo');
-
-    const connectedProviders = accounts?.map((account) => account.providerId) || [];
 
     const { data: repos, isLoading: isLoadingRepos } = useSWR<GitRepository[]>(
         connectedProviders.includes(gitProvider)

@@ -1,6 +1,5 @@
 'use client';
 
-import { authClient } from '@/lib/auth/auth-client';
 import { Button } from '@workspace/ui/components/button';
 import { Plus, X } from 'lucide-react';
 import * as React from 'react';
@@ -9,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { statusMap } from '@/utils/statusMap';
 import { useTranslations } from 'next-intl';
+import { disconnectGitAccountAction } from '@/actions/git/gitAccount.action';
 
 interface IntegrationCardProps {
     provider: string;
@@ -16,8 +16,6 @@ interface IntegrationCardProps {
     description: string;
     isConnected: boolean;
     icon: React.ReactNode;
-    onConnect?: () => Promise<void>;
-    onDisconnect?: () => Promise<void>;
 }
 
 export function IntegrationCard({
@@ -26,38 +24,27 @@ export function IntegrationCard({
     description,
     isConnected,
     icon,
-    onConnect,
-    onDisconnect,
 }: IntegrationCardProps) {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const t = useTranslations('common');
     const tStatus = useTranslations('docker.status');
 
-    const handleConnect = async () => {
+    const handleConnect = () => {
         setIsLoading(true);
-        if (onConnect) {
-            await onConnect();
-        } else {
-            await authClient.linkSocial({
-                provider,
-                callbackURL: '/integrations',
-            });
-        }
-        setIsLoading(false);
+        window.location.href = `/api/git/oauth/connect?provider=${provider}`;
     };
 
     const handleDisconnect = async () => {
         setIsLoading(true);
-        if (onDisconnect) {
-            await onDisconnect();
-        } else {
-            await authClient.unlinkAccount({
-                providerId: provider,
+        try {
+            await disconnectGitAccountAction({
+                provider: provider as 'github' | 'gitlab',
             });
+        } finally {
+            setIsLoading(false);
+            router.refresh();
         }
-        setIsLoading(false);
-        router.refresh();
     };
 
     return (

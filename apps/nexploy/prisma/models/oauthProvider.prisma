@@ -1,16 +1,37 @@
 model GitProvider {
-  id            String   @id @default(cuid())
-  provider      String // "github" | "gitlab"
-  displayName   String // e.g. "My Org GitHub", "Work GitLab"
-  appId         String? // GitHub App ID
-  appName       String? // GitHub App slug/name
-  clientId      String? // Encrypted - OAuth Client ID
-  clientSecret  String? // Encrypted - OAuth Client Secret
-  webhookSecret String? // Encrypted - Webhook secret
-  privateKey    String? // Encrypted - PEM private key (GitHub App)
-  enabled       Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id            String       @id @default(cuid())
+  provider      String
+  displayName   String
+  appId         String?
+  appName       String?
+  clientId      String?
+  clientSecret  String?
+  webhookSecret String?
+  privateKey    String?
+  enabled       Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  gitAccounts   GitAccount[]
 
   @@map("git_provider")
+}
+
+model GitAccount {
+  id                   String      @id @default(cuid())
+  userId               String
+  user                 User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gitProviderId        String
+  gitProvider          GitProvider @relation(fields: [gitProviderId], references: [id], onDelete: Cascade)
+  provider             String
+  providerAccountId    String
+  providerUsername     String?
+  accessToken          String
+  refreshToken         String?
+  accessTokenExpiresAt DateTime?
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+
+  @@unique([userId, gitProviderId])
+  @@index([userId, provider])
+  @@map("git_account")
 }

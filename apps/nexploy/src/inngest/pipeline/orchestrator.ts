@@ -132,7 +132,6 @@ export class PipelineOrchestrator implements IPipelineOrchestrator {
                 }
 
                 const stepResult = await inngestStep.run(stepId, async () => {
-                    // Check if already cancelled before starting the step
                     if (context.isAborted()) {
                         throw new DOMException('Build cancelled', 'AbortError');
                     }

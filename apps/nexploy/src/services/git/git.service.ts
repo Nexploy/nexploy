@@ -13,6 +13,7 @@ import { GithubRepo } from '@workspace/typescript-interface/git/repository/githu
 import { GitlabRepo } from '@workspace/typescript-interface/git/repository/gitlab.repository';
 import { GitlabBranch } from '@workspace/typescript-interface/git/branch/gitlab.branch';
 import { GithubBranch } from '@workspace/typescript-interface/git/branch/github.branch';
+import { decrypt, encrypt } from '@/lib/encryption';
 
 export function extractGitHubRepo(repositoryUrl: string): { owner: string; repo: string } {
     const match = repositoryUrl.match(/github\.com[\/:]([^\/]+)\/([^\/\.]+)/);
@@ -29,10 +30,10 @@ export async function getGitProviderToken(
     const userId = requestedUserId ?? (await getUserSession())?.user.id;
     if (!userId) throw new Error('Unauthorized');
 
-    const tokens = await prisma.account.findFirst({
+    const gitAccount = await prisma.gitAccount.findFirst({
         where: {
             userId,
-            providerId: provider,
+            provider,
         },
         select: {
             accessToken: true,
@@ -41,11 +42,15 @@ export async function getGitProviderToken(
         },
     });
 
-    if (!tokens?.accessToken) {
+    if (!gitAccount?.accessToken) {
         throw new Error(`No access token found for ${provider}`);
     }
 
-    return tokens;
+    return {
+        accessToken: decrypt(gitAccount.accessToken),
+        refreshToken: gitAccount.refreshToken ? decrypt(gitAccount.refreshToken) : null,
+        accessTokenExpiresAt: gitAccount.accessTokenExpiresAt,
+    };
 }
 
 export async function getRepositories(provider: string, userId: string): Promise<GitRepository[]> {
@@ -166,26 +171,45 @@ export async function updateGitProviderToken(
     },
 ): Promise<void> {
     try {
-        const account = await prisma.account.findFirst({
+        const gitAccount = await prisma.gitAccount.findFirst({
             where: {
-                providerId: provider,
+                provider,
                 userId,
             },
         });
 
-        if (!account) throw new Error(`No ${provider} account found for user`);
+        if (!gitAccount) throw new Error(`No ${provider} account found for user`);
 
-        await prisma.account.update({
+        await prisma.gitAccount.update({
             where: {
-                id: account.id,
+                id: gitAccount.id,
             },
             data: {
-                accessToken: tokenData.accessToken,
-                refreshToken: tokenData.refreshToken,
+                accessToken: encrypt(tokenData.accessToken),
+                refreshToken: tokenData.refreshToken ? encrypt(tokenData.refreshToken) : null,
                 accessTokenExpiresAt: tokenData.accessTokenExpiresAt,
             },
         });
     } catch (error: unknown) {
         throw new Error('Failed to update git provider token');
+    }
+}
+
+export async function listGitAccounts(userId: string) {
+    try {
+        return await prisma.gitAccount.findMany({
+            where: { userId },
+            select: {
+                id: true,
+                provider: true,
+                providerAccountId: true,
+                providerUsername: true,
+                gitProviderId: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to list git accounts');
     }
 }

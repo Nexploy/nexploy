@@ -37,14 +37,16 @@ function buildManifest(appUrl: string) {
         name: `Nexploy-${Math.random().toString(36).slice(2, 10)}`,
         url: appUrl,
         redirect_url: `${appUrl}/api/providers/github/setup`,
-        callback_urls: [`${appUrl}/api/providers/github/setup`],
+        callback_urls: [`${appUrl}/api/git/oauth/callback`],
         hook_attributes: {
             url: `${appUrl}/api/webhooks/github`,
         },
         public: false,
+        request_oauth_on_install: true,
         default_permissions: {
             contents: 'read',
             metadata: 'read',
+            administration: 'read',
         },
         default_events: ['push'],
     };

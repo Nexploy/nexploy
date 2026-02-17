@@ -12,19 +12,28 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/componen
 import { GitBranch, Github, Gitlab } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import useSWR from 'swr';
-import { authClient } from '@/lib/auth/auth-client';
 import { ProviderSource } from '@/components/repositories/steps/source/ProviderSource';
-import { SocialAccount } from '@workspace/typescript-interface/auth/social-account';
 import { useTranslations } from 'next-intl';
+import { fetcherApi } from '@/lib/api/fetcherApi';
+
+interface GitAccountSummary {
+    id: string;
+    provider: string;
+    providerAccountId: string;
+    providerUsername: string | null;
+    gitProviderId: string;
+}
 
 export function GitSourceStep() {
     const { control, setValue } = useFormContext();
     const t = useTranslations('repository.steps.gitSource');
 
-    const { data: accounts } = useSWR<SocialAccount[] | null>(
-        'auth/listAccounts',
-        async () => (await authClient.listAccounts()).data,
+    const { data: accounts } = useSWR<GitAccountSummary[]>(
+        '/api/git/accounts',
+        fetcherApi,
     );
+
+    const connectedProviders = accounts?.map((a) => a.provider) ?? [];
 
     return (
         <Card>
@@ -61,19 +70,13 @@ export function GitSourceStep() {
                                     <TabsTrigger value="gitlab" className="gap-2">
                                         <Gitlab /> GitLab
                                     </TabsTrigger>
-                                    {/*<TabsTrigger value="manual" className="gap-2">*/}
-                                    {/*    <Link2 /> Manuel*/}
-                                    {/*</TabsTrigger>*/}
                                 </TabsList>
                                 <TabsContent value="github">
-                                    <ProviderSource accounts={accounts} />
+                                    <ProviderSource connectedProviders={connectedProviders} />
                                 </TabsContent>
                                 <TabsContent value="gitlab">
-                                    <ProviderSource accounts={accounts} />
+                                    <ProviderSource connectedProviders={connectedProviders} />
                                 </TabsContent>
-                                {/*<TabsContent value="manual">*/}
-                                {/*    <ManuelSource />*/}
-                                {/*</TabsContent>*/}
                             </Tabs>
                         </FormItem>
                     )}
