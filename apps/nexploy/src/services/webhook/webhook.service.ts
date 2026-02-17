@@ -20,10 +20,10 @@ export async function setupWebhookForRepository(
 
     let result: WebhookConfig;
 
-    if (gitProvider === 'gitlab') {
-        result = await createGitLabWebhook(repositoryUrl, userId, webhookUrl);
-    } else if (gitProvider === 'github') {
+    if (gitProvider === 'github') {
         result = await createGitHubWebhook(repositoryUrl, userId, webhookUrl);
+    } else if (gitProvider === 'gitlab') {
+        result = await createGitLabWebhook(repositoryUrl, userId, webhookUrl);
     } else {
         throw new Error(`Unsupported git provider: ${gitProvider}`);
     }

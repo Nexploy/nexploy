@@ -6,7 +6,6 @@ import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { DialogFooter } from '@workspace/ui/components/dialog';
-import { saveGitLabProviderAction } from '@/actions/admin/oauthProvider.action';
 import { gitlabProviderSchema } from '@workspace/schemas-zod/admin/oauthProvider.schema';
 import {
     Form,
@@ -18,6 +17,7 @@ import {
 } from '@workspace/ui/components/form';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
+import { saveGitLabProviderAction } from '@/actions/admin/saveGitLabProvider.action';
 
 export function OAuthProviderForm() {
     const { closeDialog } = useConfirmationDialogStore();

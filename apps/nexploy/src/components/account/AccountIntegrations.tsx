@@ -4,7 +4,6 @@ import { IntegrationCard } from '@/components/git/IntegrationCard';
 import { getAllGitProviders } from '@/services/oauthProvider.service';
 import { listGitAccounts } from '@/services/git/git.service';
 import { getUserSession } from '@/services/auth/auth.service';
-import { OwnerType } from 'generated/client';
 
 const providerIcons: Record<string, React.ReactNode> = {
     github: <Github className="size-5" />,
@@ -33,7 +32,7 @@ export async function AcountIntegrations() {
         <div className="space-y-2">
             {allInstances.map((instance) => {
                 const providerType = providers.github.includes(instance) ? 'github' : 'gitlab';
-                const isOrg = instance.ownerType === OwnerType.ORGANIZATION;
+                const isOrg = instance.ownerType === 'Organization';
                 const subtitle = isOrg ? instance.ownerName : undefined;
 
                 return (

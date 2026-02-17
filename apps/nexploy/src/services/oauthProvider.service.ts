@@ -1,5 +1,5 @@
 import { prisma } from '../../prisma/prisma';
-import { encrypt, decrypt } from '@/lib/encryption';
+import { decrypt, encrypt } from '@/lib/encryption';
 
 export interface GitProviderInfo {
     id: string;
@@ -21,7 +21,15 @@ export interface GitProviderCredentials {
 export async function getGitProvidersByType(provider: string): Promise<GitProviderInfo[]> {
     const records = await prisma.gitProvider.findMany({
         where: { provider, enabled: true },
-        select: { id: true, displayName: true, clientId: true, appName: true, ownerName: true, ownerType: true, enabled: true },
+        select: {
+            id: true,
+            displayName: true,
+            clientId: true,
+            appName: true,
+            ownerName: true,
+            ownerType: true,
+            enabled: true,
+        },
         orderBy: { createdAt: 'asc' },
     });
 
@@ -163,8 +171,12 @@ export async function saveGitLabProvider(
     });
 }
 
-export async function deleteGitProvider(id: string): Promise<void> {
-    await prisma.gitProvider.delete({
-        where: { id },
-    });
+export async function deleteGitProvider(id: string) {
+    try {
+        return await prisma.gitProvider.delete({
+            where: { id },
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to delete git provider');
+    }
 }

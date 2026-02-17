@@ -54,6 +54,7 @@ export async function createRepository(
 
         return repository.id;
     } catch (error: unknown) {
+        console.log(error);
         throw new Error('Failed to create repository');
     }
 }

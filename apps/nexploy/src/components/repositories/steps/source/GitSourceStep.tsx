@@ -30,7 +30,6 @@ import { useTranslations } from 'next-intl';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import Link from 'next/link';
 import { GitBranch, GitRepository } from '@workspace/typescript-interface/git/git';
-import { OwnerType } from 'generated/client';
 
 interface GitAccountSummary {
     id: string;
@@ -63,13 +62,15 @@ export function GitSourceStep() {
     const selectedAccount = accounts?.find((a) => a.id === selectedAccountId);
 
     const { data: repos, isLoading: isLoadingRepos } = useSWR<GitRepository[]>(
-        selectedAccount ? `/api/git/repositories?provider=${selectedAccount.provider}` : null,
+        selectedAccount
+            ? `/api/git/repositories?provider=${selectedAccount.provider}&gitAccountId=${selectedAccount.id}`
+            : null,
         fetcherApi,
     );
 
     const { data: branches, isLoading: isLoadingBranches } = useSWR<GitBranch[]>(
         selectedRepo && selectedAccount
-            ? `/api/git/branches?provider=${selectedAccount.provider}&repoId=${selectedRepo.id}&owner=${selectedRepo.fullName.split('/')[0]}&repoName=${selectedRepo.fullName.split('/')[1]}`
+            ? `/api/git/branches?provider=${selectedAccount.provider}&gitAccountId=${selectedAccount.id}&repoId=${selectedRepo.id}&owner=${selectedRepo.fullName.split('/')[0]}&repoName=${selectedRepo.fullName.split('/')[1]}`
             : null,
         fetcherApi,
     );
@@ -126,7 +127,7 @@ export function GitSourceStep() {
                                             {accounts?.map((account) => {
                                                 const isOrg =
                                                     account.gitProvider.ownerType ===
-                                                    OwnerType.ORGANIZATION;
+                                                    'Organization';
                                                 return (
                                                     <SelectItem key={account.id} value={account.id}>
                                                         <span className="flex items-center gap-2">

@@ -27,7 +27,9 @@ export async function startBuildRepositoryInngest(
         throw new Error('Repository not found');
     }
 
-    const oldToken = await getGitProviderToken(repository.gitProvider, userId);
+    const oldToken = await getGitProviderToken(repository.gitProvider, {
+        requestedUserId: userId,
+    });
     const token = await getValidToken(oldToken, repository.gitProvider, userId);
 
     const commit = await getCommit(

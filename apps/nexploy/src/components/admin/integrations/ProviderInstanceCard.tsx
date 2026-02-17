@@ -6,9 +6,9 @@ import { Button } from '@workspace/ui/components/button';
 import { Trash2 } from 'lucide-react';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { statusMap } from '@/utils/statusMap';
-import { deleteGitProviderAction } from '@/actions/admin/oauthProvider.action';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
+import { deleteGitProviderAction } from '@/actions/admin/deleteGitProvider.action';
 
 interface ProviderInstanceCardProps {
     id: string;

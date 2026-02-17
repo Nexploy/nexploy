@@ -25,7 +25,7 @@ export function extractGitHubRepo(repositoryUrl: string): { owner: string; repo:
 
 export async function getGitProviderToken(
     provider: string,
-    requestedUserId?: string,
+    { gitAccountId, requestedUserId }: { gitAccountId?: string; requestedUserId?: string } = {},
 ): Promise<GitProviderToken> {
     const userId = requestedUserId ?? (await getUserSession())?.user.id;
     if (!userId) throw new Error('Unauthorized');
@@ -34,6 +34,7 @@ export async function getGitProviderToken(
         where: {
             userId,
             provider,
+            ...(gitAccountId && { id: gitAccountId }),
         },
         select: {
             accessToken: true,
@@ -53,23 +54,23 @@ export async function getGitProviderToken(
     };
 }
 
-export async function getRepositories(provider: string, userId: string): Promise<GitRepository[]> {
-    const oldToken = await getGitProviderToken(provider);
+export async function getRepositories(
+    provider: string,
+    gitAccountId: string,
+    userId: string,
+): Promise<GitRepository[]> {
+    const oldToken = await getGitProviderToken(provider, { gitAccountId });
     const token = await getValidToken(oldToken, provider, userId);
 
     switch (provider) {
         case 'github': {
             const allRepos = await tokenGitStorage.run(token, async () => {
-                // Get all installations accessible to this user token
                 const installationsRes = await kyGithub
                     .get('user/installations', {
                         headers: { Accept: 'application/vnd.github+json' },
                     })
                     .json<{ installations: { id: number }[] }>();
 
-                console.log(installationsRes);
-
-                // Fetch repos from each installation (includes org repos)
                 const repoPromises = installationsRes.installations.map((inst) =>
                     kyGithub
                         .get(`user/installations/${inst.id}/repositories`, {
@@ -84,7 +85,6 @@ export async function getRepositories(provider: string, userId: string): Promise
                 return results.flat();
             });
 
-            // Deduplicate by repo id
             const seen = new Set<string>();
             const repositories = allRepos.filter((repo) => {
                 const id = String(repo.id);
@@ -137,10 +137,14 @@ export async function getBranches(
     provider: 'github' | 'gitlab',
     repoId: string,
     userId: string,
+    gitAccountId: string,
     owner?: string,
     repoName?: string,
 ): Promise<GitBranch[]> {
-    const oldToken = await getGitProviderToken(provider);
+    const oldToken = await getGitProviderToken(provider, {
+        gitAccountId,
+        requestedUserId: userId,
+    });
     const token = await getValidToken(oldToken, provider, userId);
 
     switch (provider) {
