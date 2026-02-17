@@ -1,6 +1,6 @@
 'use client';
 
-import CopyButton from '@/components/utils/CopyButton';
+import CopyButton from '@/components/shared/CopyButton';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { Button } from '@workspace/ui/components/button';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';

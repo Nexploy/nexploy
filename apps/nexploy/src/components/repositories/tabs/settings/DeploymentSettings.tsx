@@ -12,6 +12,7 @@ import { updateDeploymentSchema } from '@workspace/schemas-zod/repository/settin
 import { updateDeploymentAction } from '@/actions/repository/settings/updateDeployment.action';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { DeploymentFields } from '@/components/repositories/forms/DeploymentFields';
+import { toast } from 'sonner';
 
 interface DeploymentSettingsProps {
     repository: Repository;
@@ -33,6 +34,7 @@ export function ChangeDeployment({ repository }: DeploymentSettingsProps) {
             },
             actionProps: {
                 onSuccess: ({ data }) => {
+                    toast.success(t('updated'));
                     if (data) form.reset(data);
                 },
             },

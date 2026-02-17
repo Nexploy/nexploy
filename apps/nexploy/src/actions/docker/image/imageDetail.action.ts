@@ -5,7 +5,7 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { z } from 'zod';
 import { ImageHistoryEntry } from '@workspace/typescript-interface/docker/docker.image';
 import { HTTPError } from 'ky';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 
 const imageIdSchema = z.object({
     imageId: z.string().min(1),

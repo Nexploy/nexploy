@@ -18,7 +18,7 @@ import {
     CardTitle,
 } from '@workspace/ui/components/card';
 import { getRepositories } from '@/services/repository.service';
-import { StatusBadge } from '@/components/utils/StatusBadge';
+import { StatusBadge } from '@/components/shared/StatusBadge';
 import { RunBuildButton } from '@/components/repositories/RunBuildButton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Separator } from '@workspace/ui/components/separator';

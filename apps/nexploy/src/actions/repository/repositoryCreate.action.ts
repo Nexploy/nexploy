@@ -2,7 +2,7 @@
 
 import { authActionServer } from '@/lib/api/safe-action';
 import { repositoryCreateFormSchema } from '@workspace/schemas-zod/repository/repositoryCreate.schema';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { createRepository } from '@/services/repository.service';
 
 export const onRepositoryCreateAction = authActionServer

@@ -70,6 +70,10 @@ export const GET = route
                 }
 
                 accessToken = tokenData.access_token;
+                refreshToken = tokenData.refresh_token ?? null;
+                if (tokenData.expires_in) {
+                    expiresAt = new Date(Date.now() + tokenData.expires_in * 1000);
+                }
 
                 const userRes = await fetch('https://api.github.com/user', {
                     headers: { Authorization: `Bearer ${accessToken}` },

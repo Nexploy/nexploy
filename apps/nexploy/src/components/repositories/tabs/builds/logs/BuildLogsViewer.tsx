@@ -8,7 +8,7 @@ import { BuildStatus } from 'generated/client';
 import dayjs from 'dayjs';
 import { BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { StatusBadge } from '@/components/utils/StatusBadge';
+import { StatusBadge } from '@/components/shared/StatusBadge';
 import { cn } from '@workspace/ui/lib/utils';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { Realtime } from '@inngest/realtime';

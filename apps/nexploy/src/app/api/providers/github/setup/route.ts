@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { saveGitHubApp } from '@/services/oauthProvider.service';
 import { adminOnly, authRouteServer, route } from '@/lib/api/nextRoute';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { getUserSession } from '@/services/auth/auth.service';
 import { getBaseUrl } from '@/lib/getBaseUrl';
 

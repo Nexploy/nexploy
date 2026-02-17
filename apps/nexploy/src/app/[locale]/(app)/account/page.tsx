@@ -30,7 +30,7 @@ export default async function AccountPage() {
                     </div>
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden px-5">
-                    <div className={'space-y-8 pb-6'}>
+                    <div className={'space-y-8 pb-5'}>
                         <AccountDetailsSection />
                     </div>
                 </ScrollAreaWithShadow>

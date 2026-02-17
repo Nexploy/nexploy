@@ -1,7 +1,7 @@
 'use server';
 
 import { authActionServer } from '@/lib/api/safe-action';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { cancelBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { cancelBuildInngest } from '@/services/inngest/build.inngest.service';
 import { getTranslations } from 'next-intl/server';

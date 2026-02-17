@@ -1,7 +1,7 @@
 'use server';
 
 import { authActionServer } from '@/lib/api/safe-action';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { HTTPError } from 'ky';
 import { getSubscriptionToken } from '@inngest/realtime';
 import { inngest } from '@/inngest/client';

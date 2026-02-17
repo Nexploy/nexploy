@@ -1,5 +1,5 @@
 import { authRouteServer, route } from '@/lib/api/nextRoute';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { listCloudflareZones } from '@/services/cloudflare.service';
 import { Session } from '@/lib/auth/auth';
 

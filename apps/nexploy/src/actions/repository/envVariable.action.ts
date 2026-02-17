@@ -1,7 +1,7 @@
 'use server';
 
 import { authActionServer } from '@/lib/api/safe-action';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { updateEnvVariables } from '@/services/repository.service';
 import { envVariableSchema } from '@workspace/schemas-zod/repository/envVariable.schema';
 

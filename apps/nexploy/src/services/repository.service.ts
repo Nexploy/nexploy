@@ -232,7 +232,10 @@ async function updateRepositoryAutoDeploy(
 export async function deleteRepository(repositoryId: string, userId: string) {
     const repository = await getRepositoryById(repositoryId);
 
-    const oldToken = await getGitProviderToken(repository.gitProvider);
+    const oldToken = await getGitProviderToken(repository.gitProvider, {
+        gitAccountId: repository.gitAccountId ?? undefined,
+        requestedUserId: userId,
+    });
     const token = await getValidToken(oldToken, repository.gitProvider, userId);
 
     if (repository.webhookId) {
@@ -253,7 +256,10 @@ export async function toggleAutoDeployRepository(
 ) {
     const repository = await getRepositoryById(repositoryId);
 
-    const oldToken = await getGitProviderToken(repository.gitProvider);
+    const oldToken = await getGitProviderToken(repository.gitProvider, {
+        gitAccountId: repository.gitAccountId ?? undefined,
+        requestedUserId: userId,
+    });
     const token = await getValidToken(oldToken, repository.gitProvider, userId);
 
     if (autoDeploy && !repository.webhookId) {

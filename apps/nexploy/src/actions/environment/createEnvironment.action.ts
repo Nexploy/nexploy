@@ -1,7 +1,7 @@
 'use server';
 
 import { authActionServer } from '@/lib/api/safe-action';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { createEnvironment } from '@/services/environment/environment.service';
 import { environmentSchema } from '@workspace/schemas-zod/docker/environment/environment.schema';
 

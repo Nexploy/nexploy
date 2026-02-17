@@ -1,7 +1,7 @@
 'use server';
 
 import { authActionServer } from '@/lib/api/safe-action';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { getDefaultEnvironment } from '@/services/environment/environment.service';
 
 export const getDefaultEnvironmentAction = authActionServer.action(async () => {

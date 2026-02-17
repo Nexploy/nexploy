@@ -120,6 +120,19 @@ app.post('/stream/compose', async (c) => {
 
             let composeContent = yaml.parse(composeYamlContent) as ComposeContent;
 
+            // Fix for dockerode-compose bug: when external networks don't have an explicit
+            // `name` property, the library resolves it as `undefined`. Set name to the key.
+            if (composeContent.networks) {
+                for (const [networkName, networkConfig] of Object.entries(
+                    composeContent.networks,
+                )) {
+                    const net = networkConfig as Record<string, unknown> | null;
+                    if (net && net.external === true && !net.name) {
+                        net.name = networkName;
+                    }
+                }
+            }
+
             const envConfig = environmentId
                 ? dockerClientRegistry.getEnvironmentConfig(environmentId)
                 : null;
@@ -185,7 +198,12 @@ app.post('/stream/compose', async (c) => {
                 }
             }
 
-            const buildConfigs = parseComposeBuildConfigs(composeContent, projectName, workDir, buildId);
+            const buildConfigs = parseComposeBuildConfigs(
+                composeContent,
+                projectName,
+                workDir,
+                buildId,
+            );
             const servicesToPull = getServicesToPull(composeContent);
 
             const initialCompose = new DockerodeCompose(dockerClient, composeFilePath, projectName);
@@ -217,7 +235,9 @@ app.post('/stream/compose', async (c) => {
                                             }
 
                                             const raw = chunk.toString();
-                                            const lines = raw.split('\n').filter((l: string) => l.trim());
+                                            const lines = raw
+                                                .split('\n')
+                                                .filter((l: string) => l.trim());
 
                                             for (const line of lines) {
                                                 try {
@@ -313,9 +333,9 @@ app.post('/stream/compose', async (c) => {
             if (buildId && repositoryId && buildConfigs.length > 0) {
                 sendLog('Creating version manifest image...');
                 const manifestTag = `${repositoryId}:${buildId}`;
-                const composeConfigB64 = Buffer.from(
-                    yaml.stringify(composeContent),
-                ).toString('base64');
+                const composeConfigB64 = Buffer.from(yaml.stringify(composeContent)).toString(
+                    'base64',
+                );
 
                 const tmpDir = path.join(workDir, '.nexploy-manifest');
                 fs.mkdirSync(tmpDir, { recursive: true });
@@ -338,9 +358,8 @@ app.post('/stream/compose', async (c) => {
                     });
 
                     await new Promise<void>((resolve, reject) => {
-                        dockerClient.modem.followProgress(
-                            buildStream,
-                            (err: any) => (err ? reject(err) : resolve()),
+                        dockerClient.modem.followProgress(buildStream, (err: any) =>
+                            err ? reject(err) : resolve(),
                         );
                     });
 
@@ -397,6 +416,16 @@ app.post('/stream/compose', async (c) => {
                     fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
                     sendLog('Updated compose file with port mappings for remote environment');
                 }
+            }
+
+            // Always write a processed compose file if we modified the content
+            // (e.g., external networks name fix, build→image replacement, port mappings)
+            const hasExternalNetworks =
+                composeContent.networks &&
+                Object.values(composeContent.networks).some((n: any) => n && n.external === true);
+            if (hasExternalNetworks && !modifiedComposeFile) {
+                modifiedComposeFile = path.join(workDir, '.nexploy-compose-processed.yml');
+                fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
             }
 
             const deployComposeFile = modifiedComposeFile || composeFilePath;

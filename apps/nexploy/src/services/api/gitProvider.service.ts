@@ -31,7 +31,7 @@ export async function getValidToken(
         if (provider === 'gitlab') {
             return await refreshGitLabToken(token, userId);
         } else if (provider === 'github') {
-            return token;
+            return await refreshGitHubToken(token, userId);
         } else {
             throw new Error(`Unknown provider: ${provider}`);
         }
@@ -198,6 +198,61 @@ async function refreshGitLabToken(
     };
 
     await updateGitProviderToken('gitlab', userId, newToken);
+
+    return newToken;
+}
+
+async function refreshGitHubToken(
+    token: GitProviderToken,
+    userId: string,
+): Promise<GitProviderToken> {
+    if (!token.refreshToken) {
+        throw new Error('No refresh token available for GitHub');
+    }
+
+    const githubCreds = await getGitProviderCredentials('github');
+    if (!githubCreds) {
+        throw new Error('GitHub provider not configured');
+    }
+
+    const body = new URLSearchParams({
+        client_id: githubCreds.clientId,
+        client_secret: githubCreds.clientSecret,
+        grant_type: 'refresh_token',
+        refresh_token: token.refreshToken,
+    });
+
+    const response = await fetch('https://github.com/login/oauth/access_token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Accept: 'application/json',
+        },
+        body,
+    });
+
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(
+            `Failed to refresh GitHub token. Status ${response.status}. Message: ${message}`,
+        );
+    }
+
+    const data = await response.json();
+
+    if (data.error) {
+        throw new Error(`GitHub token refresh failed: ${data.error_description || data.error}`);
+    }
+
+    const expiresAt = data.expires_in ? new Date(Date.now() + data.expires_in * 1000) : null;
+
+    const newToken: GitProviderToken = {
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token ?? token.refreshToken,
+        accessTokenExpiresAt: expiresAt,
+    };
+
+    await updateGitProviderToken('github', userId, newToken);
 
     return newToken;
 }

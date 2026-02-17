@@ -4,7 +4,7 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { enable2FA } from '@/services/auth/twoFactorAuth.service';
 import { twoFactorAuthSchema } from '@workspace/schemas-zod/auth/twoFactorAuth.schema';
 import { getTranslations } from 'next-intl/server';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 
 async function getTwoFactorAuthEnableSchema() {
     const t = await getTranslations('validation');

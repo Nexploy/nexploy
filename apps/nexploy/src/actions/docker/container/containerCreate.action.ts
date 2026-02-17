@@ -3,7 +3,7 @@
 import { authActionServer } from '@/lib/api/safe-action';
 import { HTTPError } from 'ky';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { kyDocker } from '@/lib/api/kyDocker';
 
 export const onContainerCreateAction = authActionServer

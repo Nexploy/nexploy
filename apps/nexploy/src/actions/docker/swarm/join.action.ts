@@ -3,7 +3,7 @@
 import { authActionServer } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { swarmJoinSchema } from '@workspace/schemas-zod/docker/swarm/join.schema';
 
 export const onSwarmJoinAction = authActionServer

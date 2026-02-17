@@ -1,7 +1,7 @@
 import { createZodRoute, MiddlewareFunction } from 'next-zod-route';
 import { NextResponse } from 'next/server';
 import { getUserSession } from '@/services/auth/auth.service';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { Session } from '@/lib/auth/auth';
 
 export const route = createZodRoute({

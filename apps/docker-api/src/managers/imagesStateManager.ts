@@ -389,7 +389,6 @@ export class ImagesStateManager extends BaseStateManager {
                 continue;
             }
 
-            // Fallback: match images by name pattern repositoryId:* (retro-compat)
             const matchesName =
                 image.name.some((n) => n === repositoryId) ||
                 image.repoTags.some((t) => t.startsWith(`${repositoryId}:`));

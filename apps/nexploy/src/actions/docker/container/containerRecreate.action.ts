@@ -2,7 +2,7 @@
 
 import { authActionServer } from '@/lib/api/safe-action';
 import { HTTPError } from 'ky';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 

@@ -3,7 +3,7 @@ import { HTTPError } from 'ky';
 import { getUserSession } from '@/services/auth/auth.service';
 import { Session } from '@/lib/auth/auth';
 import { redirect } from 'next/navigation';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { cookies } from 'next/headers';
 import { getTranslations } from 'next-intl/server';
 

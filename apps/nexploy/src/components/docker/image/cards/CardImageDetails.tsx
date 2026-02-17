@@ -4,7 +4,7 @@ import { Card, CardContent } from '@workspace/ui/components/card';
 import { List } from 'lucide-react';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
-import CopyButton from '@/components/utils/CopyButton';
+import CopyButton from '@/components/shared/CopyButton';
 import { useTranslations } from 'next-intl';
 import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';

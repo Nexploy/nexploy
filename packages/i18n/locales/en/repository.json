@@ -80,7 +80,8 @@
         "autoDeploy": "Automatic Deployment",
         "autoDeployDescription": "Automatically deploy on push to the branch",
         "save": "Save",
-        "saving": "Saving..."
+        "saving": "Saving...",
+        "updated": "Deployment settings updated successfully"
     },
     "environment": {
         "title": "Environment",
@@ -298,7 +299,8 @@
             "label": "Branch",
             "loading": "Loading...",
             "saving": "Saving...",
-            "save": "Save"
+            "save": "Save",
+            "updated": "Branch updated successfully"
         },
         "autoDeploy": {
             "title": "Automatic deployment",
@@ -313,6 +315,7 @@
             "selectType": "Select a type",
             "saving": "Saving...",
             "save": "Save",
+            "updated": "Build configuration updated successfully",
             "dockerfile": "Dockerfile",
             "dockerfileDescription": "Use an existing Dockerfile",
             "dockerCompose": "Docker Compose",

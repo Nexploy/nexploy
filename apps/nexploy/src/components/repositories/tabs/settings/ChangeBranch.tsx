@@ -29,6 +29,7 @@ import { updateBranchAction } from '@/actions/repository/settings/updateBranch.a
 import { useEffect } from 'react';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 interface ChangeBranchProps {
     repository: Repository;
@@ -55,6 +56,7 @@ export function ChangeBranch({ repository }: ChangeBranchProps) {
             },
             actionProps: {
                 onSuccess: ({ data }) => {
+                    toast.success(t('updated'));
                     if (data) form.reset({ branch: data });
                 },
             },

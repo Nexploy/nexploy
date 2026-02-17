@@ -81,7 +81,12 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
         onError: ({ error }) => toast.error(error.serverError || t('userDeleteFailed')),
     });
 
-    const { execute: executeBan, isPending: isBanning } = useAction(banUser);
+    const { execute: executeBan, isPending: isBanning } = useAction(banUser, {
+        onSuccess: ({ data }) => {
+            if (data)
+                toast.success(data === 'ban' ? t('userBannedSuccess') : t('userUnbannedSuccess'));
+        },
+    });
 
     const handleRoleChange = (userId: string, role: 'admin' | 'user') => {
         executeUpdateRole({ userId, role });

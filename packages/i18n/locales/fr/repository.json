@@ -80,7 +80,8 @@
         "autoDeploy": "Déploiement automatique",
         "autoDeployDescription": "Déployer automatiquement lors d'un push sur la branche",
         "save": "Enregistrer",
-        "saving": "Enregistrement..."
+        "saving": "Enregistrement...",
+        "updated": "Paramètres de déploiement mis à jour avec succès"
     },
     "environment": {
         "title": "Environnement",
@@ -298,7 +299,8 @@
             "label": "Branche",
             "loading": "Chargement...",
             "saving": "Enregistrement...",
-            "save": "Enregistrer"
+            "save": "Enregistrer",
+            "updated": "Branche mise à jour avec succès"
         },
         "autoDeploy": {
             "title": "Déploiement automatique",
@@ -313,6 +315,7 @@
             "selectType": "Sélectionner un type",
             "saving": "Enregistrement...",
             "save": "Enregistrer",
+            "updated": "Configuration de build mise à jour avec succès",
             "dockerfile": "Dockerfile",
             "dockerfileDescription": "Utiliser un Dockerfile existant",
             "dockerCompose": "Docker Compose",

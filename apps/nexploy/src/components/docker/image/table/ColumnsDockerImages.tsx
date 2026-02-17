@@ -6,7 +6,7 @@ import { ArrowUpDown, ChevronRight, MoreVertical } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Badge } from '@workspace/ui/components/badge';
-import CopyButton from '@/components/utils/CopyButton';
+import CopyButton from '@/components/shared/CopyButton';
 import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';
 import { ImageDropdownActions } from '@/components/docker/image/ImageDropdownActions';

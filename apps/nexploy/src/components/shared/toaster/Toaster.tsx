@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { ClientToasts } from '@/components/utils/toaster/ClientToasts';
+import { ClientToasts } from '@/components/shared/toaster/ClientToasts';
 import { ToastData, ToastItem } from '@workspace/typescript-interface/toast';
 
 export async function Toaster() {

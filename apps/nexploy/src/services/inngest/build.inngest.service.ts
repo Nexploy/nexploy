@@ -5,7 +5,7 @@ import { getCommit, getValidToken } from '@/services/api/gitProvider.service';
 import { addBuildJob } from '@/inngest/jobs/queue';
 import { inngest } from '@/inngest/client';
 import { getRepositorieWithEnv } from '@/services/repository.service';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { decrypt } from '@/lib/encryption';
 import {
     ResumeBuildSchemaType,
@@ -28,6 +28,7 @@ export async function startBuildRepositoryInngest(
     }
 
     const oldToken = await getGitProviderToken(repository.gitProvider, {
+        gitAccountId: repository.gitAccountId ?? undefined,
         requestedUserId: userId,
     });
     const token = await getValidToken(oldToken, repository.gitProvider, userId);
@@ -197,8 +198,10 @@ export async function retryBuildRepositoryInngest(
 
     const repository = existingBuild.repository;
 
-    const token = await getGitProviderToken(repository.gitProvider);
-    if (!token) throw new Error('No access token provider found');
+    const token = await getGitProviderToken(repository.gitProvider, {
+        gitAccountId: repository.gitAccountId ?? undefined,
+        requestedUserId: userId,
+    });
 
     const imageName = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
@@ -247,8 +250,10 @@ export async function resumeBuildRepositoryInngest(
 
     const repository = existingBuild.repository;
 
-    const token = await getGitProviderToken(repository.gitProvider);
-    if (!token) throw new Error('No access token provider found');
+    const token = await getGitProviderToken(repository.gitProvider, {
+        gitAccountId: repository.gitAccountId ?? undefined,
+        requestedUserId: userId,
+    });
 
     const imageName = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 

@@ -73,7 +73,7 @@ class DeployComposeStep extends BaseStep {
         await ctx.reporter.setStatus('DEPLOYING');
         await ctx.logger.info(this.metadata.id, 'Starting Docker Compose deployment');
 
-        const composePath = ctx.getMetadata<string>('composePath');
+        const composePath = ctx.getMetadata<string>('composePath') || config.dockerComposePath;
 
         const onLog = async (message: string) => {
             await ctx.logger.info(this.metadata.id, message);

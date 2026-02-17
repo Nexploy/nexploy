@@ -7,7 +7,7 @@ import { Clock, GitBranch, GitCommit } from 'lucide-react';
 import dayjs from 'dayjs';
 import { Build } from 'generated/client';
 import { Separator } from '@workspace/ui/components/separator';
-import { StatusBadge } from '@/components/utils/StatusBadge';
+import { StatusBadge } from '@/components/shared/StatusBadge';
 import { BuildDropdownActions } from '@/components/repositories/BuildDropdownActions';
 import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
 

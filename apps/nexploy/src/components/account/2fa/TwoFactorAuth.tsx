@@ -9,7 +9,7 @@ import { TwoFactorAuthSetting } from '@/components/account/2fa/TwoFactorAuthSett
 import QRCode from 'react-qr-code';
 import { ButtonGroup } from '@workspace/ui/components/button-group';
 import { Input } from '@workspace/ui/components/input';
-import CopyButton from '@/components/utils/CopyButton';
+import CopyButton from '@/components/shared/CopyButton';
 import { TwoFactorVerifCodeForm } from '@/components/auth/2faVerifCodeForm';
 import { DialogTitle } from '@workspace/ui/components/dialog';
 import { Session } from '@/lib/auth/auth';

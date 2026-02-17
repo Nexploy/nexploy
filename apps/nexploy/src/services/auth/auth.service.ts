@@ -1,7 +1,7 @@
 import { auth, Session } from '@/lib/auth/auth';
 import { User } from 'better-auth';
 import { headers } from 'next/headers';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { prisma } from '../../../prisma/prisma';
 import { getTranslations } from 'next-intl/server';
 import { redirect, RedirectType } from 'next/navigation';

@@ -192,11 +192,7 @@ export async function getBranches(
 export async function updateGitProviderToken(
     provider: string,
     userId: string,
-    tokenData: {
-        accessToken: string;
-        refreshToken?: string;
-        accessTokenExpiresAt: Date | null;
-    },
+    tokenData: GitProviderToken,
 ): Promise<void> {
     try {
         const gitAccount = await prisma.gitAccount.findFirst({
@@ -246,5 +242,25 @@ export async function listGitAccounts(userId: string) {
         });
     } catch (error: unknown) {
         throw new Error('Failed to list git accounts');
+    }
+}
+
+export async function disconnectGitAccount(userId: string, gitProviderId: string) {
+    try {
+        const gitAccount = await prisma.gitAccount.findUnique({
+            where: {
+                userId_gitProviderId: { userId, gitProviderId },
+            },
+        });
+
+        if (!gitAccount) {
+            throw new Error('Git account not found');
+        }
+
+        await prisma.gitAccount.delete({
+            where: { id: gitAccount.id },
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to disconnect git account');
     }
 }

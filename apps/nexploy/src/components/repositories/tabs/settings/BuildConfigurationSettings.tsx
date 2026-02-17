@@ -12,6 +12,7 @@ import { buildTypeSchema } from '@workspace/schemas-zod/repository/buildType.sch
 import { updateBuildTypeAction } from '@/actions/repository/settings/updateBuildType.action';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { BuildConfigurationFields } from '@/components/repositories/forms/BuildConfigurationFields';
+import { toast } from 'sonner';
 
 interface BuildConfigurationSettingsProps {
     repository: Repository;
@@ -36,6 +37,7 @@ export function BuildConfigurationSettings({ repository }: BuildConfigurationSet
             },
             actionProps: {
                 onSuccess: ({ data }) => {
+                    toast.success(tSettings('updated'));
                     if (data) form.reset(data);
                 },
             },
@@ -57,6 +59,7 @@ export function BuildConfigurationSettings({ repository }: BuildConfigurationSet
                             <Button
                                 type="submit"
                                 icon={Save}
+                                isLoading={action.isPending}
                                 disabled={action.isPending || !form.formState.isDirty}
                             >
                                 {action.isPending ? tSettings('saving') : tSettings('save')}

@@ -1,32 +1,12 @@
 'use server';
 
 import { authActionServer } from '@/lib/api/safe-action';
-import { prisma } from '@/../prisma/prisma';
-import { z } from 'zod';
-
-const disconnectSchema = z.object({
-    gitProviderId: z.string(),
-});
+import { disconnectGitAccount } from '@/services/git/git.service';
+import { disconnectGitAccountSchema } from '@workspace/schemas-zod/git/gitAccount.schema';
 
 export const disconnectGitAccountAction = authActionServer
-    .inputSchema(disconnectSchema)
+    .inputSchema(disconnectGitAccountSchema)
     .action(async ({ parsedInput, ctx }) => {
-        const { gitProviderId } = parsedInput;
-        const userId = ctx.session.user.id;
-
-        const gitAccount = await prisma.gitAccount.findUnique({
-            where: {
-                userId_gitProviderId: { userId, gitProviderId },
-            },
-        });
-
-        if (!gitAccount) {
-            throw new Error('Git account not found');
-        }
-
-        await prisma.gitAccount.delete({
-            where: { id: gitAccount.id },
-        });
-
+        await disconnectGitAccount(ctx.session.user.id, parsedInput.gitProviderId);
         return { success: true };
     });

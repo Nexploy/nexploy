@@ -1,7 +1,7 @@
 'use server';
 
 import { authActionServer } from '@/lib/api/safe-action';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { deployVersionSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { decrypt } from '@/lib/encryption';
@@ -56,7 +56,9 @@ export const onDeployVersion = authActionServer
             if (err instanceof Error) {
                 await setToastServer({
                     type: 'error',
-                    message: err.message || (await getTranslations('repository'))('builds.failedToDeploy'),
+                    message:
+                        err.message ||
+                        (await getTranslations('repository'))('builds.failedToDeploy'),
                 });
             }
             throw err;

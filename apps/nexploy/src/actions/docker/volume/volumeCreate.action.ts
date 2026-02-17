@@ -4,7 +4,7 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
 import { volumeCreateSchema } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { getTranslations } from 'next-intl/server';
 
 export const onVolumeCreateAction = authActionServer
