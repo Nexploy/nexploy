@@ -5,8 +5,10 @@ model Repository {
   repositoryUrl String @unique
   branch        String @default("main")
 
-  gitProvider String
-  gitId       String @unique
+  gitProvider   String
+  gitId         String @unique
+  gitAccountId  String?
+  gitAccount    GitAccount? @relation(fields: [gitAccountId], references: [id], onDelete: SetNull)
 
   buildType         BuildType @default(DOCKERFILE)
   dockerfilePath    String?   @default("Dockerfile")

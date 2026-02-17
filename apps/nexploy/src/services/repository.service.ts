@@ -22,7 +22,10 @@ export async function createRepository(
         let webhookConfig = null;
 
         if (restRepositoryCreate.autoDeploy) {
-            const oldToken = await getGitProviderToken(restRepositoryCreate.gitProvider);
+            const oldToken = await getGitProviderToken(restRepositoryCreate.gitProvider, {
+                gitAccountId: restRepositoryCreate.gitAccountId,
+                requestedUserId: ctx.session.user.id,
+            });
             const token = await getValidToken(
                 oldToken,
                 restRepositoryCreate.gitProvider,
