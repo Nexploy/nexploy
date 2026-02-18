@@ -7,6 +7,7 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { decrypt } from '@/lib/encryption';
 import { getTranslations } from 'next-intl/server';
 import { getRepositorieWithEnv } from '@/services/repository.service';
+import { prisma } from '@/../prisma/prisma';
 
 export const onDeployVersion = authActionServer
     .inputSchema(deployVersionSchema)
@@ -26,20 +27,28 @@ export const onDeployVersion = authActionServer
                 envVariables[envVar.key] = decrypt(envVar.value);
             }
 
-            const imageName = `${repositoryId}:${imageTag}`;
-
             if (repository.buildType === 'DOCKER_COMPOSE') {
+                const version = await prisma.version.findUnique({
+                    where: { repositoryId_imageTag: { repositoryId, imageTag } },
+                });
+
+                if (!version?.composeConfig) {
+                    throw new Error(t('versions.composeConfigNotFound'));
+                }
+
                 return await kyDocker
                     .post('pipeline/deploy-compose', {
                         json: {
                             repositoryId,
-                            buildId: imageTag,
                             projectName: `nexploy-${repositoryId}`,
                             envVars: envVariables,
+                            composeConfig: version.composeConfig,
                         },
                     })
                     .json();
             }
+
+            const imageName = `${repositoryId}:${imageTag}`;
 
             return await kyDocker
                 .post('pipeline/deploy', {

@@ -61,6 +61,7 @@ model Repository {
 
   build        Build[]
   envVariables EnvVariable[]
+  versions     Version[]
 
   @@map("repository")
 }

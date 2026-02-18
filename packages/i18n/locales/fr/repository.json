@@ -40,7 +40,8 @@
         "deleteTitle": "Supprimer la version",
         "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette version ? L'image Docker sera définitivement supprimée.",
         "deleteSuccess": "Version supprimée avec succès",
-        "deleteError": "Échec de la suppression de la version"
+        "deleteError": "Échec de la suppression de la version",
+        "composeConfigNotFound": "Configuration Compose introuvable pour cette version"
     },
     "deployment": {
         "title": "Déploiement",

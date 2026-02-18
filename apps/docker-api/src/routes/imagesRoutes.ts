@@ -13,16 +13,6 @@ app.post(
     }),
 );
 
-app.get(
-    '/versions',
-    handleAsync(async (c) => {
-        const repositoryId = c.req.query('repositoryId');
-        if (!repositoryId) {
-            return c.json({ error: 'repositoryId is required' }, 400);
-        }
-        return imagesStateManager.getVersionsByRepository(repositoryId);
-    }),
-);
 
 app.get(
     '/',

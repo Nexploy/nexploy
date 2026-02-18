@@ -5,7 +5,6 @@ import { DeployOptions } from '@workspace/typescript-interface/inngest/deploy';
 import { getCurrentDockerClient } from '@/lib/dockerContext';
 import DockerodeCompose from 'dockerode-compose';
 import { substituteEnvVars } from '@/utils/composePreprocessor';
-import { getTranslations } from '@/middleware/locale.middleware';
 import yaml from 'yaml';
 import fs from 'fs';
 import path from 'path';
@@ -30,25 +29,16 @@ app.post(
 app.post(
     '/deploy-compose',
     handleAsync(async (c) => {
-        const { repositoryId, buildId, projectName, envVars } = await c.req.json<{
+        const { repositoryId, projectName, envVars, composeConfig } = await c.req.json<{
             repositoryId: string;
-            buildId: string;
             projectName: string;
             envVars?: Record<string, string>;
+            composeConfig: string;
         }>();
 
         const dockerClient = getCurrentDockerClient();
-        const manifestTag = `${repositoryId}:${buildId}`;
 
-        const imageInfo = await dockerClient.getImage(manifestTag).inspect();
-        const configB64 = imageInfo.Config?.Labels?.['nexploy.compose.config'];
-
-        if (!configB64) {
-            const t = getTranslations(c, 'docker');
-            throw new Error(t('errors.manifestNoComposeConfig'));
-        }
-
-        let composeYaml = Buffer.from(configB64, 'base64').toString('utf8');
+        let composeYaml = Buffer.from(composeConfig, 'base64').toString('utf8');
 
         if (envVars && Object.keys(envVars).length > 0) {
             composeYaml = substituteEnvVars(composeYaml, envVars);

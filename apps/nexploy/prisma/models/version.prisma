@@ -1,0 +1,18 @@
+model Version {
+  id            String   @id @default(cuid())
+  repositoryId  String
+  imageTag      String
+  buildType     String
+  branch        String?
+  commitHash    String?
+  commitMessage String?
+  composeConfig String?  @db.Text
+
+  createdAt DateTime @default(now())
+
+  repository Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  @@unique([repositoryId, imageTag])
+  @@index([repositoryId])
+  @@map("version")
+}

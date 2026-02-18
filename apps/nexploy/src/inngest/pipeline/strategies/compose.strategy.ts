@@ -5,6 +5,7 @@ import { BaseStep } from '../steps/base.step';
 import { IPipelineStep, StepExecutionContext, StepMetadata, StepResult } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
+import { prisma } from '@/../prisma/prisma';
 
 class PrepareComposeStep extends BaseStep {
     readonly metadata: StepMetadata = {
@@ -103,6 +104,32 @@ class DeployComposeStep extends BaseStep {
                 config.repositoryId,
                 labels,
             );
+
+            try {
+                await prisma.version.upsert({
+                    where: {
+                        repositoryId_imageTag: {
+                            repositoryId: config.repositoryId,
+                            imageTag: config.imageTag,
+                        },
+                    },
+                    update: { composeConfig: result.composeConfig ?? null },
+                    create: {
+                        repositoryId: config.repositoryId,
+                        imageTag: config.imageTag,
+                        buildType: config.buildType,
+                        branch: config.gitBranch ?? null,
+                        commitHash: config.gitCommitHash ?? null,
+                        commitMessage: config.gitCommitMessage ?? null,
+                        composeConfig: result.composeConfig ?? null,
+                    },
+                });
+            } catch (err) {
+                await ctx.logger.warn(
+                    this.metadata.id,
+                    `Failed to save version to DB: ${err instanceof Error ? err.message : String(err)}`,
+                );
+            }
 
             await ctx.logger.info(
                 this.metadata.id,
