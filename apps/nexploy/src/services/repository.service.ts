@@ -30,6 +30,7 @@ export async function createRepository(
                 oldToken,
                 restRepositoryCreate.gitProvider,
                 ctx.session.user.id,
+                restRepositoryCreate.gitAccountId,
             );
 
             const baseUrl = await getBaseUrl();
@@ -57,7 +58,6 @@ export async function createRepository(
 
         return repository.id;
     } catch (error: unknown) {
-        console.log(error);
         throw new Error('Failed to create repository');
     }
 }
@@ -236,7 +236,12 @@ export async function deleteRepository(repositoryId: string, userId: string) {
         gitAccountId: repository.gitAccountId ?? undefined,
         requestedUserId: userId,
     });
-    const token = await getValidToken(oldToken, repository.gitProvider, userId);
+    const token = await getValidToken(
+        oldToken,
+        repository.gitProvider,
+        userId,
+        repository.gitAccountId ?? undefined,
+    );
 
     if (repository.webhookId) {
         await tokenGitStorage.run(token, async () => {
@@ -260,7 +265,12 @@ export async function toggleAutoDeployRepository(
         gitAccountId: repository.gitAccountId ?? undefined,
         requestedUserId: userId,
     });
-    const token = await getValidToken(oldToken, repository.gitProvider, userId);
+    const token = await getValidToken(
+        oldToken,
+        repository.gitProvider,
+        userId,
+        repository.gitAccountId ?? undefined,
+    );
 
     if (autoDeploy && !repository.webhookId) {
         const baseUrl = await getBaseUrl();

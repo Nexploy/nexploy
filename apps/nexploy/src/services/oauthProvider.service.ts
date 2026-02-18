@@ -129,6 +129,18 @@ export async function getGitProviderCredentialsById(
     };
 }
 
+export async function getGitProviderCredentialsByAccountId(
+    gitAccountId: string,
+): Promise<GitProviderCredentials | null> {
+    const gitAccount = await prisma.gitAccount.findUnique({
+        where: { id: gitAccountId },
+        select: { gitProviderId: true },
+    });
+
+    if (!gitAccount) return null;
+    return getGitProviderCredentialsById(gitAccount.gitProviderId);
+}
+
 export async function saveGitHubApp(data: {
     displayName: string;
     appId: string;

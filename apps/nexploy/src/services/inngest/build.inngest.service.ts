@@ -31,7 +31,12 @@ export async function startBuildRepositoryInngest(
         gitAccountId: repository.gitAccountId ?? undefined,
         requestedUserId: userId,
     });
-    const token = await getValidToken(oldToken, repository.gitProvider, userId);
+    const token = await getValidToken(
+        oldToken,
+        repository.gitProvider,
+        userId,
+        repository.gitAccountId ?? undefined,
+    );
 
     const commit = await getCommit(
         repository.repositoryUrl,

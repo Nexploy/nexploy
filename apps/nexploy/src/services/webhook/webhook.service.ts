@@ -1,6 +1,5 @@
 import { WebhookConfig } from '@workspace/typescript-interface/websocket';
 import { kyGitlab } from '@/lib/api/kyGitlab';
-import { kyGithub } from '@/lib/api/kyGithub';
 import {
     createGitLabWebhook,
     extractGitLabProjectId,
@@ -9,6 +8,7 @@ import { createGitHubWebhook } from '@/services/webhook/github.webhook.service';
 import { prisma } from '../../../prisma/prisma';
 import { extractGitHubRepo } from '@/services/git/git.service';
 import { deleteWebhookForRepository } from '@/services/repository.service';
+import { githubDeleteWebhook } from '@/lib/api/github.api';
 
 export async function setupWebhookForRepository(
     repositoryUrl: string,
@@ -53,7 +53,7 @@ export async function removeWebhookForRepository(repositoryId: string): Promise<
         } else if (repository.gitProvider === 'github') {
             const { owner, repo } = extractGitHubRepo(repository.repositoryUrl);
 
-            await kyGithub.delete(`repos/${owner}/${repo}/hooks/${repository.webhookId}`).json();
+            await githubDeleteWebhook(owner, repo, repository.webhookId);
         }
     } catch (error: unknown) {
         throw new Error('Failed to delete webhook');

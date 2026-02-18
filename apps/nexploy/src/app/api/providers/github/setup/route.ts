@@ -5,6 +5,7 @@ import { adminOnly, authRouteServer, route } from '@/lib/api/nextRoute';
 import { setToastServer } from '@/lib/toastServer';
 import { getUserSession } from '@/services/auth/auth.service';
 import { getBaseUrl } from '@/lib/getBaseUrl';
+import { githubExchangeManifestCode } from '@/lib/api/github.api';
 
 export const GET = route
     .use(authRouteServer)
@@ -33,19 +34,14 @@ export const GET = route
         const displayNameCookie = cookieStore.get('github_app_display_name')?.value;
         const displayName = displayNameCookie ? decodeURIComponent(displayNameCookie) : 'GitHub';
 
-        const response = await fetch(`https://api.github.com/app-manifests/${code}/conversions`, {
-            method: 'POST',
-            headers: { Accept: 'application/vnd.github+json' },
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('GitHub App manifest exchange failed:', errorText);
+        let data;
+        try {
+            data = await githubExchangeManifestCode(code);
+        } catch (error) {
+            console.error('GitHub App manifest exchange failed:', error);
             await setToastServer({ type: 'error', message: 'GitHub App creation failed' });
             return redirectTo('/admin/integrations');
         }
-
-        const data = await response.json();
 
         await saveGitHubApp({
             displayName,

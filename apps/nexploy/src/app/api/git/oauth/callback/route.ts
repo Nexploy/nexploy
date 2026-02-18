@@ -5,6 +5,10 @@ import { decrypt, encrypt } from '@/lib/encryption';
 import { getBaseUrl } from '@/lib/getBaseUrl';
 import { authRouteServer, route } from '@/lib/api/nextRoute';
 import { Session } from '@/lib/auth/auth';
+import {
+    githubExchangeCodeForToken,
+    githubGetAuthenticatedUser,
+} from '@/lib/api/github.api';
 
 export const GET = route
     .use(authRouteServer)
@@ -50,21 +54,12 @@ export const GET = route
             let providerUsername: string | null = null;
 
             if (payload.provider === 'github') {
-                const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
-                    body: JSON.stringify({
-                        client_id: clientId,
-                        client_secret: clientSecret,
-                        code,
-                        redirect_uri: redirectUri,
-                    }),
-                });
-
-                const tokenData = await tokenRes.json();
+                const tokenData = await githubExchangeCodeForToken(
+                    code,
+                    clientId,
+                    clientSecret,
+                    redirectUri,
+                );
                 if (tokenData.error) {
                     return NextResponse.redirect(`${accountUrl}?error=token_exchange_failed`);
                 }
@@ -75,10 +70,7 @@ export const GET = route
                     expiresAt = new Date(Date.now() + tokenData.expires_in * 1000);
                 }
 
-                const userRes = await fetch('https://api.github.com/user', {
-                    headers: { Authorization: `Bearer ${accessToken}` },
-                });
-                const userData = await userRes.json();
+                const userData = await githubGetAuthenticatedUser(accessToken);
 
                 providerAccountId = String(userData.id);
                 providerUsername = userData.login;

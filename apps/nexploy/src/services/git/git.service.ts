@@ -6,14 +6,18 @@ import {
     GitRepository,
 } from '@workspace/typescript-interface/git/git';
 import { getValidToken } from '@/services/api/gitProvider.service';
-import { kyGithub } from '@/lib/api/kyGithub';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { kyGitlab } from '@/lib/api/kyGitlab';
-import { GithubRepo } from '@workspace/typescript-interface/git/repository/github.repository';
 import { GitlabRepo } from '@workspace/typescript-interface/git/repository/gitlab.repository';
 import { GitlabBranch } from '@workspace/typescript-interface/git/branch/gitlab.branch';
 import { GithubBranch } from '@workspace/typescript-interface/git/branch/github.branch';
+import { GithubRepo } from '@workspace/typescript-interface/git/repository/github.repository';
 import { decrypt, encrypt } from '@/lib/encryption';
+import {
+    githubGetUserInstallations,
+    githubGetInstallationRepositories,
+    githubGetRepositoryBranches,
+} from '@/lib/api/github.api';
 
 export function extractGitHubRepo(repositoryUrl: string): { owner: string; repo: string } {
     const match = repositoryUrl.match(/github\.com[\/:]([^\/]+)\/([^\/\.]+)/);
@@ -60,25 +64,15 @@ export async function getRepositories(
     userId: string,
 ): Promise<GitRepository[]> {
     const oldToken = await getGitProviderToken(provider, { gitAccountId });
-    const token = await getValidToken(oldToken, provider, userId);
+    const token = await getValidToken(oldToken, provider, userId, gitAccountId);
 
     switch (provider) {
         case 'github': {
             const allRepos = await tokenGitStorage.run(token, async () => {
-                const installationsRes = await kyGithub
-                    .get('user/installations', {
-                        headers: { Accept: 'application/vnd.github+json' },
-                    })
-                    .json<{ installations: { id: number }[] }>();
+                const { installations } = await githubGetUserInstallations();
 
-                const repoPromises = installationsRes.installations.map((inst) =>
-                    kyGithub
-                        .get(`user/installations/${inst.id}/repositories`, {
-                            headers: { Accept: 'application/vnd.github+json' },
-                            searchParams: { per_page: '100' },
-                        })
-                        .json<{ repositories: GithubRepo[] }>()
-                        .then((res) => res.repositories),
+                const repoPromises = installations.map((inst) =>
+                    githubGetInstallationRepositories(inst.id).then((res) => res.repositories),
                 );
 
                 const results = await Promise.all(repoPromises);
@@ -145,22 +139,16 @@ export async function getBranches(
         gitAccountId,
         requestedUserId: userId,
     });
-    const token = await getValidToken(oldToken, provider, userId);
+    const token = await getValidToken(oldToken, provider, userId, gitAccountId);
 
     switch (provider) {
         case 'github': {
             try {
-                const branchs = await tokenGitStorage.run(token, async () => {
-                    return await kyGithub
-                        .get(`repos/${owner}/${repoName}/branches`, {
-                            headers: {
-                                Accept: 'application/vnd.github+json',
-                            },
-                        })
-                        .json<GithubBranch[]>();
+                const branches = await tokenGitStorage.run(token, async () => {
+                    return await githubGetRepositoryBranches(owner!, repoName!);
                 });
 
-                return branchs.map((branch: GithubBranch) => ({
+                return branches.map((branch: GithubBranch) => ({
                     name: branch.name,
                     protected: branch.protected,
                 }));
@@ -170,13 +158,13 @@ export async function getBranches(
         }
         case 'gitlab': {
             try {
-                const branchs = await tokenGitStorage.run(token, async () => {
+                const branches = await tokenGitStorage.run(token, async () => {
                     return await kyGitlab
                         .get(`v4/projects/${repoId}/repository/branches`)
                         .json<GitlabBranch[]>();
                 });
 
-                return branchs.map((branch: GitlabBranch) => ({
+                return branches.map((branch: GitlabBranch) => ({
                     name: branch.name,
                     protected: branch.protected,
                 }));
@@ -193,12 +181,14 @@ export async function updateGitProviderToken(
     provider: string,
     userId: string,
     tokenData: GitProviderToken,
+    gitAccountId?: string,
 ): Promise<void> {
     try {
         const gitAccount = await prisma.gitAccount.findFirst({
             where: {
                 provider,
                 userId,
+                ...(gitAccountId && { id: gitAccountId }),
             },
         });
 
