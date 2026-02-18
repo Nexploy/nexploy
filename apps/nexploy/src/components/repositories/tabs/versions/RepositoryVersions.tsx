@@ -63,13 +63,11 @@ export function RepositoryVersions({
     const isCurrentVersion = (version: Version) => {
         if (!containerImageUsed) return false;
         const currentTag = containerImageUsed.split(':').at(-1) ?? '';
-        // Dockerfile: exact match. Compose: service images are tagged with the full buildId
-        // while version.imageTag is the last 8 chars of that buildId.
         return currentTag === version.imageTag || currentTag.endsWith(version.imageTag);
     };
 
     return (
-        <div className="flex flex-col gap-4 px-5">
+        <div className="flex flex-col gap-2 px-5">
             <h2 className="text-xl font-semibold">{t('title')}</h2>
             <div className="rounded-md border">
                 {versions.length === 0 ? (

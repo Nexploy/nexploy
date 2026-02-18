@@ -29,7 +29,7 @@ app.post(
 app.post(
     '/deploy-compose',
     handleAsync(async (c) => {
-        const { repositoryId, projectName, envVars, composeConfig } = await c.req.json<{
+        const { projectName, envVars, composeConfig } = await c.req.json<{
             repositoryId: string;
             projectName: string;
             envVars?: Record<string, string>;

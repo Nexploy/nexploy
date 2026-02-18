@@ -120,8 +120,6 @@ app.post('/stream/compose', async (c) => {
 
             let composeContent = yaml.parse(composeYamlContent) as ComposeContent;
 
-            // Fix for dockerode-compose bug: when external networks don't have an explicit
-            // `name` property, the library resolves it as `undefined`. Set name to the key.
             if (composeContent.networks) {
                 for (const [networkName, networkConfig] of Object.entries(
                     composeContent.networks,
@@ -390,8 +388,6 @@ app.post('/stream/compose', async (c) => {
                 }
             }
 
-            // Always write a processed compose file if we modified the content
-            // (e.g., external networks name fix, build→image replacement, port mappings)
             const hasExternalNetworks =
                 composeContent.networks &&
                 Object.values(composeContent.networks).some((n: any) => n && n.external === true);
@@ -470,7 +466,11 @@ app.post('/stream/compose', async (c) => {
             }
 
             const composeConfigB64 = Buffer.from(yaml.stringify(composeContent)).toString('base64');
-            const result = { success: true, containers: containerIds, composeConfig: composeConfigB64 };
+            const result = {
+                success: true,
+                containers: containerIds,
+                composeConfig: composeConfigB64,
+            };
 
             if (!isClientDisconnected && !c.req.raw.signal.aborted) {
                 await stream.writeSSE({

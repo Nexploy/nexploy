@@ -65,9 +65,7 @@ export const onDeployVersion = authActionServer
             if (err instanceof Error) {
                 await setToastServer({
                     type: 'error',
-                    message:
-                        err.message ||
-                        (await getTranslations('repository'))('builds.failedToDeploy'),
+                    message: (await getTranslations('repository'))('builds.failedToDeploy'),
                 });
             }
             throw err;
