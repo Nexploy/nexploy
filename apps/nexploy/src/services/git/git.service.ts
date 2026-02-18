@@ -209,7 +209,7 @@ export async function updateGitProviderToken(
                 id: gitAccount.id,
             },
             data: {
-                accessToken: encrypt(tokenData.accessToken),
+                accessToken: tokenData.accessToken ? encrypt(tokenData.accessToken) : undefined,
                 refreshToken: tokenData.refreshToken ? encrypt(tokenData.refreshToken) : null,
                 accessTokenExpiresAt: tokenData.accessTokenExpiresAt,
             },

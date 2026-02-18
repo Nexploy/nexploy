@@ -16,6 +16,7 @@ import { containerImageEvents } from '@/managers/containersStateManager';
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
+import dayjs from 'dayjs';
 
 export class ImagesStateManager extends BaseStateManager {
     private images: Map<string, Image> = new Map();
@@ -301,7 +302,9 @@ export class ImagesStateManager extends BaseStateManager {
             tag: tag || [],
             repoTags: image.RepoTags || [],
             repoDigests: image.RepoDigests || [],
-            created: isInspect ? new Date(image.Created).getTime() / 1000 : image.Created,
+            created: isInspect
+                ? dayjs(image.Created).valueOf()
+                : dayjs.unix(image.Created).valueOf(),
             size: image.Size,
             virtualSize: image.VirtualSize,
             sharedSize: isInspect ? 0 : (image as ImageInfo).SharedSize || 0,

@@ -19,15 +19,12 @@ export function CardInfoImages() {
     const activeImagesCount = images.filter((img) => img.containersUsed > 0).length;
     const totalImages = images.length;
 
-    const totalDiskCapacity = 2 * 1024 * 1024 * 1024;
-    const percentUsed = (totalSizeImages / totalDiskCapacity) * 100;
-
     const lastUpdated = [...images].sort(
         (a, b) => new Date(b.created || 0).getTime() - new Date(a.created || 0).getTime(),
     )[0];
 
     const lastUpdatedLabel = lastUpdated?.created
-        ? dayjs.unix(lastUpdated.created).format('DD/MM/YYYY')
+        ? dayjs(lastUpdated.created).format('DD/MM/YYYY')
         : '';
 
     const lastUpdatedName = lastUpdated?.name?.[0] || '<none>';

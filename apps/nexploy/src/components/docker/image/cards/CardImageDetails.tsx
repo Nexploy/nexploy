@@ -61,7 +61,7 @@ export function CardImageDetails({ imageId }: CardImageDetailsProps) {
                                 {t('created')}
                             </TableCell>
                             <TableCell className={'max-w-0 truncate'}>
-                                {dayjs.unix(image.created).format('YYYY-MM-DD HH:mm:ss')}
+                                {dayjs(image.created).format('YYYY-MM-DD HH:mm:ss')}
                             </TableCell>
                         </TableRow>
                         <TableRow>

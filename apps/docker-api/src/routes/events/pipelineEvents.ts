@@ -617,6 +617,24 @@ app.post('/stream/build', async (c) => {
                 labels,
             );
 
+            try {
+                const dockerClient = getCurrentDockerClient();
+                const pruneResult = await dockerClient.pruneImages({
+                    filters: { dangling: { true: true } },
+                });
+                const reclaimed = pruneResult.SpaceReclaimed || 0;
+                if (reclaimed > 0) {
+                    onLog(
+                        `Pruned dangling images (reclaimed ${(reclaimed / 1024 / 1024).toFixed(1)} MB)`,
+                    );
+                }
+            } catch (pruneErr) {
+                logger.warn(
+                    { error: pruneErr },
+                    'Failed to prune dangling images after dockerfile build',
+                );
+            }
+
             if (!isClientDisconnected && !c.req.raw.signal.aborted) {
                 await stream.writeSSE({
                     data: JSON.stringify({

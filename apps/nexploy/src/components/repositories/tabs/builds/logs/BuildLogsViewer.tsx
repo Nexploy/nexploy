@@ -112,7 +112,7 @@ export function BuildLogsViewer({
     return (
         <div className="flex flex-1 flex-col overflow-hidden">
             <div className="flex items-center justify-between border-b p-3">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                     <StatusBadge status={status} />
                     <span className="text-muted-foreground text-sm">
                         {t('started')} {dayjs(createdAt).format('DD/MM/YYYY HH:mm:ss')}

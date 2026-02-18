@@ -233,7 +233,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
         ),
         cell: ({ row }) => {
             const created = row.original.created;
-            const date = dayjs.unix(created).format('DD/MM/YYYY');
+            const date = dayjs(created).format('DD/MM/YYYY');
 
             return (
                 <div className="text-muted-foreground flex items-center gap-2 text-sm">{date}</div>
