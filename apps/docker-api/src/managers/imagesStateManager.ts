@@ -17,6 +17,17 @@ import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 import dayjs from 'dayjs';
 import { NEXPLOY_LABELS } from '@/utils/nexployLabels';
 
+const IMAGE_STATE_CHANGE_EVENTS = new Set<ImageAction>([
+    'pull',
+    'push',
+    'tag',
+    'untag',
+    'delete',
+    'import',
+    'load',
+    'save',
+]);
+
 export class ImagesStateManager extends BaseStateManager {
     private images: Map<string, Image> = new Map();
 
@@ -50,9 +61,9 @@ export class ImagesStateManager extends BaseStateManager {
 
         try {
             const images = await this.docker.listImages({ all: true });
+            const parsed = await Promise.all(images.map((image) => this.parseImageInfo(image)));
 
-            for (const image of images) {
-                const state = await this.parseImageInfo(image);
+            for (const state of parsed) {
                 this.images.set(state.id, state);
             }
 
@@ -77,18 +88,7 @@ export class ImagesStateManager extends BaseStateManager {
         const action = event.Action;
         logger.debug({ imageId, action }, 'Docker Image event received');
 
-        const stateChangeEvents: ImageAction[] = [
-            'pull',
-            'push',
-            'tag',
-            'untag',
-            'delete',
-            'import',
-            'load',
-            'save',
-        ];
-
-        if (stateChangeEvents.includes(action)) {
+        if (IMAGE_STATE_CHANGE_EVENTS.has(action)) {
             await this.updateImageState(imageId, action);
         }
     }
@@ -96,9 +96,9 @@ export class ImagesStateManager extends BaseStateManager {
     async fullStateSync(): Promise<void> {
         try {
             const images = await this.docker.listImages({ all: true });
+            const parsed = await Promise.all(images.map((image) => this.parseImageInfo(image)));
 
-            for (const image of images) {
-                const newState = await this.parseImageInfo(image);
+            for (const newState of parsed) {
                 const oldState = this.images.get(newState.id);
 
                 if (!oldState) return;
@@ -393,7 +393,10 @@ export class ImagesStateManager extends BaseStateManager {
     private getStateChanges(oldState: Image, newState: Image): ImageStateChanges {
         const changes: ImageStateChanges = {};
 
-        if (JSON.stringify(oldState.repoTags) !== JSON.stringify(newState.repoTags))
+        const oldRepoTags = JSON.stringify(oldState.repoTags);
+        const newRepoTags = JSON.stringify(newState.repoTags);
+
+        if (oldRepoTags !== newRepoTags)
             changes.repoTags = { from: oldState.repoTags, to: newState.repoTags };
         if (oldState.size !== newState.size)
             changes.size = { from: oldState.size, to: newState.size };
@@ -430,9 +433,9 @@ export class ImagesStateManager extends BaseStateManager {
         try {
             const images = await this.docker.listImages({ all: true });
             const newImageMap = new Map<string, Image>();
+            const parsed = await Promise.all(images.map((image) => this.parseImageInfo(image)));
 
-            for (const image of images) {
-                const state = await this.parseImageInfo(image);
+            for (const state of parsed) {
                 newImageMap.set(state.id, state);
             }
 

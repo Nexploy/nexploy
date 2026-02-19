@@ -104,9 +104,13 @@ export async function generateTraefikConfigForRepository(
 
         config.http.routers[routerName] = router;
 
-        const matchedContainer = containers.find((container) =>
-            container.Ports?.some((p) => p.PrivatePort === domain.containerPort),
-        );
+        // Match by port first. Compose stacks often have no published ports
+        // (Traefik handles routing internally), so Ports[] may be empty.
+        // Fall back to the first container in the project when port matching fails.
+        const matchedContainer =
+            containers.find((container) =>
+                container.Ports?.some((p) => p.PrivatePort === domain.containerPort),
+            ) ?? containers[0];
 
         const containerName = matchedContainer
             ? matchedContainer.Names[0]?.replace(/^\//, '')

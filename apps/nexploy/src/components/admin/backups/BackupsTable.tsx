@@ -1,5 +1,6 @@
 'use client';
 
+import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import {
     FilterFn,
     flexRender,
@@ -61,7 +62,7 @@ export function BackupsTable({ backups }: BackupsTableProps) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [rowSelection, setRowSelection] = useState({});
-    const [pageSize, setPageSize] = useState<number | 'all'>(10);
+    const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
 
     const t = useTranslations('admin');
     const tCommon = useTranslations('common');
@@ -228,7 +229,7 @@ export function BackupsTable({ backups }: BackupsTableProps) {
                             <SelectContent>
                                 <SelectGroup>
                                     <SelectLabel>{tCommon('size')}</SelectLabel>
-                                    {[10, 25, 50, 100].map((size) => (
+                                    {PAGE_SIZE_OPTIONS.map((size) => (
                                         <SelectItem key={size} value={`${size}`}>
                                             {size}
                                         </SelectItem>

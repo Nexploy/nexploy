@@ -9,17 +9,23 @@ export const handleAsync = <C extends Context = Context>(
 ) => {
     const status = opts?.status ?? 200;
     return async (c: C) => {
+        let timeoutId: ReturnType<typeof setTimeout> | undefined;
         try {
             const t = getTranslations(c as any, 'docker');
             const result = await Promise.race([
                 fn(c),
-                new Promise((_, rej) =>
-                    setTimeout(() => rej(new Error(t('errors.requestTimeout'))), Number(3_600_000)),
-                ),
+                new Promise((_, rej) => {
+                    timeoutId = setTimeout(
+                        () => rej(new Error(t('errors.requestTimeout'))),
+                        3_600_000,
+                    );
+                }),
             ]);
+            clearTimeout(timeoutId);
             logger.debug({ path: c.req.url });
             return c.json(result ?? { ok: true }, status);
         } catch (err: any) {
+            clearTimeout(timeoutId);
             logger.error({ err, path: c.req.url, method: c.req.method }, 'handler error');
 
             const message = err.message;

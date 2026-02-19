@@ -37,18 +37,20 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
     const form = useForm<ContainerPortForm>({
         resolver: zodResolver(containerPortSchema),
         defaultValues: {
-            privatePort: defaultPort?.privatePort ?? 0,
+            privatePort: defaultPort?.privatePort ?? undefined,
             publicPort: defaultPort?.publicPort ?? undefined,
             type: defaultPort?.type ?? 'tcp',
         },
     });
 
     const onSubmit = (data: ContainerPortForm) => {
+        const { publicPort, privatePort, type } = containerPortSchema.parse(data);
+
         if (mode === 'add') {
             onPortChange({
                 typeAction: 'add',
-                publicPort: data.publicPort ?? undefined,
-                privatePort: data.privatePort,
+                publicPort,
+                privatePort,
                 type: data.type,
             });
         } else if (mode === 'edit') {
@@ -56,9 +58,9 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
 
             onPortChange({
                 typeAction: 'edit',
-                publicPort: data.publicPort ?? undefined,
-                privatePort: data.privatePort,
-                type: data.type,
+                publicPort,
+                privatePort,
+                type,
                 currentPublicPort: referencePort?.publicPort,
                 currentPrivatePort: referencePort?.privatePort,
                 currentType: referencePort?.type,
@@ -94,14 +96,12 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                             <FormLabel>{t('port.hostPort')}</FormLabel>
                             <FormControl>
                                 <Input
-                                    {...field}
-                                    placeholder="8080"
                                     type="number"
-                                    value={field.value || ''}
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        field.onChange(value ? parseInt(value) : undefined);
-                                    }}
+                                    placeholder="8080"
+                                    min={1}
+                                    max={65535}
+                                    value={field.value ?? ''}
+                                    onChange={(e) => field.onChange(parseInt(e.target.value) || '')}
                                 />
                             </FormControl>
                             <FormDescription className="text-xs">
@@ -120,13 +120,12 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                             <FormLabel>{t('port.containerPort')}</FormLabel>
                             <FormControl>
                                 <Input
-                                    {...field}
                                     type="number"
                                     placeholder="80"
-                                    value={field.value || ''}
-                                    onChange={(e) =>
-                                        field.onChange(parseInt(e.target.value) || undefined)
-                                    }
+                                    min={1}
+                                    max={65535}
+                                    value={field.value ?? ''}
+                                    onChange={(e) => field.onChange(parseInt(e.target.value) || '')}
                                 />
                             </FormControl>
                             <FormMessage />

@@ -1,5 +1,6 @@
 'use client';
 
+import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import { Bug, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { useEventsStore } from '@/stores/docker/useEventsStore';
@@ -26,8 +27,7 @@ import {
 } from '@workspace/ui/components/select';
 import { Button } from '@workspace/ui/components/button';
 import { DockerEventData } from '@workspace/typescript-interface/docker/docker.events';
-import { useTranslations } from 'next-intl';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 export default function EventsPage() {
     const t = useTranslations('docker');
@@ -44,7 +44,7 @@ export default function EventsPage() {
         setTypeFilter,
     } = useEventsStore();
 
-    const [pageSize, setPageSize] = useState<number | 'all'>(25);
+    const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
     const [currentPage, setCurrentPage] = useState(0);
 
     const isLoading = !lastUpdate;
@@ -260,7 +260,7 @@ export default function EventsPage() {
                                     <SelectContent>
                                         <SelectGroup>
                                             <SelectLabel>{t('size')}</SelectLabel>
-                                            {[10, 25, 50, 100].map((size) => (
+                                            {PAGE_SIZE_OPTIONS.map((size) => (
                                                 <SelectItem key={size} value={`${size}`}>
                                                     {size}
                                                 </SelectItem>

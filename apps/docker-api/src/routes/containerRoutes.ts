@@ -11,6 +11,8 @@ import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/conta
 import { PortType } from '@workspace/typescript-interface/docker/docker.port';
 import { HttpError } from '@workspace/shared/http-error';
 
+const NAMED_VOLUME_REGEX = /\/var\/lib\/docker\/volumes\/([^/]+)\/_data/;
+
 const app = new Hono();
 
 app.post(
@@ -128,13 +130,25 @@ app.post(
 
         for (const port of ports) {
             if (port.typeAction === 'delete' || port.typeAction === 'edit') {
-                if (port.currentPrivatePort && port.currentType && port.currentPublicPort) {
-                    removePort(port.currentPrivatePort, port.currentType, port.currentPublicPort);
+                if (port.currentPrivatePort && port.currentType) {
+                    if (port.currentPublicPort) {
+                        removePort(
+                            port.currentPrivatePort,
+                            port.currentType,
+                            port.currentPublicPort,
+                        );
+                    } else {
+                        const key = `${port.currentPrivatePort}/${port.currentType}`;
+                        delete exposedPorts[key];
+                        delete portBindings[key];
+                    }
                 }
             }
             if (port.typeAction === 'add' || port.typeAction === 'edit') {
                 if (port.privatePort && port.type && port.publicPort) {
                     addPort(port.privatePort, port.type, port.publicPort);
+                } else if (port.typeAction === 'edit' && port.privatePort && port.type) {
+                    exposedPorts[`${port.privatePort}/${port.type}`] = {};
                 }
             }
         }
@@ -171,9 +185,7 @@ app.post(
             if (volume.typeAction === 'delete') {
                 if (volume.currentHostPath && volume.currentContainerPath) {
                     let hostPath = volume.currentHostPath;
-                    const namedVolumeMatch = hostPath.match(
-                        /\/var\/lib\/docker\/volumes\/([^/]+)\/_data/,
-                    );
+                    const namedVolumeMatch = hostPath.match(NAMED_VOLUME_REGEX);
                     if (namedVolumeMatch) {
                         hostPath = namedVolumeMatch[1];
                     }
@@ -198,9 +210,7 @@ app.post(
             if (volume.typeAction === 'add') {
                 if (volume.hostPath && volume.containerPath) {
                     let hostPath = volume.hostPath;
-                    const namedVolumeMatch = hostPath.match(
-                        /\/var\/lib\/docker\/volumes\/([^/]+)\/_data/,
-                    );
+                    const namedVolumeMatch = hostPath.match(NAMED_VOLUME_REGEX);
                     if (namedVolumeMatch) {
                         hostPath = namedVolumeMatch[1];
                     }

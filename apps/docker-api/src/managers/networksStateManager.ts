@@ -11,6 +11,14 @@ import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 
+const NETWORK_STATE_CHANGE_EVENTS = new Set<NetworkAction>([
+    'create',
+    'connect',
+    'disconnect',
+    'destroy',
+    'remove',
+]);
+
 export class NetworksStateManager extends BaseStateManager {
     private networks: Map<string, Network> = new Map();
 
@@ -37,9 +45,11 @@ export class NetworksStateManager extends BaseStateManager {
 
         try {
             const networks = await this.docker.listNetworks();
+            const inspected = await Promise.all(
+                networks.map(({ Id }) => this.docker.getNetwork(Id).inspect()),
+            );
 
-            for (const { Id } of networks) {
-                const network = await this.docker.getNetwork(Id).inspect();
+            for (const network of inspected) {
                 const state = this.parseNetworkInfo(network);
                 this.networks.set(state.id, state);
             }
@@ -65,15 +75,7 @@ export class NetworksStateManager extends BaseStateManager {
         const action = event.Action as NetworkAction;
         logger.debug({ networkId, action }, 'Docker Network event received');
 
-        const stateChangeEvents: NetworkAction[] = [
-            'create',
-            'connect',
-            'disconnect',
-            'destroy',
-            'remove',
-        ];
-
-        if (stateChangeEvents.includes(action)) {
+        if (NETWORK_STATE_CHANGE_EVENTS.has(action)) {
             await this.updateNetworkState(networkId, action);
         }
     }
@@ -81,9 +83,11 @@ export class NetworksStateManager extends BaseStateManager {
     async fullStateSync(): Promise<void> {
         try {
             const networks = await this.docker.listNetworks();
+            const inspected = await Promise.all(
+                networks.map(({ Id }) => this.docker.getNetwork(Id).inspect()),
+            );
 
-            for (const { Id } of networks) {
-                const network = await this.docker.getNetwork(Id).inspect();
+            for (const network of inspected) {
                 const newState = this.parseNetworkInfo(network);
                 const oldState = this.networks.get(newState.id);
 
@@ -222,13 +226,18 @@ export class NetworksStateManager extends BaseStateManager {
     private getStateChanges(oldState: Network, newState: Network): NetworkStateChanges {
         const changes: NetworkStateChanges = {};
 
-        if (JSON.stringify(oldState.containers) !== JSON.stringify(newState.containers))
+        const oldContainers = JSON.stringify(oldState.containers);
+        const newContainers = JSON.stringify(newState.containers);
+        const oldLabels = JSON.stringify(oldState.labels);
+        const newLabels = JSON.stringify(newState.labels);
+
+        if (oldContainers !== newContainers)
             changes.containers = { from: oldState.containers, to: newState.containers };
         if (oldState.internal !== newState.internal)
             changes.internal = { from: oldState.internal, to: newState.internal };
         if (oldState.attachable !== newState.attachable)
             changes.attachable = { from: oldState.attachable, to: newState.attachable };
-        if (JSON.stringify(oldState.labels) !== JSON.stringify(newState.labels))
+        if (oldLabels !== newLabels)
             changes.labels = { from: oldState.labels, to: newState.labels };
 
         return changes;
@@ -276,9 +285,11 @@ export class NetworksStateManager extends BaseStateManager {
         try {
             const networks = await this.docker.listNetworks();
             const newNetworkMap = new Map<string, Network>();
+            const inspected = await Promise.all(
+                networks.map(({ Id }) => this.docker.getNetwork(Id).inspect()),
+            );
 
-            for (const { Id } of networks) {
-                const network = await this.docker.getNetwork(Id).inspect();
+            for (const network of inspected) {
                 const state = this.parseNetworkInfo(network);
                 newNetworkMap.set(state.id, state);
             }

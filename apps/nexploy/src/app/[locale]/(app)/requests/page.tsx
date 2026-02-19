@@ -1,5 +1,6 @@
 'use client';
 
+import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import { ChevronLeft, ChevronRight, Send } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { useRequestsStore } from '@/stores/traefik/useRequestsStore';
@@ -48,7 +49,7 @@ export default function RequestsPage() {
         setStatusFilter,
     } = useRequestsStore();
 
-    const [pageSize, setPageSize] = useState<number | 'all'>(25);
+    const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
     const [currentPage, setCurrentPage] = useState(0);
 
     const isLoading = !lastUpdate;
@@ -244,16 +245,11 @@ export default function RequestsPage() {
                                     {!isLoading && !paginatedRequests.length ? (
                                         <TableRow>
                                             <TableCell colSpan={7} className="py-6 text-center">
-                                                <div className="flex flex-col items-center gap-2">
-                                                    <div className="bg-muted flex size-10 items-center justify-center rounded-full">
-                                                        <Send className="text-muted-foreground size-5" />
-                                                    </div>
-                                                    <p className="text-muted-foreground text-sm">
-                                                        {requests.length === 0
-                                                            ? t('noRequests')
-                                                            : t('noMatchingRequests')}
-                                                    </p>
-                                                </div>
+                                                <span className="text-muted-foreground text-sm">
+                                                    {requests.length === 0
+                                                        ? t('noRequests')
+                                                        : t('noMatchingRequests')}
+                                                </span>
                                             </TableCell>
                                         </TableRow>
                                     ) : (
@@ -323,7 +319,7 @@ export default function RequestsPage() {
                                         <SelectContent>
                                             <SelectGroup>
                                                 <SelectLabel>{t('sizeLabel')}</SelectLabel>
-                                                {[10, 25, 50, 100].map((size) => (
+                                                {PAGE_SIZE_OPTIONS.map((size) => (
                                                     <SelectItem key={size} value={`${size}`}>
                                                         {size}
                                                     </SelectItem>

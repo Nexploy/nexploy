@@ -119,40 +119,59 @@ app.post(
             throw new HttpError(t('errors.noNetworkIdsProvided'), 400);
         }
 
-        const BUILTIN_NETWORKS = ['bridge', 'host', 'none'];
+        const BUILTIN_NETWORKS = new Set(['bridge', 'host', 'none']);
+
+        const results = await Promise.all(
+            networkIds.map(async (networkId: string) => {
+                const network = docker.getNetwork(networkId);
+                const info = await network.inspect();
+
+                if (BUILTIN_NETWORKS.has(info.Name)) {
+                    return { type: 'skipped', id: networkId, name: info.Name, reason: 'builtin' };
+                }
+
+                if (!force) {
+                    const isComposeNetwork = !!info.Labels?.['com.docker.compose.project'];
+                    if (isComposeNetwork) {
+                        return {
+                            type: 'skipped',
+                            id: networkId,
+                            name: info.Name,
+                            reason: 'compose_stack',
+                        };
+                    }
+
+                    const connectedContainers = Object.keys(info.Containers || {});
+                    if (connectedContainers.length > 0) {
+                        return {
+                            type: 'skipped',
+                            id: networkId,
+                            name: info.Name,
+                            reason: 'has_containers',
+                        };
+                    }
+                } else {
+                    const connectedContainers = Object.keys(info.Containers || {});
+                    await Promise.all(
+                        connectedContainers.map((containerId) =>
+                            network.disconnect({ Container: containerId, Force: true }),
+                        ),
+                    );
+                }
+
+                await network.remove();
+                return { type: 'deleted', id: networkId };
+            }),
+        );
+
         const deleted: string[] = [];
         const skipped: { id: string; name: string; reason: string }[] = [];
-
-        for (const networkId of networkIds) {
-            const network = docker.getNetwork(networkId);
-            const info = await network.inspect();
-
-            if (BUILTIN_NETWORKS.includes(info.Name)) {
-                skipped.push({ id: networkId, name: info.Name, reason: 'builtin' });
-                continue;
-            }
-
-            if (!force) {
-                const isComposeNetwork = !!info.Labels?.['com.docker.compose.project'];
-                if (isComposeNetwork) {
-                    skipped.push({ id: networkId, name: info.Name, reason: 'compose_stack' });
-                    continue;
-                }
-
-                const connectedContainers = Object.keys(info.Containers || {});
-                if (connectedContainers.length > 0) {
-                    skipped.push({ id: networkId, name: info.Name, reason: 'has_containers' });
-                    continue;
-                }
+        for (const result of results) {
+            if (result.type === 'deleted') {
+                deleted.push(result.id);
             } else {
-                const connectedContainers = Object.keys(info.Containers || {});
-                for (const containerId of connectedContainers) {
-                    await network.disconnect({ Container: containerId, Force: true });
-                }
+                skipped.push({ id: result.id, name: result.name!, reason: result.reason! });
             }
-
-            await network.remove();
-            deleted.push(networkId);
         }
 
         return { deleted, skipped };
