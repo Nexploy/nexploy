@@ -22,6 +22,16 @@ import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 
+const PENDING_TASK_STATES = new Set<SwarmTaskState>([
+    'new',
+    'pending',
+    'assigned',
+    'accepted',
+    'preparing',
+    'ready',
+    'starting',
+]);
+
 export class SwarmStateManager extends BaseStateManager {
     private nodes: Map<string, SwarmNode> = new Map();
     private services: Map<string, SwarmService> = new Map();
@@ -72,17 +82,21 @@ export class SwarmStateManager extends BaseStateManager {
 
             this.isSwarmActive = true;
 
-            const swarm = await this.docker.swarmInspect();
+            const [swarm, nodesList] = await Promise.all([
+                this.docker.swarmInspect(),
+                this.docker.listNodes(),
+            ]);
             this.swarmInfo = this.parseSwarmInfo(swarm, info);
 
-            const nodesList = await this.docker.listNodes();
             for (const node of nodesList) {
                 const parsedNode = this.parseNodeInfo(node);
                 this.nodes.set(parsedNode.id, parsedNode);
             }
 
-            const servicesList = await this.docker.listServices();
-            const tasksList = await this.docker.listTasks();
+            const [servicesList, tasksList] = await Promise.all([
+                this.docker.listServices(),
+                this.docker.listTasks(),
+            ]);
 
             const serviceTaskCounts = new Map<string, { running: number; total: number }>();
             for (const task of tasksList) {
@@ -415,8 +429,10 @@ export class SwarmStateManager extends BaseStateManager {
     }
 
     private async syncServicesAndTasks(): Promise<void> {
-        const servicesList = await this.docker.listServices();
-        const tasksList = await this.docker.listTasks();
+        const [servicesList, tasksList] = await Promise.all([
+            this.docker.listServices(),
+            this.docker.listTasks(),
+        ]);
         const currentServiceIds = new Set<string>();
         const currentTaskIds = new Set<string>();
 
@@ -715,10 +731,12 @@ export class SwarmStateManager extends BaseStateManager {
 
         const prevLabels = Object.keys(previous.labels);
         const currLabels = Object.keys(current.labels);
-        const added = currLabels.filter((k) => !prevLabels.includes(k));
-        const removed = prevLabels.filter((k) => !currLabels.includes(k));
+        const prevLabelsSet = new Set(prevLabels);
+        const currLabelsSet = new Set(currLabels);
+        const added = currLabels.filter((k) => !prevLabelsSet.has(k));
+        const removed = prevLabels.filter((k) => !currLabelsSet.has(k));
         const changed = currLabels.filter(
-            (k) => prevLabels.includes(k) && previous.labels[k] !== current.labels[k],
+            (k) => prevLabelsSet.has(k) && previous.labels[k] !== current.labels[k],
         );
 
         if (added.length > 0 || removed.length > 0 || changed.length > 0) {
@@ -821,29 +839,37 @@ export class SwarmStateManager extends BaseStateManager {
     }
 
     getSwarmStats(): SwarmStats {
-        const tasks = Array.from(this.tasks.values());
+        let managerNodes = 0;
+        let workerNodes = 0;
+        let healthyNodes = 0;
+        for (const n of this.nodes.values()) {
+            if (n.role === 'manager') managerNodes++;
+            if (n.role === 'worker') workerNodes++;
+            if (n.state === 'ready') healthyNodes++;
+        }
+
+        let runningTasks = 0;
+        let pendingTasks = 0;
+        let failedTasks = 0;
+        let totalTasks = 0;
+        for (const t of this.tasks.values()) {
+            totalTasks++;
+            if (t.state === 'running') runningTasks++;
+            else if (t.state === 'failed') failedTasks++;
+            else if (PENDING_TASK_STATES.has(t.state as SwarmTaskState)) pendingTasks++;
+        }
+
         return {
             isSwarmActive: this.isSwarmActive,
             totalNodes: this.nodes.size,
-            managerNodes: Array.from(this.nodes.values()).filter((n) => n.role === 'manager')
-                .length,
-            workerNodes: Array.from(this.nodes.values()).filter((n) => n.role === 'worker').length,
-            healthyNodes: Array.from(this.nodes.values()).filter((n) => n.state === 'ready').length,
+            managerNodes,
+            workerNodes,
+            healthyNodes,
             totalServices: this.services.size,
-            totalTasks: tasks.length,
-            runningTasks: tasks.filter((t) => t.state === 'running').length,
-            pendingTasks: tasks.filter((t) =>
-                [
-                    'new',
-                    'pending',
-                    'assigned',
-                    'accepted',
-                    'preparing',
-                    'ready',
-                    'starting',
-                ].includes(t.state),
-            ).length,
-            failedTasks: tasks.filter((t) => t.state === 'failed').length,
+            totalTasks,
+            runningTasks,
+            pendingTasks,
+            failedTasks,
         };
     }
 

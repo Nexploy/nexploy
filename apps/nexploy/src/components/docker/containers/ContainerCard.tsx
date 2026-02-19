@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/componen
 import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
 import { Button } from '@workspace/ui/components/button';
 import { Container as IconContainer, MoreVertical } from 'lucide-react';
-import { useTransition } from 'react';
+import { useMemo, useTransition } from 'react';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { ContainersDropdownActions } from '@/components/docker/containers/ContainersDropdownActions';
 import Link from 'next/link';
@@ -22,6 +22,7 @@ interface ContainerCardProps {
 export function ContainerCard({ container }: ContainerCardProps) {
     const [isPending] = useTransition();
     const t = useTranslations('docker.containerCard');
+    const autoplayPlugin = useMemo(() => Autoplay({ delay: 3000 }), []);
 
     const containerName = container.name;
     const containerState = container.state;
@@ -79,11 +80,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
                         </div>{' '}
                         {container.ports.length ? (
                             <Carousel
-                                plugins={[
-                                    Autoplay({
-                                        delay: 3000,
-                                    }),
-                                ]}
+                                plugins={[autoplayPlugin]}
                                 opts={{ align: 'start', loop: true }}
                                 className="w-full max-w-xs"
                             >

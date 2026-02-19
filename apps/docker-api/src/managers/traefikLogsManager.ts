@@ -288,10 +288,10 @@ export class TraefikLogsManager extends BaseStateManager {
     }
 
     private addRequest(request: TraefikRequest): void {
-        this.requests.unshift(request);
+        this.requests.push(request);
 
         if (this.requests.length > MAX_REQUESTS) {
-            this.requests = this.requests.slice(0, MAX_REQUESTS);
+            this.requests.shift();
         }
 
         const event: TraefikLogEvent = {
@@ -321,11 +321,11 @@ export class TraefikLogsManager extends BaseStateManager {
     }
 
     getRequests(): TraefikRequest[] {
-        return [...this.requests];
+        return [...this.requests].reverse();
     }
 
     getRecentRequests(count: number): TraefikRequest[] {
-        return this.requests.slice(0, count);
+        return this.requests.slice(-count).reverse();
     }
 
     clearRequests(): void {

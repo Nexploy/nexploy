@@ -79,7 +79,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
         return () => {
             logsContainer.removeEventListener('scroll', handleScroll);
         };
-    }, [logsContainerRef.current, autoScroll, open]);
+    }, [open, setAutoScroll]);
 
     useEffect(() => {
         if (!autoScroll || !logsEndRef.current || !open) return;

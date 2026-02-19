@@ -12,8 +12,10 @@ export const metadata: Metadata = {
 };
 
 export default async function UsersPage() {
-    const t = await getTranslations('admin');
-    const session = await getUserSession();
+    const [t, session] = await Promise.all([
+        getTranslations('admin'),
+        getUserSession(),
+    ]);
     const isAdmin = session?.user.role === 'admin';
 
     return (

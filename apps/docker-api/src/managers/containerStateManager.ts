@@ -9,6 +9,19 @@ import {
 import { BaseSingleResourceStateManager } from '@/lib/BaseSingleResourceStateManager';
 import { ContainerPorts, PortType } from '@workspace/typescript-interface/docker/docker.port';
 
+const CONTAINER_STATE_CHANGE_EVENTS = new Set<ContainerStateEvents>([
+    'start',
+    'die',
+    'stop',
+    'pause',
+    'unpause',
+    'restart',
+    'kill',
+    'create',
+    'destroy',
+    'health_status',
+]);
+
 export class ContainerStateManager extends BaseSingleResourceStateManager<Container> {
     constructor(containerId: string, environmentId: string) {
         super({
@@ -35,19 +48,7 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
     }
 
     shouldHandleEvent(action: string): boolean {
-        const stateChangeEvents: ContainerStateEvents[] = [
-            'start',
-            'die',
-            'stop',
-            'pause',
-            'unpause',
-            'restart',
-            'kill',
-            'create',
-            'destroy',
-            'health_status',
-        ];
-        return stateChangeEvents.includes(action as ContainerStateEvents);
+        return CONTAINER_STATE_CHANGE_EVENTS.has(action as ContainerStateEvents);
     }
 
     isDestroyAction(action: string): boolean {
@@ -126,7 +127,7 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
             const [privatePortStr, type = 'tcp'] = portKey.split('/');
             const privatePort = parseInt(privatePortStr, 10);
 
-            if (bindings && Array.isArray(bindings) && bindings.length > 0) {
+            if (bindings && bindings.length > 0) {
                 for (const binding of bindings) {
                     const publicPort = binding.HostPort
                         ? parseInt(binding.HostPort, 10)

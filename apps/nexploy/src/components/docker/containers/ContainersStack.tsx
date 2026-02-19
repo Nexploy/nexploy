@@ -7,7 +7,8 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@workspace/ui/
 import { useTranslations } from 'next-intl';
 
 export function ContainersStack() {
-    const stacksMap = useContainersStore((state) => state.getOrganizedContainers)().stacks;
+    const getOrganizedContainers = useContainersStore((state) => state.getOrganizedContainers);
+    const stacksMap = getOrganizedContainers().stacks;
     const stacks = Array.from(stacksMap.entries());
     const t = useTranslations('docker.tables');
 

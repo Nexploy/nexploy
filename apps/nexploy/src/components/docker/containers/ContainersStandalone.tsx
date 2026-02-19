@@ -19,8 +19,8 @@ interface ContainersStandaloneProps {
 
 export function ContainersStandalone({ keepEmpty = false }: ContainersStandaloneProps) {
     const t = useTranslations('docker');
-    const standaloneContainers = useContainersStore((state) => state.getOrganizedContainers)()
-        .standaloneContainers;
+    const getOrganizedContainers = useContainersStore((state) => state.getOrganizedContainers);
+    const { standaloneContainers } = getOrganizedContainers();
 
     if (standaloneContainers.length) {
         return (

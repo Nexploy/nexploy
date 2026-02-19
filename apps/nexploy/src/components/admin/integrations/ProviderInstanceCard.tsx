@@ -49,7 +49,7 @@ export function ProviderInstanceCard({
     const statusText = appName ? `${tOAuth('configured')} — ${appName}` : tOAuth('configured');
 
     return (
-        <div className="flex items-center justify-between rounded-lg border p-4">
+        <div className="bg-card flex items-center justify-between rounded-lg border p-4">
             <div className="flex flex-col gap-0.5">
                 <div className="flex items-center gap-2">
                     <span className="font-medium">{displayName}</span>

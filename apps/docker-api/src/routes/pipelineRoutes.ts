@@ -78,65 +78,75 @@ app.post(
                     label: [`com.docker.compose.project=${projectName}`],
                 },
             });
-            for (const containerInfo of existingContainers) {
-                try {
-                    const container = dockerClient.getContainer(containerInfo.Id);
-                    if (containerInfo.State === 'running') {
-                        await container.stop();
-                    }
-                    await container.remove({ force: true });
-                } catch {}
-            }
+            await Promise.all(
+                existingContainers.map(async (containerInfo) => {
+                    try {
+                        const container = dockerClient.getContainer(containerInfo.Id);
+                        if (containerInfo.State === 'running') {
+                            await container.stop();
+                        }
+                        await container.remove({ force: true });
+                    } catch {}
+                }),
+            );
 
             if (composeContent.services) {
-                for (const service of Object.values(composeContent.services) as any[]) {
-                    if (service.container_name) {
-                        try {
-                            const container = dockerClient.getContainer(service.container_name);
-                            const info = await container.inspect();
-                            if (info.State.Running) {
-                                await container.stop();
-                            }
-                            await container.remove({ force: true });
-                        } catch {}
-                    }
-                }
+                await Promise.all(
+                    (Object.values(composeContent.services) as any[]).map(async (service) => {
+                        if (service.container_name) {
+                            try {
+                                const container = dockerClient.getContainer(service.container_name);
+                                const info = await container.inspect();
+                                if (info.State.Running) {
+                                    await container.stop();
+                                }
+                                await container.remove({ force: true });
+                            } catch {}
+                        }
+                    }),
+                );
             }
 
             if (composeContent.networks) {
-                for (const networkName of Object.keys(composeContent.networks)) {
-                    const fullNetworkName = `${projectName}_${networkName}`;
-                    try {
-                        const network = dockerClient.getNetwork(fullNetworkName);
-                        const networkInfo = await network.inspect();
-                        const connectedContainers = networkInfo.Containers || {};
-                        for (const containerId of Object.keys(connectedContainers)) {
-                            try {
-                                await network.disconnect({
-                                    Container: containerId,
-                                    Force: true,
-                                });
-                            } catch {}
-                        }
-                        await network.remove();
-                    } catch {}
-                }
+                await Promise.all(
+                    Object.keys(composeContent.networks).map(async (networkName) => {
+                        const fullNetworkName = `${projectName}_${networkName}`;
+                        try {
+                            const network = dockerClient.getNetwork(fullNetworkName);
+                            const networkInfo = await network.inspect();
+                            const connectedContainers = networkInfo.Containers || {};
+                            await Promise.all(
+                                Object.keys(connectedContainers).map(async (containerId) => {
+                                    try {
+                                        await network.disconnect({
+                                            Container: containerId,
+                                            Force: true,
+                                        });
+                                    } catch {}
+                                }),
+                            );
+                            await network.remove();
+                        } catch {}
+                    }),
+                );
             }
 
             const upResult = await compose.up({ verbose: true });
             const containerIds = upResult.services.map((container: { id: string }) => container.id);
 
-            for (const containerId of containerIds) {
-                try {
-                    const network = dockerClient.getNetwork('nexploy_traefik_network');
-                    await network.connect({ Container: containerId });
-                } catch {
-                    logger.warn(
-                        { containerId: containerId.substring(0, 12) },
-                        'Could not connect container to Traefik network',
-                    );
-                }
-            }
+            const traefikNetwork = dockerClient.getNetwork('nexploy_traefik_network');
+            await Promise.all(
+                containerIds.map(async (containerId: string) => {
+                    try {
+                        await traefikNetwork.connect({ Container: containerId });
+                    } catch {
+                        logger.warn(
+                            { containerId: containerId.substring(0, 12) },
+                            'Could not connect container to Traefik network',
+                        );
+                    }
+                }),
+            );
 
             return { success: true, containers: containerIds };
         } finally {

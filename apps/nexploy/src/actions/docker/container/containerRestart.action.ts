@@ -10,7 +10,7 @@ export const onContainerRestartAction = authActionServer
     .inputSchema(containerActionsSchema)
     .action(async ({ parsedInput: { containerId } }) => {
         try {
-            return await kyDocker.post(`/container/${containerId}/restart`).json();
+            return await kyDocker.post(`container/${containerId}/restart`).json();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({

@@ -29,23 +29,26 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { z } from 'zod';
 import { ToolbarButton } from '@/components/shared/ToolbarButton';
+import { useMemo } from 'react';
+
+const cuidSchema = z.cuid();
 
 export function ContainerDetailPage() {
     const container = useContainerStore((state) => state.container);
     const t = useTranslations('docker.containerDetail');
 
-    const repositoryId = (() => {
+    const repositoryId = useMemo(() => {
         const fromName = container?.name?.replace(/^nexploy-/, '');
-        if (fromName && fromName !== container?.name && z.cuid().safeParse(fromName).success) {
+        if (fromName && fromName !== container?.name && cuidSchema.safeParse(fromName).success) {
             return fromName;
         }
         const projectLabel = container?.labels?.['com.docker.compose.project'];
         const fromStack = projectLabel?.replace(/^nexploy-/, '');
-        if (fromStack && fromStack !== projectLabel && z.cuid().safeParse(fromStack).success) {
+        if (fromStack && fromStack !== projectLabel && cuidSchema.safeParse(fromStack).success) {
             return fromStack;
         }
         return null;
-    })();
+    }, [container?.name, container?.labels]);
 
     return (
         <div className="relative flex h-full flex-1 flex-col gap-5 pt-5">
