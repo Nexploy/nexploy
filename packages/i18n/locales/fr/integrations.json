@@ -34,7 +34,7 @@
         "stateExpired": "La demande de connexion a expiré. Veuillez réessayer.",
         "connectedSuccess": "Fournisseur Git connecté avec succès.",
         "disconnectedSuccess": "Fournisseur Git déconnecté avec succès.",
-        "addGithub": "Ajouter une GitHub App",
+        "addGithub": "Ajouter GitHub",
         "addGitlab": "Ajouter GitLab",
         "instanceCount": "{count, plural, =0 {Aucune instance} one {# instance} other {# instances}}",
         "noInstances": "Aucune instance configurée",

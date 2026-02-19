@@ -1,12 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import {
     parseGitLabWebhook,
     verifyGitLabWebhookToken,
 } from '@/services/webhook/gitlab.webhook.service';
 import { startBuildRepositoryInngest } from '@/services/inngest/build.inngest.service';
 import { findRepositoryByWebhook } from '@/services/webhook/webhook.service';
+import { route } from '@/lib/api/nextRoute';
 
-export async function POST(request: NextRequest) {
+export const POST = route.handler(async (request: Request) => {
     try {
         const gitlabTokenUserId = request.headers.get('x-gitlab-token')!;
         const payload = await request.json();
@@ -45,4 +46,4 @@ export async function POST(request: NextRequest) {
     } catch (error) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
-}
+});

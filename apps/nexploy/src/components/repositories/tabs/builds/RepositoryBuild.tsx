@@ -17,9 +17,11 @@ interface BuildLogsProps {
     build: Build;
 }
 
+const statusEnable: BuildStatus[] = ['COMPLETED', 'FAILED'];
+
 export function RepositoryBuild({ repositoryId, build, index }: BuildLogsProps) {
     const { latestData } = useInngestSubscription({
-        enabled: build.status !== 'COMPLETED',
+        enabled: !statusEnable.includes(build.status),
         refreshToken: async () => {
             const result = await onGetTokenBuildIdAction({
                 buildId: build.id,

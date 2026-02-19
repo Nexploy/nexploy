@@ -63,7 +63,7 @@ export function RepositoryVersions({
     const isCurrentVersion = (version: Version) => {
         if (!containerImageUsed) return false;
         const currentTag = containerImageUsed.split(':').at(-1) ?? '';
-        return currentTag === version.imageTag || currentTag.endsWith(version.imageTag);
+        return currentTag === version.imageTag;
     };
 
     return (
@@ -76,7 +76,7 @@ export function RepositoryVersions({
                     </div>
                 ) : (
                     <div className="divide-y">
-                        {versions.map((version, index) => {
+                        {versions.map((version) => {
                             const isCurrent = isCurrentVersion(version);
                             return (
                                 <div
@@ -89,7 +89,7 @@ export function RepositoryVersions({
                                                 variant={isCurrent ? 'default' : 'secondary'}
                                                 className="font-mono text-xs"
                                             >
-                                                v{versions.length - index}
+                                                v{version.versionNumber}
                                             </Badge>
                                             <span className="line-clamp-1 text-sm font-medium">
                                                 {version.commitMessage ??

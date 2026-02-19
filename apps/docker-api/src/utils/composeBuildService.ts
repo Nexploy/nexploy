@@ -15,6 +15,7 @@ export async function buildComposeServices(
     buildConfigs: ParsedBuildConfig[],
     onProgress: (progress: BuildProgress) => void,
     signal?: AbortSignal,
+    extraLabels?: Record<string, string>,
 ): Promise<Map<string, string>> {
     const builtImages = new Map<string, string>();
 
@@ -30,7 +31,7 @@ export async function buildComposeServices(
         });
 
         try {
-            const imageId = await buildServiceImage(docker, config, onProgress, signal);
+            const imageId = await buildServiceImage(docker, config, onProgress, signal, extraLabels);
             builtImages.set(config.serviceName, imageId);
 
             onProgress({
@@ -61,6 +62,7 @@ async function buildServiceImage(
     config: ParsedBuildConfig,
     onProgress: (progress: BuildProgress) => void,
     signal?: AbortSignal,
+    extraLabels?: Record<string, string>,
 ): Promise<string> {
     return new Promise((resolve, reject) => {
         if (!fs.existsSync(config.contextPath)) {
@@ -108,8 +110,12 @@ async function buildServiceImage(
             buildOptions.cachefrom = JSON.stringify(config.cacheFrom);
         }
 
-        if (config.labels && Object.keys(config.labels).length > 0) {
-            buildOptions.labels = JSON.stringify(config.labels);
+        const mergedLabels = {
+            ...(extraLabels || {}),
+            ...(config.labels || {}),
+        };
+        if (Object.keys(mergedLabels).length > 0) {
+            buildOptions.labels = JSON.stringify(mergedLabels);
         }
 
         if (config.shmSize) {

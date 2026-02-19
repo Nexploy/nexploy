@@ -77,7 +77,7 @@ export async function startBuildRepositoryInngest(
         dockerfilePath: repository.dockerfilePath || undefined,
         dockerComposePath: repository.dockerComposePath || undefined,
         imageName,
-        imageTag: build.id.slice(-8),
+        imageTag: build.id,
         autoDeploy: repository.autoDeploy,
         environmentId: repository.environmentId,
     };
@@ -232,7 +232,7 @@ export async function retryBuildRepositoryInngest(
         dockerfilePath: repository.dockerfilePath || undefined,
         dockerComposePath: repository.dockerComposePath || undefined,
         imageName,
-        imageTag: buildId.slice(-8),
+        imageTag: buildId,
         autoDeploy: repository.autoDeploy,
         environmentId,
     };
@@ -287,7 +287,7 @@ export async function resumeBuildRepositoryInngest(
         dockerfilePath: repository.dockerfilePath || undefined,
         dockerComposePath: repository.dockerComposePath || undefined,
         imageName,
-        imageTag: buildId.slice(-8),
+        imageTag: buildId,
         autoDeploy: repository.autoDeploy,
         startFromStep: resumeStep,
         environmentId,

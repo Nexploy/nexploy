@@ -16,14 +16,17 @@ export class FinalizeStep extends BaseStep {
         await ctx.reporter.setStatus('COMPLETED');
 
         const { config } = ctx.context;
-        // DOCKER_COMPOSE versions are saved in DeployComposeStep (has composeConfig available).
-        // Only create version here for non-compose builds.
+
         if (config.buildType !== 'DOCKER_COMPOSE') {
-            // For Dockerfile builds, the image is tagged with the full buildId
-            // (ctx.context.buildId), not config.imageTag (which is only the last 8 chars).
-            // We must store the real Docker image tag so deployVersion can find it.
             const imageTag = ctx.context.buildId;
             try {
+                const lastVersion = await prisma.version.findFirst({
+                    where: { repositoryId: config.repositoryId },
+                    orderBy: { versionNumber: 'desc' },
+                    select: { versionNumber: true },
+                });
+                const versionNumber = (lastVersion?.versionNumber ?? 0) + 1;
+
                 await prisma.version.upsert({
                     where: {
                         repositoryId_imageTag: {
@@ -35,6 +38,7 @@ export class FinalizeStep extends BaseStep {
                     create: {
                         repositoryId: config.repositoryId,
                         imageTag,
+                        versionNumber,
                         buildType: config.buildType,
                         branch: config.gitBranch ?? null,
                         commitHash: config.gitCommitHash ?? null,
@@ -42,7 +46,10 @@ export class FinalizeStep extends BaseStep {
                     },
                 });
             } catch (err) {
-                await ctx.logger.warn(this.metadata.id, `Failed to save version to DB: ${err instanceof Error ? err.message : String(err)}`);
+                await ctx.logger.warn(
+                    this.metadata.id,
+                    `Failed to save version to DB: ${err instanceof Error ? err.message : String(err)}`,
+                );
             }
         }
 

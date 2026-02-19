@@ -15,6 +15,7 @@ import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 import dayjs from 'dayjs';
+import { NEXPLOY_LABELS } from '@/utils/nexployLabels';
 
 export class ImagesStateManager extends BaseStateManager {
     private images: Map<string, Image> = new Map();
@@ -31,7 +32,7 @@ export class ImagesStateManager extends BaseStateManager {
     }
 
     private setupContainerListeners(): void {
-        containerImageEvents.on('container-usage-changed', (data: any) => {
+        containerImageEvents.on('container-usage-changed', () => {
             this.updateImageUsageFromContainers();
         });
     }
@@ -181,6 +182,50 @@ export class ImagesStateManager extends BaseStateManager {
         };
     }
 
+    private async syncVersionDelete(oldState: Image): Promise<void> {
+        const repositoryId = oldState.labels?.[NEXPLOY_LABELS.repositoryId];
+        const imageTag = oldState.labels?.[NEXPLOY_LABELS.buildId];
+
+        logger.error(
+            `Syncing version delete for image ${oldState.id} with repositoryId ${repositoryId} and imageTag ${imageTag}`,
+        );
+
+        if (!repositoryId || !imageTag) return;
+
+        const nexployUrl = process.env.NEXPLOY_API_URL;
+        const apiKey = process.env.NEXPLOY_API_KEY;
+
+        if (!nexployUrl || !apiKey) {
+            logger.warn('Cannot sync version delete: NEXPLOY_API_URL or NEXPLOY_API_KEY not set');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${nexployUrl}/api/internal/versions/sync-delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': apiKey,
+                },
+                body: JSON.stringify({ repositoryId, imageTag }),
+            });
+
+            if (!response.ok) {
+                logger.warn(
+                    { repositoryId, imageTag, status: response.status },
+                    'Failed to sync version delete to nexploy',
+                );
+            } else {
+                logger.debug({ repositoryId, imageTag }, 'Version sync delete sent to nexploy');
+            }
+        } catch (err) {
+            logger.warn(
+                { err, repositoryId, imageTag },
+                'Error calling nexploy version sync-delete',
+            );
+        }
+    }
+
     private async updateImageState(imageId: string, action?: ImageAction): Promise<void> {
         const imageIdSplited = imageId.split(':')[1];
 
@@ -196,6 +241,7 @@ export class ImagesStateManager extends BaseStateManager {
                         timestamp: Date.now(),
                     };
                     this.emit('image-removed', imageRemovedData);
+                    await this.syncVersionDelete(oldState);
                     logger.debug({ imageIdSplited }, 'Image deleted');
                 }
                 return;
@@ -216,6 +262,7 @@ export class ImagesStateManager extends BaseStateManager {
                                 timestamp: Date.now(),
                             };
                             this.emit('image-removed', imageRemovedData);
+                            await this.syncVersionDelete(oldState);
                             logger.debug({ imageId }, 'Image removed after untag');
                         }
                     } else {
@@ -238,6 +285,7 @@ export class ImagesStateManager extends BaseStateManager {
                         timestamp: Date.now(),
                     };
                     this.emit('image-removed', imageRemovedData);
+                    await this.syncVersionDelete(oldState);
                 }
             } else {
                 logger.error({ err, imageId: imageIdSplited }, 'Error updating image state');
@@ -397,6 +445,7 @@ export class ImagesStateManager extends BaseStateManager {
                         timestamp: Date.now(),
                     };
                     this.emit('image-removed', imageRemovedData);
+                    await this.syncVersionDelete(oldState);
                     logger.debug({ imageId }, 'Image detected as removed during hard refresh');
                 }
             }

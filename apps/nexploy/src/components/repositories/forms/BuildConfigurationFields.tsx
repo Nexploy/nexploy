@@ -59,8 +59,8 @@ export function BuildConfigurationFields() {
                                 <FormLabel>{t('dockerfilePath')}</FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder={t('dockerfilePathPlaceholder')}
                                         {...field}
+                                        placeholder={t('dockerfilePathPlaceholder')}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -72,7 +72,7 @@ export function BuildConfigurationFields() {
                         name="contextPath"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>{t('contextPath')}</FormLabel>
+                                <FormLabel>{t('dockerfileContextPath')}</FormLabel>
                                 <FormControl>
                                     <Input placeholder={t('contextPathPlaceholder')} {...field} />
                                 </FormControl>

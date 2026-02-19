@@ -41,7 +41,8 @@
         "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette version ? L'image Docker sera définitivement supprimée.",
         "deleteSuccess": "Version supprimée avec succès",
         "deleteError": "Échec de la suppression de la version",
-        "composeConfigNotFound": "Configuration Compose introuvable pour cette version"
+        "composeConfigNotFound": "Configuration Compose introuvable pour cette version",
+        "imageNotFound": "Image Docker introuvable. Elle a peut-être été supprimée. Veuillez reconstruire avant de déployer."
     },
     "deployment": {
         "title": "Déploiement",
@@ -257,11 +258,12 @@
             "description": "Comment votre application doit être construite",
             "buildType": "Type de build",
             "selectType": "Sélectionner un type",
-            "dockerfilePath": "Chemin du Dockerfile",
+            "dockerfilePath": "Nom du fichier",
             "dockerfilePathPlaceholder": "Dockerfile",
-            "contextPath": "Contexte de build",
+            "dockerfileContextPath": "Chemin du Dockerfile",
+            "contextPath": "Chemin du fichier Compose",
             "contextPathPlaceholder": ".",
-            "composePath": "Chemin du fichier Compose",
+            "composePath": "Nom du fichier",
             "composePathPlaceholder": "docker-compose.yml"
         },
         "deployment": {

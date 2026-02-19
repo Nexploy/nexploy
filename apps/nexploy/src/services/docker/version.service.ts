@@ -12,6 +12,7 @@ export async function getVersionsByRepository(repositoryId: string): Promise<Ver
             imageTag: v.imageTag,
             repositoryId: v.repositoryId,
             buildId: v.imageTag,
+            versionNumber: v.versionNumber,
             commitHash: v.commitHash ?? undefined,
             commitMessage: v.commitMessage ?? undefined,
             branch: v.branch ?? undefined,

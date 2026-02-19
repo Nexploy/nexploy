@@ -311,6 +311,7 @@ app.post('/stream/compose', async (c) => {
                         }
                     },
                     abortController.signal,
+                    labels,
                 );
 
                 sendLog('All services built successfully');

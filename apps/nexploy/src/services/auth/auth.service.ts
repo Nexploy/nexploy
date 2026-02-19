@@ -8,10 +8,10 @@ import { redirect, RedirectType } from 'next/navigation';
 import { TypeChangeUsernameFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 import { SocialAccount } from '@workspace/typescript-interface/auth/social-account';
 
-export async function getUserSession(): Promise<Session | null> {
+export async function getUserSession(headerCustom?: Headers): Promise<Session | null> {
     try {
         const session = await auth.api.getSession({
-            headers: await headers(),
+            headers: headerCustom ?? (await headers()),
             asResponse: true,
         });
 

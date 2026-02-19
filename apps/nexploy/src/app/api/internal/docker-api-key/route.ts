@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
+import { route } from '@/lib/api/nextRoute';
 
 const KEY_FILE = '/tmp/nexploy-api-key';
 
-export async function GET(request: Request) {
+export const GET = route.handler(async (request: Request) => {
     const secret = request.headers.get('x-internal-secret');
 
     if (!secret || secret !== process.env.ENCRYPTION_KEY) {
@@ -16,4 +17,4 @@ export async function GET(request: Request) {
     } catch {
         return NextResponse.json({ error: 'Key not available' }, { status: 503 });
     }
-}
+});

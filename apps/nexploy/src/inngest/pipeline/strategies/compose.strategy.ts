@@ -106,17 +106,25 @@ class DeployComposeStep extends BaseStep {
             );
 
             try {
+                const lastVersion = await prisma.version.findFirst({
+                    where: { repositoryId: config.repositoryId },
+                    orderBy: { versionNumber: 'desc' },
+                    select: { versionNumber: true },
+                });
+                const versionNumber = (lastVersion?.versionNumber ?? 0) + 1;
+
                 await prisma.version.upsert({
                     where: {
                         repositoryId_imageTag: {
                             repositoryId: config.repositoryId,
-                            imageTag: config.imageTag,
+                            imageTag: ctx.context.buildId,
                         },
                     },
                     update: { composeConfig: result.composeConfig ?? null },
                     create: {
                         repositoryId: config.repositoryId,
-                        imageTag: config.imageTag,
+                        imageTag: ctx.context.buildId,
+                        versionNumber,
                         buildType: config.buildType,
                         branch: config.gitBranch ?? null,
                         commitHash: config.gitCommitHash ?? null,

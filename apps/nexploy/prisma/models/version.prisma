@@ -2,6 +2,7 @@ model Version {
   id            String   @id @default(cuid())
   repositoryId  String
   imageTag      String
+  versionNumber Int      @default(1)
   buildType     String
   branch        String?
   commitHash    String?
