@@ -13,11 +13,12 @@ import { Mail } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 export async function UsersSection() {
-    const t = await getTranslations('admin');
-
-    const session = await getUserSession();
-    const users = await getUsers();
-    const invitations = await getInvitations();
+    const [t, session, users, invitations] = await Promise.all([
+        getTranslations('admin'),
+        getUserSession(),
+        getUsers(),
+        getInvitations(),
+    ]);
 
     const isAdmin = session?.user.role === 'admin';
 

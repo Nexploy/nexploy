@@ -8,13 +8,15 @@ import { getTranslations } from 'next-intl/server';
 
 export const onDockerRefreshAction = authActionServer.action(async () => {
     try {
-        await Promise.all([
-            kyDocker.post('containers/hardRefresh').json(),
-            kyDocker.post('images/hardRefresh').json(),
-            kyDocker.post('volumes/hardRefresh').json(),
-            kyDocker.post('networks/hardRefresh').json(),
+        const [, t] = await Promise.all([
+            Promise.all([
+                kyDocker.post('containers/hardRefresh').json(),
+                kyDocker.post('images/hardRefresh').json(),
+                kyDocker.post('volumes/hardRefresh').json(),
+                kyDocker.post('networks/hardRefresh').json(),
+            ]),
+            getTranslations('docker'),
         ]);
-        const t = await getTranslations('docker');
         await setToastServer({
             type: 'success',
             message: t('refreshSuccess'),

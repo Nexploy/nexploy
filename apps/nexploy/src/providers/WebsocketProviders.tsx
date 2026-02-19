@@ -4,6 +4,8 @@ import { PropsWithChildren, useEffect, useMemo } from 'react';
 import { useTerminalStore } from '@/stores/useTerminalStore';
 import { WebsocketChannel } from '@workspace/typescript-interface/websocket';
 
+const DEFAULT_WS_PARAMS: WebsocketParams = {};
+
 type ExtractConnectParams<T> = T extends (params: infer P) => void ? P : never;
 
 type WebsocketParams = {
@@ -15,7 +17,11 @@ interface WebsocketProviderProps extends PropsWithChildren {
     params?: WebsocketParams;
 }
 
-export function WebsocketProvider({ children, connections, params = {} }: WebsocketProviderProps) {
+export function WebsocketProvider({
+    children,
+    connections,
+    params = DEFAULT_WS_PARAMS,
+}: WebsocketProviderProps) {
     const memoizedConnections = useMemo(() => connections, [JSON.stringify(connections)]);
     const memoizedParams = useMemo(() => params, [JSON.stringify(params)]);
 

@@ -7,6 +7,7 @@ import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { useTranslations } from 'next-intl';
+import { useMemo } from 'react';
 
 export function CardInfoImages() {
     const t = useTranslations('docker');
@@ -15,19 +16,24 @@ export function CardInfoImages() {
 
     const isLoading = !images.length && !lastUpdate;
 
-    const totalSizeImages = images.reduce((acc, image) => acc + (image.size || 0), 0);
-    const activeImagesCount = images.filter((img) => img.containersUsed > 0).length;
-    const totalImages = images.length;
-
-    const lastUpdated = [...images].sort(
-        (a, b) => new Date(b.created || 0).getTime() - new Date(a.created || 0).getTime(),
-    )[0];
-
-    const lastUpdatedLabel = lastUpdated?.created
-        ? dayjs(lastUpdated.created).format('DD/MM/YYYY')
-        : '';
-
-    const lastUpdatedName = lastUpdated?.name?.[0] || '<none>';
+    const { totalSizeImages, activeImagesCount, totalImages, lastUpdatedLabel, lastUpdatedName } =
+        useMemo(() => {
+            const total = images.reduce((acc, image) => acc + (image.size || 0), 0);
+            const active = images.filter((img) => img.containersUsed > 0).length;
+            const lastUpdated = [...images].sort(
+                (a, b) =>
+                    new Date(b.created || 0).getTime() - new Date(a.created || 0).getTime(),
+            )[0];
+            return {
+                totalSizeImages: total,
+                activeImagesCount: active,
+                totalImages: images.length,
+                lastUpdatedLabel: lastUpdated?.created
+                    ? dayjs(lastUpdated.created).format('DD/MM/YYYY')
+                    : '',
+                lastUpdatedName: lastUpdated?.name?.[0] || '<none>',
+            };
+        }, [images]);
 
     const imageInfos = [
         {

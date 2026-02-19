@@ -37,8 +37,10 @@ const getGitIcon = (provider: string) => {
 };
 
 export default async function RepositoriesPage() {
-    const repositories = await getRepositories();
-    const t = await getTranslations('repository');
+    const [repositories, t] = await Promise.all([
+        getRepositories(),
+        getTranslations('repository'),
+    ]);
 
     return (
         <div className="flex h-full flex-1 flex-col pt-5">

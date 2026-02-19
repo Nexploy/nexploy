@@ -26,9 +26,10 @@ export default function ContainersPage() {
 
     const lastUpdate = useContainersStore((state) => state.lastUpdate);
     const containers = useContainersStore((state) => state.containers);
-    const stacksSize = useContainersStore((state) => state.getOrganizedContainers)().stacks.size;
-    const standaloneContainersLenght = useContainersStore((state) => state.getOrganizedContainers)()
-        .standaloneContainers.length;
+    const getOrganizedContainers = useContainersStore((state) => state.getOrganizedContainers);
+    const { stacks, standaloneContainers } = getOrganizedContainers();
+    const stacksSize = stacks.size;
+    const standaloneContainersLenght = standaloneContainers.length;
 
     const numberOfStackAndStandaloneContainer = stacksSize + standaloneContainersLenght;
 

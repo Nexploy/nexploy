@@ -241,11 +241,14 @@ export function TableDockerImages() {
                                 </Button>
                             </div>
                         </TooltipTrigger>
-                        {getUseTooltipContent() && (
-                            <TooltipContent>
-                                <p>{getUseTooltipContent()}</p>
-                            </TooltipContent>
-                        )}
+                        {(() => {
+                            const tooltipContent = getUseTooltipContent();
+                            return tooltipContent ? (
+                                <TooltipContent>
+                                    <p>{tooltipContent}</p>
+                                </TooltipContent>
+                            ) : null;
+                        })()}
                     </Tooltip>
                     <Button asChild>
                         <Link href={'/docker/images/pull-image'}>

@@ -16,8 +16,10 @@ export async function applyDomainOperations({
     userId,
     operations,
 }: ApplyDomainOperationsInput): Promise<Domain[]> {
-    const cloudflareInfo = await getCloudflareCredentialInfo(userId);
-    const existingDomains = await getDomainsFromTraefikConfig(repositoryId);
+    const [cloudflareInfo, existingDomains] = await Promise.all([
+        getCloudflareCredentialInfo(userId),
+        getDomainsFromTraefikConfig(repositoryId),
+    ]);
 
     await handleDeletions(operations.delete, cloudflareInfo, userId);
 
@@ -57,19 +59,19 @@ async function handleDeletions(
 ): Promise<void> {
     if (!cloudflareInfo.isConnected) return;
 
-    for (const domain of domainsToDelete) {
-        if (domain.cloudflareZoneId && domain.cloudflareDnsRecordId) {
-            try {
-                await deleteCloudflareDnsRecord(
+    await Promise.all(
+        domainsToDelete
+            .filter((domain) => domain.cloudflareZoneId && domain.cloudflareDnsRecordId)
+            .map((domain) =>
+                deleteCloudflareDnsRecord(
                     userId,
-                    domain.cloudflareZoneId,
-                    domain.cloudflareDnsRecordId,
-                );
-            } catch (error) {
-                console.error(`Failed to delete Cloudflare DNS for ${domain.host}:`, error);
-            }
-        }
-    }
+                    domain.cloudflareZoneId!,
+                    domain.cloudflareDnsRecordId!,
+                ).catch((error) => {
+                    console.error(`Failed to delete Cloudflare DNS for ${domain.host}:`, error);
+                }),
+            ),
+    );
 }
 
 async function handleEdit({

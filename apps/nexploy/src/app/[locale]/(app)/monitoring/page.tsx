@@ -61,7 +61,7 @@ export default function MonitoringPage() {
         return `${days}d ${hours}h ${mins}m`;
     };
 
-    const statsCards = [
+    const statsCards = useMemo(() => [
         {
             title: t('cpuUsage'),
             icon: Cpu,
@@ -86,9 +86,10 @@ export default function MonitoringPage() {
             value: formatUptime(metrics?.uptime || 0),
             description: `${metrics?.hostname || 'Unknown'} • ${metrics?.platform || 'Unknown'}`,
         },
-    ];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    ], [metrics, t]);
 
-    const chartCards = [
+    const chartCards = useMemo(() => [
         {
             title: t('cpuUsagePercent'),
             description: t('cpuUsageDescription'),
@@ -133,7 +134,7 @@ export default function MonitoringPage() {
                 return `${numValue.toFixed(2)}%`;
             },
         },
-    ];
+    ], [t]);
 
     return (
         <SSEProvider connections={['monitoring']} params={{ monitoring: { refreshRate } }}>

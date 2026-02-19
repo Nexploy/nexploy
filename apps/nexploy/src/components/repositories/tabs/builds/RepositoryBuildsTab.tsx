@@ -7,8 +7,10 @@ interface RepositoryOverviewTabProps {
 }
 
 export async function RepositoryBuildsTab({ repositoryId }: RepositoryOverviewTabProps) {
-    const builds = await getAllBuildsInngest(repositoryId);
-    const t = await getTranslations('repository.builds');
+    const [builds, t] = await Promise.all([
+        getAllBuildsInngest(repositoryId),
+        getTranslations('repository.builds'),
+    ]);
 
     return (
         <div className="flex flex-col gap-2 px-5">

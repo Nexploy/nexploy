@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@workspace/ui/
 import { Activity, Download } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import * as React from 'react';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { SSEProvider } from '@/providers/SSEProviders';
 import { useContainerStatsStore } from '@/stores/docker/useContainerStatsStore';
@@ -67,19 +67,23 @@ export function ContainerStats({ children }: ContainerStatsProps) {
         setOpen(false);
     };
 
-    const chartData = history.map((stat) => ({
-        timestamp: new Date(stat.timestamp).toLocaleTimeString(),
-        cpuPercent: stat.cpuPercent,
-        memoryUsage: stat.memoryUsage,
-        networkRx: stat.networkRx,
-        networkTx: stat.networkTx,
-        blockRead: stat.blockRead,
-        blockWrite: stat.blockWrite,
-        memoryPercent: stat.memoryPercent,
-        pidsCount: stat.pidsCount,
-    }));
+    const chartData = useMemo(
+        () =>
+            history.map((stat) => ({
+                timestamp: new Date(stat.timestamp).toLocaleTimeString(),
+                cpuPercent: stat.cpuPercent,
+                memoryUsage: stat.memoryUsage,
+                networkRx: stat.networkRx,
+                networkTx: stat.networkTx,
+                blockRead: stat.blockRead,
+                blockWrite: stat.blockWrite,
+                memoryPercent: stat.memoryPercent,
+                pidsCount: stat.pidsCount,
+            })),
+        [history],
+    );
 
-    const statsCard = [
+    const statsCard = useMemo(() => [
         {
             title: t('cpuUsage'),
             description: t('cpuDescription'),
@@ -188,9 +192,10 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                 return formatBytes(numValue);
             },
         },
-    ];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    ], [t]);
 
-    const smallsStats = [
+    const smallsStats = useMemo(() => [
         {
             title: t('pidsCount'),
             description: t('pidsDescription'),
@@ -201,7 +206,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
             description: t('memoryPercentDescription'),
             value: `${stats?.memoryPercent?.toFixed(3) || 0}%`,
         },
-    ];
+    ], [t, stats]);
 
     return (
         <>

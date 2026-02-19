@@ -15,6 +15,16 @@ import { useSwarmStore } from '@/stores/docker/useSwarmStore';
 import { useRequestsStore } from '@/stores/traefik/useRequestsStore';
 import { useMonitoringStore } from '@/stores/monitoring/useMonitoringStore';
 
+const DEFAULT_SSE_CONNECTIONS: SSEChannel[] = [
+    'docker',
+    'containers',
+    'images',
+    'volumes',
+    'networks',
+    'events',
+];
+const DEFAULT_SSE_PARAMS: SSEParams = {};
+
 type ExtractConnectParams<T> = T extends (params: infer P) => void ? P : never;
 
 type SSEParams = {
@@ -39,8 +49,8 @@ interface SSEProviderProps extends PropsWithChildren {
 
 export function SSEProvider({
     children,
-    connections = ['docker', 'containers', 'images', 'volumes', 'networks', 'events'],
-    params = {},
+    connections = DEFAULT_SSE_CONNECTIONS,
+    params = DEFAULT_SSE_PARAMS,
 }: SSEProviderProps) {
     const memoizedConnections = useMemo(() => connections, [JSON.stringify(connections)]);
     const memoizedParams = useMemo(() => params, [JSON.stringify(params)]);

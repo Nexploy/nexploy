@@ -78,7 +78,7 @@ export function BuildLogsViewer({
         return () => {
             logsContainer.removeEventListener('scroll', handleScroll);
         };
-    }, [logsContainerRef.current, autoScroll]);
+    }, []);
 
     useEffect(() => {
         if (!autoScroll || !logsEndRef.current) return;

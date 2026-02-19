@@ -17,14 +17,15 @@ import * as React from 'react';
 import { cn } from '@workspace/ui/lib/utils';
 
 export default async function IntegrationsPage() {
-    const session = await getUserSession();
-    const t = await getTranslations('integrations');
+    const [session, t, providers] = await Promise.all([
+        getUserSession(),
+        getTranslations('integrations'),
+        getAllGitProviders(),
+    ]);
 
     const cloudflareInfo = session
         ? await getCloudflareCredentialInfo(session.user.id)
         : { isConnected: false };
-
-    const providers = await getAllGitProviders();
 
     const hasGithubApps = providers.github.length;
     const hasGitlabApps = providers.gitlab.length;
