@@ -23,7 +23,7 @@ import {
 } from '@workspace/ui/components/select';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
-import { Building2, GitBranch as GitBranchIcon, Github, Gitlab } from 'lucide-react';
+import { BookMarked, Building2, GitBranch as GitBranchIcon, Github, Gitlab } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
@@ -189,7 +189,10 @@ export function GitSourceStep() {
                                             <SelectContent>
                                                 {repos?.map((repo) => (
                                                     <SelectItem key={repo.id} value={repo.id}>
-                                                        {repo.fullName || repo.name}
+                                                        <span className="flex items-center gap-2">
+                                                            <BookMarked />
+                                                            {repo.fullName || repo.name}
+                                                        </span>
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>

@@ -18,7 +18,6 @@ import { getTranslations } from 'next-intl/server';
 export async function AccountMenu() {
     const session = await getUserSession();
     const tAccount = await getTranslations('account');
-    const tIntegrations = await getTranslations('integrations');
 
     return (
         <SidebarMenu>
