@@ -1,12 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import {
     parseGitHubWebhook,
     verifyGitHubSignature,
 } from '@/services/webhook/github.webhook.service';
 import { startBuildRepositoryInngest } from '@/services/inngest/build.inngest.service';
 import { findRepositoryByWebhook } from '@/services/webhook/webhook.service';
+import { route } from '@/lib/api/nextRoute';
 
-export async function POST(request: NextRequest) {
+export const POST = route.handler(async (request: Request) => {
     try {
         const event = request.headers.get('x-github-event');
         const signature = request.headers.get('x-hub-signature-256');
@@ -51,4 +52,4 @@ export async function POST(request: NextRequest) {
     } catch (error: unknown) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
-}
+});

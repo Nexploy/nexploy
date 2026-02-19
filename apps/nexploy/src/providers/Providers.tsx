@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { NextIntlClientProvider } from 'next-intl';
 import { SheetProvider } from '@/providers/SheetProvider';
-import { Toaster } from '@/components/utils/toaster/Toaster';
+import { Toaster } from '@/components/shared/toaster/Toaster';
 import { Suspense } from 'react';
 import { AlertConfirmationDialog } from '@/components/dialog/AlertConfirmationDialog';
 import { ConfirmationDialog } from '@/components/dialog/ConfirmationDialog';

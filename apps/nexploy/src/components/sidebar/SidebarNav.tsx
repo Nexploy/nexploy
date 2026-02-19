@@ -14,6 +14,7 @@ import {
     HardDrive,
     LayoutList,
     Network,
+    Plug,
     Send,
     Users,
 } from 'lucide-react';
@@ -76,6 +77,7 @@ const groups: SidebarNavGroup[] = [
         children: [
             { titleKey: 'users', href: '/admin/users', icon: Users },
             { titleKey: 'backups', href: '/admin/backups', icon: Database },
+            { titleKey: 'integrations', href: '/admin/integrations', icon: Plug },
             { titleKey: 'ai', href: '/admin/ai', icon: Bot },
             { titleKey: 'tools', href: '/admin/tools', icon: Hammer },
         ],
@@ -99,9 +101,7 @@ export function SidebarNav() {
                         <SidebarMenu>
                             {group.children.map((item) => {
                                 const title = t(item.titleKey);
-                                const actionIcon = item.hasActionIcon ? (
-                                    <RefreshDocker />
-                                ) : undefined;
+                                const actionIcon = item.hasActionIcon && <RefreshDocker />;
 
                                 if (!item.enableCollapsible || !item.children) {
                                     return (

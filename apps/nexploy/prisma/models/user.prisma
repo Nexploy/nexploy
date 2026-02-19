@@ -18,6 +18,7 @@ model User {
   cloudflareCredential CloudflareCredential?
   environments         Environment[]
   apikeys              Apikey[]
+  gitAccounts          GitAccount[]
 
   @@unique([email])
   @@map("user")

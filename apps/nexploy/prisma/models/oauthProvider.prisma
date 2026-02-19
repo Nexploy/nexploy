@@ -1,0 +1,40 @@
+model GitProvider {
+  id            String       @id @default(cuid())
+  provider      String
+  displayName   String
+  appId         String?
+  appName       String?
+  ownerName     String?
+  ownerType     String?
+  clientId      String?
+  clientSecret  String?
+  webhookSecret String?
+  privateKey    String?
+  enabled       Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  gitAccounts   GitAccount[]
+
+  @@map("git_provider")
+}
+
+model GitAccount {
+  id                   String      @id @default(cuid())
+  userId               String
+  user                 User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gitProviderId        String
+  gitProvider          GitProvider @relation(fields: [gitProviderId], references: [id], onDelete: Cascade)
+  provider             String
+  providerAccountId    String
+  providerUsername     String?
+  accessToken          String
+  refreshToken         String?
+  accessTokenExpiresAt DateTime?
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  repositories         Repository[]
+
+  @@unique([userId, gitProviderId])
+  @@index([userId, provider])
+  @@map("git_account")
+}

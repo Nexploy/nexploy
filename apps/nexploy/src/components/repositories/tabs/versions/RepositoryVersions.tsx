@@ -61,12 +61,13 @@ export function RepositoryVersions({
     };
 
     const isCurrentVersion = (version: Version) => {
-        const currentTag = containerImageUsed?.split(':')[1];
-        return currentTag === version.imageTag || currentTag === version.buildId;
+        if (!containerImageUsed) return false;
+        const currentTag = containerImageUsed.split(':').at(-1) ?? '';
+        return currentTag === version.imageTag;
     };
 
     return (
-        <div className="flex flex-col gap-4 px-5">
+        <div className="flex flex-col gap-2 px-5">
             <h2 className="text-xl font-semibold">{t('title')}</h2>
             <div className="rounded-md border">
                 {versions.length === 0 ? (
@@ -75,11 +76,11 @@ export function RepositoryVersions({
                     </div>
                 ) : (
                     <div className="divide-y">
-                        {versions.map((version, index) => {
+                        {versions.map((version) => {
                             const isCurrent = isCurrentVersion(version);
                             return (
                                 <div
-                                    key={version.imageId}
+                                    key={`${version.repositoryId}-${version.imageTag}`}
                                     className={`flex items-center justify-between gap-4 p-3`}
                                 >
                                     <div className="flex flex-col gap-2">
@@ -88,7 +89,7 @@ export function RepositoryVersions({
                                                 variant={isCurrent ? 'default' : 'secondary'}
                                                 className="font-mono text-xs"
                                             >
-                                                v{versions.length - index}
+                                                v{version.versionNumber}
                                             </Badge>
                                             <span className="line-clamp-1 text-sm font-medium">
                                                 {version.commitMessage ??

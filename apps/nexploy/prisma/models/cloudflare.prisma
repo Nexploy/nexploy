@@ -1,7 +1,7 @@
 model CloudflareCredential {
   id        String   @id @default(cuid())
-  apiToken  String // Encrypted with AES-256-CBC
-  serverIp  String   @default("") // IP publique du serveur pour les DNS records A
+  apiToken  String
+  serverIp  String   @default("")
   userId    String   @unique
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())

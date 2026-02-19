@@ -22,11 +22,15 @@ export async function createRepository(
         let webhookConfig = null;
 
         if (restRepositoryCreate.autoDeploy) {
-            const oldToken = await getGitProviderToken(restRepositoryCreate.gitProvider);
+            const oldToken = await getGitProviderToken(restRepositoryCreate.gitProvider, {
+                gitAccountId: restRepositoryCreate.gitAccountId,
+                requestedUserId: ctx.session.user.id,
+            });
             const token = await getValidToken(
                 oldToken,
                 restRepositoryCreate.gitProvider,
                 ctx.session.user.id,
+                restRepositoryCreate.gitAccountId,
             );
 
             const baseUrl = await getBaseUrl();
@@ -152,14 +156,37 @@ export async function updateBranchRepository(newBranch: string, repositoryId: st
     }
 }
 
-export async function updateBuildTypeRepository(buildType: BuildType, repositoryId: string) {
+export async function updateBuildTypeRepository(
+    data: {
+        buildType: BuildType;
+        dockerfilePath: string;
+        dockerComposePath: string;
+        contextPath: string;
+        buildArgs?: string;
+    },
+    repositoryId: string,
+) {
     try {
         return await prisma.repository.update({
             where: { id: repositoryId },
-            data: { buildType },
+            data,
         });
     } catch (error: unknown) {
         throw new Error('Failed to update build type repository');
+    }
+}
+
+export async function updateDeploymentRepository(
+    data: { environmentId: string; autoDeploy: boolean },
+    repositoryId: string,
+) {
+    try {
+        return await prisma.repository.update({
+            where: { id: repositoryId },
+            data,
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to update deployment settings');
     }
 }
 
@@ -205,8 +232,16 @@ async function updateRepositoryAutoDeploy(
 export async function deleteRepository(repositoryId: string, userId: string) {
     const repository = await getRepositoryById(repositoryId);
 
-    const oldToken = await getGitProviderToken(repository.gitProvider);
-    const token = await getValidToken(oldToken, repository.gitProvider, userId);
+    const oldToken = await getGitProviderToken(repository.gitProvider, {
+        gitAccountId: repository.gitAccountId ?? undefined,
+        requestedUserId: userId,
+    });
+    const token = await getValidToken(
+        oldToken,
+        repository.gitProvider,
+        userId,
+        repository.gitAccountId ?? undefined,
+    );
 
     if (repository.webhookId) {
         await tokenGitStorage.run(token, async () => {
@@ -226,8 +261,16 @@ export async function toggleAutoDeployRepository(
 ) {
     const repository = await getRepositoryById(repositoryId);
 
-    const oldToken = await getGitProviderToken(repository.gitProvider);
-    const token = await getValidToken(oldToken, repository.gitProvider, userId);
+    const oldToken = await getGitProviderToken(repository.gitProvider, {
+        gitAccountId: repository.gitAccountId ?? undefined,
+        requestedUserId: userId,
+    });
+    const token = await getValidToken(
+        oldToken,
+        repository.gitProvider,
+        userId,
+        repository.gitAccountId ?? undefined,
+    );
 
     if (autoDeploy && !repository.webhookId) {
         const baseUrl = await getBaseUrl();

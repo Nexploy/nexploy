@@ -40,7 +40,9 @@
         "deleteTitle": "Delete version",
         "confirmDelete": "Are you sure you want to delete this version? The Docker image will be permanently removed.",
         "deleteSuccess": "Version deleted successfully",
-        "deleteError": "Failed to delete version"
+        "deleteError": "Failed to delete version",
+        "composeConfigNotFound": "Compose configuration not found for this version",
+        "imageNotFound": "Docker image not found. It may have been deleted. Please rebuild before deploying."
     },
     "deployment": {
         "title": "Deployment",
@@ -71,7 +73,17 @@
         "port": "Port",
         "portPlaceholder": "3000",
         "replicas": "Replicas",
-        "replicasDescription": "Number of container replicas to run"
+        "replicasDescription": "Number of container replicas to run",
+        "environment": "Environment",
+        "environmentDescription": "Target Docker environment for deployment",
+        "selectEnvironment": "Select an environment",
+        "loading": "Loading...",
+        "default": "default",
+        "autoDeploy": "Automatic Deployment",
+        "autoDeployDescription": "Automatically deploy on push to the branch",
+        "save": "Save",
+        "saving": "Saving...",
+        "updated": "Deployment settings updated successfully"
     },
     "environment": {
         "title": "Environment",
@@ -226,7 +238,11 @@
     "steps": {
         "gitSource": {
             "title": "Git Source",
-            "description": "Source repository configuration"
+            "description": "Source repository configuration",
+            "account": "Git Account",
+            "selectAccount": "Select an account",
+            "noAccounts": "No Git accounts connected. Connect one from your account settings.",
+            "connectAccount": "Connect an account"
         },
         "generalInfo": {
             "title": "General Information",
@@ -242,11 +258,12 @@
             "description": "How your application should be built",
             "buildType": "Build type",
             "selectType": "Select a type",
-            "dockerfilePath": "Dockerfile path",
+            "dockerfilePath": "File name",
             "dockerfilePathPlaceholder": "Dockerfile",
-            "contextPath": "Build context",
+            "dockerfileContextPath": "Dockerfile path",
+            "contextPath": "Compose file path",
             "contextPathPlaceholder": ".",
-            "composePath": "Compose file path",
+            "composePath": "File name",
             "composePathPlaceholder": "docker-compose.yml"
         },
         "deployment": {
@@ -285,7 +302,8 @@
             "label": "Branch",
             "loading": "Loading...",
             "saving": "Saving...",
-            "save": "Save"
+            "save": "Save",
+            "updated": "Branch updated successfully"
         },
         "autoDeploy": {
             "title": "Automatic deployment",
@@ -300,6 +318,7 @@
             "selectType": "Select a type",
             "saving": "Saving...",
             "save": "Save",
+            "updated": "Build configuration updated successfully",
             "dockerfile": "Dockerfile",
             "dockerfileDescription": "Use an existing Dockerfile",
             "dockerCompose": "Docker Compose",

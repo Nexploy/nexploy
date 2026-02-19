@@ -7,7 +7,7 @@ import { Button } from '@workspace/ui/components/button';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Badge } from '@workspace/ui/components/badge';
 import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
-import CopyButton from '@/components/utils/CopyButton';
+import CopyButton from '@/components/shared/CopyButton';
 import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';
 import { VolumeDropdownActions } from '@/components/docker/volume/VolumeDropdownActions';

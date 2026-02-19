@@ -75,8 +75,6 @@ async function seedDockerApiKey() {
     console.log('Docker API Key created successfully!');
     console.log('='.repeat(60));
     console.log('');
-    console.log('Add this to your docker-api .env file:');
-    console.log('');
     console.log(`NEXPLOY_API_KEY=${apiKey.key}`);
     console.log('');
     console.log('='.repeat(60));

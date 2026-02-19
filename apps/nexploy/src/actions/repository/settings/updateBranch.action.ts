@@ -4,7 +4,7 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { branchSchema } from '@workspace/schemas-zod/repository/branch.schema';
 import { repositoryIdSchema } from '@workspace/schemas-zod/bind/repositoryId.schema';
 import { revalidatePath } from 'next/cache';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { updateBranchRepository } from '@/services/repository.service';
 
 export const updateBranchAction = authActionServer

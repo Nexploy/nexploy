@@ -29,6 +29,7 @@ import { updateBranchAction } from '@/actions/repository/settings/updateBranch.a
 import { useEffect } from 'react';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 interface ChangeBranchProps {
     repository: Repository;
@@ -37,7 +38,9 @@ interface ChangeBranchProps {
 export function ChangeBranch({ repository }: ChangeBranchProps) {
     const t = useTranslations('repository.settings.branch');
     const { data: branches, isLoading: isLoadingBranches } = useSWR<GitBranch[]>(
-        `/api/git/branches?provider=${repository.gitProvider}&repoId=${repository.gitId}&owner=${repository.name.split('/')[0]}&repoName=${repository.name.split('/')[1]}`,
+        repository.gitAccountId
+            ? `/api/git/branches?provider=${repository.gitProvider}&gitAccountId=${repository.gitAccountId}&repoId=${repository.gitId}&owner=${repository.name.split('/')[0]}&repoName=${repository.name.split('/')[1]}`
+            : null,
         fetcherApi,
     );
 
@@ -53,6 +56,7 @@ export function ChangeBranch({ repository }: ChangeBranchProps) {
             },
             actionProps: {
                 onSuccess: ({ data }) => {
+                    toast.success(t('updated'));
                     if (data) form.reset({ branch: data });
                 },
             },

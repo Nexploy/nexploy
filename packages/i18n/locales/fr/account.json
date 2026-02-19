@@ -27,6 +27,10 @@
         "lastChanged": "Modifié il y a {days} jours",
         "change": "Modifier"
     },
+    "integrations": {
+        "title": "Intégrations",
+        "description": "Connectez votre compte avec des services et outils externes"
+    },
     "notifications": {
         "title": "Préférences de notification",
         "description": "Contrôlez comment et quand vous recevez des notifications"

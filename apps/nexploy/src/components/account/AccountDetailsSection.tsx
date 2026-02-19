@@ -5,7 +5,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@workspace/ui/components/card';
-import { Bell, Globe, Shield } from 'lucide-react';
+import { Bell, Globe, Plug, Shield } from 'lucide-react';
 import { TwoFactorAuth } from '@/components/account/2fa/TwoFactorAuth';
 import { ProfileInfoForm } from '@/components/account/2fa/forms/ProfileInfoForm';
 import { LanguageSwitcher } from '@/components/account/LanguageSwitcher';
@@ -14,6 +14,7 @@ import { ChangePassword } from '@/components/account/ChangePassword';
 import { getUserSession } from '@/services/auth/auth.service';
 import { Label } from '@workspace/ui/components/label';
 import { getTranslations } from 'next-intl/server';
+import { AcountIntegrations } from '@/components/account/AccountIntegrations';
 
 export async function AccountDetailsSection() {
     const session = await getUserSession();
@@ -36,6 +37,19 @@ export async function AccountDetailsSection() {
                         <TwoFactorAuth user={session?.user} />
                         <ChangePassword />
                     </div>
+                </CardContent>
+            </Card>
+
+            <Card id="integrations">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Plug className="size-5" />
+                        {t('integrations.title')}
+                    </CardTitle>
+                    <CardDescription>{t('integrations.description')}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <AcountIntegrations />
                 </CardContent>
             </Card>
 

@@ -4,7 +4,7 @@ import { Card, CardContent } from '@workspace/ui/components/card';
 import { List } from 'lucide-react';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
-import CopyButton from '@/components/utils/CopyButton';
+import CopyButton from '@/components/shared/CopyButton';
 import { useTranslations } from 'next-intl';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
 import dayjs from 'dayjs';
@@ -138,9 +138,9 @@ export function CardNetworkDetails({ network }: CardNetworkDetailsProps) {
                                 {t('ipam')}
                             </span>
                             <div className="flex-1 space-y-2">
-                                {ipamConfigs.map((config, index) => (
+                                {ipamConfigs.map((config) => (
                                     <div
-                                        key={index}
+                                        key={`${config.Subnet}-${config.Gateway}`}
                                         className="bg-muted/50 space-y-1 rounded-md p-2"
                                     >
                                         {config.Subnet && (

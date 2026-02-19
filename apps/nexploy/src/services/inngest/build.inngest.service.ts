@@ -5,7 +5,7 @@ import { getCommit, getValidToken } from '@/services/api/gitProvider.service';
 import { addBuildJob } from '@/inngest/jobs/queue';
 import { inngest } from '@/inngest/client';
 import { getRepositorieWithEnv } from '@/services/repository.service';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { decrypt } from '@/lib/encryption';
 import {
     ResumeBuildSchemaType,
@@ -27,8 +27,16 @@ export async function startBuildRepositoryInngest(
         throw new Error('Repository not found');
     }
 
-    const oldToken = await getGitProviderToken(repository.gitProvider, userId);
-    const token = await getValidToken(oldToken, repository.gitProvider, userId);
+    const oldToken = await getGitProviderToken(repository.gitProvider, {
+        gitAccountId: repository.gitAccountId ?? undefined,
+        requestedUserId: userId,
+    });
+    const token = await getValidToken(
+        oldToken,
+        repository.gitProvider,
+        userId,
+        repository.gitAccountId ?? undefined,
+    );
 
     const commit = await getCommit(
         repository.repositoryUrl,
@@ -69,7 +77,7 @@ export async function startBuildRepositoryInngest(
         dockerfilePath: repository.dockerfilePath || undefined,
         dockerComposePath: repository.dockerComposePath || undefined,
         imageName,
-        imageTag: build.id.slice(-8),
+        imageTag: build.id,
         autoDeploy: repository.autoDeploy,
         environmentId: repository.environmentId,
     };
@@ -195,8 +203,10 @@ export async function retryBuildRepositoryInngest(
 
     const repository = existingBuild.repository;
 
-    const token = await getGitProviderToken(repository.gitProvider);
-    if (!token) throw new Error('No access token provider found');
+    const token = await getGitProviderToken(repository.gitProvider, {
+        gitAccountId: repository.gitAccountId ?? undefined,
+        requestedUserId: userId,
+    });
 
     const imageName = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
@@ -222,7 +232,7 @@ export async function retryBuildRepositoryInngest(
         dockerfilePath: repository.dockerfilePath || undefined,
         dockerComposePath: repository.dockerComposePath || undefined,
         imageName,
-        imageTag: buildId.slice(-8),
+        imageTag: buildId,
         autoDeploy: repository.autoDeploy,
         environmentId,
     };
@@ -245,8 +255,10 @@ export async function resumeBuildRepositoryInngest(
 
     const repository = existingBuild.repository;
 
-    const token = await getGitProviderToken(repository.gitProvider);
-    if (!token) throw new Error('No access token provider found');
+    const token = await getGitProviderToken(repository.gitProvider, {
+        gitAccountId: repository.gitAccountId ?? undefined,
+        requestedUserId: userId,
+    });
 
     const imageName = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
@@ -275,7 +287,7 @@ export async function resumeBuildRepositoryInngest(
         dockerfilePath: repository.dockerfilePath || undefined,
         dockerComposePath: repository.dockerComposePath || undefined,
         imageName,
-        imageTag: buildId.slice(-8),
+        imageTag: buildId,
         autoDeploy: repository.autoDeploy,
         startFromStep: resumeStep,
         environmentId,

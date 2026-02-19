@@ -1,19 +1,10 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth/auth';
 import { prisma } from '../../../../../prisma/prisma';
-import { route } from '@/lib/api/nextRoute';
+import { authRouteServer, route } from '@/lib/api/nextRoute';
 import { decrypt } from '@/lib/encryption';
 
-export const GET = route.handler(async (request, { params }) => {
+export const GET = route.use(authRouteServer).handler(async (_, { params }) => {
     try {
-        const session = await auth.api.getSession({
-            headers: request.headers,
-        });
-
-        if (!session) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
         const { id } = await params;
 
         const environment = await prisma.environment.findUnique({

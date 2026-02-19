@@ -80,7 +80,10 @@ export async function dockerEnvironmentMiddleware(c: Context, next: Next) {
             const t = getTranslations(c, 'docker');
             return c.json(
                 {
-                    error: t('errors.environmentUnavailable', { id: environmentId, message: registerErr.message }),
+                    error: t('errors.environmentUnavailable', {
+                        id: environmentId,
+                        message: registerErr.message,
+                    }),
                     code: 'ENVIRONMENT_UNAVAILABLE',
                     environmentId,
                 },

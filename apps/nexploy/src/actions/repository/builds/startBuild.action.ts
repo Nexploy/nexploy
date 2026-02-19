@@ -1,7 +1,7 @@
 'use server';
 
 import { authActionServer } from '@/lib/api/safe-action';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { HTTPError } from 'ky';
 import { startBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { startBuildRepositoryInngest } from '@/services/inngest/build.inngest.service';

@@ -1,6 +1,5 @@
 import { WebhookConfig } from '@workspace/typescript-interface/websocket';
-import { kyGitlab } from '@/lib/api/drinoGitlab';
-import { kyGithub } from '@/lib/api/drinoGithub';
+import { kyGitlab } from '@/lib/api/kyGitlab';
 import {
     createGitLabWebhook,
     extractGitLabProjectId,
@@ -9,6 +8,7 @@ import { createGitHubWebhook } from '@/services/webhook/github.webhook.service';
 import { prisma } from '../../../prisma/prisma';
 import { extractGitHubRepo } from '@/services/git/git.service';
 import { deleteWebhookForRepository } from '@/services/repository.service';
+import { githubDeleteWebhook } from '@/lib/api/github.api';
 
 export async function setupWebhookForRepository(
     repositoryUrl: string,
@@ -20,10 +20,10 @@ export async function setupWebhookForRepository(
 
     let result: WebhookConfig;
 
-    if (gitProvider === 'gitlab') {
-        result = await createGitLabWebhook(repositoryUrl, userId, webhookUrl);
-    } else if (gitProvider === 'github') {
+    if (gitProvider === 'github') {
         result = await createGitHubWebhook(repositoryUrl, userId, webhookUrl);
+    } else if (gitProvider === 'gitlab') {
+        result = await createGitLabWebhook(repositoryUrl, userId, webhookUrl);
     } else {
         throw new Error(`Unsupported git provider: ${gitProvider}`);
     }
@@ -49,15 +49,11 @@ export async function removeWebhookForRepository(repositoryId: string): Promise<
         if (repository.gitProvider === 'gitlab') {
             const projectId = extractGitLabProjectId(repository.repositoryUrl);
 
-            await kyGitlab
-                .delete(`v4/projects/${projectId}/hooks/${repository.webhookId}`)
-                .json();
+            await kyGitlab.delete(`v4/projects/${projectId}/hooks/${repository.webhookId}`).json();
         } else if (repository.gitProvider === 'github') {
             const { owner, repo } = extractGitHubRepo(repository.repositoryUrl);
 
-            await kyGithub
-                .delete(`repos/${owner}/${repo}/hooks/${repository.webhookId}`)
-                .json();
+            await githubDeleteWebhook(owner, repo, repository.webhookId);
         }
     } catch (error: unknown) {
         throw new Error('Failed to delete webhook');

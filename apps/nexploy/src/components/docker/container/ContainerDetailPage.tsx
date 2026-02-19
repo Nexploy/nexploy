@@ -1,13 +1,6 @@
 'use client';
 
-import {
-    Activity,
-    Container as IconContainer,
-    FileText,
-    Globe,
-    LucideIcon,
-    Terminal,
-} from 'lucide-react';
+import { Activity, Container as IconContainer, FileText, Globe, Terminal } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { CardInfoDetail } from '@/components/docker/container/cards/CardInfoDetail';
@@ -35,28 +28,7 @@ import { CardLabels } from '@/components/docker/container/cards/label/CardLabels
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { z } from 'zod';
-
-function ToolbarButton({
-    icon: Icon,
-    label,
-    onClick,
-}: {
-    icon: LucideIcon;
-    label: string;
-    onClick: () => void;
-}) {
-    return (
-        <Tooltip>
-            <TooltipTrigger asChild>
-                <Button variant="outline" onClick={onClick}>
-                    <Icon />
-                    <span className="sm:hidden md:block">{label}</span>
-                </Button>
-            </TooltipTrigger>
-            <TooltipContent className="hidden sm:block md:hidden">{label}</TooltipContent>
-        </Tooltip>
-    );
-}
+import { ToolbarButton } from '@/components/shared/ToolbarButton';
 
 export function ContainerDetailPage() {
     const container = useContainerStore((state) => state.container);

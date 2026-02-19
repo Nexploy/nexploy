@@ -33,7 +33,7 @@ export default async function BackupsPage() {
                     <CreateBackupButton />
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
-                    <div className="px-5 pb-6">
+                    <div className="px-5 pb-5">
                         <BackupsSection />
                     </div>
                 </ScrollAreaWithShadow>

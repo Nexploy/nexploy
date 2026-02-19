@@ -63,8 +63,6 @@ export const locales = {
     },
 };
 
-// --- Translate utility ---
-
 export const appLocales = ['en', 'fr'] as const;
 export type AppLocale = (typeof appLocales)[number];
 export const defaultLocale: AppLocale = 'en';

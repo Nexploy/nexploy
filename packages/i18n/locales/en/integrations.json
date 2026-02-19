@@ -11,6 +11,48 @@
         "title": "GitLab",
         "description": "Connect your GitLab account to deploy repositories"
     },
+    "oauth": {
+        "title": "Git Providers",
+        "description": "Configure Git provider integrations so users can connect their repositories",
+        "providerDescription": "{provider} integration for repository access",
+        "configured": "Configured",
+        "notConfigured": "Not configured",
+        "clientId": "Client ID",
+        "clientIdPlaceholder": "Enter your Application ID",
+        "clientSecret": "Client Secret",
+        "clientSecretPlaceholder": "Enter your Application Secret",
+        "displayName": "Display Name",
+        "displayNamePlaceholder": "e.g. My Org GitHub, Work GitLab",
+        "configureTitle": "Configure {provider}",
+        "configureDescription": "Enter the OAuth application credentials for {provider}",
+        "save": "Save",
+        "saveSuccess": "Provider saved successfully",
+        "saveFailed": "Failed to save provider",
+        "deleteSuccess": "Provider removed successfully",
+        "noProvidersAvailable": "No Git providers have been configured by the administrator yet.",
+        "connectFailed": "Failed to connect to the Git provider. Please try again.",
+        "stateExpired": "The connection request has expired. Please try again.",
+        "connectedSuccess": "Git provider connected successfully.",
+        "disconnectedSuccess": "Git provider disconnected successfully.",
+        "addGithub": "Add GitHub",
+        "addGitlab": "Add GitLab",
+        "instanceCount": "{count, plural, =0 {No instances} one {# instance} other {# instances}}",
+        "noInstances": "No instances configured",
+        "guide": {
+            "github": {
+                "manifestDescription": "Create a GitHub App to let users connect their repositories. The app will be automatically configured with the right permissions.",
+                "organization": "Install on an organization",
+                "organizationPlaceholder": "Organization name",
+                "existingApp": "Already have a GitHub App?",
+                "createApp": "Create GitHub App"
+            },
+            "gitlab": {
+                "step1": "Go to GitLab → Preferences → Applications → New application",
+                "step2": "Set the Redirect URI to: {url}/api/auth/callback/gitlab and select the scopes: read_user, read_repository, api",
+                "step3": "Copy the Application ID and Secret"
+            }
+        }
+    },
     "cloudflare": {
         "title": "Cloudflare",
         "description": "Manage DNS records and tunnels with Cloudflare",

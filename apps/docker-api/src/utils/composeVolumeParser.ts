@@ -2,9 +2,9 @@ import path from 'path';
 import fs from 'fs';
 import type { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
 import type {
-    ParsedBindMount,
     BindMountClassification,
     ComposeVolumeConfig,
+    ParsedBindMount,
 } from '@workspace/typescript-interface/docker/docker.compose.volume';
 
 const CODE_EXTENSIONS = new Set([
@@ -155,7 +155,10 @@ export function classifyBindMount(
 
             for (const file of files) {
                 if (CODE_INDICATOR_FILES.has(file.toLowerCase())) {
-                    return { classification: 'code', reason: `Contains code indicator file: ${file}` };
+                    return {
+                        classification: 'code',
+                        reason: `Contains code indicator file: ${file}`,
+                    };
                 }
             }
 
@@ -171,9 +174,7 @@ export function classifyBindMount(
             if (files.length === 0) {
                 return { classification: 'data', reason: 'Empty directory, treating as data' };
             }
-        } catch {
-            // Cannot read directory
-        }
+        } catch {}
     }
 
     return { classification: 'data', reason: 'Unable to determine, defaulting to data' };

@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
@@ -14,14 +15,16 @@ interface AICommandChatProps {
 }
 
 export function AICommandChat({ initialInput = '', onBack }: AICommandChatProps) {
-    const { messages, input, handleInputChange, handleSubmit, stop, isLoading } = useChat({
-        api: '/api/chat',
-        initialInput,
+    const { messages, sendMessage, stop, status } = useChat({
+        transport: new DefaultChatTransport({ api: '/api/chat' }),
     });
     const t = useTranslations('ai.chat');
 
+    const [input, setInput] = useState(initialInput);
     const scrollRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+
+    const isLoading = status === 'submitted' || status === 'streaming';
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -35,6 +38,13 @@ export function AICommandChat({ initialInput = '', onBack }: AICommandChatProps)
     useEffect(() => {
         setTimeout(() => inputRef.current?.focus(), 100);
     }, []);
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!input.trim() || isLoading) return;
+        sendMessage({ text: input });
+        setInput('');
+    };
 
     return (
         <div className="flex h-[500px] w-full flex-col">
@@ -56,9 +66,7 @@ export function AICommandChat({ initialInput = '', onBack }: AICommandChatProps)
                     {messages.length === 0 && (
                         <div className="text-muted-foreground mt-10 text-center">
                             <p>{t('helpMessage')}</p>
-                            <p className="mt-2 text-xs">
-                                {t('helpExample')}
-                            </p>
+                            <p className="mt-2 text-xs">{t('helpExample')}</p>
                         </div>
                     )}
                     {messages.map((m) => (
@@ -78,29 +86,38 @@ export function AICommandChat({ initialInput = '', onBack }: AICommandChatProps)
                             <div
                                 className={`max-w-[80%] rounded-lg p-3 text-sm ${m.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
                             >
-                                {m.content && <p className="whitespace-pre-wrap">{m.content}</p>}
-                                {m.toolInvocations?.map((toolInvocation) => {
-                                    const toolCallId = toolInvocation.toolCallId;
-                                    const isRunning = !('result' in toolInvocation);
-
-                                    return (
-                                        <div
-                                            key={toolCallId}
-                                            className="bg-background/50 text-foreground mt-2 rounded border p-2 text-xs"
-                                        >
-                                            <div className="mb-1 flex items-center gap-2 font-semibold">
-                                                {isRunning ? (
-                                                    <Loader2 className="h-3 w-3 animate-spin" />
-                                                ) : (
-                                                    <Bot className="h-3 w-3" />
-                                                )}
-                                                {toolInvocation.toolName}
+                                {m.parts.map((part, partIndex) => {
+                                    if (part.type === 'text') {
+                                        return (
+                                            <p key={`${m.id}-${partIndex}`} className="whitespace-pre-wrap">
+                                                {part.text}
+                                            </p>
+                                        );
+                                    }
+                                    if (part.type === 'dynamic-tool') {
+                                        const isRunning =
+                                            part.state === 'input-streaming' ||
+                                            part.state === 'input-available';
+                                        return (
+                                            <div
+                                                key={part.toolCallId}
+                                                className="bg-background/50 text-foreground mt-2 rounded border p-2 text-xs"
+                                            >
+                                                <div className="mb-1 flex items-center gap-2 font-semibold">
+                                                    {isRunning ? (
+                                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                                    ) : (
+                                                        <Bot className="h-3 w-3" />
+                                                    )}
+                                                    {part.toolName}
+                                                </div>
+                                                {part.state === 'output-available' &&
+                                                    ((part.output as any)?.message ||
+                                                        JSON.stringify(part.output))}
                                             </div>
-                                            {!isRunning &&
-                                                (toolInvocation.result.message ||
-                                                    JSON.stringify(toolInvocation.result))}
-                                        </div>
-                                    );
+                                        );
+                                    }
+                                    return null;
                                 })}
                             </div>
                         </div>
@@ -122,7 +139,7 @@ export function AICommandChat({ initialInput = '', onBack }: AICommandChatProps)
                 <Input
                     ref={inputRef}
                     value={input}
-                    onChange={handleInputChange}
+                    onChange={(e) => setInput(e.target.value)}
                     placeholder={t('inputPlaceholder')}
                     className="flex-1"
                 />

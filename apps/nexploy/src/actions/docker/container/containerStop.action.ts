@@ -4,7 +4,7 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { containerActionsSchema } from '@workspace/schemas-zod/docker/container/containerAction.schema';
 import { HTTPError } from 'ky';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 
 export const onContainerStopAction = authActionServer
     .inputSchema(containerActionsSchema)

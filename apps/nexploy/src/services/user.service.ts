@@ -3,7 +3,7 @@ import { UserRow } from '@/components/admin/users/ColumnsUsers';
 
 export async function getUsers(): Promise<UserRow[]> {
     try {
-        const users = await prisma.user.findMany({
+        return await prisma.user.findMany({
             select: {
                 id: true,
                 name: true,
@@ -15,11 +15,9 @@ export async function getUsers(): Promise<UserRow[]> {
                 image: true,
             },
             orderBy: {
-                createdAt: 'desc',
+                createdAt: 'asc',
             },
         });
-
-        return users;
     } catch {
         throw new Error('Failed to get users');
     }
@@ -27,7 +25,7 @@ export async function getUsers(): Promise<UserRow[]> {
 
 export async function getInvitations() {
     try {
-        const invitations = await prisma.invitation.findMany({
+        return await prisma.invitation.findMany({
             where: {
                 status: 'pending',
                 expiresAt: {
@@ -45,8 +43,6 @@ export async function getInvitations() {
                 createdAt: 'desc',
             },
         });
-
-        return invitations;
     } catch {
         throw new Error('Failed to get invitations');
     }

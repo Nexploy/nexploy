@@ -9,6 +9,7 @@ import { logger } from '@/utils/logger';
 import { getTranslations } from '@/middleware/locale.middleware';
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 import { PortType } from '@workspace/typescript-interface/docker/docker.port';
+import { HttpError } from '@workspace/shared/http-error';
 
 const app = new Hono();
 
@@ -317,10 +318,9 @@ app.get(
         } catch (error: any) {
             if (error.statusCode === 404) {
                 const t = getTranslations(c, 'docker');
-                const err = new Error(t('errors.containerNotFound', { id }));
-                (err as any).status = 404;
-                throw err;
+                throw new HttpError(t('errors.containerNotFound', { id }), 404);
             }
+
             throw error;
         }
     }),
@@ -348,7 +348,7 @@ app.get(
 
         if (!container) {
             const t = getTranslations(c, 'docker');
-            throw new Error(t('errors.containerNotFound', { id }));
+            throw new HttpError(t('errors.containerNotFound', { id }), 404);
         }
 
         return {
@@ -359,17 +359,22 @@ app.get(
     }),
 );
 
-app.get('/status', (c) => {
-    const stats = containersStateManager.getStats();
-    return c.json({
-        ...stats,
-        timestamp: Date.now(),
-    });
-});
+app.get(
+    '/status',
+    handleAsync(async () => {
+        const stats = containersStateManager.getStats();
+        return {
+            ...stats,
+            timestamp: Date.now(),
+        };
+    }),
+);
 
-app.get('/current', (c) => {
-    const containers = containersStateManager.getAllStates();
-    return c.json(containers);
-});
+app.get(
+    '/current',
+    handleAsync(async () => {
+        return containersStateManager.getAllStates();
+    }),
+);
 
 export default app;

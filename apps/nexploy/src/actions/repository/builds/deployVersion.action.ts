@@ -1,12 +1,16 @@
 'use server';
 
 import { authActionServer } from '@/lib/api/safe-action';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { deployVersionSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { decrypt } from '@/lib/encryption';
 import { getTranslations } from 'next-intl/server';
 import { getRepositorieWithEnv } from '@/services/repository.service';
+import { prisma } from '@/../prisma/prisma';
+import { Image } from '@workspace/typescript-interface/docker/docker.image';
+import { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
+import * as yaml from 'yaml';
 
 export const onDeployVersion = authActionServer
     .inputSchema(deployVersionSchema)
@@ -26,19 +30,54 @@ export const onDeployVersion = authActionServer
                 envVariables[envVar.key] = decrypt(envVar.value);
             }
 
-            const imageName = `${repositoryId}:${imageTag}`;
-
             if (repository.buildType === 'DOCKER_COMPOSE') {
+                const version = await prisma.version.findUnique({
+                    where: { repositoryId_imageTag: { repositoryId, imageTag } },
+                });
+
+                if (!version?.composeConfig) {
+                    throw new Error(t('versions.composeConfigNotFound'));
+                }
+
+                const composeYaml = Buffer.from(version.composeConfig, 'base64').toString('utf8');
+                const composeContent = yaml.parse(composeYaml) as ComposeContent;
+                const builtServices = Object.values(composeContent.services || {}).filter(
+                    (s) => s.build && s.image,
+                );
+
+                if (builtServices.length > 0) {
+                    const allImages = await kyDocker.get('images').json<Image[]>();
+                    const missingImages = builtServices.filter(
+                        (s) => !allImages.some((img) => img.repoTags.includes(s.image!)),
+                    );
+
+                    if (missingImages.length > 0) {
+                        throw new Error(t('versions.imageNotFound'));
+                    }
+                }
+
                 return await kyDocker
                     .post('pipeline/deploy-compose', {
                         json: {
                             repositoryId,
-                            buildId: imageTag,
                             projectName: `nexploy-${repositoryId}`,
                             envVars: envVariables,
+                            composeConfig: version.composeConfig,
                         },
                     })
                     .json();
+            }
+
+            const imageName = `${repositoryId}:${imageTag}`;
+
+            const images = await kyDocker
+                .get('images', { searchParams: { name: repositoryId } })
+                .json<Image[]>();
+
+            const imageExists = images.some((img) => img.repoTags.includes(imageName));
+
+            if (!imageExists) {
+                throw new Error(t('versions.imageNotFound'));
             }
 
             return await kyDocker
@@ -56,7 +95,7 @@ export const onDeployVersion = authActionServer
             if (err instanceof Error) {
                 await setToastServer({
                     type: 'error',
-                    message: err.message || (await getTranslations('repository'))('builds.failedToDeploy'),
+                    message: (await getTranslations('repository'))('builds.failedToDeploy'),
                 });
             }
             throw err;

@@ -6,7 +6,7 @@ import { ArrowUpDown, ChevronRight, MoreVertical } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Badge } from '@workspace/ui/components/badge';
-import CopyButton from '@/components/utils/CopyButton';
+import CopyButton from '@/components/shared/CopyButton';
 import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';
 import { ImageDropdownActions } from '@/components/docker/image/ImageDropdownActions';
@@ -180,8 +180,8 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                                 </Badge>
                             </TooltipTrigger>
                             <TooltipContent className={'flex max-w-xs flex-col gap-1 p-2 text-sm'}>
-                                {tags.map((tag: string, index: number) => (
-                                    <Badge key={index} variant="secondary" className="font-mono">
+                                {tags.map((tag: string) => (
+                                    <Badge key={tag} variant="secondary" className="font-mono">
                                         {tag}
                                     </Badge>
                                 ))}
@@ -233,7 +233,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
         ),
         cell: ({ row }) => {
             const created = row.original.created;
-            const date = dayjs.unix(created).format('DD/MM/YYYY');
+            const date = dayjs(created).format('DD/MM/YYYY');
 
             return (
                 <div className="text-muted-foreground flex items-center gap-2 text-sm">{date}</div>

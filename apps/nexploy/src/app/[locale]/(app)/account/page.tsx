@@ -26,13 +26,11 @@ export default async function AccountPage() {
                         <h1 className="text-3xl leading-none font-semibold tracking-tight">
                             {t('title')}
                         </h1>
-                        <p className="text-muted-foreground text-sm">
-                            {t('description')}
-                        </p>
+                        <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden px-5">
-                    <div className={'space-y-8 pb-6'}>
+                    <div className={'space-y-8 pb-5'}>
                         <AccountDetailsSection />
                     </div>
                 </ScrollAreaWithShadow>

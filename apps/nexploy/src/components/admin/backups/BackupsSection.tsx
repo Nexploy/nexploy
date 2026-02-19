@@ -2,7 +2,6 @@
 
 import { BackupsTable } from '@/components/admin/backups/BackupsTable';
 
-// TODO: Replace with actual data from database when backend is implemented
 export interface Backup {
     id: string;
     name: string;
@@ -15,7 +14,6 @@ export interface Backup {
     s3Region?: string;
 }
 
-// Mock data for frontend development
 const mockBackups: Backup[] = [];
 
 export function BackupsSection() {

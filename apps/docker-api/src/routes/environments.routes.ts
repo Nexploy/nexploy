@@ -11,6 +11,7 @@ import { handleAsync } from '@/helpers/handleAsync';
 import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
 import { createDockerClient } from '@/utils/dockerClient';
 import { getTranslations } from '@/middleware/locale.middleware';
+import { HttpError } from '@workspace/shared/http-error';
 
 const app = new Hono();
 
@@ -102,9 +103,7 @@ app.patch(
 
         if (environmentId !== config.id) {
             const t = getTranslations(c, 'docker');
-            const error: any = new Error(t('errors.environmentIdMismatch'));
-            error.status = 400;
-            throw error;
+            throw new HttpError(t('errors.environmentIdMismatch'), 400);
         }
 
         const tempClient = createDockerClient(config);

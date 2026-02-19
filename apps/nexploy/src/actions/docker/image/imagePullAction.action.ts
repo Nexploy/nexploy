@@ -3,7 +3,7 @@
 import { authActionServer } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { imagePullSchema } from '@workspace/schemas-zod/docker/image/imagePullAction.schema';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { HTTPError } from 'ky';
 
 export const onImagePullAction = authActionServer

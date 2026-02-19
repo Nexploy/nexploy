@@ -11,6 +11,48 @@
         "title": "GitLab",
         "description": "Connectez votre compte GitLab pour déployer vos dépôts"
     },
+    "oauth": {
+        "title": "Fournisseurs Git",
+        "description": "Configurez les intégrations Git pour que les utilisateurs puissent connecter leurs dépôts",
+        "providerDescription": "Intégration {provider} pour l'accès aux dépôts",
+        "configured": "Configuré",
+        "notConfigured": "Non configuré",
+        "clientId": "Client ID",
+        "clientIdPlaceholder": "Entrez votre Application ID",
+        "clientSecret": "Client Secret",
+        "clientSecretPlaceholder": "Entrez votre Application Secret",
+        "displayName": "Nom d'affichage",
+        "displayNamePlaceholder": "ex. Mon Org GitHub, GitLab Pro",
+        "configureTitle": "Configurer {provider}",
+        "configureDescription": "Entrez les identifiants de l'application OAuth pour {provider}",
+        "save": "Enregistrer",
+        "saveSuccess": "Fournisseur enregistré avec succès",
+        "saveFailed": "Échec de l'enregistrement du fournisseur",
+        "deleteSuccess": "Fournisseur supprimé avec succès",
+        "noProvidersAvailable": "Aucun fournisseur Git n'a encore été configuré par l'administrateur.",
+        "connectFailed": "Échec de la connexion au fournisseur Git. Veuillez réessayer.",
+        "stateExpired": "La demande de connexion a expiré. Veuillez réessayer.",
+        "connectedSuccess": "Fournisseur Git connecté avec succès.",
+        "disconnectedSuccess": "Fournisseur Git déconnecté avec succès.",
+        "addGithub": "Ajouter GitHub",
+        "addGitlab": "Ajouter GitLab",
+        "instanceCount": "{count, plural, =0 {Aucune instance} one {# instance} other {# instances}}",
+        "noInstances": "Aucune instance configurée",
+        "guide": {
+            "github": {
+                "manifestDescription": "Créez une GitHub App pour permettre aux utilisateurs de connecter leurs dépôts. L'application sera automatiquement configurée avec les bonnes permissions.",
+                "organization": "Installer sur une organisation",
+                "organizationPlaceholder": "Nom de l'organisation",
+                "existingApp": "Vous avez déjà une GitHub App ?",
+                "createApp": "Créer la GitHub App"
+            },
+            "gitlab": {
+                "step1": "Allez sur GitLab → Préférences → Applications → Nouvelle application",
+                "step2": "Définissez l'URI de redirection sur : {url}/api/auth/callback/gitlab et sélectionnez les scopes : read_user, read_repository, api",
+                "step3": "Copiez l'Application ID et le Secret"
+            }
+        }
+    },
     "cloudflare": {
         "title": "Cloudflare",
         "description": "Gérez les enregistrements DNS et les tunnels avec Cloudflare",

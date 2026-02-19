@@ -1,26 +1,22 @@
 import { updateGitProviderToken } from '@/services/git/git.service';
 import { GitLabCommit, GitProviderToken } from '@workspace/typescript-interface/git/git';
-import { kyGithub } from '@/lib/api/drinoGithub';
-import { kyGitlab } from '@/lib/api/drinoGitlab';
+import { kyGitlab } from '@/lib/api/kyGitlab';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
-
-interface GitHubCommit {
-    sha: string;
-    commit: {
-        message: string;
-        author: {
-            name: string;
-            email: string;
-            date: string;
-        };
-    };
-    html_url: string;
-}
+import {
+    getGitProviderCredentials,
+    getGitProviderCredentialsByAccountId,
+} from '@/services/oauthProvider.service';
+import {
+    githubGetCommit,
+    githubRefreshAccessToken,
+} from '@/lib/api/github.api';
+import { extractGitHubRepo } from '@/services/git/git.service';
 
 export async function getValidToken(
     token: GitProviderToken,
     provider: string,
     userId: string,
+    gitAccountId?: string,
 ): Promise<GitProviderToken> {
     if (!token.accessTokenExpiresAt) {
         return token;
@@ -28,9 +24,9 @@ export async function getValidToken(
 
     if (new Date(token.accessTokenExpiresAt) < new Date()) {
         if (provider === 'gitlab') {
-            return await refreshGitLabToken(token, userId);
+            return await refreshGitLabToken(token, userId, gitAccountId);
         } else if (provider === 'github') {
-            return token;
+            return await refreshGitHubToken(token, userId, gitAccountId);
         } else {
             throw new Error(`Unknown provider: ${provider}`);
         }
@@ -108,8 +104,8 @@ async function getGitHubCommit(
     commitHash?: string,
 ): Promise<{ hash: string; message: string } | null> {
     try {
-        const repoPath = extractGitHubRepoPath(repositoryUrl);
-
+        const { owner, repo } = extractGitHubRepo(repositoryUrl);
+        const repoPath = `${owner}/${repo}`;
         const ref = commitHash || branch;
 
         const token: GitProviderToken = {
@@ -119,13 +115,7 @@ async function getGitHubCommit(
         };
 
         return await tokenGitStorage.run(token, async () => {
-            const commit = await kyGithub
-                .get(`repos/${repoPath}/commits/${ref}`, {
-                    headers: {
-                        Accept: 'application/vnd.github.v3+json',
-                    },
-                })
-                .json<GitHubCommit>();
+            const commit = await githubGetCommit(repoPath, ref);
 
             return {
                 hash: commit.sha.substring(0, 8),
@@ -145,24 +135,21 @@ function extractGitLabRepositoryPath(repositoryUrl: string): string {
     throw new Error(`Invalid GitLab repository URL: ${repositoryUrl}`);
 }
 
-function extractGitHubRepoPath(repositoryUrl: string): string {
-    const match = repositoryUrl.match(/github\.com[\/:](.+?)(\.git)?$/);
-    if (match && match[1]) {
-        return match[1].replace('.git', '');
-    }
-    throw new Error(`Invalid GitHub repository URL: ${repositoryUrl}`);
-}
-
 async function refreshGitLabToken(
     token: GitProviderToken,
     userId: string,
+    gitAccountId?: string,
 ): Promise<GitProviderToken> {
     if (!token.refreshToken) {
         throw new Error('No refresh token available for GitLab');
     }
 
-    const clientId = process.env.GITLAB_CLIENT_ID;
-    const clientSecret = process.env.GITLAB_CLIENT_SECRET;
+    const gitlabCreds = gitAccountId
+        ? (await getGitProviderCredentialsByAccountId(gitAccountId)) ??
+          (await getGitProviderCredentials('gitlab'))
+        : await getGitProviderCredentials('gitlab');
+    const clientId = gitlabCreds?.clientId;
+    const clientSecret = gitlabCreds?.clientSecret;
 
     const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 
@@ -195,7 +182,47 @@ async function refreshGitLabToken(
         accessTokenExpiresAt: expiresAt,
     };
 
-    await updateGitProviderToken('gitlab', userId, newToken);
+    await updateGitProviderToken('gitlab', userId, newToken, gitAccountId);
+
+    return newToken;
+}
+
+async function refreshGitHubToken(
+    token: GitProviderToken,
+    userId: string,
+    gitAccountId?: string,
+): Promise<GitProviderToken> {
+    if (!token.refreshToken) {
+        throw new Error('No refresh token available for GitHub');
+    }
+
+    const githubCreds = gitAccountId
+        ? (await getGitProviderCredentialsByAccountId(gitAccountId)) ??
+          (await getGitProviderCredentials('github'))
+        : await getGitProviderCredentials('github');
+    if (!githubCreds) {
+        throw new Error('GitHub provider not configured');
+    }
+
+    const data = await githubRefreshAccessToken(
+        token.refreshToken,
+        githubCreds.clientId,
+        githubCreds.clientSecret,
+    );
+
+    if (data.error) {
+        throw new Error(`GitHub token refresh failed: ${data.error_description || data.error}`);
+    }
+
+    const expiresAt = data.expires_in ? new Date(Date.now() + data.expires_in * 1000) : null;
+
+    const newToken: GitProviderToken = {
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token ?? token.refreshToken,
+        accessTokenExpiresAt: expiresAt,
+    };
+
+    await updateGitProviderToken('github', userId, newToken, gitAccountId);
 
     return newToken;
 }

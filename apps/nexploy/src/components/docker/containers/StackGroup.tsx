@@ -146,7 +146,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                                     onClick={handleRemove}
                                     disabled={isLoading}
                                     isLoading={isLoading}
-                                    variant={'destructive'}
+                                    variant={'destructiveOutline'}
                                     icon={Trash2}
                                     size="icon"
                                 >

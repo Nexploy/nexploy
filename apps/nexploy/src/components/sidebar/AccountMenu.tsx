@@ -6,7 +6,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
-import { Plug, User } from 'lucide-react';
+import { User } from 'lucide-react';
 import Link from 'next/link';
 import { getUserSession } from '@/services/auth/auth.service';
 import { AvatarDisplay } from '@/components/user/AvatarDisplay';
@@ -40,15 +40,6 @@ export async function AccountMenu() {
                             >
                                 <User />
                                 <span>{tAccount('title')}</span>
-                            </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                            <Link
-                                className={'flex cursor-pointer items-center gap-2'}
-                                href={'/integrations'}
-                            >
-                                <Plug />
-                                <span>{tIntegrations('title')}</span>
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />

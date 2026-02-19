@@ -1,10 +1,11 @@
 'use server';
 
 import { authActionServer } from '@/lib/api/safe-action';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { deleteVersionSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { getTranslations } from 'next-intl/server';
+import { prisma } from '@/../prisma/prisma';
 
 export const onDeleteVersion = authActionServer
     .inputSchema(deleteVersionSchema)
@@ -17,6 +18,10 @@ export const onDeleteVersion = authActionServer
                     json: { imageIds: [`${repositoryId}:${imageTag}`] },
                 })
                 .json();
+
+            await prisma.version.deleteMany({
+                where: { repositoryId, imageTag },
+            });
 
             return { success: true };
         } catch (err: unknown) {

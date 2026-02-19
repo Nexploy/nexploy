@@ -3,6 +3,7 @@ import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { swarmStateManager } from '@/managers/swarmStateManager';
 import { getTranslations } from '@/middleware/locale.middleware';
+import { HttpError } from '@workspace/shared/http-error';
 
 const app = new Hono();
 
@@ -21,7 +22,7 @@ app.get(
 
         if (!service) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.serviceNotFound') }, 404);
+            throw new HttpError(t('errors.serviceNotFound'), 404);
         }
 
         const tasks = swarmStateManager.getTasksByService(serviceId);
@@ -52,7 +53,7 @@ app.post(
 
         if (!name || !image) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.nameAndImageRequired') }, 400);
+            throw new HttpError(t('errors.nameAndImageRequired'), 400);
         }
 
         const portConfigs = ports.map((p: any) => ({
@@ -240,7 +241,7 @@ app.post(
 
         if (typeof replicas !== 'number' || replicas < 0) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.invalidReplicasCount') }, 400);
+            throw new HttpError(t('errors.invalidReplicasCount'), 400);
         }
 
         const service = docker.getService(serviceId);
@@ -248,7 +249,7 @@ app.post(
 
         if (!serviceInfo.Spec.Mode.Replicated) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.cannotScaleGlobalService') }, 400);
+            throw new HttpError(t('errors.cannotScaleGlobalService'), 400);
         }
 
         await service.update({
@@ -276,7 +277,7 @@ app.post(
 
         if (!serviceInfo.PreviousSpec) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.noPreviousVersion') }, 400);
+            throw new HttpError(t('errors.noPreviousVersion'), 400);
         }
 
         await service.update({

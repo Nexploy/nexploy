@@ -6,7 +6,7 @@ import {
     CloudflareDnsRecord,
     CloudflareZone,
 } from '@workspace/typescript-interface/cloudflare/cloudflare';
-import { kyCloudflare } from '@/lib/api/drinoCloudflare';
+import { kyCloudflare } from '@/lib/api/kyCloudflare';
 import { tokenCloudflareStorage } from '@/lib/storage/token-cloudlfare-storage';
 
 export async function saveCloudflareCredential(
@@ -96,11 +96,8 @@ export async function listCloudflareZones(userId: string): Promise<CloudflareZon
         const apiToken = await getCloudflareApiToken(userId);
 
         return await tokenCloudflareStorage.run({ apiToken }, async () => {
-            return (
-                await kyCloudflare
-                    .get('zones')
-                    .json<CloudflareApiResponse<CloudflareZone[]>>()
-            ).result;
+            return (await kyCloudflare.get('zones').json<CloudflareApiResponse<CloudflareZone[]>>())
+                .result;
         });
     } catch (error: unknown) {
         throw new Error('Cloudflare error listing zones');

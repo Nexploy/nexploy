@@ -149,9 +149,7 @@ export function AICommand() {
                                         <CommandItem
                                             onSelect={() =>
                                                 runCommand(() =>
-                                                    router.push(
-                                                        '/docker/containers/create-container',
-                                                    ),
+                                                    router.push('/docker/containers/create'),
                                                 )
                                             }
                                         >

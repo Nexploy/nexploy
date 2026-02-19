@@ -24,7 +24,7 @@ export function ContainersStandalone({ keepEmpty = false }: ContainersStandalone
 
     if (standaloneContainers.length) {
         return (
-            <div className={'space-y-3 px-5'}>
+            <div className="flex flex-col gap-2 px-5">
                 <div className="flex items-center gap-2 px-1">
                     <span className="text-lg font-semibold">{t('containers')}</span>
                     <Badge variant={'secondary'}>{standaloneContainers.length}</Badge>
@@ -32,8 +32,8 @@ export function ContainersStandalone({ keepEmpty = false }: ContainersStandalone
                 <div
                     className={`grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6`}
                 >
-                    {standaloneContainers.map((container, index) => (
-                        <ContainerCard key={index} container={container} />
+                    {standaloneContainers.map((container) => (
+                        <ContainerCard key={container.id} container={container} />
                     ))}
                 </div>
             </div>

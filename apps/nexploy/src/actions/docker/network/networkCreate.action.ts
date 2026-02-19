@@ -2,7 +2,7 @@
 
 import { authActionServer } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { networkCreateSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';
 import { HTTPError } from 'ky';
 import { getTranslations } from 'next-intl/server';

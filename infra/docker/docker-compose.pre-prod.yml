@@ -1,0 +1,123 @@
+name: nexploy_prod
+services:
+  postgres:
+    image: postgres:18.0
+    container_name: nexploy_postgres
+    restart: unless-stopped
+    ports:
+      - "4522:5432"
+    networks:
+      - nexploy_network
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-nexploy}
+      POSTGRES_USER: ${POSTGRES_USER:-nexploy}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    volumes:
+      - db:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-nexploy}"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+      start_period: 5s
+
+  inngest:
+    image: inngest/inngest:v1.14.0
+    container_name: nexploy_inngest
+    restart: unless-stopped
+    networks:
+      - nexploy_network
+    environment:
+      INNGEST_EVENT_KEY: ${INNGEST_EVENT_KEY:?INNGEST_EVENT_KEY is required}
+      INNGEST_SIGNING_KEY: ${INNGEST_SIGNING_KEY:?INNGEST_SIGNING_KEY is required}
+    command: inngest start -u http://nexploy:3000/api/inngest
+    depends_on:
+      nexploy:
+        condition: service_healthy
+
+  traefik:
+    image: traefik:v3.6.2
+    container_name: nexploy_traefik
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ../traefik/traefik.prod.yml:/etc/traefik/traefik.yml:ro
+      - ../traefik/service:/etc/traefik/dynamic
+      - traefik_acme:/etc/traefik
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - nexploy_network
+      - traefik_network
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  nexploy:
+    build:
+      context: ../..
+      dockerfile: apps/nexploy/Dockerfile
+    container_name: nexploy_app
+    restart: unless-stopped
+    networks:
+      - nexploy_network
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-nexploy}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nexploy}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET is required}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:?BETTER_AUTH_URL is required}
+      DOCKER_API_URL: http://docker-api:3300
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?ENCRYPTION_KEY is required}
+      DEPLOYER_WORK_DIR: /tmp/deployer
+      INNGEST_EVENT_KEY: ${INNGEST_EVENT_KEY}
+      INNGEST_SIGNING_KEY: ${INNGEST_SIGNING_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://0.0.0.0:3000 || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+    ports:
+      - "4521:3000"
+
+  docker-api:
+    build:
+      context: ../..
+      dockerfile: apps/docker-api/Dockerfile
+    container_name: nexploy_docker_api
+    restart: unless-stopped
+    networks:
+      - nexploy_network
+      - traefik_network
+    environment:
+      NODE_ENV: production
+      PORT: 3300
+      DOCKER_SOCKET: /var/run/docker.sock
+      NEXPLOY_API_URL: http://nexploy:3000
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      nexploy:
+        condition: service_healthy
+    expose:
+      - "3300"
+
+volumes:
+  db:
+  traefik_acme:
+
+networks:
+  nexploy_network:
+    name: nexploy_network
+    driver: bridge
+  traefik_network:
+    name: nexploy_traefik_network
+    driver: bridge

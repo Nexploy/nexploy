@@ -4,6 +4,7 @@ import { handleAsync } from '@/helpers/handleAsync';
 import type { SwarmTaskState } from '@workspace/typescript-interface/docker/swarm';
 import { swarmStateManager } from '@/managers/swarmStateManager';
 import { getTranslations } from '@/middleware/locale.middleware';
+import { HttpError } from '@workspace/shared/http-error';
 
 const app = new Hono();
 
@@ -43,7 +44,7 @@ app.get(
 
         if (!task) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.taskNotFound') }, 404);
+            throw new HttpError(t('errors.taskNotFound'), 404);
         }
 
         return { task };
@@ -78,12 +79,12 @@ app.get(
         const task = swarmStateManager.getTask(taskId);
         if (!task) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.taskNotFound') }, 404);
+            throw new HttpError(t('errors.taskNotFound'), 404);
         }
 
         if (!task.containerStatus?.containerId) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.taskNoContainer') }, 400);
+            throw new HttpError(t('errors.taskNoContainer'), 400);
         }
 
         try {
@@ -99,7 +100,7 @@ app.get(
         } catch (err: any) {
             if (err.statusCode === 404) {
                 const t = getTranslations(c, 'docker');
-                return c.json({ error: t('errors.containerRemoved') }, 404);
+                throw new HttpError(t('errors.containerRemoved'), 404);
             }
             throw err;
         }

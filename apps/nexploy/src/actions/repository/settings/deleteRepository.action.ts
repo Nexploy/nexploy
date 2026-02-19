@@ -1,7 +1,7 @@
 'use server';
 
 import { authActionServer } from '@/lib/api/safe-action';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { redirect } from 'next/navigation';
 import { deleteRepository } from '@/services/repository.service';
 import { deleteRepositorySchema } from '@workspace/schemas-zod/repository/settings/deleteRepository.schema';

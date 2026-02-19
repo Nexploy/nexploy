@@ -120,6 +120,17 @@ app.post('/stream/compose', async (c) => {
 
             let composeContent = yaml.parse(composeYamlContent) as ComposeContent;
 
+            if (composeContent.networks) {
+                for (const [networkName, networkConfig] of Object.entries(
+                    composeContent.networks,
+                )) {
+                    const net = networkConfig as Record<string, unknown> | null;
+                    if (net && net.external === true && !net.name) {
+                        net.name = networkName;
+                    }
+                }
+            }
+
             const envConfig = environmentId
                 ? dockerClientRegistry.getEnvironmentConfig(environmentId)
                 : null;
@@ -185,7 +196,12 @@ app.post('/stream/compose', async (c) => {
                 }
             }
 
-            const buildConfigs = parseComposeBuildConfigs(composeContent, projectName, workDir, buildId);
+            const buildConfigs = parseComposeBuildConfigs(
+                composeContent,
+                projectName,
+                workDir,
+                buildId,
+            );
             const servicesToPull = getServicesToPull(composeContent);
 
             const initialCompose = new DockerodeCompose(dockerClient, composeFilePath, projectName);
@@ -217,7 +233,9 @@ app.post('/stream/compose', async (c) => {
                                             }
 
                                             const raw = chunk.toString();
-                                            const lines = raw.split('\n').filter((l: string) => l.trim());
+                                            const lines = raw
+                                                .split('\n')
+                                                .filter((l: string) => l.trim());
 
                                             for (const line of lines) {
                                                 try {
@@ -293,9 +311,27 @@ app.post('/stream/compose', async (c) => {
                         }
                     },
                     abortController.signal,
+                    labels,
                 );
 
                 sendLog('All services built successfully');
+
+                try {
+                    const pruneResult = await dockerClient.pruneImages({
+                        filters: { dangling: { true: true } },
+                    });
+                    const reclaimed = pruneResult.SpaceReclaimed || 0;
+                    if (reclaimed > 0) {
+                        sendLog(
+                            `Pruned dangling images (reclaimed ${(reclaimed / 1024 / 1024).toFixed(1)} MB)`,
+                        );
+                    }
+                } catch (pruneErr) {
+                    logger.warn(
+                        { error: pruneErr },
+                        'Failed to prune dangling images after compose build',
+                    );
+                }
 
                 for (const config of buildConfigs) {
                     const service = composeContent.services?.[config.serviceName];
@@ -308,52 +344,6 @@ app.post('/stream/compose', async (c) => {
                 modifiedComposeFile = path.join(workDir, '.nexploy-compose-processed.yml');
                 fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
                 sendLog('Created processed compose file for deployment');
-            }
-
-            if (buildId && repositoryId && buildConfigs.length > 0) {
-                sendLog('Creating version manifest image...');
-                const manifestTag = `${repositoryId}:${buildId}`;
-                const composeConfigB64 = Buffer.from(
-                    yaml.stringify(composeContent),
-                ).toString('base64');
-
-                const tmpDir = path.join(workDir, '.nexploy-manifest');
-                fs.mkdirSync(tmpDir, { recursive: true });
-                fs.writeFileSync(
-                    path.join(tmpDir, 'Dockerfile'),
-                    'FROM scratch\nLABEL nexploy.manifest=true\n',
-                    'utf8',
-                );
-
-                try {
-                    const tarStream = (await import('tar-fs')).pack(tmpDir);
-                    const buildStream = await dockerClient.buildImage(tarStream as any, {
-                        t: manifestTag,
-                        labels: {
-                            'nexploy.compose.config': composeConfigB64,
-                            'nexploy.buildType': 'DOCKER_COMPOSE',
-                            'nexploy.projectName': projectName,
-                            ...labels,
-                        },
-                    });
-
-                    await new Promise<void>((resolve, reject) => {
-                        dockerClient.modem.followProgress(
-                            buildStream,
-                            (err: any) => (err ? reject(err) : resolve()),
-                        );
-                    });
-
-                    sendLog(`Manifest image created: ${manifestTag}`);
-                } catch (manifestErr) {
-                    sendLog(
-                        `Warning: Failed to create manifest image: ${manifestErr instanceof Error ? manifestErr.message : 'Unknown error'}`,
-                    );
-                } finally {
-                    try {
-                        fs.rmSync(tmpDir, { recursive: true, force: true });
-                    } catch {}
-                }
             }
 
             if (isRemoteEnvironment) {
@@ -397,6 +387,14 @@ app.post('/stream/compose', async (c) => {
                     fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
                     sendLog('Updated compose file with port mappings for remote environment');
                 }
+            }
+
+            const hasExternalNetworks =
+                composeContent.networks &&
+                Object.values(composeContent.networks).some((n: any) => n && n.external === true);
+            if (hasExternalNetworks && !modifiedComposeFile) {
+                modifiedComposeFile = path.join(workDir, '.nexploy-compose-processed.yml');
+                fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
             }
 
             const deployComposeFile = modifiedComposeFile || composeFilePath;
@@ -468,7 +466,12 @@ app.post('/stream/compose', async (c) => {
                 }
             }
 
-            const result = { success: true, containers: containerIds };
+            const composeConfigB64 = Buffer.from(yaml.stringify(composeContent)).toString('base64');
+            const result = {
+                success: true,
+                containers: containerIds,
+                composeConfig: composeConfigB64,
+            };
 
             if (!isClientDisconnected && !c.req.raw.signal.aborted) {
                 await stream.writeSSE({
@@ -587,6 +590,24 @@ app.post('/stream/build', async (c) => {
                 abortController.signal,
                 labels,
             );
+
+            try {
+                const dockerClient = getCurrentDockerClient();
+                const pruneResult = await dockerClient.pruneImages({
+                    filters: { dangling: { true: true } },
+                });
+                const reclaimed = pruneResult.SpaceReclaimed || 0;
+                if (reclaimed > 0) {
+                    onLog(
+                        `Pruned dangling images (reclaimed ${(reclaimed / 1024 / 1024).toFixed(1)} MB)`,
+                    );
+                }
+            } catch (pruneErr) {
+                logger.warn(
+                    { error: pruneErr },
+                    'Failed to prune dangling images after dockerfile build',
+                );
+            }
 
             if (!isClientDisconnected && !c.req.raw.signal.aborted) {
                 await stream.writeSSE({

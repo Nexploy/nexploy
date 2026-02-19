@@ -6,8 +6,6 @@ import {
     ImageEvent,
     ImageStateChanges,
 } from '@workspace/typescript-interface/docker/docker.image';
-import type { Version } from '@workspace/typescript-interface/docker/docker.version';
-import { NEXPLOY_LABELS } from '@/utils/nexployLabels';
 import { BaseStateManager } from '@/lib/BaseStateManager';
 import * as tar from 'tar-fs';
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
@@ -16,6 +14,8 @@ import { containerImageEvents } from '@/managers/containersStateManager';
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
+import dayjs from 'dayjs';
+import { NEXPLOY_LABELS } from '@/utils/nexployLabels';
 
 export class ImagesStateManager extends BaseStateManager {
     private images: Map<string, Image> = new Map();
@@ -32,7 +32,7 @@ export class ImagesStateManager extends BaseStateManager {
     }
 
     private setupContainerListeners(): void {
-        containerImageEvents.on('container-usage-changed', (data: any) => {
+        containerImageEvents.on('container-usage-changed', () => {
             this.updateImageUsageFromContainers();
         });
     }
@@ -182,6 +182,50 @@ export class ImagesStateManager extends BaseStateManager {
         };
     }
 
+    private async syncVersionDelete(oldState: Image): Promise<void> {
+        const repositoryId = oldState.labels?.[NEXPLOY_LABELS.repositoryId];
+        const imageTag = oldState.labels?.[NEXPLOY_LABELS.buildId];
+
+        logger.error(
+            `Syncing version delete for image ${oldState.id} with repositoryId ${repositoryId} and imageTag ${imageTag}`,
+        );
+
+        if (!repositoryId || !imageTag) return;
+
+        const nexployUrl = process.env.NEXPLOY_API_URL;
+        const apiKey = process.env.NEXPLOY_API_KEY;
+
+        if (!nexployUrl || !apiKey) {
+            logger.warn('Cannot sync version delete: NEXPLOY_API_URL or NEXPLOY_API_KEY not set');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${nexployUrl}/api/internal/versions/sync-delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': apiKey,
+                },
+                body: JSON.stringify({ repositoryId, imageTag }),
+            });
+
+            if (!response.ok) {
+                logger.warn(
+                    { repositoryId, imageTag, status: response.status },
+                    'Failed to sync version delete to nexploy',
+                );
+            } else {
+                logger.debug({ repositoryId, imageTag }, 'Version sync delete sent to nexploy');
+            }
+        } catch (err) {
+            logger.warn(
+                { err, repositoryId, imageTag },
+                'Error calling nexploy version sync-delete',
+            );
+        }
+    }
+
     private async updateImageState(imageId: string, action?: ImageAction): Promise<void> {
         const imageIdSplited = imageId.split(':')[1];
 
@@ -197,6 +241,7 @@ export class ImagesStateManager extends BaseStateManager {
                         timestamp: Date.now(),
                     };
                     this.emit('image-removed', imageRemovedData);
+                    await this.syncVersionDelete(oldState);
                     logger.debug({ imageIdSplited }, 'Image deleted');
                 }
                 return;
@@ -217,6 +262,7 @@ export class ImagesStateManager extends BaseStateManager {
                                 timestamp: Date.now(),
                             };
                             this.emit('image-removed', imageRemovedData);
+                            await this.syncVersionDelete(oldState);
                             logger.debug({ imageId }, 'Image removed after untag');
                         }
                     } else {
@@ -239,6 +285,7 @@ export class ImagesStateManager extends BaseStateManager {
                         timestamp: Date.now(),
                     };
                     this.emit('image-removed', imageRemovedData);
+                    await this.syncVersionDelete(oldState);
                 }
             } else {
                 logger.error({ err, imageId: imageIdSplited }, 'Error updating image state');
@@ -301,7 +348,9 @@ export class ImagesStateManager extends BaseStateManager {
             tag: tag || [],
             repoTags: image.RepoTags || [],
             repoDigests: image.RepoDigests || [],
-            created: isInspect ? new Date(image.Created).getTime() / 1000 : image.Created,
+            created: isInspect
+                ? dayjs(image.Created).valueOf()
+                : dayjs.unix(image.Created).valueOf(),
             size: image.Size,
             virtualSize: image.VirtualSize,
             sharedSize: isInspect ? 0 : (image as ImageInfo).SharedSize || 0,
@@ -357,63 +406,6 @@ export class ImagesStateManager extends BaseStateManager {
         return changes;
     }
 
-    getVersionsByRepository(repositoryId: string): Version[] {
-        const versions: Version[] = [];
-
-        for (const image of this.images.values()) {
-            const labels = image.labels || {};
-
-            if (
-                labels[NEXPLOY_LABELS.version] === 'true' &&
-                labels[NEXPLOY_LABELS.repositoryId] === repositoryId
-            ) {
-                // Extract the actual Docker tag from repoTags rather than using the label,
-                // because compose manifests are tagged repositoryId:fullBuildId while
-                // the label stores the sliced imageTag
-                const matchingRepoTag = image.repoTags.find((t) => t.startsWith(`${repositoryId}:`));
-                const actualTag = matchingRepoTag
-                    ? matchingRepoTag.split(':')[1]
-                    : labels[NEXPLOY_LABELS.imageTag] || image.tag[0] || '';
-
-                versions.push({
-                    imageTag: actualTag,
-                    repositoryId: labels[NEXPLOY_LABELS.repositoryId],
-                    buildId: labels[NEXPLOY_LABELS.buildId] || '',
-                    commitHash: labels[NEXPLOY_LABELS.commitHash],
-                    commitMessage: labels[NEXPLOY_LABELS.commitMessage],
-                    branch: labels[NEXPLOY_LABELS.branch],
-                    buildType: (labels[NEXPLOY_LABELS.buildType]) || 'DOCKERFILE',
-                    createdAt: image.created,
-                    imageId: image.id,
-                    imageFullName: matchingRepoTag || image.repoTags[0] || `${image.id}`,
-                });
-                continue;
-            }
-
-            // Fallback: match images by name pattern repositoryId:* (retro-compat)
-            const matchesName =
-                image.name.some((n) => n === repositoryId) ||
-                image.repoTags.some((t) => t.startsWith(`${repositoryId}:`));
-
-            if (matchesName && !labels[NEXPLOY_LABELS.version]) {
-                const tag = image.repoTags.find((t) => t.startsWith(`${repositoryId}:`));
-                const imageTag = tag ? tag.split(':')[1] : image.tag[0] || '';
-
-                versions.push({
-                    imageTag,
-                    repositoryId,
-                    buildId: imageTag,
-                    buildType: (labels[NEXPLOY_LABELS.buildType]) || 'DOCKERFILE',
-                    createdAt: image.created,
-                    imageId: image.id,
-                    imageFullName: tag || `${repositoryId}:${imageTag}`,
-                });
-            }
-        }
-
-        return versions.sort((a, b) => b.createdAt - a.createdAt);
-    }
-
     getAllImages(): Image[] {
         return Array.from(this.images.values());
     }
@@ -453,6 +445,7 @@ export class ImagesStateManager extends BaseStateManager {
                         timestamp: Date.now(),
                     };
                     this.emit('image-removed', imageRemovedData);
+                    await this.syncVersionDelete(oldState);
                     logger.debug({ imageId }, 'Image detected as removed during hard refresh');
                 }
             }

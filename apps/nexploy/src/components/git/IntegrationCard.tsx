@@ -1,67 +1,54 @@
 'use client';
 
-import { authClient } from '@/lib/auth/auth-client';
 import { Button } from '@workspace/ui/components/button';
-import { Plus, X } from 'lucide-react';
+import { Building2, Plus, User, X } from 'lucide-react';
 import * as React from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { statusMap } from '@/utils/statusMap';
 import { useTranslations } from 'next-intl';
+import { disconnectGitAccountAction } from '@/actions/git/gitAccount.action';
+import Link from 'next/link';
+import { Badge } from '@workspace/ui/components/badge';
 
 interface IntegrationCardProps {
+    gitProviderId: string;
     provider: string;
     name: string;
     description: string;
     isConnected: boolean;
     icon: React.ReactNode;
-    onConnect?: () => Promise<void>;
-    onDisconnect?: () => Promise<void>;
+    subtitle?: string;
+    isOrg?: boolean;
 }
 
 export function IntegrationCard({
-    provider,
+    gitProviderId,
     name,
     description,
     isConnected,
     icon,
-    onConnect,
-    onDisconnect,
+    subtitle,
+    isOrg,
 }: IntegrationCardProps) {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const t = useTranslations('common');
     const tStatus = useTranslations('docker.status');
 
-    const handleConnect = async () => {
-        setIsLoading(true);
-        if (onConnect) {
-            await onConnect();
-        } else {
-            await authClient.linkSocial({
-                provider,
-                callbackURL: '/integrations',
-            });
-        }
-        setIsLoading(false);
-    };
-
     const handleDisconnect = async () => {
         setIsLoading(true);
-        if (onDisconnect) {
-            await onDisconnect();
-        } else {
-            await authClient.unlinkAccount({
-                providerId: provider,
-            });
+        try {
+            await disconnectGitAccountAction({ gitProviderId });
+        } finally {
+            setIsLoading(false);
+            router.refresh();
         }
-        setIsLoading(false);
-        router.refresh();
     };
 
     return (
-        <div className="bg-muted/40 flex items-center justify-between rounded-lg border p-4">
+        <div className="flex items-center justify-between rounded-lg border p-4">
             <div className="flex items-center gap-3">
                 <div className="bg-muted flex size-10 items-center justify-center rounded-lg">
                     {icon}
@@ -69,12 +56,25 @@ export function IntegrationCard({
                 <div className="flex flex-col gap-0.5">
                     <div className="flex items-center gap-2">
                         <span className="font-medium">{name}</span>
+                        {isOrg ? (
+                            <Badge variant="secondary" className="gap-1 text-xs">
+                                <Building2 className="size-3" />
+                                {subtitle}
+                            </Badge>
+                        ) : subtitle ? (
+                            <Badge variant="outline" className="gap-1 text-xs">
+                                <User className="size-3" />
+                                {subtitle}
+                            </Badge>
+                        ) : null}
                         <Status
                             status={statusMap[isConnected ? 'connected' : 'disconnected'].status}
                         >
                             <StatusIndicator />
                             <StatusLabel>
-                                {tStatus(statusMap[isConnected ? 'connected' : 'disconnected'].labelKey)}
+                                {tStatus(
+                                    statusMap[isConnected ? 'connected' : 'disconnected'].labelKey,
+                                )}
                             </StatusLabel>
                         </Status>
                     </div>
@@ -92,14 +92,11 @@ export function IntegrationCard({
                     {t('disconnect')}
                 </Button>
             ) : (
-                <Button
-                    onClick={handleConnect}
-                    icon={Plus}
-                    disabled={isLoading}
-                    isLoading={isLoading}
-                >
-                    {t('connect')}
-                </Button>
+                <Link href={`/api/git/oauth/connect?gitProviderId=${gitProviderId}`}>
+                    <Button icon={Plus} disabled={isLoading} isLoading={isLoading}>
+                        {t('connect')}
+                    </Button>
+                </Link>
             )}
         </div>
     );

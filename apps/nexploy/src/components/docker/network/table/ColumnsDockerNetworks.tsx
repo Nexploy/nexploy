@@ -7,7 +7,7 @@ import { Button } from '@workspace/ui/components/button';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Badge } from '@workspace/ui/components/badge';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
-import CopyButton from '@/components/utils/CopyButton';
+import CopyButton from '@/components/shared/CopyButton';
 import dayjs from 'dayjs';
 import { NetworkDropdownActions } from '@/components/docker/network/NetworkDropdownActions';
 import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
@@ -77,7 +77,11 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
                                 <StatusIndicator />
                             </TooltipTrigger>
                             <TooltipContent>
-                                {isBuiltin ? <p>{t('systemNetwork')}</p> : <p>{t('customNetwork')}</p>}
+                                {isBuiltin ? (
+                                    <p>{t('systemNetwork')}</p>
+                                ) : (
+                                    <p>{t('customNetwork')}</p>
+                                )}
                             </TooltipContent>
                         </Tooltip>
 

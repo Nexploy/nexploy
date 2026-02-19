@@ -1,7 +1,7 @@
 import { getRepositorieById } from '@/services/repository.service';
 import { ChangeBranch } from '@/components/repositories/tabs/settings/ChangeBranch';
-import { ChangeBuildType } from '@/components/repositories/tabs/settings/ChangeBuildType';
-import { ChangeDeployment } from '@/components/repositories/tabs/settings/ChangeDeployment';
+import { BuildConfigurationSettings } from '@/components/repositories/tabs/settings/BuildConfigurationSettings';
+import { ChangeDeployment } from '@/components/repositories/tabs/settings/DeploymentSettings';
 import { DangerZone } from '@/components/repositories/tabs/settings/DangerZone';
 import { notFound } from 'next/navigation';
 
@@ -16,7 +16,7 @@ export async function RepositorySettingsTab({ repositoryId }: RepositorySettings
     return (
         <div className="mx-5 space-y-6">
             <ChangeBranch repository={repository} />
-            <ChangeBuildType repository={repository} />
+            <BuildConfigurationSettings repository={repository} />
             <ChangeDeployment repository={repository} />
             <DangerZone repository={repository} />
         </div>

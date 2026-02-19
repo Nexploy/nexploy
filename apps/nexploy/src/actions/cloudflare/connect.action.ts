@@ -4,7 +4,7 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { cloudflareConnectSchema } from '@workspace/schemas-zod/cloudflare/cloudflare.schema';
 import { saveCloudflareCredential } from '@/services/cloudflare.service';
 import { HTTPError } from 'ky';
-import { setToastServer } from '@/components/utils/toaster/toastServer';
+import { setToastServer } from '@/lib/toastServer';
 import { revalidatePath } from 'next/cache';
 
 export const connectCloudflareAction = authActionServer

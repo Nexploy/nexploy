@@ -221,8 +221,8 @@ export const GET = route.use(authRouteServer).handler(async (request: Request) =
                                         }),
                                     );
                                 }
-                            } catch (parseError) {
-                                // If JSON parsing fails, fall through to generic error
+                            } catch {
+                                /* empty */
                             }
                         }
 
@@ -320,7 +320,7 @@ export const GET = route.use(authRouteServer).handler(async (request: Request) =
                             errorData = JSON.stringify(parsed);
                         }
                     } catch {
-                        // Not a JSON error, use as-is
+                        /* empty */
                     }
 
                     try {

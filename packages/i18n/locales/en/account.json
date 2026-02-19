@@ -27,6 +27,10 @@
         "lastChanged": "Last changed {days} days ago",
         "change": "Change"
     },
+    "integrations": {
+        "title": "Integrations",
+        "description": "Connect your account with external services and tools"
+    },
     "notifications": {
         "title": "Notification Preferences",
         "description": "Control how and when you receive notifications"

@@ -36,7 +36,7 @@ export default async function UsersPage() {
                     {isAdmin && <AddUserButton />}
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
-                    <div className="px-5 pb-6">
+                    <div className="px-5 pb-5">
                         <UsersSection />
                     </div>
                 </ScrollAreaWithShadow>

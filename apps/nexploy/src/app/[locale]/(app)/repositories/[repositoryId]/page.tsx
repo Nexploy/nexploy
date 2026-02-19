@@ -68,10 +68,14 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                                 <Separator orientation={'vertical'} className={'!h-3 w-1'} />
                                 <div className={'flex items-center gap-1'}>
                                     <Server className="size-3" />
-                                    {repository.environment?.name}
+                                    <span className={'truncate'}>
+                                        {repository.environment?.name}
+                                    </span>
                                 </div>
                                 <Separator orientation={'vertical'} className={'!h-3 w-1'} />
-                                <span>{toDisplayLabel(repository.buildType)}</span>
+                                <span className={'truncate'}>
+                                    {toDisplayLabel(repository.buildType)}
+                                </span>
                             </div>
                         </div>
                     </div>

@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import { extractGitHubRepo } from '@/services/git/git.service';
-import { getTokenGitStorage } from '@/lib/storage/token-git-storage';
 import { WebhookPayload } from '@workspace/typescript-interface/webhook';
+import { githubCreateWebhook } from '@/lib/api/github.api';
 
 export function parseGitHubWebhook(payload: any): WebhookPayload | null {
     if (!payload.ref?.startsWith('refs/heads/')) {
@@ -40,33 +40,7 @@ export async function createGitHubWebhook(
 ): Promise<{ webhookId: string; webhookSecret: string }> {
     const { owner, repo } = extractGitHubRepo(repositoryUrl);
 
-    const token = getTokenGitStorage();
+    const data = await githubCreateWebhook(owner, repo, webhookUrl, userId);
 
-    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/hooks`, {
-        method: 'POST',
-        headers: {
-            Authorization: `Bearer ${token.accessToken}`,
-            Accept: 'application/vnd.github+json',
-            'X-GitHub-Api-Version': '2022-11-28',
-        },
-        body: JSON.stringify({
-            name: 'web',
-            active: true,
-            events: ['push'],
-            config: {
-                url: webhookUrl,
-                content_type: 'json',
-                insecure_ssl: '0',
-                secret: userId,
-            },
-        }),
-    });
-
-    if (!response.ok) {
-        const error = await response.text();
-        throw new Error(`Failed to create GitHub webhook: ${response.status} - ${error}`);
-    }
-
-    const data = await response.json();
     return { webhookId: String(data.id), webhookSecret: userId };
 }
