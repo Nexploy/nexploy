@@ -3,6 +3,7 @@ import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { swarmStateManager } from '@/managers/swarmStateManager';
 import { getTranslations } from '@/middleware/locale.middleware';
+import { HttpError } from '@workspace/shared/http-error';
 
 const app = new Hono();
 
@@ -43,7 +44,7 @@ app.post(
 
         if (!advertiseAddr) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.advertiseAddrRequired') }, 400);
+            throw new HttpError(t('errors.advertiseAddrRequired'), 400);
         }
 
         const result = await docker.swarmInit({
@@ -65,11 +66,11 @@ app.post(
 
         if (!remoteAddrs || remoteAddrs.length === 0) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.remoteAddrsRequired') }, 400);
+            throw new HttpError(t('errors.remoteAddrsRequired'), 400);
         }
         if (!joinToken) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.joinTokenRequired') }, 400);
+            throw new HttpError(t('errors.joinTokenRequired'), 400);
         }
 
         await docker.swarmJoin({

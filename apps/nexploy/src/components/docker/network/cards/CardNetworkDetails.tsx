@@ -138,9 +138,9 @@ export function CardNetworkDetails({ network }: CardNetworkDetailsProps) {
                                 {t('ipam')}
                             </span>
                             <div className="flex-1 space-y-2">
-                                {ipamConfigs.map((config, index) => (
+                                {ipamConfigs.map((config) => (
                                     <div
-                                        key={index}
+                                        key={`${config.Subnet}-${config.Gateway}`}
                                         className="bg-muted/50 space-y-1 rounded-md p-2"
                                     >
                                         {config.Subnet && (

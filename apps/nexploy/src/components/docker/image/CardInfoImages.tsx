@@ -55,11 +55,11 @@ export function CardInfoImages() {
 
     return (
         <div className="grid grid-cols-1 gap-4 px-5 md:grid-cols-2 lg:grid-cols-4">
-            {imageInfos.map((info, index) =>
+            {imageInfos.map((info) =>
                 isLoading ? (
-                    <Skeleton key={index} className="rounded-xl py-19" />
+                    <Skeleton key={info.title} className="rounded-xl py-19" />
                 ) : (
-                    <Card key={index} className="flex flex-col justify-between gap-0 py-6">
+                    <Card key={info.title} className="flex flex-col justify-between gap-0 py-6">
                         <CardHeader className="flex flex-row justify-between space-y-0">
                             <CardTitle className="flex h-14 text-sm font-medium">
                                 {info.title}

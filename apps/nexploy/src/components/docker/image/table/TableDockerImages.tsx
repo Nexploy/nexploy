@@ -190,7 +190,7 @@ export function TableDockerImages() {
     };
 
     const handleUseAction = () => {
-        router.push(`/docker/containers/create-container?image=${selectedImage?.repoTags[0]}`);
+        router.push(`/docker/containers/create?image=${selectedImage?.repoTags[0]}`);
     };
 
     const isShowingAll = pageSize === 'all';

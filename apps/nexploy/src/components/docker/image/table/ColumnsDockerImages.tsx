@@ -180,8 +180,8 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                                 </Badge>
                             </TooltipTrigger>
                             <TooltipContent className={'flex max-w-xs flex-col gap-1 p-2 text-sm'}>
-                                {tags.map((tag: string, index: number) => (
-                                    <Badge key={index} variant="secondary" className="font-mono">
+                                {tags.map((tag: string) => (
+                                    <Badge key={tag} variant="secondary" className="font-mono">
                                         {tag}
                                     </Badge>
                                 ))}

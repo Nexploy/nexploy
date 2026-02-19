@@ -30,9 +30,9 @@ export function TwoFactorAuthBackupCodes({ backupCodes }: TwoFactorAuthBackupCod
     return (
         <div className={'flex flex-col gap-8'}>
             <div className="grid grid-cols-2 gap-3">
-                {backupCodes.map((backupCode, index) => (
+                {backupCodes.map((backupCode) => (
                     <div
-                        key={index}
+                        key={backupCode}
                         className={`bg-muted flex items-center justify-between rounded-lg border p-2`}
                     >
                         <code className={`font-mono text-sm`}>{backupCode}</code>

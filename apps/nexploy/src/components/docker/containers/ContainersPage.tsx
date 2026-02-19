@@ -78,7 +78,7 @@ export default function ContainersPage() {
                     </div>
                 </div>
                 <Button asChild>
-                    <Link href={'/docker/containers/create-container'}>
+                    <Link href={'/docker/containers/create'}>
                         <Plus />
                         {t('createContainer.create')}
                     </Link>
@@ -104,7 +104,7 @@ export default function ContainersPage() {
                     </EmptyHeader>
                     <EmptyContent>
                         <Button asChild>
-                            <Link href={'/docker/containers/create-container'}>
+                            <Link href={'/docker/containers/create'}>
                                 <Plus />
                                 {t('createContainer.create')}
                             </Link>

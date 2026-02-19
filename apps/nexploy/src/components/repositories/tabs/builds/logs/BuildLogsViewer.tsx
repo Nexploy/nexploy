@@ -156,9 +156,9 @@ export function BuildLogsViewer({
                     className="bg-muted/30 flex h-full font-mono text-sm"
                 >
                     <div className="space-y-0.5 pt-1 pr-2 pl-0">
-                        {logs.map((log, index) => (
+                        {logs.map((log, logIndex) => (
                             <div
-                                key={index}
+                                key={`${log.createdAt}-${logIndex}`}
                                 className={cn(
                                     'grid grid-cols-[auto_1fr] gap-2 border-l pl-2',
                                     getLogLevelColor(log.level),

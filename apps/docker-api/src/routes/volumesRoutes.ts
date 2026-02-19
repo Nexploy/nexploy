@@ -3,6 +3,7 @@ import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { volumesStateManager } from '@/managers/volumesStateManager';
 import { getTranslations } from '@/middleware/locale.middleware';
+import { HttpError } from '@workspace/shared/http-error';
 
 const app = new Hono();
 
@@ -59,7 +60,7 @@ app.post(
 
         if (!volumeNames || volumeNames.length === 0) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.noVolumeNamesProvided') }, 400);
+            throw new HttpError(t('errors.noVolumeNamesProvided'), 400);
         }
 
         const force = c.req.query('force') === 'true';

@@ -3,6 +3,7 @@ import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { swarmStateManager } from '@/managers/swarmStateManager';
 import { getTranslations } from '@/middleware/locale.middleware';
+import { HttpError } from '@workspace/shared/http-error';
 
 const app = new Hono();
 
@@ -21,7 +22,7 @@ app.get(
 
         if (!node) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.nodeNotFound') }, 404);
+            throw new HttpError(t('errors.nodeNotFound'), 404);
         }
 
         const tasks = swarmStateManager.getTasksByNode(nodeId);
@@ -85,7 +86,7 @@ app.post(
 
         if (nodeInfo.Spec.Role === 'manager') {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.nodeAlreadyManager') }, 400);
+            throw new HttpError(t('errors.nodeAlreadyManager'), 400);
         }
 
         node.update({
@@ -111,7 +112,7 @@ app.post(
 
         if (nodeInfo.Spec.Role === 'worker') {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.nodeAlreadyWorker') }, 400);
+            throw new HttpError(t('errors.nodeAlreadyWorker'), 400);
         }
 
         node.update({

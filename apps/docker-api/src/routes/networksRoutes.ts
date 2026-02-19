@@ -4,6 +4,7 @@ import { Hono } from 'hono';
 import { networksStateManager } from '@/managers/networksStateManager';
 import { filterNexployNetworks } from '@workspace/shared/nexployFilter';
 import { getTranslations } from '@/middleware/locale.middleware';
+import { HttpError } from '@workspace/shared/http-error';
 
 const app = new Hono();
 
@@ -29,7 +30,7 @@ app.post(
 
         if (!name) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.networkNameRequired') }, 400);
+            throw new HttpError(t('errors.networkNameRequired'), 400);
         }
 
         const networkExists = networksStateManager.getByName(name);
@@ -59,7 +60,7 @@ app.post(
 
         if (!containerId) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.containerIdRequired') }, 400);
+            throw new HttpError(t('errors.containerIdRequired'), 400);
         }
 
         const network = docker.getNetwork(networkId);
@@ -81,7 +82,7 @@ app.post(
 
         if (!containerId) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.containerIdRequired') }, 400);
+            throw new HttpError(t('errors.containerIdRequired'), 400);
         }
 
         const network = docker.getNetwork(networkId);
@@ -115,7 +116,7 @@ app.post(
 
         if (!networkIds || networkIds.length === 0) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.noNetworkIdsProvided') }, 400);
+            throw new HttpError(t('errors.noNetworkIdsProvided'), 400);
         }
 
         const BUILTIN_NETWORKS = ['bridge', 'host', 'none'];

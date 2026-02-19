@@ -3,6 +3,7 @@ import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { imagesStateManager } from '@/managers/imagesStateManager';
 import { getTranslations } from '@/middleware/locale.middleware';
+import { HttpError } from '@workspace/shared/http-error';
 
 const app = new Hono();
 
@@ -79,7 +80,7 @@ app.post(
 
         if (imageIds.length === 0) {
             const t = getTranslations(c, 'docker');
-            return c.json({ error: t('errors.noImageIdsProvided') }, 400);
+            throw new HttpError(t('errors.noImageIdsProvided'), 400);
         }
 
         const force = c.req.query('force') === 'true';

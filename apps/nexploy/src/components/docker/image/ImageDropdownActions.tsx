@@ -31,12 +31,9 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
         {
             icon: Play,
             label: t('use'),
-            onClick: () =>
-                router.push(`/docker/containers/create-container?image=${image.repoTags[0]}`),
+            onClick: () => router.push(`/docker/containers/create?image=${image.repoTags[0]}`),
             disabled: !image.repoTags.length,
-            tooltipContent: !image.repoTags.length
-                ? t('image.noRepositoryTags')
-                : undefined,
+            tooltipContent: !image.repoTags.length ? t('image.noRepositoryTags') : undefined,
         },
         {
             icon: Trash,
@@ -56,8 +53,8 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
 
     return (
         <DropdownMenuContent align="end">
-            {containerTools.map((tool, index) => (
-                <Fragment key={index}>
+            {containerTools.map((tool) => (
+                <Fragment key={tool.label}>
                     {tool.separator && <DropdownMenuSeparator />}
                     {tool.tooltipContent ? (
                         <Tooltip>

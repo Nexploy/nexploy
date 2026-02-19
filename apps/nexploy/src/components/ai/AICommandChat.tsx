@@ -86,10 +86,10 @@ export function AICommandChat({ initialInput = '', onBack }: AICommandChatProps)
                             <div
                                 className={`max-w-[80%] rounded-lg p-3 text-sm ${m.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
                             >
-                                {m.parts.map((part, i) => {
+                                {m.parts.map((part, partIndex) => {
                                     if (part.type === 'text') {
                                         return (
-                                            <p key={i} className="whitespace-pre-wrap">
+                                            <p key={`${m.id}-${partIndex}`} className="whitespace-pre-wrap">
                                                 {part.text}
                                             </p>
                                         );
