@@ -113,10 +113,16 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
                     const data: ContainersEvent = JSON.parse(e.data);
                     if (!data.container) return;
 
-                    get().addContainer(data.container);
-                    toast.success(toastT('toasts.containerAdded', { name: data.container.name }), {
-                        className: 'container-toast',
-                    });
+                    if (!data.container.image?.startsWith('sha256:')) {
+                        console.log(data.container.image);
+                        get().addContainer(data.container);
+                        toast.success(
+                            toastT('toasts.containerAdded', { name: data.container.name }),
+                            {
+                                className: 'container-toast',
+                            },
+                        );
+                    }
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -132,14 +138,19 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
 
                     get().updateContainer(container);
 
-                    if (action === 'die') {
-                        toast.error(toastT('toasts.containerDied', { name }), {
-                            className: 'container-toast',
-                        });
-                    } else {
-                        toast.success(toastT('toasts.containerAction', { name, action: action || '' }), {
-                            className: 'container-toast',
-                        });
+                    if (!data.container?.image?.startsWith('sha256:')) {
+                        if (action === 'die') {
+                            toast.error(toastT('toasts.containerDied', { name }), {
+                                className: 'container-toast',
+                            });
+                        } else {
+                            toast.success(
+                                toastT('toasts.containerAction', { name, action: action || '' }),
+                                {
+                                    className: 'container-toast',
+                                },
+                            );
+                        }
                     }
 
                     set({ lastUpdate: timestamp });
@@ -152,9 +163,14 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
                     if (!data.containerId) return;
 
                     get().removeContainer(data.containerId);
-                    toast.success(toastT('toasts.containerRemoved', { name: data.oldState?.name || '' }), {
-                        className: 'container-toast',
-                    });
+                    if (!data.oldState?.image?.startsWith('sha256:')) {
+                        toast.success(
+                            toastT('toasts.containerRemoved', { name: data.oldState?.name || '' }),
+                            {
+                                className: 'container-toast',
+                            },
+                        );
+                    }
                     set({ lastUpdate: data.timestamp });
                 }),
             );

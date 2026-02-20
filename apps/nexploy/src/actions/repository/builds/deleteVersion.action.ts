@@ -6,6 +6,7 @@ import { deleteVersionSchema } from '@workspace/schemas-zod/inngest/build.schema
 import { kyDocker } from '@/lib/api/kyDocker';
 import { getTranslations } from 'next-intl/server';
 import { prisma } from '@/../prisma/prisma';
+import { HttpError } from '@workspace/shared/http-error';
 
 export const onDeleteVersion = authActionServer
     .inputSchema(deleteVersionSchema)
@@ -25,7 +26,7 @@ export const onDeleteVersion = authActionServer
 
             return { success: true };
         } catch (err: unknown) {
-            if (err instanceof Error) {
+            if (err instanceof HttpError) {
                 await setToastServer({
                     type: 'error',
                     message:

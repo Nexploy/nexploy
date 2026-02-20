@@ -9,6 +9,19 @@ export interface KyDockerOptions extends Options {
 export const kyDocker = ky.create({
     prefixUrl: `${process.env.DOCKER_API_URL}/api`,
     hooks: {
+        beforeError: [
+            async (error) => {
+                try {
+                    const body = await error.response.json<{ message: string }>();
+                    if (body?.message) {
+                        error.message = body.message;
+                    }
+                } catch {
+                    /* empty */
+                }
+                return error;
+            },
+        ],
         beforeRequest: [
             async (request, options) => {
                 let environmentId = (options as KyDockerOptions).environmentId;

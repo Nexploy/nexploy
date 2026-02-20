@@ -15,7 +15,7 @@ export const onImageAction = authActionServer
             if (err instanceof HTTPError) {
                 await setToastServer({
                     type: 'error',
-                    message: err.message as string,
+                    message: err.message,
                 });
             }
         }

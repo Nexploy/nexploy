@@ -14,7 +14,6 @@ app.post(
     }),
 );
 
-
 app.get(
     '/',
     handleAsync(async (c) => {

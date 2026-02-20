@@ -186,11 +186,11 @@ export class ImagesStateManager extends BaseStateManager {
         const repositoryId = oldState.labels?.[NEXPLOY_LABELS.repositoryId];
         const imageTag = oldState.labels?.[NEXPLOY_LABELS.buildId];
 
-        logger.error(
+        if (!repositoryId || !imageTag) return;
+
+        logger.debug(
             `Syncing version delete for image ${oldState.id} with repositoryId ${repositoryId} and imageTag ${imageTag}`,
         );
-
-        if (!repositoryId || !imageTag) return;
 
         const nexployUrl = process.env.NEXPLOY_API_URL;
         const apiKey = process.env.NEXPLOY_API_KEY;
