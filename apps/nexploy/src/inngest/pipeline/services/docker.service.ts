@@ -5,6 +5,7 @@ class DockerService {
     async buildImage(
         workDir: string,
         imageName: string,
+        dockerfilePath: string | undefined,
         signal: AbortSignal,
         onLog: (message: string) => Promise<void>,
         environmentId?: string,
@@ -12,7 +13,7 @@ class DockerService {
     ): Promise<{ imageId?: string }> {
         return this.streamSSERequest<{ imageId?: string }>(
             'pipeline/events/stream/build',
-            { workDir, imageName, labels },
+            { workDir, imageName, dockerfilePath, labels },
             signal,
             onLog,
             environmentId,
@@ -75,6 +76,7 @@ class DockerService {
             const decoder = new TextDecoder();
             let buffer = '';
             let result: T | null = null;
+            const logPromises: Promise<void>[] = [];
 
             const abortHandler = () => {
                 reject(new DOMException('Request aborted', 'AbortError'));
@@ -120,7 +122,7 @@ class DockerService {
                                     } else if (parsedData.type === 'error') {
                                         throw new Error(parsedData.message || 'Unknown error');
                                     } else if (parsedData.type === 'log' && parsedData.message) {
-                                        void onLog(parsedData.message);
+                                        logPromises.push(onLog(parsedData.message).catch(() => {}));
                                     }
                                 } catch (e) {
                                     if (e instanceof Error && e.message !== 'Unknown error') {
@@ -139,6 +141,9 @@ class DockerService {
                         }
                     }
                 }
+
+                // Flush all pending log writes before resolving
+                await Promise.allSettled(logPromises);
 
                 signal.removeEventListener('abort', abortHandler);
                 if (result !== null) {

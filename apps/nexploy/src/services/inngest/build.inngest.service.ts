@@ -46,6 +46,16 @@ export async function startBuildRepositoryInngest(
         commitHash,
     );
 
+    const activeBuild = await prisma.build.findFirst({
+        where: { repositoryId: repository.id, status: { in: ['QUEUED', 'BUILDING'] } },
+        select: { id: true, status: true },
+    });
+    if (activeBuild) {
+        throw new Error(
+            `A build is already in progress for this repository (build ${activeBuild.id}, status: ${activeBuild.status}). Cancel it before starting a new one.`,
+        );
+    }
+
     const build = await createBuild({
         repositoryId: repository.id,
         branch: repository.branch,

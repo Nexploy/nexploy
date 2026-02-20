@@ -1,39 +1,52 @@
+// Matches ${VAR}, ${VAR:-default}, ${VAR:?error}, ${VAR:+value}, and $VAR
+const PATTERN = /\$\{([^}:]+)(?:(:[-?+])([^}]*))?\}|\$([A-Za-z_][A-Za-z0-9_]*)/g;
+
 export function substituteEnvVars(
     content: string,
     envVars: Record<string, string>,
 ): string {
     return content.replace(
-        /\$\{([^}:]+)(:-?([^}]*))?\}|\$([A-Za-z_][A-Za-z0-9_]*)/g,
-        (match, varName1, colonDefault, defaultValue, varName2) => {
+        PATTERN,
+        (match, varName1, operator, operand, varName2) => {
             const varName = varName1 || varName2;
 
+            let value: string | undefined;
             if (varName in envVars) {
-                const value = envVars[varName];
-                if (colonDefault?.startsWith(':-') && value === '') {
-                    return defaultValue ?? '';
-                }
-                return value;
+                value = envVars[varName];
+            } else if (varName in process.env) {
+                value = process.env[varName];
             }
 
-            if (varName in process.env) {
-                const value = process.env[varName];
-                if (colonDefault?.startsWith(':-') && value === '') {
-                    return defaultValue ?? '';
-                }
-                return value ?? '';
-            }
+            const isEmpty = value === undefined || value === '';
 
-            if (defaultValue !== undefined) {
-                return defaultValue;
-            }
+            // Operator is the char after ':', e.g. '-', '?', '+'
+            const op = operator ? operator.slice(1) : undefined;
 
-            return match;
+            switch (op) {
+                case '-': // ${VAR:-default} — use default if unset or empty
+                    return isEmpty ? (operand ?? '') : value!;
+
+                case '?': // ${VAR:?error} — fail if unset or empty
+                    if (isEmpty) {
+                        throw new Error(
+                            `Required variable "${varName}" is not set${operand ? `: ${operand}` : ''}`,
+                        );
+                    }
+                    return value!;
+
+                case '+': // ${VAR:+replacement} — use replacement if set and non-empty
+                    return isEmpty ? '' : (operand ?? '');
+
+                default:
+                    // Simple ${VAR} or $VAR — return value or leave unchanged
+                    return value ?? match;
+            }
         },
     );
 }
 
 export function findUnresolvedVariables(content: string): string[] {
-    const unresolvedPattern = /\$\{([^}:]+)(?::-?[^}]*)?\}|\$([A-Za-z_][A-Za-z0-9_]*)/g;
+    const unresolvedPattern = /\$\{([^}:]+)(?::[-?+][^}]*)?\}|\$([A-Za-z_][A-Za-z0-9_]*)/g;
     const matches: string[] = [];
     let match;
 

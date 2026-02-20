@@ -488,11 +488,12 @@ export class ImagesStateManager extends BaseStateManager {
     async buildImage(
         workDir: string,
         imageName: string,
+        dockerfilePath: string | undefined,
         onLog: (log: string) => void,
         signal?: AbortSignal,
         labels?: Record<string, string>,
     ): Promise<{ imageId?: string }> {
-        logger.info({ workDir, imageName }, 'Starting Docker build');
+        logger.info({ workDir, imageName, dockerfilePath }, 'Starting Docker build');
 
         if (signal?.aborted) {
             throw new DOMException('Build aborted before start', 'AbortError');
@@ -505,7 +506,7 @@ export class ImagesStateManager extends BaseStateManager {
                 tarStream,
                 {
                     t: imageName,
-                    dockerfile: 'Dockerfile',
+                    dockerfile: dockerfilePath || 'Dockerfile',
                     rm: true,
                     forcerm: true,
                     abortSignal: signal,

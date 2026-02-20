@@ -4,12 +4,15 @@ import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
 import { getCurrentDockerClient, getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
-import DockerodeCompose from 'dockerode-compose';
+import {
+    buildDockerHostEnv,
+    getComposeContainerIds,
+    runDockerCompose,
+} from '@/utils/dockerComposeRunner';
 import path from 'path';
 import fs from 'fs';
 import yaml from 'yaml';
-import type { Readable } from 'stream';
-import { substituteEnvVars } from '@/utils/composePreprocessor';
+import { findUnresolvedVariables, substituteEnvVars } from '@/utils/composePreprocessor';
 import {
     getExplicitContainerNames,
     getServicesToPull,
@@ -75,6 +78,12 @@ app.post('/stream/compose', async (c) => {
         const builtImageNames: string[] = [];
         const abortController = new AbortController();
 
+        const envConfig = environmentId
+            ? dockerClientRegistry.getEnvironmentConfig(environmentId)
+            : null;
+        const dockerEnvResult = buildDockerHostEnv(envConfig);
+        const dockerEnv = dockerEnvResult.env;
+
         c.req.raw.signal.addEventListener('abort', () => {
             isClientDisconnected = true;
             abortController.abort();
@@ -118,22 +127,15 @@ app.post('/stream/compose', async (c) => {
                 composeYamlContent = substituteEnvVars(composeYamlContent, envVars);
             }
 
-            let composeContent = yaml.parse(composeYamlContent) as ComposeContent;
-
-            if (composeContent.networks) {
-                for (const [networkName, networkConfig] of Object.entries(
-                    composeContent.networks,
-                )) {
-                    const net = networkConfig as Record<string, unknown> | null;
-                    if (net && net.external === true && !net.name) {
-                        net.name = networkName;
-                    }
-                }
+            const unresolvedVars = findUnresolvedVariables(composeYamlContent);
+            if (unresolvedVars.length > 0) {
+                sendLog(
+                    `WARNING: Unresolved variables in compose file: ${unresolvedVars.map((v) => `$\{${v}}`).join(', ')}`,
+                );
             }
 
-            const envConfig = environmentId
-                ? dockerClientRegistry.getEnvironmentConfig(environmentId)
-                : null;
+            let composeContent = yaml.parse(composeYamlContent) as ComposeContent;
+
             const isRemoteEnvironment =
                 envConfig?.connectionType === 'TCP' || envConfig?.connectionType === 'TCP_TLS';
 
@@ -204,8 +206,6 @@ app.post('/stream/compose', async (c) => {
             );
             const servicesToPull = getServicesToPull(composeContent);
 
-            const initialCompose = new DockerodeCompose(dockerClient, composeFilePath, projectName);
-
             if (servicesToPull.length > 0) {
                 sendLog(`Pulling images for ${servicesToPull.length} service(s)...`);
 
@@ -214,63 +214,17 @@ app.post('/stream/compose', async (c) => {
                 for (const serviceName of servicesToPull) {
                     if (abortController.signal.aborted) break;
 
+                    sendLog(`Pulling image for service: ${serviceName}...`);
                     try {
-                        const pullStreams = await initialCompose.pull(serviceName, {
-                            streams: true,
-                            verbose: false,
-                        });
-
-                        if (Array.isArray(pullStreams)) {
-                            for (const pullStream of pullStreams) {
-                                if (pullStream && typeof pullStream.on === 'function') {
-                                    await new Promise<void>((resolvePull, rejectPull) => {
-                                        const readable = pullStream as Readable;
-
-                                        readable.on('data', (chunk) => {
-                                            if (isClientDisconnected || c.req.raw.signal.aborted) {
-                                                readable.destroy();
-                                                return;
-                                            }
-
-                                            const raw = chunk.toString();
-                                            const lines = raw
-                                                .split('\n')
-                                                .filter((l: string) => l.trim());
-
-                                            for (const line of lines) {
-                                                try {
-                                                    const data = JSON.parse(line);
-                                                    let message = '';
-
-                                                    if (data.status) {
-                                                        message = data.status;
-                                                        if (data.id) {
-                                                            message = `[${data.id}] ${message}`;
-                                                        }
-                                                        if (data.progress) {
-                                                            message += ` ${data.progress}`;
-                                                        }
-                                                    }
-
-                                                    if (message) {
-                                                        sendLog(message);
-                                                    }
-                                                } catch {
-                                                    if (line.trim()) {
-                                                        sendLog(line.trim());
-                                                    }
-                                                }
-                                            }
-                                        });
-
-                                        readable.on('end', () => resolvePull());
-                                        readable.on('error', (err) => {
-                                            sendLog(`Pull error: ${err.message}`);
-                                            rejectPull(err);
-                                        });
-                                    });
-                                }
-                            }
+                        const exitCode = await runDockerCompose(
+                            ['-p', projectName, '-f', composeFilePath, 'pull', serviceName],
+                            workDir,
+                            dockerEnv,
+                            sendLog,
+                            abortController.signal,
+                        );
+                        if (exitCode !== 0) {
+                            throw new Error(`docker compose pull exited with code ${exitCode}`);
                         }
                     } catch (pullError) {
                         const errorMsg =
@@ -389,22 +343,20 @@ app.post('/stream/compose', async (c) => {
                 }
             }
 
-            const hasExternalNetworks =
-                composeContent.networks &&
-                Object.values(composeContent.networks).some((n: any) => n && n.external === true);
-            if (hasExternalNetworks && !modifiedComposeFile) {
-                modifiedComposeFile = path.join(workDir, '.nexploy-compose-processed.yml');
-                fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
-            }
-
             const deployComposeFile = modifiedComposeFile || composeFilePath;
-            const compose = new DockerodeCompose(dockerClient, deployComposeFile, projectName);
 
             sendLog('Removing existing containers if any...');
             try {
-                await compose.down({ volumes: false });
-                sendLog('Existing containers removed');
-            } catch (downError) {
+                const downCode = await runDockerCompose(
+                    ['-p', projectName, '-f', deployComposeFile, 'down', '--remove-orphans'],
+                    workDir,
+                    dockerEnv,
+                    sendLog,
+                );
+                if (downCode === 0) {
+                    sendLog('Existing containers removed');
+                }
+            } catch {
                 sendLog('No existing containers to remove from project');
             }
 
@@ -444,10 +396,24 @@ app.post('/stream/compose', async (c) => {
             }
 
             sendLog('Starting services...');
-            const upResult = await compose.up({ verbose: true });
+            const upCode = await runDockerCompose(
+                ['-p', projectName, '-f', deployComposeFile, 'up', '-d', '--remove-orphans'],
+                workDir,
+                dockerEnv,
+                sendLog,
+                abortController.signal,
+            );
+            if (upCode !== 0) {
+                throw new Error(`docker compose up failed with exit code ${upCode}`);
+            }
             sendLog('Services started successfully');
 
-            const containerIds = upResult.services.map((container: { id: string }) => container.id);
+            const containerIds = await getComposeContainerIds(
+                projectName,
+                deployComposeFile,
+                workDir,
+                dockerEnv,
+            );
 
             sendLog(`Connecting ${containerIds.length} containers to Traefik network...`);
             for (const containerId of containerIds) {
@@ -507,6 +473,8 @@ app.post('/stream/compose', async (c) => {
 
             await stream.close();
         } finally {
+            dockerEnvResult.cleanup?.();
+
             if (envFileWritten) {
                 cleanupEnvFile(workDir);
                 logger.info({ workDir }, 'Cleaned up .env file after compose deployment');
@@ -548,9 +516,10 @@ app.post('/stream/compose', async (c) => {
 });
 
 app.post('/stream/build', async (c) => {
-    const { workDir, imageName, labels } = await c.req.json<{
+    const { workDir, imageName, dockerfilePath, labels } = await c.req.json<{
         workDir: string;
         imageName: string;
+        dockerfilePath?: string;
         labels?: Record<string, string>;
     }>();
 
@@ -586,6 +555,7 @@ app.post('/stream/build', async (c) => {
             const result = await manager.buildImage(
                 workDir,
                 imageName,
+                dockerfilePath,
                 onLog,
                 abortController.signal,
                 labels,

@@ -2,8 +2,13 @@ import { Hono } from 'hono';
 import { containersStateManager } from '@/managers/containersStateManager';
 import { handleAsync } from '@/helpers/handleAsync';
 import { DeployOptions } from '@workspace/typescript-interface/inngest/deploy';
-import { getCurrentDockerClient } from '@/lib/dockerContext';
-import DockerodeCompose from 'dockerode-compose';
+import { getCurrentDockerClient, getCurrentEnvironmentId } from '@/lib/dockerContext';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import {
+    buildDockerHostEnv,
+    getComposeContainerIds,
+    runDockerCompose,
+} from '@/utils/dockerComposeRunner';
 import { substituteEnvVars } from '@/utils/composePreprocessor';
 import yaml from 'yaml';
 import fs from 'fs';
@@ -37,6 +42,13 @@ app.post(
         }>();
 
         const dockerClient = getCurrentDockerClient();
+        const environmentId = getCurrentEnvironmentId();
+
+        const envConfig = environmentId
+            ? dockerClientRegistry.getEnvironmentConfig(environmentId)
+            : null;
+        const dockerEnvResult = buildDockerHostEnv(envConfig);
+        const dockerEnv = dockerEnvResult.env;
 
         let composeYaml = Buffer.from(composeConfig, 'base64').toString('utf8');
 
@@ -64,10 +76,14 @@ app.post(
             }
 
             const composeContent = yaml.parse(composeYaml) as Record<string, any>;
-            const compose = new DockerodeCompose(dockerClient, composeFilePath, projectName);
 
             try {
-                await compose.down({ volumes: false });
+                await runDockerCompose(
+                    ['-p', projectName, '-f', composeFilePath, 'down', '--remove-orphans'],
+                    tmpDir,
+                    dockerEnv,
+                    () => {},
+                );
             } catch {
                 logger.debug({ projectName }, 'No existing compose stack to remove');
             }
@@ -131,8 +147,22 @@ app.post(
                 );
             }
 
-            const upResult = await compose.up({ verbose: true });
-            const containerIds = upResult.services.map((container: { id: string }) => container.id);
+            const upCode = await runDockerCompose(
+                ['-p', projectName, '-f', composeFilePath, 'up', '-d', '--remove-orphans'],
+                tmpDir,
+                dockerEnv,
+                () => {},
+            );
+            if (upCode !== 0) {
+                throw new Error(`docker compose up failed with exit code ${upCode}`);
+            }
+
+            const containerIds = await getComposeContainerIds(
+                projectName,
+                composeFilePath,
+                tmpDir,
+                dockerEnv,
+            );
 
             const traefikNetwork = dockerClient.getNetwork('nexploy_traefik_network');
             await Promise.all(
@@ -150,6 +180,7 @@ app.post(
 
             return { success: true, containers: containerIds };
         } finally {
+            dockerEnvResult.cleanup?.();
             try {
                 fs.rmSync(tmpDir, { recursive: true, force: true });
             } catch {}

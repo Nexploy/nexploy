@@ -77,6 +77,7 @@ class BuildDockerImageStep extends BaseStep {
             const result = await dockerService.buildImage(
                 workDir,
                 imageName,
+                config.dockerfilePath,
                 ctx.context.abortController.signal,
                 onLog,
                 config.environmentId,

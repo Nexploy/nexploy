@@ -17,44 +17,65 @@ export async function buildComposeServices(
     signal?: AbortSignal,
     extraLabels?: Record<string, string>,
 ): Promise<Map<string, string>> {
-    const builtImages = new Map<string, string>();
-
-    for (const config of buildConfigs) {
-        if (signal?.aborted) {
-            throw new DOMException('Build aborted', 'AbortError');
-        }
-
-        onProgress({
-            type: 'log',
-            serviceName: config.serviceName,
-            message: `Building service: ${config.serviceName} (image: ${config.imageName})`,
-        });
-
-        try {
-            const imageId = await buildServiceImage(docker, config, onProgress, signal, extraLabels);
-            builtImages.set(config.serviceName, imageId);
-
-            onProgress({
-                type: 'complete',
-                serviceName: config.serviceName,
-                message: `Successfully built ${config.imageName}`,
-                imageId,
-            });
-        } catch (error) {
-            const errorMessage =
-                error instanceof Error ? error.message : 'Unknown error';
-
-            onProgress({
-                type: 'error',
-                serviceName: config.serviceName,
-                message: `Build failed for ${config.serviceName}: ${errorMessage}`,
-            });
-
-            throw error;
-        }
+    if (signal?.aborted) {
+        throw new DOMException('Build aborted', 'AbortError');
     }
 
-    return builtImages;
+    const builtImages = new Map<string, string>();
+
+    // Local abort controller so the first failure cancels sibling builds
+    const buildAbort = new AbortController();
+    const onExternalAbort = () => buildAbort.abort();
+    signal?.addEventListener('abort', onExternalAbort, { once: true });
+
+    try {
+        const results = await Promise.allSettled(
+            buildConfigs.map(async (config) => {
+                onProgress({
+                    type: 'log',
+                    serviceName: config.serviceName,
+                    message: `Building service: ${config.serviceName} (image: ${config.imageName})`,
+                });
+
+                try {
+                    const imageId = await buildServiceImage(
+                        docker,
+                        config,
+                        onProgress,
+                        buildAbort.signal,
+                        extraLabels,
+                    );
+                    builtImages.set(config.serviceName, imageId);
+                    onProgress({
+                        type: 'complete',
+                        serviceName: config.serviceName,
+                        message: `Successfully built ${config.imageName}`,
+                        imageId,
+                    });
+                } catch (error) {
+                    buildAbort.abort();
+                    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+                    onProgress({
+                        type: 'error',
+                        serviceName: config.serviceName,
+                        message: `Build failed for ${config.serviceName}: ${errorMessage}`,
+                    });
+                    throw error;
+                }
+            }),
+        );
+
+        const firstFailure = results.find(
+            (r): r is PromiseRejectedResult => r.status === 'rejected',
+        );
+        if (firstFailure) {
+            throw firstFailure.reason;
+        }
+
+        return builtImages;
+    } finally {
+        signal?.removeEventListener('abort', onExternalAbort);
+    }
 }
 
 async function buildServiceImage(

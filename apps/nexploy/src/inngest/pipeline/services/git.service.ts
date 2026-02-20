@@ -1,6 +1,7 @@
 import { spawn } from 'child_process';
-import { access, mkdir, rm, writeFile } from 'fs/promises';
+import { access, mkdir, mkdtemp, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
+import os from 'os';
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 import { getValidToken } from '@/services/api/gitProvider.service';
 import { ProgressCallback } from '@/types/pipeline.type';
@@ -9,13 +10,13 @@ class GitService {
     private async exec(
         command: string,
         args: string[],
-        options?: { cwd?: string },
+        options?: { cwd?: string; env?: NodeJS.ProcessEnv },
         onProgress?: ProgressCallback,
     ): Promise<string> {
         return new Promise((resolve, reject) => {
             const proc = spawn(command, args, {
                 cwd: options?.cwd,
-                env: process.env,
+                env: options?.env ?? process.env,
             });
 
             let stdout = '';
@@ -55,21 +56,6 @@ class GitService {
         });
     }
 
-    private getAuthenticatedGitUrl(gitUrl: string, gitToken: string | null): string {
-        if (!gitToken) {
-            return gitUrl;
-        }
-
-        try {
-            const url = new URL(gitUrl);
-            url.username = 'oauth2';
-            url.password = gitToken;
-            return url.toString();
-        } catch {
-            return gitUrl;
-        }
-    }
-
     async cloneRepository(
         buildConfig: BuildConfig,
         onProgress?: ProgressCallback,
@@ -92,9 +78,31 @@ class GitService {
             buildConfig.userId,
         );
 
-        const authenticatedUrl = this.getAuthenticatedGitUrl(buildConfig.gitUrl, token.accessToken);
+        // Write credentials to a temp dir instead of embedding token in the URL,
+        // so the token is never visible in `ps aux` or shell history.
+        const credsTmpDir = token.accessToken
+            ? await mkdtemp(join(os.tmpdir(), 'nexploy-git-'))
+            : null;
 
         try {
+            let gitEnv: NodeJS.ProcessEnv = process.env;
+
+            if (credsTmpDir && token.accessToken) {
+                const parsedUrl = new URL(buildConfig.gitUrl);
+                const credsEntry = `${parsedUrl.protocol}//oauth2:${token.accessToken}@${parsedUrl.host}\n`;
+                const credsFile = join(credsTmpDir, 'credentials');
+                const configFile = join(credsTmpDir, 'config');
+
+                await writeFile(credsFile, credsEntry, { mode: 0o600 });
+                await writeFile(
+                    configFile,
+                    `[credential]\n\thelper = store --file ${credsFile}\n`,
+                    { mode: 0o600 },
+                );
+
+                gitEnv = { ...process.env, GIT_CONFIG_GLOBAL: configFile };
+            }
+
             const cloneArgs = ['clone'];
 
             if (!buildConfig.gitCommitHash) {
@@ -105,15 +113,16 @@ class GitService {
                 '--single-branch',
                 `--branch=${buildConfig.gitBranch}`,
                 '--progress',
-                authenticatedUrl,
+                buildConfig.gitUrl,
                 workDir,
             );
 
-            await this.exec('git', cloneArgs, {}, onProgress);
+            await this.exec('git', cloneArgs, { env: gitEnv }, onProgress);
 
             if (buildConfig.gitCommitHash) {
                 await this.exec('git', ['checkout', buildConfig.gitCommitHash], {
                     cwd: workDir,
+                    env: gitEnv,
                 });
             }
         } catch (error: unknown) {
@@ -124,6 +133,10 @@ class GitService {
             throw new Error(
                 `Failed to clone repository from ${buildConfig.gitUrl} (branch: ${buildConfig.gitBranch}${commitInfo})`,
             );
+        } finally {
+            if (credsTmpDir) {
+                await rm(credsTmpDir, { recursive: true, force: true }).catch(() => {});
+            }
         }
 
         if (buildConfig.repositoryPath && buildConfig.repositoryPath !== '.') {
@@ -139,7 +152,18 @@ class GitService {
         }
 
         const envContent = Object.entries(envVariables)
-            .map(([key, value]) => `${key}=${value}`)
+            .map(([key, value]) => {
+                const needsQuotes =
+                    value.includes('\n') ||
+                    value.includes('"') ||
+                    value.includes("'") ||
+                    value.includes(' ') ||
+                    value.includes('=');
+                const escaped = needsQuotes
+                    ? `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`
+                    : value;
+                return `${key}=${escaped}`;
+            })
             .join('\n');
 
         const envPath = join(workDir, '.env.production');

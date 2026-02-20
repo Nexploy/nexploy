@@ -139,7 +139,24 @@ export class PipelineOrchestrator implements IPipelineOrchestrator {
                     const stepContext = context.createStepContext();
 
                     try {
-                        const result = await step.execute(stepContext);
+                        const timeoutMs = step.metadata.timeout;
+                        const executePromise = step.execute(stepContext);
+                        const result = await (timeoutMs
+                            ? Promise.race([
+                                  executePromise,
+                                  new Promise<never>((_, reject) =>
+                                      setTimeout(
+                                          () =>
+                                              reject(
+                                                  new Error(
+                                                      `Step "${stepId}" timed out after ${timeoutMs / 1000}s`,
+                                                  ),
+                                              ),
+                                          timeoutMs,
+                                      ),
+                                  ),
+                              ])
+                            : executePromise);
 
                         if (!result.skipped) {
                             await reporter.markStepCompleted(stepId);
