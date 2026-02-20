@@ -76,10 +76,9 @@ class GitService {
             },
             buildConfig.gitProvider,
             buildConfig.userId,
+            buildConfig.gitAccountId,
         );
 
-        // Write credentials to a temp dir instead of embedding token in the URL,
-        // so the token is never visible in `ps aux` or shell history.
         const credsTmpDir = token.accessToken
             ? await mkdtemp(join(os.tmpdir(), 'nexploy-git-'))
             : null;
@@ -130,8 +129,9 @@ class GitService {
             const commitInfo = buildConfig.gitCommitHash
                 ? `, commit: ${buildConfig.gitCommitHash}`
                 : '';
+            const originalMessage = error instanceof Error ? `: ${error.message}` : '';
             throw new Error(
-                `Failed to clone repository from ${buildConfig.gitUrl} (branch: ${buildConfig.gitBranch}${commitInfo})`,
+                `Failed to clone repository from ${buildConfig.gitUrl} (branch: ${buildConfig.gitBranch}${commitInfo})${originalMessage}`,
             );
         } finally {
             if (credsTmpDir) {

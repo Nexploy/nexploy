@@ -10,14 +10,13 @@ import {
 } from '@workspace/ui/components/alert-dialog';
 import { Button } from '@workspace/ui/components/button';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { isValidElement } from 'react';
 
 export function AlertConfirmationDialog() {
     const {
         isOpen,
         title,
-        asTitleDesc,
         description,
-        asChildDesc,
         cancelLabel,
         actionLabel,
         isPending,
@@ -32,8 +31,8 @@ export function AlertConfirmationDialog() {
         <AlertDialog open={isOpen} onOpenChange={closeAlertDialog}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle asChild={asTitleDesc}>{title}</AlertDialogTitle>
-                    <AlertDialogDescription asChild={asChildDesc}>
+                    <AlertDialogTitle asChild={isValidElement(title)}>{title}</AlertDialogTitle>
+                    <AlertDialogDescription asChild={isValidElement(description)}>
                         {description}
                     </AlertDialogDescription>
                 </AlertDialogHeader>

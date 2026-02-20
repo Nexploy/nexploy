@@ -89,6 +89,11 @@ export function TableDockerVolumes() {
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         onRowSelectionChange: setRowSelection,
+        initialState: {
+            pagination: {
+                pageSize: pageSize === 'all' ? volumes.length : pageSize,
+            },
+        },
         state: {
             sorting,
             globalFilter,

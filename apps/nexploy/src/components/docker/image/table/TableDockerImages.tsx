@@ -21,7 +21,7 @@ import {
     TableHeader,
     TableRow,
 } from '@workspace/ui/components/table';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { getColumnsTableImages } from '@/components/docker/image/table/ColumnsDockerImages';
 import { useTranslations } from 'next-intl';
 import { useImageStore } from '@/stores/docker/useImageStore';
@@ -46,6 +46,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useRouter } from '@/i18n/navigation';
+import { Switch } from '@workspace/ui/components/switch';
 
 function matchesSearch(image: ImageRow, search: string): boolean {
     const { name, tag, id, size, created } = image;
@@ -140,6 +141,7 @@ export function TableDockerImages() {
     const images = useImageStore((state) => state.images);
     const lastUpdate = useImageStore((state) => state.lastUpdate);
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
+    const forceRef = useRef(false);
 
     const groupedImages = useMemo(() => groupImagesByRepository(images), [images]);
     const columns = useMemo(() => getColumnsTableImages(t), [t]);
@@ -162,6 +164,11 @@ export function TableDockerImages() {
         onRowSelectionChange: setRowSelection,
         onExpandedChange: setExpanded,
         getSubRows: (row) => row.subRows,
+        initialState: {
+            pagination: {
+                pageSize: pageSize === 'all' ? images.length : pageSize,
+            },
+        },
         state: {
             sorting,
             globalFilter,
@@ -178,13 +185,36 @@ export function TableDockerImages() {
 
     const handleDeleteAction = () => {
         const imageIds = Object.keys(rowSelection);
+        forceRef.current = false;
         openAlertDialog({
             title: t('removeImages'),
-            description: t('confirmRemoveImages', { count: imageIds.length }),
             cancelLabel: tCommon('cancel'),
             actionLabel: tCommon('remove'),
+            description: (
+                <div className={'space-y-4'}>
+                    <p>{t('confirmRemoveImages', { count: imageIds.length })}</p>
+                    <label
+                        htmlFor={'force-delete'}
+                        className={
+                            'bg-muted/50 border-destructive flex cursor-pointer items-center justify-between rounded-lg border p-3'
+                        }
+                    >
+                        <div className={'space-y-0.5'}>
+                            <p className={'text-destructive text-sm font-medium'}>
+                                {t('forceDelete')}
+                            </p>
+                            <p className={'text-xs'}>{t('forceDeleteDescription')}</p>
+                        </div>
+                        <Switch
+                            id="force-delete-images"
+                            defaultChecked={false}
+                            onCheckedChange={(checked) => (forceRef.current = checked)}
+                        />
+                    </label>
+                </div>
+            ),
             onAction: async () => {
-                await onImageAction({ imageIds, action: 'delete' });
+                await onImageAction({ imageIds, action: 'delete', force: forceRef.current });
                 table.resetRowSelection();
             },
         });

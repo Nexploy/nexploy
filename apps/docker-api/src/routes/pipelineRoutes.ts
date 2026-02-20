@@ -52,9 +52,7 @@ app.post(
 
         let composeYaml = Buffer.from(composeConfig, 'base64').toString('utf8');
 
-        if (envVars && Object.keys(envVars).length > 0) {
-            composeYaml = substituteEnvVars(composeYaml, envVars);
-        }
+        composeYaml = substituteEnvVars(composeYaml, envVars || {});
 
         const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nexploy-compose-'));
         const composeFilePath = path.join(tmpDir, 'docker-compose.yml');

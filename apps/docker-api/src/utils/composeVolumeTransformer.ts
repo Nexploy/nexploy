@@ -1,7 +1,4 @@
-import type {
-    ComposeContent,
-    ParsedBuildConfig,
-} from '@workspace/typescript-interface/docker/docker.compose.build';
+import type { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
 import type {
     ParsedBindMount,
     BindMountTransformation,
@@ -20,7 +17,6 @@ export function transformBindMountsForRemote(
     composeContent: ComposeContent,
     workDir: string,
     projectName: string,
-    existingBuildConfigs: ParsedBuildConfig[],
 ): VolumeTransformationResult {
     const bindMounts = parseComposeBindMounts(composeContent, workDir);
     const transformations: BindMountTransformation[] = [];
@@ -35,7 +31,6 @@ export function transformBindMountsForRemote(
         if (!service) continue;
 
         const hasBuildSection = !!service.build;
-        const existingBuildConfig = existingBuildConfigs.find((c) => c.serviceName === serviceName);
 
         for (const mount of mounts) {
             const transformation = createTransformation(

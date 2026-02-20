@@ -58,7 +58,7 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
                     )}
                     <p className="text-muted-foreground text-sm">{t('description')}</p>
                 </div>
-                <div className="flex shrink-0 items-center gap-1">
+                <div className="flex shrink-0 items-start gap-1">
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button variant="destructive" size="icon" onClick={handleRemove}>

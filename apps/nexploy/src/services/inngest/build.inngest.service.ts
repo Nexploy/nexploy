@@ -75,6 +75,7 @@ export async function startBuildRepositoryInngest(
     const config: BuildConfig = {
         ...token,
         userId,
+        gitAccountId: repository.gitAccountId ?? undefined,
         repositoryId: repository.id,
         repositoryPath: repository.contextPath || '.',
         gitProvider: repository.gitProvider,
@@ -213,10 +214,16 @@ export async function retryBuildRepositoryInngest(
 
     const repository = existingBuild.repository;
 
-    const token = await getGitProviderToken(repository.gitProvider, {
+    const oldToken = await getGitProviderToken(repository.gitProvider, {
         gitAccountId: repository.gitAccountId ?? undefined,
         requestedUserId: userId,
     });
+    const token = await getValidToken(
+        oldToken,
+        repository.gitProvider,
+        userId,
+        repository.gitAccountId ?? undefined,
+    );
 
     const imageName = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
@@ -230,6 +237,7 @@ export async function retryBuildRepositoryInngest(
     const config: BuildConfig = {
         ...token,
         userId,
+        gitAccountId: repository.gitAccountId ?? undefined,
         repositoryId: repository.id,
         repositoryPath: repository.contextPath || '.',
         gitProvider: repository.gitProvider,
@@ -265,10 +273,16 @@ export async function resumeBuildRepositoryInngest(
 
     const repository = existingBuild.repository;
 
-    const token = await getGitProviderToken(repository.gitProvider, {
+    const oldToken = await getGitProviderToken(repository.gitProvider, {
         gitAccountId: repository.gitAccountId ?? undefined,
         requestedUserId: userId,
     });
+    const token = await getValidToken(
+        oldToken,
+        repository.gitProvider,
+        userId,
+        repository.gitAccountId ?? undefined,
+    );
 
     const imageName = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
@@ -285,6 +299,7 @@ export async function resumeBuildRepositoryInngest(
     const config: BuildConfig = {
         ...token,
         userId,
+        gitAccountId: repository.gitAccountId ?? undefined,
         repositoryId: repository.id,
         repositoryPath: repository.contextPath || '.',
         gitProvider: repository.gitProvider,

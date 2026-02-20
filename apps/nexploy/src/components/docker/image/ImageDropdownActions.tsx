@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useRef } from 'react';
 import {
     DropdownMenuContent,
     DropdownMenuItem,
@@ -11,6 +11,8 @@ import { Image, ImageAction, ImageTool } from '@workspace/typescript-interface/d
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { Switch } from '@workspace/ui/components/switch';
+import { Label } from '@workspace/ui/components/label';
 
 interface ImageDropdownActionsProps {
     image: Image;
@@ -20,11 +22,12 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const router = useRouter();
     const t = useTranslations('docker.dropdownActions');
+    const forceRef = useRef(false);
 
     const imageName = image.name ? image.name : ['<none>'];
 
     const handleAction = async (action: ImageAction) => {
-        await onImageAction({ imageIds: [image.id], action });
+        await onImageAction({ imageIds: [image.id], action, force: forceRef.current });
     };
 
     const containerTools: ImageTool[] = [
@@ -38,14 +41,39 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
         {
             icon: Trash,
             label: t('remove'),
-            onClick: () =>
+            onClick: () => {
+                forceRef.current = false;
                 openAlertDialog({
                     title: t('image.removeTitle'),
-                    description: t('image.removeDescription', { name: imageName.join(',') }),
                     cancelLabel: t('cancel'),
                     actionLabel: t('remove'),
+                    description: (
+                        <div className="space-y-3">
+                            <p className="text-muted-foreground text-sm">
+                                {t('image.removeDescription', { name: imageName.join(', ') })}
+                            </p>
+                            <div className="flex items-center gap-3">
+                                <Switch
+                                    id="force-delete-image"
+                                    defaultChecked={false}
+                                    onCheckedChange={(checked) => {
+                                        forceRef.current = checked;
+                                    }}
+                                />
+                                <div>
+                                    <Label htmlFor="force-delete-image" className="font-medium">
+                                        {t('image.forceDelete')}
+                                    </Label>
+                                    <p className="text-muted-foreground text-xs">
+                                        {t('image.forceDeleteDescription')}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ),
                     onAction: () => handleAction('delete'),
-                }),
+                });
+            },
             disabled: !image.id,
             variant: 'destructive',
         },

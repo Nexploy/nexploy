@@ -88,6 +88,11 @@ export function TableDockerNetworks() {
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         onRowSelectionChange: setRowSelection,
+        initialState: {
+            pagination: {
+                pageSize: pageSize === 'all' ? networks.length : pageSize,
+            },
+        },
         state: {
             sorting,
             globalFilter,
@@ -103,7 +108,6 @@ export function TableDockerNetworks() {
         forceRef.current = false;
         openAlertDialog({
             title: tDocker('deleteNetwork'),
-            asChildDesc: true,
             description: (
                 <div className={'space-y-4'}>
                     <p>{tDocker('confirmDeleteNetwork')}</p>

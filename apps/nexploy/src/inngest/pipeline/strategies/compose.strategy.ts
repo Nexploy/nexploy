@@ -105,38 +105,40 @@ class DeployComposeStep extends BaseStep {
                 labels,
             );
 
-            try {
-                const lastVersion = await prisma.version.findFirst({
-                    where: { repositoryId: config.repositoryId },
-                    orderBy: { versionNumber: 'desc' },
-                    select: { versionNumber: true },
-                });
-                const versionNumber = (lastVersion?.versionNumber ?? 0) + 1;
+            if (result.versioned) {
+                try {
+                    const lastVersion = await prisma.version.findFirst({
+                        where: { repositoryId: config.repositoryId },
+                        orderBy: { versionNumber: 'desc' },
+                        select: { versionNumber: true },
+                    });
+                    const versionNumber = (lastVersion?.versionNumber ?? 0) + 1;
 
-                await prisma.version.upsert({
-                    where: {
-                        repositoryId_imageTag: {
+                    await prisma.version.upsert({
+                        where: {
+                            repositoryId_imageTag: {
+                                repositoryId: config.repositoryId,
+                                imageTag: ctx.context.buildId,
+                            },
+                        },
+                        update: { composeConfig: result.composeConfig ?? null },
+                        create: {
                             repositoryId: config.repositoryId,
                             imageTag: ctx.context.buildId,
+                            versionNumber,
+                            buildType: config.buildType,
+                            branch: config.gitBranch ?? null,
+                            commitHash: config.gitCommitHash ?? null,
+                            commitMessage: config.gitCommitMessage ?? null,
+                            composeConfig: result.composeConfig ?? null,
                         },
-                    },
-                    update: { composeConfig: result.composeConfig ?? null },
-                    create: {
-                        repositoryId: config.repositoryId,
-                        imageTag: ctx.context.buildId,
-                        versionNumber,
-                        buildType: config.buildType,
-                        branch: config.gitBranch ?? null,
-                        commitHash: config.gitCommitHash ?? null,
-                        commitMessage: config.gitCommitMessage ?? null,
-                        composeConfig: result.composeConfig ?? null,
-                    },
-                });
-            } catch (err) {
-                await ctx.logger.warn(
-                    this.metadata.id,
-                    `Failed to save version to DB: ${err instanceof Error ? err.message : String(err)}`,
-                );
+                    });
+                } catch (err) {
+                    await ctx.logger.warn(
+                        this.metadata.id,
+                        `Failed to save version to DB: ${err instanceof Error ? err.message : String(err)}`,
+                    );
+                }
             }
 
             await ctx.logger.info(

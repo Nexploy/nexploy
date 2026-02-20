@@ -8,9 +8,9 @@ import { HTTPError } from 'ky';
 
 export const onImageAction = authActionServer
     .inputSchema(imageActionsSchema)
-    .action(async ({ parsedInput: { action, imageIds } }) => {
+    .action(async ({ parsedInput: { action, imageIds, force } }) => {
         try {
-            return await kyDocker.post(`images/${action}`, { json: { imageIds } }).json();
+            return await kyDocker.post(`images/${action}`, { json: { imageIds, force } }).json();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({

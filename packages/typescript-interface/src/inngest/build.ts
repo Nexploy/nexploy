@@ -43,6 +43,7 @@ export interface BuildLogEntry {
 
 export interface BuildConfig extends GitProviderToken {
     userId: string;
+    gitAccountId?: string;
     repositoryId: string;
     repositoryPath: string;
     gitProvider: string;

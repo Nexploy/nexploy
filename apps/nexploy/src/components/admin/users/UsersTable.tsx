@@ -138,6 +138,11 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         onRowSelectionChange: setRowSelection,
+        initialState: {
+            pagination: {
+                pageSize: pageSize === 'all' ? users.length : pageSize,
+            },
+        },
         state: {
             sorting,
             globalFilter,

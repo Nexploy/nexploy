@@ -478,6 +478,8 @@
         "noStacksDescription": "No container stacks found. Deploy a Docker Compose stack to see it here.",
         "removeImages": "Remove Images",
         "confirmRemoveImages": "Are you sure you want to remove {count} image(s)?",
+        "forceDelete": "Force delete",
+        "forceDeleteDescription": "Remove even if used by stopped containers",
         "use": "Use",
         "selectImageToUse": "Please select an image to use",
         "selectOnlyOneImage": "Please select only one image",
@@ -647,7 +649,9 @@
         "image": {
             "removeTitle": "Remove Image",
             "removeDescription": "Are you sure you want to remove {name} image?",
-            "noRepositoryTags": "This image has no repository tags"
+            "noRepositoryTags": "This image has no repository tags",
+            "forceDelete": "Force delete",
+            "forceDeleteDescription": "Remove even if used by stopped containers"
         },
         "volume": {
             "removeTitle": "Remove Volume",

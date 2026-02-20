@@ -478,6 +478,8 @@
         "noStacksDescription": "Aucun stack de conteneurs trouvé. Déployez un stack Docker Compose pour le voir ici.",
         "removeImages": "Supprimer les images",
         "confirmRemoveImages": "Êtes-vous sûr de vouloir supprimer {count} image(s) ?",
+        "forceDelete": "Forcer la suppression",
+        "forceDeleteDescription": "Supprimer même si utilisées par des conteneurs arrêtés",
         "use": "Utiliser",
         "selectImageToUse": "Veuillez sélectionner une image à utiliser",
         "selectOnlyOneImage": "Veuillez sélectionner une seule image",
@@ -647,7 +649,9 @@
         "image": {
             "removeTitle": "Supprimer l'image",
             "removeDescription": "Êtes-vous sûr de vouloir supprimer l'image {name} ?",
-            "noRepositoryTags": "Cette image n'a pas de tags de repository"
+            "noRepositoryTags": "Cette image n'a pas de tags de repository",
+            "forceDelete": "Forcer la suppression",
+            "forceDeleteDescription": "Supprimer même si utilisée par des conteneurs arrêtés"
         },
         "volume": {
             "removeTitle": "Supprimer le volume",

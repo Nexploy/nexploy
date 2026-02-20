@@ -4,21 +4,11 @@ import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
 import { getCurrentDockerClient, getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
-import {
-    buildDockerHostEnv,
-    getComposeContainerIds,
-    runDockerCompose,
-} from '@/utils/dockerComposeRunner';
+import { buildDockerHostEnv, runDockerCompose } from '@/utils/dockerComposeRunner';
 import path from 'path';
 import fs from 'fs';
 import yaml from 'yaml';
 import { findUnresolvedVariables, substituteEnvVars } from '@/utils/composePreprocessor';
-import {
-    getExplicitContainerNames,
-    getServicesToPull,
-    parseComposeBuildConfigs,
-} from '@/utils/composeBuildParser';
-import { buildComposeServices, cleanupPartialBuild } from '@/utils/composeBuildService';
 import {
     getTransformationSummary,
     transformBindMountsForRemote,
@@ -75,7 +65,6 @@ app.post('/stream/compose', async (c) => {
         let envFileWritten = false;
         let modifiedComposeFile: string | null = null;
         let volumeTransformResult: VolumeTransformationResult | null = null;
-        const builtImageNames: string[] = [];
         const abortController = new AbortController();
 
         const envConfig = environmentId
@@ -113,19 +102,36 @@ app.post('/stream/compose', async (c) => {
                 'Starting Docker Compose deployment',
             );
 
-            if (envVars && Object.keys(envVars).length > 0) {
+            const composeYamlRaw = fs.readFileSync(composeFilePath, 'utf8');
+
+            const nexployVersionRe = /\$\{?NEXPLOY_VERSION\}?/;
+            const rawServices = (yaml.parse(composeYamlRaw) as ComposeContent).services || {};
+            const versionedServiceNames = new Set(
+                buildId
+                    ? Object.entries(rawServices)
+                          .filter(([, s]) => s.image && nexployVersionRe.test(String(s.image)))
+                          .map(([name]) => name)
+                    : [],
+            );
+
+            const effectiveEnvVars: Record<string, string> = { ...(envVars || {}) };
+            if (versionedServiceNames.size > 0 && buildId) {
+                effectiveEnvVars['NEXPLOY_VERSION'] = buildId;
                 sendLog(
-                    `Writing ${Object.keys(envVars).length} environment variable(s) to .env file...`,
+                    `Version tracking enabled for: ${[...versionedServiceNames].join(', ')} (tag: ${buildId})`,
                 );
-                writeEnvFile(workDir, envVars);
+            }
+
+            if (Object.keys(effectiveEnvVars).length > 0) {
+                sendLog(
+                    `Writing ${Object.keys(effectiveEnvVars).length} environment variable(s) to .env file...`,
+                );
+                writeEnvFile(workDir, effectiveEnvVars);
                 envFileWritten = true;
                 sendLog('Environment variables written successfully');
             }
 
-            let composeYamlContent = fs.readFileSync(composeFilePath, 'utf8');
-            if (envVars && Object.keys(envVars).length > 0) {
-                composeYamlContent = substituteEnvVars(composeYamlContent, envVars);
-            }
+            const composeYamlContent = substituteEnvVars(composeYamlRaw, effectiveEnvVars);
 
             const unresolvedVars = findUnresolvedVariables(composeYamlContent);
             if (unresolvedVars.length > 0) {
@@ -135,6 +141,7 @@ app.post('/stream/compose', async (c) => {
             }
 
             let composeContent = yaml.parse(composeYamlContent) as ComposeContent;
+            let composeModified = false;
 
             const isRemoteEnvironment =
                 envConfig?.connectionType === 'TCP' || envConfig?.connectionType === 'TCP_TLS';
@@ -142,17 +149,10 @@ app.post('/stream/compose', async (c) => {
             if (isRemoteEnvironment) {
                 sendLog('Remote Docker environment detected - transforming bind mounts...');
 
-                const initialBuildConfigs = parseComposeBuildConfigs(
-                    composeContent,
-                    projectName,
-                    workDir,
-                    buildId,
-                );
                 volumeTransformResult = transformBindMountsForRemote(
                     composeContent,
                     workDir,
                     projectName,
-                    initialBuildConfigs,
                 );
 
                 for (const warning of volumeTransformResult.warnings) {
@@ -196,15 +196,40 @@ app.post('/stream/compose', async (c) => {
                 if (volumeTransformResult.transformations.length > 0) {
                     sendLog('Bind mount transformation complete');
                 }
+
+                composeModified = true;
             }
 
-            const buildConfigs = parseComposeBuildConfigs(
-                composeContent,
-                projectName,
-                workDir,
-                buildId,
-            );
-            const servicesToPull = getServicesToPull(composeContent);
+            const servicesToBuild = Object.entries(composeContent.services || {})
+                .filter(([, s]) => !!s.build)
+                .map(([name]) => name);
+
+            if (labels && versionedServiceNames.size > 0) {
+                for (const serviceName of servicesToBuild) {
+                    if (!versionedServiceNames.has(serviceName)) continue;
+                    const service = composeContent.services![serviceName];
+                    if (typeof service.build === 'string') {
+                        (service as any).build = { context: service.build, labels };
+                    } else if (service.build) {
+                        (service.build as any).labels = {
+                            ...((service.build as any).labels || {}),
+                            ...labels,
+                        };
+                    }
+                    composeModified = true;
+                }
+            }
+
+            if (composeModified) {
+                modifiedComposeFile = path.join(workDir, '.nexploy-compose-processed.yml');
+                fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
+            }
+
+            const activeComposeFile = modifiedComposeFile || composeFilePath;
+
+            const servicesToPull = Object.entries(composeContent.services || {})
+                .filter(([, s]) => s.image && !s.build)
+                .map(([name]) => name);
 
             if (servicesToPull.length > 0) {
                 sendLog(`Pulling images for ${servicesToPull.length} service(s)...`);
@@ -217,7 +242,7 @@ app.post('/stream/compose', async (c) => {
                     sendLog(`Pulling image for service: ${serviceName}...`);
                     try {
                         const exitCode = await runDockerCompose(
-                            ['-p', projectName, '-f', composeFilePath, 'pull', serviceName],
+                            ['-p', projectName, '-f', activeComposeFile, 'pull', serviceName],
                             workDir,
                             dockerEnv,
                             sendLog,
@@ -244,30 +269,22 @@ app.post('/stream/compose', async (c) => {
                 }
 
                 sendLog('Images pulled successfully');
-            } else if (buildConfigs.length === 0) {
-                sendLog('No images to pull or build');
             }
 
-            if (buildConfigs.length > 0) {
+            if (servicesToBuild.length > 0) {
                 sendLog(
-                    `Building ${buildConfigs.length} service(s) via Docker API: ${buildConfigs.map((c) => c.serviceName).join(', ')}`,
+                    `Building ${servicesToBuild.length} service(s): ${servicesToBuild.join(', ')}`,
                 );
-
-                await buildComposeServices(
-                    dockerClient,
-                    buildConfigs,
-                    (progress) => {
-                        if (progress.message) {
-                            sendLog(`[${progress.serviceName}] ${progress.message}`);
-                        }
-                        if (progress.type === 'complete' && progress.imageId) {
-                            builtImageNames.push(progress.imageId);
-                        }
-                    },
+                const buildCode = await runDockerCompose(
+                    ['-p', projectName, '-f', activeComposeFile, 'build'],
+                    workDir,
+                    dockerEnv,
+                    sendLog,
                     abortController.signal,
-                    labels,
                 );
-
+                if (buildCode !== 0) {
+                    throw new Error(`docker compose build failed with exit code ${buildCode}`);
+                }
                 sendLog('All services built successfully');
 
                 try {
@@ -287,17 +304,25 @@ app.post('/stream/compose', async (c) => {
                     );
                 }
 
-                for (const config of buildConfigs) {
-                    const service = composeContent.services?.[config.serviceName];
-                    if (service) {
-                        service.image = config.imageName;
-                        delete service.build;
-                    }
+                sendLog('Resolving built image references...');
+                for (const serviceName of servicesToBuild) {
+                    const service = composeContent.services![serviceName];
+                    const builtRef = service.image
+                        ? (service.image as string).includes(':')
+                            ? (service.image as string)
+                            : `${service.image}:latest`
+                        : `${projectName}-${serviceName}:latest`;
+
+                    service.image = builtRef;
+                    delete (service as any).build;
+
+                    sendLog(`  ${serviceName} → ${builtRef}`);
                 }
 
                 modifiedComposeFile = path.join(workDir, '.nexploy-compose-processed.yml');
                 fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
-                sendLog('Created processed compose file for deployment');
+            } else if (servicesToPull.length === 0) {
+                sendLog('No images to pull or build');
             }
 
             if (isRemoteEnvironment) {
@@ -360,41 +385,6 @@ app.post('/stream/compose', async (c) => {
                 sendLog('No existing containers to remove from project');
             }
 
-            const containerNames = getExplicitContainerNames(composeContent);
-
-            for (const containerName of containerNames) {
-                try {
-                    const container = dockerClient.getContainer(containerName);
-                    const info = await container.inspect();
-                    sendLog(`Stopping existing container: ${containerName}`);
-                    if (info.State.Running) {
-                        await container.stop();
-                    }
-                    await container.remove({ force: true });
-                    sendLog(`Removed existing container: ${containerName}`);
-                } catch (removeError) {}
-            }
-
-            if (composeContent.networks) {
-                for (const networkName of Object.keys(composeContent.networks)) {
-                    const fullNetworkName = `${projectName}_${networkName}`;
-                    try {
-                        const network = dockerClient.getNetwork(fullNetworkName);
-                        const networkInfo = await network.inspect();
-
-                        const connectedContainers = networkInfo.Containers || {};
-                        for (const containerId of Object.keys(connectedContainers)) {
-                            try {
-                                await network.disconnect({ Container: containerId, Force: true });
-                            } catch {}
-                        }
-
-                        await network.remove();
-                        sendLog(`Removed existing network: ${fullNetworkName}`);
-                    } catch {}
-                }
-            }
-
             sendLog('Starting services...');
             const upCode = await runDockerCompose(
                 ['-p', projectName, '-f', deployComposeFile, 'up', '-d', '--remove-orphans'],
@@ -408,12 +398,11 @@ app.post('/stream/compose', async (c) => {
             }
             sendLog('Services started successfully');
 
-            const containerIds = await getComposeContainerIds(
-                projectName,
-                deployComposeFile,
-                workDir,
-                dockerEnv,
-            );
+            const runningContainers = await dockerClient.listContainers({
+                all: true,
+                filters: { label: [`com.docker.compose.project=${projectName}`] },
+            });
+            const containerIds = runningContainers.map((c) => c.Id);
 
             sendLog(`Connecting ${containerIds.length} containers to Traefik network...`);
             for (const containerId of containerIds) {
@@ -437,6 +426,7 @@ app.post('/stream/compose', async (c) => {
                 success: true,
                 containers: containerIds,
                 composeConfig: composeConfigB64,
+                versioned: versionedServiceNames.size > 0,
             };
 
             if (!isClientDisconnected && !c.req.raw.signal.aborted) {
@@ -453,11 +443,6 @@ app.post('/stream/compose', async (c) => {
             await stream.close();
         } catch (error) {
             logger.error({ error, workDir, projectName }, 'Docker Compose deployment failed');
-
-            if (builtImageNames.length > 0) {
-                sendLog('Cleaning up partially built images...');
-                await cleanupPartialBuild(dockerClient, builtImageNames);
-            }
 
             if (!isClientDisconnected && !c.req.raw.signal.aborted) {
                 try {

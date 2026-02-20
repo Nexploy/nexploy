@@ -76,14 +76,12 @@ app.post(
 app.post(
     '/delete',
     handleAsync(async (c) => {
-        const { imageIds } = await c.req.json();
+        const { imageIds, force } = await c.req.json();
 
         if (imageIds.length === 0) {
             const t = getTranslations(c, 'docker');
             throw new HttpError(t('errors.noImageIdsProvided'), 400);
         }
-
-        const force = c.req.query('force') === 'true';
 
         await Promise.all(
             imageIds.map(async (imageId: string) => {
