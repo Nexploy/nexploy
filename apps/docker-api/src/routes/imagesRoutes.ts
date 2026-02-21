@@ -16,14 +16,24 @@ app.post(
 
 app.get(
     '/',
-    handleAsync(async (c) => {
-        const name = c.req.query('name');
-
-        if (name) {
-            return imagesStateManager.getByName(name);
-        }
-
+    handleAsync(async () => {
         return imagesStateManager.getAllImages();
+    }),
+);
+
+app.get(
+    '/name/:name',
+    handleAsync(async (c) => {
+        const name = c.req.param('name');
+        return imagesStateManager.getByName(name);
+    }),
+);
+
+app.get(
+    '/id/:id',
+    handleAsync(async (c) => {
+        const id = c.req.param('id');
+        return imagesStateManager.getById(id);
     }),
 );
 

@@ -12,6 +12,7 @@ import { getRepositorieById } from '@/services/repository.service';
 import { Separator } from '@workspace/ui/components/separator';
 import { capitalizeFirstLetter, toDisplayLabel } from '@/utils/capitalize';
 import Link from 'next/link';
+import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
 
 interface RepositoryIdPageProps {
     params: Promise<{
@@ -34,75 +35,79 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
     const GitIcon = getGitIcon(repository.gitProvider);
 
     return (
-        <div className="flex h-full flex-1 flex-col pt-5">
-            <div className="flex flex-col gap-4 overflow-hidden">
-                <div className="flex items-start justify-between gap-2 px-5">
-                    <div className="flex gap-3">
-                        <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                            <GitIcon className="text-primary size-7" />
-                        </div>
-                        <div className="flex flex-col">
-                            <Link
-                                href={repository.repositoryUrl}
-                                className={'group flex items-center gap-1'}
-                                target="_blank"
-                            >
-                                <h1 className="text-3xl leading-none font-semibold tracking-tight group-hover:underline">
-                                    {repository.name}
-                                </h1>
-                                <ExternalLink
+        <BreadcrumbProvider segments={{ repositoryId: repository.name }}>
+            <div className="flex h-full flex-1 flex-col pt-5">
+                <div className="flex flex-col gap-4 overflow-hidden">
+                    <div className="flex items-start justify-between gap-2 px-5">
+                        <div className="flex gap-3">
+                            <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+                                <GitIcon className="text-primary size-7" />
+                            </div>
+                            <div className="flex flex-col">
+                                <Link
+                                    href={repository.repositoryUrl}
+                                    className={'group flex items-center gap-1'}
+                                    target="_blank"
+                                >
+                                    <h1 className="text-3xl leading-none font-semibold tracking-tight group-hover:underline">
+                                        {repository.name}
+                                    </h1>
+                                    <ExternalLink
+                                        className={
+                                            'size-4 opacity-0 transition-opacity group-hover:opacity-100'
+                                        }
+                                    />
+                                </Link>
+                                <div
                                     className={
-                                        'size-4 opacity-0 transition-opacity group-hover:opacity-100'
+                                        'text-muted-foreground flex items-center gap-2 text-sm'
                                     }
-                                />
-                            </Link>
-                            <div
-                                className={'text-muted-foreground flex items-center gap-2 text-sm'}
-                            >
-                                <span>{capitalizeFirstLetter(repository.gitProvider)}</span>
-                                <Separator orientation={'vertical'} className={'!h-3 w-1'} />
-                                <p className="flex items-center gap-1">
-                                    <GitBranch className="size-3" />
-                                    <span>{repository.branch}</span>
-                                </p>
-                                <Separator orientation={'vertical'} className={'!h-3 w-1'} />
-                                <div className={'flex items-center gap-1'}>
-                                    <Server className="size-3" />
+                                >
+                                    <span>{capitalizeFirstLetter(repository.gitProvider)}</span>
+                                    <Separator orientation={'vertical'} className={'!h-3 w-1'} />
+                                    <p className="flex items-center gap-1">
+                                        <GitBranch className="size-3" />
+                                        <span>{repository.branch}</span>
+                                    </p>
+                                    <Separator orientation={'vertical'} className={'!h-3 w-1'} />
+                                    <div className={'flex items-center gap-1'}>
+                                        <Server className="size-3" />
+                                        <span className={'truncate'}>
+                                            {repository.environment?.name}
+                                        </span>
+                                    </div>
+                                    <Separator orientation={'vertical'} className={'!h-3 w-1'} />
                                     <span className={'truncate'}>
-                                        {repository.environment?.name}
+                                        {toDisplayLabel(repository.buildType)}
                                     </span>
                                 </div>
-                                <Separator orientation={'vertical'} className={'!h-3 w-1'} />
-                                <span className={'truncate'}>
-                                    {toDisplayLabel(repository.buildType)}
-                                </span>
                             </div>
                         </div>
-                    </div>
-                    <div className="flex shrink-0 items-center gap-2">
-                        <RunBuildButton
-                            repositoryId={repository.id}
-                            environmentId={repository.environmentId}
-                        />
-                    </div>
-                </div>
-
-                <RepositoryTabs>
-                    {{
-                        builds: <RepositoryBuildsTab repositoryId={repository.id} />,
-                        versions: (
-                            <RepositoryVersionsTab
+                        <div className="flex shrink-0 items-center gap-2">
+                            <RunBuildButton
                                 repositoryId={repository.id}
-                                buildType={repository.buildType}
+                                environmentId={repository.environmentId}
                             />
-                        ),
-                        env: <RepositoryEnvTab repositoryId={repository.id} />,
-                        domain: <RepositoryDomainsTab repositoryId={repository.id} />,
-                        deployment: <RepositoryDeploymentTab repositoryId={repository.id} />,
-                        setting: <RepositorySettingsTab repositoryId={repository.id} />,
-                    }}
-                </RepositoryTabs>
+                        </div>
+                    </div>
+
+                    <RepositoryTabs>
+                        {{
+                            builds: <RepositoryBuildsTab repositoryId={repository.id} />,
+                            versions: (
+                                <RepositoryVersionsTab
+                                    repositoryId={repository.id}
+                                    buildType={repository.buildType}
+                                />
+                            ),
+                            env: <RepositoryEnvTab repositoryId={repository.id} />,
+                            domain: <RepositoryDomainsTab repositoryId={repository.id} />,
+                            deployment: <RepositoryDeploymentTab repositoryId={repository.id} />,
+                            setting: <RepositorySettingsTab repositoryId={repository.id} />,
+                        }}
+                    </RepositoryTabs>
+                </div>
             </div>
-        </div>
+        </BreadcrumbProvider>
     );
 }

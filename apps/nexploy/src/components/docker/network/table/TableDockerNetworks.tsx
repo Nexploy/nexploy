@@ -170,7 +170,7 @@ export function TableDockerNetworks() {
                         )}
                     </Button>
                     <Button asChild>
-                        <Link href={'/docker/networks/create-network'}>
+                        <Link href={'/docker/networks/create'}>
                             <Plus />
                             {tDocker('createNetwork')}
                         </Link>

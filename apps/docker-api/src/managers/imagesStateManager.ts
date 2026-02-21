@@ -413,7 +413,7 @@ export class ImagesStateManager extends BaseStateManager {
         return Array.from(this.images.values());
     }
 
-    getState(imageId: string): Image | undefined {
+    getById(imageId: string): Image | undefined {
         return this.images.get(imageId);
     }
 

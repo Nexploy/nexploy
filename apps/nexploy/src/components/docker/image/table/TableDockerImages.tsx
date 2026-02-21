@@ -282,7 +282,7 @@ export function TableDockerImages() {
                         })()}
                     </Tooltip>
                     <Button asChild>
-                        <Link href={'/docker/images/pull-image'}>
+                        <Link href={'/docker/images/pull'}>
                             <Plus />
                             {tDocker('pullImage')}
                         </Link>

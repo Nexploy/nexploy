@@ -114,7 +114,6 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
                     if (!data.container) return;
 
                     if (!data.container.image?.startsWith('sha256:')) {
-                        console.log(data.container.image);
                         get().addContainer(data.container);
                         toast.success(
                             toastT('toasts.containerAdded', { name: data.container.name }),

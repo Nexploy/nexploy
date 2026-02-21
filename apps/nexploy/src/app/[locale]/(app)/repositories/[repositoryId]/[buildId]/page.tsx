@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getRepositorieBuildLogs } from '@/services/repository.service';
 import { BuildLogs } from '@/components/repositories/tabs/builds/logs/BuildLogs';
+import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
 
 interface BuildPageProps {
     params: Promise<{
@@ -14,5 +15,11 @@ export default async function BuildPage({ params }: BuildPageProps) {
     const build = await getRepositorieBuildLogs(repositoryId, buildId);
     if (!build) notFound();
 
-    return <BuildLogs build={build} />;
+    return (
+        <BreadcrumbProvider
+            segments={{ repositoryId: build.repository.name, buildId: build.branch }}
+        >
+            <BuildLogs build={build} />
+        </BreadcrumbProvider>
+    );
 }

@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import { NetworkDetailPage } from '@/components/docker/network/NetworkDetailPage';
 import { SSEProvider } from '@/providers/SSEProviders';
+import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { notFound } from 'next/navigation';
+import { NetworkInspectInfo } from 'dockerode';
 
 export async function generateMetadata({
     params,
@@ -19,15 +21,19 @@ export async function generateMetadata({
 export default async function NetworkPage({ params }: { params: Promise<{ networkId: string }> }) {
     const { networkId } = await params;
 
+    let networkName: string;
     try {
-        await kyDocker.get(`networks/${networkId}`).json();
+        const network = await kyDocker.get(`networks/${networkId}`).json<NetworkInspectInfo>();
+        networkName = network.Name;
     } catch {
         notFound();
     }
 
     return (
-        <SSEProvider connections={['networks', 'containers']}>
-            <NetworkDetailPage networkId={networkId} />
-        </SSEProvider>
+        <BreadcrumbProvider segments={{ networkId: networkName }}>
+            <SSEProvider connections={['networks', 'containers']}>
+                <NetworkDetailPage networkId={networkId} />
+            </SSEProvider>
+        </BreadcrumbProvider>
     );
 }

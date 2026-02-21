@@ -4,8 +4,11 @@ import { HardDrive } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { CardInfoVolumes } from '@/components/docker/volume/CardInfoVolumes';
 import { TableDockerVolumes } from '@/components/docker/volume/table/TableDockerVolumes';
+import { useTranslations } from 'next-intl';
 
 export default function VolumesPage() {
+    const t = useTranslations('docker.pages.volumes');
+
     return (
         <div className="flex h-full flex-1 flex-col pt-5">
             <div className="flex flex-col gap-5 overflow-hidden">
@@ -15,11 +18,9 @@ export default function VolumesPage() {
                     </div>
                     <div className={'flex flex-col'}>
                         <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                            Docker Volumes
+                            {t('title')}
                         </h1>
-                        <p className="text-muted-foreground text-sm">
-                            Gérez et visualisez tous vos volumes Docker
-                        </p>
+                        <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
                 </div>
 

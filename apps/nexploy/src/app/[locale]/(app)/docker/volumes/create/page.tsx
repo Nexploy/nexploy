@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowLeft, HardDrive, Info, Plus, X } from 'lucide-react';
+import { ArrowLeft, HardDrive, Plus, X } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
@@ -32,7 +32,6 @@ import {
 } from '@workspace/ui/components/select';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { onVolumeCreateAction } from '@/actions/docker/volume/volumeCreate.action';
-import { Alert, AlertTitle } from '@workspace/ui/components/alert';
 import { toast } from 'sonner';
 import { volumeCreateSchema } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 import { useTranslations } from 'next-intl';
@@ -111,10 +110,10 @@ export default function CreateVolumePage() {
     };
 
     return (
-        <div className="flex flex-1 flex-col overflow-hidden pt-5">
+        <div className="flex h-full flex-1 flex-col pt-5">
             <Form {...form}>
                 <form
-                    className={'flex flex-1 flex-col overflow-hidden'}
+                    className={'flex flex-1 flex-col gap-5 overflow-hidden'}
                     onSubmit={handleSubmitWithAction}
                 >
                     <div className="flex justify-between gap-4 px-5">
@@ -126,9 +125,7 @@ export default function CreateVolumePage() {
                                 <h1 className="text-3xl leading-none font-semibold tracking-tight">
                                     {t('title')}
                                 </h1>
-                                <p className="text-muted-foreground text-sm">
-                                    {t('description')}
-                                </p>
+                                <p className="text-muted-foreground text-sm">{t('description')}</p>
                             </div>
                         </div>
                         <div className="flex gap-3">
@@ -148,21 +145,12 @@ export default function CreateVolumePage() {
                         </div>
                     </div>
 
-                    <Alert variant={'info'} className={'mx-5 mt-5 mb-4 w-auto'}>
-                        <Info />
-                        <AlertTitle>
-                            {t('volumesPersist')}
-                        </AlertTitle>
-                    </Alert>
-
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
                         <div className="space-y-4 overflow-hidden px-5 pb-5">
                             <Card>
                                 <CardHeader>
                                     <CardTitle>{t('configuration')}</CardTitle>
-                                    <CardDescription>
-                                        {t('configureParams')}
-                                    </CardDescription>
+                                    <CardDescription>{t('configureParams')}</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <FormField
@@ -172,7 +160,10 @@ export default function CreateVolumePage() {
                                             <FormItem>
                                                 <FormLabel>{t('volumeName')}</FormLabel>
                                                 <FormControl>
-                                                    <Input {...field} placeholder={t('volumeNamePlaceholder')} />
+                                                    <Input
+                                                        {...field}
+                                                        placeholder={t('volumeNamePlaceholder')}
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                                 <FormDescription>
@@ -194,15 +185,14 @@ export default function CreateVolumePage() {
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger className={'min-w-30'}>
-                                                            <SelectValue placeholder={t('selectDriver')} />
+                                                            <SelectValue
+                                                                placeholder={t('selectDriver')}
+                                                            />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
                                                         {VOLUME_DRIVERS.map((driver) => (
-                                                            <SelectItem
-                                                                key={driver}
-                                                                value={driver}
-                                                            >
+                                                            <SelectItem key={driver} value={driver}>
                                                                 {tDrivers(driver)}
                                                             </SelectItem>
                                                         ))}

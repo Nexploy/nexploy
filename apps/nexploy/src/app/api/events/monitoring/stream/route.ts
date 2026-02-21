@@ -53,7 +53,6 @@ export const GET = route.use(authRouteServer).handler(async (request: Request) =
                     ),
                 );
             } catch (error) {
-                console.error('[Monitoring] Error getting initial metrics:', error);
                 controller.enqueue(
                     encoder.encode(
                         `data: ${JSON.stringify({

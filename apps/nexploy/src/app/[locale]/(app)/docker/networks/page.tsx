@@ -4,8 +4,11 @@ import { EthernetPort } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { CardInfoNetworks } from '@/components/docker/network/CardInfoNetworks';
 import { TableDockerNetworks } from '@/components/docker/network/table/TableDockerNetworks';
+import { useTranslations } from 'next-intl';
 
 export default function NetworksPage() {
+    const t = useTranslations('docker.pages.networks');
+
     return (
         <div className="flex h-full flex-1 flex-col gap-5 pt-5">
             <div className={'flex gap-3 px-5'}>
@@ -14,11 +17,9 @@ export default function NetworksPage() {
                 </div>
                 <div className={'flex flex-col'}>
                     <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                        Docker Networks
+                        {t('title')}
                     </h1>
-                    <p className="text-muted-foreground text-sm">
-                        Gérez et visualisez tous vos réseaux Docker
-                    </p>
+                    <p className="text-muted-foreground text-sm">{t('description')}</p>
                 </div>
             </div>
 

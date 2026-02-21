@@ -158,9 +158,7 @@ export function AICommand() {
                                         </CommandItem>
                                         <CommandItem
                                             onSelect={() =>
-                                                runCommand(() =>
-                                                    router.push('/docker/images/pull-image'),
-                                                )
+                                                runCommand(() => router.push('/docker/images/pull'))
                                             }
                                         >
                                             <FileIcon className="mr-2 h-4 w-4" />

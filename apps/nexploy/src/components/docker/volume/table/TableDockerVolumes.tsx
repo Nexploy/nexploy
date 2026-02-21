@@ -175,7 +175,7 @@ export function TableDockerVolumes() {
                         })()}
                     </Tooltip>
                     <Button asChild>
-                        <Link href={'/docker/volumes/create-volume'}>
+                        <Link href={'/docker/volumes/create'}>
                             <Plus />
                             {tDocker('createVolume')}
                         </Link>

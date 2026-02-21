@@ -15,45 +15,38 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
-import { Skeleton } from '@workspace/ui/components/skeleton';
 import { Fragment } from 'react';
 import { Link } from '@/i18n/navigation';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { addSpaceBeforeUppercase, capitalizeWords } from '@/utils/capitalize';
-import { useContainerStore } from '@/stores/docker/useContainerStore';
+import { useBreadcrumbStore } from '@/stores/useBreadcrumbStore';
 
 const ITEMS_TO_DISPLAY = 2;
 const MAX_ITEMS_BEFORE_COLLAPSE = 3;
 
 export function BreadcrumbPath() {
     const pathname = usePathname();
-    const container = useContainerStore((state) => state.container);
+    const params = useParams();
+    const overrides = useBreadcrumbStore((state) => state.overrides);
+
+    const segmentToParamName = Object.fromEntries(
+        Object.entries(params).flatMap(([paramName, value]) =>
+            Array.isArray(value) ? value.map((v) => [v, paramName]) : [[value, paramName]],
+        ),
+    );
 
     const segments = pathname.split('/').filter(Boolean);
 
     const paths = segments.map((segment, index) => {
-        let displayName = capitalizeWords(addSpaceBeforeUppercase(segment));
-        let isLoading = false;
-
-        const isContainerId = segments[index - 1] === 'containers' && segment.length > 20;
-
-        if (isContainerId) {
-            if (container?.name) {
-                displayName = container.name;
-            } else {
-                isLoading = true;
-            }
-        }
+        const paramName = segmentToParamName[segment];
+        const override = paramName ? overrides[paramName] : undefined;
 
         return {
-            name: displayName,
+            name: override ?? capitalizeWords(addSpaceBeforeUppercase(segment)),
             href: '/' + segments.slice(0, index + 1).join('/'),
             isLast: index === segments.length - 1,
-            isLoading,
         };
     });
-
-    const SkeletonStyled = () => <Skeleton className="h-4 w-24 rounded-sm" />;
 
     if (paths.length === 0) return null;
 
@@ -61,18 +54,16 @@ export function BreadcrumbPath() {
         return (
             <Breadcrumb className="hidden pl-1 md:flex">
                 <BreadcrumbList className="flex-nowrap">
-                    {paths.map(({ name, href, isLast, isLoading }) => (
+                    {paths.map(({ name, href, isLast }) => (
                         <Fragment key={href}>
                             <BreadcrumbItem>
                                 {isLast ? (
                                     <BreadcrumbPage className="line-clamp-1 break-all">
-                                        {isLoading ? <SkeletonStyled /> : name}
+                                        {name}
                                     </BreadcrumbPage>
                                 ) : (
                                     <BreadcrumbLink asChild>
-                                        <Link href={href}>
-                                            {isLoading ? <SkeletonStyled /> : name}
-                                        </Link>
+                                        <Link href={href}>{name}</Link>
                                     </BreadcrumbLink>
                                 )}
                             </BreadcrumbItem>
@@ -91,11 +82,11 @@ export function BreadcrumbPath() {
     return (
         <Breadcrumb className="hidden min-w-0 flex-1 cursor-pointer overflow-hidden pl-1 md:flex">
             <BreadcrumbList className="flex-nowrap">
-                {firstItems.map(({ name, href, isLoading }) => (
+                {firstItems.map(({ name, href }) => (
                     <Fragment key={href}>
                         <BreadcrumbItem>
                             <BreadcrumbLink asChild>
-                                <Link href={href}>{isLoading ? <SkeletonStyled /> : name}</Link>
+                                <Link href={href}>{name}</Link>
                             </BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
@@ -108,9 +99,9 @@ export function BreadcrumbPath() {
                             <span className="sr-only">Toggle menu</span>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">
-                            {middleItems.map(({ name, href, isLoading }) => (
+                            {middleItems.map(({ name, href }) => (
                                 <DropdownMenuItem key={href} asChild>
-                                    <Link href={href}>{isLoading ? <SkeletonStyled /> : name}</Link>
+                                    <Link href={href}>{name}</Link>
                                 </DropdownMenuItem>
                             ))}
                         </DropdownMenuContent>
@@ -119,7 +110,7 @@ export function BreadcrumbPath() {
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                     <BreadcrumbPage className="line-clamp-1 break-all">
-                        {lastItem.isLoading ? <SkeletonStyled /> : lastItem.name}
+                        {lastItem.name}
                     </BreadcrumbPage>
                 </BreadcrumbItem>
             </BreadcrumbList>
