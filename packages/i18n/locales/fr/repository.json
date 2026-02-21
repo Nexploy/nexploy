@@ -33,6 +33,7 @@
     "versions": {
         "title": "Versions",
         "noVersions": "Aucune version disponible. Les versions sont créées après un build réussi.",
+        "noEnvironment": "Aucun environnement",
         "deployed": "Déployée",
         "deploy": "Déployer",
         "deploySuccess": "Version déployée avec succès",
@@ -122,6 +123,7 @@
         "branch": "Branche",
         "triggeredBy": "Déclenché par",
         "noBuilds": "Aucun build",
+        "noEnvironment": "Aucun environnement",
         "noBuild": "Aucun build",
         "startedAt": "Démarré le",
         "finishedAt": "Terminé le",

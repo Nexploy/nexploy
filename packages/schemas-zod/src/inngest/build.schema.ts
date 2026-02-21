@@ -45,6 +45,7 @@ export const cancelBuildSchema = z.object({
 export const deployVersionSchema = z.object({
     imageTag: z.string(),
     repositoryId: z.cuid(),
+    environmentId: z.string().optional(),
 });
 
 export const deleteVersionSchema = z.object({

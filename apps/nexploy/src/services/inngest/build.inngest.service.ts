@@ -61,6 +61,7 @@ export async function startBuildRepositoryInngest(
         branch: repository.branch,
         commitHash: commit?.hash,
         commitMessage: commit?.message,
+        environmentId: repository.environmentId,
     });
 
     const imageName = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
@@ -111,11 +112,13 @@ export async function createBuild({
     branch,
     commitMessage,
     commitHash,
+    environmentId,
 }: {
     repositoryId: string;
     branch: string;
     commitMessage?: string;
     commitHash?: string;
+    environmentId?: string;
 }) {
     try {
         return await prisma.build.create({
@@ -124,6 +127,7 @@ export async function createBuild({
                 branch,
                 commitMessage,
                 commitHash,
+                environmentId,
             },
         });
     } catch (error: unknown) {
@@ -354,6 +358,11 @@ export async function getAllBuildsInngest(repositoryId: string) {
         return await prisma.build.findMany({
             where: { repositoryId },
             orderBy: { createdAt: 'desc' },
+            include: {
+                environment: {
+                    select: { id: true, name: true },
+                },
+            },
         });
     } catch (error: unknown) {
         throw new Error('Failed to get builds');

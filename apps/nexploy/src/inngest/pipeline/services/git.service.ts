@@ -4,6 +4,7 @@ import { join } from 'path';
 import os from 'os';
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 import { getValidToken } from '@/services/api/gitProvider.service';
+import { getGitProviderToken } from '@/services/git/git.service';
 import { ProgressCallback } from '@/types/pipeline.type';
 
 class GitService {
@@ -68,12 +69,12 @@ class GitService {
 
         await mkdir(workDir, { recursive: true });
 
+        const latestToken = await getGitProviderToken(buildConfig.gitProvider, {
+            gitAccountId: buildConfig.gitAccountId,
+            requestedUserId: buildConfig.userId,
+        });
         const token = await getValidToken(
-            {
-                accessToken: buildConfig.accessToken,
-                accessTokenExpiresAt: buildConfig.accessTokenExpiresAt,
-                refreshToken: buildConfig.refreshToken,
-            },
+            latestToken,
             buildConfig.gitProvider,
             buildConfig.userId,
             buildConfig.gitAccountId,
@@ -116,7 +117,24 @@ class GitService {
                 workDir,
             );
 
-            await this.exec('git', cloneArgs, { env: gitEnv }, onProgress);
+            try {
+                await this.exec('git', cloneArgs, { env: gitEnv }, onProgress);
+            } catch (cloneError: unknown) {
+                const errorMessage =
+                    cloneError instanceof Error ? cloneError.message : String(cloneError);
+                const isAuthError =
+                    errorMessage.includes('Authentication failed') ||
+                    errorMessage.includes('Invalid username or token') ||
+                    errorMessage.includes('could not read Username');
+
+                if (isAuthError && token.accessToken) {
+                    await rm(workDir, { recursive: true, force: true }).catch(() => {});
+                    await mkdir(workDir, { recursive: true });
+                    await this.exec('git', cloneArgs, { env: process.env }, onProgress);
+                } else {
+                    throw cloneError;
+                }
+            }
 
             if (buildConfig.gitCommitHash) {
                 await this.exec('git', ['checkout', buildConfig.gitCommitHash], {
@@ -129,9 +147,20 @@ class GitService {
             const commitInfo = buildConfig.gitCommitHash
                 ? `, commit: ${buildConfig.gitCommitHash}`
                 : '';
-            const originalMessage = error instanceof Error ? `: ${error.message}` : '';
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            const isAuthError =
+                errorMessage.includes('Authentication failed') ||
+                errorMessage.includes('Invalid username or token') ||
+                errorMessage.includes('could not read Username');
+
+            if (isAuthError) {
+                throw new Error(
+                    `Failed to clone repository: Authentication failed for ${buildConfig.gitUrl}. Your Git provider token may be expired or revoked. Please reconnect your account from the integrations settings.`,
+                );
+            }
+
             throw new Error(
-                `Failed to clone repository from ${buildConfig.gitUrl} (branch: ${buildConfig.gitBranch}${commitInfo})${originalMessage}`,
+                `Failed to clone repository from ${buildConfig.gitUrl} (branch: ${buildConfig.gitBranch}${commitInfo}): ${errorMessage}`,
             );
         } finally {
             if (credsTmpDir) {

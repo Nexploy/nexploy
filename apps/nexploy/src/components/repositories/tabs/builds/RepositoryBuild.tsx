@@ -11,10 +11,14 @@ import { StatusBadge } from '@/components/shared/StatusBadge';
 import { BuildDropdownActions } from '@/components/repositories/BuildDropdownActions';
 import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
 
+type BuildWithEnvironment = Build & {
+    environment: { id: string; name: string } | null;
+};
+
 interface BuildLogsProps {
     repositoryId: string;
     index: number;
-    build: Build;
+    build: BuildWithEnvironment;
 }
 
 const statusEnable: BuildStatus[] = ['COMPLETED', 'FAILED'];

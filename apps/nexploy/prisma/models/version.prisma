@@ -13,6 +13,9 @@ model Version {
 
   repository Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
 
+  environmentId String?
+  environment   Environment? @relation("VersionEnvironment", fields: [environmentId], references: [id])
+
   @@unique([repositoryId, imageTag])
   @@index([repositoryId])
   @@map("version")

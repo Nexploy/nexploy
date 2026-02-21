@@ -12,27 +12,57 @@ export async function RepositoryBuildsTab({ repositoryId }: RepositoryOverviewTa
         getTranslations('repository.builds'),
     ]);
 
+    const buildGlobalIndex = new Map(
+        builds.map((build, index) => [build.id, builds.length - index]),
+    );
+
+    const groups = builds.reduce<Map<string | null, { name: string; builds: typeof builds }>>(
+        (acc, build) => {
+            const key = build.environmentId ?? null;
+            if (!acc.has(key)) {
+                acc.set(key, {
+                    name: build.environment?.name ?? t('noEnvironment'),
+                    builds: [],
+                });
+            }
+            acc.get(key)!.builds.push(build);
+            return acc;
+        },
+        new Map(),
+    );
+
     return (
         <div className="flex flex-col gap-2 px-5">
             <h2 className="text-xl font-semibold">{t('history')}</h2>
-            <div className="rounded-md border">
-                {builds.length === 0 ? (
+            {builds.length === 0 ? (
+                <div className="rounded-md border">
                     <div className="text-muted-foreground p-8 text-center text-sm">
                         {t('noBuilds')}
                     </div>
-                ) : (
-                    <div className="divide-y">
-                        {builds.map((build, index) => (
-                            <RepositoryBuild
-                                key={build.id}
-                                index={builds.length - index}
-                                repositoryId={repositoryId}
-                                build={build}
-                            />
-                        ))}
-                    </div>
-                )}
-            </div>
+                </div>
+            ) : (
+                <div className="flex flex-col gap-4">
+                    {Array.from(groups.entries()).map(([key, group]) => (
+                        <div key={key ?? 'none'} className="flex flex-col gap-1">
+                            <h3 className="text-muted-foreground px-1 text-sm font-medium">
+                                {group.name}
+                            </h3>
+                            <div className="rounded-md border">
+                                <div className="divide-y">
+                                    {group.builds.map((build) => (
+                                        <RepositoryBuild
+                                            key={build.id}
+                                            index={buildGlobalIndex.get(build.id)!}
+                                            repositoryId={repositoryId}
+                                            build={build}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

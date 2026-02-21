@@ -61,80 +61,85 @@ export default function MonitoringPage() {
         return `${days}d ${hours}h ${mins}m`;
     };
 
-    const statsCards = useMemo(() => [
-        {
-            title: t('cpuUsage'),
-            icon: Cpu,
-            value: `${metrics?.cpuPercent?.toFixed(1) || 0}%`,
-            description: `${metrics?.cpuCount || 0} cores • Load: ${metrics?.loadAverage?.[0]?.toFixed(2) || 0}`,
-        },
-        {
-            title: t('memory'),
-            icon: MemoryStick,
-            value: `${metrics?.memoryPercent?.toFixed(1) || 0}%`,
-            description: `${formatBytes(metrics?.memoryUsed || 0)} / ${formatBytes(metrics?.memoryTotal || 0)}`,
-        },
-        {
-            title: t('disk'),
-            icon: HardDrive,
-            value: `${metrics?.diskPercent?.toFixed(1) || 0}%`,
-            description: `${formatBytes(metrics?.diskUsed || 0)} / ${formatBytes(metrics?.diskTotal || 0)}`,
-        },
-        {
-            title: t('uptime'),
-            icon: Clock,
-            value: formatUptime(metrics?.uptime || 0),
-            description: `${metrics?.hostname || 'Unknown'} • ${metrics?.platform || 'Unknown'}`,
-        },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    ], [metrics, t]);
+    const statsCards = useMemo(
+        () => [
+            {
+                title: t('cpuUsage'),
+                icon: Cpu,
+                value: `${metrics?.cpuPercent?.toFixed(1) || 0}%`,
+                description: `${metrics?.cpuCount || 0} cores • Load: ${metrics?.loadAverage?.[0]?.toFixed(2) || 0}`,
+            },
+            {
+                title: t('memory'),
+                icon: MemoryStick,
+                value: `${metrics?.memoryPercent?.toFixed(1) || 0}%`,
+                description: `${formatBytes(metrics?.memoryUsed || 0)} / ${formatBytes(metrics?.memoryTotal || 0)}`,
+            },
+            {
+                title: t('disk'),
+                icon: HardDrive,
+                value: `${metrics?.diskPercent?.toFixed(1) || 0}%`,
+                description: `${formatBytes(metrics?.diskUsed || 0)} / ${formatBytes(metrics?.diskTotal || 0)}`,
+            },
+            {
+                title: t('uptime'),
+                icon: Clock,
+                value: formatUptime(metrics?.uptime || 0),
+                description: `${metrics?.hostname || 'Unknown'} • ${metrics?.platform || 'Unknown'}`,
+            },
+        ],
+        [metrics, t],
+    );
 
-    const chartCards = useMemo(() => [
-        {
-            title: t('cpuUsagePercent'),
-            description: t('cpuUsageDescription'),
-            config: {
-                cpuPercent: {
-                    label: 'CPU %',
-                    color: 'var(--chart-2)',
+    const chartCards = useMemo(
+        () => [
+            {
+                title: t('cpuUsagePercent'),
+                description: t('cpuUsageDescription'),
+                config: {
+                    cpuPercent: {
+                        label: 'CPU %',
+                        color: 'var(--chart-2)',
+                    },
+                },
+                areas: [
+                    {
+                        idFill: 'fillCpu',
+                        dataKey: 'cpuPercent',
+                        fill: 'url(#fillCpu)',
+                        color: 'var(--color-cpuPercent)',
+                    },
+                ],
+                formatValue: (value: any) => {
+                    const numValue = typeof value === 'number' ? value : parseFloat(String(value));
+                    return `${numValue.toFixed(2)}%`;
                 },
             },
-            areas: [
-                {
-                    idFill: 'fillCpu',
-                    dataKey: 'cpuPercent',
-                    fill: 'url(#fillCpu)',
-                    color: 'var(--color-cpuPercent)',
+            {
+                title: t('memoryUsagePercent'),
+                description: t('memoryUsageDescription'),
+                config: {
+                    memoryPercent: {
+                        label: 'Memory %',
+                        color: 'var(--chart-2)',
+                    },
                 },
-            ],
-            formatValue: (value: any) => {
-                const numValue = typeof value === 'number' ? value : parseFloat(String(value));
-                return `${numValue.toFixed(2)}%`;
-            },
-        },
-        {
-            title: t('memoryUsagePercent'),
-            description: t('memoryUsageDescription'),
-            config: {
-                memoryPercent: {
-                    label: 'Memory %',
-                    color: 'var(--chart-2)',
+                areas: [
+                    {
+                        idFill: 'fillMemory',
+                        dataKey: 'memoryPercent',
+                        fill: 'url(#fillMemory)',
+                        color: 'var(--color-memoryPercent)',
+                    },
+                ],
+                formatValue: (value: any) => {
+                    const numValue = typeof value === 'number' ? value : parseFloat(String(value));
+                    return `${numValue.toFixed(2)}%`;
                 },
             },
-            areas: [
-                {
-                    idFill: 'fillMemory',
-                    dataKey: 'memoryPercent',
-                    fill: 'url(#fillMemory)',
-                    color: 'var(--color-memoryPercent)',
-                },
-            ],
-            formatValue: (value: any) => {
-                const numValue = typeof value === 'number' ? value : parseFloat(String(value));
-                return `${numValue.toFixed(2)}%`;
-            },
-        },
-    ], [t]);
+        ],
+        [t],
+    );
 
     return (
         <SSEProvider connections={['monitoring']} params={{ monitoring: { refreshRate } }}>
@@ -148,9 +153,7 @@ export default function MonitoringPage() {
                             <h1 className="text-3xl leading-none font-semibold tracking-tight">
                                 {t('title')}
                             </h1>
-                            <p className="text-muted-foreground text-sm">
-                                {t('description')}
-                            </p>
+                            <p className="text-muted-foreground text-sm">{t('description')}</p>
                         </div>
                     </div>
                     <div className={'flex gap-3'}>
@@ -239,7 +242,9 @@ export default function MonitoringPage() {
                                                     <ChartTooltip
                                                         content={(props) => (
                                                             <ChartTooltipContent
-                                                                {...(props as React.ComponentProps<typeof ChartTooltipContent>)}
+                                                                {...(props as React.ComponentProps<
+                                                                    typeof ChartTooltipContent
+                                                                >)}
                                                                 formatter={(value) =>
                                                                     chart.formatValue(value)
                                                                 }

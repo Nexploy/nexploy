@@ -2,23 +2,32 @@ import { Container } from '@workspace/typescript-interface/docker/docker.contain
 import { ContainerInfo, ContainerInspectInfo } from 'dockerode';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 
-export async function getContainerByName(repositoryId: string): Promise<Container[]> {
+export async function getContainerByName(
+    repositoryId: string,
+    environmentId?: string,
+): Promise<Container[]> {
     try {
         const name = `nexploy-${repositoryId}`;
 
         return await kyDocker
             .get(`containers`, {
                 searchParams: { name },
-            })
+                environmentId,
+            } as KyDockerOptions)
             .json<Container[]>();
     } catch {
         return [];
     }
 }
 
-export async function getContainerByProjectName(projectName: string): Promise<ContainerInfo[]> {
+export async function getContainerByProjectName(
+    projectName: string,
+    environmentId?: string,
+): Promise<ContainerInfo[]> {
     try {
-        return await kyDocker.get(`composes/${projectName}/list`).json<ContainerInfo[]>();
+        return await kyDocker
+            .get(`composes/${projectName}/list`, { environmentId } as KyDockerOptions)
+            .json<ContainerInfo[]>();
     } catch {
         return [];
     }

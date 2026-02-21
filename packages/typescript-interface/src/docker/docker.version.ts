@@ -10,4 +10,6 @@ export interface Version {
     createdAt: number;
     imageId: string;
     imageFullName: string;
+    environmentId?: string;
+    environmentName?: string;
 }

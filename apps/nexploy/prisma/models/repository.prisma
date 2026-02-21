@@ -98,6 +98,9 @@ model Build {
   repositoryId String
   repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
 
+  environmentId String?
+  environment   Environment? @relation("BuildEnvironment", fields: [environmentId], references: [id])
+
   @@map("build")
 }
 

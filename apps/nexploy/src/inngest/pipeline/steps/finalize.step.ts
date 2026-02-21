@@ -21,7 +21,10 @@ export class FinalizeStep extends BaseStep {
             const imageTag = ctx.context.buildId;
             try {
                 const lastVersion = await prisma.version.findFirst({
-                    where: { repositoryId: config.repositoryId },
+                    where: {
+                        repositoryId: config.repositoryId,
+                        environmentId: config.environmentId ?? null,
+                    },
                     orderBy: { versionNumber: 'desc' },
                     select: { versionNumber: true },
                 });
@@ -43,6 +46,7 @@ export class FinalizeStep extends BaseStep {
                         branch: config.gitBranch ?? null,
                         commitHash: config.gitCommitHash ?? null,
                         commitMessage: config.gitCommitMessage ?? null,
+                        environmentId: config.environmentId ?? null,
                     },
                 });
             } catch (err) {

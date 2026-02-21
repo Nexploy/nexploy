@@ -108,7 +108,10 @@ class DeployComposeStep extends BaseStep {
             if (result.versioned) {
                 try {
                     const lastVersion = await prisma.version.findFirst({
-                        where: { repositoryId: config.repositoryId },
+                        where: {
+                            repositoryId: config.repositoryId,
+                            environmentId: config.environmentId ?? null,
+                        },
                         orderBy: { versionNumber: 'desc' },
                         select: { versionNumber: true },
                     });
@@ -131,6 +134,7 @@ class DeployComposeStep extends BaseStep {
                             commitHash: config.gitCommitHash ?? null,
                             commitMessage: config.gitCommitMessage ?? null,
                             composeConfig: result.composeConfig ?? null,
+                            environmentId: config.environmentId ?? null,
                         },
                     });
                 } catch (err) {

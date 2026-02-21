@@ -83,130 +83,135 @@ export function ContainerStats({ children }: ContainerStatsProps) {
         [history],
     );
 
-    const statsCard = useMemo(() => [
-        {
-            title: t('cpuUsage'),
-            description: t('cpuDescription'),
-            config: {
-                cpuPercent: {
-                    label: t('cpuPercent'),
-                    color: 'var(--chart-2)',
+    const statsCard = useMemo(
+        () => [
+            {
+                title: t('cpuUsage'),
+                description: t('cpuDescription'),
+                config: {
+                    cpuPercent: {
+                        label: t('cpuPercent'),
+                        color: 'var(--chart-2)',
+                    },
+                },
+                areas: [
+                    {
+                        idFill: 'fillCpuPercent',
+                        dataKey: 'cpuPercent',
+                        fill: 'url(#fillCpuPercent)',
+                        color: 'var(--color-cpuPercent)',
+                    },
+                ],
+                formatValue: (value: ValueType) => {
+                    const numValue = typeof value === 'number' ? value : parseFloat(String(value));
+                    return `${numValue.toFixed(3)}%`;
                 },
             },
-            areas: [
-                {
-                    idFill: 'fillCpuPercent',
-                    dataKey: 'cpuPercent',
-                    fill: 'url(#fillCpuPercent)',
-                    color: 'var(--color-cpuPercent)',
+            {
+                title: t('memoryUsage'),
+                description: t('memoryDescription'),
+                config: {
+                    memoryUsage: {
+                        label: t('memory'),
+                        color: 'var(--chart-2)',
+                    },
                 },
-            ],
-            formatValue: (value: ValueType) => {
-                const numValue = typeof value === 'number' ? value : parseFloat(String(value));
-                return `${numValue.toFixed(3)}%`;
-            },
-        },
-        {
-            title: t('memoryUsage'),
-            description: t('memoryDescription'),
-            config: {
-                memoryUsage: {
-                    label: t('memory'),
-                    color: 'var(--chart-2)',
-                },
-            },
-            areas: [
-                {
-                    idFill: 'fillMemoryUsage',
-                    dataKey: 'memoryUsage',
-                    fill: 'url(#fillMemoryUsage)',
-                    color: 'var(--color-memoryUsage)',
-                },
-            ],
-            formatValue: (value: ValueType) => {
-                const numValue = typeof value === 'number' ? value : parseFloat(String(value));
-                return formatBytes(numValue);
-            },
-        },
-        {
-            title: t('network'),
-            description: t('networkDescription'),
-            config: {
-                networkRx: {
-                    label: t('rx'),
-                    color: 'var(--chart-2)',
-                },
-                networkTx: {
-                    label: t('tx'),
-                    color: 'var(--chart-1)',
+                areas: [
+                    {
+                        idFill: 'fillMemoryUsage',
+                        dataKey: 'memoryUsage',
+                        fill: 'url(#fillMemoryUsage)',
+                        color: 'var(--color-memoryUsage)',
+                    },
+                ],
+                formatValue: (value: ValueType) => {
+                    const numValue = typeof value === 'number' ? value : parseFloat(String(value));
+                    return formatBytes(numValue);
                 },
             },
-            areas: [
-                {
-                    idFill: 'fillNetworkRx',
-                    dataKey: 'networkRx',
-                    fill: 'url(#fillNetworkRx)',
-                    color: 'var(--color-networkRx)',
+            {
+                title: t('network'),
+                description: t('networkDescription'),
+                config: {
+                    networkRx: {
+                        label: t('rx'),
+                        color: 'var(--chart-2)',
+                    },
+                    networkTx: {
+                        label: t('tx'),
+                        color: 'var(--chart-1)',
+                    },
                 },
-                {
-                    idFill: 'fillNetworkTx',
-                    dataKey: 'networkTx',
-                    fill: 'url(#fillNetworkTx)',
-                    color: 'var(--color-networkTx)',
+                areas: [
+                    {
+                        idFill: 'fillNetworkRx',
+                        dataKey: 'networkRx',
+                        fill: 'url(#fillNetworkRx)',
+                        color: 'var(--color-networkRx)',
+                    },
+                    {
+                        idFill: 'fillNetworkTx',
+                        dataKey: 'networkTx',
+                        fill: 'url(#fillNetworkTx)',
+                        color: 'var(--color-networkTx)',
+                    },
+                ],
+                formatValue: (value: ValueType) => {
+                    const numValue = typeof value === 'number' ? value : parseFloat(String(value));
+                    return formatBytes(numValue);
                 },
-            ],
-            formatValue: (value: ValueType) => {
-                const numValue = typeof value === 'number' ? value : parseFloat(String(value));
-                return formatBytes(numValue);
             },
-        },
-        {
-            title: t('blockIo'),
-            description: t('blockIoDescription'),
-            config: {
-                blockRead: {
-                    label: t('read'),
-                    color: 'var(--chart-2)',
+            {
+                title: t('blockIo'),
+                description: t('blockIoDescription'),
+                config: {
+                    blockRead: {
+                        label: t('read'),
+                        color: 'var(--chart-2)',
+                    },
+                    blockWrite: {
+                        label: t('write'),
+                        color: 'var(--chart-1)',
+                    },
                 },
-                blockWrite: {
-                    label: t('write'),
-                    color: 'var(--chart-1)',
+                areas: [
+                    {
+                        idFill: 'fillBlockRead',
+                        dataKey: 'blockRead',
+                        fill: 'url(#fillBlockRead)',
+                        color: 'var(--color-blockRead)',
+                    },
+                    {
+                        idFill: 'fillBlockWrite',
+                        dataKey: 'blockWrite',
+                        fill: 'url(#fillBlockWrite)',
+                        color: 'var(--color-blockWrite)',
+                    },
+                ],
+                formatValue: (value: ValueType) => {
+                    const numValue = typeof value === 'number' ? value : parseFloat(String(value));
+                    return formatBytes(numValue);
                 },
             },
-            areas: [
-                {
-                    idFill: 'fillBlockRead',
-                    dataKey: 'blockRead',
-                    fill: 'url(#fillBlockRead)',
-                    color: 'var(--color-blockRead)',
-                },
-                {
-                    idFill: 'fillBlockWrite',
-                    dataKey: 'blockWrite',
-                    fill: 'url(#fillBlockWrite)',
-                    color: 'var(--color-blockWrite)',
-                },
-            ],
-            formatValue: (value: ValueType) => {
-                const numValue = typeof value === 'number' ? value : parseFloat(String(value));
-                return formatBytes(numValue);
-            },
-        },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    ], [t]);
+        ],
+        [],
+    );
 
-    const smallsStats = useMemo(() => [
-        {
-            title: t('pidsCount'),
-            description: t('pidsDescription'),
-            value: stats?.pidsCount || 0,
-        },
-        {
-            title: t('memoryPercent'),
-            description: t('memoryPercentDescription'),
-            value: `${stats?.memoryPercent?.toFixed(3) || 0}%`,
-        },
-    ], [t, stats]);
+    const smallsStats = useMemo(
+        () => [
+            {
+                title: t('pidsCount'),
+                description: t('pidsDescription'),
+                value: stats?.pidsCount || 0,
+            },
+            {
+                title: t('memoryPercent'),
+                description: t('memoryPercentDescription'),
+                value: `${stats?.memoryPercent?.toFixed(3) || 0}%`,
+            },
+        ],
+        [t, stats],
+    );
 
     return (
         <>

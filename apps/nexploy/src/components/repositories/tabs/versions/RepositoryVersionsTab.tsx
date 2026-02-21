@@ -12,31 +12,44 @@ export async function RepositoryVersionsTab({
     repositoryId,
     buildType,
 }: RepositoryVersionsTabProps) {
-    const [versions, container] = await Promise.all([
-        getVersionsByRepository(repositoryId),
-        getContainerByName(repositoryId),
-    ]);
+    const versions = await getVersionsByRepository(repositoryId);
 
-    let containerImageUsed = container[0]?.image;
+    const environmentIds = [...new Set(versions.map((v) => v.environmentId))];
 
-    if (buildType === 'DOCKER_COMPOSE' && !containerImageUsed) {
-        const composeContainers = await getContainerByProjectName(`nexploy-${repositoryId}`);
-        if (composeContainers.length > 0) {
-            const firstImage = composeContainers[0]?.Image;
-            if (firstImage) {
-                const tag = firstImage.split(':')[1];
-                if (tag) {
-                    containerImageUsed = `${repositoryId}:${tag}`;
+    const deployedImageByEnvironment: Record<string, string> = {};
+
+    await Promise.all(
+        environmentIds.map(async (environmentId) => {
+            const key = environmentId ?? '';
+
+            if (buildType === 'DOCKER_COMPOSE') {
+                const composeContainers = await getContainerByProjectName(
+                    `nexploy-${repositoryId}`,
+                    environmentId,
+                );
+                if (composeContainers.length > 0) {
+                    const firstImage = composeContainers[0]?.Image;
+                    if (firstImage) {
+                        const tag = firstImage.split(':')[1];
+                        if (tag) {
+                            deployedImageByEnvironment[key] = `${repositoryId}:${tag}`;
+                        }
+                    }
+                }
+            } else {
+                const containers = await getContainerByName(repositoryId, environmentId);
+                if (containers[0]?.image) {
+                    deployedImageByEnvironment[key] = containers[0].image;
                 }
             }
-        }
-    }
+        }),
+    );
 
     return (
         <RepositoryVersions
             repositoryId={repositoryId}
             versions={versions}
-            containerImageUsed={containerImageUsed}
+            deployedImageByEnvironment={deployedImageByEnvironment}
         />
     );
 }
