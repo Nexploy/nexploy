@@ -5,7 +5,7 @@ import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 
-const TRAEFIK_CONTAINER_NAME = 'nexploy_traefik';
+const TRAEFIK_CONTAINER_NAME = process.env.TRAEFIK_CONTAINER_NAME ?? 'nexploy_traefik';
 const MAX_REQUESTS = 500;
 
 interface TraefikLogEvent {

@@ -31,7 +31,7 @@ providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
-    network: "nexploy_network"
+    network: "nexploy_traefik_network_pre_prod"
     watch: true
 
   file:

@@ -7,7 +7,7 @@
         "dev:nexploy": "turbo run dev --filter=nexploy --ui stream",
         "dev:docker-api": "turbo run dev --filter=docker-api --ui stream",
         "dev:desktop": "turbo run dev --filter=desktop",
-        "build": "turbo run build",
+        "build": "turbo run build --filter=!desktop",
         "lint": "turbo run lint",
         "types": "tsc --noEmit",
         "format": "prettier --write \"**/*.{js,ts,tsx,css,md}\"",

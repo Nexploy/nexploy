@@ -79,7 +79,7 @@ export class VolumesStateManager extends BaseStateManager {
                 const newState = this.parseVolumeInfo(volume);
                 const oldState = this.volumes.get(newState.name);
 
-                if (!oldState) return;
+                if (!oldState) continue;
 
                 if (this.hasStateChanged(oldState, newState)) {
                     this.volumes.set(newState.name, newState);

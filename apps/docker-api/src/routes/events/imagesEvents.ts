@@ -71,11 +71,12 @@ app.get('/stream', (c) => {
                 });
             } catch (err) {
                 logger.error({ err }, 'Error sending heartbeat');
-                clearInterval(heartbeat);
+                cleanup();
             }
         }, 15000);
 
         const cleanup = () => {
+            clearInterval(heartbeat);
             manager.off('state-change', handleStateChange);
             manager.off('initial-state', handleInitialState);
             manager.off('image-added', handleImageAdded);

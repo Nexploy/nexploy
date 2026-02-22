@@ -2,16 +2,16 @@ name: nexploy_dev
 services:
   postgres:
     image: postgres:18.0
-    container_name: nexploy_postgres
+    container_name: nexploy_postgres_dev
     restart: unless-stopped
     ports:
       - "5433:5432"
     networks:
-      - nexploy_network
+      - nexploy_network_dev
     environment:
-      - POSTGRES_DB=nexploy
-      - POSTGRES_USER=nexploy
-      - POSTGRES_PASSWORD=nexploy
+      - "POSTGRES_DB=nexploy"
+      - "POSTGRES_USER=nexploy"
+      - "POSTGRES_PASSWORD=nexploy"
     volumes:
       - db:/var/lib/postgresql
     healthcheck:
@@ -22,12 +22,12 @@ services:
 
   inngest:
     image: inngest/inngest:v1.14.0
-    container_name: nexploy_inngest
+    container_name: nexploy_inngest_dev
     restart: unless-stopped
     ports:
       - "8288:8288"
     networks:
-      - nexploy_network
+      - nexploy_network_dev
     environment:
       - INNGEST_EVENT_KEY=local-dev-key
       - INNGEST_SIGNING_KEY=signkey-test-12345678
@@ -37,7 +37,7 @@ services:
 
   traefik:
     image: traefik:v3.6.2
-    container_name: nexploy_traefik
+    container_name: nexploy_traefik_dev
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -47,12 +47,12 @@ services:
       - "80:80"
       - "8080:8080"
     networks:
-      - traefik_network
+      - nexploy_traefik_network_dev
     labels:
       - "traefik.enable=true"
     healthcheck:
       test: [ "CMD", "traefik", "healthcheck", "--ping" ]
-      interval: 10s
+      interval: 30s
       timeout: 3s
       retries: 3
 
@@ -60,10 +60,9 @@ volumes:
   db:
 
 networks:
-  nexploy_network:
-    name: nexploy_network
+  nexploy_network_dev:
+    name: nexploy_network_dev
     driver: bridge
-#    internal: true
-  traefik_network:
-    name: nexploy_traefik_network
+  nexploy_traefik_network_dev:
+    name: nexploy_traefik_network_dev
     driver: bridge

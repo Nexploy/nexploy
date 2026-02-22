@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useAction } from 'next-safe-action/hooks';
 import { Button } from '@workspace/ui/components/button';
 import { Check, Clock, GitBranch, GitCommit, Loader2, Rocket } from 'lucide-react';
 import { toast } from 'sonner';
@@ -32,30 +31,26 @@ export function RepositoryVersions({
     const tBuilds = useTranslations('repository.builds');
     const router = useRouter();
 
-    const onSuccess = () => {
-        toast.success(t('deploySuccess'));
-        router.refresh();
-    };
+    const [deployingImageTags, setDeployingImageTags] = useState<Set<string>>(new Set());
 
-    const [deployingImageTag, setDeployingImageTag] = useState<string | null>(null);
-
-    const { execute: executeDeployDockerfile } = useAction(onDeployDockerfileVersion, {
-        onSuccess,
-        onError: () => setDeployingImageTag(null),
-        onSettled: () => setDeployingImageTag(null),
-    });
-    const { execute: executeDeployCompose } = useAction(onDeployComposeVersion, {
-        onSuccess,
-        onError: () => setDeployingImageTag(null),
-        onSettled: () => setDeployingImageTag(null),
-    });
-
-    const handleDeploy = (imageTag: string, buildType: string, environmentId?: string) => {
-        setDeployingImageTag(imageTag);
-        if (buildType === 'DOCKER_COMPOSE') {
-            executeDeployCompose({ imageTag, repositoryId, environmentId });
-        } else {
-            executeDeployDockerfile({ imageTag, repositoryId, environmentId });
+    const handleDeploy = async (imageTag: string, buildType: string, environmentId?: string) => {
+        setDeployingImageTags((prev) => new Set([...prev, imageTag]));
+        try {
+            const action =
+                buildType === 'DOCKER_COMPOSE' ? onDeployComposeVersion : onDeployDockerfileVersion;
+            const result = await action({ imageTag, repositoryId, environmentId });
+            if (result?.serverError) {
+                toast.error(result.serverError);
+            } else {
+                toast.success(t('deploySuccess'));
+                router.refresh();
+            }
+        } finally {
+            setDeployingImageTags((prev) => {
+                const next = new Set(prev);
+                next.delete(imageTag);
+                return next;
+            });
         }
     };
 
@@ -133,9 +128,9 @@ export function RepositoryVersions({
                         onClick={() =>
                             handleDeploy(version.imageTag, version.buildType, version.environmentId)
                         }
-                        disabled={deployingImageTag === version.imageTag || isCurrent}
+                        disabled={deployingImageTags.has(version.imageTag) || isCurrent}
                     >
-                        {deployingImageTag === version.imageTag ? (
+                        {deployingImageTags.has(version.imageTag) ? (
                             <Loader2 className="size-4 animate-spin" />
                         ) : isCurrent ? (
                             <Check className="size-4" />

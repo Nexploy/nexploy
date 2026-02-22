@@ -30,10 +30,10 @@ export class EventsStateManager extends BaseStateManager {
         this.eventsReceived++;
         this.lastEventTime = Date.now();
 
-        this.events.unshift(event);
+        this.events.push(event);
 
         if (this.events.length > this.MAX_EVENTS) {
-            this.events = this.events.slice(0, this.MAX_EVENTS);
+            this.events.shift();
         }
 
         if (this.eventsReceived > this.MAX_EVENTS) this.eventsReceived = this.MAX_EVENTS;
@@ -114,11 +114,11 @@ export class EventsStateManager extends BaseStateManager {
     }
 
     getAllEvents(): DockerEventData[] {
-        return [...this.events];
+        return [...this.events].reverse();
     }
 
     getRecentEvents(count: number): DockerEventData[] {
-        return this.events.slice(0, count);
+        return this.events.slice(-count).reverse();
     }
 
     clearEvents(): void {

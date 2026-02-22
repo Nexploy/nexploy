@@ -101,7 +101,7 @@ export class ImagesStateManager extends BaseStateManager {
             for (const newState of parsed) {
                 const oldState = this.images.get(newState.id);
 
-                if (!oldState) return;
+                if (!oldState) continue;
 
                 if (this.hasStateChanged(oldState, newState)) {
                     this.images.set(newState.id, newState);

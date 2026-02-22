@@ -1,35 +1,36 @@
 # ---- Base ----
 FROM node:20-alpine AS base
+# pnpm global bin dir (used for turbo, esbuild)
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
 RUN apk add --no-cache libc6-compat
 RUN corepack enable && corepack prepare pnpm@10.18.3 --activate
+
+# ---- Prepare (prune monorepo) ----
+FROM base AS prepare
+WORKDIR /app
+RUN pnpm add -g turbo@^2
+COPY . .
+RUN turbo prune docker-api --docker
 
 # ---- Dependencies ----
 FROM base AS deps
 WORKDIR /app
-
-# Copy workspace structure for pnpm install
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json .npmrc* ./
-COPY apps/nexploy/package.json ./apps/nexploy/package.json
-COPY apps/docker-api/package.json ./apps/docker-api/package.json
-COPY packages/ui/package.json ./packages/ui/package.json
-COPY packages/schemas-zod/package.json ./packages/schemas-zod/package.json
-COPY packages/typescript-interface/package.json ./packages/typescript-interface/package.json
-COPY packages/typescript-config/package.json ./packages/typescript-config/package.json
-COPY packages/eslint-config/package.json ./packages/eslint-config/package.json
-COPY packages/i18n/package.json ./packages/i18n/package.json
-COPY packages/shared/package.json ./packages/shared/package.json
-
+# Copy pruned package manifests + workspace config
+COPY --from=prepare /app/out/json/ .
+# Override with the correctly pruned lockfile (out/pnpm-lock.yaml != out/json/pnpm-lock.yaml)
+COPY --from=prepare /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN pnpm install --frozen-lockfile
 
 # ---- Build ----
 FROM deps AS build
 WORKDIR /app
 
-# Copy all sources on top of installed deps
-COPY . .
+# Bring in the pruned full source
+COPY --from=prepare /app/out/full/ .
 
 # Bundle with esbuild (resolves path aliases and workspace imports)
-RUN npm install -g esbuild && esbuild apps/docker-api/src/index.ts \
+RUN pnpm add -g esbuild && esbuild apps/docker-api/src/index.ts \
     --bundle \
     --platform=node \
     --format=cjs \
@@ -56,7 +57,7 @@ COPY --from=build /app/apps/docker-api/dist ./dist
 COPY --from=deps /app/node_modules ./node_modules
 
 # Copy entrypoint script
-COPY apps/docker-api/scripts/entrypoint.sh /entrypoint.sh
+COPY --from=build /app/apps/docker-api/scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Runs as root to access /var/run/docker.sock

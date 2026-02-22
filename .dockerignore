@@ -2,6 +2,7 @@ node_modules
 .git
 .next
 dist
+out
 *.log
 .env
 .env.*

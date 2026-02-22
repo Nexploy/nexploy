@@ -1,13 +1,13 @@
-name: nexploy_prod
+name: nexploy_pre_prod
 services:
   postgres:
     image: postgres:18.0
-    container_name: nexploy_postgres
+    container_name: nexploy_postgres_pre_prod
     restart: unless-stopped
     ports:
       - "4522:5432"
     networks:
-      - nexploy_network
+      - nexploy_network_pre_prod
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-nexploy}
       POSTGRES_USER: ${POSTGRES_USER:-nexploy}
@@ -23,10 +23,10 @@ services:
 
   inngest:
     image: inngest/inngest:v1.14.0
-    container_name: nexploy_inngest
+    container_name: nexploy_inngest_pre_prod
     restart: unless-stopped
     networks:
-      - nexploy_network
+      - nexploy_network_pre_prod
     environment:
       INNGEST_EVENT_KEY: ${INNGEST_EVENT_KEY:?INNGEST_EVENT_KEY is required}
       INNGEST_SIGNING_KEY: ${INNGEST_SIGNING_KEY:?INNGEST_SIGNING_KEY is required}
@@ -37,19 +37,19 @@ services:
 
   traefik:
     image: traefik:v3.6.2
-    container_name: nexploy_traefik
+    container_name: nexploy_traefik_pre_prod
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ../traefik/traefik.prod.yml:/etc/traefik/traefik.yml:ro
+      - ../traefik/traefik.pre-prod.yml:/etc/traefik/traefik.yml:ro
       - ../traefik/service:/etc/traefik/dynamic
       - traefik_acme:/etc/traefik
     ports:
       - "80:80"
       - "443:443"
     networks:
-      - nexploy_network
-      - traefik_network
+      - nexploy_network_pre_prod
+      - nexploy_traefik_network_pre_prod
     healthcheck:
       test: ["CMD", "traefik", "healthcheck", "--ping"]
       interval: 10s
@@ -60,10 +60,10 @@ services:
     build:
       context: ../..
       dockerfile: apps/nexploy/Dockerfile
-    container_name: nexploy_app
+    container_name: nexploy_app_pre_prod
     restart: unless-stopped
     networks:
-      - nexploy_network
+      - nexploy_network_pre_prod
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://${POSTGRES_USER:-nexploy}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nexploy}
@@ -90,11 +90,11 @@ services:
     build:
       context: ../..
       dockerfile: apps/docker-api/Dockerfile
-    container_name: nexploy_docker_api
+    container_name: nexploy_docker_api_pre_prod
     restart: unless-stopped
     networks:
-      - nexploy_network
-      - traefik_network
+      - nexploy_network_pre_prod
+      - nexploy_traefik_network_pre_prod
     environment:
       NODE_ENV: production
       PORT: 3300
@@ -115,9 +115,9 @@ volumes:
   traefik_acme:
 
 networks:
-  nexploy_network:
-    name: nexploy_network
+  nexploy_network_pre_prod:
+    name: nexploy_network_pre_prod
     driver: bridge
-  traefik_network:
-    name: nexploy_traefik_network
+  nexploy_traefik_network_pre_prod:
+    name: nexploy_traefik_network_pre_prod
     driver: bridge

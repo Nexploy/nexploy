@@ -13,6 +13,7 @@
         "INNGEST_SIGNING_KEY",
         "NEXPLOY_API_KEY",
         "NEXPLOY_API_URL",
+        "TRAEFIK_CONTAINER_NAME",
         "DOCKER_SOCKET",
         "LOG_LEVEL",
         "PORT",

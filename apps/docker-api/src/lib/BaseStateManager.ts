@@ -152,6 +152,8 @@ export abstract class BaseStateManager extends EventEmitter {
             return;
         }
 
+        this.cleanupEventStream();
+
         try {
             const filters = this.getEventFilters();
             const stream = await this.docker.getEvents({ filters });
@@ -227,13 +229,14 @@ export abstract class BaseStateManager extends EventEmitter {
     }
 
     private startFallbackPolling(): void {
+        if (this.POLL_INTERVAL_MS === 0) return;
+
         this.pollInterval = setInterval(async () => {
             if (!this.polling) return;
 
             try {
                 const dockerStatusManager = this.getDockerStatusManager();
                 if (!dockerStatusManager.isConnected()) {
-
                     return;
                 }
 
@@ -255,7 +258,6 @@ export abstract class BaseStateManager extends EventEmitter {
             const dockerStatusManager = this.getDockerStatusManager();
             dockerConnected = dockerStatusManager.isConnected();
         } catch (err) {
-
             dockerConnected = false;
         }
 

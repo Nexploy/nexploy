@@ -52,7 +52,7 @@ app.get('/stream', (c) => {
                 });
             } catch (err) {
                 logger.error({ err }, 'Error sending heartbeat');
-                clearInterval(heartbeat);
+                cleanup();
             }
         }, 15000);
 
