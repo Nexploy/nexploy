@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import dayjs from 'dayjs';
 import { getImagesStateManager } from '@/managers/imagesStateManager';
 import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
@@ -15,6 +16,7 @@ import {
 } from '@/utils/composeVolumeTransformer';
 import type { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
 import type { VolumeTransformationResult } from '@workspace/typescript-interface/docker/docker.compose.volume';
+import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
 
 const app = new Hono();
 
@@ -85,7 +87,7 @@ app.post('/stream/compose', async (c) => {
                         data: JSON.stringify({
                             type: 'log',
                             message: message.trim(),
-                            timestamp: new Date().toISOString(),
+                            timestamp: dayjs().toISOString(),
                         }),
                         event: 'compose-log',
                     });
@@ -407,7 +409,7 @@ app.post('/stream/compose', async (c) => {
             sendLog(`Connecting ${containerIds.length} containers to Traefik network...`);
             for (const containerId of containerIds) {
                 try {
-                    const network = dockerClient.getNetwork('nexploy_traefik_network');
+                    const network = dockerClient.getNetwork(TRAEFIK_NETWORK_NAME);
                     await network.connect({
                         Container: containerId,
                     });
@@ -530,7 +532,7 @@ app.post('/stream/build', async (c) => {
                         data: JSON.stringify({
                             type: 'log',
                             message: log,
-                            timestamp: new Date().toISOString(),
+                            timestamp: dayjs().toISOString(),
                         }),
                         event: 'build-log',
                     });

@@ -42,7 +42,9 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
     const { connectionState, connect, disconnect, terminalRef } = useTerminalStore();
 
     const buildSocketUrl = (shell: string) => {
-        const baseUrl = `ws://${window.location.host}/api/ws/docker/terminal/${container?.id}/${shell}`;
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const baseUrl = `${protocol}//${window.location.host}/api/ws/docker/terminal/${container?.id}/${shell}`;
+
         return selectedEnvironmentId ? `${baseUrl}?environment=${selectedEnvironmentId}` : baseUrl;
     };
 

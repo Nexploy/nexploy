@@ -1,10 +1,13 @@
-import { authRouteServer, route } from '@/lib/api/nextRoute';
+import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { getSystemMetrics } from '@/services/monitoring.service';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-export const GET = route.use(authRouteServer).handler(async (request: Request) => {
+export const GET = route
+    .use(authRouteServer)
+    .use(requirePermission('docker', 'read'))
+    .handler(async (request: Request) => {
     const { searchParams } = new URL(request.url);
     const refreshRate = parseInt(searchParams.get('refreshRate') ?? '2000', 10);
 

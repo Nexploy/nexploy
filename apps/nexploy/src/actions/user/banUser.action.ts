@@ -1,16 +1,24 @@
 'use server';
 
-import { adminOnly, authActionServer, preventSelfAction } from '@/lib/api/safe-action';
+import { authActionServer, preventSelfAction, requirePermission } from '@/lib/api/safe-action';
 import { auth } from '@/lib/auth/auth';
 import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { banUsersSchema } from '@workspace/schemas-zod/user/banUsersSchema';
+import { prisma } from '../../../prisma/prisma';
+import { getTranslations } from 'next-intl/server';
 
 export const banUser = authActionServer
-    .use(adminOnly)
+    .use(requirePermission('user', 'ban'))
     .use(preventSelfAction)
     .inputSchema(banUsersSchema)
     .action(async ({ parsedInput: { userId, reason, action } }) => {
+        const t = await getTranslations('admin');
+        const targetUser = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+        if (targetUser?.role === 'system') {
+            throw new Error(t('errors.cannotModifySystemUser'));
+        }
+
         try {
             const apiMethod = action === 'ban' ? auth.api.banUser : auth.api.unbanUser;
 

@@ -21,8 +21,7 @@ export function CardInfoImages() {
             const total = images.reduce((acc, image) => acc + (image.size || 0), 0);
             const active = images.filter((img) => img.containersUsed > 0).length;
             const lastUpdated = [...images].sort(
-                (a, b) =>
-                    new Date(b.created || 0).getTime() - new Date(a.created || 0).getTime(),
+                (a, b) => dayjs(b.created || 0).valueOf() - dayjs(a.created || 0).valueOf(),
             )[0];
             return {
                 totalSizeImages: total,

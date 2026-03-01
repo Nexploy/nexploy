@@ -2,6 +2,7 @@
 
 import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import { Bug, ChevronLeft, ChevronRight } from 'lucide-react';
+import dayjs from 'dayjs';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { useEventsStore } from '@/stores/docker/useEventsStore';
 import { useState } from 'react';
@@ -27,12 +28,12 @@ import {
 } from '@workspace/ui/components/select';
 import { Button } from '@workspace/ui/components/button';
 import { DockerEventData } from '@workspace/typescript-interface/docker/docker.events';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 
 export default function EventsPage() {
     const t = useTranslations('docker');
     const tCommon = useTranslations('common');
-    const locale = useLocale();
+
 
     const {
         filteredEvents,
@@ -113,14 +114,7 @@ export default function EventsPage() {
     };
 
     const getLocaleDate = (timestamp: number) => {
-        return new Date(timestamp).toLocaleString(locale === 'fr' ? 'fr-FR' : 'en-US', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-        });
+        return dayjs(timestamp).format('DD/MM/YYYY HH:mm:ss');
     };
 
     const isShowingAll = pageSize === 'all';

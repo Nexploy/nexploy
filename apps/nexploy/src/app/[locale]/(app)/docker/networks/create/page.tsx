@@ -101,7 +101,7 @@ export default function CreateNetworkPage() {
     };
 
     return (
-        <div className="flex flex-1 flex-col overflow-hidden pt-5">
+        <div className="flex h-full flex-1 flex-col gap-4 pt-5">
             <Form {...form}>
                 <form
                     className="flex flex-1 flex-col overflow-hidden"

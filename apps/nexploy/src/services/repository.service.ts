@@ -20,6 +20,7 @@ export async function createRepository(
 ) {
     try {
         let webhookConfig = null;
+        const autoDeploy = restRepositoryCreate.autoDeploy;
 
         if (restRepositoryCreate.autoDeploy) {
             const oldToken = await getGitProviderToken(restRepositoryCreate.gitProvider, {
@@ -48,6 +49,7 @@ export async function createRepository(
         const repository = await prisma.repository.create({
             data: {
                 ...restRepositoryCreate,
+                autoDeploy,
                 gitId: repo.id,
                 webhookId: webhookConfig?.webhookId,
                 webhookSecret: webhookConfig?.webhookSecret,
@@ -414,8 +416,14 @@ export async function updateEnvVariables(
             }
 
             for (const create of data.creates) {
-                await tx.envVariable.create({
-                    data: {
+                await tx.envVariable.upsert({
+                    where: {
+                        repositoryId_key: { repositoryId, key: create.key },
+                    },
+                    update: {
+                        value: encrypt(create.value),
+                    },
+                    create: {
                         key: create.key,
                         value: encrypt(create.value),
                         repositoryId,

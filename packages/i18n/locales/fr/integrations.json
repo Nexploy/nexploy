@@ -48,8 +48,11 @@
             },
             "gitlab": {
                 "step1": "Allez sur GitLab → Préférences → Applications → Nouvelle application",
-                "step2": "Définissez l'URI de redirection sur : {url}/api/auth/callback/gitlab et sélectionnez les scopes : read_user, read_repository, api",
-                "step3": "Copiez l'Application ID et le Secret"
+                "step2": "Définissez l'URI de redirection sur : {url}/api/git/oauth/callback et sélectionnez les scopes : api, read_api, read_repository",
+                "step3": "Copiez l'Application ID et le Secret",
+                "useCustomUrl": "Utiliser une instance GitLab personnalisée",
+                "customUrlLabel": "URL de l'instance GitLab",
+                "customUrlPlaceholder": "https://gitlab.monentreprise.com"
             }
         }
     },

@@ -1,11 +1,12 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { createEnvironment } from '@/services/environment/environment.service';
 import { environmentSchema } from '@workspace/schemas-zod/docker/environment/environment.schema';
 
 export const createEnvironmentAction = authActionServer
+    .use(requirePermission('environment', 'create'))
     .inputSchema(environmentSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {

@@ -1,11 +1,12 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { deleteEnvironment } from '@/services/environment/environment.service';
 import { environmentIdSchema } from '@workspace/schemas-zod/docker/environment/environment.schema';
 
 export const deleteEnvironmentAction = authActionServer
+    .use(requirePermission('environment', 'delete'))
     .inputSchema(environmentIdSchema)
     .action(async ({ parsedInput }) => {
         try {

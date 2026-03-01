@@ -2,29 +2,74 @@ import { createAccessControl } from 'better-auth/plugins/access';
 import { adminAc, defaultStatements } from 'better-auth/plugins/admin/access';
 import { Role } from '@workspace/schemas-zod/auth/permissions';
 
+export type PermissionActions = {
+    repository: 'create' | 'read' | 'update' | 'delete' | 'deploy';
+    build: 'read' | 'cancel' | 'delete';
+    environment: 'create' | 'read' | 'update' | 'delete';
+    docker: 'read' | 'manage' | 'prune';
+    gitProvider: 'create' | 'update' | 'delete';
+    user: (typeof adminAc.statements.user)[number];
+    session: (typeof adminAc.statements.session)[number];
+    backup: 'create' | 'read' | 'restore' | 'delete';
+};
+
+export type PermissionResource = keyof PermissionActions;
+
 const statement = {
     ...defaultStatements,
-    project: ['create', 'share', 'update', 'delete'],
+    user: adminAc.statements.user,
+    session: adminAc.statements.session,
+    repository: ['create', 'read', 'update', 'delete', 'deploy'] as const,
+    build: ['read', 'cancel', 'delete'] as const,
+    environment: ['create', 'read', 'update', 'delete'] as const,
+    docker: ['read', 'manage', 'prune'] as const,
+    gitProvider: ['create', 'update', 'delete'] as const,
+    backup: ['create', 'read', 'restore', 'delete'] as const,
 } as const;
 
 const ac = createAccessControl(statement);
 
-const user = ac.newRole({
-    project: ['create', 'update'],
+const read = ac.newRole({
+    repository: ['read'],
+    build: ['read'],
+    environment: ['read'],
+    docker: ['read'],
+});
+
+const readWrite = ac.newRole({
+    repository: ['create', 'read', 'update', 'delete', 'deploy'],
+    build: ['read', 'cancel', 'delete'],
+    environment: ['create', 'read', 'update', 'delete'],
+    docker: ['read', 'manage'],
 });
 
 const admin = ac.newRole({
-    project: ['create', 'update'],
     ...adminAc.statements,
+    repository: ['create', 'read', 'update', 'delete', 'deploy'],
+    build: ['read', 'cancel', 'delete'],
+    environment: ['create', 'read', 'update', 'delete'],
+    docker: ['read', 'manage', 'prune'],
+    gitProvider: ['create', 'update', 'delete'],
+    user: [...adminAc.statements.user],
+    backup: ['create', 'read', 'restore', 'delete'],
+});
+
+const system = ac.newRole({
+    environment: ['read'],
+    repository: ['read'],
+    build: ['read'],
+    docker: ['read'],
 });
 
 export const roles: Record<Role, any> = {
-    user,
+    read,
+    readWrite,
     admin,
+    system,
 } as const;
 
 export const permission = {
-    defaultRole: 'user',
+    defaultRole: 'readWrite',
     adminRoles: ['admin'],
     ac,
     roles: {

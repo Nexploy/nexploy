@@ -3,8 +3,8 @@
 import { Button } from '@workspace/ui/components/button';
 import { Plus } from 'lucide-react';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { GitHubAppSetup } from '@/components/admin/integrations/GitHubAppSetup';
-import { OAuthProviderForm } from '@/components/admin/integrations/OAuthProviderForm';
+import { GitHubAppSetupForm } from '@/components/admin/integrations/GitHubAppSetupForm';
+import { GitlabAppSetupForm } from '@/components/admin/integrations/GitlabAppSetupForm';
 import { useTranslations } from 'next-intl';
 
 interface IntegrationsAddButtonsProps {
@@ -24,7 +24,7 @@ export function IntegrationsAddButtons({ provider }: IntegrationsAddButtonsProps
                     title: tOAuth('configureTitle', { provider: t('github.title') }),
                     description: tOAuth('guide.github.manifestDescription'),
                     props: { className: 'sm:max-w-lg' },
-                    content: <GitHubAppSetup />,
+                    content: <GitHubAppSetupForm />,
                 });
                 break;
             case 'gitlab':
@@ -33,7 +33,7 @@ export function IntegrationsAddButtons({ provider }: IntegrationsAddButtonsProps
                     title: tOAuth('configureTitle', { provider: t('gitlab.title') }),
                     description: tOAuth('configureDescription', { provider: t('gitlab.title') }),
                     props: { className: 'sm:max-w-[425px]' },
-                    content: <OAuthProviderForm />,
+                    content: <GitlabAppSetupForm />,
                 });
                 break;
         }

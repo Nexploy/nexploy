@@ -1,6 +1,7 @@
 'use client';
 
 import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
+import dayjs from 'dayjs';
 import {
     ExpandedState,
     FilterFn,
@@ -51,7 +52,7 @@ import { Switch } from '@workspace/ui/components/switch';
 function matchesSearch(image: ImageRow, search: string): boolean {
     const { name, tag, id, size, created } = image;
     const realSize = formatBytes(size);
-    const date = new Date(created * 1000).toLocaleDateString();
+    const date = dayjs.unix(created).format('DD/MM/YYYY');
 
     return (
         name?.some((n) => n.toLowerCase().includes(search)) ||

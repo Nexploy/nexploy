@@ -2,7 +2,6 @@
 
 import {
     Activity,
-    Bot,
     Box,
     Bug,
     ChevronRight,
@@ -10,7 +9,6 @@ import {
     Database,
     EthernetPort,
     Folder,
-    Hammer,
     HardDrive,
     LayoutList,
     Network,
@@ -78,8 +76,8 @@ const groups: SidebarNavGroup[] = [
             { titleKey: 'users', href: '/admin/users', icon: Users },
             { titleKey: 'backups', href: '/admin/backups', icon: Database },
             { titleKey: 'integrations', href: '/admin/integrations', icon: Plug },
-            { titleKey: 'ai', href: '/admin/ai', icon: Bot },
-            { titleKey: 'tools', href: '/admin/tools', icon: Hammer },
+            // { titleKey: 'ai', href: '/admin/ai', icon: Bot },
+            // { titleKey: 'tools', href: '/admin/tools', icon: Hammer },
         ],
     },
 ];

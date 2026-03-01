@@ -1,12 +1,13 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { containerActionsSchema } from '@workspace/schemas-zod/docker/container/containerAction.schema';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 
 export const onContainerRestartAction = authActionServer
+    .use(requirePermission('docker', 'manage'))
     .inputSchema(containerActionsSchema)
     .action(async ({ parsedInput: { containerId } }) => {
         try {

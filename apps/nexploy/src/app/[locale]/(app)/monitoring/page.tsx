@@ -1,6 +1,7 @@
 'use client';
 
 import { Activity, Clock, Cpu, Download, HardDrive, MemoryStick } from 'lucide-react';
+import dayjs from 'dayjs';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { useMonitoringStore } from '@/stores/monitoring/useMonitoringStore';
 import { SSEProvider } from '@/providers/SSEProviders';
@@ -46,7 +47,7 @@ export default function MonitoringPage() {
     const chartData = useMemo(
         () =>
             history.map((m) => ({
-                timestamp: new Date(m.timestamp).toLocaleTimeString(),
+                timestamp: dayjs(m.timestamp).format('HH:mm:ss'),
                 cpuPercent: m.cpuPercent,
                 memoryPercent: m.memoryPercent,
                 diskPercent: m.diskPercent,

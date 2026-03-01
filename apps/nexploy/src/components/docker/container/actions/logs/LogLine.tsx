@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import dayjs from 'dayjs';
 import { LogEntry } from '@workspace/typescript-interface/docker/docker.container.logs';
 
 interface LogLineProps {
@@ -10,13 +11,7 @@ export const LogLine = memo(
     ({ log, showTimestamp = true }: LogLineProps) => {
         const formatTimestamp = (timestamp: string) => {
             try {
-                const date = new Date(timestamp);
-                return date.toLocaleTimeString('en-US', {
-                    hour12: false,
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                });
+                return dayjs(timestamp).format('HH:mm:ss');
             } catch {
                 return timestamp;
             }

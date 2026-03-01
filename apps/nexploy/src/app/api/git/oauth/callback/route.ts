@@ -4,6 +4,7 @@ import { prisma } from '@/../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
 import { getBaseUrl } from '@/lib/getBaseUrl';
 import { authRouteServer, route } from '@/lib/api/nextRoute';
+import dayjs from 'dayjs';
 import { Session } from '@/lib/auth/auth';
 import {
     githubExchangeCodeForToken,
@@ -67,7 +68,7 @@ export const GET = route
                 accessToken = tokenData.access_token;
                 refreshToken = tokenData.refresh_token ?? null;
                 if (tokenData.expires_in) {
-                    expiresAt = new Date(Date.now() + tokenData.expires_in * 1000);
+                    expiresAt = dayjs().add(tokenData.expires_in, 'second').toDate();
                 }
 
                 const userData = await githubGetAuthenticatedUser(accessToken);
@@ -83,7 +84,7 @@ export const GET = route
                     redirect_uri: redirectUri,
                 });
 
-                const tokenRes = await fetch('https://gitlab.com/oauth/token', {
+                const tokenRes = await fetch(`${gitProvider.baseUrl}/oauth/token`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body,
@@ -97,10 +98,10 @@ export const GET = route
                 accessToken = tokenData.access_token;
                 refreshToken = tokenData.refresh_token ?? null;
                 if (tokenData.expires_in) {
-                    expiresAt = new Date(Date.now() + tokenData.expires_in * 1000);
+                    expiresAt = dayjs().add(tokenData.expires_in, 'second').toDate();
                 }
 
-                const userRes = await fetch('https://gitlab.com/api/v4/user', {
+                const userRes = await fetch(`${gitProvider.baseUrl}/api/v4/user`, {
                     headers: { Authorization: `Bearer ${accessToken}` },
                 });
                 const userData = await userRes.json();

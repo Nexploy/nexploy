@@ -1,11 +1,13 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 
-export const onSwarmRefreshAction = authActionServer.action(async () => {
+export const onSwarmRefreshAction = authActionServer
+    .use(requirePermission('docker', 'read'))
+    .action(async () => {
     try {
         return await kyDocker.post(`swarm/hardRefresh`).json();
     } catch (err: unknown) {

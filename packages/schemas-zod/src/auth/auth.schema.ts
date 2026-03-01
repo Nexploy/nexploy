@@ -67,7 +67,7 @@ export const createUserFormSchema = (t: any) =>
                     error: t('required'),
                 })
                 .min(1, { message: t('required') }),
-            role: z.enum(['admin', 'user'] as Role[]),
+            role: z.enum(['admin', 'readWrite', 'read'] as Role[]),
         })
         .refine((data) => data.password === data.confirmPassword, {
             message: t('passwordsMustMatch'),

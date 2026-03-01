@@ -23,7 +23,8 @@ import { onCreateUserAction } from '@/actions/auth/createUser.action';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createUserFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { Plus } from 'lucide-react';
+import { Info, Plus } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 export function CreateUserForm() {
     const tValidation = useTranslations('validation');
@@ -40,7 +41,7 @@ export function CreateUserForm() {
                     email: '',
                     password: '',
                     confirmPassword: '',
-                    role: 'user',
+                    role: 'readWrite',
                 },
             },
             actionProps: {
@@ -119,7 +120,34 @@ export function CreateUserForm() {
                     name="role"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('role')}</FormLabel>
+                            <div className="flex items-center gap-1.5">
+                                <FormLabel>{t('role')}</FormLabel>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Info className="text-muted-foreground size-3.5 cursor-help" />
+                                    </TooltipTrigger>
+                                    <TooltipContent side="right" className="max-w-64 space-y-2 p-3">
+                                        <div>
+                                            <p className="font-semibold">{t('readRole')}</p>
+                                            <p className="text-muted-foreground text-xs">
+                                                {t('roleDescriptions.read')}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold">{t('readWriteRole')}</p>
+                                            <p className="text-muted-foreground text-xs">
+                                                {t('roleDescriptions.readWrite')}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold">{t('adminRole')}</p>
+                                            <p className="text-muted-foreground text-xs">
+                                                {t('roleDescriptions.admin')}
+                                            </p>
+                                        </div>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                     <SelectTrigger>
@@ -127,7 +155,8 @@ export function CreateUserForm() {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value="user">{t('userRole')}</SelectItem>
+                                    <SelectItem value="read">{t('readRole')}</SelectItem>
+                                    <SelectItem value="readWrite">{t('readWriteRole')}</SelectItem>
                                     <SelectItem value="admin">{t('adminRole')}</SelectItem>
                                 </SelectContent>
                             </Select>

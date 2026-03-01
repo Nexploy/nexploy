@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '../../../../../../prisma/prisma';
-import { authRouteServer, route } from '@/lib/api/nextRoute';
+import { internalApiAuth, route } from '@/lib/api/nextRoute';
 
-export const POST = route.use(authRouteServer).handler(async (_, { body }) => {
+export const POST = route.use(internalApiAuth).handler(async (_, { body }) => {
     const { repositoryId, imageTag } = body;
 
     if (!repositoryId || !imageTag) {

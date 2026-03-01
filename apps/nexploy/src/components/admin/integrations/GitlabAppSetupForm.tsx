@@ -4,9 +4,9 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
+import { Switch } from '@workspace/ui/components/switch';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { DialogFooter } from '@workspace/ui/components/dialog';
-import { gitlabProviderSchema } from '@workspace/schemas-zod/admin/oauthProvider.schema';
 import {
     Form,
     FormControl,
@@ -17,9 +17,10 @@ import {
 } from '@workspace/ui/components/form';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
-import { saveGitLabProviderAction } from '@/actions/admin/saveGitLabProvider.action';
+import { saveGitLabProviderAction } from '@/actions/git/saveGitLabProvider.action';
+import { gitlabSetupSchema } from '@workspace/schemas-zod/git/gitlabSetup.schema';
 
-export function OAuthProviderForm() {
+export function GitlabAppSetupForm() {
     const { closeDialog } = useConfirmationDialogStore();
     const t = useTranslations('integrations.oauth');
 
@@ -27,7 +28,7 @@ export function OAuthProviderForm() {
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         saveGitLabProviderAction,
-        zodResolver(gitlabProviderSchema),
+        zodResolver(gitlabSetupSchema),
         {
             formProps: {
                 defaultValues: {
@@ -35,6 +36,8 @@ export function OAuthProviderForm() {
                     displayName: '',
                     clientId: '',
                     clientSecret: '',
+                    useCustomUrl: false,
+                    baseUrl: '',
                 },
             },
             actionProps: {
@@ -50,6 +53,7 @@ export function OAuthProviderForm() {
     );
 
     const isSubmitting = action.status === 'executing';
+    const useCustomUrl = form.watch('useCustomUrl');
 
     return (
         <Form {...form}>
@@ -59,6 +63,46 @@ export function OAuthProviderForm() {
                     <li>{t('guide.gitlab.step2', { url: appUrl })}</li>
                     <li>{t('guide.gitlab.step3')}</li>
                 </ol>
+
+                <FormField
+                    control={form.control}
+                    name="useCustomUrl"
+                    render={({ field }) => (
+                        <FormItem className="flex items-center gap-3">
+                            <FormControl>
+                                <Switch
+                                    className="cursor-pointer"
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                            <FormLabel className="!mt-0 cursor-pointer">
+                                {t('guide.gitlab.useCustomUrl')}
+                            </FormLabel>
+                        </FormItem>
+                    )}
+                />
+
+                {useCustomUrl && (
+                    <FormField
+                        control={form.control}
+                        name="baseUrl"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('guide.gitlab.customUrlLabel')}</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="url"
+                                        placeholder={t('guide.gitlab.customUrlPlaceholder')}
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                )}
+
                 <FormField
                     control={form.control}
                     name="displayName"

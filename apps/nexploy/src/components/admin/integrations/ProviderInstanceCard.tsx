@@ -8,7 +8,7 @@ import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/k
 import { statusMap } from '@/utils/statusMap';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
-import { deleteGitProviderAction } from '@/actions/admin/deleteGitProvider.action';
+import { deleteGitProviderAction } from '@/actions/git/deleteGitProvider.action';
 
 interface ProviderInstanceCardProps {
     id: string;

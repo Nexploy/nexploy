@@ -1,9 +1,11 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { getPublicIp } from '@/lib/network/getPublicIp';
 
-export const detectPublicIpAction = authActionServer.action(async () => {
+export const detectPublicIpAction = authActionServer
+    .use(requirePermission('repository', 'read'))
+    .action(async () => {
     const ip = await getPublicIp();
 
     if (!ip) {

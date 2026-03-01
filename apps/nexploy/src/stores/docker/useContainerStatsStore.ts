@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import dayjs from 'dayjs';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import {
     ContainerStatsParams,
@@ -260,7 +261,7 @@ export const useContainerStatsStore = create<ContainerStatsState>((set, get) => 
         ];
 
         const rows = history.map((stat) => [
-            new Date(stat.timestamp).toISOString(),
+            dayjs(stat.timestamp).toISOString(),
             `${stat.cpuPercent.toFixed(3)}%`,
             formatBytes(stat.memoryUsage),
             stat.memoryLimit,
@@ -278,7 +279,7 @@ export const useContainerStatsStore = create<ContainerStatsState>((set, get) => 
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${containerName}-stats-${new Date().toISOString()}.csv`;
+        a.download = `${containerName}-stats-${dayjs().toISOString()}.csv`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

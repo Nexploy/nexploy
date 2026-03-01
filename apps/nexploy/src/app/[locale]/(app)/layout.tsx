@@ -1,11 +1,13 @@
 import { AppSidebar } from '@/components/sidebar/AppSidebar';
-import { SidebarInset, SidebarProvider } from '@workspace/ui/components/sidebar';
+import { SidebarProvider } from '@workspace/ui/components/sidebar';
 import { Header } from '@/components/header/Header';
 import { SSEProvider } from '@/providers/SSEProviders';
 import { cookies } from 'next/headers';
 import { PermissionProvider } from '@/contexts/PermissionContext';
 import { getUserSession } from '@/services/auth/auth.service';
 import { ReactNode } from 'react';
+import { InsetPanel } from '@/components/layout/InsetPanel';
+import { cn } from '@workspace/ui/lib/utils';
 
 export default async function DockerLayout({
     children,
@@ -24,9 +26,19 @@ export default async function DockerLayout({
                 <AppSidebar variant={'inset'} />
                 <div className={'flex h-screen w-full flex-col'}>
                     <Header />
-                    <SidebarInset className="!mt-0 !min-h-0 overflow-hidden">
-                        <SSEProvider>{children}</SSEProvider>
-                    </SidebarInset>
+                    <main className="flex !min-h-0 w-full flex-1 md:pr-2 md:pb-2">
+                        <InsetPanel
+                            className={cn(
+                                'flex-1',
+                                // 'mr-2'
+                            )}
+                        >
+                            <SSEProvider>{children}</SSEProvider>
+                        </InsetPanel>
+                        {/*<InsetPanel className={'w-80'}>*/}
+                        {/*    <SidebarAI />*/}
+                        {/*</InsetPanel>*/}
+                    </main>
                 </div>
             </SidebarProvider>
         </PermissionProvider>

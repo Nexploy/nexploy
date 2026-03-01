@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { deployVersionSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { getTranslations } from 'next-intl/server';
@@ -22,6 +22,7 @@ async function handleDeployError(err: unknown) {
 }
 
 export const onDeployDockerfileVersion = authActionServer
+    .use(requirePermission('repository', 'deploy'))
     .inputSchema(deployVersionSchema)
     .action(async ({ parsedInput }) => {
         const { imageTag, repositoryId, environmentId } = parsedInput;
@@ -33,6 +34,7 @@ export const onDeployDockerfileVersion = authActionServer
     });
 
 export const onDeployComposeVersion = authActionServer
+    .use(requirePermission('repository', 'deploy'))
     .inputSchema(deployVersionSchema)
     .action(async ({ parsedInput }) => {
         const { imageTag, repositoryId, environmentId } = parsedInput;

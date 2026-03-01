@@ -14,6 +14,7 @@
         "NEXPLOY_API_KEY",
         "NEXPLOY_API_URL",
         "TRAEFIK_CONTAINER_NAME",
+        "TRAEFIK_NETWORK_NAME",
         "DOCKER_SOCKET",
         "LOG_LEVEL",
         "PORT",

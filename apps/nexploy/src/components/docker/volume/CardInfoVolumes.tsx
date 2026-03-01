@@ -23,7 +23,7 @@ export function CardInfoVolumes() {
     const percentUsed = (totalSizeVolumes / totalDiskCapacity) * 100;
 
     const lastCreated = [...volumes].sort(
-        (a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime(),
+        (a, b) => dayjs(b.createdAt || 0).valueOf() - dayjs(a.createdAt || 0).valueOf(),
     )[0];
 
     const lastCreatedLabel = lastCreated?.createdAt

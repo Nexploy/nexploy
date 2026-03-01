@@ -364,6 +364,9 @@
             "updateError": "Échec de la mise à jour des variables d'environnement",
             "saveChanges": "Enregistrer",
             "addVariable": "Ajouter une variable",
+            "importEnv": "Importer .env",
+            "importSuccess": "{count} variable(s) importée(s)",
+            "importError": "Aucune variable valide trouvée dans le fichier",
             "noVariables": "Aucune variable d'environnement configurée.",
             "pendingDeletion": "Suppression en attente (enregistrez pour confirmer) :",
             "undo": "Annuler"

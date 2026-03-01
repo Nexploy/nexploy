@@ -22,28 +22,3 @@ export async function getUsers(): Promise<UserRow[]> {
         throw new Error('Failed to get users');
     }
 }
-
-export async function getInvitations() {
-    try {
-        return await prisma.invitation.findMany({
-            where: {
-                status: 'pending',
-                expiresAt: {
-                    gt: new Date(),
-                },
-            },
-            select: {
-                id: true,
-                email: true,
-                role: true,
-                expiresAt: true,
-                createdAt: true,
-            },
-            orderBy: {
-                createdAt: 'desc',
-            },
-        });
-    } catch {
-        throw new Error('Failed to get invitations');
-    }
-}

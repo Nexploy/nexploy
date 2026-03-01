@@ -1,4 +1,5 @@
 import { spawn } from 'child_process';
+import dayjs from 'dayjs';
 import { access, mkdir, mkdtemp, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
 import os from 'os';
@@ -18,6 +19,7 @@ class GitService {
             const proc = spawn(command, args, {
                 cwd: options?.cwd,
                 env: options?.env ?? process.env,
+                stdio: ['ignore', 'pipe', 'pipe'],
             });
 
             let stdout = '';
@@ -85,7 +87,11 @@ class GitService {
             : null;
 
         try {
-            let gitEnv: NodeJS.ProcessEnv = process.env;
+            let gitEnv: NodeJS.ProcessEnv = {
+                ...process.env,
+                GIT_TERMINAL_PROMPT: '0',
+                GIT_ASKPASS: 'echo',
+            };
 
             if (credsTmpDir && token.accessToken) {
                 const parsedUrl = new URL(buildConfig.gitUrl);
@@ -100,7 +106,12 @@ class GitService {
                     { mode: 0o600 },
                 );
 
-                gitEnv = { ...process.env, GIT_CONFIG_GLOBAL: configFile };
+                gitEnv = {
+                    ...process.env,
+                    GIT_TERMINAL_PROMPT: '0',
+                    GIT_ASKPASS: 'echo',
+                    GIT_CONFIG_GLOBAL: configFile,
+                };
             }
 
             const cloneArgs = ['clone'];
@@ -128,9 +139,25 @@ class GitService {
                     errorMessage.includes('could not read Username');
 
                 if (isAuthError && token.accessToken) {
+                    // Force-refresh the token and retry with new credentials
+                    const forcedExpiredToken = { ...token, accessTokenExpiresAt: dayjs(0).toDate() };
+                    const refreshedToken = await getValidToken(
+                        forcedExpiredToken,
+                        buildConfig.gitProvider,
+                        buildConfig.userId,
+                        buildConfig.gitAccountId,
+                    );
+
+                    if (credsTmpDir && refreshedToken.accessToken) {
+                        const parsedUrl = new URL(buildConfig.gitUrl);
+                        const newCredsEntry = `${parsedUrl.protocol}//oauth2:${refreshedToken.accessToken}@${parsedUrl.host}\n`;
+                        const credsFile = join(credsTmpDir, 'credentials');
+                        await writeFile(credsFile, newCredsEntry, { mode: 0o600 });
+                    }
+
                     await rm(workDir, { recursive: true, force: true }).catch(() => {});
                     await mkdir(workDir, { recursive: true });
-                    await this.exec('git', cloneArgs, { env: process.env }, onProgress);
+                    await this.exec('git', cloneArgs, { env: gitEnv }, onProgress);
                 } else {
                     throw cloneError;
                 }

@@ -41,6 +41,7 @@ interface GitAccountSummary {
         displayName: string;
         ownerName: string | null;
         ownerType: string | null;
+        baseUrl: string | null;
     };
 }
 
@@ -48,6 +49,15 @@ const providerIcons: Record<string, React.ReactNode> = {
     github: <Github className="size-4" />,
     gitlab: <Gitlab className="size-4" />,
 };
+
+function getHostname(url: string | null): string | null {
+    if (!url) return null;
+    try {
+        return new URL(url).hostname;
+    } catch {
+        return null;
+    }
+}
 
 export function GitSourceStep() {
     const { control, watch, setValue } = useFormContext();
@@ -128,6 +138,9 @@ export function GitSourceStep() {
                                                 const isOrg =
                                                     account.gitProvider.ownerType ===
                                                     'Organization';
+                                                const hostname = getHostname(
+                                                    account.gitProvider.baseUrl,
+                                                );
                                                 return (
                                                     <SelectItem key={account.id} value={account.id}>
                                                         <span className="flex items-center gap-2">
@@ -136,6 +149,11 @@ export function GitSourceStep() {
                                                                 {account.providerUsername ??
                                                                     account.providerAccountId}
                                                             </span>
+                                                            {hostname && (
+                                                                <span className="text-muted-foreground text-xs">
+                                                                    {hostname}
+                                                                </span>
+                                                            )}
                                                             {isOrg && (
                                                                 <Badge
                                                                     variant="secondary"

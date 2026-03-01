@@ -27,7 +27,9 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
     const { connectionState, connect, disconnect, terminalRef } = useTerminalStore();
 
     const buildSocketUrl = () => {
-        const baseUrl = `ws://${window.location.host}/api/ws/docker/attach/${container?.id}`;
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const baseUrl = `${protocol}//${window.location.host}/api/ws/docker/attach/${container?.id}`;
+
         return selectedEnvironmentId ? `${baseUrl}?environment=${selectedEnvironmentId}` : baseUrl;
     };
 

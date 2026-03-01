@@ -1,4 +1,5 @@
 import { logger } from '@/utils/logger';
+import dayjs from 'dayjs';
 import { BaseStateManager } from '@/lib/BaseStateManager';
 import type { Swarm } from 'dockerode';
 import type {
@@ -562,8 +563,8 @@ export class SwarmStateManager extends BaseStateManager {
         return {
             id: swarm.ID,
             version: swarm.Version?.Index || 0,
-            createdAt: swarm.CreatedAt ? new Date(swarm.CreatedAt).getTime() : Date.now(),
-            updatedAt: swarm.UpdatedAt ? new Date(swarm.UpdatedAt).getTime() : Date.now(),
+            createdAt: swarm.CreatedAt ? dayjs(swarm.CreatedAt).valueOf() : dayjs().valueOf(),
+            updatedAt: swarm.UpdatedAt ? dayjs(swarm.UpdatedAt).valueOf() : dayjs().valueOf(),
             joinTokens: {
                 worker: swarm.JoinTokens?.Worker || '',
                 manager: swarm.JoinTokens?.Manager || '',
@@ -586,8 +587,8 @@ export class SwarmStateManager extends BaseStateManager {
         return {
             id: node.ID,
             version: node.Version?.Index || 0,
-            createdAt: node.CreatedAt ? new Date(node.CreatedAt).getTime() : Date.now(),
-            updatedAt: node.UpdatedAt ? new Date(node.UpdatedAt).getTime() : Date.now(),
+            createdAt: node.CreatedAt ? dayjs(node.CreatedAt).valueOf() : dayjs().valueOf(),
+            updatedAt: node.UpdatedAt ? dayjs(node.UpdatedAt).valueOf() : dayjs().valueOf(),
             hostname: description.Hostname || 'unknown',
             role: (spec.Role?.toLowerCase() || 'worker') as SwarmNodeRole,
             availability: (spec.Availability?.toLowerCase() || 'active') as SwarmNodeAvailability,
@@ -657,8 +658,8 @@ export class SwarmStateManager extends BaseStateManager {
         return {
             id: service.ID,
             version: service.Version?.Index || 0,
-            createdAt: service.CreatedAt ? new Date(service.CreatedAt).getTime() : Date.now(),
-            updatedAt: service.UpdatedAt ? new Date(service.UpdatedAt).getTime() : Date.now(),
+            createdAt: service.CreatedAt ? dayjs(service.CreatedAt).valueOf() : dayjs().valueOf(),
+            updatedAt: service.UpdatedAt ? dayjs(service.UpdatedAt).valueOf() : dayjs().valueOf(),
             name: spec.Name || '',
             mode: serviceMode,
             replicas,
@@ -673,10 +674,10 @@ export class SwarmStateManager extends BaseStateManager {
                 ? {
                       state: service.UpdateStatus.State?.toLowerCase() as any,
                       startedAt: service.UpdateStatus.StartedAt
-                          ? new Date(service.UpdateStatus.StartedAt).getTime()
+                          ? dayjs(service.UpdateStatus.StartedAt).valueOf()
                           : undefined,
                       completedAt: service.UpdateStatus.CompletedAt
-                          ? new Date(service.UpdateStatus.CompletedAt).getTime()
+                          ? dayjs(service.UpdateStatus.CompletedAt).valueOf()
                           : undefined,
                       message: service.UpdateStatus.Message,
                   }
@@ -694,8 +695,8 @@ export class SwarmStateManager extends BaseStateManager {
         return {
             id: task.ID,
             version: task.Version?.Index || 0,
-            createdAt: task.CreatedAt ? new Date(task.CreatedAt).getTime() : Date.now(),
-            updatedAt: task.UpdatedAt ? new Date(task.UpdatedAt).getTime() : Date.now(),
+            createdAt: task.CreatedAt ? dayjs(task.CreatedAt).valueOf() : dayjs().valueOf(),
+            updatedAt: task.UpdatedAt ? dayjs(task.UpdatedAt).valueOf() : dayjs().valueOf(),
             serviceId: task.ServiceID,
             serviceName: serviceName || '',
             nodeId: task.NodeID,

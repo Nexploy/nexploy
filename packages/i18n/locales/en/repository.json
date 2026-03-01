@@ -364,6 +364,9 @@
             "updateError": "Failed to update environment variables",
             "saveChanges": "Save",
             "addVariable": "Add variable",
+            "importEnv": "Import .env",
+            "importSuccess": "{count} variable(s) imported",
+            "importError": "No valid variables found in file",
             "noVariables": "No environment variables configured.",
             "pendingDeletion": "Pending deletion (save to confirm):",
             "undo": "Undo"

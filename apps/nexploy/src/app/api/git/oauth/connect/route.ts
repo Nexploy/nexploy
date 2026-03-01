@@ -38,16 +38,16 @@ export const GET = route
 
         if (gitProvider.provider === 'github') {
             const params = new URLSearchParams({ state });
-            authUrl = `https://github.com/apps/${gitProvider.appName}/installations/new?${params.toString()}`;
+            authUrl = `${gitProvider.baseUrl}/apps/${gitProvider.appName}/installations/new?${params.toString()}`;
         } else {
             const params = new URLSearchParams({
                 client_id: clientId,
                 redirect_uri: redirectUri,
                 response_type: 'code',
                 state,
-                scope: 'read_user read_repository api',
+                scope: 'api read_api read_repository',
             });
-            authUrl = `https://gitlab.com/oauth/authorize?${params.toString()}`;
+            authUrl = `${gitProvider.baseUrl}/oauth/authorize?${params.toString()}`;
         }
 
         return NextResponse.redirect(authUrl);

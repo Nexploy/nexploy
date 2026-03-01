@@ -1,4 +1,5 @@
 import { channel, topic } from '@inngest/realtime';
+import dayjs from 'dayjs';
 import {
     BuildConfig,
     BuildLogEntry,
@@ -42,7 +43,7 @@ export const buildFunction = inngest.createFunction(
                 const log: BuildLogEntry = {
                     level,
                     buildId,
-                    createdAt: new Date(),
+                    createdAt: dayjs().toDate(),
                     step: stepName,
                     message,
                 };

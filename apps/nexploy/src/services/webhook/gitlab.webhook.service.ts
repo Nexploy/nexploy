@@ -1,12 +1,14 @@
-import { kyGitlab } from '@/lib/api/kyGitlab';
+import { createKyGitlab } from '@/lib/api/kyGitlab';
 import { WebhookPayload } from '@workspace/typescript-interface/webhook';
 
 export function extractGitLabProjectId(repositoryUrl: string): string {
-    const match = repositoryUrl.match(/gitlab\.com[\/:](.+?)(\.git)?$/);
-    if (match && match[1]) {
-        return encodeURIComponent(match[1].replace('.git', ''));
+    try {
+        const url = new URL(repositoryUrl);
+        const path = url.pathname.replace(/^\//, '').replace(/\.git$/, '');
+        return encodeURIComponent(path);
+    } catch {
+        throw new Error(`Invalid GitLab repository URL: ${repositoryUrl}`);
     }
-    throw new Error(`Invalid GitLab repository URL: ${repositoryUrl}`);
 }
 
 export function parseGitLabWebhook(payload: any): WebhookPayload | null {
@@ -35,6 +37,8 @@ export async function createGitLabWebhook(
     webhookUrl: string,
 ): Promise<{ webhookId: string; webhookSecret: string }> {
     const projectId = extractGitLabProjectId(repositoryUrl);
+    const baseUrl = new URL(repositoryUrl).origin;
+    const kyGitlab = createKyGitlab(baseUrl);
 
     try {
         const data = await kyGitlab

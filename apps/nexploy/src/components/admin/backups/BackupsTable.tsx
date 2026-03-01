@@ -24,7 +24,7 @@ import { getColumnsBackups } from '@/components/admin/backups/ColumnsBackups';
 import { useTranslations } from 'next-intl';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
-import { ChevronLeft, ChevronRight, Database } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import {
     Select,
@@ -173,14 +173,9 @@ export function BackupsTable({ backups }: BackupsTableProps) {
                                     colSpan={table.getAllColumns().length}
                                     className="py-12 text-center"
                                 >
-                                    <div className="flex flex-col items-center gap-2">
-                                        <div className="bg-muted flex size-10 items-center justify-center rounded-full">
-                                            <Database className="text-muted-foreground size-5" />
-                                        </div>
-                                        <p className="text-muted-foreground text-sm">
-                                            {t('noBackups')}
-                                        </p>
-                                    </div>
+                                    <p className="text-muted-foreground text-sm">
+                                        {t('noBackups')}
+                                    </p>
                                 </TableCell>
                             </TableRow>
                         ) : (

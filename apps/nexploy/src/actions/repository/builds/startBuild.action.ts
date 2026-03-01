@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { HTTPError } from 'ky';
 import { startBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
@@ -9,6 +9,7 @@ import { revalidatePath } from 'next/cache';
 import { getTranslations } from 'next-intl/server';
 
 export const onStartBuild = authActionServer
+    .use(requirePermission('repository', 'deploy'))
     .inputSchema(startBuildSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {

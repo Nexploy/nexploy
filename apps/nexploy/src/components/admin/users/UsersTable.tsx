@@ -89,7 +89,7 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
         },
     });
 
-    const handleRoleChange = (userId: string, role: 'admin' | 'user') => {
+    const handleRoleChange = (userId: string, role: 'admin' | 'readWrite' | 'read') => {
         executeUpdateRole({ userId, role });
     };
 

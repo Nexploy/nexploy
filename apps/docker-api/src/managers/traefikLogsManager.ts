@@ -1,11 +1,12 @@
 import { logger } from '@/utils/logger';
+import dayjs from 'dayjs';
 import { TraefikRequest } from '@workspace/typescript-interface/traefik/traefik.request';
 import { BaseStateManager } from '@/lib/BaseStateManager';
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 
-const TRAEFIK_CONTAINER_NAME = process.env.TRAEFIK_CONTAINER_NAME ?? 'nexploy_traefik';
+import { TRAEFIK_CONTAINER_NAME } from '@/lib/config';
 const MAX_REQUESTS = 500;
 
 interface TraefikLogEvent {
@@ -236,7 +237,7 @@ export class TraefikLogsManager extends BaseStateManager {
 
             const request: TraefikRequest = {
                 id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-                timestamp: log.time || log.StartUTC || new Date().toISOString(),
+                timestamp: log.time || log.StartUTC || dayjs().toISOString(),
                 clientAddr: log.ClientAddr || '',
                 clientHost: log.ClientHost || '',
                 method: log.RequestMethod || '',

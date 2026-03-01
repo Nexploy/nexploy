@@ -1,6 +1,7 @@
 'use client';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
+import dayjs from 'dayjs';
 import { Activity, Download } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import * as React from 'react';
@@ -70,7 +71,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
     const chartData = useMemo(
         () =>
             history.map((stat) => ({
-                timestamp: new Date(stat.timestamp).toLocaleTimeString(),
+                timestamp: dayjs(stat.timestamp).format('HH:mm:ss'),
                 cpuPercent: stat.cpuPercent,
                 memoryUsage: stat.memoryUsage,
                 networkRx: stat.networkRx,

@@ -1,6 +1,7 @@
 import { updateGitProviderToken } from '@/services/git/git.service';
 import { GitLabCommit, GitProviderToken } from '@workspace/typescript-interface/git/git';
-import { kyGitlab } from '@/lib/api/kyGitlab';
+import { createKyGitlab } from '@/lib/api/kyGitlab';
+import dayjs from 'dayjs';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import {
     getGitProviderCredentials,
@@ -22,7 +23,7 @@ export async function getValidToken(
         return token;
     }
 
-    if (new Date(token.accessTokenExpiresAt) < new Date()) {
+    if (dayjs(token.accessTokenExpiresAt).isBefore(dayjs())) {
         if (provider === 'gitlab') {
             return await refreshGitLabToken(token, userId, gitAccountId);
         } else if (provider === 'github') {
@@ -67,6 +68,9 @@ async function getGitLabCommit(
     };
 
     try {
+        const baseUrl = extractGitLabBaseUrl(repositoryUrl);
+        const kyGitlab = createKyGitlab(baseUrl);
+
         return await tokenGitStorage.run(token, async () => {
             const endpoint = commitHash
                 ? `v4/projects/${encodedRepositoryPath}/repository/commits/${commitHash}`
@@ -128,11 +132,21 @@ async function getGitHubCommit(
 }
 
 function extractGitLabRepositoryPath(repositoryUrl: string): string {
-    const httpsMatch = repositoryUrl.match(/gitlab\.com[\/:](.+?)(\.git)?$/);
-    if (httpsMatch && httpsMatch[1]) {
-        return httpsMatch[1].replace('.git', '');
+    try {
+        const url = new URL(repositoryUrl);
+        return url.pathname.replace(/^\//, '').replace(/\.git$/, '');
+    } catch {
+        throw new Error(`Invalid GitLab repository URL: ${repositoryUrl}`);
     }
-    throw new Error(`Invalid GitLab repository URL: ${repositoryUrl}`);
+}
+
+function extractGitLabBaseUrl(repositoryUrl: string): string {
+    try {
+        const url = new URL(repositoryUrl);
+        return `${url.protocol}//${url.host}`;
+    } catch {
+        throw new Error(`Invalid GitLab repository URL: ${repositoryUrl}`);
+    }
 }
 
 async function refreshGitLabToken(
@@ -151,6 +165,8 @@ async function refreshGitLabToken(
     const clientId = gitlabCreds?.clientId;
     const clientSecret = gitlabCreds?.clientSecret;
 
+    const gitlabBaseUrl = gitlabCreds?.baseUrl;
+    if (!gitlabBaseUrl || !clientId || !clientSecret) throw new Error('GitLab provider not configured');
     const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 
     const body = new URLSearchParams({
@@ -158,7 +174,7 @@ async function refreshGitLabToken(
         refresh_token: token.refreshToken,
     });
 
-    const response = await fetch(`https://gitlab.com/oauth/token`, {
+    const response = await fetch(`${gitlabBaseUrl}/oauth/token`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -174,12 +190,10 @@ async function refreshGitLabToken(
 
     const data = await response.json();
 
-    const expiresAt = new Date(Date.now() + data.expires_in * 1000);
-
     const newToken = {
         accessToken: data.access_token,
-        refreshToken: data.refresh_token,
-        accessTokenExpiresAt: expiresAt,
+        refreshToken: data.refresh_token ?? token.refreshToken,
+        accessTokenExpiresAt: data.expires_in ? dayjs().add(data.expires_in, 'second').toDate() : null,
     };
 
     await updateGitProviderToken('gitlab', userId, newToken, gitAccountId);
@@ -214,7 +228,7 @@ async function refreshGitHubToken(
         throw new Error(`GitHub token refresh failed: ${data.error_description || data.error}`);
     }
 
-    const expiresAt = data.expires_in ? new Date(Date.now() + data.expires_in * 1000) : null;
+    const expiresAt = data.expires_in ? dayjs().add(data.expires_in, 'second').toDate() : null;
 
     const newToken: GitProviderToken = {
         accessToken: data.access_token,

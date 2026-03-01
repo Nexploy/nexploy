@@ -1,27 +1,17 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { saveGitHubApp } from '@/services/oauthProvider.service';
-import { adminOnly, authRouteServer, route } from '@/lib/api/nextRoute';
+import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { setToastServer } from '@/lib/toastServer';
-import { getUserSession } from '@/services/auth/auth.service';
 import { getBaseUrl } from '@/lib/getBaseUrl';
 import { githubExchangeManifestCode } from '@/lib/api/github.api';
 
 export const GET = route
     .use(authRouteServer)
-    .use(adminOnly)
+    .use(requirePermission('gitProvider', 'create'))
     .handler(async (request) => {
         const baseUrl = await getBaseUrl();
         const redirectTo = (path: string) => NextResponse.redirect(`${baseUrl}${path}`);
-
-        const session = await getUserSession();
-        if (!session || session.user.role !== 'admin') {
-            await setToastServer({
-                type: 'error',
-                message: 'Only admins can configure Git providers',
-            });
-            return redirectTo('/admin/integrations');
-        }
 
         const url = new URL(request.url);
         const code = url.searchParams.get('code');

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import dayjs from 'dayjs';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import {
     MonitoringState,
@@ -206,7 +207,7 @@ export const useMonitoringStore = create<MonitoringState>((set, get) => ({
         ];
 
         const rows = history.map((metric) => [
-            new Date(metric.timestamp).toISOString(),
+            dayjs(metric.timestamp).toISOString(),
             `${metric.cpuPercent.toFixed(2)}%`,
             `${metric.memoryPercent.toFixed(2)}%`,
             `${metric.diskPercent.toFixed(2)}%`,
@@ -222,7 +223,7 @@ export const useMonitoringStore = create<MonitoringState>((set, get) => ({
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `system-metrics-${new Date().toISOString()}.csv`;
+        a.download = `system-metrics-${dayjs().toISOString()}.csv`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

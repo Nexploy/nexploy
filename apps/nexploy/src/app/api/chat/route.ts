@@ -1,22 +1,18 @@
 import { openai } from '@ai-sdk/openai';
 import { streamText } from 'ai';
-import { getUserSession } from '@/services/auth/auth.service';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { networkCreateSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';
 import { volumeCreateSchema } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 import { imagePullSchema } from '@workspace/schemas-zod/docker/image/imagePullAction.schema';
 import { kyDocker } from '@/lib/api/kyDocker';
-import { route } from '@/lib/api/nextRoute';
+import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 
 export const maxDuration = 60;
 
-export const POST = route.handler(async (request: Request) => {
-    const session = await getUserSession();
-
-    if (!session) {
-        return new Response('Unauthorized', { status: 401 });
-    }
-
+export const POST = route
+    .use(authRouteServer)
+    .use(requirePermission('docker', 'manage'))
+    .handler(async (request: Request) => {
     const { messages } = await request.json();
 
     const result = streamText({

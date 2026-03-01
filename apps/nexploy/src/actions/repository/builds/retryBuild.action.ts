@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { retryBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import {
@@ -11,6 +11,7 @@ import { deleteBuildLogInngest } from '@/services/inngest/log.inngest.service';
 import { getTranslations } from 'next-intl/server';
 
 export const onRetryBuild = authActionServer
+    .use(requirePermission('repository', 'deploy'))
     .inputSchema(retryBuildSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {

@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,25 +14,23 @@ import { BuildConfigurationStep } from '@/components/repositories/steps/BuildCon
 import { DeploymentStep } from '@/components/repositories/steps/DeploymentStep';
 import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
 
 export default function AddRepositoryPage() {
     const t = useTranslations('repository.create');
     const router = useRouter();
     const selectedEnvironmentId = useEnvironmentStore((state) => state.selectedEnvironmentId);
 
-    const defaultValues = useMemo(
-        () => ({
-            name: '',
-            branch: 'main',
-            gitToken: '',
-            gitProvider: 'github' as const,
-            buildType: 'DOCKERFILE' as const,
-            buildArgs: '',
-            autoDeploy: true,
-            environmentId: selectedEnvironmentId ?? undefined,
-        }),
-        [selectedEnvironmentId],
-    );
+    const defaultValues = {
+        name: '',
+        branch: 'main',
+        gitToken: '',
+        gitProvider: 'github' as const,
+        buildType: 'DOCKERFILE' as const,
+        buildArgs: '',
+        autoDeploy: true,
+        environmentId: selectedEnvironmentId ?? undefined,
+    };
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onRepositoryCreateAction,
@@ -55,10 +52,10 @@ export default function AddRepositoryPage() {
         if (selectedEnvironmentId && !currentValue) {
             form.setValue('environmentId', selectedEnvironmentId);
         }
-    }, [selectedEnvironmentId, form]);
+    }, [selectedEnvironmentId]);
 
     return (
-        <div className="flex flex-1 flex-col gap-5 overflow-hidden pt-5">
+        <div className="flex h-full flex-1 flex-col gap-5 pt-5">
             <div className="flex justify-between gap-4 px-5">
                 <div className="flex gap-3">
                     <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">

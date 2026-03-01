@@ -4,8 +4,9 @@ import { getUserSession } from '@/services/auth/auth.service';
 import { Session } from '@/lib/auth/auth';
 import { redirect } from 'next/navigation';
 import { setToastServer } from '@/lib/toastServer';
-import { cookies } from 'next/headers';
 import { getTranslations } from 'next-intl/server';
+import { type PermissionActions, type PermissionResource, roles } from '@/lib/auth/permissions';
+import { Role } from '@workspace/schemas-zod/auth/permissions';
 
 export const actionServer = createSafeActionClient({
     handleServerError(error) {
@@ -41,15 +42,22 @@ export const authActionServer = actionServer.use(async ({ next }) => {
     return next({ ctx: { session } });
 });
 
-export const adminOnly = createMiddleware<{ ctx: { session: Session } }>().define(
-    async ({ ctx, next }) => {
-        if (ctx.session.user.role !== 'admin') {
-            throw new Error('Only admins can perform this action');
+export const requirePermission = <R extends PermissionResource>(
+    resource: R,
+    action: PermissionActions[R],
+) =>
+    createMiddleware<{ ctx: { session: Session } }>().define(async ({ ctx, next }) => {
+        const role = ctx.session.user.role as Role;
+        const roleStatements = (
+            roles[role] as { statements?: Record<string, readonly string[]> } | undefined
+        )?.statements;
+
+        if (!roleStatements?.[resource]?.includes(action as string)) {
+            throw new Error(`Forbidden: missing permission ${resource}.${action as string}`);
         }
 
         return next({ ctx });
-    },
-);
+    });
 
 export const preventSelfAction = createMiddleware<{
     ctx: { session: Session };
@@ -65,16 +73,4 @@ export const preventSelfAction = createMiddleware<{
     }
 
     return next({ ctx });
-});
-
-export const injectDockerApiCookie = createMiddleware().define(async ({ ctx, next }) => {
-    const cookieStore = await cookies();
-    const environmentId = cookieStore.get('X-Docker-Environment')?.value || null;
-
-    return next({
-        ctx: {
-            ...ctx,
-            environmentId,
-        },
-    });
 });

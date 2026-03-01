@@ -7,7 +7,8 @@ import {
 } from '@workspace/typescript-interface/git/git';
 import { getValidToken } from '@/services/api/gitProvider.service';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
-import { kyGitlab } from '@/lib/api/kyGitlab';
+import { createKyGitlab } from '@/lib/api/kyGitlab';
+import { getGitProviderCredentialsByAccountId } from '@/services/oauthProvider.service';
 import { GitlabRepo } from '@workspace/typescript-interface/git/repository/gitlab.repository';
 import { GitlabBranch } from '@workspace/typescript-interface/git/branch/gitlab.branch';
 import { GithubBranch } from '@workspace/typescript-interface/git/branch/github.branch';
@@ -99,6 +100,10 @@ export async function getRepositories(
         }
         case 'gitlab': {
             try {
+                const gitlabCreds = await getGitProviderCredentialsByAccountId(gitAccountId);
+                const gitlabBaseUrl = gitlabCreds?.baseUrl ?? 'https://gitlab.com';
+                const kyGitlab = createKyGitlab(gitlabBaseUrl);
+
                 const repositories = await tokenGitStorage.run(token, async () => {
                     return await kyGitlab
                         .get('v4/projects', {
@@ -158,6 +163,10 @@ export async function getBranches(
         }
         case 'gitlab': {
             try {
+                const gitlabCreds = await getGitProviderCredentialsByAccountId(gitAccountId);
+                const gitlabBaseUrl = gitlabCreds?.baseUrl ?? 'https://gitlab.com';
+                const kyGitlab = createKyGitlab(gitlabBaseUrl);
+
                 const branches = await tokenGitStorage.run(token, async () => {
                     return await kyGitlab
                         .get(`v4/projects/${repoId}/repository/branches`)
@@ -226,6 +235,7 @@ export async function listGitAccounts(userId: string) {
                         displayName: true,
                         ownerName: true,
                         ownerType: true,
+                        baseUrl: true,
                     },
                 },
             },

@@ -80,18 +80,6 @@ model TwoFactor {
   @@map("twoFactor")
 }
 
-model Invitation {
-  id        String   @id
-  email     String
-  inviterId String
-  role      String?
-  status    String   @default("pending")
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-
-  @@map("invitation")
-}
-
 model Apikey {
   id                  String    @id
   name                String?

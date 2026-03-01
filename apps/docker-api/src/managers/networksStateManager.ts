@@ -1,4 +1,5 @@
 import { logger } from '@/utils/logger';
+import dayjs from 'dayjs';
 import { NetworkInspectInfo } from 'dockerode';
 import {
     Network,
@@ -207,8 +208,8 @@ export class NetworksStateManager extends BaseStateManager {
             options: network.Options || {},
             labels: network.Labels || {},
             created: network.Created
-                ? new Date(network.Created).getTime() / 1000
-                : Date.now() / 1000,
+                ? dayjs(network.Created).unix()
+                : dayjs().unix(),
             enableIPv6: network.EnableIPv6 || false,
             timestamp: Date.now(),
         };

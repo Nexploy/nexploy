@@ -8,7 +8,7 @@ import { getTranslations } from 'next-intl/server';
 
 export const metadata: Metadata = {
     title: 'Users',
-    description: 'Manage users, invitations and permissions',
+    description: 'Manage users and permissions',
 };
 
 export default async function UsersPage() {

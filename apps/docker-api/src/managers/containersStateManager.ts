@@ -14,6 +14,7 @@ import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 import { networksStateManager } from '@/managers/networksStateManager';
+import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
 
 export const containerImageEvents = new EventEmitter();
 
@@ -477,7 +478,7 @@ export class ContainersStateManager extends BaseStateManager {
         await this.removeExistingContainer(containerName);
 
         const traefikNetworkExist =
-            await networksStateManager.ensureNetworkExists('nexploy_traefik_network');
+            await networksStateManager.ensureNetworkExists(TRAEFIK_NETWORK_NAME);
 
         const envArray = options.envVars
             ? Object.entries(options.envVars).map(([key, value]) => `${key}=${value}`)
@@ -498,7 +499,7 @@ export class ContainersStateManager extends BaseStateManager {
             ...(Object.keys(imageExposedPorts).length > 0 && { ExposedPorts: imageExposedPorts }),
             HostConfig: {
                 RestartPolicy: { Name: 'unless-stopped' },
-                ...(traefikNetworkExist && { NetworkMode: 'nexploy_traefik_network' }),
+                ...(traefikNetworkExist && { NetworkMode: TRAEFIK_NETWORK_NAME }),
             },
         };
 

@@ -7,10 +7,10 @@ import { startBuildRepositoryInngest } from '@/services/inngest/build.inngest.se
 import { findRepositoryByWebhook } from '@/services/webhook/webhook.service';
 import { route } from '@/lib/api/nextRoute';
 
-export const POST = route.handler(async (request: Request) => {
+export const POST = route.handler(async (request: Request, { body }) => {
     try {
-        const gitlabTokenUserId = request.headers.get('x-gitlab-token')!;
-        const payload = await request.json();
+        const gitlabToken = request.headers.get('x-gitlab-token');
+        const payload = body;
 
         if (payload.object_kind !== 'push') {
             return NextResponse.json({ message: 'Event ignored', event: payload.object_kind });
@@ -28,10 +28,7 @@ export const POST = route.handler(async (request: Request) => {
             return NextResponse.json({ message: 'Repository not found' }, { status: 404 });
         }
 
-        if (
-            repo.webhookSecret &&
-            !verifyGitLabWebhookToken(gitlabTokenUserId, repo.webhookSecret)
-        ) {
+        if (repo.webhookSecret && !verifyGitLabWebhookToken(gitlabToken, repo.webhookSecret)) {
             return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
         }
 
@@ -39,11 +36,12 @@ export const POST = route.handler(async (request: Request) => {
             {
                 repositoryId: repo.id,
             },
-            gitlabTokenUserId,
+            repo.userId,
         );
 
         return NextResponse.json({ message: 'Build started' });
     } catch (error) {
+        console.error('[GitLab Webhook Error]', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 });

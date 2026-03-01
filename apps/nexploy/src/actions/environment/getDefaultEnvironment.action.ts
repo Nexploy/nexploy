@@ -1,10 +1,12 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { getDefaultEnvironment } from '@/services/environment/environment.service';
 
-export const getDefaultEnvironmentAction = authActionServer.action(async () => {
+export const getDefaultEnvironmentAction = authActionServer
+    .use(requirePermission('environment', 'read'))
+    .action(async () => {
     try {
         return await getDefaultEnvironment();
     } catch (error: unknown) {

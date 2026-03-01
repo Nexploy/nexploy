@@ -1,4 +1,5 @@
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import dayjs from 'dayjs';
 import type Docker from 'dockerode';
 import { EventEmitter } from 'events';
 import { logger } from '@/utils/logger';
@@ -195,7 +196,7 @@ export class ContainerLogsStateManager extends EventEmitter {
         }
 
         return {
-            timestamp: new Date().toISOString(),
+            timestamp: dayjs().toISOString(),
             stream: streamType === 1 ? 'stdout' : 'stderr',
             message: trimmed,
         };

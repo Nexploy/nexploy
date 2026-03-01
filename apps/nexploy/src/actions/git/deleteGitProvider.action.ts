@@ -1,12 +1,12 @@
 'use server';
 
-import { adminOnly, authActionServer } from '@/lib/api/safe-action';
-import { deleteGitProviderSchema } from '@workspace/schemas-zod/admin/oauthProvider.schema';
+import { deleteGitProviderSchema } from '@workspace/schemas-zod/git/git.schema';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { deleteGitProvider } from '@/services/oauthProvider.service';
 import { revalidatePath } from 'next/cache';
 
 export const deleteGitProviderAction = authActionServer
-    .use(adminOnly)
+    .use(requirePermission('gitProvider', 'delete'))
     .inputSchema(deleteGitProviderSchema)
     .action(async ({ parsedInput }) => {
         const { id } = parsedInput;

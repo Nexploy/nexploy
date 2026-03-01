@@ -7,7 +7,7 @@ import { startBuildRepositoryInngest } from '@/services/inngest/build.inngest.se
 import { findRepositoryByWebhook } from '@/services/webhook/webhook.service';
 import { route } from '@/lib/api/nextRoute';
 
-export const POST = route.handler(async (request: Request) => {
+export const POST = route.handler(async (request: Request, { body }) => {
     try {
         const event = request.headers.get('x-github-event');
         const signature = request.headers.get('x-hub-signature-256');
@@ -20,9 +20,7 @@ export const POST = route.handler(async (request: Request) => {
             return NextResponse.json({ message: 'Event ignored', event });
         }
 
-        const rawPayload = await request.text();
-        const payload = JSON.parse(rawPayload);
-        const parsed = parseGitHubWebhook(payload);
+        const parsed = parseGitHubWebhook(body);
 
         if (!parsed) {
             return NextResponse.json({ message: 'Not a branch push, ignored' });
@@ -36,7 +34,7 @@ export const POST = route.handler(async (request: Request) => {
 
         if (
             repo.webhookSecret &&
-            !verifyGitHubSignature(rawPayload, signature, repo.webhookSecret)
+            !verifyGitHubSignature(JSON.stringify(body), signature, repo.webhookSecret)
         ) {
             return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
         }
@@ -45,11 +43,12 @@ export const POST = route.handler(async (request: Request) => {
             {
                 repositoryId: repo.id,
             },
-            repo.webhookSecret!,
+            repo.userId,
         );
 
         return NextResponse.json({ message: 'Build started' });
-    } catch (error: unknown) {
+    } catch (error) {
+        console.error('[GitHub Webhook Error]', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 });

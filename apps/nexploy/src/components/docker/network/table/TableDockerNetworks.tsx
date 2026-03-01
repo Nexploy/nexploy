@@ -1,6 +1,7 @@
 'use client';
 
 import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
+import dayjs from 'dayjs';
 import {
     FilterFn,
     flexRender,
@@ -47,7 +48,7 @@ const globalFilterFn: FilterFn<Network> = (row, _, value) => {
     const search = value.toLowerCase();
     const { name, driver, id, scope } = row.original;
 
-    const date = new Date(row.original.created * 1000).toLocaleDateString();
+    const date = dayjs.unix(row.original.created).format('DD/MM/YYYY');
 
     return (
         name?.toLowerCase().includes(search) ||

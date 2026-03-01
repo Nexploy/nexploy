@@ -1,12 +1,13 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { revalidatePath } from 'next/cache';
 import { setToastServer } from '@/lib/toastServer';
 import { updateDeploymentSettings } from '@/services/repository.service';
 import { deploymentSettingsSchema } from '@workspace/schemas-zod/repository/settings/deploymentSettings.schema';
 
 export const deploymentSettingsAction = authActionServer
+    .use(requirePermission('repository', 'update'))
     .inputSchema(deploymentSettingsSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {

@@ -42,7 +42,7 @@ function buildManifest(appUrl: string) {
     };
 }
 
-export function GitHubAppSetup() {
+export function GitHubAppSetupForm() {
     const manifestFormRef = useRef<HTMLFormElement>(null);
     const { closeDialog } = useConfirmationDialogStore();
     const t = useTranslations('integrations.oauth.guide.github');

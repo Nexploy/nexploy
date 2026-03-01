@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import dayjs from 'dayjs';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import {
     ContainerLogsEvent,
@@ -248,7 +249,7 @@ export const useContainerLogsStore = create<ContainerLogsState>((set, get) => ({
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${containerName}-logs-${new Date().toISOString()}.txt`;
+        a.download = `${containerName}-logs-${dayjs().toISOString()}.txt`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

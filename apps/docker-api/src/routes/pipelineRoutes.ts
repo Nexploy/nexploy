@@ -15,6 +15,7 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import { logger } from '@/utils/logger';
+import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
 
 const app = new Hono();
 
@@ -162,7 +163,7 @@ app.post(
                 dockerEnv,
             );
 
-            const traefikNetwork = dockerClient.getNetwork('nexploy_traefik_network');
+            const traefikNetwork = dockerClient.getNetwork(TRAEFIK_NETWORK_NAME);
             await Promise.all(
                 containerIds.map(async (containerId: string) => {
                     try {

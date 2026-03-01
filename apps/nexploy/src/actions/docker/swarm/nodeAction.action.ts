@@ -1,12 +1,13 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 import { swarmNodeActionSchema } from '@workspace/schemas-zod/docker/swarm/nodeAction.schema';
 
 export const onSwarmNodeAction = authActionServer
+    .use(requirePermission('docker', 'manage'))
     .inputSchema(swarmNodeActionSchema)
     .action(async ({ parsedInput: { nodeId, action, force } }) => {
         try {

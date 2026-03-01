@@ -1,6 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
+import dayjs from 'dayjs';
 import {
     ArrowUpDown,
     Ban,
@@ -50,7 +51,7 @@ interface ColumnsOptions {
     isUpdatingRole: boolean;
     isDeleting: boolean;
     isBanning: boolean;
-    onRoleChange: (userId: string, role: 'admin' | 'user') => void;
+    onRoleChange: (userId: string, role: 'admin' | 'readWrite' | 'read') => void;
     onDelete: (user: UserRow) => void;
     onBan: (user: UserRow) => void;
 }
@@ -175,13 +176,13 @@ export const getColumnsUsers = (
                 if (canEditRole) {
                     return (
                         <Select
-                            value={user.role || 'user'}
-                            onValueChange={(value: 'admin' | 'user') =>
+                            value={user.role || 'readWrite'}
+                            onValueChange={(value: 'admin' | 'readWrite' | 'read') =>
                                 onRoleChange(user.id, value)
                             }
                             disabled={isUpdatingRole}
                         >
-                            <SelectTrigger className="w-32">
+                            <SelectTrigger className="w-36">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -191,16 +192,29 @@ export const getColumnsUsers = (
                                         {t('adminRole')}
                                     </div>
                                 </SelectItem>
-                                <SelectItem value="user">
+                                <SelectItem value="readWrite">
                                     <div className="flex items-center gap-2">
                                         <ShieldOff className="size-3" />
-                                        {t('userRole')}
+                                        {t('readWriteRole')}
+                                    </div>
+                                </SelectItem>
+                                <SelectItem value="read">
+                                    <div className="flex items-center gap-2">
+                                        <ShieldOff className="size-3" />
+                                        {t('readRole')}
                                     </div>
                                 </SelectItem>
                             </SelectContent>
                         </Select>
                     );
                 }
+
+                const roleLabel =
+                    user.role === 'admin'
+                        ? t('adminRole')
+                        : user.role === 'read'
+                          ? t('readRole')
+                          : t('readWriteRole');
 
                 return (
                     <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
@@ -209,7 +223,7 @@ export const getColumnsUsers = (
                         ) : (
                             <ShieldOff className="mr-1 size-3" />
                         )}
-                        {user.role === 'admin' ? t('adminRole') : t('userRole')}
+                        {roleLabel}
                     </Badge>
                 );
             },
@@ -263,7 +277,7 @@ export const getColumnsUsers = (
             ),
             cell: ({ row }) => (
                 <span className="text-muted-foreground">
-                    {new Date(row.original.createdAt).toLocaleDateString()}
+                    {dayjs(row.original.createdAt).format('DD/MM/YYYY')}
                 </span>
             ),
         },

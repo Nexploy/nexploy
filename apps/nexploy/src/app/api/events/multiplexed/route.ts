@@ -1,4 +1,5 @@
-import { authRouteServer, route } from '@/lib/api/nextRoute';
+import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
+import dayjs from 'dayjs';
 import { NextResponse } from 'next/server';
 import { ChannelConfig, ChannelState, SSEChannel } from '@workspace/typescript-interface/sse';
 
@@ -56,7 +57,10 @@ const buildEndpointUrl = (template: string, params?: Record<string, string>): st
     return url;
 };
 
-export const GET = route.use(authRouteServer).handler(async (request: Request) => {
+export const GET = route
+    .use(authRouteServer)
+    .use(requirePermission('docker', 'read'))
+    .handler(async (request: Request) => {
     const { searchParams } = new URL(request.url);
     const channelsParam = searchParams.get('channels');
     const environment = searchParams.get('environment');
@@ -244,7 +248,7 @@ export const GET = route.use(authRouteServer).handler(async (request: Request) =
                                     channel: config.channel,
                                     params: config.params,
                                     event: 'connected',
-                                    data: new Date().toISOString(),
+                                    data: dayjs().toISOString(),
                                 })}\n\n`,
                             ),
                         );

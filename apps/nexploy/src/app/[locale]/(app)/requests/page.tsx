@@ -27,12 +27,12 @@ import {
 } from '@workspace/ui/components/select';
 import { Button } from '@workspace/ui/components/button';
 import { SSEProvider } from '@/providers/SSEProviders';
-import { useLocale, useTranslations } from 'next-intl';
+import dayjs from 'dayjs';
+import { useTranslations } from 'next-intl';
 import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 
 export default function RequestsPage() {
     const t = useTranslations('requests');
-    const locale = useLocale();
 
     const environments = useEnvironmentStore((s) => s.environments);
     const defaultLocalEnvironment = environments.find((env) => env.isDefault);
@@ -107,13 +107,7 @@ export default function RequestsPage() {
     };
 
     const getLocaleDate = (timestamp: string) => {
-        return new Date(timestamp).toLocaleString(locale === 'fr' ? 'fr-FR' : 'en-US', {
-            day: '2-digit',
-            month: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-        });
+        return dayjs(timestamp).format('DD/MM HH:mm:ss');
     };
 
     const isShowingAll = pageSize === 'all';

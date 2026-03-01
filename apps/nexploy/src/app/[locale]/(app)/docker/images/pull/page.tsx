@@ -15,6 +15,7 @@ import {
     Info,
     LayoutList,
     LineChart,
+    LucideIcon,
     MessageSquare,
     Mountain,
     Terminal,
@@ -45,7 +46,6 @@ import { Alert, AlertTitle } from '@workspace/ui/components/alert';
 import { toast } from 'sonner';
 import { cn } from '@workspace/ui/lib/utils';
 import { useTranslations } from 'next-intl';
-import { LucideIcon } from 'lucide-react';
 
 interface SuggestedImage {
     name: string;
@@ -56,22 +56,118 @@ interface SuggestedImage {
 }
 
 const SUGGESTED_IMAGES: SuggestedImage[] = [
-    { name: 'postgres:latest', title: 'PostgreSQL', descriptionKey: 'postgres', icon: Database, category: 'Database' },
-    { name: 'redis:latest', title: 'Redis', descriptionKey: 'redis', icon: Database, category: 'Cache' },
-    { name: 'mongo:latest', title: 'MongoDB', descriptionKey: 'mongo', icon: Database, category: 'Database' },
-    { name: 'mysql:latest', title: 'MySQL', descriptionKey: 'mysql', icon: Database, category: 'Database' },
-    { name: 'minio/minio:latest', title: 'MinIO', descriptionKey: 'minio', icon: Cloud, category: 'Storage' },
-    { name: 'rabbitmq:latest', title: 'RabbitMQ', descriptionKey: 'rabbitmq', icon: MessageSquare, category: 'Messaging' },
-    { name: 'kibana:latest', title: 'Kibana', descriptionKey: 'kibana', icon: BarChart, category: 'Analytics' },
-    { name: 'grafana/grafana:latest', title: 'Grafana', descriptionKey: 'grafana', icon: LineChart, category: 'Monitoring' },
-    { name: 'prom/prometheus:latest', title: 'Prometheus', descriptionKey: 'prometheus', icon: Activity, category: 'Monitoring' },
-    { name: 'node:latest', title: 'Node.js', descriptionKey: 'node', icon: Code, category: 'Runtime' },
-    { name: 'python:latest', title: 'Python', descriptionKey: 'python', icon: Code, category: 'Runtime' },
-    { name: 'golang:latest', title: 'Golang', descriptionKey: 'golang', icon: Code, category: 'Runtime' },
-    { name: 'busybox:latest', title: 'BusyBox', descriptionKey: 'busybox', icon: Terminal, category: 'Utility' },
-    { name: 'alpine:latest', title: 'Alpine', descriptionKey: 'alpine', icon: Mountain, category: 'Base Image' },
-    { name: 'ubuntu:latest', title: 'Ubuntu', descriptionKey: 'ubuntu', icon: Cpu, category: 'Base Image' },
-    { name: 'n8nio/n8n:latest', title: 'N8N', descriptionKey: 'n8n', icon: Workflow, category: 'Automation' },
+    {
+        name: 'postgres:latest',
+        title: 'PostgreSQL',
+        descriptionKey: 'postgres',
+        icon: Database,
+        category: 'Database',
+    },
+    {
+        name: 'redis:latest',
+        title: 'Redis',
+        descriptionKey: 'redis',
+        icon: Database,
+        category: 'Cache',
+    },
+    {
+        name: 'mongo:latest',
+        title: 'MongoDB',
+        descriptionKey: 'mongo',
+        icon: Database,
+        category: 'Database',
+    },
+    {
+        name: 'mysql:latest',
+        title: 'MySQL',
+        descriptionKey: 'mysql',
+        icon: Database,
+        category: 'Database',
+    },
+    {
+        name: 'minio/minio:latest',
+        title: 'MinIO',
+        descriptionKey: 'minio',
+        icon: Cloud,
+        category: 'Storage',
+    },
+    {
+        name: 'rabbitmq:latest',
+        title: 'RabbitMQ',
+        descriptionKey: 'rabbitmq',
+        icon: MessageSquare,
+        category: 'Messaging',
+    },
+    {
+        name: 'kibana:latest',
+        title: 'Kibana',
+        descriptionKey: 'kibana',
+        icon: BarChart,
+        category: 'Analytics',
+    },
+    {
+        name: 'grafana/grafana:latest',
+        title: 'Grafana',
+        descriptionKey: 'grafana',
+        icon: LineChart,
+        category: 'Monitoring',
+    },
+    {
+        name: 'prom/prometheus:latest',
+        title: 'Prometheus',
+        descriptionKey: 'prometheus',
+        icon: Activity,
+        category: 'Monitoring',
+    },
+    {
+        name: 'node:latest',
+        title: 'Node.js',
+        descriptionKey: 'node',
+        icon: Code,
+        category: 'Runtime',
+    },
+    {
+        name: 'python:latest',
+        title: 'Python',
+        descriptionKey: 'python',
+        icon: Code,
+        category: 'Runtime',
+    },
+    {
+        name: 'golang:latest',
+        title: 'Golang',
+        descriptionKey: 'golang',
+        icon: Code,
+        category: 'Runtime',
+    },
+    {
+        name: 'busybox:latest',
+        title: 'BusyBox',
+        descriptionKey: 'busybox',
+        icon: Terminal,
+        category: 'Utility',
+    },
+    {
+        name: 'alpine:latest',
+        title: 'Alpine',
+        descriptionKey: 'alpine',
+        icon: Mountain,
+        category: 'Base Image',
+    },
+    {
+        name: 'ubuntu:latest',
+        title: 'Ubuntu',
+        descriptionKey: 'ubuntu',
+        icon: Cpu,
+        category: 'Base Image',
+    },
+    {
+        name: 'n8nio/n8n:latest',
+        title: 'N8N',
+        descriptionKey: 'n8n',
+        icon: Workflow,
+        category: 'Automation',
+    },
 ];
 
 export default function AddImagePage() {
@@ -105,7 +201,7 @@ export default function AddImagePage() {
     };
 
     return (
-        <div className="flex flex-1 flex-col overflow-hidden pt-5">
+        <div className="flex h-full flex-1 flex-col gap-5 pt-5">
             <Form {...form}>
                 <form
                     className={'flex flex-1 flex-col overflow-hidden'}
@@ -120,9 +216,7 @@ export default function AddImagePage() {
                                 <h1 className="text-3xl leading-none font-semibold tracking-tight">
                                     {t('title')}
                                 </h1>
-                                <p className="text-muted-foreground text-sm">
-                                    {t('description')}
-                                </p>
+                                <p className="text-muted-foreground text-sm">{t('description')}</p>
                             </div>
                         </div>
                         <div className="flex gap-3">
@@ -144,19 +238,15 @@ export default function AddImagePage() {
 
                     <Alert variant={'info'} className={'mx-5 mt-5 mb-4 w-auto'}>
                         <Info />
-                        <AlertTitle>
-                            {t('rateLimitInfo')}
-                        </AlertTitle>
+                        <AlertTitle>{t('rateLimitInfo')}</AlertTitle>
                     </Alert>
 
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
-                        <div className="space-y-4 overflow-hidden px-5 pb-6">
+                        <div className="space-y-4 overflow-hidden px-5 pb-5">
                             <Card>
                                 <CardHeader>
                                     <CardTitle>{t('configuration')}</CardTitle>
-                                    <CardDescription>
-                                        {t('configDescription')}
-                                    </CardDescription>
+                                    <CardDescription>{t('configDescription')}</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <FormField
@@ -166,7 +256,10 @@ export default function AddImagePage() {
                                             <FormItem>
                                                 <FormLabel>{t('imageName')}</FormLabel>
                                                 <FormControl>
-                                                    <Input {...field} placeholder={t('imageNamePlaceholder')} />
+                                                    <Input
+                                                        {...field}
+                                                        placeholder={t('imageNamePlaceholder')}
+                                                    />
                                                 </FormControl>
                                                 <FormMessage />
                                                 <FormDescription>
@@ -216,7 +309,9 @@ export default function AddImagePage() {
                                                                 {image.title}
                                                             </h3>
                                                             <p className="text-muted-foreground line-clamp-2 text-xs">
-                                                                {t(`images.${image.descriptionKey}`)}
+                                                                {t(
+                                                                    `images.${image.descriptionKey}`,
+                                                                )}
                                                             </p>
                                                         </div>
                                                     </CardContent>

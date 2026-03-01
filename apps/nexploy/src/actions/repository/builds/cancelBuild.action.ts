@@ -1,12 +1,13 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { cancelBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { cancelBuildInngest } from '@/services/inngest/build.inngest.service';
 import { getTranslations } from 'next-intl/server';
 
 export const onCancelBuild = authActionServer
+    .use(requirePermission('build', 'cancel'))
     .inputSchema(cancelBuildSchema)
     .action(async ({ parsedInput }) => {
         try {

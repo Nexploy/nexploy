@@ -10,6 +10,7 @@ model GitProvider {
   clientSecret  String?
   webhookSecret String?
   privateKey    String?
+  baseUrl       String?
   enabled       Boolean      @default(true)
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt

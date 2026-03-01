@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,6 +14,7 @@ import { envVariableSchema } from '@workspace/schemas-zod/repository/envVariable
 import { toast } from 'sonner';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
+import { ImportEnv } from './ImportEnv';
 
 interface EnvVariable {
     id?: string;
@@ -26,11 +27,6 @@ interface RepositoryEnvTabProps {
     envVariables: EnvVariable[];
 }
 
-const defaultNewEnv = {
-    key: '',
-    value: '',
-};
-
 export function RepositoryEnv({
     repositoryId,
     envVariables: initialEnvVariables,
@@ -38,6 +34,7 @@ export function RepositoryEnv({
     const router = useRouter();
     const t = useTranslations('repository.settings.envVars');
     const [showValues, setShowValues] = useState<Record<string, boolean>>({});
+    const bottomRef = useRef<HTMLDivElement>(null);
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onEnvVariableAction,
@@ -74,7 +71,17 @@ export function RepositoryEnv({
 
     const handleAddNew = () => {
         const currentEnvs = form.getValues('envVariables');
-        form.setValue('envVariables', [...currentEnvs, { ...defaultNewEnv }]);
+        form.setValue('envVariables', [
+            ...currentEnvs,
+            {
+                key: '',
+                value: '',
+            },
+        ]);
+        setTimeout(
+            () => bottomRef.current?.scrollIntoView({ behavior: 'instant', block: 'end' }),
+            0,
+        );
     };
 
     const handleRemove = (index: number) => {
@@ -117,7 +124,7 @@ export function RepositoryEnv({
     const hasChanges = form.formState.isDirty || deletedIdsSet.size > 0;
 
     return (
-        <Card className={'mx-5'}>
+        <Card className="mx-5">
             <CardHeader>
                 <div className="flex items-center justify-between">
                     <CardHeaderWithIcon
@@ -137,6 +144,14 @@ export function RepositoryEnv({
                                 {t('saveChanges')}
                             </Button>
                         )}
+                        <ImportEnv
+                            onImport={(vars) => {
+                                const currentEnvs = form.getValues('envVariables');
+                                form.setValue('envVariables', [...currentEnvs, ...vars], {
+                                    shouldDirty: true,
+                                });
+                            }}
+                        />
                         <Button variant="outline" size="sm" onClick={handleAddNew}>
                             <Plus />
                             {t('addVariable')}
@@ -249,6 +264,7 @@ export function RepositoryEnv({
                                 ))}
                             </div>
                         )}
+                        <div ref={bottomRef} />
                     </form>
                 </Form>
             </CardContent>

@@ -38,7 +38,7 @@ export default async function ContainerPage({
     return (
         <SSEProvider connections={['container']} params={{ container: { containerId } }}>
             <BreadcrumbProvider segments={{ containerId: containerName }}>
-                <ContainerDetailPage />;
+                <ContainerDetailPage />
             </BreadcrumbProvider>
         </SSEProvider>
     );

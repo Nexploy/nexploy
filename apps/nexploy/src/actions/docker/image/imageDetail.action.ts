@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { z } from 'zod';
 import { ImageHistoryEntry } from '@workspace/typescript-interface/docker/docker.image';
@@ -12,6 +12,7 @@ const imageIdSchema = z.object({
 });
 
 export const getImageHistory = authActionServer
+    .use(requirePermission('docker', 'read'))
     .inputSchema(imageIdSchema)
     .action(async ({ parsedInput: { imageId } }) => {
         try {

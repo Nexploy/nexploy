@@ -1,22 +1,24 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { prisma } from '../../../prisma/prisma';
 import { revalidatePath } from 'next/cache';
 import { deleteUserSchema } from '@workspace/schemas-zod/user/deleteUser.schema';
 import { getTranslations } from 'next-intl/server';
 
 export const deleteUser = authActionServer
+    .use(requirePermission('user', 'delete'))
     .inputSchema(deleteUserSchema)
     .action(async ({ parsedInput: { userId }, ctx: { session } }) => {
         const t = await getTranslations('admin');
 
-        if (session.user.role !== 'admin') {
-            throw new Error(t('errors.adminOnly'));
-        }
-
         if (userId === session.user.id) {
             throw new Error(t('errors.cannotDeleteOwnAccount'));
+        }
+
+        const targetUser = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+        if (targetUser?.role === 'system') {
+            throw new Error(t('errors.cannotModifySystemUser'));
         }
 
         await prisma.user.delete({

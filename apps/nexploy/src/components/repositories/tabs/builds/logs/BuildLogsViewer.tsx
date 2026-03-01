@@ -94,7 +94,7 @@ export function BuildLogsViewer({
         const logsText = logs
             .map(
                 (log) =>
-                    `[${new Date(log.createdAt).toISOString()}] [${log.step}] [${log.level}] ${log.message}`,
+                    `[${dayjs(log.createdAt).toISOString()}] [${log.step}] [${log.level}] ${log.message}`,
             )
             .join('\n');
 
@@ -170,7 +170,7 @@ export function BuildLogsViewer({
                                         [{dayjs(log.createdAt).format('DD/MM/YYYY HH:mm:ss')}]
                                     </span>
                                 )}
-                                <div className={cn('overflow-hidden break-words')}>
+                                <div className="min-w-0 whitespace-pre-wrap break-all">
                                     {parseAnsiColors(log.message).map((part, partIndex) => (
                                         <span key={partIndex} className={part.color}>
                                             {part.text}

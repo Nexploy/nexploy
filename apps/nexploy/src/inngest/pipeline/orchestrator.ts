@@ -20,16 +20,18 @@ function formatErrorDetails(error: unknown): string {
     if (error instanceof Error) {
         const details = [`Error: ${error.message}`, `Name: ${error.name}`];
 
-        if (error.stack) {
-            details.push(`Stack trace:\n${error.stack}`);
-        }
+        if (process.env.NODE_ENV !== 'production') {
+            if (error.stack) {
+                details.push(`Stack trace:\n${error.stack}`);
+            }
 
-        const additionalProps = Object.entries(error)
-            .filter(([key]) => !['message', 'name', 'stack'].includes(key))
-            .map(([key, value]) => `${key}: ${JSON.stringify(value)}`);
+            const additionalProps = Object.entries(error)
+                .filter(([key]) => !['message', 'name', 'stack'].includes(key))
+                .map(([key, value]) => `${key}: ${JSON.stringify(value)}`);
 
-        if (additionalProps.length > 0) {
-            details.push(`Additional info:\n${additionalProps.join('\n')}`);
+            if (additionalProps.length > 0) {
+                details.push(`Additional info:\n${additionalProps.join('\n')}`);
+            }
         }
 
         return details.join('\n');

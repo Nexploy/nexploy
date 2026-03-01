@@ -46,7 +46,7 @@ export default async function IntegrationsPage() {
                 </div>
 
                 <ScrollAreaWithShadow className="h-full overflow-hidden px-5">
-                    <div className="space-y-6 pb-6">
+                    <div className="space-y-6 pb-5">
                         <section className="space-y-3">
                             <div className="flex items-center gap-2">
                                 <GitBranch className="text-muted-foreground size-4" />

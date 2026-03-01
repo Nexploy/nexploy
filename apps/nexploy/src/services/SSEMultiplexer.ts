@@ -1,4 +1,5 @@
 import { SSEChannel, SSEEventHandler } from '@workspace/typescript-interface/sse';
+import dayjs from 'dayjs';
 
 type ChannelHandlers = Map<string, SSEEventHandler[]>;
 
@@ -208,7 +209,7 @@ class SSEMultiplexerService {
                         this.dispatch(
                             subscription.config.channel,
                             'connected',
-                            new Date().toISOString(),
+                            dayjs().toISOString(),
                             subscription.config.params,
                         );
                     }

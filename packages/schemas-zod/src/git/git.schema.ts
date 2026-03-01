@@ -11,5 +11,10 @@ export const getBranchesSchema = z.object({
     repoName: z.string().optional(),
 });
 
+export const deleteGitProviderSchema = z.object({
+    id: z.string(),
+});
+
 export type GetRepositoriesInput = z.infer<typeof getRepositoriesSchema>;
 export type GetBranchesInput = z.infer<typeof getBranchesSchema>;
+export type DeleteGitProviderInput = z.infer<typeof deleteGitProviderSchema>;

@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { updateEnvironmentSchema } from '@workspace/schemas-zod/repository/settings/updateEnvironment.schema';
 import { repositoryIdSchema } from '@workspace/schemas-zod/bind/repositoryId.schema';
 import { revalidatePath } from 'next/cache';
@@ -8,6 +8,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { updateEnvironmentRepository } from '@/services/repository.service';
 
 export const updateEnvironmentAction = authActionServer
+    .use(requirePermission('repository', 'update'))
     .inputSchema(updateEnvironmentSchema)
     .bindArgsSchemas(repositoryIdSchema)
     .action(async ({ parsedInput: { environmentId }, bindArgsParsedInputs: [repositoryId] }) => {

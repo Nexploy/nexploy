@@ -57,7 +57,13 @@
     "cancel": "Cancel",
     "role": "Role",
     "adminRole": "Admin",
-    "userRole": "User",
+    "readWriteRole": "Read/Write",
+    "readRole": "Read",
+    "roleDescriptions": {
+        "read": "Can view repositories, builds, environments and Docker resources. No modifications allowed.",
+        "readWrite": "Can create, update and deploy repositories, manage builds and environments, and manage Docker resources.",
+        "admin": "Full access including user management, Git provider configuration, backups, and all Read/Write permissions."
+    },
     "email": "Email",
     "name": "Name",
     "password": "Password",
@@ -118,6 +124,7 @@
         "adminOnly": "Only admins can perform this action",
         "cannotChangeOwnRole": "You cannot change your own role",
         "cannotDeleteOwnAccount": "You cannot delete your own account",
+        "cannotModifySystemUser": "System user cannot be modified",
         "userAlreadyExists": "A user with this email already exists",
         "invitationAlreadyExists": "An active invitation for this email already exists"
     }

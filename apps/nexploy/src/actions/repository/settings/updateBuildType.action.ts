@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { buildTypeSchema } from '@workspace/schemas-zod/repository/buildType.schema';
 import { repositoryIdSchema } from '@workspace/schemas-zod/bind/repositoryId.schema';
 import { revalidatePath } from 'next/cache';
@@ -8,6 +8,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { updateBuildTypeRepository } from '@/services/repository.service';
 
 export const updateBuildTypeAction = authActionServer
+    .use(requirePermission('repository', 'update'))
     .inputSchema(buildTypeSchema)
     .bindArgsSchemas(repositoryIdSchema)
     .action(async ({ parsedInput, bindArgsParsedInputs: [repositoryId] }) => {
