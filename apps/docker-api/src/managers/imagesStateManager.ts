@@ -8,7 +8,6 @@ import {
 } from '@workspace/typescript-interface/docker/docker.image';
 import { BaseStateManager } from '@/lib/BaseStateManager';
 import * as tar from 'tar-fs';
-import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 import { Readable } from 'stream';
 import { containerImageEvents } from '@/managers/containersStateManager';
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
@@ -423,8 +422,10 @@ export class ImagesStateManager extends BaseStateManager {
         );
     }
 
-    getLocalImageName(config: BuildConfig): string {
-        return `${config.imageName}:${config.imageTag}`;
+    checkIfExistByName(fullName: string): boolean {
+        return Array.from(this.images.values()).some((image) =>
+            image.name.some((n) => n.includes(fullName)),
+        );
     }
 
     async hardRefresh(): Promise<void> {

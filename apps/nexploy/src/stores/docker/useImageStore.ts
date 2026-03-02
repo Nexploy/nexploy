@@ -131,6 +131,7 @@ export const useImageStore = create<ImageState>((set, get) => ({
                     get().addImage(data.image);
                     const imageName = data.image.repoTags?.find((t) => t !== '<none>:<none>');
                     if (imageName) {
+                        toast.dismiss('downloadingImage');
                         toast.success(toastT('toasts.imageAdded', { name: imageName }));
                     }
                     set({ lastUpdate: data.timestamp });
@@ -154,7 +155,7 @@ export const useImageStore = create<ImageState>((set, get) => ({
                     if (!data.imageId) return;
 
                     get().removeImage(data.imageId);
-                    const imageName = data.image?.repoTags?.find((t) => t !== '<none>:<none>');
+                    const imageName = data.oldState?.repoTags?.find((t) => t !== '<none>:<none>');
                     if (imageName) {
                         toast.success(toastT('toasts.imageRemoved', { name: imageName }));
                     }

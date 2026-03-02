@@ -29,6 +29,7 @@ import traefikRoutes from '@/routes/traefikRoutes';
 import traefikEvents from '@/routes/events/traefikEvents';
 import composeRoutes from './routes/composeRoutes';
 import environmentsRoutes from '@/routes/environments.routes';
+import backupsRoutes from '@/routes/backupsRoutes';
 import { dockerEnvironmentMiddleware } from '@/middleware/dockerEnvironment.middleware';
 import { localeMiddleware } from '@/middleware/locale.middleware';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
@@ -90,6 +91,8 @@ app.route('/api/traefik', traefikRoutes);
 app.route('/api/events/events', eventsEvents);
 
 app.route('/api/environments', environmentsRoutes);
+
+app.route('/api/backups', backupsRoutes);
 
 app.route('/ws/docker', createTerminalRoutes(upgradeWebSocket));
 

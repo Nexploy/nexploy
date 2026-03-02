@@ -1,0 +1,15 @@
+http:
+  routers:
+    repo-cmm0lu35e00hrynbmgmyuhff4-cmq.localhost:
+      rule: Host(`cmq.localhost`)
+      service: svc-cmm0lu35e00hrynbmgmyuhff4-cmq.localhost
+      entryPoints:
+        - web
+  services:
+    svc-cmm0lu35e00hrynbmgmyuhff4-cmq.localhost:
+      loadBalancer:
+        servers:
+          - url: http://portfolio-nathan:3000
+x-nexploy-domains:
+  repo-cmm0lu35e00hrynbmgmyuhff4-cmq.localhost:
+    containerPort: 3000

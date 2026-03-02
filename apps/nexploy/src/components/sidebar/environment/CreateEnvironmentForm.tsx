@@ -22,6 +22,7 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { TlsCertificateField } from './TlsCertificateField';
+import { DownloadCertScriptButton } from './DownloadCertScriptButton';
 import { createEnvironmentAction } from '@/actions/environment/createEnvironment.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
@@ -51,6 +52,7 @@ export function CreateEnvironmentForm() {
     );
 
     const connectionType = form.watch('connectionType');
+    const host = form.watch('host');
 
     const handleConnectionTypeChange = (value: string) => {
         const type = value as 'UNIX_SOCKET' | 'TCP' | 'TCP_TLS';
@@ -208,7 +210,10 @@ export function CreateEnvironmentForm() {
                 )}
                 {connectionType === 'TCP_TLS' && (
                     <div className="space-y-4 rounded-lg border p-4">
-                        <h4 className="text-sm font-medium">{t('tlsCertificates')}</h4>
+                        <div className="flex items-center justify-between">
+                            <h4 className="text-sm font-medium">{t('tlsCertificates')}</h4>
+                            <DownloadCertScriptButton disabled={!host} host={host} />
+                        </div>
                         <p className="text-muted-foreground text-xs">
                             {t('tlsCertificatesDescription')}
                         </p>

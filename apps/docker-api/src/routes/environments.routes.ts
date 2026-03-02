@@ -24,7 +24,15 @@ app.post(
         logger.info({ name: config.name }, 'Validating environment configuration');
 
         const tempClient = createDockerClient(config);
-        await tempClient.ping();
+        try {
+            await tempClient.ping();
+        } catch (err: any) {
+            const t = getTranslations(c, 'docker');
+            throw new HttpError(
+                t('errors.dockerHostUnreachable', { host: config.host ?? config.socketPath ?? 'unknown', error: err.message }),
+                400,
+            );
+        }
 
         logger.info('Environment validation successful');
 
@@ -71,7 +79,7 @@ app.post(
 );
 
 app.delete(
-    '/:id',
+    '/:environmentId',
     zValidator('param', environmentIdSchema),
     handleAsync(async (c) => {
         const { environmentId } = getValidatedParam(c, environmentIdSchema);
@@ -92,7 +100,7 @@ app.delete(
 );
 
 app.patch(
-    '/:id',
+    '/:environmentId',
     zValidator('param', environmentIdSchema),
     zValidator('json', environmentSchema),
     handleAsync(async (c) => {
@@ -107,7 +115,15 @@ app.patch(
         }
 
         const tempClient = createDockerClient(config);
-        await tempClient.ping();
+        try {
+            await tempClient.ping();
+        } catch (err: any) {
+            const t = getTranslations(c, 'docker');
+            throw new HttpError(
+                t('errors.dockerHostUnreachable', { host: config.host ?? config.socketPath ?? 'unknown', error: err.message }),
+                400,
+            );
+        }
 
         await stateManagerFactory.shutdownEnvironment(environmentId);
         await dockerClientRegistry.reloadEnvironment(config);

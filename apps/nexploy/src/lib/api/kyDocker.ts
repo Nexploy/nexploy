@@ -8,6 +8,7 @@ export interface KyDockerOptions extends Options {
 
 export const kyDocker = ky.create({
     prefixUrl: `${process.env.DOCKER_API_URL}/api`,
+    timeout: 10000,
     hooks: {
         beforeError: [
             async (error) => {

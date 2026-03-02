@@ -42,7 +42,7 @@ app.post(
     handleAsync(async (c) => {
         const { imageName } = await c.req.json();
 
-        const imageExists = imagesStateManager.getByName(imageName);
+        const imageExists = imagesStateManager.checkIfExistByName(imageName);
         if (imageExists) {
             const t = getTranslations(c, 'docker');
             throw new Error(t('errors.imageAlreadyExists', { imageName }));

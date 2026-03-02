@@ -73,7 +73,7 @@
     "lastLogin": "Last Login",
     "noInvitations": "No invitations found",
     "backups": "Backups",
-    "manageBackupsDescription": "Backup and restore Docker volume data",
+    "manageBackupsDescription": "Backup Docker volume data",
     "createBackup": "Create Backup",
     "restoreBackup": "Restore",
     "downloadBackup": "Download",

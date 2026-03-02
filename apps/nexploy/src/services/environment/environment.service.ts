@@ -128,11 +128,9 @@ export async function updateEnvironment(environmentData: EnvironmentSchemaType) 
                 json: validationConfig,
             });
         } catch (error: any) {
-            if (error.response?.status === 400) {
-                const errorData = await error.response.json();
-                throw new Error(
-                    `Invalid Docker configuration: ${errorData.message || error.message}`,
-                );
+            if (error.response) {
+                const errorData = await error.response.json().catch(() => null);
+                throw new Error(errorData?.message || error.message);
             }
             throw new Error('docker-api is not accessible. Please ensure the service is running.');
         }

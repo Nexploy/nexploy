@@ -1,9 +1,11 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
+import { useAction } from 'next-safe-action/hooks';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useFieldArray } from 'react-hook-form';
+import { useState } from 'react';
+import { toast } from 'sonner';
 import {
     ArrowLeft,
     Circle,
@@ -44,6 +46,8 @@ import { Switch } from '@workspace/ui/components/switch';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { onContainerCreateAction } from '@/actions/docker/container/containerCreate.action';
+import { onImagePullAction } from '@/actions/docker/image/imagePullAction.action';
+import { useImageStore } from '@/stores/docker/useImageStore';
 import {
     InputAutoComplete,
     InputAutoCompleteOption,
@@ -140,31 +144,57 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
     const searchParams = useSearchParams();
     const imageFromUrl = searchParams.get('image') || '';
 
-    const { form, action, handleSubmitWithAction } = useHookFormAction(
-        onContainerCreateAction,
-        zodResolver(containerCreateFormSchema),
-        {
-            formProps: {
-                defaultValues: {
-                    name: '',
-                    image: imageFromUrl,
-                    restart: 'unless-stopped',
-                    network: '',
-                    hostname: '',
-                    autoRemove: false,
-                    privileged: false,
-                    ports: [],
-                    envVars: [],
-                    volumes: [],
-                },
-            },
-            actionProps: {
-                onSuccess: ({ data }) => {
-                    if (data) router.push(`/docker/containers/${data.id}`);
-                },
-            },
+    const [createStep, setCreateStep] = useState<'idle' | 'pulling' | 'creating'>('idle');
+
+    const getImagesByTag = useImageStore((state) => state.getImagesByTag);
+    const { executeAsync: executePullImage } = useAction(onImagePullAction);
+    const { executeAsync: executeCreate } = useAction(onContainerCreateAction);
+
+    const form = useForm({
+        resolver: zodResolver(containerCreateFormSchema),
+        defaultValues: {
+            name: '',
+            image: imageFromUrl,
+            restart: 'unless-stopped' as const,
+            network: '',
+            hostname: '',
+            autoRemove: false,
+            privileged: false,
+            ports: [],
+            envVars: [],
+            volumes: [],
         },
-    );
+    });
+
+    const handleCreate = form.handleSubmit(async (data) => {
+        const toastId = 'container-create';
+        const imageExistsLocally = getImagesByTag(data.image).length > 0;
+
+        console.log(imageExistsLocally, data.image);
+
+        if (!imageExistsLocally) {
+            setCreateStep('pulling');
+            toast.loading(t('pullingImage'), { id: toastId });
+
+            const pullResult = await executePullImage({ imageName: data.image });
+            if (!pullResult?.data) {
+                setCreateStep('idle');
+                toast.dismiss(toastId);
+                return;
+            }
+        }
+
+        setCreateStep('creating');
+        toast.loading(t('creatingContainer'), { id: toastId });
+
+        const createResult = await executeCreate(data);
+        toast.dismiss(toastId);
+        setCreateStep('idle');
+
+        if (createResult?.data?.id) {
+            router.push(`/docker/containers/${createResult.data.id}`);
+        }
+    });
 
     const {
         fields: portsFields,
@@ -193,7 +223,14 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
         name: 'volumes',
     });
 
-    const isSubmitting = action.status === 'executing';
+    const isSubmitting = createStep !== 'idle';
+
+    const submitLabel =
+        createStep === 'pulling'
+            ? t('pullingImage')
+            : createStep === 'creating'
+              ? t('creatingContainer')
+              : t('createButton');
 
     return (
         <div className="flex h-full flex-1 flex-col gap-5 pt-5">
@@ -221,13 +258,13 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                         {t('back')}
                     </Button>
                     <Button
-                        type="submit"
+                        type="button"
                         icon={Plus}
                         isLoading={isSubmitting}
                         disabled={isSubmitting}
-                        onClick={handleSubmitWithAction}
+                        onClick={handleCreate}
                     >
-                        {isSubmitting ? t('creating') : t('createButton')}
+                        {submitLabel}
                     </Button>
                 </div>
             </div>

@@ -12,7 +12,7 @@ export const onContainerCreateAction = authActionServer
     .action(async ({ parsedInput }) => {
         try {
             return await kyDocker
-                .post(`container/create`, { json: parsedInput })
+                .post(`container/create`, { json: parsedInput, timeout: false })
                 .json<{ id: string }>();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {

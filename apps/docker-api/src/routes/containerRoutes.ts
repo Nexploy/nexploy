@@ -20,21 +20,6 @@ app.post(
     handleAsync(async (c) => {
         const body: ContainerCreateForm = await c.req.json();
 
-        try {
-            await docker.getImage(body.image).inspect();
-        } catch (error) {
-            logger.info(`Image ${body.image} not found locally, pulling...`);
-            await new Promise((resolve, reject) => {
-                docker.pull(body.image, (err: any, stream: NodeJS.ReadableStream) => {
-                    if (err) return reject(err);
-                    docker.modem.followProgress(stream, (error: any, output: any) => {
-                        if (error) return reject(error);
-                        resolve(output);
-                    });
-                });
-            });
-        }
-
         const createOptions: ContainerCreateOptions = {
             name: body.name,
             Image: body.image,

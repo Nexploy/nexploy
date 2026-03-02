@@ -11,7 +11,9 @@ export const onImagePullAction = authActionServer
     .inputSchema(imagePullSchema)
     .action(async ({ parsedInput: { imageName } }) => {
         try {
-            return await kyDocker.post('images/pull', { json: imageName }).json();
+            return await kyDocker
+                .post('images/pull', { json: { imageName }, timeout: false })
+                .json<{ imageName: string; id: string; alreadyExists: boolean }>();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({

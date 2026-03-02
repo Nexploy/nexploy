@@ -17,6 +17,7 @@ export const updateEnvironmentAction = authActionServer
                     type: 'error',
                     message: error.message,
                 });
+                throw error;
             }
         }
     });

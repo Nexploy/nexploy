@@ -185,10 +185,12 @@ export default function AddImagePage() {
             },
             actionProps: {
                 onExecute: ({ input }) => {
-                    toast.loading(t('downloadingImage', { name: input.imageName }));
+                    toast.loading(t('downloadingImage', { name: input.imageName }), {
+                        id: 'downloadingImage',
+                    });
                 },
-                onSettled: () => {
-                    toast.dismiss();
+                onSuccess: () => {
+                    router.push(`/docker/images`);
                 },
             },
         },

@@ -25,8 +25,10 @@ import { TlsCertificateField } from './TlsCertificateField';
 import { updateEnvironmentAction } from '@/actions/environment/updateEnvironment.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { Environment } from 'generated/client';
-import { decrypt } from '@/lib/encryption';
 import { useTranslations } from 'next-intl';
+import { Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import { DownloadCertScriptButton } from './DownloadCertScriptButton';
 
 interface EditEnvironmentFormProps {
     environment: Environment;
@@ -36,25 +38,22 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
     const { onSuccess } = useConfirmationDialogStore();
     const t = useTranslations('docker.environmentForm');
 
-    const decryptedTlsCert = environment.tlsCert ? decrypt(environment.tlsCert) : undefined;
-    const decryptedTlsKey = environment.tlsKey ? decrypt(environment.tlsKey) : undefined;
-    const decryptedTlsCa = environment.tlsCa ? decrypt(environment.tlsCa) : undefined;
-
     const { form, handleSubmitWithAction } = useHookFormAction(
         updateEnvironmentAction,
         zodResolver(environmentSchema),
         {
             formProps: {
                 defaultValues: {
+                    id: environment.id,
                     name: environment.name,
                     connectionType: environment.connectionType,
-                    socketPath: environment.socketPath || '/var/run/docker.sock',
+                    socketPath: environment.socketPath || undefined,
                     host: environment.host || undefined,
                     port: environment.port || undefined,
                     description: environment.description || '',
-                    tlsCert: decryptedTlsCert,
-                    tlsKey: decryptedTlsKey,
-                    tlsCa: decryptedTlsCa,
+                    tlsCert: undefined,
+                    tlsKey: undefined,
+                    tlsCa: undefined,
                 },
             },
             actionProps: {
@@ -66,6 +65,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
     );
 
     const connectionType = form.watch('connectionType');
+    const host = form.watch('host');
 
     const handleConnectionTypeChange = (value: string) => {
         const type = value as 'UNIX_SOCKET' | 'TCP' | 'TCP_TLS';
@@ -143,9 +143,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                                             {t('unixSocket')}
                                         </SelectItem>
                                         <SelectItem value="TCP">{t('tcp')}</SelectItem>
-                                        <SelectItem value="TCP_TLS">
-                                            {t('tcpTls')}
-                                        </SelectItem>
+                                        <SelectItem value="TCP_TLS">{t('tcpTls')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </FormControl>
@@ -185,7 +183,19 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                                 name="host"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t('host')}</FormLabel>
+                                        <FormLabel className="flex items-center gap-1.5">
+                                            {t('host')}
+                                            {connectionType === 'TCP_TLS' && (
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Info className="text-muted-foreground h-3.5 w-3.5 cursor-help" />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent side="top" className="max-w-56">
+                                                        {t('hostCertWarning')}
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder={t('hostPlaceholder')}
@@ -220,15 +230,16 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                                 )}
                             />
                         </div>
-                        <p className="text-muted-foreground text-xs">
-                            {t('standardPorts')}
-                        </p>
+                        <p className="text-muted-foreground text-xs">{t('standardPorts')}</p>
                     </>
                 )}
 
                 {connectionType === 'TCP_TLS' && (
                     <div className="space-y-4 rounded-lg border p-4">
-                        <h4 className="text-sm font-medium">{t('tlsCertificates')}</h4>
+                        <div className="flex items-center justify-between">
+                            <h4 className="text-sm font-medium">{t('tlsCertificates')}</h4>
+                            <DownloadCertScriptButton disabled={!host} host={host} />
+                        </div>
                         <p className="text-muted-foreground text-xs">
                             {t('tlsCertificatesDescription')}
                         </p>
@@ -239,6 +250,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                             label={t('clientCertificate')}
                             placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
                             disabled={form.formState.isSubmitting}
+                            hasExistingValue={!!environment.tlsCert}
                         />
 
                         <TlsCertificateField
@@ -247,6 +259,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                             label={t('clientKey')}
                             placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
                             disabled={form.formState.isSubmitting}
+                            hasExistingValue={!!environment.tlsKey}
                         />
 
                         <TlsCertificateField
@@ -255,6 +268,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                             label={t('caCertificate')}
                             placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
                             disabled={form.formState.isSubmitting}
+                            hasExistingValue={!!environment.tlsCa}
                         />
                     </div>
                 )}
