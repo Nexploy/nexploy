@@ -336,6 +336,24 @@ app.delete(
 );
 
 app.get(
+    '/status',
+    handleAsync(async () => {
+        const stats = containersStateManager.getStats();
+        return {
+            ...stats,
+            timestamp: Date.now(),
+        };
+    }),
+);
+
+app.get(
+    '/current',
+    handleAsync(async () => {
+        return containersStateManager.getAllStates();
+    }),
+);
+
+app.get(
     '/:id',
     handleAsync(async (c) => {
         const id = c.req.param('id');
@@ -351,24 +369,6 @@ app.get(
             dockerStatus: dockerStatusManager.getStatus(),
             timestamp: Date.now(),
         };
-    }),
-);
-
-app.get(
-    '/status',
-    handleAsync(async () => {
-        const stats = containersStateManager.getStats();
-        return {
-            ...stats,
-            timestamp: Date.now(),
-        };
-    }),
-);
-
-app.get(
-    '/current',
-    handleAsync(async () => {
-        return containersStateManager.getAllStates();
     }),
 );
 

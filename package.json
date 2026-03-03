@@ -111,6 +111,7 @@
         "@types/ws": "^8.18.1",
         "@typescript-eslint/eslint-plugin": "^8.46.0",
         "@typescript-eslint/parser": "^8.46.0",
+        "@vitest/coverage-v8": "^4.0.18",
         "@workspace/eslint-config": "workspace:^",
         "@workspace/typescript-config": "workspace:*",
         "@workspace/typescript-interface": "workspace:*",
@@ -129,9 +130,10 @@
         "tsx": "^4.20.6",
         "turbo": "^2.8.3",
         "typescript": "5.9.3",
-        "typescript-eslint": "^8.46.0"
+        "typescript-eslint": "^8.46.0",
+        "vitest": "^4.0.18"
     },
-    "packageManager": "pnpm@10.18.3",
+    "packageManager": "pnpm@10.30.3",
     "engines": {
         "node": ">=20"
     }

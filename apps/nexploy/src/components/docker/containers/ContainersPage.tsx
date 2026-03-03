@@ -5,7 +5,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/componen
 import { Badge } from '@workspace/ui/components/badge';
 import {
     Empty,
-    EmptyContent,
     EmptyDescription,
     EmptyHeader,
     EmptyMedia,
@@ -103,14 +102,6 @@ export default function ContainersPage() {
                         <EmptyTitle>{t('noContainers')}</EmptyTitle>
                         <EmptyDescription>{t('noContainersDescription')}</EmptyDescription>
                     </EmptyHeader>
-                    <EmptyContent>
-                        <Button asChild>
-                            <Link href={'/docker/containers/create'}>
-                                <Plus />
-                                {t('createContainer.create')}
-                            </Link>
-                        </Button>
-                    </EmptyContent>
                 </Empty>
             )}
 

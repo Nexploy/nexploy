@@ -1,10 +1,13 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import {
+    authActionServer,
+    preventInfrastructureNetworkAction,
+    requirePermission,
+} from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { setToastServer } from '@/lib/toastServer';
 import { networkActionsSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';
-import { isNexployInfrastructureNetworkName } from '@workspace/shared/nexployFilter';
 import { HTTPError } from 'ky';
 import { getTranslations } from 'next-intl/server';
 
@@ -21,19 +24,10 @@ const skipReasonToKey: Record<string, string> = {
 
 export const onNetworkAction = authActionServer
     .use(requirePermission('docker', 'manage'))
+    .use(preventInfrastructureNetworkAction)
     .inputSchema(networkActionsSchema)
     .action(async ({ parsedInput: { action, networkIds, force } }) => {
         try {
-            if (networkIds?.length) {
-                for (const networkId of networkIds) {
-                    const info = await kyDocker
-                        .get(`networks/${networkId}`)
-                        .json<{ Name: string }>();
-                    if (isNexployInfrastructureNetworkName(info.Name)) {
-                        throw new Error(`Cannot ${action} infrastructure network "${info.Name}"`);
-                    }
-                }
-            }
             const result = await kyDocker
                 .post(`networks/${action}`, { json: { networkIds, force } })
                 .json<DeleteResponse>();

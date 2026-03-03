@@ -7,6 +7,8 @@ import { setToastServer } from '@/lib/toastServer';
 import { getTranslations } from 'next-intl/server';
 import { type PermissionActions, type PermissionResource, roles } from '@/lib/auth/permissions';
 import { Role } from '@workspace/schemas-zod/auth/permissions';
+import { kyDocker } from '@/lib/api/kyDocker';
+import { isNexployInfrastructureNetworkName } from '@workspace/shared/nexployFilter';
 
 export const actionServer = createSafeActionClient({
     handleServerError(error) {
@@ -58,6 +60,23 @@ export const requirePermission = <R extends PermissionResource>(
 
         return next({ ctx });
     });
+
+export const preventInfrastructureNetworkAction = createMiddleware().define(
+    async ({ clientInput, next }) => {
+        const input = clientInput as { action?: string; networkIds?: string[] };
+
+        if (input.networkIds?.length) {
+            for (const networkId of input.networkIds) {
+                const info = await kyDocker.get(`networks/${networkId}`).json<{ Name: string }>();
+                if (isNexployInfrastructureNetworkName(info.Name)) {
+                    throw new Error(`Cannot ${input.action} infrastructure network "${info.Name}"`);
+                }
+            }
+        }
+
+        return next();
+    },
+);
 
 export const preventSelfAction = createMiddleware<{
     ctx: { session: Session };
