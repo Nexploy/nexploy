@@ -43,22 +43,29 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
     };
 
     return (
-        <div className="flex h-full flex-1 flex-col gap-5 pt-5">
+        <div className="flex h-full flex-1 flex-col gap-5">
             <div className="flex gap-3 px-5">
-                <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+                <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
                     <Box className="text-primary size-7" />
                 </div>
-                <div className="flex flex-1 flex-col">
+                <div className="mt-3.5 flex flex-1 flex-col">
                     {!image ? (
                         <Skeleton className="h-6 w-40" />
                     ) : (
-                        <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                            {imageName}
-                        </h1>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <h1 className="line-clamp-1 text-3xl font-semibold tracking-tight break-all">
+                                    {imageName}
+                                </h1>
+                            </TooltipTrigger>
+                            <TooltipContent className={'max-w-md break-all'}>
+                                {imageName}
+                            </TooltipContent>
+                        </Tooltip>
                     )}
                     <p className="text-muted-foreground text-sm">{t('description')}</p>
                 </div>
-                <div className="flex shrink-0 items-start gap-1">
+                <div className="mt-5 flex shrink-0 items-start gap-1">
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button variant="destructive" size="icon" onClick={handleRemove}>

@@ -53,18 +53,25 @@ export function ContainerDetailPage() {
     }, [container?.name, container?.labels]);
 
     return (
-        <div className="relative flex h-full flex-1 flex-col gap-5 pt-5">
-            <div className="flex items-center gap-3 px-5">
-                <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+        <div className="flex h-full flex-1 flex-col gap-5">
+            <div className="flex gap-3 px-5">
+                <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
                     <IconContainer className="text-primary size-7" />
                 </div>
-                <div className="flex flex-1 flex-col">
+                <div className="mt-3.5 flex flex-1 flex-col">
                     {!container ? (
                         <Skeleton className="h-6 w-40" />
                     ) : (
-                        <h1 className="truncate text-3xl leading-none font-semibold tracking-tight">
-                            {container.name}
-                        </h1>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <h1 className="line-clamp-1 text-3xl font-semibold tracking-tight break-all">
+                                    {container.name}
+                                </h1>
+                            </TooltipTrigger>
+                            <TooltipContent className={'max-w-md break-all'}>
+                                {container.name}
+                            </TooltipContent>
+                        </Tooltip>
                     )}
                     <p className="text-muted-foreground text-sm">{t('description')}</p>
                 </div>

@@ -19,16 +19,18 @@ export function CardHealthDetails() {
     return (
         <Card>
             <CardHeaderWithIcon icon={Activity} title={t('title')}>
-                <Badge variant="secondary">{container.health?.logs.length}</Badge>
+                {container.health?.logs?.length && (
+                    <Badge variant="secondary">{container.health?.logs.length}</Badge>
+                )}
             </CardHeaderWithIcon>
-            <CardContent>
+            <CardContent className="px-0">
                 {!container.health?.logs?.length ? (
-                    <div className="flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
                         {t('noLogs')}
                     </div>
                 ) : (
                     <>
-                        <div className="mb-3 flex gap-4">
+                        <div className="mb-3 flex gap-4 px-6">
                             <div className="flex items-center gap-2">
                                 <span className="text-muted-foreground text-sm">{t('status')}</span>
                                 <code className="bg-muted/50 rounded px-2 py-1 text-xs">
@@ -45,9 +47,9 @@ export function CardHealthDetails() {
                             </div>
                         </div>
                         <ScrollAreaWithShadow
-                            colorShadow={'from-card via-card/50'}
+                            colorShadow="from-card via-card/50"
                             bottomShadow
-                            className="h-64 overflow-hidden"
+                            className="h-72 overflow-hidden px-6"
                         >
                             <div className="space-y-2">
                                 {container.health?.logs.map((log, idx) => (

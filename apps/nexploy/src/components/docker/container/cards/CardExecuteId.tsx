@@ -14,19 +14,21 @@ export function CardExecuteId() {
         return <Skeleton className={'h-100 flex-1'} />;
     }
 
+    const execIdsLength = container.execIds?.length;
+
     return (
         <Card>
             <CardHeaderWithIcon icon={Cpu} title={t('title')}>
-                <Badge variant="secondary">{container.execIds?.length}</Badge>
+                {!!execIdsLength && <Badge variant="secondary">{execIdsLength}</Badge>}
             </CardHeaderWithIcon>
             <CardContent>
-                {!container.execIds?.length ? (
-                    <div className="flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                {!execIdsLength ? (
+                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
                         {t('noExecIds')}
                     </div>
                 ) : (
                     <div className="space-y-2">
-                        {container.execIds.map((execId, idx) => (
+                        {container.execIds?.map((execId, idx) => (
                             <code key={idx} className="bg-muted/30 block rounded-md p-2 text-xs">
                                 {execId}
                             </code>

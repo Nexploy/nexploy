@@ -36,20 +36,20 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
 
     return (
         <BreadcrumbProvider segments={{ repositoryId: repository.name }}>
-            <div className="flex h-full flex-1 flex-col pt-5">
+            <div className="flex h-full w-full flex-1 flex-col">
                 <div className="flex flex-col gap-4 overflow-hidden">
                     <div className="flex items-start justify-between gap-2 px-5">
                         <div className="flex gap-3">
-                            <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+                            <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
                                 <GitIcon className="text-primary size-7" />
                             </div>
-                            <div className="flex flex-col">
+                            <div className="mt-3.5 flex flex-col">
                                 <Link
                                     href={repository.repositoryUrl}
                                     className={'group flex items-center gap-1'}
                                     target="_blank"
                                 >
-                                    <h1 className="text-3xl leading-none font-semibold tracking-tight group-hover:underline">
+                                    <h1 className="line-clamp-1 text-3xl font-semibold tracking-tight break-all group-hover:underline">
                                         {repository.name}
                                     </h1>
                                     <ExternalLink
@@ -83,7 +83,7 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                                 </div>
                             </div>
                         </div>
-                        <div className="flex shrink-0 items-center gap-2">
+                        <div className="mt-5 flex shrink-0 items-center gap-2">
                             <RunBuildButton
                                 repositoryId={repository.id}
                                 environmentId={repository.environmentId}

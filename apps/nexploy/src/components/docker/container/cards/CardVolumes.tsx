@@ -248,7 +248,7 @@ export function CardVolumes() {
                         </div>
                     </ScrollAreaWithShadow>
                 ) : (
-                    <div className="flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
                         {t('noVolumes')}
                     </div>
                 )}

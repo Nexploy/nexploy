@@ -48,10 +48,10 @@ export function BuildLogs({ build }: BuildLogsProps) {
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <span className="line-clamp-1 text-xl font-semibold">
-                                    {build.commitMessage || `#${build.id}`}
+                                    {build.commitMessage}
                                 </span>
                             </TooltipTrigger>
-                            <TooltipContent className={'max-w-md whitespace-break-spaces'}>
+                            <TooltipContent className={'max-w-md break-all'}>
                                 {build.commitMessage}
                             </TooltipContent>
                         </Tooltip>

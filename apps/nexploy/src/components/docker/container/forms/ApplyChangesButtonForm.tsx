@@ -6,6 +6,7 @@ import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { onContainerRecreateAction } from '@/actions/docker/container/containerRecreate.action';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { cn } from '@workspace/ui/lib/utils';
 
 export function ApplyChangesButtonForm() {
     const t = useTranslations('common');
@@ -46,11 +47,13 @@ export function ApplyChangesButtonForm() {
             icon={Save}
             isLoading={isLoading}
             onClick={handleApplyChanges}
-            className={`transition-all duration-500 ease-in-out ${
+            className={cn(
+                'mt-5',
+                'transition-all duration-500 ease-in-out',
                 hasChanges()
-                    ? 'pointer-events-auto scale-100 opacity-100'
-                    : 'pointer-events-none scale-95 opacity-0'
-            } `}
+                    ? 'pointer-events-auto opacity-100'
+                    : 'pointer-events-none opacity-100',
+            )}
         >
             {t('applyChanges')}
         </Button>
