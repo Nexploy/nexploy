@@ -124,7 +124,7 @@ export function CardLabels() {
                         </div>
                     </ScrollAreaWithShadow>
                 ) : (
-                    <div className="flex h-50 items-center justify-center pb-24 font-semibold">
+                    <div className="flex h-32 items-center justify-center pb-12 text-sm font-semibold">
                         {t('noLabels')}
                     </div>
                 )}

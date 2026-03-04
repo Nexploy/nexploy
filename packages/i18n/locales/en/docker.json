@@ -331,7 +331,8 @@
         "macAddress": "MAC Address",
         "bridge": "Bridge",
         "sandboxId": "Sandbox ID",
-        "endpointId": "Endpoint ID"
+        "endpointId": "Endpoint ID",
+        "noData": "No network configuration"
     },
     "containerProcess": {
         "title": "Process and Execution",
@@ -340,7 +341,8 @@
         "cmd": "Command",
         "entrypoint": "Entrypoint",
         "workingDir": "Working Directory",
-        "user": "User"
+        "user": "User",
+        "noData": "No process data"
     },
     "containerLabels": {
         "title": "Labels",
@@ -354,7 +356,8 @@
         "title": "Health Logs",
         "status": "Status:",
         "consecutiveFailures": "Consecutive failures:",
-        "exit": "Exit: {code}"
+        "exit": "Exit: {code}",
+        "noLogs": "No health logs"
     },
     "containerError": {
         "title": "Error"
@@ -372,14 +375,17 @@
         "appArmorProfile": "AppArmor Profile",
         "mountLabel": "Mount Label",
         "processLabel": "Process Label",
+        "noSecurityData": "No security information",
         "storageDriver": "Storage Driver",
         "driverName": "Driver Name",
         "deviceId": "Device ID",
         "deviceName": "Device Name",
-        "deviceSize": "Device Size"
+        "deviceSize": "Device Size",
+        "noDriverData": "No driver information"
     },
     "containerExecId": {
-        "title": "Execution IDs"
+        "title": "Execution IDs",
+        "noExecIds": "No execution IDs"
     },
     "containerLogs": {
         "title": "Logs — {name}",

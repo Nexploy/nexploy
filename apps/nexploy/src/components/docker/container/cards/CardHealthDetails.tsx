@@ -22,53 +22,63 @@ export function CardHealthDetails() {
                 <Badge variant="secondary">{container.health?.logs.length}</Badge>
             </CardHeaderWithIcon>
             <CardContent>
-                <div className="mb-3 flex gap-4">
-                    <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground text-sm">{t('status')}</span>
-                        <code className="bg-muted/50 rounded px-2 py-1 text-xs">
-                            {container.health?.status}
-                        </code>
+                {!container.health?.logs?.length ? (
+                    <div className="flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                        {t('noLogs')}
                     </div>
-                    <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground text-sm">
-                            {t('consecutiveFailures')}
-                        </span>
-                        <code className="bg-muted/50 rounded px-2 py-1 text-xs">
-                            {container.health?.failingStreak}
-                        </code>
-                    </div>
-                </div>
-                <ScrollAreaWithShadow
-                    colorShadow={'from-card via-card/50'}
-                    bottomShadow
-                    className="h-64 overflow-hidden"
-                >
-                    <div className="space-y-2">
-                        {container.health?.logs.map((log, idx) => (
-                            <div key={idx} className="bg-muted/30 space-y-2 rounded-lg p-3">
-                                <div className="flex items-center justify-between text-xs">
-                                    <span className="text-muted-foreground">
-                                        {dayjs(log.start).format('DD/MM/YYYY HH:mm:ss')}
-                                    </span>
-                                    <span
-                                        className={`rounded px-2 py-1 font-medium ${
-                                            log.exitCode === 0
-                                                ? 'bg-green-500/20 text-green-700 dark:text-green-400'
-                                                : 'bg-red-500/20 text-red-700 dark:text-red-400'
-                                        }`}
-                                    >
-                                        {t('exit', { code: log.exitCode })}
-                                    </span>
-                                </div>
-                                {log.output && (
-                                    <div className="bg-background/50 rounded p-2">
-                                        <code className="text-xs break-all">{log.output}</code>
-                                    </div>
-                                )}
+                ) : (
+                    <>
+                        <div className="mb-3 flex gap-4">
+                            <div className="flex items-center gap-2">
+                                <span className="text-muted-foreground text-sm">{t('status')}</span>
+                                <code className="bg-muted/50 rounded px-2 py-1 text-xs">
+                                    {container.health?.status}
+                                </code>
                             </div>
-                        ))}
-                    </div>
-                </ScrollAreaWithShadow>
+                            <div className="flex items-center gap-2">
+                                <span className="text-muted-foreground text-sm">
+                                    {t('consecutiveFailures')}
+                                </span>
+                                <code className="bg-muted/50 rounded px-2 py-1 text-xs">
+                                    {container.health?.failingStreak}
+                                </code>
+                            </div>
+                        </div>
+                        <ScrollAreaWithShadow
+                            colorShadow={'from-card via-card/50'}
+                            bottomShadow
+                            className="h-64 overflow-hidden"
+                        >
+                            <div className="space-y-2">
+                                {container.health?.logs.map((log, idx) => (
+                                    <div key={idx} className="bg-muted/30 space-y-2 rounded-lg p-3">
+                                        <div className="flex items-center justify-between text-xs">
+                                            <span className="text-muted-foreground">
+                                                {dayjs(log.start).format('DD/MM/YYYY HH:mm:ss')}
+                                            </span>
+                                            <span
+                                                className={`rounded px-2 py-1 font-medium ${
+                                                    log.exitCode === 0
+                                                        ? 'bg-green-500/20 text-green-700 dark:text-green-400'
+                                                        : 'bg-red-500/20 text-red-700 dark:text-red-400'
+                                                }`}
+                                            >
+                                                {t('exit', { code: log.exitCode })}
+                                            </span>
+                                        </div>
+                                        {log.output && (
+                                            <div className="bg-background/50 rounded p-2">
+                                                <code className="text-xs break-all">
+                                                    {log.output}
+                                                </code>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </ScrollAreaWithShadow>
+                    </>
+                )}
             </CardContent>
         </Card>
     );

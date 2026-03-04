@@ -30,6 +30,8 @@ import Link from 'next/link';
 import { z } from 'zod';
 import { ToolbarButton } from '@/components/shared/ToolbarButton';
 import { useMemo } from 'react';
+import { CardDriverGraph } from '@/components/docker/container/cards/CardDriverGraph';
+import { CardSecurity } from '@/components/docker/container/cards/CardSecurity';
 
 const cuidSchema = z.cuid();
 
@@ -149,6 +151,8 @@ export function ContainerDetailPage() {
                         <CardProcessExecution />
                         <CardHealthDetails />
                         <CardExecuteId />
+                        <CardSecurity />
+                        <CardDriverGraph />
                     </div>
                 </div>
             </ScrollAreaWithShadow>

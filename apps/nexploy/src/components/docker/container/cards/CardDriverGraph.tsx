@@ -23,44 +23,56 @@ export function CardDriverGraph() {
                 </div>
             </CardHeader>
             <CardContent>
-                <div className="space-y-3">
-                    <div className="flex items-center justify-between border-b pb-2">
-                        <span className="text-muted-foreground text-sm">{t('driverName')}</span>
-                        <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
-                            {container.graphDriver?.name}
-                        </code>
+                {!container.graphDriver ? (
+                    <div className="flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                        {t('noDriverData')}
                     </div>
-                    {container.graphDriver?.data.deviceId && (
+                ) : (
+                    <div className="space-y-3">
                         <div className="flex items-center justify-between border-b pb-2">
-                            <span className="text-muted-foreground text-sm">{t('deviceId')}</span>
+                            <span className="text-muted-foreground text-sm">{t('driverName')}</span>
                             <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
-                                {container.graphDriver?.data.deviceId}
+                                {container.graphDriver?.name}
                             </code>
                         </div>
-                    )}
-                    {container.graphDriver?.data.deviceName && (
-                        <div className="flex items-center justify-between border-b pb-2">
-                            <span className="text-muted-foreground text-sm">{t('deviceName')}</span>
-                            <code className="bg-muted/50 truncate rounded-md px-2 py-1 text-xs">
-                                {container.graphDriver?.data.deviceName}
-                            </code>
-                        </div>
-                    )}
-                    {container.graphDriver?.data.deviceSize && (
-                        <div className="flex items-center justify-between">
-                            <span className="text-muted-foreground text-sm">{t('deviceSize')}</span>
-                            <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
-                                {(
-                                    parseInt(container.graphDriver?.data.deviceSize) /
-                                    1024 /
-                                    1024 /
-                                    1024
-                                ).toFixed(2)}{' '}
-                                GB
-                            </code>
-                        </div>
-                    )}
-                </div>
+                        {container.graphDriver?.data.deviceId && (
+                            <div className="flex items-center justify-between border-b pb-2">
+                                <span className="text-muted-foreground text-sm">
+                                    {t('deviceId')}
+                                </span>
+                                <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
+                                    {container.graphDriver?.data.deviceId}
+                                </code>
+                            </div>
+                        )}
+                        {container.graphDriver?.data.deviceName && (
+                            <div className="flex items-center justify-between border-b pb-2">
+                                <span className="text-muted-foreground text-sm">
+                                    {t('deviceName')}
+                                </span>
+                                <code className="bg-muted/50 truncate rounded-md px-2 py-1 text-xs">
+                                    {container.graphDriver?.data.deviceName}
+                                </code>
+                            </div>
+                        )}
+                        {container.graphDriver?.data.deviceSize && (
+                            <div className="flex items-center justify-between">
+                                <span className="text-muted-foreground text-sm">
+                                    {t('deviceSize')}
+                                </span>
+                                <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
+                                    {(
+                                        parseInt(container.graphDriver?.data.deviceSize) /
+                                        1024 /
+                                        1024 /
+                                        1024
+                                    ).toFixed(2)}{' '}
+                                    GB
+                                </code>
+                            </div>
+                        )}
+                    </div>
+                )}
             </CardContent>
         </Card>
     );

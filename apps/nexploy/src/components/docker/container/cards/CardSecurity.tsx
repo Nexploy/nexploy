@@ -23,32 +23,44 @@ export function CardSecurity() {
                 </div>
             </CardHeader>
             <CardContent>
-                <div className="space-y-3">
-                    {container.appArmorProfile && (
-                        <div className="flex items-center justify-between border-b pb-2">
-                            <span className="text-muted-foreground text-sm">{t('appArmorProfile')}</span>
-                            <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
-                                {container.appArmorProfile}
-                            </code>
-                        </div>
-                    )}
-                    {container.mountLabel && (
-                        <div className="flex items-center justify-between border-b pb-2">
-                            <span className="text-muted-foreground text-sm">{t('mountLabel')}</span>
-                            <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
-                                {container.mountLabel}
-                            </code>
-                        </div>
-                    )}
-                    {container.processLabel && (
-                        <div className="flex items-center justify-between">
-                            <span className="text-muted-foreground text-sm">{t('processLabel')}</span>
-                            <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
-                                {container.processLabel}
-                            </code>
-                        </div>
-                    )}
-                </div>
+                {!container.appArmorProfile && !container.mountLabel && !container.processLabel ? (
+                    <div className="flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                        {t('noSecurityData')}
+                    </div>
+                ) : (
+                    <div className="space-y-3">
+                        {container.appArmorProfile && (
+                            <div className="flex items-center justify-between border-b pb-2">
+                                <span className="text-muted-foreground text-sm">
+                                    {t('appArmorProfile')}
+                                </span>
+                                <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
+                                    {container.appArmorProfile}
+                                </code>
+                            </div>
+                        )}
+                        {container.mountLabel && (
+                            <div className="flex items-center justify-between border-b pb-2">
+                                <span className="text-muted-foreground text-sm">
+                                    {t('mountLabel')}
+                                </span>
+                                <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
+                                    {container.mountLabel}
+                                </code>
+                            </div>
+                        )}
+                        {container.processLabel && (
+                            <div className="flex items-center justify-between">
+                                <span className="text-muted-foreground text-sm">
+                                    {t('processLabel')}
+                                </span>
+                                <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
+                                    {container.processLabel}
+                                </code>
+                            </div>
+                        )}
+                    </div>
+                )}
             </CardContent>
         </Card>
     );

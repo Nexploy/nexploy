@@ -176,7 +176,7 @@ export function CardEnv() {
                         </div>
                     </ScrollAreaWithShadow>
                 ) : (
-                    <div className="flex h-72 items-center justify-center pb-24 font-semibold">
+                    <div className="flex h-32 items-center justify-center pb-12 text-sm font-semibold">
                         {t('noVariables')}
                     </div>
                 )}

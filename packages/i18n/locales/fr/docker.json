@@ -331,7 +331,8 @@
         "macAddress": "Adresse MAC",
         "bridge": "Bridge",
         "sandboxId": "Sandbox ID",
-        "endpointId": "Endpoint ID"
+        "endpointId": "Endpoint ID",
+        "noData": "Aucune configuration réseau"
     },
     "containerProcess": {
         "title": "Processus et exécution",
@@ -340,7 +341,8 @@
         "cmd": "Commande",
         "entrypoint": "Entrypoint",
         "workingDir": "Répertoire de travail",
-        "user": "Utilisateur"
+        "user": "Utilisateur",
+        "noData": "Aucune donnée de processus"
     },
     "containerLabels": {
         "title": "Labels",
@@ -354,7 +356,8 @@
         "title": "Logs de santé",
         "status": "Statut :",
         "consecutiveFailures": "Échecs consécutifs :",
-        "exit": "Exit : {code}"
+        "exit": "Exit : {code}",
+        "noLogs": "Aucun log de santé"
     },
     "containerError": {
         "title": "Erreur"
@@ -372,14 +375,17 @@
         "appArmorProfile": "Profil AppArmor",
         "mountLabel": "Label de montage",
         "processLabel": "Label de processus",
+        "noSecurityData": "Aucune information de sécurité",
         "storageDriver": "Driver de stockage",
         "driverName": "Nom du driver",
         "deviceId": "ID du périphérique",
         "deviceName": "Nom du périphérique",
-        "deviceSize": "Taille du périphérique"
+        "deviceSize": "Taille du périphérique",
+        "noDriverData": "Aucune information de driver"
     },
     "containerExecId": {
-        "title": "IDs d'exécution"
+        "title": "IDs d'exécution",
+        "noExecIds": "Aucun ID d'exécution"
     },
     "containerLogs": {
         "title": "Logs — {name}",

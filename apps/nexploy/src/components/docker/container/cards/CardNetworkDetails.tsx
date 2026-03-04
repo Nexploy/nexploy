@@ -185,8 +185,7 @@ export function CardNetworkDetails() {
     }
 
     const addedNetworks = networkChanges.filter((change) => change.typeAction === 'add');
-    const networkCount =
-        Object.keys(container.network.networks).length + addedNetworks.length;
+    const networkCount = Object.keys(container.network.networks).length + addedNetworks.length;
 
     return (
         <Card>
@@ -195,11 +194,7 @@ export function CardNetworkDetails() {
                     <CardHeaderWithIcon as="div" icon={Network} title={t('title')}>
                         <Badge variant="secondary">{networkCount}</Badge>
                     </CardHeaderWithIcon>
-                    <Button
-                        className="size-9 md:size-fit"
-                        icon={Plus}
-                        onClick={handleOpenDialog}
-                    >
+                    <Button className="size-9 md:size-fit" icon={Plus} onClick={handleOpenDialog}>
                         <span className="hidden md:flex">{t('add')}</span>
                     </Button>
                 </div>
@@ -249,7 +244,7 @@ export function CardNetworkDetails() {
                         </div>
                     </ScrollAreaWithShadow>
                 ) : (
-                    <div className="flex h-90 items-center justify-center pb-24 font-semibold">
+                    <div className="flex h-32 items-center justify-center pb-12 text-sm font-semibold">
                         {t('noNetworks')}
                     </div>
                 )}
