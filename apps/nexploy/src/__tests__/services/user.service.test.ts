@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getUsers } from '@/services/user.service';
 
-const mockFindMany = vi.fn();
+const { mockFindMany } = vi.hoisted(() => ({
+    mockFindMany: vi.fn(),
+}));
 
 vi.mock('../../../prisma/prisma', () => ({
     prisma: { user: { findMany: mockFindMany } },
@@ -12,7 +14,7 @@ vi.mock('@/components/admin/users/ColumnsUsers', () => ({}));
 describe('getUsers', () => {
     beforeEach(() => vi.clearAllMocks());
 
-    it('returns users from Prisma with correct query', async () => {
+    it('returns users from Prisma with the correct query', async () => {
         const users = [
             {
                 id: 'u1',

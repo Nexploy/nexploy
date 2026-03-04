@@ -1,10 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { onContainerStopAction } from '@/actions/docker/container/containerStop.action';
 
-const mockCtx = { session: { user: { id: 'u1', role: 'admin', banned: false } } };
-const mockJson = vi.fn();
-const mockPost = vi.fn(() => ({ json: mockJson }));
-const mockSetToast = vi.fn();
+const { mockCtx, mockJson, mockPost, mockSetToast } = vi.hoisted(() => {
+    const mockJson = vi.fn();
+    return {
+        mockCtx: { session: { user: { id: 'u1', role: 'admin', banned: false } } },
+        mockJson,
+        mockPost: vi.fn(() => ({ json: mockJson })),
+        mockSetToast: vi.fn(),
+    };
+});
 
 vi.mock('@/lib/api/safe-action', () => {
     const builder: any = {

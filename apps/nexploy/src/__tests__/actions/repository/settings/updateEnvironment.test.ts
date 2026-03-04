@@ -2,9 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { revalidatePath } from 'next/cache';
 import { updateEnvironmentAction } from '@/actions/repository/settings/updateEnvironment.action';
 
-const mockCtx = { session: { user: { id: 'u1', role: 'admin', banned: false } } };
-const mockUpdateEnvironmentRepository = vi.fn();
-const mockSetToast = vi.fn();
+const { mockCtx, mockUpdateEnvironmentRepository, mockSetToast } = vi.hoisted(() => ({
+    mockCtx: { session: { user: { id: 'u1', role: 'admin', banned: false } } },
+    mockUpdateEnvironmentRepository: vi.fn(),
+    mockSetToast: vi.fn(),
+}));
 
 vi.mock('@/lib/api/safe-action', () => {
     const builder: any = {

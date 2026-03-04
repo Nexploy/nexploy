@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { onRepositoryCreateAction } from '@/actions/repository/repositoryCreate.action';
 
-const mockCtx = { session: { user: { id: 'u1', role: 'admin', banned: false } } };
-const mockCreateRepository = vi.fn();
-const mockSetToast = vi.fn();
+const { mockCtx, mockCreateRepository, mockSetToast } = vi.hoisted(() => ({
+    mockCtx: { session: { user: { id: 'u1', role: 'admin', banned: false } } },
+    mockCreateRepository: vi.fn(),
+    mockSetToast: vi.fn(),
+}));
 
 vi.mock('@/lib/api/safe-action', () => {
     const builder: any = {
