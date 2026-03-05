@@ -36,15 +36,15 @@ export function CardImageDetails({ imageId }: CardImageDetailsProps) {
                             </TableCell>
                             <TableCell className="max-w-0">
                                 <div className="flex items-center gap-2">
-                                    <code className="text-muted-foreground block truncate text-xs">
-                                        {image.fullId || image.id}
-                                    </code>
                                     <CopyButton
                                         textToCopy={image.fullId || image.id}
                                         className="size-6"
                                         size="icon"
                                         variant="ghost"
                                     />
+                                    <code className="block truncate text-xs">
+                                        {image.fullId || image.id}
+                                    </code>
                                 </div>
                             </TableCell>
                         </TableRow>

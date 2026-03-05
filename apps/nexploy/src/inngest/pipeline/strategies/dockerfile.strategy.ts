@@ -5,6 +5,7 @@ import { BaseStep } from '../steps/base.step';
 import { IPipelineStep, StepExecutionContext, StepMetadata, StepResult } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
+import { getDefaultRegistry } from '@/services/registry.service';
 
 class PrepareDockerfileStep extends BaseStep {
     readonly metadata: StepMetadata = {
@@ -103,6 +104,59 @@ class BuildDockerImageStep extends BaseStep {
     }
 }
 
+class PushToRegistryStep extends BaseStep {
+    readonly metadata: StepMetadata = {
+        id: 'push-to-registry',
+        name: 'Push to Registry',
+        description: 'Push built image to the default Docker registry',
+        retryable: false,
+        timeout: 600000,
+    };
+
+    protected readonly applicableBuildTypes = ['DOCKERFILE'] as const;
+
+    async execute(ctx: StepExecutionContext): Promise<StepResult<{ targetName: string }>> {
+        const { config, imageName } = ctx.context;
+
+        if (!imageName) {
+            throw new Error('Image name is required');
+        }
+
+        const registry = await getDefaultRegistry();
+        if (!registry) {
+            throw new Error('No default registry configured. Please configure a Docker registry in Admin > Registry before building.');
+        }
+
+        const tag = config.gitCommitHash || 'latest';
+        const baseImageName = imageName.split(':')[0];
+        const targetName = `${registry.url}/${baseImageName}:${tag}`;
+
+        await ctx.logger.info(this.metadata.id, `Pushing image to registry: ${targetName}`);
+
+        const onLog = async (message: string) => {
+            await ctx.logger.info(this.metadata.id, message);
+        };
+
+        const result = await dockerService.pushToRegistry(
+            imageName,
+            targetName,
+            {
+                serveraddress: registry.url,
+                username: registry.username || '',
+                password: registry.password || '',
+            },
+            ctx.context.buildId,
+            ctx.context.abortController.signal,
+            onLog,
+            config.environmentId,
+        );
+
+        await ctx.logger.info(this.metadata.id, `Image pushed successfully: ${result.targetName}`);
+
+        return this.success(result);
+    }
+}
+
 class DeployContainerStep extends BaseStep {
     readonly metadata: StepMetadata = {
         id: 'deploy-container',
@@ -151,6 +205,7 @@ class DeployContainerStep extends BaseStep {
 
 const prepareDockerfileStep = new PrepareDockerfileStep();
 const buildDockerImageStep = new BuildDockerImageStep();
+const pushToRegistryStep = new PushToRegistryStep();
 const deployContainerStep = new DeployContainerStep();
 
 export class DockerfileStrategy extends BaseStrategy {
@@ -158,7 +213,7 @@ export class DockerfileStrategy extends BaseStrategy {
     readonly name = 'Dockerfile';
 
     protected getStrategySteps(): IPipelineStep[] {
-        return [prepareDockerfileStep, buildDockerImageStep, deployContainerStep];
+        return [prepareDockerfileStep, buildDockerImageStep, pushToRegistryStep, deployContainerStep];
     }
 
     validateConfig(config: BuildConfig): void {

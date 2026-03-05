@@ -2,6 +2,8 @@ import { Warehouse } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { RegistryList } from '@/components/admin/registry/RegistryList';
 import { AddRegistryButton } from '@/components/admin/registry/AddRegistryButton';
+import { MirrorImageSection } from '@/components/admin/registry/MirrorImageSection';
+import { getRegistries } from '@/services/registry.service';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
@@ -11,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RegistryPage() {
-    const t = await getTranslations('admin.registry');
+    const [t, registries] = await Promise.all([getTranslations('admin.registry'), getRegistries()]);
 
     return (
         <div className="flex h-full flex-1 flex-col pt-5">
@@ -31,7 +33,8 @@ export default async function RegistryPage() {
                     <AddRegistryButton />
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
-                    <div className="px-5 pb-5">
+                    <div className="flex flex-col gap-5 px-5 pb-5">
+                        <MirrorImageSection registries={registries} />
                         <RegistryList />
                     </div>
                 </ScrollAreaWithShadow>

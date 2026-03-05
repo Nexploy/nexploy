@@ -1,5 +1,4 @@
 import { createMiddleware, createSafeActionClient } from 'next-safe-action';
-import { HTTPError } from 'ky';
 import { getUserSession } from '@/services/auth/auth.service';
 import { Session } from '@/lib/auth/auth';
 import { redirect } from 'next/navigation';
@@ -12,12 +11,7 @@ import { isNexployInfrastructureNetworkName } from '@workspace/shared/nexployFil
 
 export const actionServer = createSafeActionClient({
     handleServerError(error) {
-        console.error(`[ACTION ERROR] ${error.message}`, error);
-
-        if (error instanceof HTTPError) {
-            return error.message;
-        }
-
+        console.error(`[ACTION ERROR] ${error.message}`);
         return error.message || 'Error occurred';
     },
 });

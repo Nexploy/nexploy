@@ -1,7 +1,7 @@
 import ky from 'ky';
 import { getTokenGitStorage } from '@/lib/storage/token-git-storage';
 
-export function createKyGitlab(baseUrl: string) {
+export function kyGitlab(baseUrl: string) {
     return ky.create({
         prefixUrl: `${baseUrl}/api`,
         hooks: {

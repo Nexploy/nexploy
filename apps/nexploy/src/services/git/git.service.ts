@@ -7,7 +7,7 @@ import {
 } from '@workspace/typescript-interface/git/git';
 import { getValidToken } from '@/services/api/gitProvider.service';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
-import { createKyGitlab } from '@/lib/api/kyGitlab';
+import { kyGitlab } from '@/lib/api/kyGitlab';
 import { getGitProviderCredentialsByAccountId } from '@/services/oauthProvider.service';
 import { GitlabRepo } from '@workspace/typescript-interface/git/repository/gitlab.repository';
 import { GitlabBranch } from '@workspace/typescript-interface/git/branch/gitlab.branch';
@@ -15,9 +15,9 @@ import { GithubBranch } from '@workspace/typescript-interface/git/branch/github.
 import { GithubRepo } from '@workspace/typescript-interface/git/repository/github.repository';
 import { decrypt, encrypt } from '@/lib/encryption';
 import {
-    githubGetUserInstallations,
     githubGetInstallationRepositories,
     githubGetRepositoryBranches,
+    githubGetUserInstallations,
 } from '@/lib/api/github.api';
 
 export function extractGitHubRepo(repositoryUrl: string): { owner: string; repo: string } {
@@ -102,10 +102,9 @@ export async function getRepositories(
             try {
                 const gitlabCreds = await getGitProviderCredentialsByAccountId(gitAccountId);
                 const gitlabBaseUrl = gitlabCreds?.baseUrl ?? 'https://gitlab.com';
-                const kyGitlab = createKyGitlab(gitlabBaseUrl);
 
                 const repositories = await tokenGitStorage.run(token, async () => {
-                    return await kyGitlab
+                    return await kyGitlab(gitlabBaseUrl)
                         .get('v4/projects', {
                             searchParams: {
                                 membership: 'true',
@@ -165,10 +164,9 @@ export async function getBranches(
             try {
                 const gitlabCreds = await getGitProviderCredentialsByAccountId(gitAccountId);
                 const gitlabBaseUrl = gitlabCreds?.baseUrl ?? 'https://gitlab.com';
-                const kyGitlab = createKyGitlab(gitlabBaseUrl);
 
                 const branches = await tokenGitStorage.run(token, async () => {
-                    return await kyGitlab
+                    return await kyGitlab(gitlabBaseUrl)
                         .get(`v4/projects/${repoId}/repository/branches`)
                         .json<GitlabBranch[]>();
                 });

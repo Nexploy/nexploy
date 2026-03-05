@@ -17,6 +17,7 @@ import {
 } from '@workspace/ui/components/form';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 export function CreateRegistryForm() {
     const { onSuccess } = useConfirmationDialogStore();
@@ -37,6 +38,9 @@ export function CreateRegistryForm() {
             actionProps: {
                 onSuccess: () => {
                     if (onSuccess) onSuccess();
+                },
+                onError: ({ error }) => {
+                    toast.error(error.thrownError?.message);
                 },
             },
         },
@@ -122,7 +126,12 @@ export function CreateRegistryForm() {
                 />
 
                 <DialogFooter>
-                    <Button type="submit" disabled={isSubmitting} isLoading={isSubmitting} className="w-full">
+                    <Button
+                        type="submit"
+                        disabled={isSubmitting}
+                        isLoading={isSubmitting}
+                        className="w-full"
+                    >
                         {t('create')}
                     </Button>
                 </DialogFooter>

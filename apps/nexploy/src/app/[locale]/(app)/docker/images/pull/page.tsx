@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -173,6 +173,7 @@ const SUGGESTED_IMAGES: SuggestedImage[] = [
 export default function AddImagePage() {
     const t = useTranslations('docker.pullImagePage');
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onImagePullAction,
@@ -180,7 +181,7 @@ export default function AddImagePage() {
         {
             formProps: {
                 defaultValues: {
-                    imageName: '',
+                    imageName: searchParams.get('imageName') ?? '',
                 },
             },
             actionProps: {

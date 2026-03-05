@@ -5,7 +5,10 @@ import { BaseStep } from '../steps/base.step';
 import { IPipelineStep, StepExecutionContext, StepMetadata, StepResult } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
+import { getDefaultRegistry } from '@/services/registry.service';
 import { prisma } from '@/../prisma/prisma';
+import yaml from 'yaml';
+import type { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
 
 class PrepareComposeStep extends BaseStep {
     readonly metadata: StepMetadata = {
@@ -164,15 +167,95 @@ class DeployComposeStep extends BaseStep {
     }
 }
 
+class PushComposeImagesToRegistryStep extends BaseStep {
+    readonly metadata: StepMetadata = {
+        id: 'push-to-registry',
+        name: 'Push to Registry',
+        description: 'Push built Compose service images to the default Docker registry',
+        retryable: false,
+        timeout: 600000,
+    };
+
+    protected readonly applicableBuildTypes = ['DOCKER_COMPOSE'] as const;
+
+    async execute(ctx: StepExecutionContext): Promise<StepResult> {
+        const registry = await getDefaultRegistry();
+        if (!registry) {
+            throw new Error(
+                'No default registry configured. Please configure a Docker registry in Admin > Registry before building.',
+            );
+        }
+
+        const deployResult = ctx.getStepResult<{
+            success: boolean;
+            composeConfig?: string;
+        }>('deploy-compose');
+
+        if (!deployResult?.composeConfig) {
+            await ctx.logger.warn(this.metadata.id, 'No compose config available, skipping push');
+            return this.skipped();
+        }
+
+        const composeContent = yaml.parse(
+            Buffer.from(deployResult.composeConfig, 'base64').toString(),
+        ) as ComposeContent;
+
+        const services = Object.values(composeContent.services || {});
+        const imageNames = services
+            .map((s) => s.image as string | undefined)
+            .filter((img): img is string => !!img);
+
+        if (imageNames.length === 0) {
+            await ctx.logger.warn(this.metadata.id, 'No images found in compose config, skipping push');
+            return this.skipped();
+        }
+
+        const tag = ctx.context.config.gitCommitHash || 'latest';
+        const onLog = async (message: string) => {
+            await ctx.logger.info(this.metadata.id, message);
+        };
+
+        for (const imageName of imageNames) {
+            if (ctx.context.abortController.signal.aborted) {
+                throw new DOMException('Pipeline aborted', 'AbortError');
+            }
+
+            const baseImageName = imageName.split(':')[0];
+            const targetName = `${registry.url}/${baseImageName}:${tag}`;
+
+            await ctx.logger.info(this.metadata.id, `Pushing ${imageName} → ${targetName}`);
+
+            await dockerService.pushToRegistry(
+                imageName,
+                targetName,
+                {
+                    serveraddress: registry.url,
+                    username: registry.username || '',
+                    password: registry.password || '',
+                },
+                ctx.context.buildId,
+                ctx.context.abortController.signal,
+                onLog,
+                ctx.context.config.environmentId,
+            );
+
+            await ctx.logger.info(this.metadata.id, `Pushed successfully: ${targetName}`);
+        }
+
+        return this.success();
+    }
+}
+
 const prepareComposeStep = new PrepareComposeStep();
 const deployComposeStep = new DeployComposeStep();
+const pushComposeImagesToRegistryStep = new PushComposeImagesToRegistryStep();
 
 export class DockerComposeStrategy extends BaseStrategy {
     readonly buildType = 'DOCKER_COMPOSE' as const;
     readonly name = 'Docker Compose';
 
     protected getStrategySteps(): IPipelineStep[] {
-        return [prepareComposeStep, deployComposeStep];
+        return [prepareComposeStep, deployComposeStep, pushComposeImagesToRegistryStep];
     }
 
     validateConfig(config: BuildConfig): void {

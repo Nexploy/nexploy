@@ -1,5 +1,5 @@
-import { createKyGitlab } from '@/lib/api/kyGitlab';
 import { WebhookPayload } from '@workspace/typescript-interface/webhook';
+import { kyGitlab } from '@/lib/api/kyGitlab';
 
 export function extractGitLabProjectId(repositoryUrl: string): string {
     try {
@@ -38,10 +38,9 @@ export async function createGitLabWebhook(
 ): Promise<{ webhookId: string; webhookSecret: string }> {
     const projectId = extractGitLabProjectId(repositoryUrl);
     const baseUrl = new URL(repositoryUrl).origin;
-    const kyGitlab = createKyGitlab(baseUrl);
 
     try {
-        const data = await kyGitlab
+        const data = await kyGitlab(baseUrl)
             .post(`v4/projects/${projectId}/hooks`, {
                 json: {
                     url: webhookUrl,

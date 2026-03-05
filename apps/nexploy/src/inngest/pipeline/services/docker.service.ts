@@ -44,6 +44,24 @@ class DockerService {
         }
     }
 
+    async pushToRegistry(
+        imageName: string,
+        targetName: string,
+        auth: { serveraddress: string; username: string; password: string },
+        buildId: string,
+        signal: AbortSignal,
+        onLog: (message: string) => Promise<void>,
+        environmentId?: string,
+    ): Promise<{ targetName: string }> {
+        return this.streamSSERequest<{ targetName: string }>(
+            'pipeline/events/stream/push',
+            { imageName, targetName, auth },
+            signal,
+            onLog,
+            environmentId,
+        );
+    }
+
     async deployCompose(
         workDir: string,
         projectName: string,

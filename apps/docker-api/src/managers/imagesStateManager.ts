@@ -575,6 +575,80 @@ export class ImagesStateManager extends BaseStateManager {
         });
     }
 
+    async pushImage(
+        imageName: string,
+        targetName: string,
+        auth: { serveraddress: string; username: string; password: string },
+        onLog: (log: string) => void,
+        signal?: AbortSignal,
+    ): Promise<{ targetName: string }> {
+        logger.info({ imageName, targetName }, 'Starting Docker push');
+
+        if (signal?.aborted) {
+            throw new DOMException('Push aborted before start', 'AbortError');
+        }
+
+        // Parse targetName into repo and tag
+        const lastSlash = targetName.lastIndexOf('/');
+        const nameAndTag = lastSlash >= 0 ? targetName.slice(lastSlash + 1) : targetName;
+        const colonIdx = nameAndTag.lastIndexOf(':');
+        const targetTag = colonIdx >= 0 ? nameAndTag.slice(colonIdx + 1) : 'latest';
+        const targetRepo = colonIdx >= 0 ? targetName.slice(0, targetName.lastIndexOf(':')) : targetName;
+
+        // Tag the image
+        const image = this.docker.getImage(imageName);
+        await image.tag({ repo: targetRepo, tag: targetTag });
+        onLog(`Tagged ${imageName} as ${targetRepo}:${targetTag}`);
+
+        // Push the tagged image
+        return new Promise((resolve, reject) => {
+            const taggedImage = this.docker.getImage(targetName);
+            (taggedImage.push as any)({ authconfig: auth }, (err: any, stream: any) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+
+                if (signal?.aborted) {
+                    stream.destroy();
+                    reject(new DOMException('Push aborted', 'AbortError'));
+                    return;
+                }
+
+                this.docker.modem.followProgress(
+                    stream,
+                    (progressErr: any) => {
+                        if (progressErr) {
+                            if (
+                                progressErr.name === 'AbortError' ||
+                                progressErr.message?.includes('aborted')
+                            ) {
+                                reject(new DOMException('Push aborted', 'AbortError'));
+                                return;
+                            }
+                            reject(progressErr);
+                            return;
+                        }
+                        logger.info({ imageName, targetName }, 'Docker push completed');
+                        resolve({ targetName });
+                    },
+                    (event: any) => {
+                        if (signal?.aborted) return;
+                        const msg = event.status
+                            ? event.progress
+                                ? `${event.status} ${event.progress}`
+                                : event.status
+                            : event.error
+                              ? `ERROR: ${event.error}`
+                              : null;
+                        if (msg && onLog) onLog(msg);
+                        if (event.error) reject(new Error(event.error));
+                    },
+                );
+            });
+        });
+    }
+
     async cleanupDanglingImages(): Promise<void> {
         try {
             await this.docker.pruneImages({

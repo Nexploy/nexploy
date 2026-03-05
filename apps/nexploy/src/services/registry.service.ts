@@ -14,6 +14,21 @@ export interface RegistryInfo {
     createdAt: Date;
 }
 
+export async function getRegistryById(id: string) {
+    return prisma.dockerRegistry.findUnique({
+        where: { id },
+        select: {
+            id: true,
+            name: true,
+            url: true,
+            username: true,
+            password: true,
+            isDefault: true,
+            createdAt: true,
+        },
+    });
+}
+
 export async function getRegistries(): Promise<RegistryInfo[]> {
     try {
         return prisma.dockerRegistry.findMany({

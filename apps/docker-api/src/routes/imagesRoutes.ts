@@ -83,6 +83,68 @@ app.post(
 );
 
 app.post(
+    '/mirror',
+    handleAsync(async (c) => {
+        const { sourceImage, sourceAuth, targetName, targetAuth } = await c.req.json<{
+            sourceImage: string;
+            sourceAuth?: { username: string; password: string; serveraddress?: string };
+            targetName: string;
+            targetAuth: { serveraddress: string; username: string; password: string };
+        }>();
+
+        let sourceExistedBefore = false;
+        try {
+            await docker.getImage(sourceImage).inspect();
+            sourceExistedBefore = true;
+        } catch {
+            sourceExistedBefore = false;
+        }
+
+        await new Promise((resolve, reject) => {
+            const pullOptions: Record<string, unknown> = {};
+            if (sourceAuth) {
+                pullOptions.authconfig = sourceAuth;
+            }
+            (docker.pull as any)(sourceImage, pullOptions, (err: any, stream: any) => {
+                if (err) return reject(err);
+                docker.modem.followProgress(stream, (error: any, output: any) => {
+                    if (error) return reject(error);
+                    resolve(output);
+                });
+            });
+        });
+
+        await new Promise((resolve, reject) => {
+            const taggedImage = docker.getImage(targetName);
+            (taggedImage.push as any)({ authconfig: targetAuth }, (err: any, stream: any) => {
+                if (err) return reject(err);
+                docker.modem.followProgress(
+                    stream,
+                    (error: any, output: any) => {
+                        if (error) return reject(error);
+                        resolve(output);
+                    },
+                    (event: any) => {
+                        if (event.error) reject(new Error(event.error));
+                    },
+                );
+            });
+        });
+
+        try {
+            await docker.getImage(targetName).remove();
+        } catch {}
+        if (!sourceExistedBefore) {
+            try {
+                await docker.getImage(sourceImage).remove();
+            } catch {}
+        }
+
+        return { success: true, targetName };
+    }),
+);
+
+app.post(
     '/delete',
     handleAsync(async (c) => {
         const { imageIds, force } = await c.req.json();

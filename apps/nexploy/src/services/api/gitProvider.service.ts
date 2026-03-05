@@ -1,17 +1,13 @@
-import { updateGitProviderToken } from '@/services/git/git.service';
+import { extractGitHubRepo, updateGitProviderToken } from '@/services/git/git.service';
 import { GitLabCommit, GitProviderToken } from '@workspace/typescript-interface/git/git';
-import { createKyGitlab } from '@/lib/api/kyGitlab';
+import { kyGitlab } from '@/lib/api/kyGitlab';
 import dayjs from 'dayjs';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import {
     getGitProviderCredentials,
     getGitProviderCredentialsByAccountId,
 } from '@/services/oauthProvider.service';
-import {
-    githubGetCommit,
-    githubRefreshAccessToken,
-} from '@/lib/api/github.api';
-import { extractGitHubRepo } from '@/services/git/git.service';
+import { githubGetCommit, githubRefreshAccessToken } from '@/lib/api/github.api';
 
 export async function getValidToken(
     token: GitProviderToken,
@@ -69,7 +65,6 @@ async function getGitLabCommit(
 
     try {
         const baseUrl = extractGitLabBaseUrl(repositoryUrl);
-        const kyGitlab = createKyGitlab(baseUrl);
 
         return await tokenGitStorage.run(token, async () => {
             const endpoint = commitHash
@@ -83,7 +78,7 @@ async function getGitLabCommit(
                       per_page: '1',
                   };
 
-            const response = await kyGitlab
+            const response = await kyGitlab(baseUrl)
                 .get(endpoint, { searchParams })
                 .json<GitLabCommit | GitLabCommit[]>();
 
@@ -159,14 +154,15 @@ async function refreshGitLabToken(
     }
 
     const gitlabCreds = gitAccountId
-        ? (await getGitProviderCredentialsByAccountId(gitAccountId)) ??
-          (await getGitProviderCredentials('gitlab'))
+        ? ((await getGitProviderCredentialsByAccountId(gitAccountId)) ??
+          (await getGitProviderCredentials('gitlab')))
         : await getGitProviderCredentials('gitlab');
     const clientId = gitlabCreds?.clientId;
     const clientSecret = gitlabCreds?.clientSecret;
 
     const gitlabBaseUrl = gitlabCreds?.baseUrl;
-    if (!gitlabBaseUrl || !clientId || !clientSecret) throw new Error('GitLab provider not configured');
+    if (!gitlabBaseUrl || !clientId || !clientSecret)
+        throw new Error('GitLab provider not configured');
     const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 
     const body = new URLSearchParams({
@@ -193,7 +189,9 @@ async function refreshGitLabToken(
     const newToken = {
         accessToken: data.access_token,
         refreshToken: data.refresh_token ?? token.refreshToken,
-        accessTokenExpiresAt: data.expires_in ? dayjs().add(data.expires_in, 'second').toDate() : null,
+        accessTokenExpiresAt: data.expires_in
+            ? dayjs().add(data.expires_in, 'second').toDate()
+            : null,
     };
 
     await updateGitProviderToken('gitlab', userId, newToken, gitAccountId);
@@ -211,8 +209,8 @@ async function refreshGitHubToken(
     }
 
     const githubCreds = gitAccountId
-        ? (await getGitProviderCredentialsByAccountId(gitAccountId)) ??
-          (await getGitProviderCredentials('github'))
+        ? ((await getGitProviderCredentialsByAccountId(gitAccountId)) ??
+          (await getGitProviderCredentials('github')))
         : await getGitProviderCredentials('github');
     if (!githubCreds) {
         throw new Error('GitHub provider not configured');

@@ -1,5 +1,4 @@
 import { WebhookConfig } from '@workspace/typescript-interface/websocket';
-import { createKyGitlab } from '@/lib/api/kyGitlab';
 import {
     createGitLabWebhook,
     extractGitLabProjectId,
@@ -9,6 +8,7 @@ import { prisma } from '../../../prisma/prisma';
 import { extractGitHubRepo } from '@/services/git/git.service';
 import { deleteWebhookForRepository } from '@/services/repository.service';
 import { githubDeleteWebhook } from '@/lib/api/github.api';
+import { kyGitlab } from '@/lib/api/kyGitlab';
 
 export async function setupWebhookForRepository(
     repositoryUrl: string,
@@ -49,9 +49,8 @@ export async function removeWebhookForRepository(repositoryId: string): Promise<
         if (repository.gitProvider === 'gitlab') {
             const projectId = extractGitLabProjectId(repository.repositoryUrl);
             const baseUrl = new URL(repository.repositoryUrl).origin;
-            const kyGitlab = createKyGitlab(baseUrl);
 
-            await kyGitlab
+            await kyGitlab(baseUrl)
                 .delete(`v4/projects/${projectId}/hooks/${repository.webhookId}`)
                 .json();
         } else if (repository.gitProvider === 'github') {
@@ -66,9 +65,12 @@ export async function removeWebhookForRepository(repositoryId: string): Promise<
     await deleteWebhookForRepository(repositoryId);
 }
 
-export async function findRepositoryByWebhook(
-    repositoryUrl: string,
-): Promise<{ id: string; userId: string; webhookSecret: string | null; environmentId: string | null } | null> {
+export async function findRepositoryByWebhook(repositoryUrl: string): Promise<{
+    id: string;
+    userId: string;
+    webhookSecret: string | null;
+    environmentId: string | null;
+} | null> {
     const repositories = await prisma.repository.findUnique({
         where: {
             repositoryUrl,
