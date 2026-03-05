@@ -3,8 +3,9 @@
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { PipelineEditor } from '@/components/pipeline/PipelineEditor';
 import { registerAllNodes } from '@/lib/pipeline/nodes';
+import { PipelineProvider } from '@/contexts/PipelineContext';
+import { ReactFlowProvider } from '@xyflow/react';
 
-// Register all nodes when this module is loaded on the client
 registerAllNodes();
 
 interface PipelineEditorPageProps {
@@ -14,8 +15,10 @@ interface PipelineEditorPageProps {
 
 export function PipelineEditorPage({ repositoryId, initialGraph }: PipelineEditorPageProps) {
     return (
-        <div className="flex h-full flex-col">
-            <PipelineEditor repositoryId={repositoryId} initialGraph={initialGraph} />
-        </div>
+        <PipelineProvider initialGraph={initialGraph}>
+            <ReactFlowProvider>
+                <PipelineEditor repositoryId={repositoryId} />
+            </ReactFlowProvider>
+        </PipelineProvider>
     );
 }

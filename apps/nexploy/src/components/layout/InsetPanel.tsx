@@ -5,9 +5,8 @@ export function InsetPanel({ children, className }: { children: ReactNode; class
     return (
         <div
             className={cn(
-                'rounded-xl',
                 'bg-background border-sidebar-border border-t md:border',
-                'rounded-none shadow-none md:rounded-xl md:shadow-sm',
+                'overflow-hidden rounded-none shadow-none md:rounded-xl md:shadow-sm',
                 className,
             )}
         >

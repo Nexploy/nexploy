@@ -405,6 +405,7 @@
         "run": "Exécuter le pipeline",
         "empty": "Faites glisser des nœuds depuis la palette pour construire votre pipeline",
         "palette": "Nœuds",
+        "deleteSelection": "Supprimer {count} nœuds",
         "nodes": {
             "clone-repository": {
                 "name": "Cloner le dépôt",

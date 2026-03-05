@@ -38,7 +38,7 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
     return (
         <BreadcrumbProvider segments={{ repositoryId: repository.name }}>
             <div className="flex h-full w-full flex-1 flex-col">
-                <div className="flex flex-col gap-4 overflow-hidden">
+                <div className="flex flex-1 flex-col gap-4 overflow-hidden">
                     <div className="flex items-start justify-between gap-2 px-5">
                         <div className="flex gap-3">
                             <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
@@ -94,6 +94,7 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
 
                     <RepositoryTabs>
                         {{
+                            pipeline: <RepositoryPipelineTab repositoryId={repository.id} />,
                             builds: <RepositoryBuildsTab repositoryId={repository.id} />,
                             versions: (
                                 <RepositoryVersionsTab
@@ -104,7 +105,6 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                             env: <RepositoryEnvTab repositoryId={repository.id} />,
                             domain: <RepositoryDomainsTab repositoryId={repository.id} />,
                             deployment: <RepositoryDeploymentTab repositoryId={repository.id} />,
-                            pipeline: <RepositoryPipelineTab repositoryId={repository.id} />,
                             setting: <RepositorySettingsTab repositoryId={repository.id} />,
                         }}
                     </RepositoryTabs>

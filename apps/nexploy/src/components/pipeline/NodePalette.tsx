@@ -8,19 +8,27 @@ import {
     Container,
     FileKey,
     GitBranch,
+    type LucideIcon,
     Rocket,
     Terminal,
-    type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 
 const iconMap: Record<string, LucideIcon> = {
     GitClone: GitBranch,
-    Container: Container,
-    Rocket: Rocket,
-    FileKey: FileKey,
-    Terminal: Terminal,
-    Bell: Bell,
+    Container,
+    Rocket,
+    FileKey,
+    Terminal,
+    Bell,
+};
+
+const categoryLabel: Record<string, string> = {
+    source: 'Source',
+    build: 'Build',
+    deploy: 'Deploy',
+    utility: 'Utility',
+    notification: 'Notification',
 };
 
 export function NodePalette() {
@@ -32,38 +40,49 @@ export function NodePalette() {
         event.dataTransfer.effectAllowed = 'move';
     };
 
+    const grouped = definitions.reduce<Record<string, typeof definitions>>((acc, def) => {
+        if (!acc[def.category]) acc[def.category] = [];
+        acc[def.category]!.push(def);
+        return acc;
+    }, {});
+
     return (
-        <div className="flex w-52 shrink-0 flex-col gap-2 overflow-y-auto p-3">
-            <p className="text-muted-foreground px-1 text-xs font-medium uppercase tracking-wider">
+        <div className="bg-sidebar flex w-48 shrink-0 flex-col gap-3 border-r p-3">
+            <p className="text-muted-foreground px-1 text-[10px] font-semibold tracking-widest uppercase">
                 {t('palette')}
             </p>
-            <div className="flex flex-col gap-1.5">
-                {definitions.map((def) => {
-                    const Icon = iconMap[def.metadata.icon] ?? Terminal;
-                    return (
-                        <div
-                            key={def.type}
-                            draggable
-                            onDragStart={(e) => onDragStart(e, def.type as NodeType)}
-                            className="border-border bg-card hover:bg-accent flex cursor-grab items-center gap-2 rounded-md border p-2 transition-colors active:cursor-grabbing"
-                        >
+            {Object.entries(grouped).map(([category, defs]) => (
+                <div key={category} className="flex flex-col gap-1">
+                    <p className="text-muted-foreground px-1 text-[10px] font-medium">
+                        {categoryLabel[category] ?? category}
+                    </p>
+                    {defs.map((def) => {
+                        const Icon =
+                            (def.metadata.icon ? iconMap[def.metadata.icon] : undefined) ??
+                            Terminal;
+                        return (
                             <div
-                                className={cn(
-                                    'flex size-7 shrink-0 items-center justify-center rounded',
-                                    def.metadata.color,
-                                )}
+                                key={def.type}
+                                draggable
+                                onDragStart={(e) => onDragStart(e, def.type as NodeType)}
+                                className="border-border bg-card hover:border-accent hover:bg-muted flex cursor-grab items-center gap-2.5 rounded-lg border px-2.5 py-2 transition-all active:cursor-grabbing active:opacity-60"
                             >
-                                <Icon className="size-3.5" />
+                                <div
+                                    className={cn(
+                                        'flex size-7 shrink-0 items-center justify-center rounded-md',
+                                        def.metadata.color,
+                                    )}
+                                >
+                                    <Icon className="size-3.5" strokeWidth={1.5} />
+                                </div>
+                                <span className="text-foreground truncate text-xs font-medium">
+                                    {t(`nodes.${def.type}.name`)}
+                                </span>
                             </div>
-                            <div className="min-w-0">
-                                <p className="truncate text-xs font-medium">
-                                    {t(`nodes.${def.type as NodeType}.name` as Parameters<typeof t>[0])}
-                                </p>
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
+                        );
+                    })}
+                </div>
+            ))}
         </div>
     );
 }

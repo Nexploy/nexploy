@@ -405,6 +405,7 @@
         "run": "Run Pipeline",
         "empty": "Drag nodes from the palette to build your pipeline",
         "palette": "Nodes",
+        "deleteSelection": "Delete {count} nodes",
         "nodes": {
             "clone-repository": {
                 "name": "Clone Repository",
