@@ -12,6 +12,7 @@
     "requests": "Requests",
     "admin": "Admin",
     "users": "Users",
+    "registry": "Registry",
     "backups": "Backups",
     "ai": "AI",
     "tools": "Tools",

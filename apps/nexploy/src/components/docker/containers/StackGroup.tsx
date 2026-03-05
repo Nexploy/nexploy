@@ -70,7 +70,9 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                                 <Layers className="text-primary h-5 w-5" />
                             </div>
                             <div className="flex min-w-0 flex-col text-left">
-                                <h2 className="truncate text-base font-semibold">{stackName}</h2>
+                                <h1 className="line-clamp-1 text-base font-semibold break-all">
+                                    {stackName}
+                                </h1>
                                 <div className="text-muted-foreground flex items-center gap-2 text-xs">
                                     <span>
                                         {containers.length} {t('container')}

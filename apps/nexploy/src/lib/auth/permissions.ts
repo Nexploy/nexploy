@@ -8,6 +8,7 @@ export type PermissionActions = {
     environment: 'create' | 'read' | 'update' | 'delete';
     docker: 'read' | 'manage' | 'prune';
     gitProvider: 'create' | 'update' | 'delete';
+    registry: 'create' | 'update' | 'delete';
     user: (typeof adminAc.statements.user)[number];
     session: (typeof adminAc.statements.session)[number];
     backup: 'create' | 'read' | 'restore' | 'delete';
@@ -24,6 +25,7 @@ const statement = {
     environment: ['create', 'read', 'update', 'delete'] as const,
     docker: ['read', 'manage', 'prune'] as const,
     gitProvider: ['create', 'update', 'delete'] as const,
+    registry: ['create', 'update', 'delete'] as const,
     backup: ['create', 'read', 'restore', 'delete'] as const,
 } as const;
 
@@ -50,6 +52,7 @@ const admin = ac.newRole({
     environment: ['create', 'read', 'update', 'delete'],
     docker: ['read', 'manage', 'prune'],
     gitProvider: ['create', 'update', 'delete'],
+    registry: ['create', 'update', 'delete'],
     user: [...adminAc.statements.user],
     backup: ['create', 'read', 'restore', 'delete'],
 });

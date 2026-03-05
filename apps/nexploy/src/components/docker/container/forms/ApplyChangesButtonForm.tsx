@@ -42,18 +42,14 @@ export function ApplyChangesButtonForm() {
         }
     };
 
+    if (!hasChanges()) return null;
+
     return (
         <Button
             icon={Save}
             isLoading={isLoading}
             onClick={handleApplyChanges}
-            className={cn(
-                'mt-5',
-                'transition-all duration-500 ease-in-out',
-                hasChanges()
-                    ? 'pointer-events-auto opacity-100'
-                    : 'pointer-events-none opacity-100',
-            )}
+            className={cn('mt-5')}
         >
             {t('applyChanges')}
         </Button>

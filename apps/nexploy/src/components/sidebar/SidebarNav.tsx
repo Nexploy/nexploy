@@ -15,6 +15,7 @@ import {
     Plug,
     Send,
     Users,
+    Warehouse,
 } from 'lucide-react';
 import {
     SidebarGroup,
@@ -74,8 +75,9 @@ const groups: SidebarNavGroup[] = [
         titleKey: 'admin',
         children: [
             { titleKey: 'users', href: '/admin/users', icon: Users },
-            { titleKey: 'backups', href: '/admin/backups', icon: Database },
             { titleKey: 'integrations', href: '/admin/integrations', icon: Plug },
+            { titleKey: 'backups', href: '/admin/backups', icon: Database },
+            { titleKey: 'registry', href: '/admin/registry', icon: Warehouse },
             // { titleKey: 'ai', href: '/admin/ai', icon: Bot },
             // { titleKey: 'tools', href: '/admin/tools', icon: Hammer },
         ],

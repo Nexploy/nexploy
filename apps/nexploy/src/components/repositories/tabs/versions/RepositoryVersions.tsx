@@ -148,10 +148,8 @@ export function RepositoryVersions({
         <div className="flex flex-col gap-2 px-5">
             <h2 className="text-xl font-semibold">{t('title')}</h2>
             {versions.length === 0 ? (
-                <div className="rounded-md border">
-                    <div className="text-muted-foreground p-8 text-center text-sm">
-                        {t('noVersions')}
-                    </div>
+                <div className="text-muted-foreground rounded-md border p-8 text-center text-sm">
+                    {t('noVersions')}
                 </div>
             ) : (
                 <div className="flex flex-col gap-4">

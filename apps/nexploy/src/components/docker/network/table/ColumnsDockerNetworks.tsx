@@ -7,7 +7,6 @@ import { Button } from '@workspace/ui/components/button';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Badge } from '@workspace/ui/components/badge';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
-import CopyButton from '@/components/shared/CopyButton';
 import dayjs from 'dayjs';
 import { NetworkDropdownActions } from '@/components/docker/network/NetworkDropdownActions';
 import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
@@ -127,15 +126,9 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
         cell: ({ row }) => {
             const networkId = row.original.id;
             return (
-                <div className="flex max-w-50 items-center gap-2">
-                    <code className="text-muted-foreground truncate text-sm">{networkId}</code>
-                    <CopyButton
-                        textToCopy={row.original.id}
-                        className="size-7 !text-xs"
-                        size={'icon'}
-                        variant={'ghost'}
-                    />
-                </div>
+                <code className="text-muted-foreground line-clamp-1 max-w-50 truncate text-sm">
+                    {networkId}
+                </code>
             );
         },
     },
@@ -154,11 +147,7 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
             const containers = row.original.containers;
 
             const count = containers?.length || 0;
-            return (
-                <div className="flex items-center gap-2">
-                    <Badge variant={count > 0 ? 'default' : 'secondary'}>{count}</Badge>
-                </div>
-            );
+            return <Badge variant={count > 0 ? 'default' : 'secondary'}>{count}</Badge>;
         },
         sortingFn: (rowA, rowB) => {
             const lengthA = rowA.original.containers?.length || 0;
