@@ -8,6 +8,7 @@ import { RepositoryVersionsTab } from '@/components/repositories/tabs/versions/R
 import { ExternalLink, GitBranch, Github, Gitlab, Link2, Server } from 'lucide-react';
 import { RepositoryBuildsTab } from '@/components/repositories/tabs/builds/RepositoryBuildsTab';
 import { RepositoryDeploymentTab } from '@/components/repositories/tabs/deployment/RepositoryDeploymentTab';
+import { RepositoryPipelineTab } from '@/components/repositories/tabs/pipeline/RepositoryPipelineTab';
 import { getRepositorieById } from '@/services/repository.service';
 import { Separator } from '@workspace/ui/components/separator';
 import { capitalizeFirstLetter, toDisplayLabel } from '@/utils/capitalize';
@@ -103,6 +104,7 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                             env: <RepositoryEnvTab repositoryId={repository.id} />,
                             domain: <RepositoryDomainsTab repositoryId={repository.id} />,
                             deployment: <RepositoryDeploymentTab repositoryId={repository.id} />,
+                            pipeline: <RepositoryPipelineTab repositoryId={repository.id} />,
                             setting: <RepositorySettingsTab repositoryId={repository.id} />,
                         }}
                     </RepositoryTabs>

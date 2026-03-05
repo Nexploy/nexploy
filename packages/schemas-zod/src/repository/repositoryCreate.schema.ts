@@ -25,7 +25,7 @@ export const repositoryCreateFormSchema = z.object({
     gitAccountId: z.string().optional(),
     environmentId: z.string(),
     buildType: z
-        .enum(['DOCKERFILE', 'DOCKER_COMPOSE', 'NIXPACKS', 'BUILDPACKS'])
+        .enum(['DOCKERFILE', 'DOCKER_COMPOSE', 'NIXPACKS', 'BUILDPACKS', 'NODE_PIPELINE'])
         .default('DOCKERFILE'),
     dockerfilePath: z.string().default('Dockerfile'),
     dockerComposePath: z.string().default('docker-compose.yml'),

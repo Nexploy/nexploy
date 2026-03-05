@@ -4,6 +4,7 @@
     "private": true,
     "type": "module",
     "exports": {
-        "./*": "./src/*.ts"
+        "./*": "./src/*.ts",
+        "./pipeline/*": "./src/pipeline/*.ts"
     }
 }

@@ -23,6 +23,7 @@
         "environments": "Environnements",
         "domains": "Domaines",
         "deployment": "Déploiement",
+        "pipeline": "Pipeline",
         "settings": "Paramètres"
     },
     "delete": "Supprimer",
@@ -391,6 +392,60 @@
             "selectZoneForDns": "Sélectionnez une zone pour créer automatiquement le DNS",
             "subdomain": "Sous-domaine",
             "emptyForRoot": "Laissez vide pour le domaine racine"
+        }
+    },
+    "pipeline": {
+        "title": "Éditeur de pipeline",
+        "save": "Enregistrer le pipeline",
+        "saveSuccess": "Pipeline enregistré avec succès",
+        "saveError": "Échec de l'enregistrement du pipeline",
+        "validate": "Valider",
+        "validationSuccess": "Le pipeline est valide",
+        "validationFailed": "La validation du pipeline a échoué",
+        "run": "Exécuter le pipeline",
+        "empty": "Faites glisser des nœuds depuis la palette pour construire votre pipeline",
+        "palette": "Nœuds",
+        "nodes": {
+            "clone-repository": {
+                "name": "Cloner le dépôt",
+                "description": "Cloner le dépôt Git",
+                "noConfig": "Aucune configuration requise. L'URL du dépôt et la branche sont héritées des paramètres du dépôt."
+            },
+            "build-docker-image": {
+                "name": "Construire l'image Docker",
+                "description": "Construire une image Docker depuis un Dockerfile"
+            },
+            "deploy-container": {
+                "name": "Déployer le conteneur",
+                "description": "Déployer un conteneur Docker depuis l'image construite"
+            },
+            "write-env-file": {
+                "name": "Écrire le fichier .env",
+                "description": "Écrire les variables d'environnement dans le fichier .env"
+            },
+            "run-script": {
+                "name": "Exécuter un script",
+                "description": "Exécuter un script shell dans le répertoire de travail"
+            },
+            "send-notification": {
+                "name": "Envoyer une notification",
+                "description": "Envoyer une notification webhook"
+            }
+        },
+        "config": {
+            "dockerfilePath": "Chemin du Dockerfile",
+            "useRepositoryEnvVars": "Utiliser les variables d'environnement du dépôt",
+            "script": "Script",
+            "failOnError": "Échouer en cas d'erreur",
+            "webhookUrl": "URL du webhook",
+            "message": "Message personnalisé",
+            "messagePlaceholder": "Laisser vide pour le message par défaut",
+            "deployContainerInfo": "Le conteneur sera déployé avec l'image construite et les paramètres du dépôt."
+        },
+        "validation": {
+            "noSourceNode": "Le pipeline doit commencer par un nœud de clonage du dépôt",
+            "hasCycle": "Le pipeline contient un cycle",
+            "disconnectedNodes": "Tous les nœuds doivent être connectés"
         }
     }
 }

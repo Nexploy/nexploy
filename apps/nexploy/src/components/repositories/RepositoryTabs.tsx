@@ -2,13 +2,13 @@
 
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
-import { Globe, Hammer, Key, Rocket, Settings, Tag } from 'lucide-react';
+import { Globe, Hammer, Key, Rocket, Settings, Tag, Workflow } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { ReactNode, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 
-const VALID_TABS = ['builds', 'versions', 'env', 'domain', 'deployment', 'setting'] as const;
+const VALID_TABS = ['builds', 'versions', 'env', 'domain', 'deployment', 'pipeline', 'setting'] as const;
 type TabValue = (typeof VALID_TABS)[number];
 
 interface RepositoryTabsProps {
@@ -18,6 +18,7 @@ interface RepositoryTabsProps {
         env: ReactNode;
         domain: ReactNode;
         deployment: ReactNode;
+        pipeline: ReactNode;
         setting: ReactNode;
     };
 }
@@ -66,6 +67,10 @@ export function RepositoryTabs({ children }: RepositoryTabsProps) {
                             <Rocket />
                             {t('deployment')}
                         </TabsTrigger>
+                        <TabsTrigger value="pipeline">
+                            <Workflow />
+                            {t('pipeline')}
+                        </TabsTrigger>
                     </div>
                 </TabsList>
                 <TabsList className="mb-2">
@@ -91,6 +96,9 @@ export function RepositoryTabs({ children }: RepositoryTabsProps) {
                     </TabsContent>
                     <TabsContent value="deployment" className="mt-0">
                         {children.deployment}
+                    </TabsContent>
+                    <TabsContent value="pipeline" className="mt-0">
+                        {children.pipeline}
                     </TabsContent>
                     <TabsContent value="setting" className="mt-0">
                         {children.setting}

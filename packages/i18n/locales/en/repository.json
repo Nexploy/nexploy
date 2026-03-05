@@ -23,6 +23,7 @@
         "environments": "Environments",
         "domains": "Domains",
         "deployment": "Deployment",
+        "pipeline": "Pipeline",
         "settings": "Settings"
     },
     "delete": "Delete",
@@ -391,6 +392,60 @@
             "selectZoneForDns": "Select a zone to automatically create DNS",
             "subdomain": "Subdomain",
             "emptyForRoot": "Leave empty for root domain"
+        }
+    },
+    "pipeline": {
+        "title": "Pipeline Editor",
+        "save": "Save Pipeline",
+        "saveSuccess": "Pipeline saved successfully",
+        "saveError": "Failed to save pipeline",
+        "validate": "Validate",
+        "validationSuccess": "Pipeline is valid",
+        "validationFailed": "Pipeline validation failed",
+        "run": "Run Pipeline",
+        "empty": "Drag nodes from the palette to build your pipeline",
+        "palette": "Nodes",
+        "nodes": {
+            "clone-repository": {
+                "name": "Clone Repository",
+                "description": "Clone the git repository",
+                "noConfig": "No configuration required. The repository URL and branch are inherited from the repository settings."
+            },
+            "build-docker-image": {
+                "name": "Build Docker Image",
+                "description": "Build a Docker image from a Dockerfile"
+            },
+            "deploy-container": {
+                "name": "Deploy Container",
+                "description": "Deploy a Docker container from the built image"
+            },
+            "write-env-file": {
+                "name": "Write Env File",
+                "description": "Write environment variables to .env file"
+            },
+            "run-script": {
+                "name": "Run Script",
+                "description": "Execute a shell script in the work directory"
+            },
+            "send-notification": {
+                "name": "Send Notification",
+                "description": "Send a webhook notification"
+            }
+        },
+        "config": {
+            "dockerfilePath": "Dockerfile Path",
+            "useRepositoryEnvVars": "Use repository environment variables",
+            "script": "Script",
+            "failOnError": "Fail on error",
+            "webhookUrl": "Webhook URL",
+            "message": "Custom message",
+            "messagePlaceholder": "Leave empty for default message",
+            "deployContainerInfo": "Container will be deployed using the built image with repository settings."
+        },
+        "validation": {
+            "noSourceNode": "Pipeline must start with a Clone Repository node",
+            "hasCycle": "Pipeline contains a cycle",
+            "disconnectedNodes": "All nodes must be connected"
         }
     }
 }

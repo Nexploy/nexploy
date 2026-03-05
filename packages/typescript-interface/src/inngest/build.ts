@@ -8,7 +8,7 @@ export type BuildStatus =
     | 'DEPLOYING'
     | 'CANCELLED';
 
-export type BuildType = 'DOCKERFILE' | 'DOCKER_COMPOSE' | 'NIXPACKS' | 'BUILDPACKS';
+export type BuildType = 'DOCKERFILE' | 'DOCKER_COMPOSE' | 'NIXPACKS' | 'BUILDPACKS' | 'NODE_PIPELINE';
 
 export type BuildStep =
     | 'clone-repository'

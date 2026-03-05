@@ -40,6 +40,7 @@ export function BuildConfigurationFields() {
                             <SelectContent>
                                 <SelectItem value="DOCKERFILE">Dockerfile</SelectItem>
                                 <SelectItem value="DOCKER_COMPOSE">Docker Compose</SelectItem>
+                                <SelectItem value="NODE_PIPELINE">Node Pipeline</SelectItem>
                                 {/*<SelectItem value="NIXPACKS">Nixpacks</SelectItem>*/}
                                 {/*<SelectItem value="BUILDPACKS">Buildpacks</SelectItem>*/}
                             </SelectContent>

@@ -13,6 +13,7 @@ import {
 import { PipelineContext } from './context';
 import { dockerfileStrategy } from '@/inngest/pipeline/strategies/dockerfile.strategy';
 import { dockerComposeStrategy } from '@/inngest/pipeline/strategies/compose.strategy';
+import { NodePipelineStrategy } from '@/inngest/pipeline/strategies/nodePipeline.strategy';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { prisma } from '../../../prisma/prisma';
 
@@ -99,7 +100,23 @@ export class PipelineOrchestrator implements IPipelineOrchestrator {
         logger: PipelineLogger,
         reporter: StatusReporter,
     ): Promise<PipelineResult> {
-        const strategy = this.getStrategy(config.buildType);
+        let strategy: IBuildStrategy;
+
+        if (config.buildType === 'NODE_PIPELINE') {
+            const pipelineConfig = await prisma.pipelineConfig.findUnique({
+                where: { repositoryId: config.repositoryId },
+            });
+            if (!pipelineConfig) {
+                throw new Error(
+                    `No pipeline configuration found for repository: ${config.repositoryId}`,
+                );
+            }
+            strategy = new NodePipelineStrategy(
+                pipelineConfig as unknown as import('@workspace/typescript-interface/pipeline/node').PipelineGraph,
+            );
+        } else {
+            strategy = this.getStrategy(config.buildType);
+        }
 
         strategy.validateConfig(config);
 

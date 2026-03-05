@@ -59,11 +59,24 @@ model Repository {
   environmentId String
   environment   Environment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
 
-  build        Build[]
-  envVariables EnvVariable[]
-  versions     Version[]
+  build          Build[]
+  envVariables   EnvVariable[]
+  versions       Version[]
+  pipelineConfig PipelineConfig?
 
   @@map("repository")
+}
+
+model PipelineConfig {
+  id           String     @id @default(cuid())
+  repositoryId String     @unique
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  nodes        Json
+  edges        Json
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@map("pipeline_config")
 }
 
 model EnvVariable {
@@ -123,6 +136,7 @@ enum BuildType {
   DOCKER_COMPOSE
   NIXPACKS
   BUILDPACKS
+  NODE_PIPELINE
 }
 
 enum LogLevel {
