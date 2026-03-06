@@ -405,6 +405,14 @@
         "run": "Exécuter le pipeline",
         "empty": "Faites glisser des nœuds depuis la palette pour construire votre pipeline",
         "palette": "Nœuds",
+        "search": "Rechercher des nœuds...",
+        "categories": {
+            "source": "Source",
+            "build": "Build",
+            "deploy": "Déploiement",
+            "utility": "Utilitaire",
+            "notification": "Notification"
+        },
         "deleteSelection": "Supprimer {count} nœuds",
         "nodes": {
             "clone-repository": {

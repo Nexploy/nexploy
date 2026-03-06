@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const containerLabelSchema = z.object({
-    key: z.string().min(1, 'La clé est requise'),
+    key: z.string().min(1, 'Key is required'),
     value: z.string(),
 });
 

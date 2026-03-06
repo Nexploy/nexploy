@@ -20,7 +20,7 @@ const volumeMountSchema = z.object({
 export const containerCreateFormSchema = z
     .object({
         name: z.string().optional(),
-        image: z.string().min(1, "L'image est requise"),
+        image: z.string().min(1, 'Image is required'),
         restart: z.enum(['no', 'always', 'on-failure', 'unless-stopped']).default('unless-stopped'),
         network: z.string().optional(),
         hostname: z.string().optional(),

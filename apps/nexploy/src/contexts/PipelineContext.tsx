@@ -1,6 +1,14 @@
 'use client';
 
-import { createContext, type ReactNode, useCallback, useContext, useState } from 'react';
+import {
+    createContext,
+    type ReactNode,
+    useCallback,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import {
     addEdge,
     type Connection,
@@ -11,6 +19,7 @@ import {
 } from '@xyflow/react';
 import { type PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { graphToFlow } from '@/components/pipeline/utils/graphConvert';
+import { usePipelineHistory } from '@/hooks/usePipelineHistory';
 
 interface PipelineContextValue {
     nodes: Node[];
@@ -28,6 +37,8 @@ interface PipelineContextValue {
     handleNodeDragStop: () => void;
     triggerAutoSave: () => void;
     saveVersion: number;
+    undo: () => void;
+    redo: () => void;
     setNodes: ReturnType<typeof useNodesState>[1];
 }
 
@@ -42,11 +53,47 @@ export function PipelineProvider({
 }) {
     const { nodes: initialNodes, edges: initialEdges } = graphToFlow(initialGraph);
 
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+    const isUndoRedoRef = useRef(false);
+    const [nodes, setNodes, onNodesChangeBase] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChangeBase] = useEdgesState(initialEdges);
     const [panelNodeId, setPanelNodeId] = useState<string | null>(null);
     const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
     const [saveVersion, setSaveVersion] = useState(0);
+
+    const committedVersionRef = useRef(0);
+
+    const onRestore = useCallback(
+        (snapshot: { nodes: Node[]; edges: Edge[] }) => {
+            isUndoRedoRef.current = true;
+            setNodes(snapshot.nodes);
+            setEdges(snapshot.edges);
+            setSaveVersion((v) => v + 1);
+        },
+        [setNodes, setEdges],
+    );
+
+    const { commit, undo, redo } = usePipelineHistory(onRestore, {
+        nodes: initialNodes,
+        edges: initialEdges,
+    });
+
+    useEffect(() => {
+        if (saveVersion === 0 || saveVersion === committedVersionRef.current) return;
+        committedVersionRef.current = saveVersion;
+        if (isUndoRedoRef.current) {
+            isUndoRedoRef.current = false;
+            return;
+        }
+        commit({ nodes: [...nodes], edges: [...edges] });
+    }, [saveVersion, nodes, edges]);
+
+    const onNodesChange: typeof onNodesChangeBase = useCallback(
+        (changes) => {
+            onNodesChangeBase(changes);
+            if (changes.some((c) => c.type === 'remove')) setSaveVersion((v) => v + 1);
+        },
+        [onNodesChangeBase],
+    );
 
     const onEdgesChange: typeof onEdgesChangeBase = useCallback(
         (changes) => {
@@ -103,6 +150,7 @@ export function PipelineProvider({
         );
         setSelectedNodeIds([]);
         setPanelNodeId(null);
+        setSaveVersion((v) => v + 1);
     }, [selectedNodeIds, setNodes, setEdges]);
 
     return (
@@ -123,6 +171,8 @@ export function PipelineProvider({
                 handleNodeDragStop,
                 triggerAutoSave,
                 saveVersion,
+                undo,
+                redo,
                 setNodes,
             }}
         >

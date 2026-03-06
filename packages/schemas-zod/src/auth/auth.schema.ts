@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { email, name, password } from './common.schema';
-import { Role } from './permissions';
+import { email, name, password } from './common.schema.ts';
+import { Role } from './permissions.ts';
 
 export const signInFormSchema = (t: any) =>
     z.object({

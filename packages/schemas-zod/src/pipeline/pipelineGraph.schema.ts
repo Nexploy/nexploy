@@ -36,9 +36,8 @@ export const pipelineGraphSchema = z.object({
 });
 
 export const savePipelineSchema = z.object({
-    repositoryId: z.string().cuid(),
+    repositoryId: z.cuid(),
     graph: pipelineGraphSchema,
-    silent: z.boolean().optional(),
 });
 
 export const validatePipelineSchema = z.object({

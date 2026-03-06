@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 import {
     Background,
     BackgroundVariant,
@@ -28,21 +29,6 @@ export function PipelineCanvas() {
     const [isSpaceHeld, setIsSpaceHeld] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        const onKeyDown = (e: KeyboardEvent) => {
-            if (e.code === 'Space') setIsSpaceHeld(true);
-        };
-        const onKeyUp = (e: KeyboardEvent) => {
-            if (e.code === 'Space') setIsSpaceHeld(false);
-        };
-        window.addEventListener('keydown', onKeyDown);
-        window.addEventListener('keyup', onKeyUp);
-        return () => {
-            window.removeEventListener('keydown', onKeyDown);
-            window.removeEventListener('keyup', onKeyUp);
-        };
-    }, []);
-
     const {
         nodes,
         edges,
@@ -53,7 +39,27 @@ export function PipelineCanvas() {
         handleNodeDragStop,
         handlePaneClick,
         handleSelectionChange,
+        undo,
+        redo,
     } = usePipelineContext();
+
+    useHotkeys('space', () => setIsSpaceHeld(true), {
+        keydown: true,
+        keyup: false,
+        preventDefault: true,
+    });
+    useHotkeys('space', () => setIsSpaceHeld(false), { keydown: false, keyup: true });
+
+    useEffect(() => {
+        const handler = (e: KeyboardEvent) => {
+            if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== 'z') return;
+            e.preventDefault();
+            if (e.shiftKey) redo();
+            else undo();
+        };
+        document.addEventListener('keydown', handler, { capture: true });
+        return () => document.removeEventListener('keydown', handler, { capture: true });
+    }, [undo, redo]);
 
     const { isDragOver, onDragOver, onDragLeave, onDrop } = useDragAndDrop(rfInstance);
     const { minimapVisible, onMoveStart, onMoveEnd } = useMinimap();
@@ -110,7 +116,7 @@ export function PipelineCanvas() {
                 />
                 {nodes.length > 0 && (
                     <Controls
-                        className="[&>button]:!border-border [&>button]:!bg-card [&>button]:!text-muted-foreground [&>button:hover]:!bg-muted border-border rounded-md border [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md [&>button:not(:last-child)]:border-r"
+                        className="[&>button]:!border-border [&>button]:!bg-card [&>button:hover]:!bg-muted border-border rounded-md border [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md [&>button:not(:last-child)]:border-r"
                         showInteractive
                         orientation="horizontal"
                     />

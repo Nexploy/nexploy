@@ -13,7 +13,6 @@ export const deploymentSettingsSchema = z.object({
     repositoryId: z.string(),
     deploymentMode: deploymentModeEnum,
 
-    // Swarm configuration
     replicas: z.number().int().min(1).max(100),
     updateParallelism: z.number().int().min(1).max(100),
     updateDelay: durationSchema,
@@ -23,22 +22,18 @@ export const deploymentSettingsSchema = z.object({
     rollbackDelay: durationSchema,
     rollbackFailureAction: rollbackFailureActionEnum,
 
-    // Restart policy
     restartCondition: restartConditionEnum,
     restartDelay: durationSchema,
     restartMaxAttempts: z.number().int().min(0).max(100),
     restartWindow: durationSchema,
 
-    // Resources
     cpuLimit: z.number().min(0.1).max(128).nullable(),
     cpuReservation: z.number().min(0.1).max(128).nullable(),
     memoryLimit: z.string().nullable(),
     memoryReservation: z.string().nullable(),
 
-    // Placement
     placementConstraints: z.array(z.string()),
 
-    // Health check
     healthCheckEnabled: z.boolean(),
     healthCheckCommand: z.string().nullable(),
     healthCheckInterval: durationSchema,
