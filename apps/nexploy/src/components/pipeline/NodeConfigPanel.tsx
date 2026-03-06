@@ -133,14 +133,10 @@ export function NodeConfigPanel({ node }: NodeConfigPanelProps) {
 
     return (
         <div className="border-border bg-sidebar flex w-60 shrink-0 flex-col border-l">
-            {/* Header */}
             <div className="border-border flex items-center justify-between border-b px-4 py-3">
                 <div className="flex items-center gap-2">
-                    <div
-                        className={`size-2 rounded-full ${def.metadata.color.split(' ')[1] ?? 'text-blue-500'}`}
-                    />
                     <h3 className="text-foreground text-xs font-semibold">
-                        {t(`nodes.${node.data.type as NodeType}.name` as Parameters<typeof t>[0])}
+                        {t(`nodes.${node.data.type}.name`)}
                     </h3>
                 </div>
                 <button
@@ -151,7 +147,6 @@ export function NodeConfigPanel({ node }: NodeConfigPanelProps) {
                 </button>
             </div>
 
-            {/* Fields */}
             <div className="flex flex-col gap-4 overflow-y-auto p-4">{renderFields()}</div>
         </div>
     );

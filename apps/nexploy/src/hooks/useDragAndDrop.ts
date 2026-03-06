@@ -6,7 +6,7 @@ import { usePipelineContext } from '@/contexts/PipelineContext';
 
 export function useDragAndDrop(rfInstance: ReactFlowInstance | null) {
     const [isDragOver, setIsDragOver] = useState(false);
-    const { setNodes } = usePipelineContext();
+    const { setNodes, triggerAutoSave } = usePipelineContext();
 
     const onDragOver = useCallback((event: React.DragEvent) => {
         event.preventDefault();
@@ -46,8 +46,9 @@ export function useDragAndDrop(rfInstance: ReactFlowInstance | null) {
             };
 
             setNodes((nds) => nds.concat(newNode));
+            triggerAutoSave();
         },
-        [rfInstance, setNodes],
+        [rfInstance, setNodes, triggerAutoSave],
     );
 
     return { isDragOver, onDragOver, onDragLeave, onDrop };

@@ -13,10 +13,6 @@ export const savePipelineAction = authActionServer
         const t = await getTranslations('repository');
         try {
             await savePipelineConfig(parsedInput.repositoryId, parsedInput.graph);
-            await setToastServer({
-                type: 'success',
-                message: t('pipeline.saveSuccess'),
-            });
         } catch (error) {
             await setToastServer({
                 type: 'error',

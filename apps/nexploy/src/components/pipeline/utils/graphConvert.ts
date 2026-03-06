@@ -2,8 +2,6 @@ import { type Edge, type Node } from '@xyflow/react';
 import { NodeType, PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { getNodeDefinition } from '@/lib/pipeline/nodeRegistry';
 
-export const EDGE_STYLE = { stroke: '#4e4e5e', strokeWidth: 1.5 } as const;
-
 export function graphToFlow(graph: PipelineGraph): { nodes: Node[]; edges: Edge[] } {
     const nodes: Node[] = graph.nodes.map((n) => ({
         id: n.id,
@@ -24,8 +22,7 @@ export function graphToFlow(graph: PipelineGraph): { nodes: Node[]; edges: Edge[
         sourceHandle: e.sourceHandle,
         target: e.target,
         targetHandle: e.targetHandle,
-        type: 'smoothstep',
-        style: EDGE_STYLE,
+        type: 'gradient-edge',
         animated: false,
     }));
 

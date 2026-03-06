@@ -1,33 +1,34 @@
 'use client';
 
-import { createContext, type ReactNode, useCallback, useContext, useRef, useState } from 'react';
+import { createContext, type ReactNode, useCallback, useContext, useState } from 'react';
 import {
     addEdge,
-    applyEdgeChanges,
-    applyNodeChanges,
     type Connection,
     type Edge,
-    type EdgeChange,
     type Node,
-    type NodeChange,
+    useEdgesState,
+    useNodesState,
 } from '@xyflow/react';
 import { type PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
-import { EDGE_STYLE, graphToFlow } from '@/components/pipeline/utils/graphConvert';
+import { graphToFlow } from '@/components/pipeline/utils/graphConvert';
 
 interface PipelineContextValue {
     nodes: Node[];
     edges: Edge[];
-    selectedNodeId: string | null;
+    panelNodeId: string | null;
     selectedNodeIds: string[];
-    onNodesChange: (changes: NodeChange[]) => void;
-    onEdgesChange: (changes: EdgeChange[]) => void;
+    onNodesChange: ReturnType<typeof useNodesState>[2];
+    onEdgesChange: ReturnType<typeof useEdgesState>[2];
     onConnect: (connection: Connection) => void;
     handleSelectionChange: (selection: { nodes: Node[] }) => void;
-    handleNodeClick: (_: React.MouseEvent, node: Node) => void;
+    handleNodeDoubleClick: (_: React.MouseEvent, node: Node) => void;
     handlePaneClick: () => void;
     handleConfigChange: (nodeId: string, config: Record<string, unknown>) => void;
     handleDeleteSelection: () => void;
-    setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
+    handleNodeDragStop: () => void;
+    triggerAutoSave: () => void;
+    saveVersion: number;
+    setNodes: ReturnType<typeof useNodesState>[1];
 }
 
 const PipelineContext = createContext<PipelineContextValue | null>(null);
@@ -41,30 +42,29 @@ export function PipelineProvider({
 }) {
     const { nodes: initialNodes, edges: initialEdges } = graphToFlow(initialGraph);
 
-    const [nodes, setNodes] = useState<Node[]>(initialNodes);
-    const [edges, setEdges] = useState<Edge[]>(initialEdges);
-    const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+    const [edges, setEdges, onEdgesChangeBase] = useEdgesState(initialEdges);
+    const [panelNodeId, setPanelNodeId] = useState<string | null>(null);
     const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
+    const [saveVersion, setSaveVersion] = useState(0);
 
-    const selectedNodeIdsRef = useRef(selectedNodeIds);
-    selectedNodeIdsRef.current = selectedNodeIds;
-
-    const onNodesChange = useCallback(
-        (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
-        [],
+    const onEdgesChange: typeof onEdgesChangeBase = useCallback(
+        (changes) => {
+            onEdgesChangeBase(changes);
+            if (changes.some((c) => c.type === 'remove')) setSaveVersion((v) => v + 1);
+        },
+        [onEdgesChangeBase],
     );
 
-    const onEdgesChange = useCallback(
-        (changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-        [],
-    );
+    const triggerAutoSave = useCallback(() => setSaveVersion((v) => v + 1), []);
+    const handleNodeDragStop = useCallback(() => setSaveVersion((v) => v + 1), []);
 
     const onConnect = useCallback(
-        (connection: Connection) =>
-            setEdges((eds) =>
-                addEdge({ ...connection, type: 'smoothstep', style: EDGE_STYLE }, eds),
-            ),
-        [],
+        (connection: Connection) => {
+            setEdges((eds) => addEdge({ ...connection, type: 'gradient-edge' }, eds));
+            setSaveVersion((v) => v + 1);
+        },
+        [setEdges],
     );
 
     const handleSelectionChange = useCallback(({ nodes: sel }: { nodes: Node[] }) => {
@@ -73,51 +73,56 @@ export function PipelineProvider({
             const same = prev.length === ids.length && prev.every((id, i) => id === ids[i]);
             return same ? prev : ids;
         });
-        if (ids.length === 1) {
-            setSelectedNodeId((prev) => (prev === ids[0] ? prev : (ids[0] ?? null)));
-        } else if (ids.length === 0) {
-            setSelectedNodeId(null);
-        }
+        if (ids.length === 0) setPanelNodeId(null);
     }, []);
 
-    const handleNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
-        setSelectedNodeId(node.id);
+    const handleNodeDoubleClick = useCallback((_: React.MouseEvent, node: Node) => {
+        setPanelNodeId((prev) => (prev === node.id ? null : node.id));
     }, []);
 
     const handlePaneClick = useCallback(() => {
-        setSelectedNodeId(null);
+        setPanelNodeId(null);
         setSelectedNodeIds([]);
     }, []);
 
-    const handleConfigChange = useCallback((nodeId: string, config: Record<string, unknown>) => {
-        setNodes((nds) =>
-            nds.map((n) => (n.id === nodeId ? { ...n, data: { ...n.data, config } } : n)),
-        );
-    }, []);
+    const handleConfigChange = useCallback(
+        (nodeId: string, config: Record<string, unknown>) => {
+            setNodes((nds) =>
+                nds.map((n) => (n.id === nodeId ? { ...n, data: { ...n.data, config } } : n)),
+            );
+        },
+        [setNodes],
+    );
 
     const handleDeleteSelection = useCallback(() => {
-        const ids = selectedNodeIdsRef.current;
-        setNodes((nds) => nds.filter((n) => !ids.includes(n.id)));
-        setEdges((eds) => eds.filter((e) => !ids.includes(e.source) && !ids.includes(e.target)));
+        setNodes((nds) => nds.filter((n) => !selectedNodeIds.includes(n.id)));
+        setEdges((eds) =>
+            eds.filter(
+                (e) => !selectedNodeIds.includes(e.source) && !selectedNodeIds.includes(e.target),
+            ),
+        );
         setSelectedNodeIds([]);
-        setSelectedNodeId(null);
-    }, []);
+        setPanelNodeId(null);
+    }, [selectedNodeIds, setNodes, setEdges]);
 
     return (
         <PipelineContext.Provider
             value={{
                 nodes,
                 edges,
-                selectedNodeId,
+                panelNodeId,
                 selectedNodeIds,
                 onNodesChange,
                 onEdgesChange,
                 onConnect,
                 handleSelectionChange,
-                handleNodeClick,
+                handleNodeDoubleClick,
                 handlePaneClick,
                 handleConfigChange,
                 handleDeleteSelection,
+                handleNodeDragStop,
+                triggerAutoSave,
+                saveVersion,
                 setNodes,
             }}
         >

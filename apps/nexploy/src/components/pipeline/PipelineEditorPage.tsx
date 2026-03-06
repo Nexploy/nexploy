@@ -15,10 +15,10 @@ interface PipelineEditorPageProps {
 
 export function PipelineEditorPage({ repositoryId, initialGraph }: PipelineEditorPageProps) {
     return (
-        <PipelineProvider initialGraph={initialGraph}>
-            <ReactFlowProvider>
+        <ReactFlowProvider>
+            <PipelineProvider initialGraph={initialGraph}>
                 <PipelineEditor repositoryId={repositoryId} />
-            </ReactFlowProvider>
-        </PipelineProvider>
+            </PipelineProvider>
+        </ReactFlowProvider>
     );
 }

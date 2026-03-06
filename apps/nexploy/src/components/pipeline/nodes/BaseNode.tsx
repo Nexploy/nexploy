@@ -13,7 +13,7 @@ import {
     Trash2,
 } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
-import { useState } from 'react';
+import { Button } from '@workspace/ui/components/button';
 
 const iconMap: Record<string, LucideIcon> = {
     GitClone: GitBranch,
@@ -57,7 +57,6 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
     const Icon = iconMap[definition.metadata.icon] ?? Terminal;
     const hasInputs = definition.handles.inputs.length > 0;
     const hasOutputs = definition.handles.outputs.length > 0;
-    const [hovered, setHovered] = useState(false);
     const { deleteElements } = useReactFlow();
 
     const handleDelete = (e: React.MouseEvent) => {
@@ -66,26 +65,21 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
     };
 
     return (
-        <div
-            className="group relative flex flex-col items-center"
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-        >
-            {/* Delete button on hover */}
-            <button
+        <div className="group relative flex flex-col items-center">
+            <Button
                 onClick={handleDelete}
+                variant="destructiveGhost"
                 className={cn(
-                    'bg-destructive text-destructive-foreground absolute -top-8 left-1/2 flex size-6 -translate-x-1/2 items-center justify-center rounded-full shadow-lg transition-all duration-150',
-                    hovered ? 'scale-100 opacity-100' : 'pointer-events-none scale-75 opacity-0',
+                    'absolute -top-7 left-1/2 flex size-6 -translate-x-1/2 transition-all duration-150',
+                    'scale-75 opacity-0 group-hover:scale-100 group-hover:opacity-100 hover:scale-100',
                 )}
             >
                 <Trash2 className="size-3" />
-            </button>
+            </Button>
 
-            {/* Node card */}
             <div
                 className={cn(
-                    'relative flex size-20 items-center justify-center rounded-2xl border-2 bg-card shadow-lg transition-all duration-150',
+                    'bg-card relative flex size-20 items-center justify-center rounded-2xl border-2 shadow-lg transition-all duration-150',
                     selected
                         ? cn(
                               'border-2 shadow-xl',
@@ -93,19 +87,16 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
                               categoryGlow[definition.category],
                           )
                         : 'border-border hover:border-accent',
-                    hovered && !selected && 'border-accent',
                 )}
             >
-                {/* Input handle */}
                 {hasInputs && (
                     <Handle
                         type="target"
                         position={Position.Left}
-                        className="!top-1/2 !-left-[7px] !size-3.5 !rounded-full !border-2 !border-card !bg-base-7 transition-colors hover:!bg-base-9"
+                        className="hover:!bg-primary !border-card !bg-base-7 !-left-[3px] !size-4.5 !rounded-full !border-2 transition-all hover:!size-6"
                     />
                 )}
 
-                {/* Icon */}
                 <div
                     className={cn(
                         'flex size-11 items-center justify-center rounded-xl',
@@ -115,17 +106,18 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
                     <Icon className="size-6" strokeWidth={1.5} />
                 </div>
 
-                {/* Output handle */}
                 {hasOutputs && (
                     <Handle
                         type="source"
                         position={Position.Right}
-                        className="hover:!bg-primary !top-1/2 !-right-[7px] !size-3.5 !rounded-full !border-2 !border-card !bg-base-7 transition-colors"
+                        className={cn(
+                            'hover:!bg-primary !border-card !bg-base-7 !-right-[3px] !size-4.5 !rounded-full !border-2 transition-all hover:!size-6',
+                            `hover:${categoryBorder[definition.category]}`,
+                        )}
                     />
                 )}
             </div>
 
-            {/* Label below */}
             <span
                 className={cn(
                     'mt-2 max-w-[120px] truncate text-center text-xs font-medium transition-colors',
