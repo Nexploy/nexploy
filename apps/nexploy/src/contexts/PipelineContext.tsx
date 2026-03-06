@@ -40,6 +40,7 @@ interface PipelineContextValue {
     undo: () => void;
     redo: () => void;
     setNodes: ReturnType<typeof useNodesState>[1];
+    setEdges: ReturnType<typeof useEdgesState>[1];
 }
 
 const PipelineContext = createContext<PipelineContextValue | null>(null);
@@ -174,6 +175,7 @@ export function PipelineProvider({
                 undo,
                 redo,
                 setNodes,
+                setEdges,
             }}
         >
             {children}

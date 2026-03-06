@@ -1,5 +1,6 @@
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { RunScriptConfig } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const runScriptNodeDef: NodeDefinition<RunScriptConfig> = {
     type: 'run-script',
@@ -8,7 +9,7 @@ export const runScriptNodeDef: NodeDefinition<RunScriptConfig> = {
         name: 'pipeline.nodes.run-script.name',
         description: 'pipeline.nodes.run-script.description',
         icon: 'Terminal',
-        color: 'bg-yellow-500/10 text-yellow-600',
+        color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
     },
     defaultConfig: {
         script: '',
@@ -19,5 +20,5 @@ export const runScriptNodeDef: NodeDefinition<RunScriptConfig> = {
         inputs: [{ id: 'input', required: true }],
         outputs: [{ id: 'output' }],
     },
-    validateConfig: (config) => typeof config.script === 'string' && config.script.trim().length > 0,
+    validateConfig: (config) => config.script.trim().length > 0,
 };

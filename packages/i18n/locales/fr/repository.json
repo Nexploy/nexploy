@@ -455,6 +455,17 @@
             "noSourceNode": "Le pipeline doit commencer par un nœud de clonage du dépôt",
             "hasCycle": "Le pipeline contient un cycle",
             "disconnectedNodes": "Tous les nœuds doivent être connectés"
+        },
+        "templates": {
+            "title": "Templates",
+            "dockerfile": {
+                "name": "Dockerfile",
+                "description": "Clone, build image et déploie le container"
+            },
+            "docker-compose": {
+                "name": "Docker Compose",
+                "description": "Clone, écrit les vars et lance compose"
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { DeployContainerConfig } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const deployContainerNodeDef: NodeDefinition<DeployContainerConfig> = {
     type: 'deploy-container',
@@ -8,7 +9,7 @@ export const deployContainerNodeDef: NodeDefinition<DeployContainerConfig> = {
         name: 'pipeline.nodes.deploy-container.name',
         description: 'pipeline.nodes.deploy-container.description',
         icon: 'Rocket',
-        color: 'bg-green-500/10 text-green-600',
+        color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
     },
     defaultConfig: {
         ports: [],

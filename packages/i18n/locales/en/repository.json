@@ -455,6 +455,17 @@
             "noSourceNode": "Pipeline must start with a Clone Repository node",
             "hasCycle": "Pipeline contains a cycle",
             "disconnectedNodes": "All nodes must be connected"
+        },
+        "templates": {
+            "title": "Templates",
+            "dockerfile": {
+                "name": "Dockerfile",
+                "description": "Clone, build image and deploy container"
+            },
+            "docker-compose": {
+                "name": "Docker Compose",
+                "description": "Clone, write env and run compose"
+            }
         }
     }
 }

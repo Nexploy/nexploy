@@ -1,0 +1,113 @@
+import {
+    Bell,
+    Container,
+    FileCode2,
+    FileKey,
+    GitBranch,
+    Hammer,
+    Layers,
+    type LucideIcon,
+    Rocket,
+    Terminal,
+    Wrench,
+} from 'lucide-react';
+
+export const CATEGORY_BG_MUTED: Record<string, string> = {
+    source: 'bg-blue-500/10',
+    build: 'bg-orange-500/10',
+    deploy: 'bg-green-500/10',
+    utility: 'bg-yellow-500/10',
+    notification: 'bg-pink-500/10',
+};
+
+export const CATEGORY_BG: Record<string, string> = {
+    source: 'bg-blue-500',
+    build: 'bg-orange-500',
+    deploy: 'bg-green-500',
+    utility: 'bg-yellow-500',
+    notification: 'bg-pink-500',
+};
+
+export const CATEGORY_TEXT: Record<string, string> = {
+    source: 'text-blue-600',
+    build: 'text-orange-600',
+    deploy: 'text-green-600',
+    utility: 'text-yellow-600',
+    notification: 'text-pink-600',
+};
+
+export const CATEGORY_HEX: Record<string, string> = {
+    source: '#2b7fff',
+    build: '#ff6900',
+    deploy: '#00c951',
+    utility: '#efb100',
+    notification: '#f6339a',
+};
+
+export const CATEGORY_BORDER: Record<string, string> = {
+    source: 'border-blue-500',
+    build: 'border-orange-500',
+    deploy: 'border-green-500',
+    utility: 'border-yellow-500',
+    notification: 'border-pink-500',
+};
+
+export const CATEGORY_GLOW: Record<string, string> = {
+    source: 'shadow-blue-500/20',
+    build: 'shadow-orange-500/20',
+    deploy: 'shadow-green-500/20',
+    utility: 'shadow-yellow-500/20',
+    notification: 'shadow-pink-500/20',
+};
+
+export const CATEGORY_ICONS: Record<string, LucideIcon> = {
+    source: GitBranch,
+    build: Hammer,
+    deploy: Rocket,
+    utility: Wrench,
+    notification: Bell,
+};
+
+// ─── Node type ────────────────────────────────────────────────────────────────
+
+const NODE_CATEGORY: Record<string, string> = {
+    'clone-repository': 'source',
+    'build-docker-image': 'build',
+    'deploy-container': 'deploy',
+    'write-env-file': 'utility',
+    'run-script': 'utility',
+    'send-notification': 'notification',
+};
+
+export const NODE_BG_MUTED: Record<string, string> = Object.fromEntries(
+    Object.entries(NODE_CATEGORY).map(([node, cat]) => [node, CATEGORY_BG_MUTED[cat]!]),
+);
+
+export const NODE_TEXT: Record<string, string> = Object.fromEntries(
+    Object.entries(NODE_CATEGORY).map(([node, cat]) => [node, CATEGORY_TEXT[cat]!]),
+);
+
+export const NODE_ICONS: Record<string, LucideIcon> = {
+    'clone-repository': GitBranch,
+    'build-docker-image': Container,
+    'deploy-container': Rocket,
+    'write-env-file': FileKey,
+    'run-script': Terminal,
+    'send-notification': Bell,
+};
+
+export const ICON_NAME_MAP: Record<string, LucideIcon> = {
+    GitClone: GitBranch,
+    Container,
+    Rocket,
+    FileKey,
+    Terminal,
+    Bell,
+};
+
+// ─── Templates ────────────────────────────────────────────────────────────────
+
+export const TEMPLATE_ICONS: Record<string, LucideIcon> = {
+    dockerfile: FileCode2,
+    compose: Layers,
+};

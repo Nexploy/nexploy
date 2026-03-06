@@ -3,14 +3,7 @@
 import { BaseEdge, type EdgeProps, getBezierPath } from '@xyflow/react';
 import { type NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { usePipelineContext } from '@/contexts/PipelineContext';
-
-const categoryColors: Record<string, string> = {
-    source: '#3b82f6',
-    build: '#f97316',
-    deploy: '#22c55e',
-    utility: '#eab308',
-    notification: '#ec4899',
-};
+import { CATEGORY_HEX } from '@/components/pipeline/pipelineTheme';
 
 export function GradientEdge({
     id,
@@ -32,8 +25,8 @@ export function GradientEdge({
     const sourceCategory = (sourceNode?.data?.definition as NodeDefinition)?.category;
     const targetCategory = (targetNode?.data?.definition as NodeDefinition)?.category;
 
-    const sourceColor = sourceCategory && categoryColors[sourceCategory];
-    const targetColor = targetCategory && categoryColors[targetCategory];
+    const sourceColor = sourceCategory && CATEGORY_HEX[sourceCategory];
+    const targetColor = targetCategory && CATEGORY_HEX[targetCategory];
 
     const gradientId = `edge-gradient-${id}`;
 

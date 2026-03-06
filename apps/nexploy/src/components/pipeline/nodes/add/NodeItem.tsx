@@ -1,37 +1,21 @@
 'use client';
 
-import { getAllNodeDefinitions } from '@/lib/pipeline/nodeRegistry';
+import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { NodeType } from '@workspace/typescript-interface/pipeline/node';
 import { cn } from '@workspace/ui/lib/utils';
-import {
-    Bell,
-    Container,
-    FileKey,
-    GitBranch,
-    type LucideIcon,
-    Rocket,
-    Terminal,
-} from 'lucide-react';
-
-const iconMap: Record<string, LucideIcon> = {
-    GitClone: GitBranch,
-    Container,
-    Rocket,
-    FileKey,
-    Terminal,
-    Bell,
-};
+import { Terminal } from 'lucide-react';
+import { ICON_NAME_MAP } from '@/components/pipeline/pipelineTheme';
 
 export function NodeItem({
     def,
     label,
     onDragStart,
 }: {
-    def: ReturnType<typeof getAllNodeDefinitions>[number];
+    def: NodeDefinition;
     label: string;
     onDragStart: (e: React.DragEvent, nodeType: NodeType) => void;
 }) {
-    const Icon = (def.metadata.icon ? iconMap[def.metadata.icon] : undefined) ?? Terminal;
+    const Icon = (def.metadata.icon ? ICON_NAME_MAP[def.metadata.icon] : undefined) ?? Terminal;
 
     return (
         <div

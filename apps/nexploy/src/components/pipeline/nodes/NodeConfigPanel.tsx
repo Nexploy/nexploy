@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { NodeType, PipelineNode } from '@workspace/typescript-interface/pipeline/node';
-import { getNodeDefinition } from '@/lib/pipeline/nodeRegistry';
+import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { Label } from '@workspace/ui/components/label';
 import { Input } from '@workspace/ui/components/input';

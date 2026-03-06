@@ -1,17 +1,19 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
+import { useRef, useState } from 'react';
 import {
     Background,
     BackgroundVariant,
-    Controls,
     MiniMap,
+    Panel,
     PanOnScrollMode,
     ReactFlow,
     type ReactFlowInstance,
     SelectionMode,
+    useReactFlow,
 } from '@xyflow/react';
+import { Maximize, Minus, Plus } from 'lucide-react';
+import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
 import { BaseNode } from '@/components/pipeline/nodes/BaseNode';
@@ -19,6 +21,8 @@ import { GradientEdge } from '@/components/pipeline/edges/GradientEdge';
 import { useDragAndDrop } from '@/hooks/useDragAndDrop';
 import { useMinimap } from '@/hooks/useMinimap';
 import { usePipelineContext } from '@/contexts/PipelineContext';
+import { ButtonPanel } from '@/components/pipeline/nodes/ButtonPanel';
+import { useHotkeys } from '@/lib/useHotKeys';
 
 const nodeTypes = { 'pipeline-node': BaseNode };
 const edgeTypes = { 'gradient-edge': GradientEdge };
@@ -26,6 +30,7 @@ const edgeTypes = { 'gradient-edge': GradientEdge };
 export function PipelineCanvas() {
     const t = useTranslations('repository.pipeline');
     const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
+    const { zoomIn, zoomOut, fitView } = useReactFlow();
     const [isSpaceHeld, setIsSpaceHeld] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -50,16 +55,25 @@ export function PipelineCanvas() {
     });
     useHotkeys('space', () => setIsSpaceHeld(false), { keydown: false, keyup: true });
 
-    useEffect(() => {
-        const handler = (e: KeyboardEvent) => {
-            if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== 'z') return;
-            e.preventDefault();
-            if (e.shiftKey) redo();
-            else undo();
-        };
-        document.addEventListener('keydown', handler, { capture: true });
-        return () => document.removeEventListener('keydown', handler, { capture: true });
-    }, [undo, redo]);
+    useHotkeys('meta+z', () => undo(), {
+        preventDefault: true,
+        capture: true,
+    });
+
+    useHotkeys('meta+shift+z', () => redo(), {
+        preventDefault: true,
+        capture: true,
+    });
+
+    useHotkeys('ctrl+z', () => undo(), {
+        preventDefault: true,
+        capture: true,
+    });
+
+    useHotkeys('ctrl+shift+z', () => redo(), {
+        preventDefault: true,
+        capture: true,
+    });
 
     const { isDragOver, onDragOver, onDragLeave, onDrop } = useDragAndDrop(rfInstance);
     const { minimapVisible, onMoveStart, onMoveEnd } = useMinimap();
@@ -76,6 +90,7 @@ export function PipelineCanvas() {
             onDragLeave={onDragLeave}
             onDrop={onDrop}
         >
+            <ButtonPanel />
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
@@ -115,11 +130,37 @@ export function PipelineCanvas() {
                     color="var(--base-6)"
                 />
                 {nodes.length > 0 && (
-                    <Controls
-                        className="[&>button]:!border-border [&>button]:!bg-card [&>button:hover]:!bg-muted border-border rounded-md border [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md [&>button:not(:last-child)]:border-r"
-                        showInteractive
-                        orientation="horizontal"
-                    />
+                    <Panel position="bottom-left">
+                        <div className="flex gap-1.5">
+                            <Button
+                                variant="secondary"
+                                size="icon"
+                                className="size-8"
+                                onClick={() => zoomOut()}
+                                title="Zoom out"
+                            >
+                                <Minus />
+                            </Button>
+                            <Button
+                                variant="secondary"
+                                size="icon"
+                                className="size-8"
+                                onClick={() => fitView({ padding: 0.3 })}
+                                title="Fit view"
+                            >
+                                <Maximize />
+                            </Button>
+                            <Button
+                                variant="secondary"
+                                size="icon"
+                                className="size-8"
+                                onClick={() => zoomIn()}
+                                title="Zoom in"
+                            >
+                                <Plus />
+                            </Button>
+                        </div>
+                    </Panel>
                 )}
                 <MiniMap
                     className={cn(

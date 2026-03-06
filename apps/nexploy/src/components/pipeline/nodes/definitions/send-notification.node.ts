@@ -1,5 +1,6 @@
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { SendNotificationConfig } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const sendNotificationNodeDef: NodeDefinition<SendNotificationConfig> = {
     type: 'send-notification',
@@ -8,7 +9,7 @@ export const sendNotificationNodeDef: NodeDefinition<SendNotificationConfig> = {
         name: 'pipeline.nodes.send-notification.name',
         description: 'pipeline.nodes.send-notification.description',
         icon: 'Bell',
-        color: 'bg-pink-500/10 text-pink-600',
+        color: `${CATEGORY_BG_MUTED['notification']} ${CATEGORY_TEXT['notification']}`,
     },
     defaultConfig: {
         webhookUrl: '',

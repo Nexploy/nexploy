@@ -2,11 +2,8 @@
 
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { PipelineEditor } from '@/components/pipeline/PipelineEditor';
-import { registerAllNodes } from '@/lib/pipeline/nodes';
 import { PipelineProvider } from '@/contexts/PipelineContext';
 import { ReactFlowProvider } from '@xyflow/react';
-
-registerAllNodes();
 
 interface PipelineEditorPageProps {
     repositoryId: string;

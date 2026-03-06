@@ -1,6 +1,6 @@
 import { type Edge, type Node } from '@xyflow/react';
 import { NodeType, PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
-import { getNodeDefinition } from '@/lib/pipeline/nodeRegistry';
+import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 
 export function graphToFlow(graph: PipelineGraph): { nodes: Node[]; edges: Edge[] } {
     const nodes: Node[] = graph.nodes.map((n) => ({

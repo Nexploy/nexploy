@@ -1,44 +1,17 @@
 'use client';
 
-import { Handle, Position, useReactFlow } from '@xyflow/react';
+import { Handle, Position, useConnection, useNodeConnections, useReactFlow } from '@xyflow/react';
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
-import {
-    Bell,
-    Container,
-    FileKey,
-    GitBranch,
-    type LucideIcon,
-    Rocket,
-    Terminal,
-    Trash2,
-} from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Terminal, Trash2 } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
-
-const iconMap: Record<string, LucideIcon> = {
-    GitClone: GitBranch,
-    Container,
-    Rocket,
-    FileKey,
-    Terminal,
-    Bell,
-};
-
-const categoryGlow: Record<string, string> = {
-    source: 'shadow-blue-500/20',
-    build: 'shadow-orange-500/20',
-    deploy: 'shadow-green-500/20',
-    utility: 'shadow-yellow-500/20',
-    notification: 'shadow-pink-500/20',
-};
-
-const categoryBorder: Record<string, string> = {
-    source: 'border-blue-500',
-    build: 'border-orange-500',
-    deploy: 'border-green-500',
-    utility: 'border-yellow-500',
-    notification: 'border-pink-500',
-};
+import {
+    CATEGORY_BG,
+    CATEGORY_BORDER,
+    CATEGORY_GLOW,
+    ICON_NAME_MAP,
+} from '@/components/pipeline/pipelineTheme';
 
 interface BaseNodeProps {
     id: string;
@@ -54,10 +27,23 @@ interface BaseNodeProps {
 
 export function BaseNode({ id, data, selected }: BaseNodeProps) {
     const { definition } = data;
-    const Icon = iconMap[definition.metadata.icon] ?? Terminal;
+    const t = useTranslations('repository.pipeline');
+    const Icon = ICON_NAME_MAP[definition.metadata.icon] ?? Terminal;
     const hasInputs = definition.handles.inputs.length > 0;
     const hasOutputs = definition.handles.outputs.length > 0;
     const { deleteElements } = useReactFlow();
+
+    const connection = useConnection();
+    const inputConnections = useNodeConnections({ handleType: 'target' });
+    const outputConnections = useNodeConnections({ handleType: 'source' });
+    const handleColor = CATEGORY_BG[definition.category];
+
+    const isSourceConnecting = connection.inProgress && connection.fromNode?.id === id;
+    const isTargetHighlighted =
+        connection.inProgress && connection.toNode?.id === id && connection.isValid;
+
+    const inputActive = inputConnections.length > 0 || isTargetHighlighted;
+    const outputActive = outputConnections.length > 0 || isSourceConnecting;
 
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -83,8 +69,8 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
                     selected
                         ? cn(
                               'border-2 shadow-xl',
-                              categoryBorder[definition.category],
-                              categoryGlow[definition.category],
+                              CATEGORY_BORDER[definition.category],
+                              CATEGORY_GLOW[definition.category],
                           )
                         : 'border-border hover:border-accent',
                 )}
@@ -93,7 +79,10 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
                     <Handle
                         type="target"
                         position={Position.Left}
-                        className="hover:!bg-primary !border-card !bg-base-7 !-left-[3px] !size-4.5 !rounded-full !border-2 transition-all hover:!size-6"
+                        className={cn(
+                            '!bg-base-7 !border-card !-left-[3px] !size-4.5 !rounded-full !border-2 transition-all hover:!size-6',
+                            inputActive && `!${handleColor}`,
+                        )}
                     />
                 )}
 
@@ -111,8 +100,8 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
                         type="source"
                         position={Position.Right}
                         className={cn(
-                            'hover:!bg-primary !border-card !bg-base-7 !-right-[3px] !size-4.5 !rounded-full !border-2 transition-all hover:!size-6',
-                            `hover:${categoryBorder[definition.category]}`,
+                            '!bg-base-7 !border-card !-right-[3px] !size-4.5 !rounded-full !border-2 transition-all hover:!size-6',
+                            outputActive && `!${handleColor}`,
                         )}
                     />
                 )}
@@ -120,11 +109,11 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
 
             <span
                 className={cn(
-                    'mt-2 max-w-[120px] truncate text-center text-xs font-medium transition-colors',
+                    'mt-2 max-w-[120px] text-center text-xs font-medium transition-colors',
                     selected ? 'text-foreground' : 'text-muted-foreground',
                 )}
             >
-                {data.label}
+                {t(`nodes.${data.nodeType}.name`)}
             </span>
         </div>
     );

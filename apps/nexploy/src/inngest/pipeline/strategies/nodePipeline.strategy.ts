@@ -2,8 +2,7 @@ import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { IBuildStrategy, IPipelineStep } from '@/types/pipeline.type';
 import { topologicalSort } from '@/inngest/pipeline/utils/topologicalSort';
-import { getNodeDefinition } from '@/lib/pipeline/nodeRegistry';
-import { registerAllNodes } from '@/lib/pipeline/nodes/index';
+import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { cloneStep } from '@/inngest/pipeline/steps/clone.step';
 import { envStep } from '@/inngest/pipeline/steps/env.step';
 import { cleanupStep } from '@/inngest/pipeline/steps/cleanup.step';
@@ -16,9 +15,6 @@ import {
     WriteEnvFileConfig,
 } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { dockerfileStrategy } from '@/inngest/pipeline/strategies/dockerfile.strategy';
-
-// Ensure nodes are registered when this module is loaded server-side
-registerAllNodes();
 
 export class NodePipelineStrategy implements IBuildStrategy {
     readonly buildType = 'NODE_PIPELINE' as const;
@@ -41,7 +37,6 @@ export class NodePipelineStrategy implements IBuildStrategy {
         const sorted = topologicalSort(this.graph.nodes, this.graph.edges);
         const nodeSteps: IPipelineStep[] = [];
 
-        // Cache dockerfile strategy steps for reuse
         const dockerfileSteps = dockerfileStrategy.getSteps();
 
         for (const node of sorted) {
@@ -55,7 +50,7 @@ export class NodePipelineStrategy implements IBuildStrategy {
 
                 case 'write-env-file': {
                     const envConfig = config as WriteEnvFileConfig;
-                    if (envConfig.useRepositoryEnvVars !== false) {
+                    if (envConfig.useRepositoryEnvVars) {
                         nodeSteps.push(envStep);
                     }
                     break;
