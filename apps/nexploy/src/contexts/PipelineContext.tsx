@@ -38,6 +38,7 @@ interface PipelineContextValue {
     handlePaneClick: () => void;
     handleConfigChange: (nodeId: string, config: Record<string, unknown>) => void;
     handleDeleteSelection: () => void;
+    handleDuplicateSelection: () => void;
     handleNodeDragStop: () => void;
     triggerAutoSave: () => void;
     undo: () => void;
@@ -149,6 +150,23 @@ export function PipelineProvider({
         [setNodes],
     );
 
+    const handleDuplicateSelection = useCallback(() => {
+        setNodes((nds) => {
+            const selected = nds.filter((n) => n.selected);
+            if (selected.length === 0) return nds;
+            const copies = selected.map((n) => ({
+                ...n,
+                id: `${n.id}-copy-${Date.now()}`,
+                position: { x: n.position.x + 40, y: n.position.y + 40 },
+                selected: true,
+                data: { ...n.data },
+            }));
+            const unselected = nds.map((n) => ({ ...n, selected: false }));
+            return [...unselected, ...copies];
+        });
+        setSaveVersion((v) => v + 1);
+    }, [setNodes]);
+
     const handleDeleteSelection = useCallback(() => {
         setNodes((nds) => nds.filter((n) => !selectedNodeIds.includes(n.id)));
         setEdges((eds) =>
@@ -177,6 +195,7 @@ export function PipelineProvider({
                 handlePaneClick,
                 handleConfigChange,
                 handleDeleteSelection,
+                handleDuplicateSelection,
                 handleNodeDragStop,
                 triggerAutoSave,
                 undo,

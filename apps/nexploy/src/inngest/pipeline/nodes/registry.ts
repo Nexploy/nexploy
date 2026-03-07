@@ -9,7 +9,6 @@ import { validateDockerfileExecutor } from './executors/validate-dockerfile.exec
 import { validateComposeExecutor } from './executors/validate-compose.executor';
 import { setEnvVarsExecutor } from './executors/set-env-vars.executor';
 import { cleanWorkdirExecutor } from './executors/clean-workdir.executor';
-import { runScriptExecutor } from './executors/run-script.executor';
 import { sendNotificationExecutor } from './executors/send-notification.executor';
 
 const executors: INodeExecutor[] = [
@@ -27,7 +26,6 @@ const executors: INodeExecutor[] = [
     writeEnvFileExecutor,
     setEnvVarsExecutor,
     cleanWorkdirExecutor,
-    runScriptExecutor,
     // Notification
     sendNotificationExecutor,
 ];

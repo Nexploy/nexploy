@@ -25,13 +25,14 @@ import { PushToRegistryConfig } from './config/PushToRegistryConfig';
 import { WriteEnvFileConfig } from './config/WriteEnvFileConfig';
 import { SetEnvVarsConfig } from './config/SetEnvVarsConfig';
 import { CleanWorkdirConfig } from './config/CleanWorkdirConfig';
-import { RunScriptConfig } from './config/RunScriptConfig';
 import { SendNotificationConfig } from './config/SendNotificationConfig';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { useAction } from 'next-safe-action/hooks';
 import { savePipelineAction } from '@/actions/repository/pipeline/savePipeline.action';
 import { flowToGraph } from '@/components/pipeline/utils/graphConvert';
 import { useParams } from 'next/navigation';
+import { setEnvVarsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { toast } from 'sonner';
 
 export interface NodeConfigProps {
     config: Record<string, unknown>;
@@ -42,6 +43,14 @@ interface NodeConfigPanelProps {
     node: Node;
     isOpen: boolean;
 }
+
+const VALIDATORS: Partial<Record<NodeType, (config: Record<string, unknown>) => string | null>> = {
+    'set-env-vars': (config) => {
+        const result = setEnvVarsConfigSchema.safeParse(config);
+        if (result.success) return null;
+        return result.error.issues[0]?.message ?? 'Invalid configuration';
+    },
+};
 
 const CONFIG_PANELS: Record<NodeType, ComponentType<NodeConfigProps>> = {
     'clone-repository': CloneRepositoryConfig,
@@ -54,7 +63,6 @@ const CONFIG_PANELS: Record<NodeType, ComponentType<NodeConfigProps>> = {
     'write-env-file': WriteEnvFileConfig,
     'set-env-vars': SetEnvVarsConfig,
     'clean-workdir': CleanWorkdirConfig,
-    'run-script': RunScriptConfig,
     'send-notification': SendNotificationConfig,
 };
 
@@ -98,7 +106,21 @@ export function NodeConfigPanel({ node, isOpen }: NodeConfigPanelProps) {
         setIsDirty(true);
     };
 
+    const handleCancel = () => {
+        setLocalConfig((node.data.config as Record<string, unknown>) ?? {});
+        setIsDirty(false);
+        handlePaneClick();
+    };
+
     const handleSave = async () => {
+        const validator = VALIDATORS[nodeType];
+        if (validator) {
+            const error = validator(localConfig);
+            if (error) {
+                toast.error(error);
+                return;
+            }
+        }
         setIsSaving(true);
         try {
             handleConfigChange(node.id, localConfig);
@@ -111,7 +133,7 @@ export function NodeConfigPanel({ node, isOpen }: NodeConfigPanelProps) {
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={handlePaneClick}>
+        <Dialog open={isOpen} onOpenChange={handleCancel}>
             <DialogContent className="overflow-hidden">
                 <div className="flex max-h-[90vh] flex-col gap-4">
                     <DialogHeader>
@@ -127,7 +149,7 @@ export function NodeConfigPanel({ node, isOpen }: NodeConfigPanelProps) {
                     </ScrollAreaWithShadow>
 
                     <DialogFooter className={'px-6 pb-6'}>
-                        <Button variant="outline" size="sm" onClick={handlePaneClick}>
+                        <Button variant="outline" size="sm" onClick={handleCancel}>
                             {tCommon('cancel')}
                         </Button>
                         <Button size="sm" disabled={!isDirty || isSaving} onClick={handleSave}>

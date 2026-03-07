@@ -439,10 +439,6 @@
                 "name": "Écrire le fichier .env",
                 "description": "Écrire les variables d'environnement dans le fichier .env"
             },
-            "run-script": {
-                "name": "Exécuter un script",
-                "description": "Exécuter un script shell dans le répertoire de travail"
-            },
             "send-notification": {
                 "name": "Envoyer une notification",
                 "description": "Envoyer une notification webhook"

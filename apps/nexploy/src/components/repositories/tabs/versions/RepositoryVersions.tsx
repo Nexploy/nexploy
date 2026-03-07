@@ -14,7 +14,6 @@ import { useTranslations } from 'next-intl';
 
 interface RepositoryVersionsProps {
     repositoryId: string;
-    /** Map of environmentId (or '' for legacy/null) → full image string used by the running container */
     deployedImageByEnvironment: Record<string, string>;
     versions: Version[];
 }
@@ -33,7 +32,11 @@ export function RepositoryVersions({
     const handleDeploy = async (imageTag: string, environmentId?: string) => {
         setDeployingImageTags((prev) => new Set([...prev, imageTag]));
         try {
-            const result = await onDeployDockerfileVersion({ imageTag, repositoryId, environmentId });
+            const result = await onDeployDockerfileVersion({
+                imageTag,
+                repositoryId,
+                environmentId,
+            });
             if (result?.serverError) {
                 toast.error(result.serverError);
             } else {
@@ -120,9 +123,7 @@ export function RepositoryVersions({
                     <Button
                         size="sm"
                         variant={isCurrent ? 'secondary' : 'outline'}
-                        onClick={() =>
-                            handleDeploy(version.imageTag, version.environmentId)
-                        }
+                        onClick={() => handleDeploy(version.imageTag, version.environmentId)}
                         disabled={deployingImageTags.has(version.imageTag) || isCurrent}
                     >
                         {deployingImageTags.has(version.imageTag) ? (

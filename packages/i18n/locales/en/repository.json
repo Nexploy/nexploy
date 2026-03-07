@@ -440,10 +440,6 @@
                 "name": "Write Env File",
                 "description": "Write environment variables to .env file"
             },
-            "run-script": {
-                "name": "Run Script",
-                "description": "Execute a shell script in the work directory"
-            },
             "send-notification": {
                 "name": "Send Notification",
                 "description": "Send a webhook notification"

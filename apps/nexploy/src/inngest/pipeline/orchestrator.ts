@@ -18,6 +18,7 @@ import {
 } from '@/types/pipeline.type';
 import { topologicalSort } from './utils/topologicalSort';
 import { getNodeExecutor } from './nodes/registry';
+import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { gitService } from './services/git.service';
 import { prisma } from '../../../prisma/prisma';
 
@@ -111,6 +112,22 @@ export class NodePipelineOrchestrator {
 
                     const mergedInputs = Object.assign({}, ...inputOutputs);
                     allOutputs.set(node.id, mergedInputs);
+                    continue;
+                }
+
+                const nodeDef = getNodeDefinition(node.data.type);
+                const hasUnconnectedRequiredInput =
+                    nodeDef?.handles.inputs.some((h) => h.required) &&
+                    inputNodeIds.length === 0;
+
+                if (hasUnconnectedRequiredInput) {
+                    await inngestStep.run(`node-${node.id}`, async () => {
+                        await logger.info(
+                            node.id,
+                            `${node.data.label} : Node skipped (required input not connected)`,
+                        );
+                    });
+                    allOutputs.set(node.id, {});
                     continue;
                 }
 

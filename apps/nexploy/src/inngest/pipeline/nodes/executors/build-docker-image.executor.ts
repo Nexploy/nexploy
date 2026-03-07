@@ -1,8 +1,8 @@
 import {
+    getFromInputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    getFromInputs,
 } from '@/types/pipeline.type';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
@@ -22,7 +22,6 @@ export class BuildDockerImageExecutor implements INodeExecutor {
 
         const dockerfilePath =
             (ctx.nodeConfig.dockerfilePath as string | undefined) ?? 'Dockerfile';
-        const buildArgs = (ctx.nodeConfig.buildArgs as Record<string, string> | undefined) ?? {};
 
         const imageName = config.imageName;
 

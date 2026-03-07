@@ -47,10 +47,10 @@ export function useHotkeys(
             const matches = configs.some(
                 (config) =>
                     (!config.key || key === config.key) &&
-                    (!config.ctrl || event.ctrlKey) &&
-                    (!config.meta || event.metaKey) &&
-                    (!config.shift || event.shiftKey) &&
-                    (!config.alt || event.altKey),
+                    config.ctrl === event.ctrlKey &&
+                    config.meta === event.metaKey &&
+                    config.shift === event.shiftKey &&
+                    config.alt === event.altKey,
             );
 
             if (!matches) return;

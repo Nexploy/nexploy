@@ -9,7 +9,6 @@ import { validateComposeNodeDef } from './nodes/definitions/validate-compose.nod
 import { writeEnvFileNodeDef } from './nodes/definitions/write-env-file.node';
 import { setEnvVarsNodeDef } from './nodes/definitions/set-env-vars.node';
 import { cleanWorkdirNodeDef } from './nodes/definitions/clean-workdir.node';
-import { runScriptNodeDef } from './nodes/definitions/run-script.node';
 import { sendNotificationNodeDef } from './nodes/definitions/send-notification.node';
 
 export const ALL_NODE_DEFINITIONS: NodeDefinition[] = [
@@ -27,7 +26,6 @@ export const ALL_NODE_DEFINITIONS: NodeDefinition[] = [
     writeEnvFileNodeDef,
     setEnvVarsNodeDef,
     cleanWorkdirNodeDef,
-    runScriptNodeDef,
     // Notification
     sendNotificationNodeDef,
 ];

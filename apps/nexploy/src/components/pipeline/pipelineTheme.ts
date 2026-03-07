@@ -73,8 +73,6 @@ export const CATEGORY_ICONS: Record<string, LucideIcon> = {
     notification: Bell,
 };
 
-// ─── Node type ────────────────────────────────────────────────────────────────
-
 const NODE_CATEGORY: Record<string, string> = {
     'clone-repository': 'source',
     'validate-dockerfile': 'build',
@@ -86,7 +84,6 @@ const NODE_CATEGORY: Record<string, string> = {
     'write-env-file': 'utility',
     'set-env-vars': 'utility',
     'clean-workdir': 'utility',
-    'run-script': 'utility',
     'send-notification': 'notification',
 };
 
@@ -109,7 +106,6 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'write-env-file': FileKey,
     'set-env-vars': Variable,
     'clean-workdir': Trash2,
-    'run-script': Terminal,
     'send-notification': Bell,
 };
 

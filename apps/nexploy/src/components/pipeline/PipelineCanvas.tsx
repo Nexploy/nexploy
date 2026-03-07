@@ -52,6 +52,7 @@ export function PipelineCanvas() {
         handleNodeDragStop,
         handlePaneClick,
         handleSelectionChange,
+        handleDuplicateSelection,
         undo,
         redo,
         triggerAutoSave,
@@ -114,6 +115,10 @@ export function PipelineCanvas() {
     useHotkeys('space', () => setIsSpaceHeld(false), {
         keydown: false,
         keyup: true,
+        ref: wrapperRef,
+    });
+    useHotkeys(['meta+d', 'ctrl+d'], () => handleDuplicateSelection(), {
+        preventDefault: true,
         ref: wrapperRef,
     });
     useHotkeys('meta+z', () => undo(), { preventDefault: true, capture: true, ref: wrapperRef });

@@ -6,62 +6,71 @@ import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { Plus, Trash2 } from 'lucide-react';
 import { NodeConfigProps } from '@/components/pipeline/nodes/NodeConfigPanel';
+import { type VarEntry } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import dayjs from 'dayjs';
+
+function toEntries(raw: unknown): VarEntry[] {
+    if (Array.isArray(raw)) return raw as VarEntry[];
+    if (raw && typeof raw === 'object') {
+        return Object.entries(raw as Record<string, string>).map(([key, value]) => ({
+            id: `${key}-${Math.random()}`,
+            key,
+            value,
+        }));
+    }
+    return [];
+}
 
 export function SetEnvVarsConfig({ config, update }: NodeConfigProps) {
     const t = useTranslations('repository.pipeline.config');
-    const vars = (config.vars as Record<string, string>) ?? {};
-    const entries = Object.entries(vars);
+    const entries = toEntries(config.vars);
 
-    const setVar = (key: string, value: string) => {
-        update('vars', { ...vars, [key]: value });
+    const updateEntries = (next: VarEntry[]) => update('vars', next);
+
+    const updateEntry = (id: string, field: 'key' | 'value', val: string) => {
+        updateEntries(entries.map((e) => (e.id === id ? { ...e, [field]: val } : e)));
     };
 
-    const removeVar = (key: string) => {
-        const next = { ...vars };
-        delete next[key];
-        update('vars', next);
+    const removeEntry = (id: string) => {
+        updateEntries(entries.filter((e) => e.id !== id));
     };
 
-    const addVar = () => {
-        const key = `VAR_${entries.length + 1}`;
-        update('vars', { ...vars, [key]: '' });
+    const addEntry = () => {
+        updateEntries([...entries, { id: `${dayjs().valueOf()}`, key: '', value: '' }]);
     };
 
     return (
-        <div className="space-y-3">
-            <Label className="text-muted-foreground text-xs">{t('vars')}</Label>
-            <div className="space-y-2">
-                {entries.map(([key, value]) => (
-                    <div key={key} className="flex gap-1.5">
-                        <Input
-                            value={key}
-                            onChange={(e) => {
-                                const next = { ...vars };
-                                delete next[key];
-                                next[e.target.value] = value;
-                                update('vars', next);
-                            }}
-                            placeholder={t('varKey')}
-                            className="border-border bg-background text-foreground focus:border-primary h-7 w-1/2 font-mono text-xs"
-                        />
-                        <Input
-                            value={value}
-                            onChange={(e) => setVar(key, e.target.value)}
-                            placeholder={t('varValue')}
-                            className="border-border bg-background text-foreground focus:border-primary h-7 w-1/2 font-mono text-xs"
-                        />
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-7 shrink-0"
-                            onClick={() => removeVar(key)}
-                        >
-                            <Trash2 className="size-3" />
-                        </Button>
-                    </div>
-                ))}
+        <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+                <Label className="text-muted-foreground text-xs">{t('vars')}</Label>
+                <div className="space-y-2">
+                    {entries.map((entry) => (
+                        <div key={entry.id} className="flex gap-1.5">
+                            <Input
+                                value={entry.key}
+                                onChange={(e) => updateEntry(entry.id, 'key', e.target.value)}
+                                placeholder={t('varKey')}
+                                className="border-border bg-background text-foreground focus:border-primary h-8 font-mono text-xs"
+                            />
+                            <Input
+                                value={entry.value}
+                                onChange={(e) => updateEntry(entry.id, 'value', e.target.value)}
+                                placeholder={t('varValue')}
+                                className="border-border bg-background text-foreground focus:border-primary h-8 font-mono text-xs"
+                            />
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-8 shrink-0"
+                                onClick={() => removeEntry(entry.id)}
+                            >
+                                <Trash2 className="size-3" />
+                            </Button>
+                        </div>
+                    ))}
+                </div>
             </div>
-            <Button variant="outline" size="sm" className="h-7 w-full text-xs" onClick={addVar}>
+            <Button variant="outline" size="sm" className="w-full text-xs" onClick={addEntry}>
                 <Plus className="size-3" />
                 {t('addVar')}
             </Button>

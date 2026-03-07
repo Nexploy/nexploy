@@ -6,7 +6,18 @@ export class SetEnvVarsExecutor implements INodeExecutor {
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { logger, nodeId, nodeConfig } = ctx;
 
-        const vars = (nodeConfig.vars as Record<string, string> | undefined) ?? {};
+        type VarEntry = { id: string; key: string; value: string };
+        const raw = nodeConfig.vars;
+
+        let vars: Record<string, string>;
+        if (Array.isArray(raw)) {
+            vars = Object.fromEntries(
+                (raw as VarEntry[]).filter((e) => e.key).map((e) => [e.key, e.value]),
+            );
+        } else {
+            vars = (raw as Record<string, string> | undefined) ?? {};
+        }
+
         const count = Object.keys(vars).length;
 
         if (count === 0) {
@@ -20,8 +31,6 @@ export class SetEnvVarsExecutor implements INodeExecutor {
             await logger.debug(nodeId, `  → ${key}`);
         }
 
-        // Output vars so downstream nodes (write-env-file, deploy-compose, etc.)
-        // can merge them into their own env sets
         return {
             success: true,
             output: { vars },

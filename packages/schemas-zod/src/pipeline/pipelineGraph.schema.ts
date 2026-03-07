@@ -11,7 +11,6 @@ export const nodeTypeSchema = z.enum([
     'write-env-file',
     'set-env-vars',
     'clean-workdir',
-    'run-script',
     'send-notification',
 ]);
 
