@@ -1,0 +1,57 @@
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+    getFromInputs,
+    getFromAllOutputs,
+} from '@/types/pipeline.type';
+import { dockerService } from '@/inngest/pipeline/services/docker.service';
+
+export class DeployContainerExecutor implements INodeExecutor {
+    readonly type = 'deploy-container';
+
+    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+        const { config, inputOutputs, allOutputs, logger, reporter, nodeId, abortSignal } = ctx;
+
+        // Look for imageName from direct inputs first, then anywhere in allOutputs
+        const imageName =
+            getFromInputs<string>(inputOutputs, 'imageName') ??
+            getFromAllOutputs<string>(allOutputs, 'imageName') ??
+            config.imageName;
+
+        if (!imageName) {
+            throw new Error(
+                'No imageName found — connect this node after a Build Docker Image node',
+            );
+        }
+
+        await reporter.setStatus('DEPLOYING');
+        await logger.info(nodeId, 'Starting container deployment');
+
+        try {
+            const result = await dockerService.deployContainer(
+                config.repositoryId,
+                imageName,
+                config.envVariables,
+                abortSignal,
+                config.environmentId,
+            );
+
+            await logger.info(nodeId, `Container deployed: ${result.containerId.slice(0, 12)}`);
+
+            return {
+                success: true,
+                output: {
+                    containerId: result.containerId,
+                    imageName,
+                },
+            };
+        } catch (error) {
+            throw new Error(
+                `Container deployment failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            );
+        }
+    }
+}
+
+export const deployContainerExecutor = new DeployContainerExecutor();

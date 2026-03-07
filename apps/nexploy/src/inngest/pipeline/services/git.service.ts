@@ -195,10 +195,6 @@ class GitService {
             }
         }
 
-        if (buildConfig.repositoryPath && buildConfig.repositoryPath !== '.') {
-            return join(workDir, buildConfig.repositoryPath);
-        }
-
         return workDir;
     }
 

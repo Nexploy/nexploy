@@ -20,7 +20,7 @@ export function PipelineEditor({ repositoryId }: { repositoryId: string }) {
     const { execute: savePipeline } = useAction(savePipelineAction);
 
     useEffect(() => {
-        savePipeline({ repositoryId, graph: flowToGraph(nodes, edges) });
+        if (saveVersion !== 0) savePipeline({ repositoryId, graph: flowToGraph(nodes, edges) });
     }, [saveVersion]);
 
     return (

@@ -19,5 +19,4 @@ export const buildDockerImageNodeDef: NodeDefinition<BuildDockerImageConfig> = {
         inputs: [{ id: 'input', required: true }],
         outputs: [{ id: 'output' }],
     },
-    validateConfig: (config) => !!config.dockerfilePath,
 };

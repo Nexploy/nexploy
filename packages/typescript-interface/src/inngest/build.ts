@@ -8,30 +8,7 @@ export type BuildStatus =
     | 'DEPLOYING'
     | 'CANCELLED';
 
-export type BuildType = 'DOCKERFILE' | 'DOCKER_COMPOSE' | 'NIXPACKS' | 'BUILDPACKS' | 'NODE_PIPELINE';
-
-export type BuildStep =
-    | 'clone-repository'
-    | 'prepare-dockerfile'
-    | 'prepare-compose'
-    | 'write-env-file'
-    | 'build-docker-image'
-    | 'deploy-container'
-    | 'deploy-compose'
-    | 'cleanup'
-    | 'finalize-logs';
-
-export const BUILD_STEPS_ORDER: BuildStep[] = [
-    'clone-repository',
-    'prepare-dockerfile',
-    'prepare-compose',
-    'write-env-file',
-    'build-docker-image',
-    'deploy-container',
-    'deploy-compose',
-    'cleanup',
-    'finalize-logs',
-];
+export type BuildType = 'NODE_PIPELINE';
 
 export interface BuildLogEntry {
     createdAt: Date;
@@ -45,20 +22,14 @@ export interface BuildConfig extends GitProviderToken {
     userId: string;
     gitAccountId?: string;
     repositoryId: string;
-    repositoryPath: string;
     gitProvider: string;
     gitUrl: string;
     gitBranch: string;
     gitCommitHash?: string;
+    gitCommitMessage?: string;
     envVariables: Record<string, string>;
-    buildType: BuildType;
-    dockerfile?: string;
-    dockerfilePath?: string;
-    dockerComposePath?: string;
     imageName: string;
     imageTag: string;
-    gitCommitMessage?: string;
     autoDeploy: boolean;
-    startFromStep?: BuildStep;
     environmentId?: string;
 }

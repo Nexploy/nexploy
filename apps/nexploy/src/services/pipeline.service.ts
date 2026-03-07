@@ -1,5 +1,6 @@
 import { prisma } from '../../prisma/prisma';
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
+import { SavePipelineInput } from '@workspace/schemas-zod/pipeline/pipelineGraph.schema';
 
 export async function getPipelineConfig(repositoryId: string): Promise<PipelineGraph | null> {
     const config = await prisma.pipelineConfig.findUnique({
@@ -14,22 +15,26 @@ export async function getPipelineConfig(repositoryId: string): Promise<PipelineG
     };
 }
 
-export async function savePipelineConfig(
-    repositoryId: string,
-    graph: PipelineGraph,
-): Promise<void> {
-    await prisma.pipelineConfig.upsert({
-        where: { repositoryId },
-        create: {
-            repositoryId,
-            nodes: graph.nodes as object[],
-            edges: graph.edges as object[],
-        },
-        update: {
-            nodes: graph.nodes as object[],
-            edges: graph.edges as object[],
-        },
-    });
+export async function savePipelineConfig({
+    repositoryId,
+    graph,
+}: SavePipelineInput): Promise<void> {
+    try {
+        await prisma.pipelineConfig.upsert({
+            where: { repositoryId },
+            create: {
+                repositoryId,
+                nodes: graph.nodes as object[],
+                edges: graph.edges as object[],
+            },
+            update: {
+                nodes: graph.nodes as object[],
+                edges: graph.edges as object[],
+            },
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to save pipeline config');
+    }
 }
 
 export interface PipelineValidationResult {

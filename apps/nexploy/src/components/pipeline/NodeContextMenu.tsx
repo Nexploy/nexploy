@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import { useTranslations } from 'next-intl';
 import { Power, Trash2 } from 'lucide-react';
+import { usePipelineContext } from '@/contexts/PipelineContext';
 import {
     ContextMenu,
     ContextMenuContent,
@@ -25,7 +26,8 @@ interface NodeContextMenuProps {
 
 export function NodeContextMenu({ menu, onClose }: NodeContextMenuProps) {
     const t = useTranslations('repository.pipeline');
-    const { deleteElements, updateNodeData, getNodes } = useReactFlow();
+    const { deleteElements, getNodes } = useReactFlow();
+    const { triggerAutoSave, setNodes } = usePipelineContext();
     const triggerRef = useRef<HTMLSpanElement>(null);
 
     useEffect(() => {
@@ -57,7 +59,13 @@ export function NodeContextMenu({ menu, onClose }: NodeContextMenuProps) {
     };
 
     const handleToggleDisabled = () => {
-        getTargetIds().forEach((id) => updateNodeData(id, { disabled: !disabled }));
+        const ids = getTargetIds();
+        setNodes((nds) =>
+            nds.map((n) =>
+                ids.includes(n.id) ? { ...n, data: { ...n.data, disabled: !disabled } } : n,
+            ),
+        );
+        triggerAutoSave();
         onClose();
     };
 

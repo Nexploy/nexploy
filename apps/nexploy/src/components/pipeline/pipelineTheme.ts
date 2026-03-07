@@ -1,14 +1,19 @@
 import {
     Bell,
     Container,
+    FileCheck,
     FileCode2,
     FileKey,
+    FileSearch,
     GitBranch,
     Hammer,
     Layers,
     type LucideIcon,
     Rocket,
     Terminal,
+    Trash2,
+    Upload,
+    Variable,
     Wrench,
 } from 'lucide-react';
 
@@ -72,9 +77,15 @@ export const CATEGORY_ICONS: Record<string, LucideIcon> = {
 
 const NODE_CATEGORY: Record<string, string> = {
     'clone-repository': 'source',
+    'validate-dockerfile': 'build',
+    'validate-compose': 'build',
     'build-docker-image': 'build',
+    'push-to-registry': 'build',
     'deploy-container': 'deploy',
+    'deploy-compose': 'deploy',
     'write-env-file': 'utility',
+    'set-env-vars': 'utility',
+    'clean-workdir': 'utility',
     'run-script': 'utility',
     'send-notification': 'notification',
 };
@@ -89,9 +100,15 @@ export const NODE_TEXT: Record<string, string> = Object.fromEntries(
 
 export const NODE_ICONS: Record<string, LucideIcon> = {
     'clone-repository': GitBranch,
+    'validate-dockerfile': FileCheck,
+    'validate-compose': FileSearch,
     'build-docker-image': Container,
+    'push-to-registry': Upload,
     'deploy-container': Rocket,
+    'deploy-compose': Layers,
     'write-env-file': FileKey,
+    'set-env-vars': Variable,
+    'clean-workdir': Trash2,
     'run-script': Terminal,
     'send-notification': Bell,
 };
@@ -100,7 +117,13 @@ export const ICON_NAME_MAP: Record<string, LucideIcon> = {
     GitClone: GitBranch,
     Container,
     Rocket,
+    Layers,
+    Upload,
     FileKey,
+    FileCheck,
+    FileSearch,
+    Variable,
+    Trash2,
     Terminal,
     Bell,
 };

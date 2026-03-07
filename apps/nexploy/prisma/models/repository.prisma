@@ -10,12 +10,6 @@ model Repository {
   gitAccountId  String?
   gitAccount    GitAccount? @relation(fields: [gitAccountId], references: [id], onDelete: SetNull)
 
-  buildType         BuildType @default(DOCKERFILE)
-  dockerfilePath    String?   @default("Dockerfile")
-  dockerComposePath String?   @default("docker-compose.yml")
-  contextPath       String?   @default(".")
-  buildArgs         String?
-
   autoDeploy    Boolean @default(true)
   webhookId     String?
   webhookSecret String?
@@ -129,14 +123,6 @@ model Log {
   build   Build  @relation(fields: [buildId], references: [id], onDelete: Cascade)
 
   @@map("log")
-}
-
-enum BuildType {
-  DOCKERFILE
-  DOCKER_COMPOSE
-  NIXPACKS
-  BUILDPACKS
-  NODE_PIPELINE
 }
 
 enum LogLevel {

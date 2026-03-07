@@ -11,7 +11,7 @@ import {
     setupWebhookForRepository,
 } from '@/services/webhook/webhook.service';
 import { decrypt, encrypt } from '@/lib/encryption';
-import { BuildType, Prisma } from 'generated/client';
+import { Prisma } from 'generated/client';
 import { RepositoryPayload } from '@/types/repository.type';
 
 export async function createRepository(
@@ -161,25 +161,6 @@ export async function updateBranchRepository(newBranch: string, repositoryId: st
     }
 }
 
-export async function updateBuildTypeRepository(
-    data: {
-        buildType: BuildType;
-        dockerfilePath: string;
-        dockerComposePath: string;
-        contextPath: string;
-        buildArgs?: string;
-    },
-    repositoryId: string,
-) {
-    try {
-        return await prisma.repository.update({
-            where: { id: repositoryId },
-            data,
-        });
-    } catch (error: unknown) {
-        throw new Error('Failed to update build type repository');
-    }
-}
 
 export async function updateDeploymentRepository(
     data: { environmentId: string; autoDeploy: boolean },

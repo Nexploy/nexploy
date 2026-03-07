@@ -26,8 +26,6 @@ export default function AddRepositoryPage() {
         branch: 'main',
         gitToken: '',
         gitProvider: 'github' as const,
-        buildType: 'DOCKERFILE' as const,
-        buildArgs: '',
         autoDeploy: true,
         environmentId: selectedEnvironmentId ?? undefined,
     };

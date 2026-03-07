@@ -1,15 +1,15 @@
 import type { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
 import type {
-    ParsedBindMount,
     BindMountTransformation,
-    VolumeTransformationResult,
     ComposeVolumeConfig,
+    ParsedBindMount,
+    VolumeTransformationResult,
 } from '@workspace/typescript-interface/docker/docker.compose.volume';
 import {
-    parseComposeBindMounts,
     getBindMountsByService,
-    parseVolumeSpec,
     isBindMount,
+    parseComposeBindMounts,
+    parseVolumeSpec,
 } from './composeVolumeParser';
 import { logger } from './logger';
 
@@ -33,12 +33,7 @@ export function transformBindMountsForRemote(
         const hasBuildSection = !!service.build;
 
         for (const mount of mounts) {
-            const transformation = createTransformation(
-                mount,
-                projectName,
-                hasBuildSection,
-                service.image,
-            );
+            const transformation = createTransformation(mount, projectName);
 
             transformations.push(transformation);
 
@@ -63,7 +58,6 @@ export function transformBindMountsForRemote(
     const modifiedComposeContent = applyTransformations(
         composeContent,
         transformations,
-        projectName,
         generatedDockerfiles,
     );
 
@@ -79,8 +73,6 @@ export function transformBindMountsForRemote(
 function createTransformation(
     mount: ParsedBindMount,
     projectName: string,
-    hasBuildSection: boolean,
-    serviceImage: string | undefined,
 ): BindMountTransformation {
     if (!mount.exists) {
         return {
@@ -143,7 +135,6 @@ function generateDockerfileForCodeMounts(
 function applyTransformations(
     composeContent: ComposeContent,
     transformations: BindMountTransformation[],
-    projectName: string,
     generatedDockerfiles: Map<string, string>,
 ): ComposeContent {
     const modified = JSON.parse(JSON.stringify(composeContent)) as ComposeContent;

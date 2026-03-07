@@ -7,17 +7,19 @@ import {
 } from '@workspace/typescript-interface/inngest/build';
 import { inngest } from '@/inngest/client';
 import {
-    updateLastCompletedStepInngest,
+    updateLastCompletedNodeInngest,
     updateStatusBuildInngest,
 } from '@/services/inngest/build.inngest.service';
 import { createLogInngest } from '@/services/inngest/log.inngest.service';
-import { LogLevel, PipelineStatus, StepId } from '@/types/pipeline.type';
+import { LogLevel, PipelineStatus } from '@/types/pipeline.type';
 import {
     createPipelineLogger,
     createStatusReporter,
-    pipelineOrchestrator,
+    nodePipelineOrchestrator,
 } from '@/inngest/pipeline/orchestrator';
 import { runWithEnvironmentContextAsync } from '@/lib/environmentContext';
+import { prisma } from '../../../prisma/prisma';
+import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 
 const createBuildChannel = (buildId: string) => {
     const channelDef = channel(`build:${buildId}`)
@@ -47,7 +49,6 @@ export const buildFunction = inngest.createFunction(
                     step: stepName,
                     message,
                 };
-
                 await createLogInngest(log);
                 await publish(buildChannel.log({ log }));
             };
@@ -57,14 +58,34 @@ export const buildFunction = inngest.createFunction(
                 await publish(buildChannel.status({ status }));
             };
 
-            const markStepCompleted = async (stepId: StepId) => {
-                await updateLastCompletedStepInngest(buildId, stepId as any);
+            const logger = createPipelineLogger(publishLog);
+            const reporter = createStatusReporter(publishStatus, async (nodeId: string) => {
+                await updateLastCompletedNodeInngest(buildId, nodeId);
+            });
+
+            const pipelineConfig = await prisma.pipelineConfig.findUnique({
+                where: { repositoryId: config.repositoryId },
+            });
+
+            if (!pipelineConfig) {
+                throw new Error(
+                    `No pipeline configuration found for repository: ${config.repositoryId}`,
+                );
+            }
+
+            const graph: PipelineGraph = {
+                nodes: pipelineConfig.nodes as unknown as PipelineGraph['nodes'],
+                edges: pipelineConfig.edges as unknown as PipelineGraph['edges'],
             };
 
-            const logger = createPipelineLogger(publishLog);
-            const reporter = createStatusReporter(publishStatus, markStepCompleted);
-
-            return await pipelineOrchestrator.execute(buildId, config, step, logger, reporter);
+            return await nodePipelineOrchestrator.execute(
+                buildId,
+                config,
+                graph,
+                step,
+                logger,
+                reporter,
+            );
         });
     },
 );

@@ -159,6 +159,7 @@
         "buildNotFailed": "Can only resume failed builds",
         "buildNotFromRepository": "Build does not belong to this repository",
         "buildResumedFromStep": "Build resumed from step: {step}",
+        "buildResumed": "Build resumed successfully",
         "steps": {
             "cloneRepository": "Clone Repository",
             "prepareDockerfile": "Prepare Dockerfile",
@@ -261,6 +262,7 @@
             "description": "How your application should be built",
             "buildType": "Build type",
             "selectType": "Select a type",
+            "nodePipelineDescription": "Build configuration is managed via the Pipeline editor",
             "dockerfilePath": "File name",
             "dockerfilePathPlaceholder": "Dockerfile",
             "dockerfileContextPath": "Dockerfile path",
@@ -444,6 +446,30 @@
             "send-notification": {
                 "name": "Send Notification",
                 "description": "Send a webhook notification"
+            },
+            "deploy-compose": {
+                "name": "Deploy Compose",
+                "description": "Deploy a Docker Compose stack"
+            },
+            "push-to-registry": {
+                "name": "Push to Registry",
+                "description": "Push the built image to a Docker registry"
+            },
+            "validate-dockerfile": {
+                "name": "Validate Dockerfile",
+                "description": "Check that the Dockerfile exists and is readable"
+            },
+            "validate-compose": {
+                "name": "Validate Compose",
+                "description": "Check the Docker Compose file syntax"
+            },
+            "set-env-vars": {
+                "name": "Set Env Vars",
+                "description": "Inject additional environment variables into the pipeline"
+            },
+            "clean-workdir": {
+                "name": "Clean Work Dir",
+                "description": "Remove the cloned repository from disk"
             }
         },
         "config": {
@@ -454,7 +480,25 @@
             "webhookUrl": "Webhook URL",
             "message": "Custom message",
             "messagePlaceholder": "Leave empty for default message",
-            "deployContainerInfo": "Container will be deployed using the built image with repository settings."
+            "deployContainerInfo": "Container will be deployed using the built image with repository settings.",
+            "composePath": "Compose File Path",
+            "composePathPlaceholder": "docker-compose.yml",
+            "composeFileName": "File Name",
+            "composeFilePath": "File Path",
+            "composeFilePathPlaceholder": "Leave empty for repository root",
+            "projectName": "Project Name",
+            "projectNamePlaceholder": "Leave empty to use repository name",
+            "tag": "Image Tag",
+            "tagPlaceholder": "Leave empty to use commit hash",
+            "vars": "Environment Variables",
+            "varKey": "Key",
+            "varValue": "Value",
+            "addVar": "Add variable",
+            "save": "Save",
+            "noConfig": "No configuration required for this node.",
+            "cleanWorkdirInfo": "Removes the cloned repository directory from disk after the pipeline completes.",
+            "validateDockerfileInfo": "Validates that the Dockerfile exists and is readable in the work directory.",
+            "deployContainerNoConfig": "The container name, image and port mapping are inherited from the repository settings."
         },
         "validation": {
             "noSourceNode": "Pipeline must start with a Clone Repository node",

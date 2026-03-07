@@ -4,7 +4,13 @@ export const nodeTypeSchema = z.enum([
     'clone-repository',
     'build-docker-image',
     'deploy-container',
+    'deploy-compose',
+    'push-to-registry',
+    'validate-dockerfile',
+    'validate-compose',
     'write-env-file',
+    'set-env-vars',
+    'clean-workdir',
     'run-script',
     'send-notification',
 ]);
@@ -13,6 +19,7 @@ export const pipelineNodeDataSchema = z.object({
     type: nodeTypeSchema,
     config: z.record(z.string(), z.unknown()),
     label: z.string().optional(),
+    disabled: z.boolean().optional(),
 });
 
 export const pipelineNodeSchema = z.object({
@@ -40,9 +47,4 @@ export const savePipelineSchema = z.object({
     graph: pipelineGraphSchema,
 });
 
-export const validatePipelineSchema = z.object({
-    graph: pipelineGraphSchema,
-});
-
-export type PipelineGraphInput = z.infer<typeof pipelineGraphSchema>;
 export type SavePipelineInput = z.infer<typeof savePipelineSchema>;

@@ -51,7 +51,7 @@ export function DeploymentSettings({ repository }: DeploymentSettingsProps) {
         <SSEProvider connections={['swarm']}>
             <Form {...form}>
                 <form onSubmit={handleSubmitWithAction} className="mx-5 space-y-6">
-                    <DeploymentModeCard form={form} buildType={repository.buildType} />
+                    <DeploymentModeCard form={form} />
 
                     {isSwarmMode && (
                         <>

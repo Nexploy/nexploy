@@ -41,18 +41,17 @@ export const PIPELINE_TEMPLATES: PipelineTemplate[] = [
         nodes: [
             { type: 'clone-repository', offsetX: 0, offsetY: 0 },
             { type: 'write-env-file', offsetX: 240, offsetY: 0 },
-            {
-                type: 'run-script',
-                offsetX: 480,
-                offsetY: 0,
-                config: { script: 'docker compose up -d --build' },
-            },
-            { type: 'send-notification', offsetX: 720, offsetY: 0 },
+            { type: 'validate-compose', offsetX: 480, offsetY: 0 },
+            { type: 'deploy-compose', offsetX: 720, offsetY: 0 },
+            { type: 'clean-workdir', offsetX: 960, offsetY: 0 },
+            { type: 'send-notification', offsetX: 1200, offsetY: 0 },
         ],
         edges: [
             { sourceIndex: 0, targetIndex: 1 },
             { sourceIndex: 1, targetIndex: 2 },
             { sourceIndex: 2, targetIndex: 3 },
+            { sourceIndex: 3, targetIndex: 4 },
+            { sourceIndex: 4, targetIndex: 5 },
         ],
     },
 ];

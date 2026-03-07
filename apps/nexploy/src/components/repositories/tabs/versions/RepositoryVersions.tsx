@@ -7,10 +7,7 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
 import { Separator } from '@workspace/ui/components/separator';
-import {
-    onDeployComposeVersion,
-    onDeployDockerfileVersion,
-} from '@/actions/repository/versions/deployVersion.action';
+import { onDeployDockerfileVersion } from '@/actions/repository/versions/deployVersion.action';
 import { Badge } from '@workspace/ui/components/badge';
 import { Version } from '@workspace/typescript-interface/docker/docker.version';
 import { useTranslations } from 'next-intl';
@@ -33,12 +30,10 @@ export function RepositoryVersions({
 
     const [deployingImageTags, setDeployingImageTags] = useState<Set<string>>(new Set());
 
-    const handleDeploy = async (imageTag: string, buildType: string, environmentId?: string) => {
+    const handleDeploy = async (imageTag: string, environmentId?: string) => {
         setDeployingImageTags((prev) => new Set([...prev, imageTag]));
         try {
-            const action =
-                buildType === 'DOCKER_COMPOSE' ? onDeployComposeVersion : onDeployDockerfileVersion;
-            const result = await action({ imageTag, repositoryId, environmentId });
+            const result = await onDeployDockerfileVersion({ imageTag, repositoryId, environmentId });
             if (result?.serverError) {
                 toast.error(result.serverError);
             } else {
@@ -126,7 +121,7 @@ export function RepositoryVersions({
                         size="sm"
                         variant={isCurrent ? 'secondary' : 'outline'}
                         onClick={() =>
-                            handleDeploy(version.imageTag, version.buildType, version.environmentId)
+                            handleDeploy(version.imageTag, version.environmentId)
                         }
                         disabled={deployingImageTags.has(version.imageTag) || isCurrent}
                     >

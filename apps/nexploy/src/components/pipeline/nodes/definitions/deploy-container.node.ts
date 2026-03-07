@@ -18,5 +18,4 @@ export const deployContainerNodeDef: NodeDefinition<DeployContainerConfig> = {
         inputs: [{ id: 'input', required: true }],
         outputs: [{ id: 'output' }],
     },
-    validateConfig: () => true,
 };

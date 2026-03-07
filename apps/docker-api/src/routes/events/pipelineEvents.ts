@@ -48,16 +48,15 @@ function cleanupEnvFile(workDir: string): void {
 }
 
 app.post('/stream/compose', async (c) => {
-    const { workDir, projectName, composePath, envVars, buildId, repositoryId, labels } =
-        await c.req.json<{
-            workDir: string;
-            projectName: string;
-            composePath?: string;
-            envVars?: Record<string, string>;
-            buildId?: string;
-            repositoryId?: string;
-            labels?: Record<string, string>;
-        }>();
+    const { workDir, projectName, composePath, envVars, buildId, labels } = await c.req.json<{
+        workDir: string;
+        projectName: string;
+        composePath?: string;
+        envVars?: Record<string, string>;
+        buildId?: string;
+        repositoryId?: string;
+        labels?: Record<string, string>;
+    }>();
 
     const dockerClient = getCurrentDockerClient();
     const environmentId = getCurrentEnvironmentId();
@@ -151,11 +150,7 @@ app.post('/stream/compose', async (c) => {
             if (isRemoteEnvironment) {
                 sendLog('Remote Docker environment detected - transforming bind mounts...');
 
-                volumeTransformResult = transformBindMountsForRemote(
-                    composeContent,
-                    workDir,
-                    projectName,
-                );
+                volumeTransformResult = transformBindMountsForRemote(composeContent, workDir);
 
                 for (const warning of volumeTransformResult.warnings) {
                     sendLog(`WARNING: ${warning}`);

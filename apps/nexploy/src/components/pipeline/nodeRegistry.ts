@@ -2,16 +2,33 @@ import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDef
 import { cloneRepositoryNodeDef } from './nodes/definitions/clone-repository.node';
 import { buildDockerImageNodeDef } from './nodes/definitions/build-docker-image.node';
 import { deployContainerNodeDef } from './nodes/definitions/deploy-container.node';
+import { deployComposeNodeDef } from './nodes/definitions/deploy-compose.node';
+import { pushToRegistryNodeDef } from './nodes/definitions/push-to-registry.node';
+import { validateDockerfileNodeDef } from './nodes/definitions/validate-dockerfile.node';
+import { validateComposeNodeDef } from './nodes/definitions/validate-compose.node';
 import { writeEnvFileNodeDef } from './nodes/definitions/write-env-file.node';
+import { setEnvVarsNodeDef } from './nodes/definitions/set-env-vars.node';
+import { cleanWorkdirNodeDef } from './nodes/definitions/clean-workdir.node';
 import { runScriptNodeDef } from './nodes/definitions/run-script.node';
 import { sendNotificationNodeDef } from './nodes/definitions/send-notification.node';
 
 export const ALL_NODE_DEFINITIONS: NodeDefinition[] = [
+    // Source
     cloneRepositoryNodeDef,
+    // Build
+    validateDockerfileNodeDef,
+    validateComposeNodeDef,
     buildDockerImageNodeDef,
+    pushToRegistryNodeDef,
+    // Deploy
     deployContainerNodeDef,
+    deployComposeNodeDef,
+    // Utility
     writeEnvFileNodeDef,
+    setEnvVarsNodeDef,
+    cleanWorkdirNodeDef,
     runScriptNodeDef,
+    // Notification
     sendNotificationNodeDef,
 ];
 

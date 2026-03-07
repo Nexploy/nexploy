@@ -19,5 +19,4 @@ export const writeEnvFileNodeDef: NodeDefinition<WriteEnvFileConfig> = {
         inputs: [{ id: 'input', required: true }],
         outputs: [{ id: 'output' }],
     },
-    validateConfig: () => true,
 };

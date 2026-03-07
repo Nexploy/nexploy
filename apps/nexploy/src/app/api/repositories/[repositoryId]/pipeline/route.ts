@@ -8,7 +8,7 @@ export const GET = route
     .handler(async (_, { params }) => {
         try {
             const { repositoryId } = await params;
-            const config = await getPipelineConfig(repositoryId as string);
+            const config = await getPipelineConfig(repositoryId);
 
             if (!config) {
                 return NextResponse.json({ nodes: [], edges: [] });

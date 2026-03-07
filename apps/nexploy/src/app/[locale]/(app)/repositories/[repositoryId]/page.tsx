@@ -11,7 +11,7 @@ import { RepositoryDeploymentTab } from '@/components/repositories/tabs/deployme
 import { RepositoryPipelineTab } from '@/components/repositories/tabs/pipeline/RepositoryPipelineTab';
 import { getRepositorieById } from '@/services/repository.service';
 import { Separator } from '@workspace/ui/components/separator';
-import { capitalizeFirstLetter, toDisplayLabel } from '@/utils/capitalize';
+import { capitalizeFirstLetter } from '@/utils/capitalize';
 import Link from 'next/link';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
 
@@ -77,10 +77,6 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                                             {repository.environment?.name}
                                         </span>
                                     </div>
-                                    <Separator orientation={'vertical'} className={'!h-3 w-1'} />
-                                    <span className={'truncate'}>
-                                        {toDisplayLabel(repository.buildType)}
-                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -96,12 +92,7 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                         {{
                             pipeline: <RepositoryPipelineTab repositoryId={repository.id} />,
                             builds: <RepositoryBuildsTab repositoryId={repository.id} />,
-                            versions: (
-                                <RepositoryVersionsTab
-                                    repositoryId={repository.id}
-                                    buildType={repository.buildType}
-                                />
-                            ),
+                            versions: <RepositoryVersionsTab repositoryId={repository.id} />,
                             env: <RepositoryEnvTab repositoryId={repository.id} />,
                             domain: <RepositoryDomainsTab repositoryId={repository.id} />,
                             deployment: <RepositoryDeploymentTab repositoryId={repository.id} />,

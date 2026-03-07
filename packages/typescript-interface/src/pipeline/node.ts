@@ -2,7 +2,13 @@ export type NodeType =
     | 'clone-repository'
     | 'build-docker-image'
     | 'deploy-container'
+    | 'deploy-compose'
+    | 'push-to-registry'
+    | 'validate-dockerfile'
+    | 'validate-compose'
     | 'write-env-file'
+    | 'set-env-vars'
+    | 'clean-workdir'
     | 'run-script'
     | 'send-notification';
 
@@ -12,6 +18,7 @@ export interface PipelineNodeData {
     type: NodeType;
     config: Record<string, unknown>;
     label?: string;
+    disabled?: boolean;
 }
 
 export interface PipelineNode {

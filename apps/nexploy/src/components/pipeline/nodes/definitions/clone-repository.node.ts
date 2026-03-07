@@ -16,5 +16,4 @@ export const cloneRepositoryNodeDef: NodeDefinition<CloneRepositoryConfig> = {
         inputs: [],
         outputs: [{ id: 'output', label: 'Next' }],
     },
-    validateConfig: () => true,
 };

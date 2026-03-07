@@ -58,8 +58,8 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
                     type: 'gradient-edge',
                 }));
 
-                setNodes((nds) => nds.concat(newNodes));
-                setEdges((eds) => eds.concat(newEdges));
+                setNodes(() => newNodes);
+                setEdges(() => newEdges);
                 triggerAutoSave();
                 return;
             }

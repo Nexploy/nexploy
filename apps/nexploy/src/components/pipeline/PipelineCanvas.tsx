@@ -34,7 +34,7 @@ const edgeTypes = { 'gradient-edge': GradientEdge };
 export function PipelineCanvas() {
     const t = useTranslations('repository.pipeline');
     const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
-    const { zoomIn, zoomOut, fitView, getNodes, updateNodeData } = useReactFlow();
+    const { zoomIn, zoomOut, fitView, getNodes } = useReactFlow();
     const addSelectedNodes = useStore((s) => s.addSelectedNodes);
     const [isSpaceHeld, setIsSpaceHeld] = useState(false);
     const [contextMenu, setContextMenu] = useState<NodeContextMenuState | null>(null);
@@ -52,6 +52,8 @@ export function PipelineCanvas() {
         handleSelectionChange,
         undo,
         redo,
+        triggerAutoSave,
+        setNodes,
     } = usePipelineContext();
 
     const openContextMenu = useCallback((event: React.MouseEvent, nodeId: string) => {
@@ -88,7 +90,15 @@ export function PipelineCanvas() {
             const selected = getNodes().filter((n) => n.selected);
             if (selected.length === 0) return;
             const allDisabled = selected.every((n) => n.data.disabled);
-            selected.forEach((n) => updateNodeData(n.id, { disabled: !allDisabled }));
+            const selectedIds = new Set(selected.map((n) => n.id));
+            setNodes((nds) =>
+                nds.map((n) =>
+                    selectedIds.has(n.id)
+                        ? { ...n, data: { ...n.data, disabled: !allDisabled } }
+                        : n,
+                ),
+            );
+            triggerAutoSave();
         },
         { preventDefault: true },
     );

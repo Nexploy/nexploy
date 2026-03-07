@@ -12,7 +12,7 @@ export const savePipelineAction = authActionServer
     .action(async ({ parsedInput }) => {
         const t = await getTranslations('repository');
         try {
-            await savePipelineConfig(parsedInput.repositoryId, parsedInput.graph);
+            await savePipelineConfig(parsedInput);
         } catch (error) {
             await setToastServer({
                 type: 'error',

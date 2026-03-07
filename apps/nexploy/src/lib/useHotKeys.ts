@@ -37,6 +37,11 @@ export function useHotkeys(
         const configs = (Array.isArray(hotkey) ? hotkey : [hotkey]).map(parseHotkey);
 
         const handler = (e: KeyboardEvent) => {
+            const tag = (e.target as HTMLElement)?.tagName?.toLowerCase();
+            const isEditable = tag === 'input' || tag === 'textarea' || tag === 'select' ||
+                (e.target as HTMLElement)?.isContentEditable;
+            if (isEditable) return;
+
             const raw = e.key.toLowerCase();
             const key = raw === ' ' ? 'space' : raw;
             const matches = configs.some(

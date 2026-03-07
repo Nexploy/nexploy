@@ -20,5 +20,4 @@ export interface NodeDefinition<TConfig = Record<string, unknown>> {
         inputs: HandleDefinition[];
         outputs: HandleDefinition[];
     };
-    validateConfig(config: TConfig): boolean;
 }

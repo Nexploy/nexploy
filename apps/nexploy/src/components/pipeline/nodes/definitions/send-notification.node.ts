@@ -19,5 +19,4 @@ export const sendNotificationNodeDef: NodeDefinition<SendNotificationConfig> = {
         inputs: [{ id: 'input', required: true }],
         outputs: [],
     },
-    validateConfig: (config) => typeof config.webhookUrl === 'string' && config.webhookUrl.length > 0,
 };

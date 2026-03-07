@@ -20,5 +20,4 @@ export const runScriptNodeDef: NodeDefinition<RunScriptConfig> = {
         inputs: [{ id: 'input', required: true }],
         outputs: [{ id: 'output' }],
     },
-    validateConfig: (config) => config.script.trim().length > 0,
 };

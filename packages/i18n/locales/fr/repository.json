@@ -159,6 +159,7 @@
         "buildNotFailed": "Seuls les builds échoués peuvent être repris",
         "buildNotFromRepository": "Le build n'appartient pas à ce dépôt",
         "buildResumedFromStep": "Build repris à l'étape : {step}",
+        "buildResumed": "Build repris avec succès",
         "steps": {
             "cloneRepository": "Cloner le dépôt",
             "prepareDockerfile": "Préparer le Dockerfile",
@@ -444,6 +445,30 @@
             "send-notification": {
                 "name": "Envoyer une notification",
                 "description": "Envoyer une notification webhook"
+            },
+            "deploy-compose": {
+                "name": "Déployer Compose",
+                "description": "Déployer une stack Docker Compose"
+            },
+            "push-to-registry": {
+                "name": "Pousser vers le registre",
+                "description": "Pousser l'image construite vers un registre Docker"
+            },
+            "validate-dockerfile": {
+                "name": "Valider le Dockerfile",
+                "description": "Vérifier que le Dockerfile existe et est lisible"
+            },
+            "validate-compose": {
+                "name": "Valider Compose",
+                "description": "Vérifier la syntaxe du fichier Docker Compose"
+            },
+            "set-env-vars": {
+                "name": "Définir les variables d'env",
+                "description": "Injecter des variables d'environnement supplémentaires dans le pipeline"
+            },
+            "clean-workdir": {
+                "name": "Nettoyer le répertoire de travail",
+                "description": "Supprimer le dépôt cloné du disque"
             }
         },
         "config": {
@@ -454,7 +479,25 @@
             "webhookUrl": "URL du webhook",
             "message": "Message personnalisé",
             "messagePlaceholder": "Laisser vide pour le message par défaut",
-            "deployContainerInfo": "Le conteneur sera déployé avec l'image construite et les paramètres du dépôt."
+            "deployContainerInfo": "Le conteneur sera déployé avec l'image construite et les paramètres du dépôt.",
+            "composePath": "Chemin du fichier Compose",
+            "composePathPlaceholder": "docker-compose.yml",
+            "composeFileName": "Nom du fichier",
+            "composeFilePath": "Chemin du fichier",
+            "composeFilePathPlaceholder": "Laisser vide pour la racine du dépôt",
+            "projectName": "Nom du projet",
+            "projectNamePlaceholder": "Laisser vide pour utiliser le nom du dépôt",
+            "tag": "Tag de l'image",
+            "tagPlaceholder": "Laisser vide pour utiliser le hash du commit",
+            "vars": "Variables d'environnement",
+            "varKey": "Clé",
+            "varValue": "Valeur",
+            "addVar": "Ajouter une variable",
+            "save": "Sauvegarder",
+            "noConfig": "Aucune configuration requise pour ce nœud.",
+            "cleanWorkdirInfo": "Supprime le répertoire du dépôt cloné du disque après l'exécution du pipeline.",
+            "validateDockerfileInfo": "Vérifie que le Dockerfile existe et est lisible dans le répertoire de travail.",
+            "deployContainerNoConfig": "Le nom du conteneur, l'image et le mapping de port sont hérités des paramètres du dépôt."
         },
         "validation": {
             "noSourceNode": "Le pipeline doit commencer par un nœud de clonage du dépôt",
