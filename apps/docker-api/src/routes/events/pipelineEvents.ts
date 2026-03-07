@@ -150,7 +150,11 @@ app.post('/stream/compose', async (c) => {
             if (isRemoteEnvironment) {
                 sendLog('Remote Docker environment detected - transforming bind mounts...');
 
-                volumeTransformResult = transformBindMountsForRemote(composeContent, workDir);
+                volumeTransformResult = transformBindMountsForRemote(
+                    composeContent,
+                    workDir,
+                    projectName,
+                );
 
                 for (const warning of volumeTransformResult.warnings) {
                     sendLog(`WARNING: ${warning}`);
