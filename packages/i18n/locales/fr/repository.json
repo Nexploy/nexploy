@@ -404,6 +404,7 @@
         "validationSuccess": "Le pipeline est valide",
         "validationFailed": "La validation du pipeline a échoué",
         "run": "Exécuter le pipeline",
+        "saving": "Enregistrement...",
         "empty": "Faites glisser des nœuds depuis la palette pour construire votre pipeline",
         "palette": "Nœuds",
         "search": "Rechercher des nœuds...",

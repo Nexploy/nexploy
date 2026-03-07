@@ -405,6 +405,7 @@
         "validationSuccess": "Pipeline is valid",
         "validationFailed": "Pipeline validation failed",
         "run": "Run Pipeline",
+        "saving": "Saving...",
         "empty": "Drag nodes from the palette to build your pipeline",
         "palette": "Nodes",
         "search": "Search nodes...",

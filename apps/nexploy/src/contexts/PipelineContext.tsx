@@ -18,14 +18,18 @@ import {
     useNodesState,
 } from '@xyflow/react';
 import { type PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
-import { graphToFlow } from '@/components/pipeline/utils/graphConvert';
+import { flowToGraph, graphToFlow } from '@/components/pipeline/utils/graphConvert';
 import { usePipelineHistory } from '@/hooks/usePipelineHistory';
+import { useAction } from 'next-safe-action/hooks';
+import { savePipelineAction } from '@/actions/repository/pipeline/savePipeline.action';
+import { useParams } from 'next/navigation';
 
 interface PipelineContextValue {
     nodes: Node[];
     edges: Edge[];
     panelNodeId: string | null;
     selectedNodeIds: string[];
+    isSaving: boolean;
     onNodesChange: ReturnType<typeof useNodesState>[2];
     onEdgesChange: ReturnType<typeof useEdgesState>[2];
     onConnect: (connection: Connection) => void;
@@ -36,7 +40,6 @@ interface PipelineContextValue {
     handleDeleteSelection: () => void;
     handleNodeDragStop: () => void;
     triggerAutoSave: () => void;
-    saveVersion: number;
     undo: () => void;
     redo: () => void;
     setNodes: ReturnType<typeof useNodesState>[1];
@@ -53,6 +56,7 @@ export function PipelineProvider({
     children: ReactNode;
 }) {
     const { nodes: initialNodes, edges: initialEdges } = graphToFlow(initialGraph);
+    const { repositoryId } = useParams<{ repositoryId: string }>();
 
     const isUndoRedoRef = useRef(false);
     const [nodes, setNodes, onNodesChangeBase] = useNodesState(initialNodes);
@@ -60,6 +64,8 @@ export function PipelineProvider({
     const [panelNodeId, setPanelNodeId] = useState<string | null>(null);
     const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
     const [saveVersion, setSaveVersion] = useState(0);
+
+    const { execute: savePipeline, isPending: isSaving } = useAction(savePipelineAction);
 
     const committedVersionRef = useRef(0);
 
@@ -83,9 +89,10 @@ export function PipelineProvider({
         committedVersionRef.current = saveVersion;
         if (isUndoRedoRef.current) {
             isUndoRedoRef.current = false;
-            return;
+        } else {
+            commit({ nodes: [...nodes], edges: [...edges] });
         }
-        commit({ nodes: [...nodes], edges: [...edges] });
+        savePipeline({ repositoryId, graph: flowToGraph(nodes, edges) });
     }, [saveVersion, nodes, edges]);
 
     const onNodesChange: typeof onNodesChangeBase = useCallback(
@@ -161,6 +168,7 @@ export function PipelineProvider({
                 edges,
                 panelNodeId,
                 selectedNodeIds,
+                isSaving,
                 onNodesChange,
                 onEdgesChange,
                 onConnect,
@@ -171,7 +179,6 @@ export function PipelineProvider({
                 handleDeleteSelection,
                 handleNodeDragStop,
                 triggerAutoSave,
-                saveVersion,
                 undo,
                 redo,
                 setNodes,

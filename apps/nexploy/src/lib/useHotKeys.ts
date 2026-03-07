@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { type RefObject, useEffect } from 'react';
 
 type Options = {
     keydown?: boolean;
     keyup?: boolean;
     preventDefault?: boolean;
     capture?: boolean;
+    ref?: RefObject<HTMLElement | null>;
 };
 
 const isMac = typeof navigator !== 'undefined' && navigator.userAgent.includes('Mac');
@@ -31,39 +32,38 @@ export function useHotkeys(
     callback: (event: KeyboardEvent) => void,
     options: Options = {},
 ) {
-    const { keydown = true, keyup = false, preventDefault = false, capture = false } = options;
+    const { keydown = true, keyup = false, preventDefault = false, capture = false, ref } = options;
 
     useEffect(() => {
         const configs = (Array.isArray(hotkey) ? hotkey : [hotkey]).map(parseHotkey);
+        const target: HTMLElement | Document = ref?.current ?? document;
 
-        const handler = (e: KeyboardEvent) => {
-            const tag = (e.target as HTMLElement)?.tagName?.toLowerCase();
-            const isEditable = tag === 'input' || tag === 'textarea' || tag === 'select' ||
-                (e.target as HTMLElement)?.isContentEditable;
-            if (isEditable) return;
+        const handler = (e: Event) => {
+            const event = e as KeyboardEvent;
 
-            const raw = e.key.toLowerCase();
+            const raw = event.key.toLowerCase();
             const key = raw === ' ' ? 'space' : raw;
+
             const matches = configs.some(
                 (config) =>
                     (!config.key || key === config.key) &&
-                    (!config.ctrl || e.ctrlKey) &&
-                    (!config.meta || e.metaKey) &&
-                    (!config.shift || e.shiftKey) &&
-                    (!config.alt || e.altKey),
+                    (!config.ctrl || event.ctrlKey) &&
+                    (!config.meta || event.metaKey) &&
+                    (!config.shift || event.shiftKey) &&
+                    (!config.alt || event.altKey),
             );
 
             if (!matches) return;
-            if (preventDefault) e.preventDefault();
-            callback(e);
+            if (preventDefault) event.preventDefault();
+            callback(event);
         };
 
-        if (keydown) document.addEventListener('keydown', handler, { capture });
-        if (keyup) document.addEventListener('keyup', handler, { capture });
+        if (keydown) target.addEventListener('keydown', handler, { capture });
+        if (keyup) target.addEventListener('keyup', handler, { capture });
 
         return () => {
-            if (keydown) document.removeEventListener('keydown', handler, { capture });
-            if (keyup) document.removeEventListener('keyup', handler, { capture });
+            if (keydown) target.removeEventListener('keydown', handler, { capture });
+            if (keyup) target.removeEventListener('keyup', handler, { capture });
         };
-    }, [hotkey, callback, keydown, keyup, preventDefault, capture]);
+    }, [hotkey, callback, keydown, keyup, preventDefault, capture, ref]);
 }

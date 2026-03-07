@@ -15,8 +15,9 @@ import {
     useReactFlow,
     useStore,
 } from '@xyflow/react';
-import { Maximize, Minus, Plus } from 'lucide-react';
+import { Loader2, Maximize, Minus, Plus } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
 import { BaseNode } from '@/components/pipeline/nodes/BaseNode';
@@ -43,6 +44,7 @@ export function PipelineCanvas() {
     const {
         nodes,
         edges,
+        isSaving,
         onNodesChange,
         onEdgesChange,
         onConnect,
@@ -81,38 +83,51 @@ export function PipelineCanvas() {
         () => {
             addSelectedNodes(getNodes().map((n) => n.id));
         },
-        { preventDefault: true },
+        { preventDefault: true, ref: wrapperRef },
     );
 
     useHotkeys(
         'd',
         () => {
-            const selected = getNodes().filter((n) => n.selected);
+            const selected = getNodes().filter((node) => node.selected);
             if (selected.length === 0) return;
-            const allDisabled = selected.every((n) => n.data.disabled);
-            const selectedIds = new Set(selected.map((n) => n.id));
-            setNodes((nds) =>
-                nds.map((n) =>
-                    selectedIds.has(n.id)
-                        ? { ...n, data: { ...n.data, disabled: !allDisabled } }
-                        : n,
+            const allDisabled = selected.every((node) => node.data.disabled);
+            const selectedIds = new Set(selected.map((node) => node.id));
+            setNodes((nodes) =>
+                nodes.map((node) =>
+                    selectedIds.has(node.id)
+                        ? { ...node, data: { ...node.data, disabled: !allDisabled } }
+                        : node,
                 ),
             );
             triggerAutoSave();
         },
-        { preventDefault: true },
+        { preventDefault: true, ref: wrapperRef },
     );
 
     useHotkeys('space', () => setIsSpaceHeld(true), {
         keydown: true,
         keyup: false,
         preventDefault: true,
+        ref: wrapperRef,
     });
-    useHotkeys('space', () => setIsSpaceHeld(false), { keydown: false, keyup: true });
-    useHotkeys('meta+z', () => undo(), { preventDefault: true, capture: true });
-    useHotkeys('meta+shift+z', () => redo(), { preventDefault: true, capture: true });
-    useHotkeys('ctrl+z', () => undo(), { preventDefault: true, capture: true });
-    useHotkeys('ctrl+shift+z', () => redo(), { preventDefault: true, capture: true });
+    useHotkeys('space', () => setIsSpaceHeld(false), {
+        keydown: false,
+        keyup: true,
+        ref: wrapperRef,
+    });
+    useHotkeys('meta+z', () => undo(), { preventDefault: true, capture: true, ref: wrapperRef });
+    useHotkeys('meta+shift+z', () => redo(), {
+        preventDefault: true,
+        capture: true,
+        ref: wrapperRef,
+    });
+    useHotkeys('ctrl+z', () => undo(), { preventDefault: true, capture: true, ref: wrapperRef });
+    useHotkeys('ctrl+shift+z', () => redo(), {
+        preventDefault: true,
+        capture: true,
+        ref: wrapperRef,
+    });
 
     const { isDragOver, onDragOver, onDragLeave, onDrop } = useDragAndDropFlow(rfInstance);
     const { minimapVisible, onMoveStart, onMoveEnd } = useMinimap();
@@ -120,6 +135,7 @@ export function PipelineCanvas() {
     return (
         <div
             ref={wrapperRef}
+            tabIndex={-1}
             data-panning={isSpaceHeld}
             onContextMenu={(e) => e.preventDefault()}
             className={cn(
@@ -130,6 +146,17 @@ export function PipelineCanvas() {
             onDragLeave={onDragLeave}
             onDrop={onDrop}
         >
+            <Tooltip>
+                <TooltipTrigger
+                    className={cn(
+                        'absolute top-2 left-2 z-10 transition-opacity duration-500',
+                        isSaving ? 'opacity-100' : 'pointer-events-none opacity-0',
+                    )}
+                >
+                    <Loader2 className="text-muted-foreground size-4 animate-spin" />
+                </TooltipTrigger>
+                <TooltipContent>{t('saving')}</TooltipContent>
+            </Tooltip>
             <ButtonPanel />
             <ReactFlow
                 nodes={nodes}
