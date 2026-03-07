@@ -87,23 +87,6 @@
         "saving": "Saving...",
         "updated": "Deployment settings updated successfully"
     },
-    "environment": {
-        "title": "Environment",
-        "variables": "Environment Variables",
-        "addVariable": "Add Variable",
-        "editVariable": "Edit Variable",
-        "deleteVariable": "Delete Variable",
-        "key": "Key",
-        "keyPlaceholder": "VARIABLE_NAME",
-        "value": "Value",
-        "valuePlaceholder": "variable_value",
-        "secret": "Secret",
-        "secretDescription": "Hide value in logs and UI",
-        "confirmDelete": "Are you sure you want to delete this variable?",
-        "noVariables": "No environment variables",
-        "importFromFile": "Import from .env file",
-        "exportToFile": "Export to .env file"
-    },
     "builds": {
         "title": "Builds",
         "history": "Build History",
@@ -248,15 +231,6 @@
             "noAccounts": "No Git accounts connected. Connect one from your account settings.",
             "connectAccount": "Connect an account"
         },
-        "generalInfo": {
-            "title": "General Information",
-            "description": "Basic details of your project",
-            "projectName": "Project Name",
-            "projectNamePlaceholder": "my-awesome-project",
-            "projectNameDescription": "A unique name to identify your project",
-            "descriptionLabel": "Description",
-            "descriptionPlaceholder": "A short description of your project..."
-        },
         "buildConfig": {
             "title": "Build configuration",
             "description": "How your application should be built",
@@ -282,14 +256,6 @@
         }
     },
     "settings": {
-        "title": "Settings",
-        "environment": "Environment",
-        "environmentDescription": "Target Docker environment for deployment",
-        "environmentChangedTo": "Environment changed to \"{name}\"",
-        "environmentChangeError": "Error changing environment",
-        "loading": "Loading...",
-        "select": "Select",
-        "default": "(default)",
         "dangerZone": {
             "title": "Danger Zone",
             "description": "Irreversible actions on this repository",
@@ -309,29 +275,6 @@
             "saving": "Saving...",
             "save": "Save",
             "updated": "Branch updated successfully"
-        },
-        "autoDeploy": {
-            "title": "Automatic deployment",
-            "description": "Automatically deploy on push to the branch",
-            "enabled": "Auto-deploy enabled",
-            "disabled": "Auto-deploy disabled"
-        },
-        "buildType": {
-            "title": "Build type",
-            "description": "Choose the build method for your application",
-            "label": "Build type",
-            "selectType": "Select a type",
-            "saving": "Saving...",
-            "save": "Save",
-            "updated": "Build configuration updated successfully",
-            "dockerfile": "Dockerfile",
-            "dockerfileDescription": "Use an existing Dockerfile",
-            "dockerCompose": "Docker Compose",
-            "dockerComposeDescription": "Use a docker-compose.yml file",
-            "nixpacks": "Nixpacks",
-            "nixpacksDescription": "Automatic build with Nixpacks",
-            "buildpacks": "Buildpacks",
-            "buildpacksDescription": "Automatic build with Cloud Native Buildpacks"
         },
         "deployment": {
             "updated": "Deployment settings updated",
@@ -372,7 +315,9 @@
             "importError": "No valid variables found in file",
             "noVariables": "No environment variables configured.",
             "pendingDeletion": "Pending deletion (save to confirm):",
-            "undo": "Undo"
+            "undo": "Undo",
+            "keyPlaceholder": "VARIABLE_NAME",
+            "valuePlaceholder": "value"
         },
         "source": {
             "notConnected": "You have not connected a {provider} account",

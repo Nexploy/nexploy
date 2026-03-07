@@ -1,20 +1,10 @@
 {
-    "title": "Assistant IA",
-    "placeholder": "Posez-moi une question...",
-    "send": "Envoyer",
-    "thinking": "Réflexion...",
     "commandGroups": {
         "navigation": "Navigation",
         "containers": "Conteneurs",
         "stacks": "Stacks",
         "repositories": "Dépôts",
         "general": "Général"
-    },
-    "suggestions": {
-        "deployRepository": "Déployer un dépôt",
-        "checkContainerStatus": "Vérifier le statut des conteneurs",
-        "viewLogs": "Voir les logs",
-        "createNetwork": "Créer un réseau"
     },
     "errors": {
         "failedToProcess": "Impossible de traiter votre demande",

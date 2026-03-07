@@ -87,23 +87,6 @@
         "saving": "Enregistrement...",
         "updated": "Paramètres de déploiement mis à jour avec succès"
     },
-    "environment": {
-        "title": "Environnement",
-        "variables": "Variables d'environnement",
-        "addVariable": "Ajouter une variable",
-        "editVariable": "Modifier la variable",
-        "deleteVariable": "Supprimer la variable",
-        "key": "Clé",
-        "keyPlaceholder": "NOM_VARIABLE",
-        "value": "Valeur",
-        "valuePlaceholder": "valeur_variable",
-        "secret": "Secret",
-        "secretDescription": "Masquer la valeur dans les logs et l'interface",
-        "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette variable ?",
-        "noVariables": "Aucune variable d'environnement",
-        "importFromFile": "Importer depuis un fichier .env",
-        "exportToFile": "Exporter vers un fichier .env"
-    },
     "builds": {
         "title": "Builds",
         "history": "Historique des builds",
@@ -248,15 +231,6 @@
             "noAccounts": "Aucun compte Git connecté. Connectez-en un depuis les paramètres de votre compte.",
             "connectAccount": "Connecter un compte"
         },
-        "generalInfo": {
-            "title": "Informations générales",
-            "description": "Détails de base de votre projet",
-            "projectName": "Nom du projet",
-            "projectNamePlaceholder": "mon-super-projet",
-            "projectNameDescription": "Un nom unique pour identifier votre projet",
-            "descriptionLabel": "Description",
-            "descriptionPlaceholder": "Une courte description de votre projet..."
-        },
         "buildConfig": {
             "title": "Configuration de Build",
             "description": "Comment votre application doit être construite",
@@ -281,14 +255,6 @@
         }
     },
     "settings": {
-        "title": "Paramètres",
-        "environment": "Environnement",
-        "environmentDescription": "Environnement Docker cible pour le déploiement",
-        "environmentChangedTo": "Environnement changé vers \"{name}\"",
-        "environmentChangeError": "Erreur lors du changement d'environnement",
-        "loading": "Chargement...",
-        "select": "Sélectionner",
-        "default": "(défaut)",
         "dangerZone": {
             "title": "Zone de danger",
             "description": "Actions irréversibles sur ce repository",
@@ -308,29 +274,6 @@
             "saving": "Enregistrement...",
             "save": "Enregistrer",
             "updated": "Branche mise à jour avec succès"
-        },
-        "autoDeploy": {
-            "title": "Déploiement automatique",
-            "description": "Déployer automatiquement lors d'un push sur la branche",
-            "enabled": "Auto-deploy activé",
-            "disabled": "Auto-deploy désactivé"
-        },
-        "buildType": {
-            "title": "Type de build",
-            "description": "Choisissez la méthode de build pour votre application",
-            "label": "Type de build",
-            "selectType": "Sélectionner un type",
-            "saving": "Enregistrement...",
-            "save": "Enregistrer",
-            "updated": "Configuration de build mise à jour avec succès",
-            "dockerfile": "Dockerfile",
-            "dockerfileDescription": "Utiliser un Dockerfile existant",
-            "dockerCompose": "Docker Compose",
-            "dockerComposeDescription": "Utiliser un fichier docker-compose.yml",
-            "nixpacks": "Nixpacks",
-            "nixpacksDescription": "Build automatique avec Nixpacks",
-            "buildpacks": "Buildpacks",
-            "buildpacksDescription": "Build automatique avec Cloud Native Buildpacks"
         },
         "deployment": {
             "updated": "Paramètres de déploiement mis à jour",
@@ -371,7 +314,9 @@
             "importError": "Aucune variable valide trouvée dans le fichier",
             "noVariables": "Aucune variable d'environnement configurée.",
             "pendingDeletion": "Suppression en attente (enregistrez pour confirmer) :",
-            "undo": "Annuler"
+            "undo": "Annuler",
+            "keyPlaceholder": "Clé",
+            "valuePlaceholder": "Valeur"
         },
         "source": {
             "notConnected": "Vous n'avez pas connecté de compte {provider}",

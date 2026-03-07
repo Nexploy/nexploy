@@ -31,7 +31,13 @@ import { useAction } from 'next-safe-action/hooks';
 import { savePipelineAction } from '@/actions/repository/pipeline/savePipeline.action';
 import { flowToGraph } from '@/components/pipeline/utils/graphConvert';
 import { useParams } from 'next/navigation';
-import { setEnvVarsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import {
+    buildDockerImageConfigSchema,
+    composeFileConfigSchema,
+    sendNotificationConfigSchema,
+    setEnvVarsConfigSchema,
+    validateDockerfileConfigSchema,
+} from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { toast } from 'sonner';
 
 export interface NodeConfigProps {
@@ -44,12 +50,21 @@ interface NodeConfigPanelProps {
     isOpen: boolean;
 }
 
-const VALIDATORS: Partial<Record<NodeType, (config: Record<string, unknown>) => string | null>> = {
-    'set-env-vars': (config) => {
-        const result = setEnvVarsConfigSchema.safeParse(config);
+function zodValidator(schema: { safeParse: (v: unknown) => { success: boolean; error?: { issues: { message: string }[] } } }) {
+    return (config: Record<string, unknown>): string | null => {
+        const result = schema.safeParse(config);
         if (result.success) return null;
-        return result.error.issues[0]?.message ?? 'Invalid configuration';
-    },
+        return result.error?.issues[0]?.message ?? 'Invalid configuration';
+    };
+}
+
+const VALIDATORS: Partial<Record<NodeType, (config: Record<string, unknown>) => string | null>> = {
+    'set-env-vars': zodValidator(setEnvVarsConfigSchema),
+    'build-docker-image': zodValidator(buildDockerImageConfigSchema),
+    'validate-dockerfile': zodValidator(validateDockerfileConfigSchema),
+    'validate-compose': zodValidator(composeFileConfigSchema),
+    'deploy-compose': zodValidator(composeFileConfigSchema),
+    'send-notification': zodValidator(sendNotificationConfigSchema),
 };
 
 const CONFIG_PANELS: Record<NodeType, ComponentType<NodeConfigProps>> = {

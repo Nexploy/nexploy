@@ -27,10 +27,6 @@ export class SetEnvVarsExecutor implements INodeExecutor {
 
         await logger.info(nodeId, `Injecting ${count} environment variable(s) into the pipeline`);
 
-        for (const [key] of Object.entries(vars)) {
-            await logger.debug(nodeId, `  → ${key}`);
-        }
-
         return {
             success: true,
             output: { vars },

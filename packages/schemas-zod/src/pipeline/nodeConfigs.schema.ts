@@ -3,8 +3,17 @@ import { z } from 'zod';
 export const cloneRepositoryConfigSchema = z.object({});
 
 export const buildDockerImageConfigSchema = z.object({
-    dockerfilePath: z.string().default('Dockerfile'),
+    dockerfilePath: z.string().min(1, 'Dockerfile path is required').default('Dockerfile'),
     buildArgs: z.record(z.string(), z.string()).default({}),
+});
+
+export const validateDockerfileConfigSchema = z.object({
+    dockerfilePath: z.string().min(1, 'Dockerfile path is required').default('Dockerfile'),
+});
+
+export const composeFileConfigSchema = z.object({
+    composeFileName: z.string().min(1, 'Compose file name is required').default('docker-compose.yml'),
+    composeFilePath: z.string().optional(),
 });
 
 export const deployContainerConfigSchema = z.object({
@@ -36,7 +45,10 @@ export const setEnvVarsConfigSchema = z.object({
 });
 
 export const sendNotificationConfigSchema = z.object({
-    webhookUrl: z.url().or(z.string().default('')),
+    webhookUrl: z.string().refine(
+        (v) => v === '' || z.string().url().safeParse(v).success,
+        'Webhook URL must be a valid URL',
+    ).default(''),
     triggerOn: z.array(z.enum(['success', 'failure', 'always'])).default(['always']),
     message: z.string().optional(),
 });
@@ -45,6 +57,8 @@ export type VarEntry = z.infer<typeof varEntrySchema>;
 export type SetEnvVarsConfig = z.infer<typeof setEnvVarsConfigSchema>;
 export type CloneRepositoryConfig = z.infer<typeof cloneRepositoryConfigSchema>;
 export type BuildDockerImageConfig = z.infer<typeof buildDockerImageConfigSchema>;
+export type ValidateDockerfileConfig = z.infer<typeof validateDockerfileConfigSchema>;
+export type ComposeFileConfig = z.infer<typeof composeFileConfigSchema>;
 export type DeployContainerConfig = z.infer<typeof deployContainerConfigSchema>;
 export type WriteEnvFileConfig = z.infer<typeof writeEnvFileConfigSchema>;
 export type SendNotificationConfig = z.infer<typeof sendNotificationConfigSchema>;

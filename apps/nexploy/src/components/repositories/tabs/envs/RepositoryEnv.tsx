@@ -179,7 +179,7 @@ export function RepositoryEnv({
                                                         <Input
                                                             {...field}
                                                             autoComplete="off"
-                                                            placeholder="VARIABLE_NAME"
+                                                            placeholder={t('keyPlaceholder')}
                                                             className="font-mono"
                                                         />
                                                     </FormControl>
@@ -203,7 +203,7 @@ export function RepositoryEnv({
                                                                         : 'password'
                                                                 }
                                                                 autoComplete="off"
-                                                                placeholder="value"
+                                                                placeholder={t('valuePlaceholder')}
                                                                 className="pr-10 font-mono"
                                                             />
                                                             <Button

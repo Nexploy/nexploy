@@ -42,8 +42,6 @@
     "volumeName": "Nom du volume",
     "volumeNamePlaceholder": "mon-volume",
     "driverOptions": "Options du driver",
-    "key": "Clé",
-    "value": "Valeur",
     "keyPlaceholder": "nom_option",
     "valuePlaceholder": "valeur_option",
     "addOption": "Ajouter une option",
@@ -344,14 +342,6 @@
         "user": "Utilisateur",
         "noData": "Aucune donnée de processus"
     },
-    "containerLabels": {
-        "title": "Labels",
-        "addTitle": "Ajouter un label",
-        "addDescription": "Ajouter un nouveau label à ce conteneur.",
-        "addLabel": "Ajouter un label",
-        "add": "Ajouter",
-        "noLabels": "Aucun label"
-    },
     "containerHealth": {
         "title": "Logs de santé",
         "status": "Statut :",
@@ -454,10 +444,6 @@
         "volumes": {
             "title": "Volumes Docker",
             "description": "Gérez et visualisez tous vos volumes Docker"
-        },
-        "containers": {
-            "title": "Conteneurs",
-            "description": "Gérez et visualisez tous vos conteneurs Docker"
         }
     },
     "tables": {
@@ -522,10 +508,6 @@
         "edit": "Modifier",
         "keyPlaceholder": "clé",
         "valuePlaceholder": "valeur",
-        "env": {
-            "key": "Clé",
-            "value": "Valeur"
-        },
         "port": {
             "containerPort": "Port conteneur",
             "hostPort": "Port hôte",
@@ -544,8 +526,6 @@
             "selectNetwork": "Sélectionner un réseau"
         },
         "label": {
-            "key": "Clé",
-            "value": "Valeur",
             "keyPlaceholder": "com.example.label"
         }
     },
@@ -597,8 +577,8 @@
         "envVars": "Variables d'environnement",
         "envVarsDescription": "Variables à injecter dans le conteneur",
         "addVariable": "Ajouter une variable",
-        "keyPlaceholder": "CLÉ",
-        "valuePlaceholder": "valeur",
+        "keyPlaceholder": "Clé",
+        "valuePlaceholder": "Valeur",
         "noEnvVarsConfigured": "Aucune variable d'environnement configurée",
         "volumes": "Volumes",
         "volumesDescription": "Montage de volumes entre l'hôte et le conteneur",
