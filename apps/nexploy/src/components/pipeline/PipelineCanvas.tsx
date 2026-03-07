@@ -1,16 +1,19 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
     Background,
     BackgroundVariant,
     MiniMap,
+    type Node,
+    type NodeMouseHandler,
     Panel,
     PanOnScrollMode,
     ReactFlow,
     type ReactFlowInstance,
     SelectionMode,
     useReactFlow,
+    useStore,
 } from '@xyflow/react';
 import { Maximize, Minus, Plus } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
@@ -18,11 +21,12 @@ import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
 import { BaseNode } from '@/components/pipeline/nodes/BaseNode';
 import { GradientEdge } from '@/components/pipeline/edges/GradientEdge';
-import { useDragAndDrop } from '@/hooks/useDragAndDrop';
+import { useDragAndDropFlow } from '@/hooks/useDragAndDropFlow';
 import { useMinimap } from '@/hooks/useMinimap';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { ButtonPanel } from '@/components/pipeline/nodes/ButtonPanel';
 import { useHotkeys } from '@/lib/useHotKeys';
+import { NodeContextMenu, type NodeContextMenuState } from '@/components/pipeline/NodeContextMenu';
 
 const nodeTypes = { 'pipeline-node': BaseNode };
 const edgeTypes = { 'gradient-edge': GradientEdge };
@@ -30,8 +34,10 @@ const edgeTypes = { 'gradient-edge': GradientEdge };
 export function PipelineCanvas() {
     const t = useTranslations('repository.pipeline');
     const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
-    const { zoomIn, zoomOut, fitView } = useReactFlow();
+    const { zoomIn, zoomOut, fitView, getNodes, updateNodeData } = useReactFlow();
+    const addSelectedNodes = useStore((s) => s.addSelectedNodes);
     const [isSpaceHeld, setIsSpaceHeld] = useState(false);
+    const [contextMenu, setContextMenu] = useState<NodeContextMenuState | null>(null);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
     const {
@@ -48,40 +54,64 @@ export function PipelineCanvas() {
         redo,
     } = usePipelineContext();
 
+    const openContextMenu = useCallback((event: React.MouseEvent, nodeId: string) => {
+        event.preventDefault();
+        setContextMenu({ clientX: event.clientX, clientY: event.clientY, nodeId });
+    }, []);
+
+    const closeContextMenu = useCallback(() => setContextMenu(null), []);
+
+    const onNodeContextMenu = useCallback<NodeMouseHandler>(
+        (event, node) => openContextMenu(event, node.id),
+        [openContextMenu],
+    );
+
+    const onSelectionContextMenu = useCallback(
+        (event: React.MouseEvent, nodes: Node[]) => {
+            const first = nodes[0];
+            if (first) openContextMenu(event, first.id);
+        },
+        [openContextMenu],
+    );
+
+    useHotkeys(
+        ['meta+a', 'ctrl+a'],
+        () => {
+            addSelectedNodes(getNodes().map((n) => n.id));
+        },
+        { preventDefault: true },
+    );
+
+    useHotkeys(
+        'd',
+        () => {
+            const selected = getNodes().filter((n) => n.selected);
+            if (selected.length === 0) return;
+            const allDisabled = selected.every((n) => n.data.disabled);
+            selected.forEach((n) => updateNodeData(n.id, { disabled: !allDisabled }));
+        },
+        { preventDefault: true },
+    );
+
     useHotkeys('space', () => setIsSpaceHeld(true), {
         keydown: true,
         keyup: false,
         preventDefault: true,
     });
     useHotkeys('space', () => setIsSpaceHeld(false), { keydown: false, keyup: true });
+    useHotkeys('meta+z', () => undo(), { preventDefault: true, capture: true });
+    useHotkeys('meta+shift+z', () => redo(), { preventDefault: true, capture: true });
+    useHotkeys('ctrl+z', () => undo(), { preventDefault: true, capture: true });
+    useHotkeys('ctrl+shift+z', () => redo(), { preventDefault: true, capture: true });
 
-    useHotkeys('meta+z', () => undo(), {
-        preventDefault: true,
-        capture: true,
-    });
-
-    useHotkeys('meta+shift+z', () => redo(), {
-        preventDefault: true,
-        capture: true,
-    });
-
-    useHotkeys('ctrl+z', () => undo(), {
-        preventDefault: true,
-        capture: true,
-    });
-
-    useHotkeys('ctrl+shift+z', () => redo(), {
-        preventDefault: true,
-        capture: true,
-    });
-
-    const { isDragOver, onDragOver, onDragLeave, onDrop } = useDragAndDrop(rfInstance);
+    const { isDragOver, onDragOver, onDragLeave, onDrop } = useDragAndDropFlow(rfInstance);
     const { minimapVisible, onMoveStart, onMoveEnd } = useMinimap();
 
     return (
         <div
             ref={wrapperRef}
             data-panning={isSpaceHeld}
+            onContextMenu={(e) => e.preventDefault()}
             className={cn(
                 'relative flex-1 transition-all',
                 isDragOver && 'ring-primary/40 ring-2 ring-inset',
@@ -103,7 +133,9 @@ export function PipelineCanvas() {
                 onNodeDoubleClick={handleNodeDoubleClick}
                 onNodeDragStop={handleNodeDragStop}
                 onPaneClick={handlePaneClick}
-                panActivationKeyCode="Space"
+                onNodeContextMenu={onNodeContextMenu}
+                onSelectionContextMenu={onSelectionContextMenu}
+                panActivationKeyCode={['Space', 'Meta']}
                 panOnDrag={nodes.length > 0 ? [1, 2] : false}
                 panOnScroll={nodes.length > 0}
                 panOnScrollMode={PanOnScrollMode.Free}
@@ -170,7 +202,6 @@ export function PipelineCanvas() {
                     nodeColor={'var(--accent)'}
                     maskColor={'oklch(from var(--accent) l c h / 0.5)'}
                 />
-
                 {nodes.length === 0 && (
                     <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3">
                         <div className="border-border bg-card flex size-16 items-center justify-center rounded-2xl border">
@@ -192,6 +223,7 @@ export function PipelineCanvas() {
                     </div>
                 )}
             </ReactFlow>
+            {contextMenu && <NodeContextMenu menu={contextMenu} onClose={closeContextMenu} />}
         </div>
     );
 }

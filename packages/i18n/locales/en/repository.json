@@ -414,6 +414,11 @@
             "notification": "Notification"
         },
         "deleteSelection": "Delete {count} nodes",
+        "node": {
+            "enable": "Enable node",
+            "disable": "Disable node",
+            "delete": "Delete node"
+        },
         "nodes": {
             "clone-repository": {
                 "name": "Clone Repository",

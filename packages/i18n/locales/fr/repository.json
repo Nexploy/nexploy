@@ -414,6 +414,11 @@
             "notification": "Notification"
         },
         "deleteSelection": "Supprimer {count} nœuds",
+        "node": {
+            "enable": "Activer le nœud",
+            "disable": "Désactiver le nœud",
+            "delete": "Supprimer le nœud"
+        },
         "nodes": {
             "clone-repository": {
                 "name": "Cloner le dépôt",

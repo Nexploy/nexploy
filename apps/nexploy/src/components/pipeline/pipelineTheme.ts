@@ -21,11 +21,11 @@ export const CATEGORY_BG_MUTED: Record<string, string> = {
 };
 
 export const CATEGORY_BG: Record<string, string> = {
-    source: 'bg-blue-500',
-    build: 'bg-orange-500',
-    deploy: 'bg-green-500',
-    utility: 'bg-yellow-500',
-    notification: 'bg-pink-500',
+    source: '!bg-blue-500',
+    build: '!bg-orange-500',
+    deploy: '!bg-green-500',
+    utility: '!bg-yellow-500',
+    notification: '!bg-pink-500',
 };
 
 export const CATEGORY_TEXT: Record<string, string> = {

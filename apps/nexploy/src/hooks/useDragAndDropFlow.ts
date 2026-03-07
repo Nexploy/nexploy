@@ -5,7 +5,7 @@ import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { getTemplate } from '@/components/pipeline/nodes/template/pipelineTemplates';
 
-export function useDragAndDrop(rfInstance: ReactFlowInstance | null) {
+export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
     const [isDragOver, setIsDragOver] = useState(false);
     const { setNodes, setEdges, triggerAutoSave } = usePipelineContext();
 
@@ -23,10 +23,8 @@ export function useDragAndDrop(rfInstance: ReactFlowInstance | null) {
             setIsDragOver(false);
             if (!rfInstance) return;
 
-            const dropPosition = rfInstance.screenToFlowPosition({
-                x: event.clientX,
-                y: event.clientY,
-            });
+            const cursor = rfInstance.screenToFlowPosition({ x: event.clientX, y: event.clientY });
+            const dropPosition = { x: cursor.x - 45, y: cursor.y - 45 };
 
             const templateId = event.dataTransfer.getData('application/pipeline-template');
             if (templateId) {

@@ -7,39 +7,49 @@ type Options = {
     capture?: boolean;
 };
 
+const isMac = typeof navigator !== 'undefined' && navigator.userAgent.includes('Mac');
+
 function parseHotkey(hotkey: string) {
     const parts = hotkey.toLowerCase().split('+');
+    const wantsMeta = parts.includes('meta') || parts.includes('cmd');
+    const wantsCtrl = parts.includes('ctrl');
+
+    const requireMeta = isMac ? wantsMeta || wantsCtrl : wantsMeta && !wantsCtrl;
+    const requireCtrl = isMac ? false : wantsCtrl || wantsMeta;
 
     return {
-        key: parts.find((p) => !['ctrl', 'meta', 'shift', 'alt'].includes(p)),
-        ctrl: parts.includes('ctrl'),
-        meta: parts.includes('meta') || parts.includes('cmd'),
+        key: parts.find((p) => !['ctrl', 'meta', 'cmd', 'shift', 'alt'].includes(p)),
+        ctrl: requireCtrl,
+        meta: requireMeta,
         shift: parts.includes('shift'),
         alt: parts.includes('alt'),
     };
 }
 
 export function useHotkeys(
-    hotkey: string,
+    hotkey: string | string[],
     callback: (event: KeyboardEvent) => void,
     options: Options = {},
 ) {
     const { keydown = true, keyup = false, preventDefault = false, capture = false } = options;
 
     useEffect(() => {
-        const config = parseHotkey(hotkey);
+        const configs = (Array.isArray(hotkey) ? hotkey : [hotkey]).map(parseHotkey);
 
         const handler = (e: KeyboardEvent) => {
-            const key = e.key.toLowerCase();
+            const raw = e.key.toLowerCase();
+            const key = raw === ' ' ? 'space' : raw;
+            const matches = configs.some(
+                (config) =>
+                    (!config.key || key === config.key) &&
+                    (!config.ctrl || e.ctrlKey) &&
+                    (!config.meta || e.metaKey) &&
+                    (!config.shift || e.shiftKey) &&
+                    (!config.alt || e.altKey),
+            );
 
-            if (config.key && key !== config.key) return;
-            if (config.ctrl && !e.ctrlKey) return;
-            if (config.meta && !e.metaKey) return;
-            if (config.shift && !e.shiftKey) return;
-            if (config.alt && !e.altKey) return;
-
+            if (!matches) return;
             if (preventDefault) e.preventDefault();
-
             callback(e);
         };
 

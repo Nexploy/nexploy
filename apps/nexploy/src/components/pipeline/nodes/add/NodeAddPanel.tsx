@@ -7,7 +7,11 @@ import { cn } from '@workspace/ui/lib/utils';
 import { useNodeRegistryStore } from '@/stores/useNodeRegistryStore';
 import { NodeType } from '@workspace/typescript-interface/pipeline/node';
 import { NodeItem } from '@/components/pipeline/nodes/add/NodeItem';
-import { CATEGORY_BG_MUTED, CATEGORY_ICONS, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import {
+    CATEGORY_BG_MUTED,
+    CATEGORY_ICONS,
+    CATEGORY_TEXT,
+} from '@/components/pipeline/pipelineTheme';
 
 export function NodeAddPanel() {
     const t = useTranslations('repository.pipeline');
@@ -81,7 +85,7 @@ export function NodeAddPanel() {
                     <div className="border-b">
                         <button
                             onClick={() => setActiveCategory(null)}
-                            className="hover:bg-muted flex w-full cursor-pointer items-center gap-2.5 px-2.5 py-2 transition-colors"
+                            className="hover:bg-muted flex h-12 w-full cursor-pointer items-center gap-2 px-2.5 transition-colors"
                         >
                             <ArrowLeft className="text-muted-foreground size-3.5 shrink-0" />
                             {(() => {

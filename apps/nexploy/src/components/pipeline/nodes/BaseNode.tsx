@@ -3,7 +3,7 @@
 import { Handle, Position, useConnection, useNodeConnections, useReactFlow } from '@xyflow/react';
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { useTranslations } from 'next-intl';
-import { Terminal, Trash2 } from 'lucide-react';
+import { Power, Terminal, Trash2 } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
 import {
@@ -21,6 +21,7 @@ interface BaseNodeProps {
         definition: NodeDefinition;
         config: Record<string, unknown>;
         pipelineNodeType: string;
+        disabled?: boolean;
     };
     selected?: boolean;
 }
@@ -31,7 +32,15 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
     const Icon = ICON_NAME_MAP[definition.metadata.icon] ?? Terminal;
     const hasInputs = definition.handles.inputs.length > 0;
     const hasOutputs = definition.handles.outputs.length > 0;
-    const { deleteElements } = useReactFlow();
+    const { deleteElements, updateNodeData, getNodes } = useReactFlow();
+    const disabled = data.disabled ?? false;
+
+    const getTargetIds = () => {
+        const selectedIds = getNodes()
+            .filter((n) => n.selected)
+            .map((n) => n.id);
+        return selectedIds.length > 1 && selectedIds.includes(id) ? selectedIds : [id];
+    };
 
     const connection = useConnection();
     const inputConnections = useNodeConnections({ handleType: 'target' });
@@ -47,21 +56,38 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
 
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation();
-        deleteElements({ nodes: [{ id }] });
+        deleteElements({ nodes: getTargetIds().map((nid) => ({ id: nid })) });
+    };
+
+    const handleToggleDisabled = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        getTargetIds().forEach((nid) => updateNodeData(nid, { disabled: !disabled }));
     };
 
     return (
-        <div className="group relative flex flex-col items-center">
-            <Button
-                onClick={handleDelete}
-                variant="destructiveGhost"
+        <div className={cn('group relative flex flex-col items-center', disabled && 'opacity-40')}>
+            <div
                 className={cn(
-                    'absolute -top-7 left-1/2 flex size-6 -translate-x-1/2 transition-all duration-150',
-                    'scale-75 opacity-0 group-hover:scale-100 group-hover:opacity-100 hover:scale-100',
+                    'absolute -top-7 left-1/2 flex -translate-x-1/2 items-center gap-1',
+                    'scale-75 opacity-0 transition-all duration-150 group-hover:scale-100 group-hover:opacity-100',
                 )}
             >
-                <Trash2 className="size-3" />
-            </Button>
+                <Button
+                    onClick={handleToggleDisabled}
+                    variant="ghost"
+                    className={cn(
+                        'size-6',
+                        disabled
+                            ? 'text-muted-foreground hover:text-foreground'
+                            : 'text-foreground hover:text-muted-foreground',
+                    )}
+                >
+                    <Power className="size-3" />
+                </Button>
+                <Button onClick={handleDelete} variant="destructiveGhost" className="size-6">
+                    <Trash2 className="size-3" />
+                </Button>
+            </div>
 
             <div
                 className={cn(
@@ -81,7 +107,7 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
                         position={Position.Left}
                         className={cn(
                             '!bg-base-7 !border-card !-left-[3px] !size-4.5 !rounded-full !border-2 transition-all hover:!size-6',
-                            inputActive && `!${handleColor}`,
+                            inputActive && handleColor,
                         )}
                     />
                 )}
@@ -101,7 +127,7 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
                         position={Position.Right}
                         className={cn(
                             '!bg-base-7 !border-card !-right-[3px] !size-4.5 !rounded-full !border-2 transition-all hover:!size-6',
-                            outputActive && `!${handleColor}`,
+                            outputActive && handleColor,
                         )}
                     />
                 )}
