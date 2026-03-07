@@ -36,7 +36,7 @@ export function RepositoryTabs({ children }: RepositoryTabsProps) {
     const searchParams = useSearchParams();
     const [tab, setTab] = useQueryState(
         'tab',
-        parseAsStringLiteral(VALID_TABS).withDefault('builds'),
+        parseAsStringLiteral(VALID_TABS).withDefault('pipeline'),
     );
 
     useEffect(() => {

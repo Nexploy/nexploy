@@ -8,10 +8,5 @@ interface RepositoryPipelineTabProps {
 export async function RepositoryPipelineTab({ repositoryId }: RepositoryPipelineTabProps) {
     const graph = await getPipelineConfig(repositoryId);
 
-    return (
-        <PipelineEditorPage
-            repositoryId={repositoryId}
-            initialGraph={graph ?? { nodes: [], edges: [] }}
-        />
-    );
+    return <PipelineEditorPage initialGraph={graph ?? { nodes: [], edges: [] }} />;
 }

@@ -1,12 +1,20 @@
 'use client';
 
-import { type ComponentType, useState } from 'react';
+import { type ComponentType, useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { NodeType, PipelineNode } from '@workspace/typescript-interface/pipeline/node';
+import { NodeType } from '@workspace/typescript-interface/pipeline/node';
+import { type Node } from '@xyflow/react';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { Button } from '@workspace/ui/components/button';
-import { X } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@workspace/ui/components/dialog';
 import { CloneRepositoryConfig } from './config/CloneRepositoryConfig';
 import { BuildDockerImageConfig } from './config/BuildDockerImageConfig';
 import { ValidateDockerfileConfig } from './config/ValidateDockerfileConfig';
@@ -19,6 +27,11 @@ import { SetEnvVarsConfig } from './config/SetEnvVarsConfig';
 import { CleanWorkdirConfig } from './config/CleanWorkdirConfig';
 import { RunScriptConfig } from './config/RunScriptConfig';
 import { SendNotificationConfig } from './config/SendNotificationConfig';
+import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { useAction } from 'next-safe-action/hooks';
+import { savePipelineAction } from '@/actions/repository/pipeline/savePipeline.action';
+import { flowToGraph } from '@/components/pipeline/utils/graphConvert';
+import { useParams } from 'next/navigation';
 
 export interface NodeConfigProps {
     config: Record<string, unknown>;
@@ -26,7 +39,8 @@ export interface NodeConfigProps {
 }
 
 interface NodeConfigPanelProps {
-    node: PipelineNode;
+    node: Node;
+    isOpen: boolean;
 }
 
 const CONFIG_PANELS: Record<NodeType, ComponentType<NodeConfigProps>> = {
@@ -44,55 +58,85 @@ const CONFIG_PANELS: Record<NodeType, ComponentType<NodeConfigProps>> = {
     'send-notification': SendNotificationConfig,
 };
 
-export function NodeConfigPanel({ node }: NodeConfigPanelProps) {
+export function NodeConfigPanel({ node, isOpen }: NodeConfigPanelProps) {
     const t = useTranslations('repository.pipeline');
     const tConfig = useTranslations('repository.pipeline.config');
-    const { handleConfigChange, handlePaneClick, triggerAutoSave } = usePipelineContext();
+    const tCommon = useTranslations('common');
 
-    const [localConfig, setLocalConfig] = useState<Record<string, unknown>>(node.data.config);
+    const params = useParams<{ repositoryId: string }>();
+    const { nodes, edges, handleConfigChange, handlePaneClick } = usePipelineContext();
+
+    const { executeAsync: savePipelineAsync } = useAction(savePipelineAction);
+
+    const handleNodeSave = useCallback(
+        async (nodeId: string, config: Record<string, unknown>) => {
+            const updatedNodes = nodes.map((n) =>
+                n.id === nodeId ? { ...n, data: { ...n.data, config } } : n,
+            );
+            await savePipelineAsync({
+                repositoryId: params.repositoryId,
+                graph: flowToGraph(updatedNodes, edges),
+            });
+        },
+        [nodes, edges, params.repositoryId],
+    );
+
+    const nodeType = node.data.pipelineNodeType as NodeType;
+    const nodeConfig = (node.data.config as Record<string, unknown>) ?? {};
+
+    const [localConfig, setLocalConfig] = useState<Record<string, unknown>>(nodeConfig);
     const [isDirty, setIsDirty] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
-    const def = getNodeDefinition(node.data.type);
+    const def = getNodeDefinition(nodeType);
     if (!def) return null;
 
-    const ConfigComponent = CONFIG_PANELS[node.data.type as NodeType];
+    const ConfigComponent = CONFIG_PANELS[nodeType];
 
     const update = (key: string, value: unknown) => {
         setLocalConfig((prev) => ({ ...prev, [key]: value }));
         setIsDirty(true);
     };
 
-    const handleSave = () => {
-        handleConfigChange(node.id, localConfig);
-        triggerAutoSave();
-        setIsDirty(false);
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            handleConfigChange(node.id, localConfig);
+            await handleNodeSave(node.id, localConfig);
+            setIsDirty(false);
+            handlePaneClick();
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     return (
-        <div className="border-border bg-sidebar flex w-60 shrink-0 flex-col border-l">
-            <div className="border-border flex items-center justify-between border-b px-3 py-3">
-                <h3 className="text-foreground text-xs font-semibold">
-                    {t(`nodes.${node.data.type}.name` as never)}
-                </h3>
-                <button
-                    onClick={handlePaneClick}
-                    className="text-muted-foreground hover:bg-accent hover:text-foreground flex size-5 items-center justify-center rounded transition-colors"
-                >
-                    <X className="size-3.5" />
-                </button>
-            </div>
+        <Dialog open={isOpen} onOpenChange={handlePaneClick}>
+            <DialogContent className="overflow-hidden">
+                <div className="flex max-h-[90vh] flex-col gap-4">
+                    <DialogHeader>
+                        <DialogTitle className="text-sm">
+                            {t(`nodes.${nodeType}.name` as never)}
+                        </DialogTitle>
+                    </DialogHeader>
 
-            <div className="flex flex-col gap-4 overflow-y-auto p-3">
-                {ConfigComponent ? <ConfigComponent config={localConfig} update={update} /> : null}
-                <Button
-                    size="sm"
-                    disabled={!isDirty}
-                    className="self-end text-xs"
-                    onClick={handleSave}
-                >
-                    {tConfig('save')}
-                </Button>
-            </div>
-        </div>
+                    <ScrollAreaWithShadow bottomShadow className="h-full">
+                        <div className={'px-6 pb-6'}>
+                            <ConfigComponent config={localConfig} update={update} />
+                        </div>
+                    </ScrollAreaWithShadow>
+
+                    <DialogFooter className={'px-6 pb-6'}>
+                        <Button variant="outline" size="sm" onClick={handlePaneClick}>
+                            {tCommon('cancel')}
+                        </Button>
+                        <Button size="sm" disabled={!isDirty || isSaving} onClick={handleSave}>
+                            {isSaving && <Loader2 className="size-3.5 animate-spin" />}
+                            {tConfig('save')}
+                        </Button>
+                    </DialogFooter>
+                </div>
+            </DialogContent>
+        </Dialog>
     );
 }

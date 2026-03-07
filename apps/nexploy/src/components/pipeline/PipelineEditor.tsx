@@ -1,10 +1,9 @@
 'use client';
 
 import '@xyflow/react/dist/style.css';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAction } from 'next-safe-action/hooks';
 
-import { NodeType } from '@workspace/typescript-interface/pipeline/node';
 import { savePipelineAction } from '@/actions/repository/pipeline/savePipeline.action';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { flowToGraph } from '@/components/pipeline/utils/graphConvert';
@@ -12,15 +11,21 @@ import { NodeAddPanel } from '@/components/pipeline/nodes/add/NodeAddPanel';
 import { NodeTemplatePanel } from '@/components/pipeline/nodes/template/NodeTemplatePanel';
 import { NodeConfigPanel } from '@/components/pipeline/nodes/NodeConfigPanel';
 import { PipelineCanvas } from '@/components/pipeline/PipelineCanvas';
+import { useParams } from 'next/navigation';
 
-export function PipelineEditor({ repositoryId }: { repositoryId: string }) {
-    const { nodes, edges, panelNodeId, selectedNodeIds, saveVersion } = usePipelineContext();
+export function PipelineEditor() {
+    const params = useParams<{ repositoryId: string }>();
+
+    const { nodes, edges, panelNodeId, saveVersion } = usePipelineContext();
     const panelNode = nodes.find((n) => n.id === panelNodeId);
+    const lastPanelNodeRef = useRef(panelNode);
+    if (panelNode) lastPanelNodeRef.current = panelNode;
 
     const { execute: savePipeline } = useAction(savePipelineAction);
 
     useEffect(() => {
-        if (saveVersion !== 0) savePipeline({ repositoryId, graph: flowToGraph(nodes, edges) });
+        if (saveVersion !== 0)
+            savePipeline({ repositoryId: params.repositoryId, graph: flowToGraph(nodes, edges) });
     }, [saveVersion]);
 
     return (
@@ -29,21 +34,10 @@ export function PipelineEditor({ repositoryId }: { repositoryId: string }) {
                 <PipelineCanvas />
                 <NodeTemplatePanel />
                 <NodeAddPanel />
-                {panelNode && selectedNodeIds.length <= 1 && (
-                    <NodeConfigPanel
-                        node={{
-                            id: panelNode.id,
-                            type: panelNode.data.pipelineNodeType as NodeType,
-                            position: panelNode.position,
-                            data: {
-                                type: panelNode.data.pipelineNodeType as NodeType,
-                                config: (panelNode.data.config as Record<string, unknown>) ?? {},
-                                label: panelNode.data.label as string,
-                            },
-                        }}
-                    />
-                )}
             </div>
+            {lastPanelNodeRef.current && (
+                <NodeConfigPanel isOpen={!!panelNode} node={lastPanelNodeRef.current} />
+            )}
         </div>
     );
 }

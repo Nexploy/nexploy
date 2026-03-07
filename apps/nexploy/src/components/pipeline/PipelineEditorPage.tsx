@@ -6,15 +6,14 @@ import { PipelineProvider } from '@/contexts/PipelineContext';
 import { ReactFlowProvider } from '@xyflow/react';
 
 interface PipelineEditorPageProps {
-    repositoryId: string;
     initialGraph: PipelineGraph;
 }
 
-export function PipelineEditorPage({ repositoryId, initialGraph }: PipelineEditorPageProps) {
+export function PipelineEditorPage({ initialGraph }: PipelineEditorPageProps) {
     return (
         <ReactFlowProvider>
             <PipelineProvider initialGraph={initialGraph}>
-                <PipelineEditor repositoryId={repositoryId} />
+                <PipelineEditor />
             </PipelineProvider>
         </ReactFlowProvider>
     );
