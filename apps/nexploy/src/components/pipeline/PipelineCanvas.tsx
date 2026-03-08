@@ -52,6 +52,7 @@ export function PipelineCanvas() {
         handlePaneClick,
         handleSelectionChange,
         handleDuplicateSelection,
+        handleDeleteSelection,
         undo,
         redo,
         triggerAutoSave,
@@ -123,6 +124,10 @@ export function PipelineCanvas() {
         preventDefault: true,
         ref: wrapperRef,
     });
+    useHotkeys(['delete', 'backspace'], () => handleDeleteSelection(), {
+        preventDefault: true,
+        ref: wrapperRef,
+    });
     useHotkeys('meta+z', () => undo(), { preventDefault: true, capture: true, ref: wrapperRef });
     useHotkeys('meta+shift+z', () => redo(), {
         preventDefault: true,
@@ -184,7 +189,7 @@ export function PipelineCanvas() {
                 multiSelectionKeyCode="Shift"
                 selectionOnDrag
                 onSelectionChange={handleSelectionChange}
-                deleteKeyCode={['Delete', 'Backspace']}
+                deleteKeyCode={null}
                 fitView
                 fitViewOptions={{ padding: 0.3 }}
                 defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}

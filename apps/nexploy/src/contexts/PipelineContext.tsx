@@ -162,26 +162,24 @@ export function PipelineProvider({
     const handleDuplicateSelection = useCallback(() => {
         const selected = nodes.filter((n) => n.selected);
         if (selected.length === 0) return;
-        const timestamp = Date.now();
+        const suffix = `-copy-${Date.now()}`;
         const selectedIds = new Set(selected.map((n) => n.id));
-        const idMap = new Map(selected.map((n) => [n.id, `${n.id}-copy-${timestamp}`]));
         const copies = selected.map((n) => ({
             ...n,
-            id: idMap.get(n.id)!,
+            id: `${n.id}${suffix}`,
             position: { x: n.position.x + 40, y: n.position.y + 40 },
             selected: true,
             data: { ...n.data },
         }));
-        const unselected = nodes.map((n) => ({ ...n, selected: false }));
-        setNodes([...unselected, ...copies]);
+        setNodes([...nodes.map((n) => (n.selected ? { ...n, selected: false } : n)), ...copies]);
         setEdges((eds) => {
             const edgeCopies = eds
                 .filter((e) => selectedIds.has(e.source) && selectedIds.has(e.target))
                 .map((e) => ({
                     ...e,
-                    id: `${e.id}-copy-${timestamp}`,
-                    source: idMap.get(e.source)!,
-                    target: idMap.get(e.target)!,
+                    id: `${e.id}${suffix}`,
+                    source: `${e.source}${suffix}`,
+                    target: `${e.target}${suffix}`,
                 }));
             return [...eds, ...edgeCopies];
         });
@@ -190,16 +188,16 @@ export function PipelineProvider({
     }, [nodes, setNodes, setEdges]);
 
     const handleDeleteSelection = useCallback(() => {
-        setNodes((nds) => nds.filter((n) => !selectedNodeIds.includes(n.id)));
+        const selectedIds = new Set(nodes.filter((n) => n.selected).map((n) => n.id));
+        if (selectedIds.size === 0) return;
+        setNodes((nds) => nds.filter((n) => !selectedIds.has(n.id)));
         setEdges((eds) =>
-            eds.filter(
-                (e) => !selectedNodeIds.includes(e.source) && !selectedNodeIds.includes(e.target),
-            ),
+            eds.filter((e) => !selectedIds.has(e.source) && !selectedIds.has(e.target)),
         );
         setSelectedNodeIds([]);
         setPanelNodeId(null);
         setSaveVersion((v) => v + 1);
-    }, [selectedNodeIds, setNodes, setEdges]);
+    }, [nodes, setNodes, setEdges]);
 
     return (
         <PipelineContext.Provider
