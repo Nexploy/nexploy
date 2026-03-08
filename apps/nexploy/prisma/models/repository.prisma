@@ -95,7 +95,6 @@ model Build {
   branch            String
   commitHash        String?
   commitMessage     String?
-  lastCompletedStep String?
   nodeStatuses      Json     @default("{}")
   pipelineSnapshot  Json?
 

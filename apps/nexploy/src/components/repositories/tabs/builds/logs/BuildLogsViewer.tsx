@@ -52,7 +52,10 @@ export function BuildLogsViewer({
         .map((evt) => evt.data.log);
 
     const logs = [...initialLogs, ...liveLogs];
-    const status: BuildStatus = inngestData.latestData?.data.status ?? initialStatus;
+    const latestStatus = inngestData.data
+        .filter((evt) => evt.topic === 'status' && evt.data?.status)
+        .at(-1)?.data.status as BuildStatus | undefined;
+    const status: BuildStatus = latestStatus ?? initialStatus;
 
     useEffect(() => {
         const logsContainer = logsContainerRef.current;
@@ -170,7 +173,7 @@ export function BuildLogsViewer({
                                         [{dayjs(log.createdAt).format('DD/MM/YYYY HH:mm:ss')}]
                                     </span>
                                 )}
-                                <div className="min-w-0 whitespace-pre-wrap break-all">
+                                <div className="min-w-0 break-all whitespace-pre-wrap">
                                     {parseAnsiColors(log.message).map((part, partIndex) => (
                                         <span key={partIndex} className={part.color}>
                                             {part.text}

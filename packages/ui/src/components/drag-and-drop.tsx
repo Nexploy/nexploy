@@ -1,20 +1,15 @@
 'use client';
 
 import * as React from 'react';
-import { Upload, File as FileIcon, X } from 'lucide-react';
+import { File as FileIcon, Upload, X } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { cn } from '@workspace/ui/lib/utils';
 
 interface DragAndDropProps {
-    /** Called with the file text content and file name when a file is dropped or selected */
     onFileContent: (content: string, fileName: string) => void;
-    /** Accepted file extensions (e.g. ['.pem', '.crt']) */
     accept?: string[];
-    /** Main text displayed in the drop zone */
     dropText?: string;
-    /** Secondary text (e.g. accepted formats) */
     formatsText?: string;
-    /** Disable interaction */
     disabled?: boolean;
     className?: string;
 }

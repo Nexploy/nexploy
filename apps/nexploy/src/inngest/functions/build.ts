@@ -52,52 +52,32 @@ export const buildFunction = inngest.createFunction(
 
             const setStatus = async (status: PipelineStatus) => {
                 await updateStatusBuildInngest(buildId, status as BuildStatus);
-                try {
-                    await publish(buildChannel.status({ status }));
-                } catch {
-                    /* ignore */
-                }
             };
 
             const reporter: PipelineReporter = {
                 async markRunning(nodeId) {
                     await updateNodeStatusInngest(buildId, nodeId, 'running');
-                    try {
-                        await publish(buildChannel['node-status']({ nodeId, status: 'running' }));
-                    } catch {
-                        /* ignore */
-                    }
                 },
                 async markCompleted(nodeId) {
                     await updateNodeStatusInngest(buildId, nodeId, 'completed');
-                    try {
-                        await publish(buildChannel['node-status']({ nodeId, status: 'completed' }));
-                    } catch {
-                        /* ignore */
-                    }
                 },
                 async markSkipped(nodeId) {
                     await updateNodeStatusInngest(buildId, nodeId, 'skipped');
-                    try {
-                        await publish(buildChannel['node-status']({ nodeId, status: 'skipped' }));
-                    } catch {
-                        /* ignore */
-                    }
                 },
                 async markFailed(nodeId) {
                     await updateNodeStatusInngest(buildId, nodeId, 'failed');
                     await updateStatusBuildInngest(buildId, 'FAILED');
-                    try {
-                        await publish(buildChannel['node-status']({ nodeId, status: 'failed' }));
-                    } catch {
-                        /* ignore */
-                    }
-                    try {
-                        await publish(buildChannel.status({ status: 'FAILED' }));
-                    } catch {
-                        /* ignore */
-                    }
                 },
+            };
+
+            const publishEvent = async (nodeId: string | null, status: string) => {
+                try {
+                    if (nodeId) {
+                        await publish(buildChannel['node-status']({ nodeId, status }));
+                    } else {
+                        await publish(buildChannel.status({ status }));
+                    }
+                } catch { /* ignore */ }
             };
 
             const logger = createPipelineLogger(publishLog);
@@ -125,6 +105,7 @@ export const buildFunction = inngest.createFunction(
                 logger,
                 reporter,
                 setStatus,
+                publishEvent,
             );
         });
     },

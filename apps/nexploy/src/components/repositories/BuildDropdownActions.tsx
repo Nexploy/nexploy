@@ -16,11 +16,10 @@ import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
 interface BuildDropdownActionsProps {
     buildId: string;
     status: BuildStatus;
-    lastCompletedStep?: string | null;
 }
 
-export function BuildDropdownActions({ buildId, status, lastCompletedStep }: BuildDropdownActionsProps) {
-    const actions = useBuildActions({ buildId, status, lastCompletedStep, mode: 'dropdown' });
+export function BuildDropdownActions({ buildId, status }: BuildDropdownActionsProps) {
+    const actions = useBuildActions({ buildId, status, mode: 'dropdown' });
 
     if (actions.length === 0) return null;
 

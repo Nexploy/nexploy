@@ -22,7 +22,7 @@ export interface NodeExecutionContext {
     inputOutputs: NodeOutputData[];
     allOutputs: NodeOutputStore;
     logger: PipelineLogger;
-    reporter: StatusReporter;
+    reporter: PipelineReporter;
     abortSignal: AbortSignal;
 }
 
@@ -51,7 +51,6 @@ export interface PipelineReporter {
     markCompleted(nodeId: string): Promise<void>;
     markRunning(nodeId: string): Promise<void>;
     markSkipped(nodeId: string): Promise<void>;
-    /** Updates node status to failed in DB + sets build status to FAILED. */
     markFailed(nodeId: string): Promise<void>;
 }
 

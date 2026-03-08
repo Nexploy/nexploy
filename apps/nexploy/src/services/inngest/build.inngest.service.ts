@@ -138,17 +138,17 @@ export async function updateStatusBuildInngest(buildId: string, status: BuildSta
 
 export async function updateNodeStatusInngest(buildId: string, nodeId: string, status: string) {
     try {
-        await prisma.$executeRaw`
-            UPDATE "build"
-            SET "nodeStatuses" = COALESCE("nodeStatuses", '{}') || jsonb_build_object(${nodeId}::text, ${status}::text)
-            WHERE "id" = ${buildId}
-        `;
-        if (status === 'completed') {
-            await prisma.build.update({
-                where: { id: buildId },
-                data: { lastCompletedStep: nodeId },
-            });
-        }
+        const build = await prisma.build.findUnique({
+            where: { id: buildId },
+            select: { nodeStatuses: true },
+        });
+        const current = (build?.nodeStatuses as Record<string, string>) ?? {};
+        await prisma.build.update({
+            where: { id: buildId },
+            data: {
+                nodeStatuses: { ...current, [nodeId]: status },
+            },
+        });
     } catch {
         throw new Error('Failed to update node status');
     }

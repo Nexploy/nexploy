@@ -12,16 +12,10 @@ import { useTranslations } from 'next-intl';
 
 interface ResumeBuildButtonProps extends ComponentProps<typeof Button> {
     buildId: string;
-    lastCompletedStep?: string | null;
     onSuccess?: () => void;
 }
 
-export function ResumeBuildButton({
-    buildId,
-    lastCompletedStep: _lastCompletedStep,
-    onSuccess,
-    ...props
-}: ResumeBuildButtonProps) {
+export function ResumeBuildButton({ buildId, onSuccess, ...props }: ResumeBuildButtonProps) {
     const router = useRouter();
     const { selectedEnvironmentId } = useEnvironmentStore();
     const t = useTranslations('repository.builds');

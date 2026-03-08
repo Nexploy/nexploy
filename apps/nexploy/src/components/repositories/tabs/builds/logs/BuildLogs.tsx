@@ -46,7 +46,6 @@ export function BuildLogs({ build }: BuildLogsProps) {
     const actions = useBuildActions({
         buildId: build.id,
         status,
-        lastCompletedStep: build.lastCompletedStep,
         onRemoveSuccess: () => router.back(),
     });
 
@@ -92,7 +91,7 @@ export function BuildLogs({ build }: BuildLogsProps) {
                                     variant="ghost"
                                     size="sm"
                                     className={cn(
-                                        'rounded-none gap-1.5',
+                                        'gap-1.5 rounded-none',
                                         view === 'logs' && 'bg-accent text-accent-foreground',
                                     )}
                                     onClick={() => setView('logs')}
@@ -105,7 +104,7 @@ export function BuildLogs({ build }: BuildLogsProps) {
                                     variant="ghost"
                                     size="sm"
                                     className={cn(
-                                        'rounded-none gap-1.5',
+                                        'gap-1.5 rounded-none',
                                         view === 'pipeline' && 'bg-accent text-accent-foreground',
                                     )}
                                     onClick={() => setView('pipeline')}
@@ -139,7 +138,9 @@ export function BuildLogs({ build }: BuildLogsProps) {
             {view === 'pipeline' && hasPipeline ? (
                 <BuildPipelineView
                     graph={pipelineSnapshot}
-                    initialNodeStatuses={(build.nodeStatuses as Record<string, NodeRunStatus>) ?? {}}
+                    initialNodeStatuses={
+                        (build.nodeStatuses as Record<string, NodeRunStatus>) ?? {}
+                    }
                     buildId={build.id}
                     buildStatus={build.status}
                 />

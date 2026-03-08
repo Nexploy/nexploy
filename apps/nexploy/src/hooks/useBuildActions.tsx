@@ -31,7 +31,6 @@ export type BuildAction = BuildActionButton | BuildActionComponent;
 interface UseBuildActionsProps {
     buildId: string;
     status: BuildStatus;
-    lastCompletedStep?: string | null;
     mode?: 'button' | 'dropdown';
     onResumeSuccess?: () => void;
     onRetrySuccess?: () => void;
@@ -41,7 +40,6 @@ interface UseBuildActionsProps {
 export function useBuildActions({
     buildId,
     status,
-    lastCompletedStep,
     mode = 'button',
     onResumeSuccess,
     onRetrySuccess,
@@ -70,13 +68,7 @@ export function useBuildActions({
         actions.push({
             type: 'component',
             id: 'resume',
-            component: (
-                <ResumeBuildButton
-                    buildId={buildId}
-                    lastCompletedStep={lastCompletedStep}
-                    onSuccess={onResumeSuccess}
-                />
-            ),
+            component: <ResumeBuildButton buildId={buildId} onSuccess={onResumeSuccess} />,
         });
     }
 

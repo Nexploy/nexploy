@@ -70,11 +70,7 @@ export function RepositoryBuild({ repositoryId, build, index }: BuildLogsProps) 
                     </span>
                 </div>
             </div>
-            <BuildDropdownActions
-                buildId={build.id}
-                status={status}
-                lastCompletedStep={build.lastCompletedStep}
-            />
+            <BuildDropdownActions buildId={build.id} status={status} />
         </Link>
     );
 }

@@ -202,7 +202,9 @@ export function PipelineProvider({
     const isLiveBuild = isViewingBuild && !TERMINAL_STATUSES.has(activeBuild!.status);
 
     // Fetch fresh nodeStatuses from DB each time a build is selected
-    const [fetchedNodeStatuses, setFetchedNodeStatuses] = useState<Record<string, NodeRunStatus>>({});
+    const [fetchedNodeStatuses, setFetchedNodeStatuses] = useState<Record<string, NodeRunStatus>>(
+        {},
+    );
     useEffect(() => {
         if (!activeBuildId || !repositoryId) {
             setFetchedNodeStatuses({});
@@ -216,12 +218,10 @@ export function PipelineProvider({
             .catch(() => {});
     }, [activeBuildId, repositoryId]);
 
-    // Live node statuses from subscription (real-time overlay on top of DB state)
     const [liveStatuses, setLiveStatuses] = useState<Record<string, NodeRunStatus>>({});
     useEffect(() => {
         setLiveStatuses({});
     }, [activeBuildId]);
-
 
     const refreshToken = useCallback(async () => {
         if (!activeBuildId) return null;
