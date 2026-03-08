@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { password } from './common.schema.ts';
+import { password } from './common.schema';
 
 export const twoFactorAuthSchema = (t: any) =>
     z.object({

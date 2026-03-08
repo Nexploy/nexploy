@@ -103,7 +103,8 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
 
             <div
                 className={cn(
-                    'bg-card relative flex size-20 items-center justify-center rounded-2xl border-2 shadow-lg transition-all duration-300',
+                    'bg-card relative flex size-20 items-center justify-center border-2 shadow-lg transition-all duration-300',
+                    definition.isStartNode ? 'rounded-l-4xl rounded-r-2xl' : 'rounded-2xl',
                     runStatus === 'running' &&
                         'animate-pulse border-amber-500 shadow-xl shadow-amber-500/40',
                     runStatus === 'completed' && 'border-green-500 shadow-xl shadow-green-500/30',

@@ -88,6 +88,31 @@ export class NodePipelineOrchestrator {
             throw new Error(`Invalid pipeline graph: ${err instanceof Error ? err.message : err}`);
         }
 
+        const startNodeIds = new Set(
+            sorted
+                .filter((n) => getNodeDefinition(n.data.type)?.isStartNode === true)
+                .map((n) => n.id),
+        );
+        const reachableNodeIds = new Set<string>(startNodeIds);
+        // Bidirectional adjacency: follow edges in both directions
+        const adjacency = new Map<string, string[]>();
+        for (const edge of graph.edges) {
+            if (!adjacency.has(edge.source)) adjacency.set(edge.source, []);
+            adjacency.get(edge.source)!.push(edge.target);
+            if (!adjacency.has(edge.target)) adjacency.set(edge.target, []);
+            adjacency.get(edge.target)!.push(edge.source);
+        }
+        const bfsQueue = [...startNodeIds];
+        while (bfsQueue.length > 0) {
+            const id = bfsQueue.shift()!;
+            for (const neighborId of adjacency.get(id) ?? []) {
+                if (!reachableNodeIds.has(neighborId)) {
+                    reachableNodeIds.add(neighborId);
+                    bfsQueue.push(neighborId);
+                }
+            }
+        }
+
         const cancellationWatcher = this.startCancellationWatcher(buildId, abortController);
 
         try {
@@ -106,6 +131,19 @@ export class NodePipelineOrchestrator {
                     .map((id) => allOutputs.get(id))
                     .filter((o): o is NodeOutputData => o !== undefined);
 
+                if (!reachableNodeIds.has(node.id)) {
+                    await inngestStep.run(`node-${node.id}`, async () => {
+                        currentNodeId = node.id;
+                        await reporter.markNodeSkipped(node.id);
+                        await logger.info(
+                            node.id,
+                            `${node.data.label} : Node skipped (not connected to a start node)`,
+                        );
+                    });
+                    allOutputs.set(node.id, {});
+                    continue;
+                }
+
                 if (node.data.disabled) {
                     await inngestStep.run(`node-${node.id}`, async () => {
                         currentNodeId = node.id;
@@ -120,8 +158,7 @@ export class NodePipelineOrchestrator {
 
                 const nodeDef = getNodeDefinition(node.data.type);
                 const hasUnconnectedRequiredInput =
-                    nodeDef?.handles.inputs.some((h) => h.required) &&
-                    inputNodeIds.length === 0;
+                    nodeDef?.handles.inputs.some((h) => h.required) && inputNodeIds.length === 0;
 
                 if (hasUnconnectedRequiredInput) {
                     await inngestStep.run(`node-${node.id}`, async () => {

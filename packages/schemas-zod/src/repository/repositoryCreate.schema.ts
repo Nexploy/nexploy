@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { branchNameSchema } from './branch.schema.ts';
+import { branchNameSchema } from './branch.schema';
 
 export const repositoryCreateFormSchema = z.object({
     name: z.string().min(1, 'Project name is required'),

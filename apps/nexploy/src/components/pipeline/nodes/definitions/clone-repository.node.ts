@@ -5,6 +5,7 @@ import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipeline
 export const cloneRepositoryNodeDef: NodeDefinition<CloneRepositoryConfig> = {
     type: 'clone-repository',
     category: 'source',
+    isStartNode: true,
     metadata: {
         name: 'pipeline.nodes.clone-repository.name',
         description: 'pipeline.nodes.clone-repository.description',

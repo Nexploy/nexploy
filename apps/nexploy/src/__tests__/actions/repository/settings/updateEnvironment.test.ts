@@ -40,7 +40,7 @@ describe('updateEnvironmentAction', () => {
             environment: { name: 'Production' },
         });
 
-        const result = await updateEnvironmentAction({ environmentId: 'env-1' } as any, 'repo-1');
+        const result = await (updateEnvironmentAction as any)({ environmentId: 'env-1' }, 'repo-1');
 
         expect(mockUpdateEnvironmentRepository).toHaveBeenCalledWith('env-1', 'repo-1');
         expect(vi.mocked(revalidatePath)).toHaveBeenCalledWith('/repositories/repo-1');
@@ -50,7 +50,7 @@ describe('updateEnvironmentAction', () => {
     it('calls setToastServer on error and returns undefined data', async () => {
         mockUpdateEnvironmentRepository.mockRejectedValue(new Error('Environment not found'));
 
-        const result = await updateEnvironmentAction({ environmentId: 'env-1' } as any, 'repo-1');
+        const result = await (updateEnvironmentAction as any)({ environmentId: 'env-1' }, 'repo-1');
 
         expect(mockSetToast).toHaveBeenCalledWith({
             type: 'error',

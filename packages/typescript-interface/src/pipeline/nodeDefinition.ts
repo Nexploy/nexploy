@@ -9,6 +9,7 @@ export interface HandleDefinition {
 export interface NodeDefinition<TConfig = Record<string, unknown>> {
     type: NodeType | string;
     category: NodeCategory;
+    isStartNode?: boolean;
     metadata: {
         name: string;
         description: string;
