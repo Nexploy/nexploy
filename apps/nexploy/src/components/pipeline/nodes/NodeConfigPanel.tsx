@@ -50,7 +50,9 @@ interface NodeConfigPanelProps {
     isOpen: boolean;
 }
 
-function zodValidator(schema: { safeParse: (v: unknown) => { success: boolean; error?: { issues: { message: string }[] } } }) {
+function zodValidator(schema: {
+    safeParse: (v: unknown) => { success: boolean; error?: { issues: { message: string }[] } };
+}) {
     return (config: Record<string, unknown>): string | null => {
         const result = schema.safeParse(config);
         if (result.success) return null;

@@ -45,9 +45,14 @@ export interface PipelineLogger {
     error(step: string, message: string): Promise<void>;
 }
 
+export type NodeRunStatus = 'running' | 'completed' | 'skipped' | 'failed';
+
 export interface StatusReporter {
     setStatus(status: PipelineStatus): Promise<void>;
     markNodeCompleted(nodeId: string): Promise<void>;
+    markNodeRunning(nodeId: string): Promise<void>;
+    markNodeSkipped(nodeId: string): Promise<void>;
+    markNodeFailed(nodeId: string): Promise<void>;
 }
 
 export interface InngestStepRunner {

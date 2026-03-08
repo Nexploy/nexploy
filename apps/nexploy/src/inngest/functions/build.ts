@@ -24,7 +24,8 @@ import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 const createBuildChannel = (buildId: string) => {
     const channelDef = channel(`build:${buildId}`)
         .addTopic(topic('log').type<{ log: BuildLogEntry }>())
-        .addTopic(topic('status').type<{ status: string }>());
+        .addTopic(topic('status').type<{ status: string }>())
+        .addTopic(topic('node-status').type<{ nodeId: string; status: string }>());
     return channelDef();
 };
 
@@ -59,9 +60,22 @@ export const buildFunction = inngest.createFunction(
             };
 
             const logger = createPipelineLogger(publishLog);
-            const reporter = createStatusReporter(publishStatus, async (nodeId: string) => {
-                await updateLastCompletedNodeInngest(buildId, nodeId);
-            });
+            const reporter = createStatusReporter(
+                publishStatus,
+                async (nodeId: string) => {
+                    await updateLastCompletedNodeInngest(buildId, nodeId);
+                    await publish(buildChannel['node-status']({ nodeId, status: 'completed' }));
+                },
+                async (nodeId: string) => {
+                    await publish(buildChannel['node-status']({ nodeId, status: 'running' }));
+                },
+                async (nodeId: string) => {
+                    await publish(buildChannel['node-status']({ nodeId, status: 'skipped' }));
+                },
+                async (nodeId: string) => {
+                    await publish(buildChannel['node-status']({ nodeId, status: 'failed' }));
+                },
+            );
 
             const pipelineConfig = await prisma.pipelineConfig.findUnique({
                 where: { repositoryId: config.repositoryId },

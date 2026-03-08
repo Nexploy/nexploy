@@ -8,16 +8,21 @@ import { NodeAddPanel } from '@/components/pipeline/nodes/add/NodeAddPanel';
 import { NodeTemplatePanel } from '@/components/pipeline/nodes/template/NodeTemplatePanel';
 import { NodeConfigPanel } from '@/components/pipeline/nodes/NodeConfigPanel';
 import { PipelineCanvas } from '@/components/pipeline/PipelineCanvas';
+import { usePipelineLiveBuild } from '@/hooks/usePipelineLiveBuild';
+import { PipelineToolbar } from '@/components/pipeline/PipelineToolbar';
 
 export function PipelineEditor() {
-    const { nodes, panelNodeId } = usePipelineContext();
+    const { nodes, panelNodeId, activeBuildId } = usePipelineContext();
     const panelNode = nodes.find((n) => n.id === panelNodeId);
     const lastPanelNodeRef = useRef(panelNode);
     if (panelNode) lastPanelNodeRef.current = panelNode;
 
+    usePipelineLiveBuild({ buildId: activeBuildId });
+
     return (
         <div className="flex h-full flex-col">
-            <div className="mx-5 mb-5 flex flex-1 overflow-hidden rounded-md border">
+            <PipelineToolbar />
+            <div className="mx-5 mb-5 flex flex-1 overflow-hidden rounded-md rounded-t-none border">
                 <PipelineCanvas />
                 <NodeTemplatePanel />
                 <NodeAddPanel />

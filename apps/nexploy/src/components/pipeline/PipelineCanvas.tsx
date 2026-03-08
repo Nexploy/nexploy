@@ -15,9 +15,8 @@ import {
     useReactFlow,
     useStore,
 } from '@xyflow/react';
-import { Loader2, Maximize, Minus, Plus } from 'lucide-react';
+import { Maximize, Minus, Plus } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
 import { BaseNode } from '@/components/pipeline/nodes/BaseNode';
@@ -28,6 +27,7 @@ import { usePipelineContext } from '@/contexts/PipelineContext';
 import { ButtonPanel } from '@/components/pipeline/nodes/ButtonPanel';
 import { useHotkeys } from '@/lib/useHotKeys';
 import { NodeContextMenu, type NodeContextMenuState } from '@/components/pipeline/NodeContextMenu';
+import { BuildsPanel } from '@/components/pipeline/BuildsPanel';
 
 const nodeTypes = { 'pipeline-node': BaseNode };
 const edgeTypes = { 'gradient-edge': GradientEdge };
@@ -44,7 +44,6 @@ export function PipelineCanvas() {
     const {
         nodes,
         edges,
-        isSaving,
         onNodesChange,
         onEdgesChange,
         onConnect,
@@ -57,6 +56,9 @@ export function PipelineCanvas() {
         redo,
         triggerAutoSave,
         setNodes,
+        activeBuilds,
+        activeBuildId,
+        setActiveBuildId,
     } = usePipelineContext();
 
     const openContextMenu = useCallback((event: React.MouseEvent, nodeId: string) => {
@@ -151,17 +153,11 @@ export function PipelineCanvas() {
             onDragLeave={onDragLeave}
             onDrop={onDrop}
         >
-            <Tooltip>
-                <TooltipTrigger
-                    className={cn(
-                        'absolute top-2 left-2 z-10 transition-opacity duration-500',
-                        isSaving ? 'opacity-100' : 'pointer-events-none opacity-0',
-                    )}
-                >
-                    <Loader2 className="text-muted-foreground size-4 animate-spin" />
-                </TooltipTrigger>
-                <TooltipContent>{t('saving')}</TooltipContent>
-            </Tooltip>
+            <BuildsPanel
+                builds={activeBuilds}
+                activeBuildId={activeBuildId}
+                onSelect={setActiveBuildId}
+            />
             <ButtonPanel />
             <ReactFlow
                 nodes={nodes}
@@ -204,7 +200,7 @@ export function PipelineCanvas() {
                     color="var(--base-6)"
                 />
                 {nodes.length > 0 && (
-                    <Panel position="bottom-left">
+                    <Panel className={'!m-2'} position="bottom-left">
                         <div className="flex gap-1.5">
                             <Button
                                 variant="secondary"

@@ -45,7 +45,7 @@ export async function startBuildRepositoryInngest(
 
     const pipelineConfig = await prisma.pipelineConfig.findUnique({
         where: { repositoryId: repository.id },
-        select: { id: true },
+        select: { id: true, nodes: true, edges: true },
     });
     if (!pipelineConfig) {
         throw new Error('No pipeline configuration found. Configure a pipeline before starting a build.');
@@ -67,6 +67,7 @@ export async function startBuildRepositoryInngest(
         commitHash: commit?.hash,
         commitMessage: commit?.message,
         environmentId: repository.environmentId,
+        pipelineSnapshot: { nodes: pipelineConfig.nodes, edges: pipelineConfig.edges },
     });
 
     const imageName = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
@@ -110,16 +111,18 @@ export async function createBuild({
     commitMessage,
     commitHash,
     environmentId,
+    pipelineSnapshot,
 }: {
     repositoryId: string;
     branch: string;
     commitMessage?: string;
     commitHash?: string;
     environmentId?: string;
+    pipelineSnapshot?: object;
 }) {
     try {
         return await prisma.build.create({
-            data: { repositoryId, branch, commitMessage, commitHash, environmentId },
+            data: { repositoryId, branch, commitMessage, commitHash, environmentId, pipelineSnapshot },
         });
     } catch {
         throw new Error('Failed to create build');
@@ -138,7 +141,10 @@ export async function updateLastCompletedNodeInngest(buildId: string, nodeId: st
     try {
         return await prisma.build.update({
             where: { id: buildId },
-            data: { lastCompletedStep: nodeId },
+            data: {
+                lastCompletedStep: nodeId,
+                completedNodes: { push: nodeId },
+            },
         });
     } catch {
         throw new Error('Failed to update last completed node');

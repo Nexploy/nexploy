@@ -150,6 +150,24 @@ export async function getRepositorieBuildLogs(repositoryId: string, buildId: str
     }
 }
 
+export async function getActiveBuilds(repositoryId: string) {
+    return prisma.build.findMany({
+        where: {
+            repositoryId,
+        },
+        orderBy: { createdAt: 'desc' },
+        select: {
+            id: true,
+            status: true,
+            branch: true,
+            commitHash: true,
+            commitMessage: true,
+            createdAt: true,
+            environment: { select: { name: true } },
+        },
+    });
+}
+
 export async function updateBranchRepository(newBranch: string, repositoryId: string) {
     try {
         return await prisma.repository.update({
@@ -160,7 +178,6 @@ export async function updateBranchRepository(newBranch: string, repositoryId: st
         throw new Error('Failed to update branch repository');
     }
 }
-
 
 export async function updateDeploymentRepository(
     data: { environmentId: string; autoDeploy: boolean },

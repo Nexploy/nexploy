@@ -23,6 +23,9 @@ import { usePipelineHistory } from '@/hooks/usePipelineHistory';
 import { useAction } from 'next-safe-action/hooks';
 import { savePipelineAction } from '@/actions/repository/pipeline/savePipeline.action';
 import { useParams } from 'next/navigation';
+import { type getActiveBuilds } from '@/services/repository.service';
+
+type ActiveBuild = Awaited<ReturnType<typeof getActiveBuilds>>[number];
 
 interface PipelineContextValue {
     nodes: Node[];
@@ -30,6 +33,9 @@ interface PipelineContextValue {
     panelNodeId: string | null;
     selectedNodeIds: string[];
     isSaving: boolean;
+    activeBuilds: ActiveBuild[];
+    activeBuildId: string | undefined;
+    setActiveBuildId: (id: string | undefined) => void;
     onNodesChange: ReturnType<typeof useNodesState>[2];
     onEdgesChange: ReturnType<typeof useEdgesState>[2];
     onConnect: (connection: Connection) => void;
@@ -51,9 +57,11 @@ const PipelineContext = createContext<PipelineContextValue | null>(null);
 
 export function PipelineProvider({
     initialGraph,
+    activeBuilds = [],
     children,
 }: {
     initialGraph: PipelineGraph;
+    activeBuilds?: ActiveBuild[];
     children: ReactNode;
 }) {
     const { nodes: initialNodes, edges: initialEdges } = graphToFlow(initialGraph);
@@ -64,6 +72,7 @@ export function PipelineProvider({
     const [edges, setEdges, onEdgesChangeBase] = useEdgesState(initialEdges);
     const [panelNodeId, setPanelNodeId] = useState<string | null>(null);
     const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
+    const [activeBuildId, setActiveBuildId] = useState<string | undefined>();
     const [saveVersion, setSaveVersion] = useState(0);
 
     const { execute: savePipeline, isPending: isSaving } = useAction(savePipelineAction);
@@ -151,21 +160,34 @@ export function PipelineProvider({
     );
 
     const handleDuplicateSelection = useCallback(() => {
-        setNodes((nds) => {
-            const selected = nds.filter((n) => n.selected);
-            if (selected.length === 0) return nds;
-            const copies = selected.map((n) => ({
-                ...n,
-                id: `${n.id}-copy-${Date.now()}`,
-                position: { x: n.position.x + 40, y: n.position.y + 40 },
-                selected: true,
-                data: { ...n.data },
-            }));
-            const unselected = nds.map((n) => ({ ...n, selected: false }));
-            return [...unselected, ...copies];
+        const selected = nodes.filter((n) => n.selected);
+        if (selected.length === 0) return;
+        const timestamp = Date.now();
+        const selectedIds = new Set(selected.map((n) => n.id));
+        const idMap = new Map(selected.map((n) => [n.id, `${n.id}-copy-${timestamp}`]));
+        const copies = selected.map((n) => ({
+            ...n,
+            id: idMap.get(n.id)!,
+            position: { x: n.position.x + 40, y: n.position.y + 40 },
+            selected: true,
+            data: { ...n.data },
+        }));
+        const unselected = nodes.map((n) => ({ ...n, selected: false }));
+        setNodes([...unselected, ...copies]);
+        setEdges((eds) => {
+            const edgeCopies = eds
+                .filter((e) => selectedIds.has(e.source) && selectedIds.has(e.target))
+                .map((e) => ({
+                    ...e,
+                    id: `${e.id}-copy-${timestamp}`,
+                    source: idMap.get(e.source)!,
+                    target: idMap.get(e.target)!,
+                }));
+            return [...eds, ...edgeCopies];
         });
+        setSelectedNodeIds(copies.map((c) => c.id));
         setSaveVersion((v) => v + 1);
-    }, [setNodes]);
+    }, [nodes, setNodes, setEdges]);
 
     const handleDeleteSelection = useCallback(() => {
         setNodes((nds) => nds.filter((n) => !selectedNodeIds.includes(n.id)));
@@ -187,6 +209,9 @@ export function PipelineProvider({
                 panelNodeId,
                 selectedNodeIds,
                 isSaving,
+                activeBuilds,
+                activeBuildId,
+                setActiveBuildId,
                 onNodesChange,
                 onEdgesChange,
                 onConnect,

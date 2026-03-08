@@ -79,6 +79,7 @@ export class NodePipelineOrchestrator {
         const abortController = new AbortController();
         const allOutputs: NodeOutputStore = new Map();
         const completedNodes: string[] = [];
+        let currentNodeId: string | null = null;
 
         let sorted: PipelineNode[];
         try {
@@ -107,6 +108,8 @@ export class NodePipelineOrchestrator {
 
                 if (node.data.disabled) {
                     await inngestStep.run(`node-${node.id}`, async () => {
+                        currentNodeId = node.id;
+                        await reporter.markNodeSkipped(node.id);
                         await logger.info(node.id, `${node.data.label} : Node skipped (disabled)`);
                     });
 
@@ -122,6 +125,8 @@ export class NodePipelineOrchestrator {
 
                 if (hasUnconnectedRequiredInput) {
                     await inngestStep.run(`node-${node.id}`, async () => {
+                        currentNodeId = node.id;
+                        await reporter.markNodeSkipped(node.id);
                         await logger.info(
                             node.id,
                             `${node.data.label} : Node skipped (required input not connected)`,
@@ -132,6 +137,9 @@ export class NodePipelineOrchestrator {
                 }
 
                 const nodeResult = await inngestStep.run(`node-${node.id}`, async () => {
+                    currentNodeId = node.id;
+                    await reporter.markNodeRunning(node.id);
+
                     if (abortController.signal.aborted) {
                         throw new DOMException('Build cancelled', 'AbortError');
                     }
@@ -148,14 +156,19 @@ export class NodePipelineOrchestrator {
                         abortSignal: abortController.signal,
                     };
 
-                    return await executor.execute(ctx);
+                    const execResult = await executor.execute(ctx);
+
+                    if (!execResult.skipped) {
+                        await reporter.markNodeCompleted(node.id);
+                    }
+
+                    return execResult;
                 });
 
                 const result = nodeResult as NodeExecutionResult;
                 allOutputs.set(node.id, result.output ?? {});
 
                 if (!result.skipped) {
-                    await reporter.markNodeCompleted(node.id);
                     completedNodes.push(node.id);
                 }
             }
@@ -183,6 +196,7 @@ export class NodePipelineOrchestrator {
                 return { success: false, error: 'Build cancelled', completedNodes };
             }
 
+            if (currentNodeId) await reporter.markNodeFailed(currentNodeId);
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
             await logger.error('error', `Build failed: ${errorMessage}`);
             await logger.error('error-details', errorDetails);
@@ -262,8 +276,11 @@ export function createPipelineLogger(
 export function createStatusReporter(
     setStatus: (status: PipelineStatus) => Promise<void>,
     markNodeCompleted: (nodeId: string) => Promise<void>,
+    markNodeRunning: (nodeId: string) => Promise<void>,
+    markNodeSkipped: (nodeId: string) => Promise<void>,
+    markNodeFailed: (nodeId: string) => Promise<void>,
 ): StatusReporter {
-    return { setStatus, markNodeCompleted };
+    return { setStatus, markNodeCompleted, markNodeRunning, markNodeSkipped, markNodeFailed };
 }
 
 export const nodePipelineOrchestrator = new NodePipelineOrchestrator();

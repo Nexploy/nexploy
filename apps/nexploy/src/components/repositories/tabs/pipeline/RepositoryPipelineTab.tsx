@@ -1,4 +1,5 @@
 import { getPipelineConfig } from '@/services/pipeline.service';
+import { getActiveBuilds } from '@/services/repository.service';
 import { PipelineEditorPage } from '@/components/pipeline/PipelineEditorPage';
 
 interface RepositoryPipelineTabProps {
@@ -6,7 +7,15 @@ interface RepositoryPipelineTabProps {
 }
 
 export async function RepositoryPipelineTab({ repositoryId }: RepositoryPipelineTabProps) {
-    const graph = await getPipelineConfig(repositoryId);
+    const [graph, activeBuilds] = await Promise.all([
+        getPipelineConfig(repositoryId),
+        getActiveBuilds(repositoryId),
+    ]);
 
-    return <PipelineEditorPage initialGraph={graph ?? { nodes: [], edges: [] }} />;
+    return (
+        <PipelineEditorPage
+            initialGraph={graph ?? { nodes: [], edges: [] }}
+            activeBuilds={activeBuilds}
+        />
+    );
 }
