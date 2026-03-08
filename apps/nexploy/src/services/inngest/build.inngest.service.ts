@@ -1,5 +1,5 @@
 import { prisma } from '../../../prisma/prisma';
-import { BuildConfig, BuildStatus, BuildStep } from '@workspace/typescript-interface/inngest/build';
+import { BuildConfig, BuildStatus } from '@workspace/typescript-interface/inngest/build';
 import { getGitProviderToken } from '@/services/git/git.service';
 import { getCommit, getValidToken } from '@/services/api/gitProvider.service';
 import { addBuildJob } from '@/inngest/jobs/queue';
@@ -20,10 +20,7 @@ export async function startBuildRepositoryInngest(
     const repository = await getRepositorieWithEnv(repositoryId);
 
     if (!repository) {
-        await setToastServer({
-            type: 'error',
-            message: 'Repository not found',
-        });
+        await setToastServer({ type: 'error', message: 'Repository not found' });
         throw new Error('Repository not found');
     }
 
@@ -46,6 +43,14 @@ export async function startBuildRepositoryInngest(
         commitHash,
     );
 
+    const pipelineConfig = await prisma.pipelineConfig.findUnique({
+        where: { repositoryId: repository.id },
+        select: { id: true, nodes: true, edges: true },
+    });
+    if (!pipelineConfig) {
+        throw new Error('No pipeline configuration found. Configure a pipeline before starting a build.');
+    }
+
     const activeBuild = await prisma.build.findFirst({
         where: { repositoryId: repository.id, status: { in: ['QUEUED', 'BUILDING'] } },
         select: { id: true, status: true },
@@ -62,6 +67,7 @@ export async function startBuildRepositoryInngest(
         commitHash: commit?.hash,
         commitMessage: commit?.message,
         environmentId: repository.environmentId,
+        pipelineSnapshot: { nodes: pipelineConfig.nodes, edges: pipelineConfig.edges },
     });
 
     const imageName = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
@@ -71,23 +77,17 @@ export async function startBuildRepositoryInngest(
         envVariables[env.key] = env.value;
     }
 
-    const buildType = repository.buildType || 'DOCKERFILE';
-
     const config: BuildConfig = {
         ...token,
         userId,
         gitAccountId: repository.gitAccountId ?? undefined,
         repositoryId: repository.id,
-        repositoryPath: repository.contextPath || '.',
         gitProvider: repository.gitProvider,
         gitUrl: repository.repositoryUrl,
         gitBranch: repository.branch,
         gitCommitHash: commit?.hash,
         gitCommitMessage: commit?.message,
         envVariables,
-        buildType,
-        dockerfilePath: repository.dockerfilePath || undefined,
-        dockerComposePath: repository.dockerComposePath || undefined,
         imageName,
         imageTag: build.id,
         autoDeploy: repository.autoDeploy,
@@ -99,10 +99,8 @@ export async function startBuildRepositoryInngest(
 
 export async function removeBuild(buildId: string) {
     try {
-        return await prisma.build.delete({
-            where: { id: buildId },
-        });
-    } catch (error: unknown) {
+        return await prisma.build.delete({ where: { id: buildId } });
+    } catch {
         throw new Error('Failed to remove build');
     }
 }
@@ -113,88 +111,75 @@ export async function createBuild({
     commitMessage,
     commitHash,
     environmentId,
+    pipelineSnapshot,
 }: {
     repositoryId: string;
     branch: string;
     commitMessage?: string;
     commitHash?: string;
     environmentId?: string;
+    pipelineSnapshot?: object;
 }) {
     try {
         return await prisma.build.create({
-            data: {
-                repositoryId,
-                branch,
-                commitMessage,
-                commitHash,
-                environmentId,
-            },
+            data: { repositoryId, branch, commitMessage, commitHash, environmentId, pipelineSnapshot },
         });
-    } catch (error: unknown) {
+    } catch {
         throw new Error('Failed to create build');
     }
 }
 
 export async function updateStatusBuildInngest(buildId: string, status: BuildStatus) {
     try {
-        return await prisma.build.update({
-            where: { id: buildId },
-            data: { status },
-        });
-    } catch (error: unknown) {
+        return await prisma.build.update({ where: { id: buildId }, data: { status } });
+    } catch {
         throw new Error('Failed to update status build');
     }
 }
 
-export async function updateLastCompletedStepInngest(buildId: string, step: BuildStep) {
+export async function updateNodeStatusInngest(
+    buildId: string,
+    nodeId: string,
+    status: string,
+) {
     try {
-        return await prisma.build.update({
-            where: { id: buildId },
-            data: { lastCompletedStep: step },
-        });
-    } catch (error: unknown) {
-        throw new Error('Failed to update last completed step');
+        await prisma.$executeRaw`
+            UPDATE "build"
+            SET "nodeStatuses" = COALESCE("nodeStatuses", '{}') || jsonb_build_object(${nodeId}::text, ${status}::text)
+            WHERE "id" = ${buildId}
+        `;
+        if (status === 'completed') {
+            await prisma.build.update({
+                where: { id: buildId },
+                data: { lastCompletedStep: nodeId },
+            });
+        }
+    } catch {
+        throw new Error('Failed to update node status');
     }
 }
 
 export async function cancelBuildInngest(buildId: string) {
-    const build = await prisma.build.findUnique({
-        where: { id: buildId },
-    });
+    const build = await prisma.build.findUnique({ where: { id: buildId } });
 
-    if (!build) {
-        throw new Error('Build not found');
-    }
-
+    if (!build) throw new Error('Build not found');
     if (build.status !== 'QUEUED' && build.status !== 'BUILDING') {
         throw new Error('Build cannot be cancelled');
     }
 
-    await inngest.send({
-        name: 'build/cancel',
-        data: { buildId },
-    });
+    await inngest.send({ name: 'build/cancel', data: { buildId } });
 
-    return prisma.build.update({
-        where: { id: buildId },
-        data: { status: 'CANCELLED' },
-    });
+    return prisma.build.update({ where: { id: buildId }, data: { status: 'CANCELLED' } });
 }
 
 export async function findBuildWithEnvInngest(buildId: string) {
     try {
         const build = await prisma.build.findUnique({
             where: { id: buildId },
-            include: {
-                repository: {
-                    include: {
-                        envVariables: true,
-                    },
-                },
-            },
+            include: { repository: { include: { envVariables: true } } },
         });
 
-        if (build && build.repository) {
+        if (build?.repository) {
             build.repository.envVariables = build.repository.envVariables.map((env) => ({
                 ...env,
                 value: decrypt(env.value),
@@ -202,7 +187,7 @@ export async function findBuildWithEnvInngest(buildId: string) {
         }
 
         return build;
-    } catch (error: unknown) {
+    } catch {
         throw new Error('Failed to find build');
     }
 }
@@ -236,23 +221,17 @@ export async function retryBuildRepositoryInngest(
         envVariables[env.key] = env.value;
     }
 
-    const buildType = (repository.buildType as BuildConfig['buildType']) || 'DOCKERFILE';
-
     const config: BuildConfig = {
         ...token,
         userId,
         gitAccountId: repository.gitAccountId ?? undefined,
         repositoryId: repository.id,
-        repositoryPath: repository.contextPath || '.',
         gitProvider: repository.gitProvider,
         gitUrl: repository.repositoryUrl,
         gitBranch: existingBuild.branch,
         gitCommitHash: existingBuild.commitHash || undefined,
         gitCommitMessage: existingBuild.commitMessage || undefined,
         envVariables,
-        buildType,
-        dockerfilePath: repository.dockerfilePath || undefined,
-        dockerComposePath: repository.dockerComposePath || undefined,
         imageName,
         imageTag: buildId,
         autoDeploy: repository.autoDeploy,
@@ -263,94 +242,21 @@ export async function retryBuildRepositoryInngest(
 }
 
 export async function resumeBuildRepositoryInngest(
-    { buildId, environmentId, startFromStep }: ResumeBuildSchemaType,
+    { buildId, environmentId }: ResumeBuildSchemaType,
     userId: string,
     existingBuild: Awaited<ReturnType<typeof findBuildWithEnvInngest>>,
 ) {
     if (!existingBuild || !existingBuild.repository) {
         throw new Error('Build or Repository not found');
     }
-
     if (existingBuild.status !== 'FAILED') {
         throw new Error('Can only resume failed builds');
     }
 
-    const repository = existingBuild.repository;
+    // For node pipeline, resume = retry from scratch (Inngest handles step memoization within a run)
+    await retryBuildRepositoryInngest({ buildId, environmentId }, userId, existingBuild);
 
-    const oldToken = await getGitProviderToken(repository.gitProvider, {
-        gitAccountId: repository.gitAccountId ?? undefined,
-        requestedUserId: userId,
-    });
-    const token = await getValidToken(
-        oldToken,
-        repository.gitProvider,
-        userId,
-        repository.gitAccountId ?? undefined,
-    );
-
-    const imageName = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
-
-    const envVariables: Record<string, string> = {};
-    for (const env of repository.envVariables) {
-        envVariables[env.key] = env.value;
-    }
-
-    const resumeStep =
-        startFromStep || getNextStep(existingBuild.lastCompletedStep as BuildStep | null);
-
-    const buildType = (repository.buildType as BuildConfig['buildType']) || 'DOCKERFILE';
-
-    const config: BuildConfig = {
-        ...token,
-        userId,
-        gitAccountId: repository.gitAccountId ?? undefined,
-        repositoryId: repository.id,
-        repositoryPath: repository.contextPath || '.',
-        gitProvider: repository.gitProvider,
-        gitUrl: repository.repositoryUrl,
-        gitBranch: existingBuild.branch,
-        gitCommitHash: existingBuild.commitHash || undefined,
-        gitCommitMessage: existingBuild.commitMessage || undefined,
-        envVariables,
-        buildType,
-        dockerfilePath: repository.dockerfilePath || undefined,
-        dockerComposePath: repository.dockerComposePath || undefined,
-        imageName,
-        imageTag: buildId,
-        autoDeploy: repository.autoDeploy,
-        startFromStep: resumeStep,
-        environmentId,
-    };
-
-    await prisma.build.update({
-        where: { id: buildId },
-        data: { status: 'QUEUED' },
-    });
-
-    await addBuildJob(buildId, config);
-}
-
-function getNextStep(lastCompletedStep: BuildStep | null): BuildStep | undefined {
-    if (!lastCompletedStep) return undefined;
-
-    const steps: BuildStep[] = [
-        'clone-repository',
-        'prepare-dockerfile',
-        'prepare-compose',
-        'write-env-file',
-        'build-docker-image',
-        'deploy-container',
-        'deploy-compose',
-        'cleanup',
-        'finalize-logs',
-    ];
-
-    const currentIndex = steps.indexOf(lastCompletedStep);
-    if (currentIndex === -1 || currentIndex >= steps.length - 1) {
-        return undefined;
-    }
-
-    return steps[currentIndex + 1];
+    await prisma.build.update({ where: { id: buildId }, data: { status: 'QUEUED' } });
 }
 
 export async function getAllBuildsInngest(repositoryId: string) {
@@ -358,28 +264,18 @@ export async function getAllBuildsInngest(repositoryId: string) {
         return await prisma.build.findMany({
             where: { repositoryId },
             orderBy: { createdAt: 'desc' },
-            include: {
-                environment: {
-                    select: { id: true, name: true },
-                },
-            },
+            include: { environment: { select: { id: true, name: true } } },
         });
-    } catch (error: unknown) {
+    } catch {
         throw new Error('Failed to get builds');
     }
 }
 
 export async function getAllEnvsBuildInngest(repositoryId: string) {
     try {
-        const envs = await prisma.envVariable.findMany({
-            where: { repositoryId },
-        });
-
-        return envs.map((env) => ({
-            ...env,
-            value: decrypt(env.value),
-        }));
-    } catch (error: unknown) {
+        const envs = await prisma.envVariable.findMany({ where: { repositoryId } });
+        return envs.map((env) => ({ ...env, value: decrypt(env.value) }));
+    } catch {
         throw new Error('Failed to get builds');
     }
 }
@@ -387,13 +283,10 @@ export async function getAllEnvsBuildInngest(repositoryId: string) {
 export async function getCompletedBuildsInngest(repositoryId: string) {
     try {
         return await prisma.build.findMany({
-            where: {
-                repositoryId,
-                status: 'COMPLETED',
-            },
+            where: { repositoryId, status: 'COMPLETED' },
             orderBy: { createdAt: 'desc' },
         });
-    } catch (error: unknown) {
+    } catch {
         throw new Error('Failed to get completed builds');
     }
 }

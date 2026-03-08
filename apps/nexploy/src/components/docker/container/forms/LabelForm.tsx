@@ -84,7 +84,7 @@ export function LabelForm({ mode, defaultLabel, originalLabel }: LabelFormProps)
                     name="key"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('label.key')}</FormLabel>
+                            <FormLabel>{t('key')}</FormLabel>
                             <FormControl>
                                 <Input {...field} placeholder={t('label.keyPlaceholder')} />
                             </FormControl>
@@ -98,7 +98,7 @@ export function LabelForm({ mode, defaultLabel, originalLabel }: LabelFormProps)
                     name="value"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('label.value')}</FormLabel>
+                            <FormLabel>{t('value')}</FormLabel>
                             <FormControl>
                                 <Input {...field} placeholder={t('valuePlaceholder')} />
                             </FormControl>

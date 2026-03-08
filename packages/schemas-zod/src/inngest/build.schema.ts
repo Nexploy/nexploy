@@ -1,17 +1,5 @@
 import { z } from 'zod';
 
-export const buildStepSchema = z.enum([
-    'clone-repository',
-    'prepare-dockerfile',
-    'prepare-compose',
-    'write-env-file',
-    'build-docker-image',
-    'deploy-container',
-    'deploy-compose',
-    'cleanup',
-    'finalize-logs',
-]);
-
 export const startBuildSchema = z.object({
     repositoryId: z.cuid(),
     commitHash: z.string().optional(),
@@ -28,7 +16,6 @@ export type RetryBuildSchemaType = z.infer<typeof retryBuildSchema>;
 
 export const resumeBuildSchema = z.object({
     buildId: z.cuid(),
-    startFromStep: buildStepSchema.optional(),
     environmentId: z.cuid(),
 });
 

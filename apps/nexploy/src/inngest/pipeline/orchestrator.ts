@@ -1,93 +1,69 @@
-import { BuildConfig, BuildType } from '@workspace/typescript-interface/inngest/build';
+import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 import {
-    IBuildStrategy,
+    PipelineEdge,
+    PipelineGraph,
+    PipelineNode,
+} from '@workspace/typescript-interface/pipeline/node';
+import {
     InngestStepRunner,
-    IPipelineOrchestrator,
     LogLevel,
+    NodeExecutionContext,
+    NodeExecutionResult,
+    NodeOutputData,
+    NodeOutputStore,
     PipelineLogger,
     PipelineResult,
     PipelineStatus,
     StatusReporter,
-    StepId,
 } from '@/types/pipeline.type';
-import { PipelineContext } from './context';
-import { dockerfileStrategy } from '@/inngest/pipeline/strategies/dockerfile.strategy';
-import { dockerComposeStrategy } from '@/inngest/pipeline/strategies/compose.strategy';
-import { gitService } from '@/inngest/pipeline/services/git.service';
+import { getNodeExecutor } from './nodes/registry';
+import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
+import { analyzeGraph } from './utils/graphUtils';
+import { gitService } from './services/git.service';
 import { prisma } from '../../../prisma/prisma';
 
 function formatErrorDetails(error: unknown): string {
     if (error instanceof Error) {
         const details = [`Error: ${error.message}`, `Name: ${error.name}`];
-
         if (process.env.NODE_ENV !== 'production') {
-            if (error.stack) {
-                details.push(`Stack trace:\n${error.stack}`);
-            }
-
-            const additionalProps = Object.entries(error)
-                .filter(([key]) => !['message', 'name', 'stack'].includes(key))
-                .map(([key, value]) => `${key}: ${JSON.stringify(value)}`);
-
-            if (additionalProps.length > 0) {
-                details.push(`Additional info:\n${additionalProps.join('\n')}`);
-            }
+            if (error.stack) details.push(`Stack trace:\n${error.stack}`);
+            const extra = Object.entries(error)
+                .filter(([k]) => !['message', 'name', 'stack'].includes(k))
+                .map(([k, v]) => `${k}: ${JSON.stringify(v)}`);
+            if (extra.length) details.push(`Additional info:\n${extra.join('\n')}`);
         }
-
         return details.join('\n');
     }
-
     return `Unknown error: ${JSON.stringify(error, null, 2)}`;
 }
 
-export class PipelineOrchestrator implements IPipelineOrchestrator {
-    private strategies: Map<BuildType, IBuildStrategy> = new Map();
+function getInputNodeIds(nodeId: string, edges: PipelineEdge[]): string[] {
+    return edges.filter((e) => e.target === nodeId).map((e) => e.source);
+}
 
-    constructor() {
-        this.registerStrategy(dockerfileStrategy);
-        this.registerStrategy(dockerComposeStrategy);
+function findWorkDir(allOutputs: NodeOutputStore): string | undefined {
+    for (const output of allOutputs.values()) {
+        if (typeof output.workDir === 'string') return output.workDir;
     }
+    return undefined;
+}
 
-    registerStrategy(strategy: IBuildStrategy): void {
-        this.strategies.set(strategy.buildType, strategy);
-    }
-
-    private getStrategy(buildType: BuildType): IBuildStrategy {
-        const strategy = this.strategies.get(buildType);
-        if (!strategy) {
-            throw new Error(`No strategy registered for build type: ${buildType}`);
-        }
-        return strategy;
-    }
-
-    private shouldRunStep(stepId: StepId, allSteps: StepId[], startFromStep?: StepId): boolean {
-        if (!startFromStep) return true;
-
-        const startIndex = allSteps.indexOf(startFromStep);
-        const stepIndex = allSteps.indexOf(stepId);
-
-        return stepIndex >= startIndex;
-    }
-
+export class NodePipelineOrchestrator {
     private startCancellationWatcher(
         buildId: string,
-        context: PipelineContext,
+        abortController: AbortController,
         intervalMs = 2000,
     ): NodeJS.Timeout {
         return setInterval(async () => {
-            if (context.isAborted()) return;
-
+            if (abortController.signal.aborted) return;
             try {
                 const build = await prisma.build.findUnique({
                     where: { id: buildId },
                     select: { status: true },
                 });
-
-                if (build?.status === 'CANCELLED') {
-                    context.abort();
-                }
+                if (build?.status === 'CANCELLED') abortController.abort();
             } catch {
-                /* empty */
+                /* ignore */
             }
         }, intervalMs);
     }
@@ -95,173 +71,203 @@ export class PipelineOrchestrator implements IPipelineOrchestrator {
     async execute(
         buildId: string,
         config: BuildConfig,
+        graph: PipelineGraph,
         inngestStep: InngestStepRunner,
         logger: PipelineLogger,
         reporter: StatusReporter,
     ): Promise<PipelineResult> {
-        const strategy = this.getStrategy(config.buildType);
+        const abortController = new AbortController();
+        const allOutputs: NodeOutputStore = new Map();
+        let currentNodeId: string | null = null;
 
-        strategy.validateConfig(config);
+        let sorted: PipelineNode[];
+        let reachableNodeIds: Set<string>;
+        try {
+            ({ sorted, reachableNodeIds } = analyzeGraph(graph));
+        } catch (err) {
+            throw new Error(`Invalid pipeline graph: ${err instanceof Error ? err.message : err}`);
+        }
 
-        const context = new PipelineContext(buildId, config, logger, reporter);
-
-        const steps = strategy.getSteps();
-        const stepIds = steps.map((s) => s.metadata.id);
-        const completedSteps: StepId[] = [];
-
-        const cancellationWatcher = this.startCancellationWatcher(buildId, context);
+        const cancellationWatcher = this.startCancellationWatcher(buildId, abortController);
 
         try {
             await inngestStep.run('pipeline-init', async () => {
-                if (config.startFromStep) {
-                    await logger.info(
-                        'resume',
-                        `Resuming build from step: ${config.startFromStep}`,
-                    );
-                }
                 await reporter.setStatus('BUILDING');
             });
 
-            for (const step of steps) {
-                const stepId = step.metadata.id;
+            for (const node of sorted) {
+                const executor = getNodeExecutor(node.data.type);
+                if (!executor) {
+                    throw new Error(`Unknown node type: "${node.data.type}"`);
+                }
 
-                if (!step.shouldRun(config.buildType)) {
+                const inputNodeIds = getInputNodeIds(node.id, graph.edges);
+                const inputOutputs: NodeOutputData[] = inputNodeIds
+                    .map((id) => allOutputs.get(id))
+                    .filter((o): o is NodeOutputData => o !== undefined);
+
+                if (!reachableNodeIds.has(node.id)) {
+                    await inngestStep.run(`node-${node.id}`, async () => {
+                        currentNodeId = node.id;
+                        await reporter.markNodeSkipped(node.id);
+                        await logger.info(
+                            node.id,
+                            `${node.data.label} : Node skipped (not connected to a start node)`,
+                        );
+                    });
+                    allOutputs.set(node.id, {});
                     continue;
                 }
 
-                if (!this.shouldRunStep(stepId, stepIds, config.startFromStep)) {
+                if (node.data.disabled) {
+                    await inngestStep.run(`node-${node.id}`, async () => {
+                        currentNodeId = node.id;
+                        await reporter.markNodeSkipped(node.id);
+                        await logger.info(node.id, `${node.data.label} : Node skipped (disabled)`);
+                    });
+
+                    const mergedInputs = Object.assign({}, ...inputOutputs);
+                    allOutputs.set(node.id, mergedInputs);
                     continue;
                 }
 
-                const stepResult = await inngestStep.run(stepId, async () => {
-                    if (context.isAborted()) {
+                const nodeDef = getNodeDefinition(node.data.type);
+                const hasUnconnectedRequiredInput =
+                    nodeDef?.handles.inputs.some((h) => h.required) && inputNodeIds.length === 0;
+
+                if (hasUnconnectedRequiredInput) {
+                    await inngestStep.run(`node-${node.id}`, async () => {
+                        currentNodeId = node.id;
+                        await reporter.markNodeSkipped(node.id);
+                        await logger.info(
+                            node.id,
+                            `${node.data.label} : Node skipped (required input not connected)`,
+                        );
+                    });
+                    allOutputs.set(node.id, {});
+                    continue;
+                }
+
+                const nodeResult = await inngestStep.run(`node-${node.id}`, async () => {
+                    currentNodeId = node.id;
+                    await reporter.markNodeRunning(node.id);
+
+                    if (abortController.signal.aborted) {
                         throw new DOMException('Build cancelled', 'AbortError');
                     }
 
-                    const stepContext = context.createStepContext();
+                    const ctx: NodeExecutionContext = {
+                        buildId,
+                        config,
+                        nodeId: node.id,
+                        nodeConfig: node.data.config ?? {},
+                        inputOutputs,
+                        allOutputs,
+                        logger,
+                        reporter,
+                        abortSignal: abortController.signal,
+                    };
 
                     try {
-                        const timeoutMs = step.metadata.timeout;
-                        const executePromise = step.execute(stepContext);
-                        const result = await (timeoutMs
-                            ? Promise.race([
-                                  executePromise,
-                                  new Promise<never>((_, reject) =>
-                                      setTimeout(
-                                          () =>
-                                              reject(
-                                                  new Error(
-                                                      `Step "${stepId}" timed out after ${timeoutMs / 1000}s`,
-                                                  ),
-                                              ),
-                                          timeoutMs,
-                                      ),
-                                  ),
-                              ])
-                            : executePromise);
-
-                        if (!result.skipped) {
-                            await reporter.markStepCompleted(stepId);
+                        const execResult = await executor.execute(ctx);
+                        if (!execResult.skipped) {
+                            await reporter.markNodeCompleted(node.id);
                         }
-
-                        return {
-                            result,
-                            contextUpdates: {
-                                workDir: stepContext.context.workDir,
-                                imageId: stepContext.context.imageId,
-                                containerId: stepContext.context.containerId,
-                            },
-                        };
-                    } catch (error) {
-                        if (step.onError) {
-                            await step.onError(
-                                stepContext,
-                                error instanceof Error ? error : new Error(String(error)),
-                            );
-                        }
-                        throw error;
+                        return execResult;
+                    } catch (err) {
+                        await reporter.markNodeFailed(node.id);
+                        throw err;
                     }
                 });
 
-                if (stepResult && typeof stepResult === 'object') {
-                    const { result, contextUpdates } = stepResult as {
-                        result: { success: boolean; skipped?: boolean; data?: unknown };
-                        contextUpdates: {
-                            workDir?: string | null;
-                            imageId?: string | null;
-                            containerId?: string | null;
-                        };
-                    };
+                const result = nodeResult as NodeExecutionResult;
+                allOutputs.set(node.id, result.output ?? {});
 
-                    if (contextUpdates.workDir) context.workDir = contextUpdates.workDir;
-                    if (contextUpdates.imageId) context.imageId = contextUpdates.imageId;
-                    if (contextUpdates.containerId)
-                        context.containerId = contextUpdates.containerId;
-
-                    if (!result.skipped) {
-                        context.setStepResult(stepId, result);
-                    }
-
-                    completedSteps.push(stepId);
-                }
             }
 
             await inngestStep.run('pipeline-complete', async () => {
                 await reporter.setStatus('COMPLETED');
+                await this.saveVersion(buildId, config, allOutputs, logger);
             });
 
-            return {
-                success: true,
-                imageId: context.imageId || undefined,
-                containerId: context.containerId || undefined,
-                projectName: context.projectName || undefined,
-                completedSteps,
-            };
+            return { success: true };
         } catch (error) {
             const errorDetails = formatErrorDetails(error);
-
-            const workDirToClean = context.workDir;
+            const workDir = findWorkDir(allOutputs);
 
             if (error instanceof Error && error.name === 'AbortError') {
                 await logger.info('cancel', 'Build cancelled by user');
                 await reporter.setStatus('CANCELLED');
-
-                if (workDirToClean) {
+                if (workDir) {
                     try {
-                        await gitService.cleanup(workDirToClean);
-                    } catch (cleanupError) {
-                        console.error('Cleanup failed after cancellation:', cleanupError);
+                        await gitService.cleanup(workDir);
+                    } catch (e) {
+                        console.error('Cleanup failed after cancellation:', e);
                     }
                 }
-
-                return {
-                    success: false,
-                    error: 'Build cancelled',
-                    completedSteps,
-                };
+                return { success: false, error: 'Build cancelled' };
             }
 
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-
             await logger.error('error', `Build failed: ${errorMessage}`);
             await logger.error('error-details', errorDetails);
-
             await reporter.setStatus('FAILED');
 
-            if (workDirToClean) {
+            if (workDir) {
                 try {
-                    await gitService.cleanup(workDirToClean);
-                } catch (cleanupError) {
-                    await logger.error(
-                        'cleanup-error',
-                        `Cleanup failed: ${formatErrorDetails(cleanupError)}`,
-                    );
+                    await gitService.cleanup(workDir);
+                } catch (e) {
+                    await logger.error('cleanup-error', `Cleanup failed: ${formatErrorDetails(e)}`);
                 }
             }
 
             throw error;
         } finally {
             clearInterval(cancellationWatcher);
+        }
+    }
+
+    private async saveVersion(
+        buildId: string,
+        config: BuildConfig,
+        allOutputs: NodeOutputStore,
+        logger: PipelineLogger,
+    ): Promise<void> {
+        try {
+            const lastVersion = await prisma.version.findFirst({
+                where: {
+                    repositoryId: config.repositoryId,
+                    environmentId: config.environmentId ?? null,
+                },
+                orderBy: { versionNumber: 'desc' },
+                select: { versionNumber: true },
+            });
+            const versionNumber = (lastVersion?.versionNumber ?? 0) + 1;
+
+            await prisma.version.upsert({
+                where: {
+                    repositoryId_imageTag: {
+                        repositoryId: config.repositoryId,
+                        imageTag: config.imageTag,
+                    },
+                },
+                update: {},
+                create: {
+                    repositoryId: config.repositoryId,
+                    imageTag: config.imageTag,
+                    versionNumber,
+                    buildType: 'NODE_PIPELINE',
+                    branch: config.gitBranch ?? null,
+                    commitHash: config.gitCommitHash ?? null,
+                    commitMessage: config.gitCommitMessage ?? null,
+                    environmentId: config.environmentId ?? null,
+                },
+            });
+        } catch (err) {
+            await logger.warn(
+                'finalize',
+                `Failed to save version: ${err instanceof Error ? err.message : String(err)}`,
+            );
         }
     }
 }
@@ -280,9 +286,12 @@ export function createPipelineLogger(
 
 export function createStatusReporter(
     setStatus: (status: PipelineStatus) => Promise<void>,
-    markStepCompleted: (stepId: StepId) => Promise<void>,
+    markNodeCompleted: (nodeId: string) => Promise<void>,
+    markNodeRunning: (nodeId: string) => Promise<void>,
+    markNodeSkipped: (nodeId: string) => Promise<void>,
+    markNodeFailed: (nodeId: string) => Promise<void>,
 ): StatusReporter {
-    return { setStatus, markStepCompleted };
+    return { setStatus, markNodeCompleted, markNodeRunning, markNodeSkipped, markNodeFailed };
 }
 
-export const pipelineOrchestrator = new PipelineOrchestrator();
+export const nodePipelineOrchestrator = new NodePipelineOrchestrator();

@@ -42,8 +42,6 @@
     "volumeName": "Volume Name",
     "volumeNamePlaceholder": "my-volume",
     "driverOptions": "Driver Options",
-    "key": "Key",
-    "value": "Value",
     "keyPlaceholder": "option_name",
     "valuePlaceholder": "option_value",
     "addOption": "Add Option",
@@ -344,14 +342,6 @@
         "user": "User",
         "noData": "No process data"
     },
-    "containerLabels": {
-        "title": "Labels",
-        "addTitle": "Add a label",
-        "addDescription": "Add a new label to this container.",
-        "addLabel": "Add a label",
-        "add": "Add",
-        "noLabels": "No labels"
-    },
     "containerHealth": {
         "title": "Health Logs",
         "status": "Status:",
@@ -454,10 +444,6 @@
         "volumes": {
             "title": "Docker Volumes",
             "description": "Manage and view all your Docker volumes"
-        },
-        "containers": {
-            "title": "Containers",
-            "description": "Manage and view all your Docker containers"
         }
     },
     "tables": {
@@ -522,10 +508,6 @@
         "edit": "Edit",
         "keyPlaceholder": "key",
         "valuePlaceholder": "value",
-        "env": {
-            "key": "Key",
-            "value": "Value"
-        },
         "port": {
             "containerPort": "Container port",
             "hostPort": "Host port",
@@ -544,8 +526,6 @@
             "selectNetwork": "Select a network"
         },
         "label": {
-            "key": "Key",
-            "value": "Value",
             "keyPlaceholder": "com.example.label"
         }
     },
@@ -597,8 +577,8 @@
         "envVars": "Environment Variables",
         "envVarsDescription": "Variables to inject into the container",
         "addVariable": "Add Variable",
-        "keyPlaceholder": "KEY",
-        "valuePlaceholder": "value",
+        "keyPlaceholder": "Key",
+        "valuePlaceholder": "Value",
         "noEnvVarsConfigured": "No environment variables configured",
         "volumes": "Volumes",
         "volumesDescription": "Volume mounting between host and container",

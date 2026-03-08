@@ -1,8 +1,6 @@
-import { BuildConfig, BuildType } from '@workspace/typescript-interface/inngest/build';
+import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 
 export type LogLevel = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
-
-export type StepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
 
 export type PipelineStatus =
     | 'QUEUED'
@@ -12,21 +10,31 @@ export type PipelineStatus =
     | 'FAILED'
     | 'CANCELLED';
 
-export type StepId = string;
+export type NodeOutputData = Record<string, unknown>;
 
-export interface StepResult<T = unknown> {
+export type NodeOutputStore = Map<string, NodeOutputData>;
+
+export interface NodeExecutionContext {
+    buildId: string;
+    config: BuildConfig;
+    nodeId: string;
+    nodeConfig: Record<string, unknown>;
+    inputOutputs: NodeOutputData[];
+    allOutputs: NodeOutputStore;
+    logger: PipelineLogger;
+    reporter: StatusReporter;
+    abortSignal: AbortSignal;
+}
+
+export interface NodeExecutionResult {
     success: boolean;
-    data?: T;
-    error?: Error;
+    output: NodeOutputData;
     skipped?: boolean;
 }
 
-export interface StepMetadata {
-    id: StepId;
-    name: string;
-    description?: string;
-    retryable?: boolean;
-    timeout?: number;
+export interface INodeExecutor {
+    readonly type: string;
+    execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult>;
 }
 
 export interface PipelineLogger {
@@ -37,62 +45,14 @@ export interface PipelineLogger {
     error(step: string, message: string): Promise<void>;
 }
 
+export type NodeRunStatus = 'running' | 'completed' | 'skipped' | 'failed';
+
 export interface StatusReporter {
     setStatus(status: PipelineStatus): Promise<void>;
-    markStepCompleted(stepId: StepId): Promise<void>;
-}
-
-export interface PipelineContextData {
-    buildId: string;
-    config: BuildConfig;
-    workDir: string | null;
-    imageName: string | null;
-    imageId: string | null;
-    containerId: string | null;
-    projectName: string | null;
-    abortController: AbortController;
-    startFromStep?: StepId;
-    metadata: Record<string, unknown>;
-}
-
-export interface StepExecutionContext {
-    context: PipelineContextData;
-    logger: PipelineLogger;
-    reporter: StatusReporter;
-    getStepResult<T>(stepId: StepId): T | undefined;
-    setMetadata(key: string, value: unknown): void;
-    getMetadata<T>(key: string): T | undefined;
-}
-
-export interface IPipelineStep {
-    readonly metadata: StepMetadata;
-
-    shouldRun(buildType: BuildType): boolean;
-
-    execute(ctx: StepExecutionContext): Promise<StepResult>;
-
-    onError?(ctx: StepExecutionContext, error: Error): Promise<void>;
-}
-
-export interface IBuildStrategy {
-    readonly buildType: BuildType;
-    readonly name: string;
-
-    getSteps(): IPipelineStep[];
-
-    validateConfig(config: BuildConfig): void;
-}
-
-export interface IPipelineOrchestrator {
-    registerStrategy(strategy: IBuildStrategy): void;
-
-    execute(
-        buildId: string,
-        config: BuildConfig,
-        inngestStep: InngestStepRunner,
-        logger: PipelineLogger,
-        reporter: StatusReporter,
-    ): Promise<PipelineResult>;
+    markNodeCompleted(nodeId: string): Promise<void>;
+    markNodeRunning(nodeId: string): Promise<void>;
+    markNodeSkipped(nodeId: string): Promise<void>;
+    markNodeFailed(nodeId: string): Promise<void>;
 }
 
 export interface InngestStepRunner {
@@ -101,12 +61,7 @@ export interface InngestStepRunner {
 
 export interface PipelineResult {
     success: boolean;
-    imageId?: string;
-    containerId?: string;
-    projectName?: string;
     error?: string;
-    completedSteps: StepId[];
-    failedStep?: StepId;
 }
 
 export type ProgressCallback = (progress: number, message: string) => void | Promise<void>;
@@ -116,4 +71,18 @@ export interface SSEEvent {
     message?: string;
     result?: unknown;
     timestamp?: string;
+}
+
+export function getFromInputs<T>(inputOutputs: NodeOutputData[], key: string): T | undefined {
+    for (const output of inputOutputs) {
+        if (key in output) return output[key] as T;
+    }
+    return undefined;
+}
+
+export function getFromAllOutputs<T>(allOutputs: NodeOutputStore, key: string): T | undefined {
+    for (const output of allOutputs.values()) {
+        if (key in output) return output[key] as T;
+    }
+    return undefined;
 }

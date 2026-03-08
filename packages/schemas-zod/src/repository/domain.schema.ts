@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Base domain schema avec tous les champs
 export const domainSchema = z.object({
     id: z.string().optional(),
     host: z.string().min(1, 'Le domaine est requis'),
@@ -14,13 +13,11 @@ export const domainSchema = z.object({
     cloudflareDnsRecordId: z.string().optional(),
 });
 
-// Form schema pour le formulaire client
 export const domainsFormSchema = z.object({
     domains: z.array(domainSchema),
     deletedIds: z.array(z.string()).default([]),
 });
 
-// Schema pour l'action serveur avec les 3 types d'opérations
 export const domainOperationsSchema = z.object({
     repositoryId: z.string(),
     add: z.array(domainSchema).default([]),

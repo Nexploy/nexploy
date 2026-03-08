@@ -72,7 +72,6 @@ export function useBuildActions({
             id: 'resume',
             component: (
                 <ResumeBuildButton
-                    mode={mode}
                     buildId={buildId}
                     lastCompletedStep={lastCompletedStep}
                     onSuccess={onResumeSuccess}

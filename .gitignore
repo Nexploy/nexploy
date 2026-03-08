@@ -36,11 +36,7 @@ npm-debug.log*
 *.pem
 
 .idea
-/TODO
 
 infra/traefik/letsencrypt/
 infra/traefik/logs/
 *.log
-
-.claude
-

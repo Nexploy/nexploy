@@ -8,9 +8,10 @@ import { RepositoryVersionsTab } from '@/components/repositories/tabs/versions/R
 import { ExternalLink, GitBranch, Github, Gitlab, Link2, Server } from 'lucide-react';
 import { RepositoryBuildsTab } from '@/components/repositories/tabs/builds/RepositoryBuildsTab';
 import { RepositoryDeploymentTab } from '@/components/repositories/tabs/deployment/RepositoryDeploymentTab';
+import { RepositoryPipelineTab } from '@/components/repositories/tabs/pipeline/RepositoryPipelineTab';
 import { getRepositorieById } from '@/services/repository.service';
 import { Separator } from '@workspace/ui/components/separator';
-import { capitalizeFirstLetter, toDisplayLabel } from '@/utils/capitalize';
+import { capitalizeFirstLetter } from '@/utils/capitalize';
 import Link from 'next/link';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
 
@@ -37,7 +38,7 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
     return (
         <BreadcrumbProvider segments={{ repositoryId: repository.name }}>
             <div className="flex h-full w-full flex-1 flex-col">
-                <div className="flex flex-col gap-4 overflow-hidden">
+                <div className="flex flex-1 flex-col gap-4 overflow-hidden">
                     <div className="flex items-start justify-between gap-2 px-5">
                         <div className="flex gap-3">
                             <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
@@ -76,10 +77,6 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                                             {repository.environment?.name}
                                         </span>
                                     </div>
-                                    <Separator orientation={'vertical'} className={'!h-3 w-1'} />
-                                    <span className={'truncate'}>
-                                        {toDisplayLabel(repository.buildType)}
-                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -93,13 +90,9 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
 
                     <RepositoryTabs>
                         {{
+                            pipeline: <RepositoryPipelineTab repositoryId={repository.id} />,
                             builds: <RepositoryBuildsTab repositoryId={repository.id} />,
-                            versions: (
-                                <RepositoryVersionsTab
-                                    repositoryId={repository.id}
-                                    buildType={repository.buildType}
-                                />
-                            ),
+                            versions: <RepositoryVersionsTab repositoryId={repository.id} />,
                             env: <RepositoryEnvTab repositoryId={repository.id} />,
                             domain: <RepositoryDomainsTab repositoryId={repository.id} />,
                             deployment: <RepositoryDeploymentTab repositoryId={repository.id} />,

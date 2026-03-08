@@ -11,7 +11,7 @@ import {
     setupWebhookForRepository,
 } from '@/services/webhook/webhook.service';
 import { decrypt, encrypt } from '@/lib/encryption';
-import { BuildType, Prisma } from 'generated/client';
+import { Prisma } from 'generated/client';
 import { RepositoryPayload } from '@/types/repository.type';
 
 export async function createRepository(
@@ -150,6 +150,25 @@ export async function getRepositorieBuildLogs(repositoryId: string, buildId: str
     }
 }
 
+export async function getActiveBuilds(repositoryId: string) {
+    return prisma.build.findMany({
+        where: {
+            repositoryId,
+        },
+        orderBy: { createdAt: 'desc' },
+        select: {
+            id: true,
+            status: true,
+            branch: true,
+            commitHash: true,
+            commitMessage: true,
+            createdAt: true,
+            pipelineSnapshot: true,
+            environment: { select: { name: true } },
+        },
+    });
+}
+
 export async function updateBranchRepository(newBranch: string, repositoryId: string) {
     try {
         return await prisma.repository.update({
@@ -158,26 +177,6 @@ export async function updateBranchRepository(newBranch: string, repositoryId: st
         });
     } catch (error: unknown) {
         throw new Error('Failed to update branch repository');
-    }
-}
-
-export async function updateBuildTypeRepository(
-    data: {
-        buildType: BuildType;
-        dockerfilePath: string;
-        dockerComposePath: string;
-        contextPath: string;
-        buildArgs?: string;
-    },
-    repositoryId: string,
-) {
-    try {
-        return await prisma.repository.update({
-            where: { id: repositoryId },
-            data,
-        });
-    } catch (error: unknown) {
-        throw new Error('Failed to update build type repository');
     }
 }
 

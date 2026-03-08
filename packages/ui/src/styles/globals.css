@@ -316,6 +316,17 @@
     background-color: oklch(0.371 0 0);
 }
 
+.react-flow__pane {
+    cursor: default !important;
+}
+
+[data-panning='true'] .react-flow__pane {
+    cursor: grab !important;
+}
+
+[data-panning='true'] .react-flow__pane:active {
+    cursor: grabbing !important;
+}
 
 @layer base {
     * {

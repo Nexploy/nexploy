@@ -12,7 +12,7 @@ export const containerPortSchema = z
         type: z.enum(['tcp', 'udp', 'sctp']).default('tcp'),
     })
     .refine((data) => !(data.publicPort && !data.privatePort), {
-        message: 'Le port conteneur est requis si un port hôte est spécifié',
+        message: 'Container port is required if a host port is specified',
         path: ['privatePort'],
     });
 

@@ -29,9 +29,7 @@ export const onResumeBuild = authActionServer
 
             await setToastServer({
                 type: 'success',
-                message: t('builds.buildResumedFromStep', {
-                    step: parsedInput.startFromStep || 'beginning',
-                }),
+                message: t('builds.buildResumed'),
             });
         } catch (err: unknown) {
             if (err instanceof Error) {

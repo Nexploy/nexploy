@@ -1,20 +1,10 @@
 {
-    "title": "AI Assistant",
-    "placeholder": "Ask me anything...",
-    "send": "Send",
-    "thinking": "Thinking...",
     "commandGroups": {
         "navigation": "Navigation",
         "containers": "Containers",
         "stacks": "Stacks",
         "repositories": "Repositories",
         "general": "General"
-    },
-    "suggestions": {
-        "deployRepository": "Deploy a repository",
-        "checkContainerStatus": "Check container status",
-        "viewLogs": "View logs",
-        "createNetwork": "Create a network"
     },
     "errors": {
         "failedToProcess": "Failed to process your request",

@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent } from '@workspace/ui/components/card';
-import { AlertCircle, Box, FileCode2, Layers } from 'lucide-react';
+import { AlertCircle, Box, Layers } from 'lucide-react';
 import { UseFormReturn } from 'react-hook-form';
 import { DeploymentSettingsForm } from '@workspace/schemas-zod/repository/settings/deploymentSettings.schema';
 import {
@@ -16,43 +16,15 @@ import { cn } from '@workspace/ui/lib/utils';
 import Link from 'next/link';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
-import { BuildType } from 'generated/client';
 import { useTranslations } from 'next-intl';
 
 interface DeploymentModeCardProps {
     form: UseFormReturn<DeploymentSettingsForm>;
-    buildType?: BuildType;
 }
 
-export function DeploymentModeCard({ form, buildType }: DeploymentModeCardProps) {
+export function DeploymentModeCard({ form }: DeploymentModeCardProps) {
     const t = useTranslations('repository.deployment');
     const isSwarmActive = useSwarmStore((s) => s.isSwarmActive);
-    const isDockerCompose = buildType === 'DOCKER_COMPOSE';
-
-    if (isDockerCompose) {
-        return (
-            <Card>
-                <CardHeaderWithIcon
-                    icon={Layers}
-                    title={t('mode')}
-                    description={t('description')}
-                />
-                <CardContent>
-                    <div className="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900/50 dark:bg-blue-950/20">
-                        <FileCode2 className="mt-0.5 size-5 shrink-0 text-blue-600 dark:text-blue-400" />
-                        <div className="flex flex-col gap-1">
-                            <span className="font-medium text-blue-900 dark:text-blue-100">
-                                {t('dockerComposeMode')}
-                            </span>
-                            <span className="text-sm text-blue-800 dark:text-blue-200">
-                                {t('dockerComposeModeDescription')}
-                            </span>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-        );
-    }
 
     return (
         <Card>

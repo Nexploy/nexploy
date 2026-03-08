@@ -77,7 +77,7 @@ export function EnvForm({ mode, defaultEnvVar, originalEnvVar }: EnvFormProps) {
                     name="key"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('env.key')}</FormLabel>
+                            <FormLabel>{t('key')}</FormLabel>
                             <FormControl>
                                 <Input {...field} placeholder={t('keyPlaceholder')} />
                             </FormControl>
@@ -91,7 +91,7 @@ export function EnvForm({ mode, defaultEnvVar, originalEnvVar }: EnvFormProps) {
                     name="value"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('env.value')}</FormLabel>
+                            <FormLabel>{t('value')}</FormLabel>
                             <FormControl>
                                 <Input {...field} placeholder={t('valuePlaceholder')} />
                             </FormControl>

@@ -27,15 +27,10 @@ export default async function DockerLayout({
                 <div className={'flex h-screen w-full flex-col'}>
                     <Header />
                     <main className="flex !min-h-0 w-full flex-1 md:pr-2 md:pb-2">
-                        <InsetPanel
-                            className={cn(
-                                'flex-1',
-                                // 'mr-2'
-                            )}
-                        >
+                        <InsetPanel className={cn('flex-1')}>
                             <SSEProvider>{children}</SSEProvider>
                         </InsetPanel>
-                        {/*<InsetPanel className={'w-80'}>*/}
+                        {/*<InsetPanel className={'ml-2 w-80'}>*/}
                         {/*    <SidebarAI />*/}
                         {/*</InsetPanel>*/}
                     </main>

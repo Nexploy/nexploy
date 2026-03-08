@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { branchNameSchema } from './branch.schema.ts';
+import { branchNameSchema } from './branch.schema';
 
 export const repositoryCreateFormSchema = z.object({
-    name: z.string().min(1, 'Le nom du projet est requis'),
+    name: z.string().min(1, 'Project name is required'),
     repo: z.object(
         {
             id: z.string(),
@@ -24,16 +24,6 @@ export const repositoryCreateFormSchema = z.object({
     gitProvider: z.enum(['github', 'gitlab', 'manual']),
     gitAccountId: z.string().optional(),
     environmentId: z.string(),
-    buildType: z
-        .enum(['DOCKERFILE', 'DOCKER_COMPOSE', 'NIXPACKS', 'BUILDPACKS'])
-        .default('DOCKERFILE'),
-    dockerfilePath: z.string().default('Dockerfile'),
-    dockerComposePath: z.string().default('docker-compose.yml'),
-    contextPath: z.string().default('.'),
-    buildArgs: z
-        .string()
-        .optional()
-        .transform((value) => (value === '' ? undefined : value)),
     autoDeploy: z.boolean().default(true),
 });
 

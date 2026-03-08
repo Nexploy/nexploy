@@ -23,6 +23,7 @@
         "environments": "Environnements",
         "domains": "Domaines",
         "deployment": "Déploiement",
+        "pipeline": "Pipeline",
         "settings": "Paramètres"
     },
     "delete": "Supprimer",
@@ -86,28 +87,12 @@
         "saving": "Enregistrement...",
         "updated": "Paramètres de déploiement mis à jour avec succès"
     },
-    "environment": {
-        "title": "Environnement",
-        "variables": "Variables d'environnement",
-        "addVariable": "Ajouter une variable",
-        "editVariable": "Modifier la variable",
-        "deleteVariable": "Supprimer la variable",
-        "key": "Clé",
-        "keyPlaceholder": "NOM_VARIABLE",
-        "value": "Valeur",
-        "valuePlaceholder": "valeur_variable",
-        "secret": "Secret",
-        "secretDescription": "Masquer la valeur dans les logs et l'interface",
-        "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette variable ?",
-        "noVariables": "Aucune variable d'environnement",
-        "importFromFile": "Importer depuis un fichier .env",
-        "exportToFile": "Exporter vers un fichier .env"
-    },
     "builds": {
         "title": "Builds",
         "history": "Historique des builds",
         "latest": "Dernier build",
         "viewLogs": "Voir les logs",
+        "viewPipeline": "Pipeline",
         "retry": "Réessayer",
         "retrying": "Relance...",
         "retrySuccess": "Build relancé avec succès",
@@ -158,6 +143,7 @@
         "buildNotFailed": "Seuls les builds échoués peuvent être repris",
         "buildNotFromRepository": "Le build n'appartient pas à ce dépôt",
         "buildResumedFromStep": "Build repris à l'étape : {step}",
+        "buildResumed": "Build repris avec succès",
         "steps": {
             "cloneRepository": "Cloner le dépôt",
             "prepareDockerfile": "Préparer le Dockerfile",
@@ -246,15 +232,6 @@
             "noAccounts": "Aucun compte Git connecté. Connectez-en un depuis les paramètres de votre compte.",
             "connectAccount": "Connecter un compte"
         },
-        "generalInfo": {
-            "title": "Informations générales",
-            "description": "Détails de base de votre projet",
-            "projectName": "Nom du projet",
-            "projectNamePlaceholder": "mon-super-projet",
-            "projectNameDescription": "Un nom unique pour identifier votre projet",
-            "descriptionLabel": "Description",
-            "descriptionPlaceholder": "Une courte description de votre projet..."
-        },
         "buildConfig": {
             "title": "Configuration de Build",
             "description": "Comment votre application doit être construite",
@@ -279,14 +256,6 @@
         }
     },
     "settings": {
-        "title": "Paramètres",
-        "environment": "Environnement",
-        "environmentDescription": "Environnement Docker cible pour le déploiement",
-        "environmentChangedTo": "Environnement changé vers \"{name}\"",
-        "environmentChangeError": "Erreur lors du changement d'environnement",
-        "loading": "Chargement...",
-        "select": "Sélectionner",
-        "default": "(défaut)",
         "dangerZone": {
             "title": "Zone de danger",
             "description": "Actions irréversibles sur ce repository",
@@ -306,29 +275,6 @@
             "saving": "Enregistrement...",
             "save": "Enregistrer",
             "updated": "Branche mise à jour avec succès"
-        },
-        "autoDeploy": {
-            "title": "Déploiement automatique",
-            "description": "Déployer automatiquement lors d'un push sur la branche",
-            "enabled": "Auto-deploy activé",
-            "disabled": "Auto-deploy désactivé"
-        },
-        "buildType": {
-            "title": "Type de build",
-            "description": "Choisissez la méthode de build pour votre application",
-            "label": "Type de build",
-            "selectType": "Sélectionner un type",
-            "saving": "Enregistrement...",
-            "save": "Enregistrer",
-            "updated": "Configuration de build mise à jour avec succès",
-            "dockerfile": "Dockerfile",
-            "dockerfileDescription": "Utiliser un Dockerfile existant",
-            "dockerCompose": "Docker Compose",
-            "dockerComposeDescription": "Utiliser un fichier docker-compose.yml",
-            "nixpacks": "Nixpacks",
-            "nixpacksDescription": "Build automatique avec Nixpacks",
-            "buildpacks": "Buildpacks",
-            "buildpacksDescription": "Build automatique avec Cloud Native Buildpacks"
         },
         "deployment": {
             "updated": "Paramètres de déploiement mis à jour",
@@ -369,7 +315,9 @@
             "importError": "Aucune variable valide trouvée dans le fichier",
             "noVariables": "Aucune variable d'environnement configurée.",
             "pendingDeletion": "Suppression en attente (enregistrez pour confirmer) :",
-            "undo": "Annuler"
+            "undo": "Annuler",
+            "keyPlaceholder": "Clé",
+            "valuePlaceholder": "Valeur"
         },
         "source": {
             "notConnected": "Vous n'avez pas connecté de compte {provider}",
@@ -391,6 +339,138 @@
             "selectZoneForDns": "Sélectionnez une zone pour créer automatiquement le DNS",
             "subdomain": "Sous-domaine",
             "emptyForRoot": "Laissez vide pour le domaine racine"
+        }
+    },
+    "pipeline": {
+        "title": "Éditeur de pipeline",
+        "save": "Enregistrer le pipeline",
+        "saveSuccess": "Pipeline enregistré avec succès",
+        "saveError": "Échec de l'enregistrement du pipeline",
+        "validate": "Valider",
+        "validationSuccess": "Le pipeline est valide",
+        "validationFailed": "La validation du pipeline a échoué",
+        "run": "Exécuter le pipeline",
+        "saving": "Enregistrement...",
+        "saved": "Enregistré",
+        "undo": "Annuler",
+        "redo": "Rétablir",
+        "watching": "En observation",
+        "shortcuts": "Raccourcis clavier",
+        "shortcutsList": {
+            "selectAll": "Tout sélectionner",
+            "duplicate": "Dupliquer",
+            "toggleDisable": "Activer / désactiver",
+            "delete": "Supprimer",
+            "pan": "Déplacer le canvas"
+        },
+        "nodeCount": "{count, plural, one {# nœud} other {# nœuds}}",
+        "disabledCount": "{count, plural, one {# désactivé} other {# désactivés}}",
+        "empty": "Faites glisser des nœuds depuis la palette pour construire votre pipeline",
+        "palette": "Nœuds",
+        "search": "Rechercher des nœuds...",
+        "categories": {
+            "source": "Source",
+            "build": "Build",
+            "deploy": "Déploiement",
+            "utility": "Utilitaire",
+            "notification": "Notification"
+        },
+        "deleteSelection": "Supprimer {count} nœuds",
+        "node": {
+            "enable": "Activer le nœud",
+            "disable": "Désactiver le nœud",
+            "delete": "Supprimer le nœud"
+        },
+        "nodes": {
+            "clone-repository": {
+                "name": "Cloner le dépôt",
+                "description": "Cloner le dépôt Git",
+                "noConfig": "Aucune configuration requise. L'URL du dépôt et la branche sont héritées des paramètres du dépôt."
+            },
+            "build-docker-image": {
+                "name": "Construire l'image Docker",
+                "description": "Construire une image Docker depuis un Dockerfile"
+            },
+            "deploy-container": {
+                "name": "Déployer le conteneur",
+                "description": "Déployer un conteneur Docker depuis l'image construite"
+            },
+            "write-env-file": {
+                "name": "Écrire le fichier .env",
+                "description": "Écrire les variables d'environnement dans le fichier .env"
+            },
+            "send-notification": {
+                "name": "Envoyer une notification",
+                "description": "Envoyer une notification webhook"
+            },
+            "deploy-compose": {
+                "name": "Déployer Compose",
+                "description": "Déployer une stack Docker Compose"
+            },
+            "push-to-registry": {
+                "name": "Pousser vers le registre",
+                "description": "Pousser l'image construite vers un registre Docker"
+            },
+            "validate-dockerfile": {
+                "name": "Valider le Dockerfile",
+                "description": "Vérifier que le Dockerfile existe et est lisible"
+            },
+            "validate-compose": {
+                "name": "Valider Compose",
+                "description": "Vérifier la syntaxe du fichier Docker Compose"
+            },
+            "set-env-vars": {
+                "name": "Définir les variables d'env",
+                "description": "Injecter des variables d'environnement supplémentaires dans le pipeline"
+            },
+            "clean-workdir": {
+                "name": "Nettoyer le répertoire de travail",
+                "description": "Supprimer le dépôt cloné du disque"
+            }
+        },
+        "config": {
+            "dockerfilePath": "Chemin du Dockerfile",
+            "useRepositoryEnvVars": "Utiliser les variables d'environnement du dépôt",
+            "script": "Script",
+            "failOnError": "Échouer en cas d'erreur",
+            "webhookUrl": "URL du webhook",
+            "message": "Message personnalisé",
+            "messagePlaceholder": "Laisser vide pour le message par défaut",
+            "deployContainerInfo": "Le conteneur sera déployé avec l'image construite et les paramètres du dépôt.",
+            "composePath": "Chemin du fichier Compose",
+            "composePathPlaceholder": "docker-compose.yml",
+            "composeFileName": "Nom du fichier",
+            "composeFilePath": "Chemin du fichier",
+            "composeFilePathPlaceholder": "Laisser vide pour la racine du dépôt",
+            "projectName": "Nom du projet",
+            "projectNamePlaceholder": "Laisser vide pour utiliser le nom du dépôt",
+            "tag": "Tag de l'image",
+            "tagPlaceholder": "Laisser vide pour utiliser le hash du commit",
+            "vars": "Variables d'environnement",
+            "varKey": "Clé",
+            "varValue": "Valeur",
+            "addVar": "Ajouter une variable",
+            "save": "Sauvegarder",
+            "noConfig": "Aucune configuration requise pour ce nœud.",
+            "cleanWorkdirInfo": "Supprime le répertoire du dépôt cloné du disque après l'exécution du pipeline.",
+            "validateDockerfileInfo": "Vérifie que le Dockerfile existe et est lisible dans le répertoire de travail.",
+            "deployContainerNoConfig": "Le nom du conteneur, l'image et le mapping de port sont hérités des paramètres du dépôt."
+        },
+        "validation": {
+            "noSourceNode": "Le pipeline doit commencer par un nœud de clonage du dépôt",
+            "hasCycle": "Le pipeline contient un cycle",
+            "disconnectedNodes": "Tous les nœuds doivent être connectés"
+        },
+        "templates": {
+            "title": "Templates",
+            "dockerfile": {
+                "name": "Dockerfile",
+                "description": "Clone, build image et déploie le container"
+            },
+            "docker-compose": {
+                "name": "Docker Compose",
+                "description": "Clone, écrit les vars et lance compose"
+            }
         }
     }
 }

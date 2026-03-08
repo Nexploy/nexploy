@@ -18,10 +18,7 @@ const IPAMSchema = z
     .optional();
 
 export const networkCreateSchema = z.object({
-    name: z
-        .string()
-        .min(1, 'Le nom du réseau est requis.')
-        .max(255, 'Le nom du réseau est trop long.'),
+    name: z.string().min(1, 'Network name is required.').max(255, 'Network name is too long.'),
     checkDuplicate: z.boolean().optional(),
     driver: z.string().optional(),
     scope: z.string().optional(),

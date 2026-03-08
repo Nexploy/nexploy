@@ -13,7 +13,6 @@
     "deleted": "Successfully deleted",
     "created": "Successfully created",
     "updated": "Successfully updated",
-    "copied": "Copied to clipboard",
     "copiedToClipboard": "Copied to clipboard",
     "failedToCopy": "Failed to copy to clipboard",
     "connectionEstablished": "Connection established",
