@@ -140,7 +140,10 @@ class GitService {
 
                 if (isAuthError && token.accessToken) {
                     // Force-refresh the token and retry with new credentials
-                    const forcedExpiredToken = { ...token, accessTokenExpiresAt: dayjs(0).toDate() };
+                    const forcedExpiredToken = {
+                        ...token,
+                        accessTokenExpiresAt: dayjs(0).toDate(),
+                    };
                     const refreshedToken = await getValidToken(
                         forcedExpiredToken,
                         buildConfig.gitProvider,
@@ -222,8 +225,8 @@ class GitService {
         await writeFile(envPath, envContent);
     }
 
-    async validateComposeFile(workDir: string, composePath?: string): Promise<string> {
-        const primaryPath = composePath || 'docker-compose.yml';
+    async validateComposeFile(workDir: string, composePath: string): Promise<string> {
+        const primaryPath = composePath;
         const composeFilePath = join(workDir, primaryPath);
 
         try {

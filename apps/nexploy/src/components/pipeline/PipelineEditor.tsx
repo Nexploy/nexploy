@@ -6,10 +6,10 @@ import { useRef } from 'react';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { NodeAddPanel } from '@/components/pipeline/nodes/add/NodeAddPanel';
 import { NodeTemplatePanel } from '@/components/pipeline/nodes/template/NodeTemplatePanel';
-import { NodeConfigPanel } from '@/components/pipeline/nodes/NodeConfigPanel';
 import { PipelineCanvas } from '@/components/pipeline/PipelineCanvas';
 import { usePipelineLiveBuild } from '@/hooks/usePipelineLiveBuild';
 import { PipelineToolbar } from '@/components/pipeline/PipelineToolbar';
+import { NodeConfigPanel } from '@/components/pipeline/nodes/nodeConfigPanel/NodeConfigPanel';
 
 export function PipelineEditor() {
     const { nodes, panelNodeId, activeBuildId } = usePipelineContext();

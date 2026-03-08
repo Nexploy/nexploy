@@ -44,6 +44,12 @@ export const setEnvVarsConfigSchema = z.object({
     vars: z.array(varEntrySchema).default([]),
 });
 
+export const pushToRegistryConfigSchema = z.object({
+    tag: z.string().optional(),
+});
+
+export const cleanWorkdirConfigSchema = z.object({});
+
 export const sendNotificationConfigSchema = z.object({
     webhookUrl: z.string().refine(
         (v) => v === '' || z.string().url().safeParse(v).success,
@@ -53,6 +59,8 @@ export const sendNotificationConfigSchema = z.object({
     message: z.string().optional(),
 });
 
+export type PushToRegistryConfig = z.infer<typeof pushToRegistryConfigSchema>;
+export type CleanWorkdirConfig = z.infer<typeof cleanWorkdirConfigSchema>;
 export type VarEntry = z.infer<typeof varEntrySchema>;
 export type SetEnvVarsConfig = z.infer<typeof setEnvVarsConfigSchema>;
 export type CloneRepositoryConfig = z.infer<typeof cloneRepositoryConfigSchema>;

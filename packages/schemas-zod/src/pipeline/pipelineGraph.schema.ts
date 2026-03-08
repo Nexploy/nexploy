@@ -48,3 +48,6 @@ export const savePipelineSchema = z.object({
 });
 
 export type SavePipelineInput = z.infer<typeof savePipelineSchema>;
+
+export const saveNodeConfigBindArgsSchemas = [z.cuid(), z.string()] as const;
+export const saveNodeConfigInputSchema = z.record(z.string(), z.unknown());

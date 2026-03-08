@@ -1,21 +1,27 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { useFormContext } from 'react-hook-form';
+import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Label } from '@workspace/ui/components/label';
 import { Input } from '@workspace/ui/components/input';
-import { NodeConfigProps } from '@/components/pipeline/nodes/NodeConfigPanel';
 
-export function BuildDockerImageConfig({ config, update }: NodeConfigProps) {
+export function BuildDockerImageConfig() {
     const t = useTranslations('repository.pipeline.config');
+    const form = useFormContext();
     return (
-        <div className="space-y-1.5">
-            <Label className="text-muted-foreground text-xs">{t('dockerfilePath')}</Label>
-            <Input
-                value={(config.dockerfilePath as string) ?? 'Dockerfile'}
-                onChange={(e) => update('dockerfilePath', e.target.value)}
-                placeholder="Dockerfile"
-                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-            />
-        </div>
+        <FormField
+            control={form.control}
+            name="dockerfilePath"
+            render={({ field }) => (
+                <FormItem className="space-y-1.5">
+                    <Label className="text-muted-foreground text-xs">{t('dockerfilePath')}</Label>
+                    <FormControl>
+                        <Input {...field} placeholder="Dockerfile" className="border-border bg-background text-foreground focus:border-primary h-8 text-xs" />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                </FormItem>
+            )}
+        />
     );
 }

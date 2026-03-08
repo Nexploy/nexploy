@@ -51,7 +51,7 @@ app.post('/stream/compose', async (c) => {
     const { workDir, projectName, composePath, envVars, buildId, labels } = await c.req.json<{
         workDir: string;
         projectName: string;
-        composePath?: string;
+        composePath: string;
         envVars?: Record<string, string>;
         buildId?: string;
         repositoryId?: string;
@@ -95,7 +95,7 @@ app.post('/stream/compose', async (c) => {
         };
 
         try {
-            const composeFile = composePath || 'docker-compose.yml';
+            const composeFile = composePath;
             const composeFilePath = path.join(workDir, composeFile);
 
             logger.info(

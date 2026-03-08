@@ -80,12 +80,13 @@ export function PipelineProvider({
     const [edges, setEdges, onEdgesChangeBase] = useEdgesState(initialEdges);
     const [panelNodeId, setPanelNodeId] = useState<string | null>(null);
     const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
-    const [activeBuildId, setActiveBuildId] = useState<string | undefined>();
     const [saveVersion, setSaveVersion] = useState(0);
+    const [activeBuildId, setActiveBuildId] = useState<string | undefined>();
+    const [nodeStatuses, setNodeStatuses] = useState<Record<string, NodeRunStatus>>({});
 
     const { execute: savePipeline, isPending: isSaving } = useAction(savePipelineAction);
-
     const committedVersionRef = useRef(0);
+    const processedEventCountRef = useRef(0);
 
     const onRestore = useCallback(
         (snapshot: { nodes: Node[]; edges: Edge[] }) => {
@@ -113,6 +114,8 @@ export function PipelineProvider({
         savePipeline({ repositoryId, graph: flowToGraph(nodes, edges) });
     }, [saveVersion, nodes, edges]);
 
+    const triggerAutoSave = useCallback(() => setSaveVersion((v) => v + 1), []);
+
     const onNodesChange: typeof onNodesChangeBase = useCallback(
         (changes) => {
             onNodesChangeBase(changes);
@@ -128,8 +131,6 @@ export function PipelineProvider({
         },
         [onEdgesChangeBase],
     );
-
-    const triggerAutoSave = useCallback(() => setSaveVersion((v) => v + 1), []);
 
     const onConnect = useCallback(
         (connection: Connection) => {
@@ -194,6 +195,18 @@ export function PipelineProvider({
         setSaveVersion((v) => v + 1);
     }, [nodes, setNodes, setEdges]);
 
+    const handleDeleteSelection = useCallback(() => {
+        const selectedIds = new Set(nodes.filter((n) => n.selected).map((n) => n.id));
+        if (selectedIds.size === 0) return;
+        setNodes((nds) => nds.filter((n) => !selectedIds.has(n.id)));
+        setEdges((eds) =>
+            eds.filter((e) => !selectedIds.has(e.source) && !selectedIds.has(e.target)),
+        );
+        setSelectedNodeIds([]);
+        setPanelNodeId(null);
+        setSaveVersion((v) => v + 1);
+    }, [nodes, setNodes, setEdges]);
+
     const activeBuild = useMemo(
         () => activeBuilds.find((b) => b.id === activeBuildId),
         [activeBuilds, activeBuildId],
@@ -201,26 +214,19 @@ export function PipelineProvider({
     const isViewingBuild = !!activeBuild?.pipelineSnapshot;
     const isLiveBuild = isViewingBuild && !TERMINAL_STATUSES.has(activeBuild!.status);
 
-    // Fetch fresh nodeStatuses from DB each time a build is selected
-    const [fetchedNodeStatuses, setFetchedNodeStatuses] = useState<Record<string, NodeRunStatus>>(
-        {},
-    );
     useEffect(() => {
-        if (!activeBuildId || !repositoryId) {
-            setFetchedNodeStatuses({});
-            return;
-        }
+        setNodeStatuses({});
+        if (!activeBuildId) return;
         fetch(`/api/repositories/${repositoryId}/builds/${activeBuildId}`)
             .then((r) => r.json())
             .then((data: { nodeStatuses: Record<string, NodeRunStatus> }) => {
-                setFetchedNodeStatuses(data.nodeStatuses ?? {});
+                setNodeStatuses(data.nodeStatuses ?? {});
             })
             .catch(() => {});
-    }, [activeBuildId, repositoryId]);
+    }, [activeBuildId]);
 
-    const [liveStatuses, setLiveStatuses] = useState<Record<string, NodeRunStatus>>({});
     useEffect(() => {
-        setLiveStatuses({});
+        processedEventCountRef.current = 0;
     }, [activeBuildId]);
 
     const refreshToken = useCallback(async () => {
@@ -235,46 +241,39 @@ export function PipelineProvider({
     const { data: liveEvents } = useInngestSubscription({ enabled: isLiveBuild, refreshToken });
 
     useEffect(() => {
-        for (const evt of liveEvents) {
+        const newEvents = liveEvents.slice(processedEventCountRef.current);
+        processedEventCountRef.current = liveEvents.length;
+        if (newEvents.length === 0) return;
+        const updates: Record<string, NodeRunStatus> = {};
+        for (const evt of newEvents) {
             if (evt.topic === 'node-status' && evt.data?.nodeId) {
-                setLiveStatuses((prev) => ({
-                    ...prev,
-                    [evt.data.nodeId as string]: evt.data.status as NodeRunStatus,
-                }));
+                updates[evt.data.nodeId as string] = evt.data.status as NodeRunStatus;
             }
+        }
+        if (Object.keys(updates).length > 0) {
+            setNodeStatuses((prev) => ({ ...prev, ...updates }));
         }
     }, [liveEvents]);
 
+    const snapshotFlow = useMemo(() => {
+        if (!activeBuild?.pipelineSnapshot) return null;
+        return graphToFlow(activeBuild.pipelineSnapshot as unknown as PipelineGraph);
+    }, [activeBuild]);
+
     const { displayNodes, displayEdges } = useMemo(() => {
-        if (!activeBuild?.pipelineSnapshot) {
-            return { displayNodes: nodes, displayEdges: edges };
-        }
-        const snapshot = activeBuild.pipelineSnapshot as unknown as PipelineGraph;
-        const { nodes: snapshotNodes, edges: snapshotEdges } = graphToFlow(snapshot);
+        if (!snapshotFlow) return { displayNodes: nodes, displayEdges: edges };
         return {
-            displayNodes: snapshotNodes.map((n) => ({
+            displayNodes: snapshotFlow.nodes.map((n) => ({
                 ...n,
                 data: {
                     ...n.data,
-                    runStatus: liveStatuses[n.id] ?? fetchedNodeStatuses[n.id] ?? undefined,
+                    runStatus: nodeStatuses[n.id] ?? undefined,
                     viewOnly: true,
                 },
             })),
-            displayEdges: snapshotEdges,
+            displayEdges: snapshotFlow.edges,
         };
-    }, [activeBuild, liveStatuses, fetchedNodeStatuses, nodes, edges]);
-
-    const handleDeleteSelection = useCallback(() => {
-        const selectedIds = new Set(nodes.filter((n) => n.selected).map((n) => n.id));
-        if (selectedIds.size === 0) return;
-        setNodes((nds) => nds.filter((n) => !selectedIds.has(n.id)));
-        setEdges((eds) =>
-            eds.filter((e) => !selectedIds.has(e.source) && !selectedIds.has(e.target)),
-        );
-        setSelectedNodeIds([]);
-        setPanelNodeId(null);
-        setSaveVersion((v) => v + 1);
-    }, [nodes, setNodes, setEdges]);
+    }, [snapshotFlow, nodeStatuses, nodes, edges]);
 
     return (
         <PipelineContext.Provider

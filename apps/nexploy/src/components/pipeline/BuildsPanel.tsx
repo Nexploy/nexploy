@@ -13,7 +13,6 @@ import { usePipelineContext } from '@/contexts/PipelineContext';
 dayjs.extend(relativeTime);
 
 const STATUS_DOT: Partial<Record<BuildStatus, string>> = {
-    DEPLOYING: 'bg-orange-500',
     QUEUED: 'bg-yellow-500',
     BUILDING: 'bg-blue-500',
     COMPLETED: 'bg-green-500',

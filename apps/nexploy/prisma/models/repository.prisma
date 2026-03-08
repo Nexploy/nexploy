@@ -138,7 +138,6 @@ enum BuildStatus {
   BUILDING
   COMPLETED
   FAILED
-  DEPLOYING
   CANCELLED
 }
 

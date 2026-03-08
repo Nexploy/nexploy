@@ -1,9 +1,8 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { NodeConfigProps } from '@/components/pipeline/nodes/NodeConfigPanel';
 
-export function CleanWorkdirConfig(_: NodeConfigProps) {
+export function CleanWorkdirConfig() {
     const t = useTranslations('repository.pipeline.config');
     return <p className="text-muted-foreground text-xs">{t('cleanWorkdirInfo')}</p>;
 }

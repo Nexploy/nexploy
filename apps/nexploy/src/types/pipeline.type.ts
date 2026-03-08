@@ -2,13 +2,7 @@ import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 
 export type LogLevel = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
 
-export type PipelineStatus =
-    | 'QUEUED'
-    | 'BUILDING'
-    | 'DEPLOYING'
-    | 'COMPLETED'
-    | 'FAILED'
-    | 'CANCELLED';
+export type PipelineStatus = 'QUEUED' | 'BUILDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
 
 export type NodeOutputData = Record<string, unknown>;
 

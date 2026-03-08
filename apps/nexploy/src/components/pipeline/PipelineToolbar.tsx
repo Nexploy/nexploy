@@ -7,12 +7,16 @@ import {
     Loader2,
     Power,
     Redo2,
+    Rocket,
     SquareDashed,
     Trash2,
     Undo2,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { usePipelineContext } from '@/contexts/PipelineContext';
+import { useAction } from 'next-safe-action/hooks';
+import { onStartBuild } from '@/actions/repository/builds/startBuild.action';
+import { useParams } from 'next/navigation';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
@@ -20,8 +24,9 @@ import { Kbd } from '@workspace/ui/components/kbd';
 import { useReactFlow, useStore } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
 
-const isMac = typeof navigator !== 'undefined' && /Mac/.test(navigator.platform);
-const mod = isMac ? '⌘' : 'Ctrl';
+const isApple =
+    navigator.platform.startsWith('Mac') || navigator.platform === 'iPhone' ? '⌘' : 'Ctrl';
+const mod = isApple ? '⌘' : 'Ctrl';
 
 export function PipelineToolbar() {
     const t = useTranslations('repository.pipeline');
@@ -37,7 +42,15 @@ export function PipelineToolbar() {
         triggerAutoSave,
         activeBuildId,
         activeBuilds,
+        setActiveBuildId,
     } = usePipelineContext();
+
+    const { repositoryId } = useParams<{ repositoryId: string }>();
+    const { execute: startBuild, isPending: isBuildPending } = useAction(onStartBuild, {
+        onSuccess: ({ data }) => {
+            if (data?.buildId) setActiveBuildId(data.buildId);
+        },
+    });
 
     const { getNodes } = useReactFlow();
     const addSelectedNodes = useStore((s) => s.addSelectedNodes);
@@ -202,23 +215,38 @@ export function PipelineToolbar() {
                     </div>
                 )}
             </div>
-            <div
-                className={cn(
-                    'text-muted-foreground flex items-center gap-1.5 text-xs transition-opacity duration-300',
-                    isSaving ? 'opacity-100' : 'opacity-40',
-                )}
-            >
-                {isSaving ? (
-                    <>
+            <div className="flex items-center gap-2">
+                <Button
+                    size="sm"
+                    className="h-7 gap-1.5 text-xs"
+                    onClick={() => startBuild({ repositoryId })}
+                    disabled={isBuildPending}
+                >
+                    {isBuildPending ? (
                         <Loader2 className="size-3 animate-spin" />
-                        {t('saving')}
-                    </>
-                ) : (
-                    <>
-                        <Check className="size-3" />
-                        {t('saved')}
-                    </>
-                )}
+                    ) : (
+                        <Rocket className="size-3" />
+                    )}
+                    {t('runBuild')}
+                </Button>
+                <div
+                    className={cn(
+                        'text-muted-foreground flex items-center gap-1.5 text-xs transition-opacity duration-300',
+                        isSaving ? 'opacity-100' : 'opacity-40',
+                    )}
+                >
+                    {isSaving ? (
+                        <>
+                            <Loader2 className="size-3 animate-spin" />
+                            {t('saving')}
+                        </>
+                    ) : (
+                        <>
+                            <Check className="size-3" />
+                            {t('saved')}
+                        </>
+                    )}
+                </div>
             </div>
         </div>
     );

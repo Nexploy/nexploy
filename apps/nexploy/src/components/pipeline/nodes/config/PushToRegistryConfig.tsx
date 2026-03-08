@@ -1,21 +1,27 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { useFormContext } from 'react-hook-form';
+import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Label } from '@workspace/ui/components/label';
 import { Input } from '@workspace/ui/components/input';
-import { NodeConfigProps } from '@/components/pipeline/nodes/NodeConfigPanel';
 
-export function PushToRegistryConfig({ config, update }: NodeConfigProps) {
+export function PushToRegistryConfig() {
     const t = useTranslations('repository.pipeline.config');
+    const form = useFormContext();
     return (
-        <div className="space-y-1.5">
-            <Label className="text-muted-foreground text-xs">{t('tag')}</Label>
-            <Input
-                value={(config.tag as string) ?? ''}
-                onChange={(e) => update('tag', e.target.value || undefined)}
-                placeholder={t('tagPlaceholder')}
-                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-            />
-        </div>
+        <FormField
+            control={form.control}
+            name="tag"
+            render={({ field }) => (
+                <FormItem className="space-y-1.5">
+                    <Label className="text-muted-foreground text-xs">{t('tag')}</Label>
+                    <FormControl>
+                        <Input {...field} value={field.value ?? ''} placeholder={t('tagPlaceholder')} className="border-border bg-background text-foreground focus:border-primary h-8 text-xs" />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                </FormItem>
+            )}
+        />
     );
 }

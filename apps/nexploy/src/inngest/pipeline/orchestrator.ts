@@ -11,6 +11,7 @@ import {
     NodeExecutionResult,
     NodeOutputData,
     NodeOutputStore,
+    NodeRunStatus,
     PipelineLogger,
     PipelineReporter,
     PipelineResult,
@@ -48,7 +49,7 @@ function findWorkDir(allOutputs: NodeOutputStore): string | undefined {
     return undefined;
 }
 
-export class NodePipelineOrchestrator {
+export class PipelineOrchestrator {
     private startCancellationWatcher(
         buildId: string,
         abortController: AbortController,
@@ -68,6 +69,24 @@ export class NodePipelineOrchestrator {
         }, intervalMs);
     }
 
+    private async runSkippedNode(
+        node: PipelineNode,
+        reason: string,
+        inngestStep: InngestStepRunner,
+        reporter: PipelineReporter,
+        logger: PipelineLogger,
+        publishNodeStatus: (nodeId: string, status: NodeRunStatus) => Promise<void>,
+        allOutputs: NodeOutputStore,
+        output: NodeOutputData = {},
+    ): Promise<void> {
+        await inngestStep.run(`node-${node.id}`, async () => {
+            await reporter.markSkipped(node.id);
+            await logger.info(node.id, `${node.data.label} : Node skipped (${reason})`);
+        });
+        await publishNodeStatus(node.id, 'skipped');
+        allOutputs.set(node.id, output);
+    }
+
     async execute(
         buildId: string,
         config: BuildConfig,
@@ -76,7 +95,8 @@ export class NodePipelineOrchestrator {
         logger: PipelineLogger,
         reporter: PipelineReporter,
         setStatus: (status: PipelineStatus) => Promise<void>,
-        publishEvent: (nodeId: string | null, status: string) => Promise<void>,
+        publishNodeStatus: (nodeId: string, status: NodeRunStatus) => Promise<void>,
+        publishPipelineStatus: (status: PipelineStatus) => Promise<void>,
     ): Promise<PipelineResult> {
         const abortController = new AbortController();
         const allOutputs: NodeOutputStore = new Map();
@@ -95,7 +115,7 @@ export class NodePipelineOrchestrator {
             await inngestStep.run('pipeline-init', async () => {
                 await setStatus('BUILDING');
             });
-            await publishEvent(null, 'BUILDING');
+            await publishPipelineStatus('BUILDING');
 
             for (const node of sorted) {
                 const executor = getNodeExecutor(node.data.type);
@@ -109,26 +129,30 @@ export class NodePipelineOrchestrator {
                     .filter((o): o is NodeOutputData => o !== undefined);
 
                 if (!reachableNodeIds.has(node.id)) {
-                    await inngestStep.run(`node-${node.id}`, async () => {
-                        await reporter.markSkipped(node.id);
-                        await logger.info(
-                            node.id,
-                            `${node.data.label} : Node skipped (not connected to a start node)`,
-                        );
-                    });
-                    await publishEvent(node.id, 'skipped');
-                    allOutputs.set(node.id, {});
+                    await this.runSkippedNode(
+                        node,
+                        'not connected to a start node',
+                        inngestStep,
+                        reporter,
+                        logger,
+                        publishNodeStatus,
+                        allOutputs,
+                    );
                     continue;
                 }
 
                 if (node.data.disabled) {
-                    await inngestStep.run(`node-${node.id}`, async () => {
-                        await reporter.markSkipped(node.id);
-                        await logger.info(node.id, `${node.data.label} : Node skipped (disabled)`);
-                    });
-                    await publishEvent(node.id, 'skipped');
                     const mergedInputs = Object.assign({}, ...inputOutputs);
-                    allOutputs.set(node.id, mergedInputs);
+                    await this.runSkippedNode(
+                        node,
+                        'disabled',
+                        inngestStep,
+                        reporter,
+                        logger,
+                        publishNodeStatus,
+                        allOutputs,
+                        mergedInputs,
+                    );
                     continue;
                 }
 
@@ -137,19 +161,19 @@ export class NodePipelineOrchestrator {
                     nodeDef?.handles.inputs.some((h) => h.required) && inputNodeIds.length === 0;
 
                 if (hasUnconnectedRequiredInput) {
-                    await inngestStep.run(`node-${node.id}`, async () => {
-                        await reporter.markSkipped(node.id);
-                        await logger.info(
-                            node.id,
-                            `${node.data.label} : Node skipped (required input not connected)`,
-                        );
-                    });
-                    await publishEvent(node.id, 'skipped');
-                    allOutputs.set(node.id, {});
+                    await this.runSkippedNode(
+                        node,
+                        'required input not connected',
+                        inngestStep,
+                        reporter,
+                        logger,
+                        publishNodeStatus,
+                        allOutputs,
+                    );
                     continue;
                 }
 
-                await publishEvent(node.id, 'running');
+                await publishNodeStatus(node.id, 'running');
                 try {
                     const nodeResult = await inngestStep.run(`node-${node.id}`, async () => {
                         await reporter.markRunning(node.id);
@@ -179,11 +203,11 @@ export class NodePipelineOrchestrator {
 
                     const result = nodeResult as NodeExecutionResult;
                     allOutputs.set(node.id, result.output ?? {});
-                    await publishEvent(node.id, result.skipped ? 'skipped' : 'completed');
+                    await publishNodeStatus(node.id, result.skipped ? 'skipped' : 'completed');
                 } catch (nodeError) {
                     await reporter.markFailed(node.id);
-                    await publishEvent(node.id, 'failed');
-                    await publishEvent(null, 'FAILED');
+                    await publishNodeStatus(node.id, 'failed');
+                    await publishPipelineStatus('FAILED');
                     throw nodeError;
                 }
             }
@@ -192,7 +216,7 @@ export class NodePipelineOrchestrator {
                 await setStatus('COMPLETED');
                 await this.saveVersion(buildId, config, allOutputs, logger);
             });
-            await publishEvent(null, 'COMPLETED');
+            await publishPipelineStatus('COMPLETED');
 
             return { success: true };
         } catch (error) {
@@ -202,7 +226,7 @@ export class NodePipelineOrchestrator {
             if (error instanceof Error && error.name === 'AbortError') {
                 await logger.info('cancel', 'Build cancelled by user');
                 await setStatus('CANCELLED');
-                await publishEvent(null, 'CANCELLED');
+                await publishPipelineStatus('CANCELLED');
                 if (workDir) {
                     try {
                         await gitService.cleanup(workDir);
@@ -216,7 +240,7 @@ export class NodePipelineOrchestrator {
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
             await logger.error('error', `Build failed: ${errorMessage}`);
             await logger.error('error-details', errorDetails);
-            // Fallback: ensure FAILED is set in DB if markFailed in node catch didn't run
+            // Fallback: ensure FAILED is set if markFailed in node catch didn't run
             try {
                 await setStatus('FAILED');
             } catch {
@@ -294,4 +318,4 @@ export function createPipelineLogger(
     };
 }
 
-export const nodePipelineOrchestrator = new NodePipelineOrchestrator();
+export const pipelineOrchestrator = new PipelineOrchestrator();

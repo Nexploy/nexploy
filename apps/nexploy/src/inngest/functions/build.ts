@@ -11,8 +11,8 @@ import {
     updateStatusBuildInngest,
 } from '@/services/inngest/build.inngest.service';
 import { createLogInngest } from '@/services/inngest/log.inngest.service';
-import { LogLevel, PipelineReporter, PipelineStatus } from '@/types/pipeline.type';
-import { createPipelineLogger, nodePipelineOrchestrator } from '@/inngest/pipeline/orchestrator';
+import { LogLevel, NodeRunStatus, PipelineReporter, PipelineStatus } from '@/types/pipeline.type';
+import { createPipelineLogger, pipelineOrchestrator } from '@/inngest/pipeline/orchestrator';
 import { runWithEnvironmentContextAsync } from '@/lib/environmentContext';
 import { prisma } from '../../../prisma/prisma';
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
@@ -65,19 +65,24 @@ export const buildFunction = inngest.createFunction(
                     await updateNodeStatusInngest(buildId, nodeId, 'skipped');
                 },
                 async markFailed(nodeId) {
-                    await updateNodeStatusInngest(buildId, nodeId, 'failed');
-                    await updateStatusBuildInngest(buildId, 'FAILED');
+                    await updateNodeStatusInngest(buildId, nodeId, 'failed', 'FAILED');
                 },
             };
 
-            const publishEvent = async (nodeId: string | null, status: string) => {
+            const publishNodeStatus = async (nodeId: string, status: NodeRunStatus) => {
                 try {
-                    if (nodeId) {
-                        await publish(buildChannel['node-status']({ nodeId, status }));
-                    } else {
-                        await publish(buildChannel.status({ status }));
-                    }
-                } catch { /* ignore */ }
+                    await publish(buildChannel['node-status']({ nodeId, status }));
+                } catch {
+                    /* ignore */
+                }
+            };
+
+            const publishPipelineStatus = async (status: PipelineStatus) => {
+                try {
+                    await publish(buildChannel.status({ status }));
+                } catch {
+                    /* ignore */
+                }
             };
 
             const logger = createPipelineLogger(publishLog);
@@ -97,7 +102,7 @@ export const buildFunction = inngest.createFunction(
                 edges: pipelineConfig.edges as unknown as PipelineGraph['edges'],
             };
 
-            return await nodePipelineOrchestrator.execute(
+            return await pipelineOrchestrator.execute(
                 buildId,
                 config,
                 graph,
@@ -105,7 +110,8 @@ export const buildFunction = inngest.createFunction(
                 logger,
                 reporter,
                 setStatus,
-                publishEvent,
+                publishNodeStatus,
+                publishPipelineStatus,
             );
         });
     },

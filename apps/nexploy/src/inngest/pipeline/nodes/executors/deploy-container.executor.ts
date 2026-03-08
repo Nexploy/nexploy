@@ -1,9 +1,9 @@
 import {
+    getFromAllOutputs,
+    getFromInputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    getFromInputs,
-    getFromAllOutputs,
 } from '@/types/pipeline.type';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 
@@ -11,9 +11,8 @@ export class DeployContainerExecutor implements INodeExecutor {
     readonly type = 'deploy-container';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { config, inputOutputs, allOutputs, logger, reporter, nodeId, abortSignal } = ctx;
+        const { config, inputOutputs, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        // Look for imageName from direct inputs first, then anywhere in allOutputs
         const imageName =
             getFromInputs<string>(inputOutputs, 'imageName') ??
             getFromAllOutputs<string>(allOutputs, 'imageName') ??
@@ -25,7 +24,6 @@ export class DeployContainerExecutor implements INodeExecutor {
             );
         }
 
-        await reporter.setStatus('DEPLOYING');
         await logger.info(nodeId, 'Starting container deployment');
 
         try {

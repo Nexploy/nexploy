@@ -99,7 +99,6 @@
         "cancel": "Cancel",
         "queued": "Queued",
         "building": "Building",
-        "deploying": "Deploying",
         "completed": "Completed",
         "failed": "Failed",
         "cancelled": "Cancelled",

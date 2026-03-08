@@ -12,16 +12,7 @@ export class DeployComposeExecutor implements INodeExecutor {
     readonly type = 'deploy-compose';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const {
-            config,
-            inputOutputs,
-            allOutputs,
-            logger,
-            reporter,
-            nodeId,
-            nodeConfig,
-            abortSignal,
-        } = ctx;
+        const { config, inputOutputs, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
 
         const workDir =
             getFromInputs<string>(inputOutputs, 'workDir') ??
@@ -61,7 +52,6 @@ export class DeployComposeExecutor implements INodeExecutor {
             }),
         };
 
-        await reporter.setStatus('DEPLOYING');
         await logger.info(nodeId, `Deploying Docker Compose stack: ${projectName}`);
 
         const onLog = async (message: string) => logger.info(nodeId, message);

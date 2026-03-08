@@ -1,12 +1,6 @@
 import { GitProviderToken } from '../git/git';
 
-export type BuildStatus =
-    | 'QUEUED'
-    | 'BUILDING'
-    | 'COMPLETED'
-    | 'FAILED'
-    | 'DEPLOYING'
-    | 'CANCELLED';
+export type BuildStatus = 'QUEUED' | 'BUILDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
 
 export type BuildType = 'NODE_PIPELINE';
 

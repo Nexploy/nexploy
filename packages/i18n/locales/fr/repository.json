@@ -99,7 +99,6 @@
         "cancel": "Annuler",
         "queued": "En file d'attente",
         "building": "En construction",
-        "deploying": "En déploiement",
         "completed": "Terminé",
         "failed": "Échoué",
         "cancelled": "Annulé",

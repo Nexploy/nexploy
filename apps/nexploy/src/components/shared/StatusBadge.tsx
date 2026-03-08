@@ -41,13 +41,6 @@ export function StatusBadge({ status }: StatusBadgeProps) {
                     {t('building')}
                 </Badge>
             );
-        case 'DEPLOYING':
-            return (
-                <Badge variant="warning">
-                    <Loader2 className="size-3 animate-spin" />
-                    {t('deploying')}
-                </Badge>
-            );
         case 'QUEUED':
             return (
                 <Badge variant="secondary" className="gap-1">

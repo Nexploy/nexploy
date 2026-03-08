@@ -87,6 +87,7 @@ export async function startBuildRepositoryInngest(
     };
 
     await addBuildJob(build.id, config);
+    return build.id;
 }
 
 export async function removeBuild(buildId: string) {
@@ -136,7 +137,12 @@ export async function updateStatusBuildInngest(buildId: string, status: BuildSta
     }
 }
 
-export async function updateNodeStatusInngest(buildId: string, nodeId: string, status: string) {
+export async function updateNodeStatusInngest(
+    buildId: string,
+    nodeId: string,
+    status: string,
+    buildStatus?: BuildStatus,
+) {
     try {
         const build = await prisma.build.findUnique({
             where: { id: buildId },
@@ -147,6 +153,7 @@ export async function updateNodeStatusInngest(buildId: string, nodeId: string, s
             where: { id: buildId },
             data: {
                 nodeStatuses: { ...current, [nodeId]: status },
+                ...(buildStatus ? { status: buildStatus } : {}),
             },
         });
     } catch {
