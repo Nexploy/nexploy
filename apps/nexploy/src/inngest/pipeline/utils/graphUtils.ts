@@ -59,22 +59,3 @@ export function analyzeGraph(graph: PipelineGraph): GraphAnalysis {
     return { sorted, reachableNodeIds };
 }
 
-export function findRunningNodeId(graph: PipelineGraph, completedSet: Set<string>): string | null {
-    const { sorted, reachableNodeIds } = analyzeGraph(graph);
-
-    const deps = new Map<string, Set<string>>(graph.nodes.map((n) => [n.id, new Set()]));
-    for (const edge of graph.edges) {
-        deps.get(edge.target)?.add(edge.source);
-    }
-
-    for (const node of sorted) {
-        if (!reachableNodeIds.has(node.id)) continue;
-        if (completedSet.has(node.id)) continue;
-        const nodeDeps = deps.get(node.id)!;
-        if ([...nodeDeps].every((dep) => completedSet.has(dep) || !reachableNodeIds.has(dep))) {
-            return node.id;
-        }
-    }
-
-    return null;
-}

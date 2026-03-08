@@ -62,7 +62,6 @@ export interface InngestStepRunner {
 export interface PipelineResult {
     success: boolean;
     error?: string;
-    completedNodes: string[];
 }
 
 export type ProgressCallback = (progress: number, message: string) => void | Promise<void>;

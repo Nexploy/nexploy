@@ -137,17 +137,25 @@ export async function updateStatusBuildInngest(buildId: string, status: BuildSta
     }
 }
 
-export async function updateLastCompletedNodeInngest(buildId: string, nodeId: string) {
+export async function updateNodeStatusInngest(
+    buildId: string,
+    nodeId: string,
+    status: string,
+) {
     try {
-        return await prisma.build.update({
-            where: { id: buildId },
-            data: {
-                lastCompletedStep: nodeId,
-                completedNodes: { push: nodeId },
-            },
-        });
+        await prisma.$executeRaw`
+            UPDATE "build"
+            SET "nodeStatuses" = COALESCE("nodeStatuses", '{}') || jsonb_build_object(${nodeId}::text, ${status}::text)
+            WHERE "id" = ${buildId}
+        `;
+        if (status === 'completed') {
+            await prisma.build.update({
+                where: { id: buildId },
+                data: { lastCompletedStep: nodeId },
+            });
+        }
     } catch {
-        throw new Error('Failed to update last completed node');
+        throw new Error('Failed to update node status');
     }
 }
 

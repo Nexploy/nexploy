@@ -1,35 +1,26 @@
 import { prisma } from '../../prisma/prisma';
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { SavePipelineInput } from '@workspace/schemas-zod/pipeline/pipelineGraph.schema';
-import { findRunningNodeId } from '@/inngest/pipeline/utils/graphUtils';
-
-const ACTIVE_BUILD_STATUSES = new Set(['QUEUED', 'BUILDING', 'DEPLOYING']);
+// PipelineGraph is used in getPipelineConfig and validatePipelineGraph
+import { type NodeRunStatus } from '@/types/pipeline.type';
 
 export interface BuildPipelineStatus {
-    completedNodes: string[];
+    nodeStatuses: Record<string, NodeRunStatus>;
     status: string;
-    currentNodeId: string | null;
 }
 
 export async function getBuildPipelineStatus(buildId: string): Promise<BuildPipelineStatus | null> {
     const build = await prisma.build.findUnique({
         where: { id: buildId },
-        select: { completedNodes: true, status: true, pipelineSnapshot: true },
+        select: { nodeStatuses: true, status: true },
     });
 
     if (!build) return null;
 
-    const completedSet = new Set(build.completedNodes);
-    let currentNodeId: string | null = null;
-
-    if (ACTIVE_BUILD_STATUSES.has(build.status) && build.pipelineSnapshot) {
-        currentNodeId = findRunningNodeId(
-            build.pipelineSnapshot as unknown as PipelineGraph,
-            completedSet,
-        );
-    }
-
-    return { completedNodes: build.completedNodes, status: build.status, currentNodeId };
+    return {
+        nodeStatuses: (build.nodeStatuses as Record<string, NodeRunStatus>) ?? {},
+        status: build.status,
+    };
 }
 
 export async function getPipelineConfig(repositoryId: string): Promise<PipelineGraph | null> {

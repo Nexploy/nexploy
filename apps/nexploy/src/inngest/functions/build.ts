@@ -7,7 +7,7 @@ import {
 } from '@workspace/typescript-interface/inngest/build';
 import { inngest } from '@/inngest/client';
 import {
-    updateLastCompletedNodeInngest,
+    updateNodeStatusInngest,
     updateStatusBuildInngest,
 } from '@/services/inngest/build.inngest.service';
 import { createLogInngest } from '@/services/inngest/log.inngest.service';
@@ -63,16 +63,19 @@ export const buildFunction = inngest.createFunction(
             const reporter = createStatusReporter(
                 publishStatus,
                 async (nodeId: string) => {
-                    await updateLastCompletedNodeInngest(buildId, nodeId);
+                    await updateNodeStatusInngest(buildId, nodeId, 'completed');
                     await publish(buildChannel['node-status']({ nodeId, status: 'completed' }));
                 },
                 async (nodeId: string) => {
+                    await updateNodeStatusInngest(buildId, nodeId, 'running');
                     await publish(buildChannel['node-status']({ nodeId, status: 'running' }));
                 },
                 async (nodeId: string) => {
+                    await updateNodeStatusInngest(buildId, nodeId, 'skipped');
                     await publish(buildChannel['node-status']({ nodeId, status: 'skipped' }));
                 },
                 async (nodeId: string) => {
+                    await updateNodeStatusInngest(buildId, nodeId, 'failed');
                     await publish(buildChannel['node-status']({ nodeId, status: 'failed' }));
                 },
             );

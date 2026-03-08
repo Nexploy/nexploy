@@ -22,7 +22,7 @@ const edgeTypes = { 'gradient-edge': GradientEdge };
 
 interface BuildPipelineViewProps {
     graph: PipelineGraph;
-    initialCompletedNodes: string[];
+    initialNodeStatuses: Record<string, NodeRunStatus>;
     buildId: string;
     buildStatus: BuildStatus;
 }
@@ -31,13 +31,20 @@ const TERMINAL_STATUSES: BuildStatus[] = ['COMPLETED', 'FAILED', 'CANCELLED'];
 
 function BuildPipelineViewInner({
     graph,
-    initialCompletedNodes,
+    initialNodeStatuses,
     buildId,
     buildStatus,
 }: BuildPipelineViewProps) {
     const { updateNodeData } = useReactFlow();
 
     const isLive = !TERMINAL_STATUSES.includes(buildStatus);
+
+    // Apply initial statuses from DB on mount
+    useEffect(() => {
+        for (const [nodeId, status] of Object.entries(initialNodeStatuses)) {
+            updateNodeData(nodeId, { runStatus: status, viewOnly: true });
+        }
+    }, [initialNodeStatuses, updateNodeData]);
 
     // Subscribe to live node-status events (only for active builds)
     const { data } = useInngestSubscription({
@@ -50,7 +57,6 @@ function BuildPipelineViewInner({
             return result?.data ?? null;
         },
     });
-
 
     // Apply live events on top of initial state
     useEffect(() => {

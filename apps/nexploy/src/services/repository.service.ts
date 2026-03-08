@@ -163,7 +163,6 @@ export async function getActiveBuilds(repositoryId: string) {
             commitHash: true,
             commitMessage: true,
             createdAt: true,
-            completedNodes: true,
             pipelineSnapshot: true,
             environment: { select: { name: true } },
         },

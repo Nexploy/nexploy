@@ -10,6 +10,7 @@ import { Separator } from '@workspace/ui/components/separator';
 import { BuildLogsViewer } from '@/components/repositories/tabs/builds/logs/BuildLogsViewer';
 import { useRouter } from 'next/navigation';
 import { getRepositorieBuildLogs } from '@/services/repository.service';
+import { type NodeRunStatus } from '@/types/pipeline.type';
 import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
 import { useBuildActions } from '@/hooks/useBuildActions';
 import { BuildPipelineView } from '@/components/repositories/tabs/builds/BuildPipelineView';
@@ -138,7 +139,7 @@ export function BuildLogs({ build }: BuildLogsProps) {
             {view === 'pipeline' && hasPipeline ? (
                 <BuildPipelineView
                     graph={pipelineSnapshot}
-                    initialCompletedNodes={build.completedNodes}
+                    initialNodeStatuses={(build.nodeStatuses as Record<string, NodeRunStatus>) ?? {}}
                     buildId={build.id}
                     buildStatus={build.status}
                 />

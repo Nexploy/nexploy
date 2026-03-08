@@ -78,7 +78,6 @@ export class NodePipelineOrchestrator {
     ): Promise<PipelineResult> {
         const abortController = new AbortController();
         const allOutputs: NodeOutputStore = new Map();
-        const completedNodes: string[] = [];
         let currentNodeId: string | null = null;
 
         let sorted: PipelineNode[];
@@ -169,21 +168,21 @@ export class NodePipelineOrchestrator {
                         abortSignal: abortController.signal,
                     };
 
-                    const execResult = await executor.execute(ctx);
-
-                    if (!execResult.skipped) {
-                        await reporter.markNodeCompleted(node.id);
+                    try {
+                        const execResult = await executor.execute(ctx);
+                        if (!execResult.skipped) {
+                            await reporter.markNodeCompleted(node.id);
+                        }
+                        return execResult;
+                    } catch (err) {
+                        await reporter.markNodeFailed(node.id);
+                        throw err;
                     }
-
-                    return execResult;
                 });
 
                 const result = nodeResult as NodeExecutionResult;
                 allOutputs.set(node.id, result.output ?? {});
 
-                if (!result.skipped) {
-                    completedNodes.push(node.id);
-                }
             }
 
             await inngestStep.run('pipeline-complete', async () => {
@@ -191,7 +190,7 @@ export class NodePipelineOrchestrator {
                 await this.saveVersion(buildId, config, allOutputs, logger);
             });
 
-            return { success: true, completedNodes };
+            return { success: true };
         } catch (error) {
             const errorDetails = formatErrorDetails(error);
             const workDir = findWorkDir(allOutputs);
@@ -206,10 +205,9 @@ export class NodePipelineOrchestrator {
                         console.error('Cleanup failed after cancellation:', e);
                     }
                 }
-                return { success: false, error: 'Build cancelled', completedNodes };
+                return { success: false, error: 'Build cancelled' };
             }
 
-            if (currentNodeId) await reporter.markNodeFailed(currentNodeId);
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
             await logger.error('error', `Build failed: ${errorMessage}`);
             await logger.error('error-details', errorDetails);

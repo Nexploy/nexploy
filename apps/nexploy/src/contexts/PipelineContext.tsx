@@ -201,29 +201,27 @@ export function PipelineProvider({
     const isViewingBuild = !!activeBuild?.pipelineSnapshot;
     const isLiveBuild = isViewingBuild && !TERMINAL_STATUSES.has(activeBuild!.status);
 
-    // Fetch fresh completedNodes + currentNodeId from DB each time a build is selected
-    const [fetchedCompletedNodes, setFetchedCompletedNodes] = useState<Set<string>>(new Set());
-    const [fetchedCurrentNodeId, setFetchedCurrentNodeId] = useState<string | null>(null);
+    // Fetch fresh nodeStatuses from DB each time a build is selected
+    const [fetchedNodeStatuses, setFetchedNodeStatuses] = useState<Record<string, NodeRunStatus>>({});
     useEffect(() => {
         if (!activeBuildId || !repositoryId) {
-            setFetchedCompletedNodes(new Set());
-            setFetchedCurrentNodeId(null);
+            setFetchedNodeStatuses({});
             return;
         }
         fetch(`/api/repositories/${repositoryId}/builds/${activeBuildId}`)
             .then((r) => r.json())
-            .then((data: { completedNodes: string[]; currentNodeId: string | null }) => {
-                setFetchedCompletedNodes(new Set(data.completedNodes));
-                setFetchedCurrentNodeId(data.currentNodeId);
+            .then((data: { nodeStatuses: Record<string, NodeRunStatus> }) => {
+                setFetchedNodeStatuses(data.nodeStatuses ?? {});
             })
             .catch(() => {});
     }, [activeBuildId, repositoryId]);
 
-    // Track live node statuses (running / newly completed) from subscription
+    // Live node statuses from subscription (real-time overlay on top of DB state)
     const [liveStatuses, setLiveStatuses] = useState<Record<string, NodeRunStatus>>({});
     useEffect(() => {
         setLiveStatuses({});
     }, [activeBuildId]);
+
 
     const refreshToken = useCallback(async () => {
         if (!activeBuildId) return null;
@@ -258,19 +256,13 @@ export function PipelineProvider({
                 ...n,
                 data: {
                     ...n.data,
-                    runStatus:
-                        liveStatuses[n.id] ??
-                        (fetchedCompletedNodes.has(n.id)
-                            ? 'completed'
-                            : fetchedCurrentNodeId === n.id
-                              ? 'running'
-                              : undefined),
+                    runStatus: liveStatuses[n.id] ?? fetchedNodeStatuses[n.id] ?? undefined,
                     viewOnly: true,
                 },
             })),
             displayEdges: snapshotEdges,
         };
-    }, [activeBuild, liveStatuses, fetchedCompletedNodes, fetchedCurrentNodeId, nodes, edges]);
+    }, [activeBuild, liveStatuses, fetchedNodeStatuses, nodes, edges]);
 
     const handleDeleteSelection = useCallback(() => {
         const selectedIds = new Set(nodes.filter((n) => n.selected).map((n) => n.id));
