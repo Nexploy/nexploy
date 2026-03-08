@@ -1,6 +1,36 @@
 import { prisma } from '../../prisma/prisma';
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { SavePipelineInput } from '@workspace/schemas-zod/pipeline/pipelineGraph.schema';
+import { findRunningNodeId } from '@/inngest/pipeline/utils/graphUtils';
+
+const ACTIVE_BUILD_STATUSES = new Set(['QUEUED', 'BUILDING', 'DEPLOYING']);
+
+export interface BuildPipelineStatus {
+    completedNodes: string[];
+    status: string;
+    currentNodeId: string | null;
+}
+
+export async function getBuildPipelineStatus(buildId: string): Promise<BuildPipelineStatus | null> {
+    const build = await prisma.build.findUnique({
+        where: { id: buildId },
+        select: { completedNodes: true, status: true, pipelineSnapshot: true },
+    });
+
+    if (!build) return null;
+
+    const completedSet = new Set(build.completedNodes);
+    let currentNodeId: string | null = null;
+
+    if (ACTIVE_BUILD_STATUSES.has(build.status) && build.pipelineSnapshot) {
+        currentNodeId = findRunningNodeId(
+            build.pipelineSnapshot as unknown as PipelineGraph,
+            completedSet,
+        );
+    }
+
+    return { completedNodes: build.completedNodes, status: build.status, currentNodeId };
+}
 
 export async function getPipelineConfig(repositoryId: string): Promise<PipelineGraph | null> {
     const config = await prisma.pipelineConfig.findUnique({

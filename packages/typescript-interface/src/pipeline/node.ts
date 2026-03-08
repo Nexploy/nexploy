@@ -18,6 +18,7 @@ export interface PipelineNodeData {
     config: Record<string, unknown>;
     label?: string;
     disabled?: boolean;
+    isStartNode?: boolean;
 }
 
 export interface PipelineNode {

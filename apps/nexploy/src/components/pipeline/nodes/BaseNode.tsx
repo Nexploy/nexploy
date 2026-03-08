@@ -3,7 +3,7 @@
 import { Handle, Position, useConnection, useNodeConnections, useReactFlow } from '@xyflow/react';
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { useTranslations } from 'next-intl';
-import { CheckCircle2, Loader2, Power, Terminal, Trash2, XCircle } from 'lucide-react';
+import { CheckCircle2, CircleX, Loader2, Power, Terminal, Trash2 } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
 import {
@@ -39,6 +39,8 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
     const disabled = data.disabled ?? false;
     const viewOnly = data.viewOnly ?? false;
     const runStatus = data.runStatus;
+
+    console.log(runStatus);
 
     const getTargetIds = () => {
         const selectedIds = getNodes()
@@ -127,7 +129,7 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
                     <CheckCircle2 className="absolute top-1.5 right-1.5 size-3.5 text-green-500" />
                 )}
                 {runStatus === 'failed' && (
-                    <XCircle className="absolute top-1.5 right-1.5 size-3.5 text-red-500" />
+                    <CircleX className="absolute top-1.5 right-1.5 size-3.5 text-red-500" />
                 )}
                 {hasInputs && (
                     <Handle

@@ -19,6 +19,7 @@ export const pipelineNodeDataSchema = z.object({
     config: z.record(z.string(), z.unknown()),
     label: z.string().optional(),
     disabled: z.boolean().optional(),
+    isStartNode: z.boolean().optional(),
 });
 
 export const pipelineNodeSchema = z.object({

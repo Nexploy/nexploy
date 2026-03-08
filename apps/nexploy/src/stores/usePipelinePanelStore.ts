@@ -16,7 +16,7 @@ interface PipelinePanelStore {
 }
 
 export const usePipelinePanelStore = create<PipelinePanelStore>((set) => ({
-    activePanel: null,
+    activePanel: 'palette',
     paletteCategory: null,
     paletteSearch: '',
 

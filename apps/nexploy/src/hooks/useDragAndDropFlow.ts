@@ -47,6 +47,7 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
                             pipelineNodeType: tn.type,
                             definition: def,
                             config: { ...(def?.defaultConfig ?? {}), ...(tn.config ?? {}) },
+                            isStartNode: def?.isStartNode ?? false,
                         },
                     };
                 });
@@ -80,10 +81,11 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
                     pipelineNodeType: nodeType,
                     definition: def,
                     config: { ...def.defaultConfig },
+                    isStartNode: def.isStartNode ?? false,
                 },
             };
 
-            setNodes((nds) => nds.concat(newNode));
+            setNodes((node) => node.concat(newNode));
             triggerAutoSave();
         },
         [rfInstance, setNodes, setEdges, triggerAutoSave],

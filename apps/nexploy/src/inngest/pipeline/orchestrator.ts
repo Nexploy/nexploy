@@ -16,9 +16,9 @@ import {
     PipelineStatus,
     StatusReporter,
 } from '@/types/pipeline.type';
-import { topologicalSort } from './utils/topologicalSort';
 import { getNodeExecutor } from './nodes/registry';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
+import { analyzeGraph } from './utils/graphUtils';
 import { gitService } from './services/git.service';
 import { prisma } from '../../../prisma/prisma';
 
@@ -82,35 +82,11 @@ export class NodePipelineOrchestrator {
         let currentNodeId: string | null = null;
 
         let sorted: PipelineNode[];
+        let reachableNodeIds: Set<string>;
         try {
-            sorted = topologicalSort(graph.nodes, graph.edges);
+            ({ sorted, reachableNodeIds } = analyzeGraph(graph));
         } catch (err) {
             throw new Error(`Invalid pipeline graph: ${err instanceof Error ? err.message : err}`);
-        }
-
-        const startNodeIds = new Set(
-            sorted
-                .filter((n) => getNodeDefinition(n.data.type)?.isStartNode === true)
-                .map((n) => n.id),
-        );
-        const reachableNodeIds = new Set<string>(startNodeIds);
-        // Bidirectional adjacency: follow edges in both directions
-        const adjacency = new Map<string, string[]>();
-        for (const edge of graph.edges) {
-            if (!adjacency.has(edge.source)) adjacency.set(edge.source, []);
-            adjacency.get(edge.source)!.push(edge.target);
-            if (!adjacency.has(edge.target)) adjacency.set(edge.target, []);
-            adjacency.get(edge.target)!.push(edge.source);
-        }
-        const bfsQueue = [...startNodeIds];
-        while (bfsQueue.length > 0) {
-            const id = bfsQueue.shift()!;
-            for (const neighborId of adjacency.get(id) ?? []) {
-                if (!reachableNodeIds.has(neighborId)) {
-                    reachableNodeIds.add(neighborId);
-                    bfsQueue.push(neighborId);
-                }
-            }
         }
 
         const cancellationWatcher = this.startCancellationWatcher(buildId, abortController);

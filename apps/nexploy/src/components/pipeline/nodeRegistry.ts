@@ -35,7 +35,3 @@ const nodeRegistry = new Map(ALL_NODE_DEFINITIONS.map((d) => [d.type, d]));
 export function getNodeDefinition(type: string): NodeDefinition | undefined {
     return nodeRegistry.get(type);
 }
-
-export function getAllNodeDefinitions(): NodeDefinition[] {
-    return ALL_NODE_DEFINITIONS;
-}
