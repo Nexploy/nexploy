@@ -6,6 +6,7 @@ import {
     useCallback,
     useContext,
     useEffect,
+    useMemo,
     useRef,
     useState,
 } from 'react';
@@ -30,6 +31,9 @@ type ActiveBuild = Awaited<ReturnType<typeof getActiveBuilds>>[number];
 interface PipelineContextValue {
     nodes: Node[];
     edges: Edge[];
+    displayNodes: Node[];
+    displayEdges: Edge[];
+    isViewingBuild: boolean;
     panelNodeId: string | null;
     selectedNodeIds: string[];
     isSaving: boolean;
@@ -45,7 +49,6 @@ interface PipelineContextValue {
     handleConfigChange: (nodeId: string, config: Record<string, unknown>) => void;
     handleDeleteSelection: () => void;
     handleDuplicateSelection: () => void;
-    handleNodeDragStop: () => void;
     triggerAutoSave: () => void;
     undo: () => void;
     redo: () => void;
@@ -122,7 +125,6 @@ export function PipelineProvider({
     );
 
     const triggerAutoSave = useCallback(() => setSaveVersion((v) => v + 1), []);
-    const handleNodeDragStop = useCallback(() => setSaveVersion((v) => v + 1), []);
 
     const onConnect = useCallback(
         (connection: Connection) => {
@@ -187,6 +189,28 @@ export function PipelineProvider({
         setSaveVersion((v) => v + 1);
     }, [nodes, setNodes, setEdges]);
 
+    const { displayNodes, displayEdges, isViewingBuild } = useMemo(() => {
+        const activeBuild = activeBuilds.find((b) => b.id === activeBuildId);
+        if (!activeBuild?.pipelineSnapshot) {
+            return { displayNodes: nodes, displayEdges: edges, isViewingBuild: false };
+        }
+        const snapshot = activeBuild.pipelineSnapshot as unknown as PipelineGraph;
+        const completedSet = new Set(activeBuild.completedNodes);
+        const { nodes: snapshotNodes, edges: snapshotEdges } = graphToFlow(snapshot);
+        return {
+            displayNodes: snapshotNodes.map((n) => ({
+                ...n,
+                data: {
+                    ...n.data,
+                    runStatus: completedSet.has(n.id) ? 'completed' : undefined,
+                    viewOnly: true,
+                },
+            })),
+            displayEdges: snapshotEdges,
+            isViewingBuild: true,
+        };
+    }, [activeBuildId, activeBuilds, nodes, edges]);
+
     const handleDeleteSelection = useCallback(() => {
         const selectedIds = new Set(nodes.filter((n) => n.selected).map((n) => n.id));
         if (selectedIds.size === 0) return;
@@ -204,6 +228,9 @@ export function PipelineProvider({
             value={{
                 nodes,
                 edges,
+                displayNodes,
+                displayEdges,
+                isViewingBuild,
                 panelNodeId,
                 selectedNodeIds,
                 isSaving,
@@ -219,7 +246,6 @@ export function PipelineProvider({
                 handleConfigChange,
                 handleDeleteSelection,
                 handleDuplicateSelection,
-                handleNodeDragStop,
                 triggerAutoSave,
                 undo,
                 redo,

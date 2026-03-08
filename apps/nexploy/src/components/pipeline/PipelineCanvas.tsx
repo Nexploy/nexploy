@@ -43,12 +43,13 @@ export function PipelineCanvas() {
 
     const {
         nodes,
-        edges,
+        displayNodes,
+        displayEdges,
+        isViewingBuild,
         onNodesChange,
         onEdgesChange,
         onConnect,
         handleNodeDoubleClick,
-        handleNodeDragStop,
         handlePaneClick,
         handleSelectionChange,
         handleDuplicateSelection,
@@ -57,9 +58,6 @@ export function PipelineCanvas() {
         redo,
         triggerAutoSave,
         setNodes,
-        activeBuilds,
-        activeBuildId,
-        setActiveBuildId,
     } = usePipelineContext();
 
     const openContextMenu = useCallback((event: React.MouseEvent, nodeId: string) => {
@@ -158,27 +156,25 @@ export function PipelineCanvas() {
             onDragLeave={onDragLeave}
             onDrop={onDrop}
         >
-            <BuildsPanel
-                builds={activeBuilds}
-                activeBuildId={activeBuildId}
-                onSelect={setActiveBuildId}
-            />
+            <BuildsPanel />
             <ButtonPanel />
             <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
+                nodes={displayNodes}
+                edges={displayEdges}
+                onNodesChange={isViewingBuild ? () => {} : onNodesChange}
+                onEdgesChange={isViewingBuild ? () => {} : onEdgesChange}
+                onConnect={isViewingBuild ? undefined : onConnect}
                 onInit={setRfInstance}
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
-                onNodeDoubleClick={handleNodeDoubleClick}
-                onNodeDragStop={handleNodeDragStop}
+                onNodeDoubleClick={isViewingBuild ? undefined : handleNodeDoubleClick}
+                onNodeDragStop={isViewingBuild ? undefined : triggerAutoSave}
                 onPaneClick={handlePaneClick}
-                onNodeContextMenu={onNodeContextMenu}
-                onSelectionContextMenu={onSelectionContextMenu}
-                panActivationKeyCode={['Space', 'Meta']}
+                onNodeContextMenu={isViewingBuild ? undefined : onNodeContextMenu}
+                onSelectionContextMenu={isViewingBuild ? undefined : onSelectionContextMenu}
+                nodesDraggable={!isViewingBuild}
+                nodesConnectable={!isViewingBuild}
+                elementsSelectable={!isViewingBuild}
                 panOnDrag={nodes.length > 0 ? [1, 2] : false}
                 panOnScroll={nodes.length > 0}
                 panOnScrollMode={PanOnScrollMode.Free}
@@ -186,9 +182,8 @@ export function PipelineCanvas() {
                 zoomOnPinch={nodes.length > 0}
                 zoomOnDoubleClick={false}
                 selectionMode={SelectionMode.Partial}
-                multiSelectionKeyCode="Shift"
-                selectionOnDrag
-                onSelectionChange={handleSelectionChange}
+                selectionOnDrag={!isViewingBuild}
+                onSelectionChange={isViewingBuild ? undefined : handleSelectionChange}
                 deleteKeyCode={null}
                 fitView
                 fitViewOptions={{ padding: 0.3 }}
@@ -204,7 +199,7 @@ export function PipelineCanvas() {
                     size={1.5}
                     color="var(--base-6)"
                 />
-                {nodes.length > 0 && (
+                {displayNodes.length > 0 && (
                     <Panel className={'!m-2'} position="bottom-left">
                         <div className="flex gap-1.5">
                             <Button
@@ -245,7 +240,7 @@ export function PipelineCanvas() {
                     nodeColor={'var(--accent)'}
                     maskColor={'oklch(from var(--accent) l c h / 0.5)'}
                 />
-                {nodes.length === 0 && (
+                {displayNodes.length === 0 && (
                     <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3">
                         <div className="border-border bg-card flex size-16 items-center justify-center rounded-2xl border">
                             <svg

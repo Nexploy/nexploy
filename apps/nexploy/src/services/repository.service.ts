@@ -154,6 +154,7 @@ export async function getActiveBuilds(repositoryId: string) {
     return prisma.build.findMany({
         where: {
             repositoryId,
+            status: { in: ['QUEUED', 'BUILDING', 'DEPLOYING', 'COMPLETED'] },
         },
         orderBy: { createdAt: 'desc' },
         select: {
@@ -163,6 +164,8 @@ export async function getActiveBuilds(repositoryId: string) {
             commitHash: true,
             commitMessage: true,
             createdAt: true,
+            completedNodes: true,
+            pipelineSnapshot: true,
             environment: { select: { name: true } },
         },
     });
