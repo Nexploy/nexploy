@@ -48,16 +48,8 @@ export async function startBuildRepositoryInngest(
         select: { id: true, nodes: true, edges: true },
     });
     if (!pipelineConfig) {
-        throw new Error('No pipeline configuration found. Configure a pipeline before starting a build.');
-    }
-
-    const activeBuild = await prisma.build.findFirst({
-        where: { repositoryId: repository.id, status: { in: ['QUEUED', 'BUILDING'] } },
-        select: { id: true, status: true },
-    });
-    if (activeBuild) {
         throw new Error(
-            `A build is already in progress for this repository (build ${activeBuild.id}, status: ${activeBuild.status}). Cancel it before starting a new one.`,
+            'No pipeline configuration found. Configure a pipeline before starting a build.',
         );
     }
 
@@ -122,7 +114,14 @@ export async function createBuild({
 }) {
     try {
         return await prisma.build.create({
-            data: { repositoryId, branch, commitMessage, commitHash, environmentId, pipelineSnapshot },
+            data: {
+                repositoryId,
+                branch,
+                commitMessage,
+                commitHash,
+                environmentId,
+                pipelineSnapshot,
+            },
         });
     } catch {
         throw new Error('Failed to create build');
@@ -137,11 +136,7 @@ export async function updateStatusBuildInngest(buildId: string, status: BuildSta
     }
 }
 
-export async function updateNodeStatusInngest(
-    buildId: string,
-    nodeId: string,
-    status: string,
-) {
+export async function updateNodeStatusInngest(buildId: string, nodeId: string, status: string) {
     try {
         await prisma.$executeRaw`
             UPDATE "build"

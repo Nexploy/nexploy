@@ -11,12 +11,8 @@ import {
     updateStatusBuildInngest,
 } from '@/services/inngest/build.inngest.service';
 import { createLogInngest } from '@/services/inngest/log.inngest.service';
-import { LogLevel, PipelineStatus } from '@/types/pipeline.type';
-import {
-    createPipelineLogger,
-    createStatusReporter,
-    nodePipelineOrchestrator,
-} from '@/inngest/pipeline/orchestrator';
+import { LogLevel, PipelineReporter, PipelineStatus } from '@/types/pipeline.type';
+import { createPipelineLogger, nodePipelineOrchestrator } from '@/inngest/pipeline/orchestrator';
 import { runWithEnvironmentContextAsync } from '@/lib/environmentContext';
 import { prisma } from '../../../prisma/prisma';
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
@@ -54,31 +50,57 @@ export const buildFunction = inngest.createFunction(
                 await publish(buildChannel.log({ log }));
             };
 
-            const publishStatus = async (status: PipelineStatus) => {
+            const setStatus = async (status: PipelineStatus) => {
                 await updateStatusBuildInngest(buildId, status as BuildStatus);
-                await publish(buildChannel.status({ status }));
+                try {
+                    await publish(buildChannel.status({ status }));
+                } catch {
+                    /* ignore */
+                }
+            };
+
+            const reporter: PipelineReporter = {
+                async markRunning(nodeId) {
+                    await updateNodeStatusInngest(buildId, nodeId, 'running');
+                    try {
+                        await publish(buildChannel['node-status']({ nodeId, status: 'running' }));
+                    } catch {
+                        /* ignore */
+                    }
+                },
+                async markCompleted(nodeId) {
+                    await updateNodeStatusInngest(buildId, nodeId, 'completed');
+                    try {
+                        await publish(buildChannel['node-status']({ nodeId, status: 'completed' }));
+                    } catch {
+                        /* ignore */
+                    }
+                },
+                async markSkipped(nodeId) {
+                    await updateNodeStatusInngest(buildId, nodeId, 'skipped');
+                    try {
+                        await publish(buildChannel['node-status']({ nodeId, status: 'skipped' }));
+                    } catch {
+                        /* ignore */
+                    }
+                },
+                async markFailed(nodeId) {
+                    await updateNodeStatusInngest(buildId, nodeId, 'failed');
+                    await updateStatusBuildInngest(buildId, 'FAILED');
+                    try {
+                        await publish(buildChannel['node-status']({ nodeId, status: 'failed' }));
+                    } catch {
+                        /* ignore */
+                    }
+                    try {
+                        await publish(buildChannel.status({ status: 'FAILED' }));
+                    } catch {
+                        /* ignore */
+                    }
+                },
             };
 
             const logger = createPipelineLogger(publishLog);
-            const reporter = createStatusReporter(
-                publishStatus,
-                async (nodeId: string) => {
-                    await updateNodeStatusInngest(buildId, nodeId, 'completed');
-                    await publish(buildChannel['node-status']({ nodeId, status: 'completed' }));
-                },
-                async (nodeId: string) => {
-                    await updateNodeStatusInngest(buildId, nodeId, 'running');
-                    await publish(buildChannel['node-status']({ nodeId, status: 'running' }));
-                },
-                async (nodeId: string) => {
-                    await updateNodeStatusInngest(buildId, nodeId, 'skipped');
-                    await publish(buildChannel['node-status']({ nodeId, status: 'skipped' }));
-                },
-                async (nodeId: string) => {
-                    await updateNodeStatusInngest(buildId, nodeId, 'failed');
-                    await publish(buildChannel['node-status']({ nodeId, status: 'failed' }));
-                },
-            );
 
             const pipelineConfig = await prisma.pipelineConfig.findUnique({
                 where: { repositoryId: config.repositoryId },
@@ -102,6 +124,7 @@ export const buildFunction = inngest.createFunction(
                 step,
                 logger,
                 reporter,
+                setStatus,
             );
         });
     },

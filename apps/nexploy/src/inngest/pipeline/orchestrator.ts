@@ -12,9 +12,9 @@ import {
     NodeOutputData,
     NodeOutputStore,
     PipelineLogger,
+    PipelineReporter,
     PipelineResult,
     PipelineStatus,
-    StatusReporter,
 } from '@/types/pipeline.type';
 import { getNodeExecutor } from './nodes/registry';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
@@ -74,11 +74,11 @@ export class NodePipelineOrchestrator {
         graph: PipelineGraph,
         inngestStep: InngestStepRunner,
         logger: PipelineLogger,
-        reporter: StatusReporter,
+        reporter: PipelineReporter,
+        setStatus: (status: PipelineStatus) => Promise<void>,
     ): Promise<PipelineResult> {
         const abortController = new AbortController();
         const allOutputs: NodeOutputStore = new Map();
-        let currentNodeId: string | null = null;
 
         let sorted: PipelineNode[];
         let reachableNodeIds: Set<string>;
@@ -92,7 +92,7 @@ export class NodePipelineOrchestrator {
 
         try {
             await inngestStep.run('pipeline-init', async () => {
-                await reporter.setStatus('BUILDING');
+                await setStatus('BUILDING');
             });
 
             for (const node of sorted) {
@@ -108,8 +108,7 @@ export class NodePipelineOrchestrator {
 
                 if (!reachableNodeIds.has(node.id)) {
                     await inngestStep.run(`node-${node.id}`, async () => {
-                        currentNodeId = node.id;
-                        await reporter.markNodeSkipped(node.id);
+                        await reporter.markSkipped(node.id);
                         await logger.info(
                             node.id,
                             `${node.data.label} : Node skipped (not connected to a start node)`,
@@ -121,8 +120,7 @@ export class NodePipelineOrchestrator {
 
                 if (node.data.disabled) {
                     await inngestStep.run(`node-${node.id}`, async () => {
-                        currentNodeId = node.id;
-                        await reporter.markNodeSkipped(node.id);
+                        await reporter.markSkipped(node.id);
                         await logger.info(node.id, `${node.data.label} : Node skipped (disabled)`);
                     });
 
@@ -137,8 +135,7 @@ export class NodePipelineOrchestrator {
 
                 if (hasUnconnectedRequiredInput) {
                     await inngestStep.run(`node-${node.id}`, async () => {
-                        currentNodeId = node.id;
-                        await reporter.markNodeSkipped(node.id);
+                        await reporter.markSkipped(node.id);
                         await logger.info(
                             node.id,
                             `${node.data.label} : Node skipped (required input not connected)`,
@@ -149,8 +146,7 @@ export class NodePipelineOrchestrator {
                 }
 
                 const nodeResult = await inngestStep.run(`node-${node.id}`, async () => {
-                    currentNodeId = node.id;
-                    await reporter.markNodeRunning(node.id);
+                    await reporter.markRunning(node.id);
 
                     if (abortController.signal.aborted) {
                         throw new DOMException('Build cancelled', 'AbortError');
@@ -171,22 +167,21 @@ export class NodePipelineOrchestrator {
                     try {
                         const execResult = await executor.execute(ctx);
                         if (!execResult.skipped) {
-                            await reporter.markNodeCompleted(node.id);
+                            await reporter.markCompleted(node.id);
                         }
                         return execResult;
                     } catch (err) {
-                        await reporter.markNodeFailed(node.id);
+                        await reporter.markFailed(node.id);
                         throw err;
                     }
                 });
 
                 const result = nodeResult as NodeExecutionResult;
                 allOutputs.set(node.id, result.output ?? {});
-
             }
 
             await inngestStep.run('pipeline-complete', async () => {
-                await reporter.setStatus('COMPLETED');
+                await setStatus('COMPLETED');
                 await this.saveVersion(buildId, config, allOutputs, logger);
             });
 
@@ -197,7 +192,7 @@ export class NodePipelineOrchestrator {
 
             if (error instanceof Error && error.name === 'AbortError') {
                 await logger.info('cancel', 'Build cancelled by user');
-                await reporter.setStatus('CANCELLED');
+                await setStatus('CANCELLED');
                 if (workDir) {
                     try {
                         await gitService.cleanup(workDir);
@@ -211,7 +206,12 @@ export class NodePipelineOrchestrator {
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
             await logger.error('error', `Build failed: ${errorMessage}`);
             await logger.error('error-details', errorDetails);
-            await reporter.setStatus('FAILED');
+            // markFailed inside the step already set FAILED; this is a fallback
+            try {
+                await setStatus('FAILED');
+            } catch {
+                /* ignore */
+            }
 
             if (workDir) {
                 try {
@@ -282,16 +282,6 @@ export function createPipelineLogger(
         warn: (step, message) => publishLog(step, message, 'WARN'),
         error: (step, message) => publishLog(step, message, 'ERROR'),
     };
-}
-
-export function createStatusReporter(
-    setStatus: (status: PipelineStatus) => Promise<void>,
-    markNodeCompleted: (nodeId: string) => Promise<void>,
-    markNodeRunning: (nodeId: string) => Promise<void>,
-    markNodeSkipped: (nodeId: string) => Promise<void>,
-    markNodeFailed: (nodeId: string) => Promise<void>,
-): StatusReporter {
-    return { setStatus, markNodeCompleted, markNodeRunning, markNodeSkipped, markNodeFailed };
 }
 
 export const nodePipelineOrchestrator = new NodePipelineOrchestrator();
