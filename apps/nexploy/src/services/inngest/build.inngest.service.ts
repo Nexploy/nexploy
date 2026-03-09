@@ -255,7 +255,6 @@ export async function resumeBuildRepositoryInngest(
         throw new Error('Can only resume failed builds');
     }
 
-    // For node pipeline, resume = retry from scratch (Inngest handles step memoization within a run)
     await retryBuildRepositoryInngest({ buildId, environmentId }, userId, existingBuild);
 
     await prisma.build.update({ where: { id: buildId }, data: { status: 'QUEUED' } });
@@ -279,16 +278,5 @@ export async function getAllEnvsBuildInngest(repositoryId: string) {
         return envs.map((env) => ({ ...env, value: decrypt(env.value) }));
     } catch {
         throw new Error('Failed to get builds');
-    }
-}
-
-export async function getCompletedBuildsInngest(repositoryId: string) {
-    try {
-        return await prisma.build.findMany({
-            where: { repositoryId, status: 'COMPLETED' },
-            orderBy: { createdAt: 'desc' },
-        });
-    } catch {
-        throw new Error('Failed to get completed builds');
     }
 }

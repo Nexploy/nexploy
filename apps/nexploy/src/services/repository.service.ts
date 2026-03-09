@@ -151,23 +151,16 @@ export async function getRepositorieBuildLogs(repositoryId: string, buildId: str
 }
 
 export async function getActiveBuilds(repositoryId: string) {
-    return prisma.build.findMany({
-        where: {
-            repositoryId,
-        },
-        orderBy: { createdAt: 'desc' },
-        select: {
-            id: true,
-            status: true,
-            branch: true,
-            commitHash: true,
-            commitMessage: true,
-            createdAt: true,
-            pipelineSnapshot: true,
-            nodeStatuses: true,
-            environment: { select: { name: true } },
-        },
-    });
+    try {
+        return prisma.build.findMany({
+            where: {
+                repositoryId,
+            },
+            orderBy: { createdAt: 'desc' },
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to get active builds');
+    }
 }
 
 export async function updateBranchRepository(newBranch: string, repositoryId: string) {

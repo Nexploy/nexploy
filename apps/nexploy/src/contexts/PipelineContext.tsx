@@ -218,8 +218,8 @@ export function PipelineProvider({
         [activeBuilds, activeBuildId],
     );
     const isViewingBuild = !!activeBuild?.pipelineSnapshot;
-    // Si le build n'est pas encore dans activeBuilds (revalidation SSR en cours), on le considère live
-    const isLiveBuild = !!activeBuildId && (activeBuild ? !TERMINAL_STATUSES.has(activeBuild.status) : true);
+    const isLiveBuild =
+        !!activeBuildId && (activeBuild ? !TERMINAL_STATUSES.has(activeBuild.status) : true);
 
     useEffect(() => {
         const build = activeBuilds.find((b) => b.id === activeBuildId);
@@ -270,7 +270,6 @@ export function PipelineProvider({
         if (Object.keys(updates).length > 0) {
             setNodeStatuses((prev) => {
                 const next = { ...prev, ...updates };
-                // Ne pas écraser un statut déjà défini pour la complétion globale
                 for (const [id, status] of Object.entries(updates)) {
                     if (status === 'completed' && prev[id]) next[id] = prev[id];
                 }
