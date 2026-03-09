@@ -1,8 +1,8 @@
 import {
+    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    getFromAllOutputs,
 } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 
@@ -12,13 +12,11 @@ export class CleanWorkdirExecutor implements INodeExecutor {
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { inputOutputs, allOutputs, logger, nodeId } = ctx;
 
-        // Look for workDir from direct inputs first, then anywhere in allOutputs
         const workDirFromInputs = inputOutputs
             .map((o) => o.workDir)
             .find((v): v is string => typeof v === 'string');
 
-        const workDir =
-            workDirFromInputs ?? getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = workDirFromInputs ?? getFromAllOutputs<string>(allOutputs, 'workDir');
 
         if (!workDir) {
             await logger.info(nodeId, 'No work directory to clean up');

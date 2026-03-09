@@ -1,8 +1,4 @@
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 
 export class SendNotificationExecutor implements INodeExecutor {
     readonly type = 'send-notification';
@@ -11,7 +7,6 @@ export class SendNotificationExecutor implements INodeExecutor {
         const { config, logger, nodeId, nodeConfig, abortSignal } = ctx;
 
         const webhookUrl = (nodeConfig.webhookUrl as string | undefined) ?? '';
-        const triggerOn = (nodeConfig.triggerOn as string[] | undefined) ?? ['always'];
         const customMessage = nodeConfig.message as string | undefined;
 
         if (!webhookUrl) {

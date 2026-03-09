@@ -1,9 +1,9 @@
 import {
+    getFromAllOutputs,
+    getFromInputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    getFromInputs,
-    getFromAllOutputs,
 } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 
@@ -23,8 +23,7 @@ export class ValidateDockerfileExecutor implements INodeExecutor {
             );
         }
 
-        const dockerfilePath =
-            (nodeConfig.dockerfilePath as string | undefined) ?? 'Dockerfile';
+        const dockerfilePath = (nodeConfig.dockerfilePath as string | undefined) ?? 'Dockerfile';
 
         await logger.info(nodeId, `Validating Dockerfile: ${dockerfilePath}`);
 
@@ -32,7 +31,6 @@ export class ValidateDockerfileExecutor implements INodeExecutor {
             await gitService.validateDockerfile(workDir, dockerfilePath);
             await logger.info(nodeId, `Dockerfile validated: ${dockerfilePath}`);
 
-            // Pass workDir and dockerfilePath through so downstream nodes can use them
             return {
                 success: true,
                 output: { workDir, dockerfilePath },

@@ -218,7 +218,8 @@ export function PipelineProvider({
         [activeBuilds, activeBuildId],
     );
     const isViewingBuild = !!activeBuild?.pipelineSnapshot;
-    const isLiveBuild = isViewingBuild && !TERMINAL_STATUSES.has(activeBuild!.status);
+    // Si le build n'est pas encore dans activeBuilds (revalidation SSR en cours), on le considère live
+    const isLiveBuild = !!activeBuildId && (activeBuild ? !TERMINAL_STATUSES.has(activeBuild.status) : true);
 
     useEffect(() => {
         const build = activeBuilds.find((b) => b.id === activeBuildId);
@@ -233,15 +234,23 @@ export function PipelineProvider({
         if (!activeBuildId) return null;
         const result = await onGetTokenBuildIdAction({
             buildId: activeBuildId,
-            topics: ['node-status'],
+            topics: ['node-status', 'status'],
         });
         return result?.data ?? null;
     }, [activeBuildId]);
 
-    const { data: liveEvents, latestData } = useInngestSubscription({
+    const { data: liveEvents } = useInngestSubscription({
         enabled: isLiveBuild,
         refreshToken,
     });
+
+    const snapshotFlow = useMemo(() => {
+        if (!activeBuild?.pipelineSnapshot) return null;
+        return graphToFlow(activeBuild.pipelineSnapshot as unknown as PipelineGraph);
+    }, [activeBuild]);
+
+    const snapshotFlowRef = useRef(snapshotFlow);
+    snapshotFlowRef.current = snapshotFlow;
 
     useEffect(() => {
         const newEvents = liveEvents.slice(processedEventCountRef.current);
@@ -252,16 +261,23 @@ export function PipelineProvider({
             if (evt.topic === 'node-status' && evt.data?.nodeId) {
                 updates[evt.data.nodeId as string] = evt.data.status as NodeRunStatus;
             }
+            if (evt.topic === 'status' && evt.data?.status === 'COMPLETED') {
+                for (const node of snapshotFlowRef.current?.nodes ?? []) {
+                    if (!updates[node.id]) updates[node.id] = 'completed';
+                }
+            }
         }
         if (Object.keys(updates).length > 0) {
-            setNodeStatuses((prev) => ({ ...prev, ...updates }));
+            setNodeStatuses((prev) => {
+                const next = { ...prev, ...updates };
+                // Ne pas écraser un statut déjà défini pour la complétion globale
+                for (const [id, status] of Object.entries(updates)) {
+                    if (status === 'completed' && prev[id]) next[id] = prev[id];
+                }
+                return next;
+            });
         }
     }, [liveEvents]);
-
-    const snapshotFlow = useMemo(() => {
-        if (!activeBuild?.pipelineSnapshot) return null;
-        return graphToFlow(activeBuild.pipelineSnapshot as unknown as PipelineGraph);
-    }, [activeBuild]);
 
     const { displayNodes, displayEdges } = useMemo(() => {
         if (!snapshotFlow) return { displayNodes: nodes, displayEdges: edges };

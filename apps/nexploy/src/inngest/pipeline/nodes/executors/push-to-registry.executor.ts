@@ -1,9 +1,9 @@
 import {
+    getFromAllOutputs,
+    getFromInputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    getFromInputs,
-    getFromAllOutputs,
 } from '@/types/pipeline.type';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { getDefaultRegistry } from '@/services/registry.service';
@@ -14,7 +14,6 @@ export class PushToRegistryExecutor implements INodeExecutor {
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { config, inputOutputs, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
 
-        // Look for imageName from inputs, then all outputs, then global config
         const imageName =
             getFromInputs<string>(inputOutputs, 'imageName') ??
             getFromAllOutputs<string>(allOutputs, 'imageName') ??
@@ -33,7 +32,8 @@ export class PushToRegistryExecutor implements INodeExecutor {
             );
         }
 
-        const customTag = (nodeConfig.tag as string | undefined) ?? config.gitCommitHash ?? 'latest';
+        const customTag =
+            (nodeConfig.tag as string | undefined) ?? config.gitCommitHash ?? 'latest';
         const baseImageName = imageName.split(':')[0];
         const targetName = `${registry.url}/${baseImageName}:${customTag}`;
 
