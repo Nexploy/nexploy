@@ -222,13 +222,21 @@ export function PipelineProvider({
         !!activeBuildId && (activeBuild ? !TERMINAL_STATUSES.has(activeBuild.status) : true);
 
     useEffect(() => {
-        const build = activeBuilds.find((b) => b.id === activeBuildId);
-        setNodeStatuses((build?.nodeStatuses as Record<string, NodeRunStatus>) ?? {});
-    }, [activeBuildId, activeBuilds]);
-
-    useEffect(() => {
         processedEventCountRef.current = 0;
-    }, [activeBuildId]);
+        if (!activeBuildId) {
+            setNodeStatuses({});
+            return;
+        }
+        fetch(`/api/repositories/${repositoryId}/builds/${activeBuildId}`)
+            .then((r) => r.json())
+            .then((data: { nodeStatuses: Record<string, NodeRunStatus> }) => {
+                setNodeStatuses(data.nodeStatuses ?? {});
+            })
+            .catch(() => {
+                const build = activeBuilds.find((b) => b.id === activeBuildId);
+                setNodeStatuses((build?.nodeStatuses as Record<string, NodeRunStatus>) ?? {});
+            });
+    }, [activeBuildId, repositoryId]);
 
     const refreshToken = useCallback(async () => {
         if (!activeBuildId) return null;
@@ -271,7 +279,9 @@ export function PipelineProvider({
             setNodeStatuses((prev) => {
                 const next = { ...prev, ...updates };
                 for (const [id, status] of Object.entries(updates)) {
-                    if (status === 'completed' && prev[id]) next[id] = prev[id];
+                    if (status === 'completed' && prev[id] && prev[id] !== 'running') {
+                        next[id] = prev[id];
+                    }
                 }
                 return next;
             });
