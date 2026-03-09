@@ -1,23 +1,38 @@
 'use client';
 
-import { BaseEdge, type EdgeProps, getBezierPath, useNodes } from '@xyflow/react';
+import {
+    BaseEdge,
+    type EdgeProps,
+    EdgeToolbar,
+    getBezierPath,
+    useNodes,
+    useReactFlow,
+    useViewport,
+} from '@xyflow/react';
 import { type NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { CATEGORY_HEX } from '@/components/pipeline/pipelineTheme';
-import { type NodeRunStatus } from '@/types/pipeline.type';
+import { Trash2 } from 'lucide-react';
+import { Button } from '@workspace/ui/components/button';
+import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 
-export function GradientEdge({
-    id,
-    source,
-    target,
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-    sourcePosition,
-    targetPosition,
-    style,
-}: EdgeProps) {
+export function GradientEdge(props: EdgeProps) {
+    const {
+        id,
+        source,
+        target,
+        sourceX,
+        sourceY,
+        targetX,
+        targetY,
+        sourcePosition,
+        targetPosition,
+        style,
+    } = props;
+
     const nodes = useNodes();
+    const { deleteElements, getEdges } = useReactFlow();
+    const { zoom } = useViewport();
+    const hoveredEdgeId = usePipelineEditorStore((s) => s.hoveredEdgeId);
 
     const sourceNode = nodes.find((n) => n.id === source);
     const targetNode = nodes.find((n) => n.id === target);
@@ -28,15 +43,9 @@ export function GradientEdge({
     const sourceColor = (sourceCategory && CATEGORY_HEX[sourceCategory]) || '#888';
     const targetColor = (targetCategory && CATEGORY_HEX[targetCategory]) || '#888';
 
-    const sourceRunStatus = sourceNode?.data?.runStatus as NodeRunStatus | undefined;
-    const targetRunStatus = targetNode?.data?.runStatus as NodeRunStatus | undefined;
-    const isAnimated =
-        sourceRunStatus === 'running' ||
-        (sourceRunStatus === 'completed' && targetRunStatus === 'running');
-
     const gradientId = `edge-gradient-${id}`;
 
-    const [edgePath] = getBezierPath({
+    const [edgePath, centerX, centerY] = getBezierPath({
         sourceX,
         sourceY,
         sourcePosition,
@@ -44,6 +53,11 @@ export function GradientEdge({
         targetY,
         targetPosition,
     });
+
+    const deleteEdge = () => {
+        const edge = getEdges().find((e) => e.id === id);
+        if (edge) deleteElements({ edges: [edge] });
+    };
 
     return (
         <>
@@ -69,25 +83,17 @@ export function GradientEdge({
                     strokeWidth: 2,
                 }}
             />
-            {isAnimated && (
-                <path
-                    d={edgePath}
-                    fill="none"
-                    stroke={`url(#${gradientId})`}
-                    strokeWidth={3}
-                    strokeDasharray="6 5"
-                    strokeLinecap="round"
-                    opacity={0.9}
+            <EdgeToolbar edgeId={id} x={centerX} y={centerY} isVisible={hoveredEdgeId === id}>
+                <Button
+                    className="nodrag nopan size-8 duration-0"
+                    size={'icon'}
+                    variant={'destructiveOutline'}
+                    style={{ transform: `scale(${zoom})` }}
+                    onClick={deleteEdge}
                 >
-                    <animate
-                        attributeName="stroke-dashoffset"
-                        from="0"
-                        to="-11"
-                        dur="0.5s"
-                        repeatCount="indefinite"
-                    />
-                </path>
-            )}
+                    <Trash2 className={'size-4'} />
+                </Button>
+            </EdgeToolbar>
         </>
     );
 }

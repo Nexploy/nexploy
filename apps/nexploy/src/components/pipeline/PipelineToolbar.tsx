@@ -7,21 +7,17 @@ import {
     Loader2,
     Power,
     Redo2,
-    Rocket,
     SquareDashed,
     Trash2,
     Undo2,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { usePipelineContext } from '@/contexts/PipelineContext';
-import { useAction } from 'next-safe-action/hooks';
-import { onStartBuild } from '@/actions/repository/builds/startBuild.action';
-import { useParams } from 'next/navigation';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Kbd } from '@workspace/ui/components/kbd';
-import { useReactFlow, useStore } from '@xyflow/react';
+import { useStore } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
 
 const isApple =
@@ -42,17 +38,8 @@ export function PipelineToolbar() {
         triggerAutoSave,
         activeBuildId,
         activeBuilds,
-        setActiveBuildId,
     } = usePipelineContext();
 
-    const { repositoryId } = useParams<{ repositoryId: string }>();
-    const { execute: startBuild, isPending: isBuildPending } = useAction(onStartBuild, {
-        onSuccess: ({ data }) => {
-            if (data?.buildId) setActiveBuildId(data.buildId);
-        },
-    });
-
-    const { getNodes } = useReactFlow();
     const addSelectedNodes = useStore((s) => s.addSelectedNodes);
 
     const disabledCount = nodes.filter((n) => n.data.disabled).length;
@@ -63,11 +50,11 @@ export function PipelineToolbar() {
         : undefined;
 
     const handleSelectAll = () => {
-        addSelectedNodes(getNodes().map((n) => n.id));
+        addSelectedNodes(nodes.map((n) => n.id));
     };
 
     const handleToggleDisable = () => {
-        const selected = getNodes().filter((n) => n.selected);
+        const selected = nodes.filter((n) => n.selected);
         if (selected.length === 0) return;
         const allDisabled = selected.every((n) => n.data.disabled);
         const selectedIds = new Set(selected.map((n) => n.id));
@@ -87,9 +74,12 @@ export function PipelineToolbar() {
                         {t('nodeCount', { count: nodes.length })}
                     </span>
                     {disabledCount > 0 && (
-                        <span className="text-muted-foreground/60 text-xs">
-                            · {t('disabledCount', { count: disabledCount })}
-                        </span>
+                        <>
+                            <span className={'text-muted-foreground text-base'}>·</span>
+                            <span className="text-muted-foreground/60 text-xs">
+                                {t('disabledCount', { count: disabledCount })}
+                            </span>
+                        </>
                     )}
                 </div>
                 <Separator orientation="vertical" className="!h-4" />
@@ -202,13 +192,17 @@ export function PipelineToolbar() {
                         <div className="flex items-center gap-1.5">
                             <span className="size-1.5 animate-pulse rounded-full bg-blue-500" />
                             <span className="text-muted-foreground text-xs">{t('watching')}</span>
+                            <span className={'text-muted-foreground'}>·</span>
                             <span className="flex items-center gap-1 text-xs font-medium">
                                 <GitBranch className="size-3" />
                                 {watchedBuild.branch}
                                 {watchedBuild.commitHash && (
-                                    <span className="text-muted-foreground font-mono">
-                                        · {watchedBuild.commitHash.slice(0, 6)}
-                                    </span>
+                                    <>
+                                        <span className={'text-muted-foreground text-base'}>·</span>
+                                        <span className="text-muted-foreground font-mono">
+                                            {watchedBuild.commitHash}
+                                        </span>
+                                    </>
                                 )}
                             </span>
                         </div>
@@ -216,19 +210,6 @@ export function PipelineToolbar() {
                 )}
             </div>
             <div className="flex items-center gap-2">
-                <Button
-                    size="sm"
-                    className="h-7 gap-1.5 text-xs"
-                    onClick={() => startBuild({ repositoryId })}
-                    disabled={isBuildPending}
-                >
-                    {isBuildPending ? (
-                        <Loader2 className="size-3 animate-spin" />
-                    ) : (
-                        <Rocket className="size-3" />
-                    )}
-                    {t('runBuild')}
-                </Button>
                 <div
                     className={cn(
                         'text-muted-foreground flex items-center gap-1.5 text-xs transition-opacity duration-300',

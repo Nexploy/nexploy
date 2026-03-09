@@ -1,7 +1,6 @@
 'use client';
 
 import '@xyflow/react/dist/style.css';
-import { useRef } from 'react';
 
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { NodeAddPanel } from '@/components/pipeline/nodes/add/NodeAddPanel';
@@ -9,13 +8,10 @@ import { NodeTemplatePanel } from '@/components/pipeline/nodes/template/NodeTemp
 import { PipelineCanvas } from '@/components/pipeline/PipelineCanvas';
 import { usePipelineLiveBuild } from '@/hooks/usePipelineLiveBuild';
 import { PipelineToolbar } from '@/components/pipeline/PipelineToolbar';
-import { NodeConfigPanel } from '@/components/pipeline/nodes/nodeConfigPanel/NodeConfigPanel';
+import { NodeConfigDialog } from '@/components/pipeline/nodes/nodeConfigPanel/NodeConfigDialog';
 
 export function PipelineEditor() {
-    const { nodes, panelNodeId, activeBuildId } = usePipelineContext();
-    const panelNode = nodes.find((n) => n.id === panelNodeId);
-    const lastPanelNodeRef = useRef(panelNode);
-    if (panelNode) lastPanelNodeRef.current = panelNode;
+    const { activeBuildId } = usePipelineContext();
 
     usePipelineLiveBuild({ buildId: activeBuildId });
 
@@ -27,9 +23,7 @@ export function PipelineEditor() {
                 <NodeTemplatePanel />
                 <NodeAddPanel />
             </div>
-            {lastPanelNodeRef.current && (
-                <NodeConfigPanel isOpen={!!panelNode} node={lastPanelNodeRef.current} />
-            )}
+            <NodeConfigDialog />
         </div>
     );
 }

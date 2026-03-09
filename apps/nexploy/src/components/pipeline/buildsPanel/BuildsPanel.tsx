@@ -1,0 +1,45 @@
+'use client';
+
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { useEffect } from 'react';
+import { useLocale } from 'next-intl';
+import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { usePipelineContext } from '@/contexts/PipelineContext';
+import { BuildsPanelItem } from '@/components/pipeline/buildsPanel/BuildsPanelItem';
+
+dayjs.extend(relativeTime);
+
+export function BuildsPanel() {
+    const locale = useLocale();
+    const { setActiveBuildId, activeBuilds, activeBuildId } = usePipelineContext();
+
+    useEffect(() => {
+        import(`dayjs/locale/${locale}`).catch(() => {});
+    }, [locale]);
+
+    if (activeBuilds.length === 0) return null;
+
+    return (
+        <div className="absolute z-10">
+            <ScrollAreaWithShadow
+                bottomShadow
+                className="h-[100px] transition-all duration-300 hover:h-[250px]"
+            >
+                <div className={'m-2 flex flex-col gap-1'}>
+                    {activeBuilds.map((build, index) => (
+                        <BuildsPanelItem
+                            key={build.id}
+                            build={build}
+                            index={index}
+                            total={activeBuilds.length}
+                            isSelected={build.id === activeBuildId}
+                            locale={locale}
+                            onSelect={setActiveBuildId}
+                        />
+                    ))}
+                </div>
+            </ScrollAreaWithShadow>
+        </div>
+    );
+}

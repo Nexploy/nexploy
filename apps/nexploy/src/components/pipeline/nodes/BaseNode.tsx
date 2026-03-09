@@ -13,6 +13,7 @@ import {
     ICON_NAME_MAP,
 } from '@/components/pipeline/pipelineTheme';
 import { type NodeRunStatus } from '@/types/pipeline.type';
+import { usePipelineContext } from '@/contexts/PipelineContext';
 
 interface BaseNodeProps {
     id: string;
@@ -35,12 +36,11 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
     const Icon = ICON_NAME_MAP[definition.metadata.icon] ?? Terminal;
     const hasInputs = definition.handles.inputs.length > 0;
     const hasOutputs = definition.handles.outputs.length > 0;
-    const { deleteElements, updateNodeData, getNodes } = useReactFlow();
+    const { deleteElements, getNodes } = useReactFlow();
+    const { triggerAutoSave, setNodes } = usePipelineContext();
     const disabled = data.disabled ?? false;
     const viewOnly = data.viewOnly ?? false;
     const runStatus = data.runStatus;
-
-    console.log(runStatus);
 
     const getTargetIds = () => {
         const selectedIds = getNodes()
@@ -68,7 +68,15 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
 
     const handleToggleDisabled = (e: React.MouseEvent) => {
         e.stopPropagation();
-        getTargetIds().forEach((nid) => updateNodeData(nid, { disabled: !disabled }));
+
+        setNodes((nodes) =>
+            nodes.map((node) =>
+                getTargetIds().includes(node.id)
+                    ? { ...node, data: { ...node.data, disabled: !disabled } }
+                    : node,
+            ),
+        );
+        triggerAutoSave();
     };
 
     return (
@@ -115,7 +123,7 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
                     !runStatus &&
                         (selected
                             ? cn(
-                                  'border-2 shadow-xl',
+                                  'shadow-xl',
                                   CATEGORY_BORDER[definition.category],
                                   CATEGORY_GLOW[definition.category],
                               )
@@ -123,13 +131,13 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
                 )}
             >
                 {runStatus === 'running' && (
-                    <Loader2 className="absolute top-1.5 right-1.5 size-3.5 animate-spin text-amber-500" />
+                    <Loader2 className="absolute top-1 right-1 size-4 animate-spin text-amber-500" />
                 )}
                 {runStatus === 'completed' && (
-                    <CheckCircle2 className="absolute top-1.5 right-1.5 size-3.5 text-green-500" />
+                    <CheckCircle2 className="absolute top-1 right-1 size-4 text-green-500" />
                 )}
                 {runStatus === 'failed' && (
-                    <CircleX className="absolute top-1.5 right-1.5 size-3.5 text-red-500" />
+                    <CircleX className="absolute top-1 right-1 size-4 text-red-500" />
                 )}
                 {hasInputs && (
                     <Handle

@@ -24,10 +24,11 @@ import { GradientEdge } from '@/components/pipeline/edges/GradientEdge';
 import { useDragAndDropFlow } from '@/hooks/useDragAndDropFlow';
 import { useMinimap } from '@/hooks/useMinimap';
 import { usePipelineContext } from '@/contexts/PipelineContext';
+import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { ButtonPanel } from '@/components/pipeline/nodes/ButtonPanel';
 import { useHotkeys } from '@/lib/useHotKeys';
 import { NodeContextMenu, type NodeContextMenuState } from '@/components/pipeline/NodeContextMenu';
-import { BuildsPanel } from '@/components/pipeline/BuildsPanel';
+import { BuildsPanel } from '@/components/pipeline/buildsPanel/BuildsPanel';
 
 const nodeTypes = { 'pipeline-node': BaseNode };
 const edgeTypes = { 'gradient-edge': GradientEdge };
@@ -40,6 +41,8 @@ export function PipelineCanvas() {
     const [isSpaceHeld, setIsSpaceHeld] = useState(false);
     const [contextMenu, setContextMenu] = useState<NodeContextMenuState | null>(null);
     const wrapperRef = useRef<HTMLDivElement>(null);
+
+    const setHoveredEdgeId = usePipelineEditorStore((s) => s.setHoveredEdgeId);
 
     const {
         nodes,
@@ -64,8 +67,6 @@ export function PipelineCanvas() {
         event.preventDefault();
         setContextMenu({ clientX: event.clientX, clientY: event.clientY, nodeId });
     }, []);
-
-    const closeContextMenu = useCallback(() => setContextMenu(null), []);
 
     const onNodeContextMenu = useCallback<NodeMouseHandler>(
         (event, node) => openContextMenu(event, node.id),
@@ -163,6 +164,10 @@ export function PipelineCanvas() {
                 edges={displayEdges}
                 onNodesChange={isViewingBuild ? () => {} : onNodesChange}
                 onEdgesChange={isViewingBuild ? () => {} : onEdgesChange}
+                onEdgeMouseEnter={
+                    isViewingBuild ? undefined : (_, edge) => setHoveredEdgeId(edge.id)
+                }
+                onEdgeMouseLeave={isViewingBuild ? undefined : () => setHoveredEdgeId(null)}
                 onConnect={isViewingBuild ? undefined : onConnect}
                 onInit={setRfInstance}
                 nodeTypes={nodeTypes}
@@ -261,7 +266,9 @@ export function PipelineCanvas() {
                     </div>
                 )}
             </ReactFlow>
-            {contextMenu && <NodeContextMenu menu={contextMenu} onClose={closeContextMenu} />}
+            {contextMenu && (
+                <NodeContextMenu menu={contextMenu} onClose={() => setContextMenu(null)} />
+            )}
         </div>
     );
 }

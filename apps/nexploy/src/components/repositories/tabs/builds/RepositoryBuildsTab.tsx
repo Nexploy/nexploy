@@ -12,10 +12,6 @@ export async function RepositoryBuildsTab({ repositoryId }: RepositoryOverviewTa
         getTranslations('repository.builds'),
     ]);
 
-    const buildGlobalIndex = new Map(
-        builds.map((build, index) => [build.id, builds.length - index]),
-    );
-
     const groups = builds.reduce<Map<string | null, { name: string; builds: typeof builds }>>(
         (acc, build) => {
             const key = build.environmentId ?? null;
@@ -49,10 +45,10 @@ export async function RepositoryBuildsTab({ repositoryId }: RepositoryOverviewTa
                             </h3>
                             <div className="rounded-md border">
                                 <div className="divide-y">
-                                    {group.builds.map((build) => (
+                                    {group.builds.map((build, index) => (
                                         <RepositoryBuild
                                             key={build.id}
-                                            index={buildGlobalIndex.get(build.id)!}
+                                            index={group.builds.length - index}
                                             repositoryId={repositoryId}
                                             build={build}
                                         />

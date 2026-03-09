@@ -18,16 +18,15 @@ import { CONFIG_PANELS, CONFIG_SCHEMAS } from './nodeConfigRegistry';
 
 interface NodeConfigFormProps {
     node: Node;
-    onClose: () => void;
 }
 
-export function NodeConfigForm({ node, onClose }: NodeConfigFormProps) {
+export function NodeConfigForm({ node }: NodeConfigFormProps) {
     const t = useTranslations('repository.pipeline');
     const tConfig = useTranslations('repository.pipeline.config');
     const tCommon = useTranslations('common');
 
     const params = useParams<{ repositoryId: string }>();
-    const { handleConfigChange } = usePipelineContext();
+    const { handleConfigChange, handlePaneClick } = usePipelineContext();
 
     const nodeType = node.data.pipelineNodeType as NodeType;
     const nodeConfig = (node.data.config as Record<string, unknown>) ?? {};
@@ -44,7 +43,7 @@ export function NodeConfigForm({ node, onClose }: NodeConfigFormProps) {
             actionProps: {
                 onSuccess: ({ data }) => {
                     if (data) handleConfigChange(node.id, data as Record<string, unknown>);
-                    onClose();
+                    handlePaneClick();
                 },
                 onError: ({ error }) => {
                     toast.error(error.serverError ?? tConfig('saveError'));
@@ -71,7 +70,7 @@ export function NodeConfigForm({ node, onClose }: NodeConfigFormProps) {
                 </ScrollAreaWithShadow>
 
                 <DialogFooter className="px-6 pb-6">
-                    <Button type="button" variant="outline" size="sm" onClick={onClose}>
+                    <Button type="button" variant="outline" size="sm" onClick={handlePaneClick}>
                         {tCommon('cancel')}
                     </Button>
                     <Button
@@ -79,7 +78,7 @@ export function NodeConfigForm({ node, onClose }: NodeConfigFormProps) {
                         size="sm"
                         disabled={!form.formState.isDirty || action.isPending}
                     >
-                        {action.isPending && <Loader2 className="size-3.5 animate-spin" />}
+                        {action.isPending && <Loader2 className="animate-spin" />}
                         {tConfig('save')}
                     </Button>
                 </DialogFooter>

@@ -8,8 +8,8 @@ import {
     useEffect,
     useMemo,
     useRef,
-    useState,
 } from 'react';
+import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import {
     addEdge,
     type Connection,
@@ -78,11 +78,17 @@ export function PipelineProvider({
     const isUndoRedoRef = useRef(false);
     const [nodes, setNodes, onNodesChangeBase] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChangeBase] = useEdgesState(initialEdges);
-    const [panelNodeId, setPanelNodeId] = useState<string | null>(null);
-    const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
-    const [saveVersion, setSaveVersion] = useState(0);
-    const [activeBuildId, setActiveBuildId] = useState<string | undefined>();
-    const [nodeStatuses, setNodeStatuses] = useState<Record<string, NodeRunStatus>>({});
+
+    const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
+    const setPanelNodeId = usePipelineEditorStore((s) => s.setPanelNodeId);
+    const selectedNodeIds = usePipelineEditorStore((s) => s.selectedNodeIds);
+    const setSelectedNodeIds = usePipelineEditorStore((s) => s.setSelectedNodeIds);
+    const saveVersion = usePipelineEditorStore((s) => s.saveVersion);
+    const setSaveVersion = usePipelineEditorStore((s) => s.setSaveVersion);
+    const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
+    const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
+    const nodeStatuses = usePipelineEditorStore((s) => s.nodeStatuses);
+    const setNodeStatuses = usePipelineEditorStore((s) => s.setNodeStatuses);
 
     const { execute: savePipeline, isPending: isSaving } = useAction(savePipelineAction);
     const committedVersionRef = useRef(0);
@@ -154,8 +160,8 @@ export function PipelineProvider({
     }, []);
 
     const handlePaneClick = useCallback(() => {
-        setPanelNodeId(null);
         setSelectedNodeIds([]);
+        setPanelNodeId(null);
     }, []);
 
     const handleConfigChange = useCallback(
@@ -215,15 +221,9 @@ export function PipelineProvider({
     const isLiveBuild = isViewingBuild && !TERMINAL_STATUSES.has(activeBuild!.status);
 
     useEffect(() => {
-        setNodeStatuses({});
-        if (!activeBuildId) return;
-        fetch(`/api/repositories/${repositoryId}/builds/${activeBuildId}`)
-            .then((r) => r.json())
-            .then((data: { nodeStatuses: Record<string, NodeRunStatus> }) => {
-                setNodeStatuses(data.nodeStatuses ?? {});
-            })
-            .catch(() => {});
-    }, [activeBuildId]);
+        const build = activeBuilds.find((b) => b.id === activeBuildId);
+        setNodeStatuses((build?.nodeStatuses as Record<string, NodeRunStatus>) ?? {});
+    }, [activeBuildId, activeBuilds]);
 
     useEffect(() => {
         processedEventCountRef.current = 0;
@@ -238,7 +238,10 @@ export function PipelineProvider({
         return result?.data ?? null;
     }, [activeBuildId]);
 
-    const { data: liveEvents } = useInngestSubscription({ enabled: isLiveBuild, refreshToken });
+    const { data: liveEvents, latestData } = useInngestSubscription({
+        enabled: isLiveBuild,
+        refreshToken,
+    });
 
     useEffect(() => {
         const newEvents = liveEvents.slice(processedEventCountRef.current);
@@ -263,15 +266,21 @@ export function PipelineProvider({
     const { displayNodes, displayEdges } = useMemo(() => {
         if (!snapshotFlow) return { displayNodes: nodes, displayEdges: edges };
         return {
-            displayNodes: snapshotFlow.nodes.map((n) => ({
-                ...n,
+            displayNodes: snapshotFlow.nodes.map((node) => ({
+                ...node,
                 data: {
-                    ...n.data,
-                    runStatus: nodeStatuses[n.id] ?? undefined,
+                    ...node.data,
+                    runStatus: nodeStatuses[node.id] ?? undefined,
                     viewOnly: true,
                 },
             })),
-            displayEdges: snapshotFlow.edges,
+            displayEdges: snapshotFlow.edges.map((edge) => ({
+                ...edge,
+                animated:
+                    nodeStatuses[edge.source] === 'running' ||
+                    (nodeStatuses[edge.source] === 'completed' &&
+                        nodeStatuses[edge.target] === 'running'),
+            })),
         };
     }, [snapshotFlow, nodeStatuses, nodes, edges]);
 

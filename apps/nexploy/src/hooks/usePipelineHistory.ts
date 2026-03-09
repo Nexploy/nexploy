@@ -3,13 +3,9 @@ import { type Edge, type Node } from '@xyflow/react';
 
 type Snapshot = { nodes: Node[]; edges: Edge[] };
 
-export function usePipelineHistory(
-    onRestore: (snapshot: Snapshot) => void,
-    initial: Snapshot,
-) {
+export function usePipelineHistory(onRestore: (snapshot: Snapshot) => void, initial: Snapshot) {
     const historyRef = useRef<Snapshot[]>([initial]);
     const pointerRef = useRef(0);
-    // State only used to expose canUndo/canRedo reactively
     const [pointer, setPointer] = useState(0);
 
     const commit = useCallback((snapshot: Snapshot) => {

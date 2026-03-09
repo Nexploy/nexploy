@@ -10,6 +10,7 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 import { BuildOptionsDialog } from './BuildOptionsDialog';
 import { ButtonGroup } from '@workspace/ui/components/button-group';
 import { useTranslations } from 'next-intl';
+import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 
 interface DeployButtonProps extends ComponentProps<typeof Button> {
     repositoryId: string;
@@ -26,10 +27,12 @@ export function RunBuildButton({
     ...props
 }: DeployButtonProps) {
     const t = useTranslations('repository.builds');
+    const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 
     const { execute, isPending } = useAction(onStartBuild, {
-        onSuccess: () => {
+        onSuccess: ({ data }) => {
             toast.success(t('startSuccess'));
+            if (data) setActiveBuildId(data.buildId);
         },
     });
 

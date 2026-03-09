@@ -39,14 +39,12 @@ function BuildPipelineViewInner({
 
     const isLive = !TERMINAL_STATUSES.includes(buildStatus);
 
-    // Apply initial statuses from DB on mount
     useEffect(() => {
         for (const [nodeId, status] of Object.entries(initialNodeStatuses)) {
             updateNodeData(nodeId, { runStatus: status, viewOnly: true });
         }
     }, [initialNodeStatuses, updateNodeData]);
 
-    // Subscribe to live node-status events (only for active builds)
     const { data } = useInngestSubscription({
         enabled: isLive,
         refreshToken: async () => {
@@ -58,7 +56,6 @@ function BuildPipelineViewInner({
         },
     });
 
-    // Apply live events on top of initial state
     useEffect(() => {
         for (const evt of data) {
             if (evt.topic === 'node-status' && evt.data?.nodeId) {

@@ -51,7 +51,7 @@ export function NodeContextMenu({ menu, onClose }: NodeContextMenuProps) {
     };
 
     const targetNode = getNodes().find((n) => n.id === menu.nodeId);
-    const disabled = (targetNode?.data?.disabled as boolean) ?? false;
+    const disabled = targetNode?.data?.disabled ?? false;
 
     const handleDelete = () => {
         deleteElements({ nodes: getTargetIds().map((id) => ({ id })) });
