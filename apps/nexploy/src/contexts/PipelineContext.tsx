@@ -57,6 +57,8 @@ interface PipelineContextValue {
     triggerAutoSave: () => void;
     undo: () => void;
     redo: () => void;
+    canUndo: boolean;
+    canRedo: boolean;
     setNodes: ReturnType<typeof useNodesState>[1];
     setEdges: ReturnType<typeof useEdgesState>[1];
 }
@@ -104,7 +106,7 @@ export function PipelineProvider({
         [setNodes, setEdges],
     );
 
-    const { commit, undo, redo } = usePipelineHistory(onRestore, {
+    const { commit, undo, redo, canUndo, canRedo } = usePipelineHistory(onRestore, {
         nodes: initialNodes,
         edges: initialEdges,
     });
@@ -335,6 +337,8 @@ export function PipelineProvider({
                 triggerAutoSave,
                 undo,
                 redo,
+                canUndo,
+                canRedo,
                 setNodes,
                 setEdges,
             }}

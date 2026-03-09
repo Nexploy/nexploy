@@ -32,6 +32,8 @@ export function PipelineToolbar() {
         selectedNodeIds,
         undo,
         redo,
+        canUndo,
+        canRedo,
         handleDeleteSelection,
         handleDuplicateSelection,
         setNodes,
@@ -92,6 +94,7 @@ export function PipelineToolbar() {
                                     size="icon"
                                     className="size-6"
                                     onClick={undo}
+                                    disabled={!canUndo}
                                 >
                                     <Undo2 className="size-3" />
                                 </Button>
@@ -108,6 +111,7 @@ export function PipelineToolbar() {
                                     size="icon"
                                     className="size-6"
                                     onClick={redo}
+                                    disabled={!canRedo}
                                 >
                                     <Redo2 className="size-3" />
                                 </Button>
