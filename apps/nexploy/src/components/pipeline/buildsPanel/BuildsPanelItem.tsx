@@ -9,6 +9,11 @@ import { Status, StatusIndicator, StatusProps } from '@workspace/ui/components/k
 import { useInngestSubscription } from '@inngest/realtime/hooks';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { type getActiveBuilds } from '@/services/repository.service';
+import { useCallback, useEffect, useRef } from 'react';
+import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { graphToFlow } from '@/components/pipeline/utils/graphConvert';
+import { type PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeRunStatus } from '@/types/pipeline.type';
 
 const TERMINAL_STATUSES: BuildStatus[] = ['COMPLETED', 'FAILED', 'CANCELLED'];
 
@@ -39,19 +44,83 @@ export function BuildsPanelItem({
     locale,
     onSelect,
 }: BuildsPanelItemProps) {
+    const isLive = !TERMINAL_STATUSES.includes(build.status);
+    const setNodeStatuses = usePipelineEditorStore((s) => s.setNodeStatuses);
+    const processedCountRef = useRef(0);
+    const prevIsSelectedRef = useRef(isSelected);
+
+    const snapshotNodes = build.pipelineSnapshot
+        ? graphToFlow(build.pipelineSnapshot as unknown as PipelineGraph).nodes
+        : null;
+    const snapshotNodesRef = useRef(snapshotNodes);
+    snapshotNodesRef.current = snapshotNodes;
+
+    const refreshStatusToken = useCallback(async () => {
+        const result = await onGetTokenBuildIdAction({
+            buildId: build.id,
+            topics: ['status'],
+        });
+        return result?.data ?? null;
+    }, [build.id]);
+
     const { latestData } = useInngestSubscription({
-        enabled: !TERMINAL_STATUSES.includes(build.status),
-        refreshToken: async () => {
-            const result = await onGetTokenBuildIdAction({
-                buildId: build.id,
-                topics: ['status'],
-            });
-            return result?.data ?? null;
-        },
+        enabled: isLive,
+        refreshToken: refreshStatusToken,
     });
 
-    const status =
-        (latestData?.data?.status as BuildStatus | undefined) ?? (build.status as BuildStatus);
+    const refreshNodeToken = useCallback(async () => {
+        const result = await onGetTokenBuildIdAction({
+            buildId: build.id,
+            topics: ['node-status', 'status'],
+        });
+        return result?.data ?? null;
+    }, [build.id]);
+
+    const { data: liveEvents } = useInngestSubscription({
+        enabled: isLive && isSelected,
+        refreshToken: refreshNodeToken,
+    });
+
+    useEffect(() => {
+        const justSelected = isSelected && !prevIsSelectedRef.current;
+        prevIsSelectedRef.current = isSelected;
+
+        if (justSelected) {
+            processedCountRef.current = liveEvents.length;
+            return;
+        }
+
+        if (!isSelected) return;
+
+        const newEvents = liveEvents.slice(processedCountRef.current);
+        processedCountRef.current = liveEvents.length;
+        if (newEvents.length === 0) return;
+
+        const updates: Record<string, NodeRunStatus> = {};
+        for (const evt of newEvents) {
+            if (evt.topic === 'node-status' && evt.data?.nodeId) {
+                updates[evt.data.nodeId as string] = evt.data.status as NodeRunStatus;
+            }
+            if (evt.topic === 'status' && evt.data?.status === 'COMPLETED') {
+                for (const node of snapshotNodesRef.current ?? []) {
+                    if (!updates[node.id]) updates[node.id] = 'completed';
+                }
+            }
+        }
+        if (Object.keys(updates).length > 0) {
+            setNodeStatuses((prev) => {
+                const next = { ...prev, ...updates };
+                for (const [id, status] of Object.entries(updates)) {
+                    if (status === 'completed' && prev[id] && prev[id] !== 'running') {
+                        next[id] = prev[id];
+                    }
+                }
+                return next;
+            });
+        }
+    }, [liveEvents, isSelected]);
+
+    const status: BuildStatus = (latestData?.data?.status ?? build.status) as BuildStatus;
 
     return (
         <Button

@@ -25,11 +25,7 @@ import { useAction } from 'next-safe-action/hooks';
 import { savePipelineAction } from '@/actions/repository/pipeline/savePipeline.action';
 import { useParams } from 'next/navigation';
 import { type getActiveBuilds } from '@/services/repository.service';
-import { useInngestSubscription } from '@inngest/realtime/hooks';
-import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { type NodeRunStatus } from '@/types/pipeline.type';
-
-const TERMINAL_STATUSES = new Set(['COMPLETED', 'FAILED', 'CANCELLED']);
 
 type ActiveBuild = Awaited<ReturnType<typeof getActiveBuilds>>[number];
 
@@ -94,7 +90,6 @@ export function PipelineProvider({
 
     const { execute: savePipeline, isPending: isSaving } = useAction(savePipelineAction);
     const committedVersionRef = useRef(0);
-    const processedEventCountRef = useRef(0);
 
     const onRestore = useCallback(
         (snapshot: { nodes: Node[]; edges: Edge[] }) => {
@@ -220,11 +215,8 @@ export function PipelineProvider({
         [activeBuilds, activeBuildId],
     );
     const isViewingBuild = !!activeBuild?.pipelineSnapshot;
-    const isLiveBuild =
-        !!activeBuildId && (activeBuild ? !TERMINAL_STATUSES.has(activeBuild.status) : true);
 
     useEffect(() => {
-        processedEventCountRef.current = 0;
         if (!activeBuildId) {
             setNodeStatuses({});
             return;
@@ -233,62 +225,13 @@ export function PipelineProvider({
             .then((r) => r.json())
             .then((data: { nodeStatuses: Record<string, NodeRunStatus> }) => {
                 setNodeStatuses(data.nodeStatuses ?? {});
-            })
-            .catch(() => {
-                const build = activeBuilds.find((b) => b.id === activeBuildId);
-                setNodeStatuses((build?.nodeStatuses as Record<string, NodeRunStatus>) ?? {});
             });
     }, [activeBuildId, repositoryId]);
-
-    const refreshToken = useCallback(async () => {
-        if (!activeBuildId) return null;
-        const result = await onGetTokenBuildIdAction({
-            buildId: activeBuildId,
-            topics: ['node-status', 'status'],
-        });
-        return result?.data ?? null;
-    }, [activeBuildId]);
-
-    const { data: liveEvents } = useInngestSubscription({
-        enabled: isLiveBuild,
-        refreshToken,
-    });
 
     const snapshotFlow = useMemo(() => {
         if (!activeBuild?.pipelineSnapshot) return null;
         return graphToFlow(activeBuild.pipelineSnapshot as unknown as PipelineGraph);
     }, [activeBuild]);
-
-    const snapshotFlowRef = useRef(snapshotFlow);
-    snapshotFlowRef.current = snapshotFlow;
-
-    useEffect(() => {
-        const newEvents = liveEvents.slice(processedEventCountRef.current);
-        processedEventCountRef.current = liveEvents.length;
-        if (newEvents.length === 0) return;
-        const updates: Record<string, NodeRunStatus> = {};
-        for (const evt of newEvents) {
-            if (evt.topic === 'node-status' && evt.data?.nodeId) {
-                updates[evt.data.nodeId as string] = evt.data.status as NodeRunStatus;
-            }
-            if (evt.topic === 'status' && evt.data?.status === 'COMPLETED') {
-                for (const node of snapshotFlowRef.current?.nodes ?? []) {
-                    if (!updates[node.id]) updates[node.id] = 'completed';
-                }
-            }
-        }
-        if (Object.keys(updates).length > 0) {
-            setNodeStatuses((prev) => {
-                const next = { ...prev, ...updates };
-                for (const [id, status] of Object.entries(updates)) {
-                    if (status === 'completed' && prev[id] && prev[id] !== 'running') {
-                        next[id] = prev[id];
-                    }
-                }
-                return next;
-            });
-        }
-    }, [liveEvents]);
 
     const { displayNodes, displayEdges } = useMemo(() => {
         if (!snapshotFlow) return { displayNodes: nodes, displayEdges: edges };
