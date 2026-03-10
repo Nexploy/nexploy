@@ -3,9 +3,9 @@ import { LucideIcon, Square } from 'lucide-react';
 import { onCancelBuild } from '@/actions/repository/builds/cancelBuild.action';
 import { ResumeBuildButton } from '@/components/repositories/ResumeBuildButton';
 import { RemoveBuildButton } from '@/components/repositories/RemoveBuildButton';
-import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
 import { RetryBuildButton } from '@/components/repositories/RetryBuildButton';
 import { useTranslations } from 'next-intl';
+import { BuildStatus } from 'generated/client';
 
 interface BaseBuildAction {
     id: string;

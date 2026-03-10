@@ -1,15 +1,8 @@
 import { channel, topic } from '@inngest/realtime';
 import dayjs from 'dayjs';
-import {
-    BuildConfig,
-    BuildLogEntry,
-    BuildStatus,
-} from '@workspace/typescript-interface/inngest/build';
+import { BuildConfig, BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
 import { inngest } from '@/inngest/client';
-import {
-    updateNodeStatusInngest,
-    updateStatusBuildInngest,
-} from '@/services/inngest/build.inngest.service';
+import { updateNodeStatus, updateStatusBuild } from '@/services/inngest/build.inngest.service';
 import { createLogInngest } from '@/services/inngest/log.inngest.service';
 import { LogLevel, NodeRunStatus, PipelineReporter, PipelineStatus } from '@/types/pipeline.type';
 import { createPipelineLogger, pipelineOrchestrator } from '@/inngest/pipeline/orchestrator';
@@ -20,8 +13,8 @@ import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 const createBuildChannel = (buildId: string) => {
     const channelDef = channel(`build:${buildId}`)
         .addTopic(topic('log').type<{ log: BuildLogEntry }>())
-        .addTopic(topic('status').type<{ status: string }>())
-        .addTopic(topic('node-status').type<{ nodeId: string; status: string }>());
+        .addTopic(topic('status').type<{ buildStatus: string }>())
+        .addTopic(topic('node-status').type<{ nodeId: string; nodeStatus: string }>());
     return channelDef();
 };
 
@@ -51,35 +44,35 @@ export const buildFunction = inngest.createFunction(
             };
 
             const setStatus = async (status: PipelineStatus) => {
-                await updateStatusBuildInngest(buildId, status as BuildStatus);
+                await updateStatusBuild(buildId, status);
             };
 
             const reporter: PipelineReporter = {
                 async markRunning(nodeId) {
-                    await updateNodeStatusInngest(buildId, nodeId, 'running');
+                    await updateNodeStatus(buildId, nodeId, 'running');
                 },
                 async markCompleted(nodeId) {
-                    await updateNodeStatusInngest(buildId, nodeId, 'completed');
+                    await updateNodeStatus(buildId, nodeId, 'completed');
                 },
                 async markSkipped(nodeId) {
-                    await updateNodeStatusInngest(buildId, nodeId, 'skipped');
+                    await updateNodeStatus(buildId, nodeId, 'skipped');
                 },
                 async markFailed(nodeId) {
-                    await updateNodeStatusInngest(buildId, nodeId, 'failed', 'FAILED');
+                    await updateNodeStatus(buildId, nodeId, 'failed', 'FAILED');
                 },
             };
 
-            const publishNodeStatus = async (nodeId: string, status: NodeRunStatus) => {
+            const publishNodeStatus = async (nodeId: string, nodeStatus: NodeRunStatus) => {
                 try {
-                    await publish(buildChannel['node-status']({ nodeId, status }));
+                    await publish(buildChannel['node-status']({ nodeId, nodeStatus }));
                 } catch {
                     /* ignore */
                 }
             };
 
-            const publishPipelineStatus = async (status: PipelineStatus) => {
+            const publishPipelineStatus = async (buildStatus: PipelineStatus) => {
                 try {
-                    await publish(buildChannel.status({ status }));
+                    await publish(buildChannel.status({ buildStatus }));
                 } catch {
                     /* ignore */
                 }

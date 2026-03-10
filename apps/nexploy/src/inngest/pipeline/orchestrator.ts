@@ -95,8 +95,8 @@ export class PipelineOrchestrator {
         logger: PipelineLogger,
         reporter: PipelineReporter,
         setStatus: (status: PipelineStatus) => Promise<void>,
-        publishNodeStatus: (nodeId: string, status: NodeRunStatus) => Promise<void>,
-        publishPipelineStatus: (status: PipelineStatus) => Promise<void>,
+        publishNodeStatus: (nodeId: string, nodeStatus: NodeRunStatus) => Promise<void>,
+        publishPipelineStatus: (buildStatus: PipelineStatus) => Promise<void>,
     ): Promise<PipelineResult> {
         const abortController = new AbortController();
         const allOutputs: NodeOutputStore = new Map();

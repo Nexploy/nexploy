@@ -11,7 +11,7 @@ import {
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 import { useBuildActions } from '@/hooks/useBuildActions';
-import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
+import { BuildStatus } from 'generated/client';
 
 interface BuildDropdownActionsProps {
     buildId: string;

@@ -1,5 +1,5 @@
 import { prisma } from '../../../prisma/prisma';
-import { BuildConfig, BuildStatus } from '@workspace/typescript-interface/inngest/build';
+import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 import { getGitProviderToken } from '@/services/git/git.service';
 import { getCommit, getValidToken } from '@/services/api/gitProvider.service';
 import { addBuildJob } from '@/inngest/jobs/queue';
@@ -12,6 +12,7 @@ import {
     RetryBuildSchemaType,
     StartBuildSchemaType,
 } from '@workspace/schemas-zod/inngest/build.schema';
+import { BuildStatus } from 'generated/client';
 
 export async function startBuildRepositoryInngest(
     { repositoryId, commitHash }: StartBuildSchemaType,
@@ -129,7 +130,7 @@ export async function createBuild({
     }
 }
 
-export async function updateStatusBuildInngest(buildId: string, status: BuildStatus) {
+export async function updateStatusBuild(buildId: string, status: BuildStatus) {
     try {
         return await prisma.build.update({ where: { id: buildId }, data: { status } });
     } catch {
@@ -137,7 +138,7 @@ export async function updateStatusBuildInngest(buildId: string, status: BuildSta
     }
 }
 
-export async function updateNodeStatusInngest(
+export async function updateNodeStatus(
     buildId: string,
     nodeId: string,
     status: string,

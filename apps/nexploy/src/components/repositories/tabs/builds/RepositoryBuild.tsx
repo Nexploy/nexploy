@@ -5,11 +5,10 @@ import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import Link from 'next/link';
 import { Clock, GitBranch, GitCommit } from 'lucide-react';
 import dayjs from 'dayjs';
-import { Build } from 'generated/client';
+import { Build, BuildStatus } from 'generated/client';
 import { Separator } from '@workspace/ui/components/separator';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { BuildDropdownActions } from '@/components/repositories/BuildDropdownActions';
-import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
 
 type BuildWithEnvironment = Build & {
     environment: { id: string; name: string } | null;
@@ -21,7 +20,7 @@ interface BuildLogsProps {
     build: BuildWithEnvironment;
 }
 
-const statusEnable: BuildStatus[] = ['COMPLETED', 'FAILED'];
+const statusEnable: BuildStatus[] = ['COMPLETED', 'FAILED', 'CANCELLED'];
 
 export function RepositoryBuild({ repositoryId, build, index }: BuildLogsProps) {
     const { latestData } = useInngestSubscription({

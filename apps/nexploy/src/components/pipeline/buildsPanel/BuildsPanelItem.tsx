@@ -3,7 +3,6 @@
 import dayjs from 'dayjs';
 import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
-import { BuildStatus } from 'generated/client';
 import { Separator } from '@workspace/ui/components/separator';
 import { Status, StatusIndicator, StatusProps } from '@workspace/ui/components/kibo-ui/status';
 import { useInngestSubscription } from '@inngest/realtime/hooks';
@@ -11,15 +10,14 @@ import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { type getActiveBuilds } from '@/services/repository.service';
 import { useCallback, useEffect, useRef } from 'react';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
-import { graphToFlow } from '@/components/pipeline/utils/graphConvert';
-import { type PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { type NodeRunStatus } from '@/types/pipeline.type';
+import { BuildStatus } from 'generated/client';
 
 const TERMINAL_STATUSES: BuildStatus[] = ['COMPLETED', 'FAILED', 'CANCELLED'];
 
 export const STATUS_PIPELINE: Partial<Record<BuildStatus, StatusProps['status']>> = {
-    QUEUED: 'degraded',
-    BUILDING: 'maintenance',
+    QUEUED: 'maintenance',
+    BUILDING: 'degraded',
     COMPLETED: 'online',
     FAILED: 'offline',
     CANCELLED: 'offline',
@@ -49,26 +47,7 @@ export function BuildsPanelItem({
     const processedCountRef = useRef(0);
     const prevIsSelectedRef = useRef(isSelected);
 
-    const snapshotNodes = build.pipelineSnapshot
-        ? graphToFlow(build.pipelineSnapshot as unknown as PipelineGraph).nodes
-        : null;
-    const snapshotNodesRef = useRef(snapshotNodes);
-    snapshotNodesRef.current = snapshotNodes;
-
-    const refreshStatusToken = useCallback(async () => {
-        const result = await onGetTokenBuildIdAction({
-            buildId: build.id,
-            topics: ['status'],
-        });
-        return result?.data ?? null;
-    }, [build.id]);
-
-    const { latestData } = useInngestSubscription({
-        enabled: isLive,
-        refreshToken: refreshStatusToken,
-    });
-
-    const refreshNodeToken = useCallback(async () => {
+    const refreshToken = useCallback(async () => {
         const result = await onGetTokenBuildIdAction({
             buildId: build.id,
             topics: ['node-status', 'status'],
@@ -77,8 +56,8 @@ export function BuildsPanelItem({
     }, [build.id]);
 
     const { data: liveEvents } = useInngestSubscription({
-        enabled: isLive && isSelected,
-        refreshToken: refreshNodeToken,
+        enabled: isLive,
+        refreshToken,
     });
 
     useEffect(() => {
@@ -97,30 +76,18 @@ export function BuildsPanelItem({
         if (newEvents.length === 0) return;
 
         const updates: Record<string, NodeRunStatus> = {};
-        for (const evt of newEvents) {
-            if (evt.topic === 'node-status' && evt.data?.nodeId) {
-                updates[evt.data.nodeId as string] = evt.data.status as NodeRunStatus;
-            }
-            if (evt.topic === 'status' && evt.data?.status === 'COMPLETED') {
-                for (const node of snapshotNodesRef.current ?? []) {
-                    if (!updates[node.id]) updates[node.id] = 'completed';
-                }
+        for (const event of newEvents) {
+            if (event.topic === 'node-status' && event.data?.nodeId) {
+                updates[event.data.nodeId as string] = event.data.nodeStatus as NodeRunStatus;
             }
         }
         if (Object.keys(updates).length > 0) {
-            setNodeStatuses((prev) => {
-                const next = { ...prev, ...updates };
-                for (const [id, status] of Object.entries(updates)) {
-                    if (status === 'completed' && prev[id] && prev[id] !== 'running') {
-                        next[id] = prev[id];
-                    }
-                }
-                return next;
-            });
+            setNodeStatuses((prev) => ({ ...prev, ...updates }));
         }
     }, [liveEvents, isSelected]);
 
-    const status: BuildStatus = (latestData?.data?.status ?? build.status) as BuildStatus;
+    const liveStatus = liveEvents.findLast((evt) => evt.topic === 'status')?.data?.buildStatus;
+    const status: BuildStatus = liveStatus ?? build.status;
 
     return (
         <Button

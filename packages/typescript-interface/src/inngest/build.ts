@@ -1,9 +1,5 @@
 import { GitProviderToken } from '../git/git';
 
-export type BuildStatus = 'QUEUED' | 'BUILDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
-
-export type BuildType = 'NODE_PIPELINE';
-
 export interface BuildLogEntry {
     createdAt: Date;
     level: 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';

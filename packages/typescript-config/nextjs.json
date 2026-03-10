@@ -6,6 +6,8 @@
     "plugins": [{ "name": "next" }],
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "target": "ES2023",
+    "lib": ["ES2023", "DOM"],
     "allowJs": true,
     "jsx": "preserve",
     "noEmit": true

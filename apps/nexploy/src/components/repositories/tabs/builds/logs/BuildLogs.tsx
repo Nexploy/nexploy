@@ -9,7 +9,6 @@ import { Separator } from '@workspace/ui/components/separator';
 import { BuildLogsViewer } from '@/components/repositories/tabs/builds/logs/BuildLogsViewer';
 import { useRouter } from 'next/navigation';
 import { getRepositorieBuildLogs } from '@/services/repository.service';
-import { BuildStatus } from '@workspace/typescript-interface/inngest/build';
 import { useBuildActions } from '@/hooks/useBuildActions';
 
 interface BuildLogsProps {
@@ -29,7 +28,7 @@ export function BuildLogs({ build }: BuildLogsProps) {
         },
     });
 
-    const status: BuildStatus = latestData?.data.status ?? build.status;
+    const status = latestData?.data.status ?? build.status;
     const actions = useBuildActions({
         buildId: build.id,
         status,
