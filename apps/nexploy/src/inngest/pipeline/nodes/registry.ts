@@ -10,6 +10,7 @@ import { validateComposeExecutor } from './executors/validate-compose.executor';
 import { setEnvVarsExecutor } from './executors/set-env-vars.executor';
 import { cleanWorkdirExecutor } from './executors/clean-workdir.executor';
 import { sendNotificationExecutor } from './executors/send-notification.executor';
+import { saveVersionExecutor } from './executors/save-version.executor';
 
 const executors: INodeExecutor[] = [
     // Source
@@ -28,6 +29,8 @@ const executors: INodeExecutor[] = [
     cleanWorkdirExecutor,
     // Notification
     sendNotificationExecutor,
+    // Versioning
+    saveVersionExecutor,
 ];
 
 const executorRegistry = new Map(executors.map((e) => [e.type, e]));

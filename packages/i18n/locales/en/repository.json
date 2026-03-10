@@ -431,6 +431,10 @@
             "clean-workdir": {
                 "name": "Clean Work Dir",
                 "description": "Remove the cloned repository from disk"
+            },
+            "save-version": {
+                "name": "Save Version",
+                "description": "Save the current build as a new version"
             }
         },
         "config": {
@@ -458,6 +462,7 @@
             "save": "Save",
             "noConfig": "No configuration required for this node.",
             "cleanWorkdirInfo": "Removes the cloned repository directory from disk after the pipeline completes.",
+            "saveVersionInfo": "Saves the current build as a new numbered version using the built image tag and commit info.",
             "validateDockerfileInfo": "Validates that the Dockerfile exists and is readable in the work directory.",
             "deployContainerNoConfig": "The container name, image and port mapping are inherited from the repository settings."
         },

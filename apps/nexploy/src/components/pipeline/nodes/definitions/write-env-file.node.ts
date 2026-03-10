@@ -13,7 +13,6 @@ export const writeEnvFileNodeDef: NodeDefinition<WriteEnvFileConfig> = {
     },
     defaultConfig: {
         useRepositoryEnvVars: true,
-        additionalVars: {},
     },
     handles: {
         inputs: [{ id: 'input', required: true }],

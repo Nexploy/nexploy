@@ -430,6 +430,10 @@
             "clean-workdir": {
                 "name": "Nettoyer le répertoire de travail",
                 "description": "Supprimer le dépôt cloné du disque"
+            },
+            "save-version": {
+                "name": "Sauvegarder la version",
+                "description": "Enregistrer le build actuel comme nouvelle version"
             }
         },
         "config": {
@@ -457,6 +461,7 @@
             "save": "Sauvegarder",
             "noConfig": "Aucune configuration requise pour ce nœud.",
             "cleanWorkdirInfo": "Supprime le répertoire du dépôt cloné du disque après l'exécution du pipeline.",
+            "saveVersionInfo": "Enregistre le build actuel comme une nouvelle version numérotée en utilisant le tag d'image et les informations du commit.",
             "validateDockerfileInfo": "Vérifie que le Dockerfile existe et est lisible dans le répertoire de travail.",
             "deployContainerNoConfig": "Le nom du conteneur, l'image et le mapping de port sont hérités des paramètres du dépôt."
         },

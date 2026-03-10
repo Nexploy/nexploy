@@ -1,8 +1,8 @@
 import {
+    getFromInputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    getFromInputs,
 } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 
@@ -22,12 +22,9 @@ export class WriteEnvFileExecutor implements INodeExecutor {
         const useRepositoryEnvVars =
             (ctx.nodeConfig.useRepositoryEnvVars as boolean | undefined) !== false;
 
-        const additionalVars = (ctx.nodeConfig.additionalVars as Record<string, string>) ?? {};
-
-        const envVariables: Record<string, string> = {
-            ...(useRepositoryEnvVars ? config.envVariables : {}),
-            ...additionalVars,
-        };
+        const envVariables: Record<string, string> = useRepositoryEnvVars
+            ? config.envVariables
+            : {};
 
         const envCount = Object.keys(envVariables).length;
 

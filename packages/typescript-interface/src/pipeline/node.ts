@@ -9,7 +9,8 @@ export type NodeType =
     | 'write-env-file'
     | 'set-env-vars'
     | 'clean-workdir'
-    | 'send-notification';
+    | 'send-notification'
+    | 'save-version';
 
 export type NodeCategory = 'source' | 'build' | 'deploy' | 'utility' | 'notification';
 

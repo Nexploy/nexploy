@@ -10,6 +10,7 @@ import {
     Layers,
     type LucideIcon,
     Rocket,
+    Tag,
     Terminal,
     Trash2,
     Upload,
@@ -85,6 +86,7 @@ const NODE_CATEGORY: Record<string, string> = {
     'set-env-vars': 'utility',
     'clean-workdir': 'utility',
     'send-notification': 'notification',
+    'save-version': 'utility',
 };
 
 export const NODE_BG_MUTED: Record<string, string> = Object.fromEntries(
@@ -107,6 +109,7 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'set-env-vars': Variable,
     'clean-workdir': Trash2,
     'send-notification': Bell,
+    'save-version': Tag,
 };
 
 export const ICON_NAME_MAP: Record<string, LucideIcon> = {
@@ -122,9 +125,8 @@ export const ICON_NAME_MAP: Record<string, LucideIcon> = {
     Trash2,
     Terminal,
     Bell,
+    Tag,
 };
-
-// ─── Templates ────────────────────────────────────────────────────────────────
 
 export const TEMPLATE_ICONS: Record<string, LucideIcon> = {
     dockerfile: FileCode2,

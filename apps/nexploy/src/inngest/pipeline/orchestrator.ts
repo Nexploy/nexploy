@@ -185,7 +185,9 @@ export class PipelineOrchestrator {
                         };
 
                         const execResult = await executor.execute(ctx);
-                        if (!execResult.skipped) {
+                        if (execResult.skipped) {
+                            await reporter.markSkipped(node.id);
+                        } else {
                             await reporter.markCompleted(node.id);
                         }
                         return execResult;

@@ -12,7 +12,10 @@ export const validateDockerfileConfigSchema = z.object({
 });
 
 export const composeFileConfigSchema = z.object({
-    composeFileName: z.string().min(1, 'Compose file name is required').default('docker-compose.yml'),
+    composeFileName: z
+        .string()
+        .min(1, 'Compose file name is required')
+        .default('docker-compose.yml'),
     composeFilePath: z.string().optional(),
 });
 
@@ -31,7 +34,6 @@ export const deployContainerConfigSchema = z.object({
 
 export const writeEnvFileConfigSchema = z.object({
     useRepositoryEnvVars: z.boolean().default(true),
-    additionalVars: z.record(z.string(), z.string()).default({}),
 });
 
 export const varEntrySchema = z.object({
@@ -50,11 +52,16 @@ export const pushToRegistryConfigSchema = z.object({
 
 export const cleanWorkdirConfigSchema = z.object({});
 
+export const saveVersionConfigSchema = z.object({});
+
 export const sendNotificationConfigSchema = z.object({
-    webhookUrl: z.string().refine(
-        (v) => v === '' || z.string().url().safeParse(v).success,
-        'Webhook URL must be a valid URL',
-    ).default(''),
+    webhookUrl: z
+        .string()
+        .refine(
+            (v) => v === '' || z.string().url().safeParse(v).success,
+            'Webhook URL must be a valid URL',
+        )
+        .default(''),
     triggerOn: z.array(z.enum(['success', 'failure', 'always'])).default(['always']),
     message: z.string().optional(),
 });
@@ -69,4 +76,5 @@ export type ValidateDockerfileConfig = z.infer<typeof validateDockerfileConfigSc
 export type ComposeFileConfig = z.infer<typeof composeFileConfigSchema>;
 export type DeployContainerConfig = z.infer<typeof deployContainerConfigSchema>;
 export type WriteEnvFileConfig = z.infer<typeof writeEnvFileConfigSchema>;
+export type SaveVersionConfig = z.infer<typeof saveVersionConfigSchema>;
 export type SendNotificationConfig = z.infer<typeof sendNotificationConfigSchema>;

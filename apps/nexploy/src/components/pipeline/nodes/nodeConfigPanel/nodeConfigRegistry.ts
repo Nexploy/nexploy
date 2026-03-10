@@ -7,6 +7,7 @@ import {
     composeFileConfigSchema,
     deployContainerConfigSchema,
     pushToRegistryConfigSchema,
+    saveVersionConfigSchema,
     sendNotificationConfigSchema,
     setEnvVarsConfigSchema,
     validateDockerfileConfigSchema,
@@ -23,6 +24,7 @@ import { WriteEnvFileConfig } from '../config/WriteEnvFileConfig';
 import { SetEnvVarsConfig } from '../config/SetEnvVarsConfig';
 import { CleanWorkdirConfig } from '../config/CleanWorkdirConfig';
 import { SendNotificationConfig } from '../config/SendNotificationConfig';
+import { SaveVersionConfig } from '../config/SaveVersionConfig';
 
 export const CONFIG_SCHEMAS: Record<NodeType, any> = {
     'clone-repository': cloneRepositoryConfigSchema,
@@ -36,6 +38,7 @@ export const CONFIG_SCHEMAS: Record<NodeType, any> = {
     'set-env-vars': setEnvVarsConfigSchema,
     'clean-workdir': cleanWorkdirConfigSchema,
     'send-notification': sendNotificationConfigSchema,
+    'save-version': saveVersionConfigSchema,
 };
 
 export const CONFIG_PANELS: Record<NodeType, ComponentType> = {
@@ -50,4 +53,5 @@ export const CONFIG_PANELS: Record<NodeType, ComponentType> = {
     'set-env-vars': SetEnvVarsConfig,
     'clean-workdir': CleanWorkdirConfig,
     'send-notification': SendNotificationConfig,
+    'save-version': SaveVersionConfig,
 };

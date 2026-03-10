@@ -78,6 +78,8 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
         triggerAutoSave();
     };
 
+    console.log({ runStatus, label: t(`nodes.${data.nodeType}.name`) });
+
     return (
         <div
             className={cn(

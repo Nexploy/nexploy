@@ -10,6 +10,7 @@ import { writeEnvFileNodeDef } from './nodes/definitions/write-env-file.node';
 import { setEnvVarsNodeDef } from './nodes/definitions/set-env-vars.node';
 import { cleanWorkdirNodeDef } from './nodes/definitions/clean-workdir.node';
 import { sendNotificationNodeDef } from './nodes/definitions/send-notification.node';
+import { saveVersionNodeDef } from './nodes/definitions/save-version.node';
 
 export const ALL_NODE_DEFINITIONS: NodeDefinition[] = [
     // Source
@@ -28,6 +29,8 @@ export const ALL_NODE_DEFINITIONS: NodeDefinition[] = [
     cleanWorkdirNodeDef,
     // Notification
     sendNotificationNodeDef,
+    // Versioning
+    saveVersionNodeDef,
 ];
 
 const nodeRegistry = new Map(ALL_NODE_DEFINITIONS.map((d) => [d.type, d]));
