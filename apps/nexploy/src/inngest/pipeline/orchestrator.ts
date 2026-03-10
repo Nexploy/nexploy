@@ -11,7 +11,6 @@ import {
     NodeExecutionResult,
     NodeOutputData,
     NodeOutputStore,
-    NodeRunStatus,
     PipelineLogger,
     PipelineReporter,
     PipelineResult,
@@ -75,7 +74,6 @@ export class PipelineOrchestrator {
         inngestStep: InngestStepRunner,
         reporter: PipelineReporter,
         logger: PipelineLogger,
-        publishNodeStatus: (nodeId: string, status: NodeRunStatus) => Promise<void>,
         allOutputs: NodeOutputStore,
         output: NodeOutputData = {},
     ): Promise<void> {
@@ -83,7 +81,6 @@ export class PipelineOrchestrator {
             await reporter.markSkipped(node.id);
             await logger.info(node.id, `${node.data.label} : Node skipped (${reason})`);
         });
-        await publishNodeStatus(node.id, 'skipped');
         allOutputs.set(node.id, output);
     }
 
@@ -95,8 +92,6 @@ export class PipelineOrchestrator {
         logger: PipelineLogger,
         reporter: PipelineReporter,
         setStatus: (status: PipelineStatus) => Promise<void>,
-        publishNodeStatus: (nodeId: string, nodeStatus: NodeRunStatus) => Promise<void>,
-        publishPipelineStatus: (buildStatus: PipelineStatus) => Promise<void>,
     ): Promise<PipelineResult> {
         const abortController = new AbortController();
         const allOutputs: NodeOutputStore = new Map();
@@ -115,7 +110,6 @@ export class PipelineOrchestrator {
             await inngestStep.run('pipeline-init', async () => {
                 await setStatus('BUILDING');
             });
-            await publishPipelineStatus('BUILDING');
 
             for (const node of sorted) {
                 const executor = getNodeExecutor(node.data.type);
@@ -135,7 +129,6 @@ export class PipelineOrchestrator {
                         inngestStep,
                         reporter,
                         logger,
-                        publishNodeStatus,
                         allOutputs,
                     );
                     continue;
@@ -149,7 +142,6 @@ export class PipelineOrchestrator {
                         inngestStep,
                         reporter,
                         logger,
-                        publishNodeStatus,
                         allOutputs,
                         mergedInputs,
                     );
@@ -167,13 +159,11 @@ export class PipelineOrchestrator {
                         inngestStep,
                         reporter,
                         logger,
-                        publishNodeStatus,
                         allOutputs,
                     );
                     continue;
                 }
 
-                await publishNodeStatus(node.id, 'running');
                 try {
                     const nodeResult = await inngestStep.run(`node-${node.id}`, async () => {
                         await reporter.markRunning(node.id);
@@ -203,20 +193,17 @@ export class PipelineOrchestrator {
 
                     const result = nodeResult as NodeExecutionResult;
                     allOutputs.set(node.id, result.output ?? {});
-                    await publishNodeStatus(node.id, result.skipped ? 'skipped' : 'completed');
                 } catch (nodeError) {
                     await reporter.markFailed(node.id);
-                    await publishNodeStatus(node.id, 'failed');
-                    await publishPipelineStatus('FAILED');
+                    await setStatus('FAILED');
                     throw nodeError;
                 }
             }
 
             await inngestStep.run('pipeline-complete', async () => {
                 await setStatus('COMPLETED');
-                await this.saveVersion(buildId, config, allOutputs, logger);
+                // await this.saveVersion(buildId, config, allOutputs, logger);
             });
-            await publishPipelineStatus('COMPLETED');
 
             return { success: true };
         } catch (error) {
@@ -226,7 +213,6 @@ export class PipelineOrchestrator {
             if (error instanceof Error && error.name === 'AbortError') {
                 await logger.info('cancel', 'Build cancelled by user');
                 await setStatus('CANCELLED');
-                await publishPipelineStatus('CANCELLED');
                 if (workDir) {
                     try {
                         await gitService.cleanup(workDir);

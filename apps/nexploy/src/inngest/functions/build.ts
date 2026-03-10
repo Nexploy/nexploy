@@ -4,7 +4,7 @@ import { BuildConfig, BuildLogEntry } from '@workspace/typescript-interface/inng
 import { inngest } from '@/inngest/client';
 import { updateNodeStatus, updateStatusBuild } from '@/services/inngest/build.inngest.service';
 import { createLogInngest } from '@/services/inngest/log.inngest.service';
-import { LogLevel, NodeRunStatus, PipelineReporter, PipelineStatus } from '@/types/pipeline.type';
+import { LogLevel, PipelineReporter, PipelineStatus } from '@/types/pipeline.type';
 import { createPipelineLogger, pipelineOrchestrator } from '@/inngest/pipeline/orchestrator';
 import { runWithEnvironmentContextAsync } from '@/lib/environmentContext';
 import { prisma } from '../../../prisma/prisma';
@@ -13,7 +13,7 @@ import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 const createBuildChannel = (buildId: string) => {
     const channelDef = channel(`build:${buildId}`)
         .addTopic(topic('log').type<{ log: BuildLogEntry }>())
-        .addTopic(topic('status').type<{ buildStatus: string }>())
+        .addTopic(topic('build-status').type<{ buildStatus: string }>())
         .addTopic(topic('node-status').type<{ nodeId: string; nodeStatus: string }>());
     return channelDef();
 };
@@ -43,39 +43,45 @@ export const buildFunction = inngest.createFunction(
                 await publish(buildChannel.log({ log }));
             };
 
+            const publishSafe = async (payload: Parameters<typeof publish>[0]) => {
+                try {
+                    await publish(payload);
+                } catch {
+                    /* ignore */
+                }
+            };
+
             const setStatus = async (status: PipelineStatus) => {
+                console.log(buildId, status);
                 await updateStatusBuild(buildId, status);
+                await publishSafe(buildChannel['build-status']({ buildStatus: status }));
             };
 
             const reporter: PipelineReporter = {
                 async markRunning(nodeId) {
                     await updateNodeStatus(buildId, nodeId, 'running');
+                    await publishSafe(
+                        buildChannel['node-status']({ nodeId, nodeStatus: 'running' }),
+                    );
                 },
                 async markCompleted(nodeId) {
                     await updateNodeStatus(buildId, nodeId, 'completed');
+                    await publishSafe(
+                        buildChannel['node-status']({ nodeId, nodeStatus: 'completed' }),
+                    );
                 },
                 async markSkipped(nodeId) {
                     await updateNodeStatus(buildId, nodeId, 'skipped');
+                    await publishSafe(
+                        buildChannel['node-status']({ nodeId, nodeStatus: 'skipped' }),
+                    );
                 },
                 async markFailed(nodeId) {
                     await updateNodeStatus(buildId, nodeId, 'failed', 'FAILED');
+                    await publishSafe(
+                        buildChannel['node-status']({ nodeId, nodeStatus: 'failed' }),
+                    );
                 },
-            };
-
-            const publishNodeStatus = async (nodeId: string, nodeStatus: NodeRunStatus) => {
-                try {
-                    await publish(buildChannel['node-status']({ nodeId, nodeStatus }));
-                } catch {
-                    /* ignore */
-                }
-            };
-
-            const publishPipelineStatus = async (buildStatus: PipelineStatus) => {
-                try {
-                    await publish(buildChannel.status({ buildStatus }));
-                } catch {
-                    /* ignore */
-                }
             };
 
             const logger = createPipelineLogger(publishLog);
@@ -103,8 +109,6 @@ export const buildFunction = inngest.createFunction(
                 logger,
                 reporter,
                 setStatus,
-                publishNodeStatus,
-                publishPipelineStatus,
             );
         });
     },

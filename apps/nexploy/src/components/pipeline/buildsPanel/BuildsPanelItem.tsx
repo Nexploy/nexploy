@@ -50,12 +50,12 @@ export function BuildsPanelItem({
     const refreshToken = useCallback(async () => {
         const result = await onGetTokenBuildIdAction({
             buildId: build.id,
-            topics: ['node-status', 'status'],
+            topics: ['node-status', 'build-status'],
         });
         return result?.data ?? null;
     }, [build.id]);
 
-    const { data: liveEvents } = useInngestSubscription({
+    const { data: liveEvents, freshData } = useInngestSubscription({
         enabled: isLive,
         refreshToken,
     });
@@ -86,7 +86,10 @@ export function BuildsPanelItem({
         }
     }, [liveEvents, isSelected]);
 
-    const liveStatus = liveEvents.findLast((evt) => evt.topic === 'status')?.data?.buildStatus;
+    console.log(freshData.length > 1 && freshData);
+
+    const liveStatus = liveEvents.findLast((evt) => evt.topic === 'build-status')?.data
+        ?.buildStatus as BuildStatus | undefined;
     const status: BuildStatus = liveStatus ?? build.status;
 
     return (
