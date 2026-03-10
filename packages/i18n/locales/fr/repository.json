@@ -362,6 +362,11 @@
             "delete": "Supprimer",
             "pan": "Déplacer le canvas"
         },
+        "canvas": {
+            "zoomOut": "Zoom arrière",
+            "fitView": "Ajuster la vue",
+            "zoomIn": "Zoom avant"
+        },
         "nodeCount": "{count, plural, one {# nœud} other {# nœuds}}",
         "disabledCount": "{count, plural, one {# désactivé} other {# désactivés}}",
         "empty": "Faites glisser des nœuds depuis la palette pour construire votre pipeline",

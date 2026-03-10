@@ -202,7 +202,6 @@ export class PipelineOrchestrator {
 
             await inngestStep.run('pipeline-complete', async () => {
                 await setStatus('COMPLETED');
-                // await this.saveVersion(buildId, config, allOutputs, logger);
             });
 
             return { success: true };
@@ -244,50 +243,6 @@ export class PipelineOrchestrator {
             throw error;
         } finally {
             clearInterval(cancellationWatcher);
-        }
-    }
-
-    private async saveVersion(
-        buildId: string,
-        config: BuildConfig,
-        allOutputs: NodeOutputStore,
-        logger: PipelineLogger,
-    ): Promise<void> {
-        try {
-            const lastVersion = await prisma.version.findFirst({
-                where: {
-                    repositoryId: config.repositoryId,
-                    environmentId: config.environmentId ?? null,
-                },
-                orderBy: { versionNumber: 'desc' },
-                select: { versionNumber: true },
-            });
-            const versionNumber = (lastVersion?.versionNumber ?? 0) + 1;
-
-            await prisma.version.upsert({
-                where: {
-                    repositoryId_imageTag: {
-                        repositoryId: config.repositoryId,
-                        imageTag: config.imageTag,
-                    },
-                },
-                update: {},
-                create: {
-                    repositoryId: config.repositoryId,
-                    imageTag: config.imageTag,
-                    versionNumber,
-                    buildType: 'NODE_PIPELINE',
-                    branch: config.gitBranch ?? null,
-                    commitHash: config.gitCommitHash ?? null,
-                    commitMessage: config.gitCommitMessage ?? null,
-                    environmentId: config.environmentId ?? null,
-                },
-            });
-        } catch (err) {
-            await logger.warn(
-                'finalize',
-                `Failed to save version: ${err instanceof Error ? err.message : String(err)}`,
-            );
         }
     }
 }

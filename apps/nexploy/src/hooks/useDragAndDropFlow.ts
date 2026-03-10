@@ -44,7 +44,6 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
                         data: {
                             label: tn.type,
                             nodeType: tn.type,
-                            pipelineNodeType: tn.type,
                             definition: def,
                             config: { ...(def?.defaultConfig ?? {}), ...(tn.config ?? {}) },
                             isStartNode: def?.isStartNode ?? false,
@@ -78,7 +77,6 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
                 data: {
                     label: nodeType,
                     nodeType,
-                    pipelineNodeType: nodeType,
                     definition: def,
                     config: { ...def.defaultConfig },
                     isStartNode: def.isStartNode ?? false,

@@ -212,7 +212,7 @@ export function PipelineCanvas() {
                                 size="icon"
                                 className="size-8"
                                 onClick={() => zoomOut()}
-                                title="Zoom out"
+                                title={t('canvas.zoomOut')}
                             >
                                 <Minus />
                             </Button>
@@ -221,7 +221,7 @@ export function PipelineCanvas() {
                                 size="icon"
                                 className="size-8"
                                 onClick={() => fitView({ padding: 0.3 })}
-                                title="Fit view"
+                                title={t('canvas.fitView')}
                             >
                                 <Maximize />
                             </Button>
@@ -230,7 +230,7 @@ export function PipelineCanvas() {
                                 size="icon"
                                 className="size-8"
                                 onClick={() => zoomIn()}
-                                title="Zoom in"
+                                title={t('canvas.zoomIn')}
                             >
                                 <Plus />
                             </Button>

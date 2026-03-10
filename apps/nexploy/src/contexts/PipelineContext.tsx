@@ -98,7 +98,7 @@ export function PipelineProvider({
             setEdges(snapshot.edges);
             setSaveVersion((v) => v + 1);
         },
-        [setNodes, setEdges],
+        [setNodes, setEdges, setSaveVersion],
     );
 
     const { commit, undo, redo, canUndo, canRedo } = usePipelineHistory(onRestore, {

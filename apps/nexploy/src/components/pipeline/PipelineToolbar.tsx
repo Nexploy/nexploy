@@ -20,9 +20,7 @@ import { Kbd } from '@workspace/ui/components/kbd';
 import { useStore } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
 
-const isApple =
-    navigator.platform.startsWith('Mac') || navigator.platform === 'iPhone' ? '⌘' : 'Ctrl';
-const mod = isApple ? '⌘' : 'Ctrl';
+const mod = /Mac|iPhone|iPad/i.test(navigator.userAgent) ? '⌘' : 'Ctrl';
 
 export function PipelineToolbar() {
     const t = useTranslations('repository.pipeline');

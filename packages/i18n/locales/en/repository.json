@@ -363,6 +363,11 @@
             "delete": "Delete",
             "pan": "Pan canvas"
         },
+        "canvas": {
+            "zoomOut": "Zoom out",
+            "fitView": "Fit view",
+            "zoomIn": "Zoom in"
+        },
         "nodeCount": "{count, plural, one {# node} other {# nodes}}",
         "disabledCount": "{count, plural, one {# disabled} other {# disabled}}",
         "empty": "Drag nodes from the palette to build your pipeline",

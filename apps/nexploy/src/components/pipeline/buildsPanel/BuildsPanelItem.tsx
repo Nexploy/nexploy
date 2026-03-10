@@ -86,8 +86,6 @@ export function BuildsPanelItem({
         }
     }, [liveEvents, isSelected]);
 
-    console.log(freshData.length > 1 && freshData);
-
     const liveStatus = liveEvents.findLast((evt) => evt.topic === 'build-status')?.data
         ?.buildStatus as BuildStatus | undefined;
     const status: BuildStatus = liveStatus ?? build.status;

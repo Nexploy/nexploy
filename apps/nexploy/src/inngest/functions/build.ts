@@ -52,7 +52,6 @@ export const buildFunction = inngest.createFunction(
             };
 
             const setStatus = async (status: PipelineStatus) => {
-                console.log(buildId, status);
                 await updateStatusBuild(buildId, status);
                 await publishSafe(buildChannel['build-status']({ buildStatus: status }));
             };

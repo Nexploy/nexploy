@@ -12,7 +12,6 @@ export function graphToFlow(graph: PipelineGraph): { nodes: Node[]; edges: Edge[
             nodeType: n.data.type,
             definition: getNodeDefinition(n.data.type)!,
             config: n.data.config,
-            pipelineNodeType: n.data.type,
             disabled: n.data.disabled ?? false,
             isStartNode: n.data.isStartNode ?? false,
         },
@@ -35,10 +34,10 @@ export function flowToGraph(nodes: Node[], edges: Edge[]): PipelineGraph {
     return {
         nodes: nodes.map((n) => ({
             id: n.id,
-            type: n.data.pipelineNodeType as NodeType,
+            type: n.data.nodeType as NodeType,
             position: n.position,
             data: {
-                type: n.data.pipelineNodeType as NodeType,
+                type: n.data.nodeType as NodeType,
                 config: (n.data.config as Record<string, unknown>) ?? {},
                 label: n.data.label as string,
                 disabled: (n.data.disabled as boolean) ?? false,

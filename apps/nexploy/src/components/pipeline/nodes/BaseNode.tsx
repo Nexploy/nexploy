@@ -22,7 +22,6 @@ interface BaseNodeProps {
         nodeType: string;
         definition: NodeDefinition;
         config: Record<string, unknown>;
-        pipelineNodeType: string;
         disabled?: boolean;
         viewOnly?: boolean;
         runStatus?: NodeRunStatus;
