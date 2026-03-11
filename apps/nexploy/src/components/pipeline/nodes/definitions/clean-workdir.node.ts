@@ -2,7 +2,8 @@ import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDef
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const cleanWorkdirNodeDef: NodeDefinition = {
-    type: 'clean-workdir',
+    id: 'clean-workdir',
+    type: 'base-node',
     category: 'utility',
     metadata: {
         name: 'pipeline.nodes.clean-workdir.name',

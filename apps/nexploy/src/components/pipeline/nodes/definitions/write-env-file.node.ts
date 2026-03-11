@@ -3,7 +3,8 @@ import { WriteEnvFileConfig } from '@workspace/schemas-zod/pipeline/nodeConfigs.
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const writeEnvFileNodeDef: NodeDefinition<WriteEnvFileConfig> = {
-    type: 'write-env-file',
+    id: 'write-env-file',
+    type: 'base-node',
     category: 'utility',
     metadata: {
         name: 'pipeline.nodes.write-env-file.name',

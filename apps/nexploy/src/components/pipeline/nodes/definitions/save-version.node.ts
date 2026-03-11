@@ -2,8 +2,10 @@ import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDef
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const saveVersionNodeDef: NodeDefinition = {
-    type: 'save-version',
+    id: 'save-version',
+    type: 'base-node',
     category: 'utility',
+    variant: 'sub',
     metadata: {
         name: 'pipeline.nodes.save-version.name',
         description: 'pipeline.nodes.save-version.description',

@@ -3,7 +3,8 @@ import { BuildDockerImageConfig } from '@workspace/schemas-zod/pipeline/nodeConf
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const buildDockerImageNodeDef: NodeDefinition<BuildDockerImageConfig> = {
-    type: 'build-docker-image',
+    id: 'build-docker-image',
+    type: 'base-node',
     category: 'build',
     metadata: {
         name: 'pipeline.nodes.build-docker-image.name',

@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { ArrowLeft, ChevronRight, Search, Wrench, X } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import { useNodeRegistryStore } from '@/stores/useNodeRegistryStore';
-import { NodeType } from '@workspace/typescript-interface/pipeline/node';
+import { NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { NodeItem } from '@/components/pipeline/nodes/add/NodeItem';
 import {
     CATEGORY_BG_MUTED,
@@ -33,7 +33,7 @@ export function NodeAddPanel() {
         return acc;
     }, {});
 
-    const onDragStart = (event: React.DragEvent, nodeType: NodeType) => {
+    const onDragStart = (event: React.DragEvent, nodeType: NodeId) => {
         event.dataTransfer.setData('application/reactflow', nodeType);
         event.dataTransfer.effectAllowed = 'move';
     };
@@ -42,9 +42,7 @@ export function NodeAddPanel() {
     const isSearching = searchQuery.length > 0;
 
     const searchResults = isSearching
-        ? definitions.filter((def) =>
-              t(`nodes.${def.type}.name`).toLowerCase().includes(searchQuery),
-          )
+        ? definitions.filter((def) => t(`nodes.${def.id}.name`).toLowerCase().includes(searchQuery))
         : [];
 
     return (
@@ -115,9 +113,9 @@ export function NodeAddPanel() {
                     {isSearching &&
                         searchResults.map((def) => (
                             <NodeItem
-                                key={def.type}
+                                key={def.id}
                                 def={def}
-                                label={t(`nodes.${def.type}.name`)}
+                                label={t(`nodes.${def.id}.name`)}
                                 onDragStart={onDragStart}
                             />
                         ))}
@@ -160,9 +158,9 @@ export function NodeAddPanel() {
                         activeCategory &&
                         grouped[activeCategory]?.map((def) => (
                             <NodeItem
-                                key={def.type}
+                                key={def.id}
                                 def={def}
-                                label={t(`nodes.${def.type}.name`)}
+                                label={t(`nodes.${def.id}.name`)}
                                 onDragStart={onDragStart}
                             />
                         ))}

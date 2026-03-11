@@ -2,7 +2,7 @@ import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDef
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const setEnvVarsNodeDef: NodeDefinition = {
-    type: 'set-env-vars',
+    id: 'set-env-vars',
     category: 'utility',
     metadata: {
         name: 'pipeline.nodes.set-env-vars.name',

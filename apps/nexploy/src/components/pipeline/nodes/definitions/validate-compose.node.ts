@@ -2,7 +2,8 @@ import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDef
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const validateComposeNodeDef: NodeDefinition = {
-    type: 'validate-compose',
+    id: 'validate-compose',
+    type: 'base-node',
     category: 'build',
     metadata: {
         name: 'pipeline.nodes.validate-compose.name',

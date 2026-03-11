@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { type Edge, type Node, type ReactFlowInstance } from '@xyflow/react';
-import { NodeType } from '@workspace/typescript-interface/pipeline/node';
+import { NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { getTemplate } from '@/components/pipeline/nodes/template/pipelineTemplates';
@@ -26,17 +26,17 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
             const cursor = rfInstance.screenToFlowPosition({ x: event.clientX, y: event.clientY });
             const dropPosition = { x: cursor.x - 45, y: cursor.y - 45 };
 
-            const templateId = event.dataTransfer.getData('application/pipeline-template');
+            const templateId = event.dataTransfer.getData('application/node-template');
             if (templateId) {
                 const template = getTemplate(templateId);
                 if (!template) return;
 
                 const ts = Date.now();
                 const newNodes: Node[] = template.nodes.map((tn, i) => {
-                    const def = getNodeDefinition(tn.type as NodeType);
+                    const def = getNodeDefinition(tn.type as NodeId);
                     return {
                         id: `${tn.type}-${ts}-${i}`,
-                        type: 'pipeline-node',
+                        type: def?.type,
                         position: {
                             x: dropPosition.x + tn.offsetX,
                             y: dropPosition.y + tn.offsetY,
@@ -64,7 +64,7 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
                 return;
             }
 
-            const nodeType = event.dataTransfer.getData('application/reactflow') as NodeType;
+            const nodeType = event.dataTransfer.getData('application/reactflow') as NodeId;
             if (!nodeType) return;
 
             const def = getNodeDefinition(nodeType);
@@ -72,7 +72,7 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
 
             const newNode: Node = {
                 id: `${nodeType}-${Date.now()}`,
-                type: 'pipeline-node',
+                type: def.type,
                 position: dropPosition,
                 data: {
                     label: nodeType,

@@ -4,6 +4,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import {
     Background,
     BackgroundVariant,
+    type IsValidConnection,
     MiniMap,
     type Node,
     type NodeMouseHandler,
@@ -15,11 +16,13 @@ import {
     useReactFlow,
     useStore,
 } from '@xyflow/react';
+import { type NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { Maximize, Minus, Plus } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
 import { BaseNode } from '@/components/pipeline/nodes/BaseNode';
+import { AttachNode } from '@/components/pipeline/nodes/AttachNode';
 import { GradientEdge } from '@/components/pipeline/edges/GradientEdge';
 import { useDragAndDropFlow } from '@/hooks/useDragAndDropFlow';
 import { useMinimap } from '@/hooks/useMinimap';
@@ -30,13 +33,48 @@ import { useHotkeys } from '@/lib/useHotKeys';
 import { NodeContextMenu, type NodeContextMenuState } from '@/components/pipeline/NodeContextMenu';
 import { BuildsPanel } from '@/components/pipeline/buildsPanel/BuildsPanel';
 
-const nodeTypes = { 'pipeline-node': BaseNode };
+const nodeTypes = { 'base-node': BaseNode, 'attach-node': AttachNode };
 const edgeTypes = { 'gradient-edge': GradientEdge };
 
 export function PipelineCanvas() {
     const t = useTranslations('repository.pipeline');
     const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
     const { zoomIn, zoomOut, fitView, getNodes } = useReactFlow();
+
+    const isValidConnection = useCallback<IsValidConnection>(
+        (connection) => {
+            const nodes = getNodes();
+            const sourceNode = nodes.find((n) => n.id === connection.source);
+            const targetNode = nodes.find((n) => n.id === connection.target);
+            if (!sourceNode || !targetNode) return false;
+
+            const sourceDef = sourceNode.data.definition as NodeDefinition | undefined;
+            const targetDef = targetNode.data.definition as NodeDefinition | undefined;
+
+            if (connection.sourceHandle) {
+                const attachment = sourceDef?.handles?.attachments?.find(
+                    (a) => a.id === connection.sourceHandle,
+                );
+                if (attachment) {
+                    return attachment.id === (targetNode.data.nodeType as string);
+                }
+            }
+
+            if (targetDef?.variant === 'sub') {
+                return !!(
+                    connection.sourceHandle &&
+                    sourceDef?.handles?.attachments?.some(
+                        (a) =>
+                            a.id === connection.sourceHandle &&
+                            a.id === (targetNode.data.nodeType as string),
+                    )
+                );
+            }
+
+            return true;
+        },
+        [getNodes],
+    );
     const addSelectedNodes = useStore((s) => s.addSelectedNodes);
     const [isSpaceHeld, setIsSpaceHeld] = useState(false);
     const [contextMenu, setContextMenu] = useState<NodeContextMenuState | null>(null);
@@ -169,6 +207,7 @@ export function PipelineCanvas() {
                 }
                 onEdgeMouseLeave={isViewingBuild ? undefined : () => setHoveredEdgeId(null)}
                 onConnect={isViewingBuild ? undefined : onConnect}
+                isValidConnection={isViewingBuild ? undefined : isValidConnection}
                 onInit={setRfInstance}
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}

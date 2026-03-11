@@ -2,7 +2,8 @@ import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDef
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const pushToRegistryNodeDef: NodeDefinition = {
-    type: 'push-to-registry',
+    id: 'push-to-registry',
+    type: 'base-node',
     category: 'build',
     metadata: {
         name: 'pipeline.nodes.push-to-registry.name',

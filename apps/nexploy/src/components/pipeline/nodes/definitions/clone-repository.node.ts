@@ -3,7 +3,8 @@ import { CloneRepositoryConfig } from '@workspace/schemas-zod/pipeline/nodeConfi
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const cloneRepositoryNodeDef: NodeDefinition<CloneRepositoryConfig> = {
-    type: 'clone-repository',
+    id: 'clone-repository',
+    type: 'base-node',
     category: 'source',
     isStartNode: true,
     metadata: {
@@ -15,6 +16,6 @@ export const cloneRepositoryNodeDef: NodeDefinition<CloneRepositoryConfig> = {
     defaultConfig: {},
     handles: {
         inputs: [],
-        outputs: [{ id: 'output', label: 'Next' }],
+        outputs: [{ id: 'output' }],
     },
 };

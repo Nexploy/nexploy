@@ -3,8 +3,10 @@ import { DeployContainerConfig } from '@workspace/schemas-zod/pipeline/nodeConfi
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const deployContainerNodeDef: NodeDefinition<DeployContainerConfig> = {
-    type: 'deploy-container',
+    id: 'deploy-container',
+    type: 'attach-node',
     category: 'deploy',
+    variant: 'card',
     metadata: {
         name: 'pipeline.nodes.deploy-container.name',
         description: 'pipeline.nodes.deploy-container.description',
@@ -17,5 +19,6 @@ export const deployContainerNodeDef: NodeDefinition<DeployContainerConfig> = {
     handles: {
         inputs: [{ id: 'input', required: true }],
         outputs: [{ id: 'output' }],
+        attachments: [{ id: 'save-version' }],
     },
 };

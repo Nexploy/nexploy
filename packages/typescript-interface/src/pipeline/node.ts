@@ -1,4 +1,4 @@
-export type NodeType =
+export type NodeId =
     | 'clone-repository'
     | 'build-docker-image'
     | 'deploy-container'
@@ -12,10 +12,12 @@ export type NodeType =
     | 'send-notification'
     | 'save-version';
 
+export type NodeType = 'base-node' | 'attach-node';
+
 export type NodeCategory = 'source' | 'build' | 'deploy' | 'utility' | 'notification';
 
 export interface PipelineNodeData {
-    type: NodeType;
+    type: NodeId;
     config: Record<string, unknown>;
     label?: string;
     disabled?: boolean;
@@ -24,7 +26,7 @@ export interface PipelineNodeData {
 
 export interface PipelineNode {
     id: string;
-    type: NodeType;
+    type: NodeId;
     position: { x: number; y: number };
     data: PipelineNodeData;
 }

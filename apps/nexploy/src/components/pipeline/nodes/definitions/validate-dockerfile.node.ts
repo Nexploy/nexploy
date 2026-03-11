@@ -2,7 +2,8 @@ import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDef
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const validateDockerfileNodeDef: NodeDefinition = {
-    type: 'validate-dockerfile',
+    id: 'validate-dockerfile',
+    type: 'base-node',
     category: 'build',
     metadata: {
         name: 'pipeline.nodes.validate-dockerfile.name',

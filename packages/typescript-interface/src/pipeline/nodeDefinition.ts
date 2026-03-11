@@ -1,14 +1,15 @@
-import { NodeCategory, NodeType } from './node';
+import { NodeCategory, NodeId, NodeType } from './node';
 
 export interface HandleDefinition {
     id: string;
-    label?: string;
     required?: boolean;
 }
 
 export interface NodeDefinition<TConfig = Record<string, unknown>> {
-    type: NodeType | string;
+    id: NodeId;
+    type: NodeType;
     category: NodeCategory;
+    variant?: 'icon' | 'card' | 'sub';
     isStartNode?: boolean;
     metadata: {
         name: string;
@@ -20,5 +21,6 @@ export interface NodeDefinition<TConfig = Record<string, unknown>> {
     handles: {
         inputs: HandleDefinition[];
         outputs: HandleDefinition[];
+        attachments?: HandleDefinition[];
     };
 }

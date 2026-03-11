@@ -1,7 +1,7 @@
-import { NodeType } from '@workspace/typescript-interface/pipeline/node';
+import { NodeId } from '@workspace/typescript-interface/pipeline/node';
 
 export type TemplateNode = {
-    type: NodeType;
+    type: NodeId;
     offsetX: number;
     offsetY: number;
     config?: Record<string, unknown>;

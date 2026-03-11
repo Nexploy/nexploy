@@ -3,7 +3,8 @@ import { SendNotificationConfig } from '@workspace/schemas-zod/pipeline/nodeConf
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const sendNotificationNodeDef: NodeDefinition<SendNotificationConfig> = {
-    type: 'send-notification',
+    id: 'send-notification',
+    type: 'base-node',
     category: 'notification',
     metadata: {
         name: 'pipeline.nodes.send-notification.name',

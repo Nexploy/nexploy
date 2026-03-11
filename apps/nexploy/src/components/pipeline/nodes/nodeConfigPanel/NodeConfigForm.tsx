@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { type NodeType } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { type Node } from '@xyflow/react';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { Button } from '@workspace/ui/components/button';
@@ -28,7 +28,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
     const params = useParams<{ repositoryId: string }>();
     const { handleConfigChange, handlePaneClick } = usePipelineContext();
 
-    const nodeType = node.data.nodeType as NodeType;
+    const nodeType = node.data.nodeType as NodeId;
     const nodeConfig = (node.data.config as Record<string, unknown>) ?? {};
     const schema = CONFIG_SCHEMAS[nodeType];
     const ConfigComponent = CONFIG_PANELS[nodeType];

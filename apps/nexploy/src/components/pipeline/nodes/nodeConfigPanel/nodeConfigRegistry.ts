@@ -1,5 +1,5 @@
 import { type ComponentType } from 'react';
-import { type NodeType } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
 import {
     buildDockerImageConfigSchema,
     cleanWorkdirConfigSchema,
@@ -26,7 +26,7 @@ import { CleanWorkdirConfig } from '../config/CleanWorkdirConfig';
 import { SendNotificationConfig } from '../config/SendNotificationConfig';
 import { SaveVersionConfig } from '../config/SaveVersionConfig';
 
-export const CONFIG_SCHEMAS: Record<NodeType, any> = {
+export const CONFIG_SCHEMAS: Record<NodeId, any> = {
     'clone-repository': cloneRepositoryConfigSchema,
     'build-docker-image': buildDockerImageConfigSchema,
     'validate-dockerfile': validateDockerfileConfigSchema,
@@ -41,7 +41,7 @@ export const CONFIG_SCHEMAS: Record<NodeType, any> = {
     'save-version': saveVersionConfigSchema,
 };
 
-export const CONFIG_PANELS: Record<NodeType, ComponentType> = {
+export const CONFIG_PANELS: Record<NodeId, ComponentType> = {
     'clone-repository': CloneRepositoryConfig,
     'build-docker-image': BuildDockerImageConfig,
     'validate-dockerfile': ValidateDockerfileConfig,

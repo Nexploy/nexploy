@@ -2,14 +2,19 @@ import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
 import { PipelineTemplate } from '@/components/pipeline/nodes/template/pipelineTemplates';
 import { FileCode2, Terminal } from 'lucide-react';
-import { NODE_BG_MUTED, NODE_ICONS, NODE_TEXT, TEMPLATE_ICONS } from '@/components/pipeline/pipelineTheme';
+import {
+    NODE_BG_MUTED,
+    NODE_ICONS,
+    NODE_TEXT,
+    TEMPLATE_ICONS,
+} from '@/components/pipeline/pipelineTheme';
 
 export function TemplateItem({ template }: { template: PipelineTemplate }) {
     const t = useTranslations('repository.pipeline');
     const Icon = TEMPLATE_ICONS[template.icon] ?? FileCode2;
 
     const onDragStart = (e: React.DragEvent) => {
-        e.dataTransfer.setData('application/pipeline-template', template.id);
+        e.dataTransfer.setData('application/node-template', template.id);
         e.dataTransfer.effectAllowed = 'move';
     };
 

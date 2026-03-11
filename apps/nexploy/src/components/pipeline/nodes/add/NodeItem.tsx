@@ -1,7 +1,7 @@
 'use client';
 
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
-import { NodeType } from '@workspace/typescript-interface/pipeline/node';
+import { NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { cn } from '@workspace/ui/lib/utils';
 import { Terminal } from 'lucide-react';
 import { ICON_NAME_MAP } from '@/components/pipeline/pipelineTheme';
@@ -13,14 +13,14 @@ export function NodeItem({
 }: {
     def: NodeDefinition;
     label: string;
-    onDragStart: (e: React.DragEvent, nodeType: NodeType) => void;
+    onDragStart: (e: React.DragEvent, nodeType: NodeId) => void;
 }) {
     const Icon = (def.metadata.icon ? ICON_NAME_MAP[def.metadata.icon] : undefined) ?? Terminal;
 
     return (
         <div
             draggable
-            onDragStart={(e) => onDragStart(e, def.type as NodeType)}
+            onDragStart={(e) => onDragStart(e, def.id as NodeId)}
             className="border-border bg-card hover:bg-muted flex cursor-grab items-center gap-2.5 rounded-lg border px-1.5 py-1.5 transition-all active:cursor-grabbing active:opacity-60"
         >
             <div

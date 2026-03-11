@@ -33,7 +33,7 @@ export const ALL_NODE_DEFINITIONS: NodeDefinition[] = [
     saveVersionNodeDef,
 ];
 
-const nodeRegistry = new Map(ALL_NODE_DEFINITIONS.map((d) => [d.type, d]));
+const nodeRegistry = new Map(ALL_NODE_DEFINITIONS.map((d) => [d.id, d]));
 
 export function getNodeDefinition(type: string): NodeDefinition | undefined {
     return nodeRegistry.get(type);
