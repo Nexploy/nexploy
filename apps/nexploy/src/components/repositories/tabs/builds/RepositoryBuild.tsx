@@ -1,13 +1,11 @@
 'use client';
 
-import { useInngestSubscription } from '@inngest/realtime/hooks';
-import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import Link from 'next/link';
 import { Clock, GitBranch, GitCommit } from 'lucide-react';
 import dayjs from 'dayjs';
-import { Build, BuildStatus } from 'generated/client';
+import { Build } from 'generated/client';
 import { Separator } from '@workspace/ui/components/separator';
-import { StatusBadge } from '@/components/shared/StatusBadge';
+import { StatusLive } from '@/components/shared/StatusLive';
 import { BuildDropdownActions } from '@/components/repositories/BuildDropdownActions';
 
 type BuildWithEnvironment = Build & {
@@ -20,22 +18,7 @@ interface BuildLogsProps {
     build: BuildWithEnvironment;
 }
 
-const statusEnable: BuildStatus[] = ['COMPLETED', 'FAILED', 'CANCELLED'];
-
 export function RepositoryBuild({ repositoryId, build, index }: BuildLogsProps) {
-    const { latestData } = useInngestSubscription({
-        enabled: !statusEnable.includes(build.status),
-        refreshToken: async () => {
-            const result = await onGetTokenBuildIdAction({
-                buildId: build.id,
-                topics: ['status'],
-            });
-            return result?.data ?? null;
-        },
-    });
-
-    const status: BuildStatus = latestData?.data.status ?? build.status;
-
     return (
         <Link
             href={`/repositories/${repositoryId}/${build.id}`}
@@ -43,7 +26,7 @@ export function RepositoryBuild({ repositoryId, build, index }: BuildLogsProps) 
         >
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
-                    <StatusBadge status={status} />
+                    <StatusLive buildId={build.id} initialStatus={build.status} />
                     <span className="line-clamp-1 text-sm font-medium">
                         #{index} {build.commitMessage ?? `#${build.id}`}
                     </span>
@@ -69,7 +52,7 @@ export function RepositoryBuild({ repositoryId, build, index }: BuildLogsProps) 
                     </span>
                 </div>
             </div>
-            <BuildDropdownActions buildId={build.id} status={status} />
+            <BuildDropdownActions buildId={build.id} status={build.status} />
         </Link>
     );
 }

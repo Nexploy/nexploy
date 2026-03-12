@@ -12,14 +12,13 @@ export type NodeId =
     | 'send-notification'
     | 'save-version';
 
-export type NodeType = 'base-node' | 'attach-node';
+export type NodeType = 'base-node' | 'large-node' | 'attach-node';
 
 export type NodeCategory = 'source' | 'build' | 'deploy' | 'utility' | 'notification';
 
 export interface PipelineNodeData {
     type: NodeId;
     config: Record<string, unknown>;
-    label?: string;
     disabled?: boolean;
     isStartNode?: boolean;
 }

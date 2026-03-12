@@ -8,7 +8,7 @@ import { BuildStatus } from 'generated/client';
 import dayjs from 'dayjs';
 import { BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { StatusBadge } from '@/components/shared/StatusBadge';
+import { StatusLive } from '@/components/shared/StatusLive';
 import { cn } from '@workspace/ui/lib/utils';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { Realtime } from '@inngest/realtime';
@@ -52,10 +52,6 @@ export function BuildLogsViewer({
         .map((evt) => evt.data.log);
 
     const logs = [...initialLogs, ...liveLogs];
-    const latestStatus = inngestData.data
-        .filter((evt) => evt.topic === 'status' && evt.data?.status)
-        .at(-1)?.data.status as BuildStatus | undefined;
-    const status: BuildStatus = latestStatus ?? initialStatus;
 
     useEffect(() => {
         const logsContainer = logsContainerRef.current;
@@ -116,7 +112,7 @@ export function BuildLogsViewer({
         <div className="flex flex-1 flex-col overflow-hidden">
             <div className="flex items-center justify-between border-b p-3">
                 <div className="flex items-center gap-3">
-                    <StatusBadge status={status} />
+                    <StatusLive buildId={buildId} initialStatus={initialStatus} />
                     <span className="text-muted-foreground text-sm">
                         {t('started')} {dayjs(createdAt).format('DD/MM/YYYY HH:mm:ss')}
                     </span>

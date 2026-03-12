@@ -4,29 +4,26 @@ import dayjs from 'dayjs';
 import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
-import { Status, StatusIndicator, StatusProps } from '@workspace/ui/components/kibo-ui/status';
+import { StatusProps } from '@workspace/ui/components/kibo-ui/status';
 import { useInngestSubscription } from '@inngest/realtime/hooks';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
-import { type getActiveBuilds } from '@/services/repository.service';
 import { useCallback, useEffect, useRef } from 'react';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { type NodeRunStatus } from '@/types/pipeline.type';
-import { BuildStatus } from 'generated/client';
+import { Build, BuildStatus } from 'generated/client';
+import { isBuildLive } from '@/utils/buildStatus';
+import { StatusLive } from '@/components/shared/StatusLive';
 
-const TERMINAL_STATUSES: BuildStatus[] = ['COMPLETED', 'FAILED', 'CANCELLED'];
-
-export const STATUS_PIPELINE: Partial<Record<BuildStatus, StatusProps['status']>> = {
-    QUEUED: 'maintenance',
+export const STATUS_PIPELINE: Record<BuildStatus, StatusProps['status']> = {
+    QUEUED: 'waiting',
     BUILDING: 'degraded',
-    COMPLETED: 'online',
+    COMPLETED: 'maintenance',
     FAILED: 'offline',
     CANCELLED: 'offline',
 };
 
-type ActiveBuild = Awaited<ReturnType<typeof getActiveBuilds>>[number];
-
 export interface BuildsPanelItemProps {
-    build: ActiveBuild;
+    build: Build;
     index: number;
     total: number;
     isSelected: boolean;
@@ -42,7 +39,7 @@ export function BuildsPanelItem({
     locale,
     onSelect,
 }: BuildsPanelItemProps) {
-    const isLive = !TERMINAL_STATUSES.includes(build.status);
+    const isLive = isBuildLive(build.status);
     const setNodeStatuses = usePipelineEditorStore((s) => s.setNodeStatuses);
     const processedCountRef = useRef(0);
     const prevIsSelectedRef = useRef(isSelected);
@@ -50,12 +47,12 @@ export function BuildsPanelItem({
     const refreshToken = useCallback(async () => {
         const result = await onGetTokenBuildIdAction({
             buildId: build.id,
-            topics: ['node-status', 'build-status'],
+            topics: ['node-status'],
         });
         return result?.data ?? null;
     }, [build.id]);
 
-    const { data: liveEvents, freshData } = useInngestSubscription({
+    const { data: liveEvents } = useInngestSubscription({
         enabled: isLive,
         refreshToken,
     });
@@ -86,10 +83,6 @@ export function BuildsPanelItem({
         }
     }, [liveEvents, isSelected]);
 
-    const liveStatus = liveEvents.findLast((evt) => evt.topic === 'build-status')?.data
-        ?.buildStatus as BuildStatus | undefined;
-    const status: BuildStatus = liveStatus ?? build.status;
-
     return (
         <Button
             variant={isSelected ? 'default' : 'secondary'}
@@ -98,13 +91,7 @@ export function BuildsPanelItem({
             className="h-auto flex-col items-start gap-0.5 px-2.5 py-1.5"
         >
             <div className="flex w-full items-center gap-1">
-                <Status
-                    className={'rounded-none border-0 p-1'}
-                    status={STATUS_PIPELINE[status] ?? 'offline'}
-                    variant="outline"
-                >
-                    <StatusIndicator />
-                </Status>
+                <StatusLive displayType={'dot'} buildId={build.id} initialStatus={build.status} />
                 <span className="text-xs font-medium">#{total - index}</span>
                 <span className="text-xs font-medium">{build.branch}</span>
                 <Separator orientation={'vertical'} className="!h-3" />

@@ -1,6 +1,7 @@
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { WriteEnvFileConfig } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Position } from '@xyflow/react';
 
 export const writeEnvFileNodeDef: NodeDefinition<WriteEnvFileConfig> = {
     id: 'write-env-file',
@@ -16,7 +17,7 @@ export const writeEnvFileNodeDef: NodeDefinition<WriteEnvFileConfig> = {
         useRepositoryEnvVars: true,
     },
     handles: {
-        inputs: [{ id: 'input', required: true }],
-        outputs: [{ id: 'output' }],
+        inputs: [{ id: 'input', required: true, position: Position.Left }],
+        outputs: [{ id: 'output', position: Position.Right }],
     },
 };

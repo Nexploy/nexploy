@@ -12,13 +12,13 @@ dayjs.extend(relativeTime);
 
 export function BuildsPanel() {
     const locale = useLocale();
-    const { setActiveBuildId, activeBuilds, activeBuildId } = usePipelineContext();
+    const { setActiveBuildId, builds, activeBuildId } = usePipelineContext();
 
     useEffect(() => {
         import(`dayjs/locale/${locale}`).catch(() => {});
     }, [locale]);
 
-    if (activeBuilds.length === 0) return null;
+    if (builds.length === 0) return null;
 
     return (
         <div className="absolute z-10">
@@ -27,12 +27,12 @@ export function BuildsPanel() {
                 className="h-[100px] transition-all duration-300 hover:h-[250px]"
             >
                 <div className={'m-2 flex flex-col gap-1'}>
-                    {activeBuilds.map((build, index) => (
+                    {builds.map((build, index) => (
                         <BuildsPanelItem
                             key={build.id}
                             build={build}
                             index={index}
-                            total={activeBuilds.length}
+                            total={builds.length}
                             isSelected={build.id === activeBuildId}
                             locale={locale}
                             onSelect={setActiveBuildId}

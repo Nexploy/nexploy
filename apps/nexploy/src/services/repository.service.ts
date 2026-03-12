@@ -150,7 +150,7 @@ export async function getRepositorieBuildLogs(repositoryId: string, buildId: str
     }
 }
 
-export async function getActiveBuilds(repositoryId: string) {
+export async function getBuilds(repositoryId: string) {
     try {
         return prisma.build.findMany({
             where: {

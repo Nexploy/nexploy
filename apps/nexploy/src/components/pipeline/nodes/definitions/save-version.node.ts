@@ -1,11 +1,11 @@
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Position } from '@xyflow/react';
 
 export const saveVersionNodeDef: NodeDefinition = {
     id: 'save-version',
-    type: 'base-node',
+    type: 'attach-node',
     category: 'utility',
-    variant: 'sub',
     metadata: {
         name: 'pipeline.nodes.save-version.name',
         description: 'pipeline.nodes.save-version.description',
@@ -14,7 +14,7 @@ export const saveVersionNodeDef: NodeDefinition = {
     },
     defaultConfig: {},
     handles: {
-        inputs: [{ id: 'input' }],
-        outputs: [{ id: 'output' }],
+        inputs: [{ id: 'input', position: Position.Top }],
+        outputs: [],
     },
 };

@@ -79,7 +79,7 @@ export class PipelineOrchestrator {
     ): Promise<void> {
         await inngestStep.run(`node-${node.id}`, async () => {
             await reporter.markSkipped(node.id);
-            await logger.info(node.id, `${node.data.label} : Node skipped (${reason})`);
+            await logger.info(node.id, `${node.data.type} : Node skipped (${reason})`);
         });
         allOutputs.set(node.id, output);
     }
@@ -166,6 +166,7 @@ export class PipelineOrchestrator {
 
                 try {
                     const nodeResult = await inngestStep.run(`node-${node.id}`, async () => {
+                        await setStatus('BUILDING');
                         await reporter.markRunning(node.id);
 
                         if (abortController.signal.aborted) {

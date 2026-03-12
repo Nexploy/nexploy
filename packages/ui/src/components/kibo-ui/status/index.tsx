@@ -3,7 +3,7 @@ import { cn } from '@workspace/ui/lib/utils';
 import { Badge } from '@workspace/ui/components/badge';
 
 export type StatusProps = ComponentProps<typeof Badge> & {
-    status: 'online' | 'offline' | 'maintenance' | 'degraded';
+    status: 'online' | 'offline' | 'maintenance' | 'degraded' | 'waiting';
 };
 
 export const Status = ({ className, status, ...props }: StatusProps) => (
@@ -25,6 +25,7 @@ export const StatusIndicator = ({ className, ...props }: StatusIndicatorProps) =
                 'group-[.offline]:bg-offline',
                 'group-[.maintenance]:bg-maintenance',
                 'group-[.degraded]:bg-degraded',
+                'group-[.waiting]:bg-waiting',
             )}
         />
         <span
@@ -34,6 +35,7 @@ export const StatusIndicator = ({ className, ...props }: StatusIndicatorProps) =
                 'group-[.offline]:bg-offline',
                 'group-[.maintenance]:bg-maintenance',
                 'group-[.degraded]:bg-degraded',
+                'group-[.waiting]:bg-waiting',
             )}
         />
     </span>
@@ -49,6 +51,7 @@ export const StatusLabel = ({ className, children, ...props }: StatusLabelProps)
                 <span className="hidden group-[.offline]:block">Offline</span>
                 <span className="hidden group-[.maintenance]:block">Maintenance</span>
                 <span className="hidden group-[.degraded]:block">Degraded</span>
+                <span className="hidden group-[.waiting]:block">Waiting</span>
             </>
         )}
     </span>

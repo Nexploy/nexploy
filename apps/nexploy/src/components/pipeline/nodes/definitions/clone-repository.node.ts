@@ -1,6 +1,7 @@
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { CloneRepositoryConfig } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Position } from '@xyflow/react';
 
 export const cloneRepositoryNodeDef: NodeDefinition<CloneRepositoryConfig> = {
     id: 'clone-repository',
@@ -16,6 +17,6 @@ export const cloneRepositoryNodeDef: NodeDefinition<CloneRepositoryConfig> = {
     defaultConfig: {},
     handles: {
         inputs: [],
-        outputs: [{ id: 'output' }],
+        outputs: [{ id: 'output', position: Position.Right }],
     },
 };

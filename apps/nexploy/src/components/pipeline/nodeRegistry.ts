@@ -1,4 +1,4 @@
-import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
+import { type NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { cloneRepositoryNodeDef } from './nodes/definitions/clone-repository.node';
 import { buildDockerImageNodeDef } from './nodes/definitions/build-docker-image.node';
 import { deployContainerNodeDef } from './nodes/definitions/deploy-container.node';
@@ -33,7 +33,9 @@ export const ALL_NODE_DEFINITIONS: NodeDefinition[] = [
     saveVersionNodeDef,
 ];
 
-const nodeRegistry = new Map(ALL_NODE_DEFINITIONS.map((d) => [d.id, d]));
+const nodeRegistry = new Map<string, NodeDefinition>(
+    ALL_NODE_DEFINITIONS.map((d) => [d.id, d]),
+);
 
 export function getNodeDefinition(type: string): NodeDefinition | undefined {
     return nodeRegistry.get(type);

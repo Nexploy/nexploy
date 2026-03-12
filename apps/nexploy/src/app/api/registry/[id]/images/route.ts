@@ -47,7 +47,6 @@ export const GET = route
 
             return NextResponse.json({ images });
         } catch (error: any) {
-            console.log(error);
             return NextResponse.json(
                 { error: error.message || 'Failed to fetch registry images' },
                 { status: 500 },

@@ -19,6 +19,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { Kbd } from '@workspace/ui/components/kbd';
 import { useStore } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
+import { StatusLive } from '@/components/shared/StatusLive';
 
 const mod = /Mac|iPhone|iPad/i.test(navigator.userAgent) ? '⌘' : 'Ctrl';
 
@@ -37,17 +38,13 @@ export function PipelineToolbar() {
         setNodes,
         triggerAutoSave,
         activeBuildId,
-        activeBuilds,
+        activeBuild,
     } = usePipelineContext();
 
     const addSelectedNodes = useStore((s) => s.addSelectedNodes);
 
     const disabledCount = nodes.filter((n) => n.data.disabled).length;
     const hasSelection = selectedNodeIds.length > 0;
-
-    const watchedBuild = activeBuildId
-        ? activeBuilds.find((b) => b.id === activeBuildId)
-        : undefined;
 
     const handleSelectAll = () => {
         addSelectedNodes(nodes.map((n) => n.id));
@@ -188,21 +185,23 @@ export function PipelineToolbar() {
                         </Tooltip>
                     </div>
                 </div>
-                {watchedBuild && (
+                {activeBuild && (
                     <div className="flex items-center gap-1.5">
                         <Separator orientation="vertical" className="!h-4" />
                         <div className="flex items-center gap-1.5">
-                            <span className="size-1.5 animate-pulse rounded-full bg-blue-500" />
-                            <span className="text-muted-foreground text-xs">{t('watching')}</span>
+                            <StatusLive
+                                buildId={activeBuildId}
+                                initialStatus={activeBuild.status}
+                            />
                             <span className={'text-muted-foreground'}>·</span>
                             <span className="flex items-center gap-1 text-xs font-medium">
                                 <GitBranch className="size-3" />
-                                {watchedBuild.branch}
-                                {watchedBuild.commitHash && (
+                                {activeBuild.branch}
+                                {activeBuild.commitHash && (
                                     <>
                                         <span className={'text-muted-foreground text-base'}>·</span>
                                         <span className="text-muted-foreground font-mono">
-                                            {watchedBuild.commitHash}
+                                            {activeBuild.commitHash}
                                         </span>
                                     </>
                                 )}

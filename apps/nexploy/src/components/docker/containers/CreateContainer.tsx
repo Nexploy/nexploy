@@ -170,8 +170,6 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
         const toastId = 'container-create';
         const imageExistsLocally = getImagesByTag(data.image).length > 0;
 
-        console.log(imageExistsLocally, data.image);
-
         if (!imageExistsLocally) {
             setCreateStep('pulling');
             toast.loading(t('pullingImage'), { id: toastId });

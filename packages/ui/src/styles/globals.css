@@ -92,6 +92,7 @@
     --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
     monospace;
+    --waiting: theme('colors.yellow.500');
 }
 
 .dark {
@@ -178,6 +179,7 @@
     --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
     monospace;
+    --waiting: theme('colors.yellow.500');
 }
 
 @theme inline {
@@ -274,6 +276,7 @@
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
     monospace;
     --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+    --color-waiting: var(--waiting);
 }
 
 @theme {

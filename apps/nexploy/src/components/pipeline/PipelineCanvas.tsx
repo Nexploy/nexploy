@@ -1,28 +1,26 @@
 'use client';
 
-import React, { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
     Background,
     BackgroundVariant,
-    type IsValidConnection,
+    IsValidConnection,
     MiniMap,
-    type Node,
-    type NodeMouseHandler,
+    Node,
+    NodeMouseHandler,
     Panel,
     PanOnScrollMode,
     ReactFlow,
-    type ReactFlowInstance,
+    ReactFlowInstance,
     SelectionMode,
     useReactFlow,
     useStore,
 } from '@xyflow/react';
-import { type NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
+import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { Maximize, Minus, Plus } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
-import { BaseNode } from '@/components/pipeline/nodes/BaseNode';
-import { AttachNode } from '@/components/pipeline/nodes/AttachNode';
 import { GradientEdge } from '@/components/pipeline/edges/GradientEdge';
 import { useDragAndDropFlow } from '@/hooks/useDragAndDropFlow';
 import { useMinimap } from '@/hooks/useMinimap';
@@ -32,14 +30,24 @@ import { ButtonPanel } from '@/components/pipeline/nodes/ButtonPanel';
 import { useHotkeys } from '@/lib/useHotKeys';
 import { NodeContextMenu, type NodeContextMenuState } from '@/components/pipeline/NodeContextMenu';
 import { BuildsPanel } from '@/components/pipeline/buildsPanel/BuildsPanel';
+import { LargeNode } from '@/components/pipeline/nodes/types/LargeNode';
+import { BaseNode } from '@/components/pipeline/nodes/types/BaseNode';
+import { AttachNode } from '@/components/pipeline/nodes/types/AttachNode';
 
-const nodeTypes = { 'base-node': BaseNode, 'attach-node': AttachNode };
+const nodeTypes = { 'base-node': BaseNode, 'large-node': LargeNode, 'attach-node': AttachNode };
 const edgeTypes = { 'gradient-edge': GradientEdge };
 
 export function PipelineCanvas() {
     const t = useTranslations('repository.pipeline');
     const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
     const { zoomIn, zoomOut, fitView, getNodes } = useReactFlow();
+
+    const addSelectedNodes = useStore((s) => s.addSelectedNodes);
+    const [isSpaceHeld, setIsSpaceHeld] = useState(false);
+    const [contextMenu, setContextMenu] = useState<NodeContextMenuState | null>(null);
+    const wrapperRef = useRef<HTMLDivElement>(null);
+
+    const setHoveredEdgeId = usePipelineEditorStore((s) => s.setHoveredEdgeId);
 
     const isValidConnection = useCallback<IsValidConnection>(
         (connection) => {
@@ -60,7 +68,7 @@ export function PipelineCanvas() {
                 }
             }
 
-            if (targetDef?.variant === 'sub') {
+            if (targetDef?.handles?.attachments) {
                 return !!(
                     connection.sourceHandle &&
                     sourceDef?.handles?.attachments?.some(
@@ -75,12 +83,6 @@ export function PipelineCanvas() {
         },
         [getNodes],
     );
-    const addSelectedNodes = useStore((s) => s.addSelectedNodes);
-    const [isSpaceHeld, setIsSpaceHeld] = useState(false);
-    const [contextMenu, setContextMenu] = useState<NodeContextMenuState | null>(null);
-    const wrapperRef = useRef<HTMLDivElement>(null);
-
-    const setHoveredEdgeId = usePipelineEditorStore((s) => s.setHoveredEdgeId);
 
     const {
         nodes,

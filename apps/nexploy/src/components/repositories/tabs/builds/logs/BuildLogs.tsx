@@ -22,7 +22,7 @@ export function BuildLogs({ build }: BuildLogsProps) {
         refreshToken: async () => {
             const result = await onGetTokenBuildIdAction({
                 buildId: build.id,
-                topics: ['status', 'log'],
+                topics: ['log'],
             });
             return result?.data ?? null;
         },

@@ -18,7 +18,7 @@ import {
     CardTitle,
 } from '@workspace/ui/components/card';
 import { getRepositories } from '@/services/repository.service';
-import { StatusBadge } from '@/components/shared/StatusBadge';
+import { StatusLive } from '@/components/shared/StatusLive';
 import { RunBuildButton } from '@/components/repositories/RunBuildButton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Separator } from '@workspace/ui/components/separator';
@@ -127,7 +127,10 @@ export default async function RepositoriesPage() {
                                                     </div>
                                                 </CardHeader>
                                                 <CardFooter className="bg-muted/40 text-muted-foreground flex h-14 justify-between border-t !p-3">
-                                                    <StatusBadge status={lastDeployment?.status} />
+                                                    <StatusLive
+                                                        buildId={lastDeployment?.id}
+                                                        initialStatus={lastDeployment?.status}
+                                                    />
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <RunBuildButton

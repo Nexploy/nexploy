@@ -1,6 +1,7 @@
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { SendNotificationConfig } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Position } from '@xyflow/react';
 
 export const sendNotificationNodeDef: NodeDefinition<SendNotificationConfig> = {
     id: 'send-notification',
@@ -17,7 +18,7 @@ export const sendNotificationNodeDef: NodeDefinition<SendNotificationConfig> = {
         triggerOn: ['always'],
     },
     handles: {
-        inputs: [{ id: 'input', required: true }],
-        outputs: [],
+        inputs: [{ id: 'input', required: true, position: Position.Left }],
+        outputs: [{ id: 'output', position: Position.Right }],
     },
 };

@@ -24,10 +24,8 @@ import { usePipelineHistory } from '@/hooks/usePipelineHistory';
 import { useAction } from 'next-safe-action/hooks';
 import { savePipelineAction } from '@/actions/repository/pipeline/savePipeline.action';
 import { useParams } from 'next/navigation';
-import { type getActiveBuilds } from '@/services/repository.service';
 import { type NodeRunStatus } from '@/types/pipeline.type';
-
-type ActiveBuild = Awaited<ReturnType<typeof getActiveBuilds>>[number];
+import { Build } from 'generated/client';
 
 interface PipelineContextValue {
     nodes: Node[];
@@ -38,7 +36,8 @@ interface PipelineContextValue {
     panelNodeId: string | null;
     selectedNodeIds: string[];
     isSaving: boolean;
-    activeBuilds: ActiveBuild[];
+    activeBuild?: Build;
+    builds: Build[];
     activeBuildId: string | undefined;
     setActiveBuildId: (id: string | undefined) => void;
     onNodesChange: ReturnType<typeof useNodesState>[2];
@@ -63,11 +62,11 @@ const PipelineContext = createContext<PipelineContextValue | null>(null);
 
 export function PipelineProvider({
     initialGraph,
-    activeBuilds = [],
+    builds = [],
     children,
 }: {
     initialGraph: PipelineGraph;
-    activeBuilds?: ActiveBuild[];
+    builds?: Build[];
     children: ReactNode;
 }) {
     const { nodes: initialNodes, edges: initialEdges } = graphToFlow(initialGraph);
@@ -210,10 +209,7 @@ export function PipelineProvider({
         setSaveVersion((v) => v + 1);
     }, [nodes, setNodes, setEdges]);
 
-    const activeBuild = useMemo(
-        () => activeBuilds.find((b) => b.id === activeBuildId),
-        [activeBuilds, activeBuildId],
-    );
+    const activeBuild = builds.find((b) => b.id === activeBuildId);
     const isViewingBuild = !!activeBuild?.pipelineSnapshot;
 
     useEffect(() => {
@@ -265,8 +261,9 @@ export function PipelineProvider({
                 panelNodeId,
                 selectedNodeIds,
                 isSaving,
-                activeBuilds,
+                builds,
                 activeBuildId,
+                activeBuild,
                 setActiveBuildId,
                 onNodesChange,
                 onEdgesChange,

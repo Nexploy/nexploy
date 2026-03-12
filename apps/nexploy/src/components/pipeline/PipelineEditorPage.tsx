@@ -4,19 +4,17 @@ import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { PipelineEditor } from '@/components/pipeline/PipelineEditor';
 import { PipelineProvider } from '@/contexts/PipelineContext';
 import { ReactFlowProvider } from '@xyflow/react';
-import { getActiveBuilds } from '@/services/repository.service';
-
-type ActiveBuild = Awaited<ReturnType<typeof getActiveBuilds>>[number];
+import { Build } from 'generated/client';
 
 interface PipelineEditorPageProps {
     initialGraph: PipelineGraph;
-    activeBuilds: ActiveBuild[];
+    builds: Build[];
 }
 
-export function PipelineEditorPage({ initialGraph, activeBuilds }: PipelineEditorPageProps) {
+export function PipelineEditorPage({ initialGraph, builds }: PipelineEditorPageProps) {
     return (
         <ReactFlowProvider>
-            <PipelineProvider initialGraph={initialGraph} activeBuilds={activeBuilds}>
+            <PipelineProvider initialGraph={initialGraph} builds={builds}>
                 <PipelineEditor />
             </PipelineProvider>
         </ReactFlowProvider>

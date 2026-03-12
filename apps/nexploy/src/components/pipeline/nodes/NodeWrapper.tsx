@@ -1,47 +1,43 @@
 'use client';
 
-import { Handle, Position, useConnection, useNodeConnections, useReactFlow } from '@xyflow/react';
-import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
-import { useTranslations } from 'next-intl';
-import { CheckCircle2, CircleX, Loader2, Power, Terminal, Trash2 } from 'lucide-react';
+import React from 'react';
+import { CheckCircle2, CircleX, Loader2, LucideIcon, Power, Trash2 } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
-import {
-    CATEGORY_BG,
-    CATEGORY_BORDER,
-    CATEGORY_GLOW,
-    ICON_NAME_MAP,
-} from '@/components/pipeline/pipelineTheme';
 import { type NodeRunStatus } from '@/types/pipeline.type';
+import { useReactFlow } from '@xyflow/react';
 import { usePipelineContext } from '@/contexts/PipelineContext';
+import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
+import { CATEGORY_BORDER, CATEGORY_GLOW, ICON_NAME_MAP } from '@/components/pipeline/pipelineTheme';
+import { useTranslations } from 'next-intl';
 
-interface BaseNodeProps {
+interface NodeWrapperProps {
     id: string;
     data: {
-        label: string;
-        nodeType: string;
         definition: NodeDefinition;
-        config: Record<string, unknown>;
+        nodeType: string;
         disabled?: boolean;
         viewOnly?: boolean;
         runStatus?: NodeRunStatus;
     };
     selected?: boolean;
+    className?: string;
+    children: React.ReactNode;
 }
 
-export function BaseNode({ id, data, selected }: BaseNodeProps) {
-    const { definition } = data;
+export function NodeWrapper({
+    id,
+    data: { runStatus, viewOnly, disabled, definition, nodeType },
+    selected,
+    className,
+    children,
+}: NodeWrapperProps) {
     const t = useTranslations('repository.pipeline');
-    const Icon = ICON_NAME_MAP[definition.metadata.icon] ?? Terminal;
-    const hasInputs = definition.handles.inputs.length > 0;
-    const hasOutputs = definition.handles.outputs.length > 0;
+    const Icon = ICON_NAME_MAP[definition.metadata.icon] as LucideIcon;
+    const hasAttachHandles = definition.handles.attachments;
+
     const { deleteElements, getNodes } = useReactFlow();
     const { triggerAutoSave, setNodes } = usePipelineContext();
-    const disabled = data.disabled ?? false;
-    const viewOnly = data.viewOnly ?? false;
-    const runStatus = data.runStatus;
-    const isSub = definition.variant === 'sub';
-    const inputPosition = isSub ? Position.Top : Position.Left;
 
     const getTargetIds = () => {
         const selectedIds = getNodes()
@@ -50,18 +46,6 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
         return selectedIds.length > 1 && selectedIds.includes(id) ? selectedIds : [id];
     };
 
-    const connection = useConnection();
-    const inputConnections = useNodeConnections({ handleType: 'target' });
-    const outputConnections = useNodeConnections({ handleType: 'source' });
-    const handleColor = CATEGORY_BG[definition.category];
-
-    const isSourceConnecting = connection.inProgress && connection.fromNode?.id === id;
-    const isTargetHighlighted =
-        connection.inProgress && connection.toNode?.id === id && connection.isValid;
-
-    const inputActive = inputConnections.length > 0 || isTargetHighlighted;
-    const outputActive = outputConnections.length > 0 || isSourceConnecting;
-
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation();
         deleteElements({ nodes: getTargetIds().map((nid) => ({ id: nid })) });
@@ -69,7 +53,6 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
 
     const handleToggleDisabled = (e: React.MouseEvent) => {
         e.stopPropagation();
-
         setNodes((nodes) =>
             nodes.map((node) =>
                 getTargetIds().includes(node.id)
@@ -83,8 +66,9 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
     return (
         <div
             className={cn(
-                'group relative flex flex-col items-center',
+                'group relative',
                 (disabled || runStatus === 'skipped') && 'opacity-40',
+                className,
             )}
         >
             {!viewOnly && (
@@ -114,7 +98,7 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
 
             <div
                 className={cn(
-                    'bg-card relative flex size-20 items-center justify-center border-2 shadow-lg transition-all duration-300',
+                    'bg-card relative flex items-center gap-3 rounded-2xl border-2 p-4 shadow-lg transition-all duration-300',
                     definition.isStartNode ? 'rounded-l-4xl rounded-r-2xl' : 'rounded-2xl',
                     runStatus === 'running' &&
                         'animate-pulse border-amber-500 shadow-xl shadow-amber-500/40',
@@ -140,18 +124,6 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
                 {runStatus === 'failed' && (
                     <CircleX className="absolute top-1 right-1 size-4 text-red-500" />
                 )}
-                {hasInputs && (
-                    <Handle
-                        type="target"
-                        position={inputPosition}
-                        className={cn(
-                            '!bg-base-7 !border-card !rounded-full !border-2 transition-all hover:!size-6',
-                            isSub ? '!-top-[3px] !size-4.5' : '!-left-[3px] !size-4.5',
-                            inputActive && handleColor,
-                        )}
-                    />
-                )}
-
                 <div
                     className={cn(
                         'flex size-11 items-center justify-center rounded-xl',
@@ -160,27 +132,28 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
                 >
                     <Icon className="size-6" strokeWidth={1.5} />
                 </div>
-
-                {hasOutputs && (
-                    <Handle
-                        type="source"
-                        position={Position.Right}
+                {children}
+                {hasAttachHandles && (
+                    <span
                         className={cn(
-                            '!bg-base-7 !border-card !-right-[3px] !size-4.5 !rounded-full !border-2 transition-all hover:!size-6',
-                            outputActive && handleColor,
+                            'text-xs font-medium',
+                            selected ? 'text-foreground' : 'text-muted-foreground',
                         )}
-                    />
+                    >
+                        {t(`nodes.${nodeType}.name`)}
+                    </span>
                 )}
             </div>
-
-            <span
-                className={cn(
-                    'mt-2 max-w-[120px] text-center text-xs font-medium transition-colors',
-                    selected ? 'text-foreground' : 'text-muted-foreground',
-                )}
-            >
-                {t(`nodes.${data.nodeType}.name`)}
-            </span>
+            {!hasAttachHandles && (
+                <span
+                    className={cn(
+                        'mt-2 max-w-[120px] text-center text-xs font-medium transition-colors',
+                        selected ? 'text-foreground' : 'text-muted-foreground',
+                    )}
+                >
+                    {t(`nodes.${nodeType}.name`)}
+                </span>
+            )}
         </div>
     );
 }

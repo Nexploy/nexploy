@@ -3,30 +3,28 @@ import { NodeId, PipelineGraph } from '@workspace/typescript-interface/pipeline/
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 
 export function graphToFlow(graph: PipelineGraph): { nodes: Node[]; edges: Edge[] } {
-    const nodes: Node[] = graph.nodes.map((n) => {
-        const def = getNodeDefinition(n.data.type);
-        const rfType = def?.variant === 'card' ? 'attach-node' : 'base-node';
+    const nodes: Node[] = graph.nodes.map((node) => {
+        const def = getNodeDefinition(node.data.type);
         return {
-            id: n.id,
-            type: rfType,
-            position: n.position,
+            id: node.id,
+            type: def?.type,
+            position: node.position,
             data: {
-                label: n.data.label ?? n.data.type,
-                nodeType: n.data.type,
+                nodeType: node.data.type,
                 definition: def!,
-                config: n.data.config,
-                disabled: n.data.disabled ?? false,
-                isStartNode: n.data.isStartNode ?? false,
+                config: node.data.config,
+                disabled: node.data.disabled ?? false,
+                isStartNode: node.data.isStartNode ?? false,
             },
         };
     });
 
-    const edges: Edge[] = graph.edges.map((e) => ({
-        id: e.id,
-        source: e.source,
-        sourceHandle: e.sourceHandle,
-        target: e.target,
-        targetHandle: e.targetHandle,
+    const edges: Edge[] = graph.edges.map((edge) => ({
+        id: edge.id,
+        source: edge.source,
+        sourceHandle: edge.sourceHandle,
+        target: edge.target,
+        targetHandle: edge.targetHandle,
         type: 'gradient-edge',
         animated: false,
     }));
@@ -43,7 +41,6 @@ export function flowToGraph(nodes: Node[], edges: Edge[]): PipelineGraph {
             data: {
                 type: n.data.nodeType as NodeId,
                 config: (n.data.config as Record<string, unknown>) ?? {},
-                label: n.data.label as string,
                 disabled: (n.data.disabled as boolean) ?? false,
                 isStartNode: (n.data.isStartNode as boolean) ?? false,
             },
