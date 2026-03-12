@@ -190,10 +190,10 @@ export function PipelineToolbar() {
                         <Separator orientation="vertical" className="!h-4" />
                         <div className="flex items-center gap-1.5">
                             <StatusLive
+                                key={activeBuildId}
                                 buildId={activeBuildId}
                                 initialStatus={activeBuild.status}
                             />
-                            <span className={'text-muted-foreground'}>·</span>
                             <span className="flex items-center gap-1 text-xs font-medium">
                                 <GitBranch className="size-3" />
                                 {activeBuild.branch}

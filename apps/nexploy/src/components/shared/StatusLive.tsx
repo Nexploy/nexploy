@@ -4,7 +4,6 @@ import { Badge } from '@workspace/ui/components/badge';
 import { BuildStatus } from 'generated/client';
 import { CheckCircle2, Clock, Hourglass, Loader2, XCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useCallback } from 'react';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { useInngestSubscription } from '@inngest/realtime/hooks';
 import { isBuildLive } from '@/utils/buildStatus';
@@ -20,25 +19,23 @@ interface StatusBadgeProps {
 export function StatusLive({ initialStatus, buildId, displayType = 'badge' }: StatusBadgeProps) {
     const t = useTranslations('repository.builds');
 
-    const refreshToken = useCallback(async () => {
+    const refreshToken = async () => {
         if (!buildId) return null;
         const result = await onGetTokenBuildIdAction({
             buildId,
             topics: ['build-status'],
         });
         return result?.data ?? null;
-    }, [buildId]);
+    };
 
     const isLive = isBuildLive(initialStatus);
 
-    const { data: liveEvents } = useInngestSubscription({
+    const { latestData } = useInngestSubscription({
         enabled: isLive,
         refreshToken,
     });
 
-    const liveStatus = liveEvents.findLast((evt) => evt.topic === 'build-status')?.data
-        ?.buildStatus as BuildStatus | undefined;
-    const status = liveStatus ?? initialStatus;
+    const status = (latestData?.data?.buildStatus ?? initialStatus) as BuildStatus;
 
     if (displayType === 'dot') {
         return (

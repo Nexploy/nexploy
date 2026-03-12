@@ -128,6 +128,7 @@ export default async function RepositoriesPage() {
                                                 </CardHeader>
                                                 <CardFooter className="bg-muted/40 text-muted-foreground flex h-14 justify-between border-t !p-3">
                                                     <StatusLive
+                                                        key={lastDeployment?.id}
                                                         buildId={lastDeployment?.id}
                                                         initialStatus={lastDeployment?.status}
                                                     />

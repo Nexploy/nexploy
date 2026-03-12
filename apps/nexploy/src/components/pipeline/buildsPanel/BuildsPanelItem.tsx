@@ -91,7 +91,7 @@ export function BuildsPanelItem({
             className="h-auto flex-col items-start gap-0.5 px-2.5 py-1.5"
         >
             <div className="flex w-full items-center gap-1">
-                <StatusLive displayType={'dot'} buildId={build.id} initialStatus={build.status} />
+                <StatusLive key={build.id} displayType={'dot'} buildId={build.id} initialStatus={build.status} />
                 <span className="text-xs font-medium">#{total - index}</span>
                 <span className="text-xs font-medium">{build.branch}</span>
                 <Separator orientation={'vertical'} className="!h-3" />

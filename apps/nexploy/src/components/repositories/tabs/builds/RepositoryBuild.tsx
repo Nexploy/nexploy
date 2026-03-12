@@ -26,7 +26,7 @@ export function RepositoryBuild({ repositoryId, build, index }: BuildLogsProps) 
         >
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
-                    <StatusLive buildId={build.id} initialStatus={build.status} />
+                    <StatusLive key={build.id} buildId={build.id} initialStatus={build.status} />
                     <span className="line-clamp-1 text-sm font-medium">
                         #{index} {build.commitMessage ?? `#${build.id}`}
                     </span>
