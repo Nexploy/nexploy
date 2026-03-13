@@ -18,5 +18,6 @@ export const cloneRepositoryNodeDef: NodeDefinition<CloneRepositoryConfig> = {
     handles: {
         inputs: [],
         outputs: [{ id: 'output', position: Position.Right }],
+        attachments: [],
     },
 };

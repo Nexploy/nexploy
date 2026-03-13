@@ -18,5 +18,6 @@ export const setEnvVarsNodeDef: NodeDefinition = {
     handles: {
         inputs: [],
         outputs: [{ id: 'output', position: Position.Right }],
+        attachments: [],
     },
 };

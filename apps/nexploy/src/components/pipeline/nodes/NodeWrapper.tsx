@@ -28,6 +28,7 @@ interface NodeWrapperProps {
 
 export function NodeWrapper({ id, data, className, children }: NodeWrapperProps) {
     const handleColor = CATEGORY_BG[data.definition.category]!;
+    const isAttachNode = data.definition.type === 'attach-node';
 
     const { deleteElements, getNodes } = useReactFlow();
     const { triggerAutoSave, setNodes, openDialogSettingNode } = usePipelineContext();
@@ -67,7 +68,7 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
             {!data.viewOnly && (
                 <div
                     className={cn(
-                        'absolute -top-7 left-1/2 flex -translate-x-1/2 items-center gap-1',
+                        'bg-background absolute -top-9 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1',
                         'scale-75 opacity-0 transition-all duration-150 group-hover:scale-100 group-hover:opacity-100',
                     )}
                 >
@@ -110,6 +111,7 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
                     nodeId={id}
                     handleColor={handleColor}
                     position={handle.position}
+                    square={isAttachNode}
                 />
             ))}
             {data.definition.handles.outputs.map((handle) => (
@@ -121,7 +123,7 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
                     position={handle.position}
                 />
             ))}
-            {(data.definition.handles.attachments ?? []).map((attach) => (
+            {data.definition.handles.attachments.map((attach) => (
                 <AttachmentHandle
                     key={attach.id}
                     attach={attach}

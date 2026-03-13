@@ -67,17 +67,12 @@ export function PipelineCanvas() {
                 }
             }
 
-            // Block regular connections to AttachNodes (they can only receive from attachment handles)
-            const targetIsAttachNode = targetNode.type === 'attach-node';
-            if (targetIsAttachNode) {
-                return !!(
-                    connection.sourceHandle &&
-                    sourceDef?.handles?.attachments?.some(
-                        (a) =>
-                            a.id === connection.sourceHandle &&
-                            a.id === (targetNode.data.nodeType as string),
-                    )
-                );
+            const targetDef = targetNode.data.definition as NodeDefinition | undefined;
+            const targetHandle = targetDef?.handles.inputs.find(
+                (h) => h.id === connection.targetHandle,
+            );
+            if (targetHandle?.acceptsFrom) {
+                return connection.sourceHandle === targetHandle.acceptsFrom;
             }
 
             return true;

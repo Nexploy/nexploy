@@ -7,9 +7,10 @@ interface InputHandleProps {
     nodeId: string;
     handleColor: string;
     position: Position;
+    square?: boolean;
 }
 
-export function InputHandle({ handle, nodeId, handleColor, position }: InputHandleProps) {
+export function InputHandle({ handle, nodeId, handleColor, position, square }: InputHandleProps) {
     const connection = useConnection();
     const connections = useNodeConnections({ handleType: 'target', handleId: handle.id });
 
@@ -38,7 +39,8 @@ export function InputHandle({ handle, nodeId, handleColor, position }: InputHand
             type="target"
             position={position}
             className={cn(
-                '!bg-base-7 !border-card !size-4.5 !rounded-full !border-2 transition-all hover:!size-6',
+                '!bg-base-7 !border-card !size-4.5 !border-2 transition-all hover:!size-6',
+                square ? '!rounded-[2px]' : '!rounded-full',
                 offsetClass,
                 active && handleColor,
             )}

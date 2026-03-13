@@ -5,6 +5,7 @@ export interface HandleDefinition {
     id: string;
     position: Position;
     required?: boolean;
+    acceptsFrom?: string;
 }
 
 export interface NodeDefinition<TConfig = Record<string, unknown>> {
@@ -22,6 +23,6 @@ export interface NodeDefinition<TConfig = Record<string, unknown>> {
     handles: {
         inputs: HandleDefinition[];
         outputs: HandleDefinition[];
-        attachments?: HandleDefinition[];
+        attachments: HandleDefinition[];
     };
 }

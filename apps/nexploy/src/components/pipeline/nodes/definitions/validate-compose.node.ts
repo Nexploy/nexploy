@@ -18,5 +18,6 @@ export const validateComposeNodeDef: NodeDefinition = {
     handles: {
         inputs: [{ id: 'input', position: Position.Left, required: true }],
         outputs: [{ id: 'output', position: Position.Right }],
+        attachments: [],
     },
 };

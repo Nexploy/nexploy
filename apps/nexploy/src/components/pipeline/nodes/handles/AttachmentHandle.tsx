@@ -32,14 +32,16 @@ export function AttachmentHandle({ attach, handleColor, position }: AttachmentHa
                     active && handleColor,
                 )}
             />
-            <span
-                className={cn(
-                    'absolute -bottom-6 -left-4 text-center text-[10px]',
-                    attach.required ? 'text-foreground' : 'text-muted-foreground/60',
-                )}
-            >
-                {t(`nodes.${attach.id}.name`)}
-            </span>
+            {connections.length === 0 && (
+                <span
+                    className={cn(
+                        'absolute -bottom-6 -left-4 text-center text-[10px]',
+                        attach.required ? 'text-foreground' : 'text-muted-foreground/60',
+                    )}
+                >
+                    {t(`nodes.${attach.id}.name`)}
+                </span>
+            )}
         </>
     );
 }

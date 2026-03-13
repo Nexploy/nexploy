@@ -14,7 +14,8 @@ export const saveVersionNodeDef: NodeDefinition = {
     },
     defaultConfig: {},
     handles: {
-        inputs: [{ id: 'input', position: Position.Top }],
+        inputs: [{ id: 'input', position: Position.Top, acceptsFrom: 'save-version' }],
         outputs: [],
+        attachments: [],
     },
 };
