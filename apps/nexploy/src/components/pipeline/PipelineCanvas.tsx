@@ -57,7 +57,6 @@ export function PipelineCanvas() {
             if (!sourceNode || !targetNode) return false;
 
             const sourceDef = sourceNode.data.definition as NodeDefinition | undefined;
-            const targetDef = targetNode.data.definition as NodeDefinition | undefined;
 
             if (connection.sourceHandle) {
                 const attachment = sourceDef?.handles?.attachments?.find(
@@ -68,7 +67,9 @@ export function PipelineCanvas() {
                 }
             }
 
-            if (targetDef?.handles?.attachments) {
+            // Block regular connections to AttachNodes (they can only receive from attachment handles)
+            const targetIsAttachNode = targetNode.type === 'attach-node';
+            if (targetIsAttachNode) {
                 return !!(
                     connection.sourceHandle &&
                     sourceDef?.handles?.attachments?.some(
@@ -92,7 +93,7 @@ export function PipelineCanvas() {
         onNodesChange,
         onEdgesChange,
         onConnect,
-        handleNodeDoubleClick,
+        openDialogSettingNode,
         handlePaneClick,
         handleSelectionChange,
         handleDuplicateSelection,
@@ -213,7 +214,9 @@ export function PipelineCanvas() {
                 onInit={setRfInstance}
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
-                onNodeDoubleClick={isViewingBuild ? undefined : handleNodeDoubleClick}
+                onNodeDoubleClick={
+                    isViewingBuild ? undefined : (_, node) => openDialogSettingNode(node.id)
+                }
                 onNodeDragStop={isViewingBuild ? undefined : triggerAutoSave}
                 onPaneClick={handlePaneClick}
                 onNodeContextMenu={isViewingBuild ? undefined : onNodeContextMenu}

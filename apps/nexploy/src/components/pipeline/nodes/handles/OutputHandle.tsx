@@ -11,9 +11,12 @@ interface OutputHandleProps {
 
 export function OutputHandle({ handle, nodeId, handleColor }: OutputHandleProps) {
     const connection = useConnection();
-    const connections = useNodeConnections({ handleType: 'source' });
+    const connections = useNodeConnections({ handleType: 'source', handleId: handle.id });
 
-    const isSourceConnecting = connection.inProgress && connection.fromNode?.id === nodeId;
+    const isSourceConnecting =
+        connection.inProgress &&
+        connection.fromNode?.id === nodeId &&
+        connection.fromHandle?.id === handle.id;
     const active = connections.length > 0 || isSourceConnecting;
 
     const pos = handle.position;

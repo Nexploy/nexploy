@@ -10,9 +10,12 @@ interface InputHandleProps {
 
 export function InputHandle({ handle, nodeId, handleColor }: InputHandleProps) {
     const connection = useConnection();
-    const connections = useNodeConnections({ handleType: 'target' });
+    const connections = useNodeConnections({ handleType: 'target', handleId: handle.id });
 
-    const isTargetConnecting = connection.inProgress && connection.toNode?.id === nodeId;
+    const isTargetConnecting =
+        connection.inProgress &&
+        connection.toNode?.id === nodeId &&
+        connection.toHandle?.id === handle.id;
     const active = connections.length > 0 || isTargetConnecting;
 
     const pos = handle.position;

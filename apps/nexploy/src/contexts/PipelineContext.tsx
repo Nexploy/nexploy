@@ -44,7 +44,7 @@ interface PipelineContextValue {
     onEdgesChange: ReturnType<typeof useEdgesState>[2];
     onConnect: (connection: Connection) => void;
     handleSelectionChange: (selection: { nodes: Node[] }) => void;
-    handleNodeDoubleClick: (_: React.MouseEvent, node: Node) => void;
+    openDialogSettingNode: (id: string) => void;
     handlePaneClick: () => void;
     handleConfigChange: (nodeId: string, config: Record<string, unknown>) => void;
     handleDeleteSelection: () => void;
@@ -151,8 +151,8 @@ export function PipelineProvider({
         if (ids.length === 0) setPanelNodeId(null);
     }, []);
 
-    const handleNodeDoubleClick = useCallback((_: React.MouseEvent, node: Node) => {
-        setPanelNodeId((prev) => (prev === node.id ? null : node.id));
+    const openDialogSettingNode = useCallback((id: string) => {
+        setPanelNodeId((prev) => (prev === id ? null : id));
     }, []);
 
     const handlePaneClick = useCallback(() => {
@@ -269,7 +269,7 @@ export function PipelineProvider({
                 onEdgesChange,
                 onConnect,
                 handleSelectionChange,
-                handleNodeDoubleClick,
+                openDialogSettingNode,
                 handlePaneClick,
                 handleConfigChange,
                 handleDeleteSelection,

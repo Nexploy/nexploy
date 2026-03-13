@@ -6,16 +6,15 @@ import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDef
 
 interface AttachmentHandleProps {
     attach: NonNullable<NodeDefinition['handles']['attachments']>[number];
-    nodeId: string;
     handleColor: string;
 }
 
-export function AttachmentHandle({ attach, nodeId, handleColor }: AttachmentHandleProps) {
+export function AttachmentHandle({ attach, handleColor }: AttachmentHandleProps) {
     const t = useTranslations('repository.pipeline');
     const connection = useConnection();
     const connections = useNodeConnections({ handleType: 'source', handleId: attach.id });
 
-    const isSourceConnecting = connection.inProgress && connection.fromHandle?.id === nodeId;
+    const isSourceConnecting = connection.inProgress && connection.fromHandle?.id === attach.id;
     const active = connections.length > 0 || isSourceConnecting;
 
     return (

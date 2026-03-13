@@ -48,12 +48,7 @@ export function LargeNode({ id, data, selected }: LargeNodeProps) {
             ))}
 
             {attachments.map((attach) => (
-                <AttachmentHandle
-                    key={attach.id}
-                    attach={attach}
-                    nodeId={id}
-                    handleColor={handleColor}
-                />
+                <AttachmentHandle key={attach.id} attach={attach} handleColor={handleColor} />
             ))}
         </NodeWrapper>
     );
