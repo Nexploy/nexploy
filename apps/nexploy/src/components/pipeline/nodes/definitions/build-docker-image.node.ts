@@ -1,7 +1,6 @@
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { BuildDockerImageConfig } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
-import { Position } from '@xyflow/react';
 
 export const buildDockerImageNodeDef: NodeDefinition<BuildDockerImageConfig> = {
     id: 'build-docker-image',
@@ -18,7 +17,7 @@ export const buildDockerImageNodeDef: NodeDefinition<BuildDockerImageConfig> = {
         buildArgs: {},
     },
     handles: {
-        inputs: [{ id: 'input', required: true, position: Position.Left }],
-        outputs: [{ id: 'output', position: Position.Right }],
+        inputs: [{ id: 'input', required: true }],
+        outputs: [{ id: 'output' }],
     },
 };

@@ -1,15 +1,27 @@
 'use client';
 
 import React from 'react';
-import { CheckCircle2, CircleX, Loader2, LucideIcon, Power, Settings, Trash2 } from 'lucide-react';
+import { Power, Settings, Trash2 } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
 import { type NodeRunStatus } from '@/types/pipeline.type';
-import { useReactFlow } from '@xyflow/react';
+import { Position, useReactFlow } from '@xyflow/react';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
-import { CATEGORY_BORDER, CATEGORY_GLOW, ICON_NAME_MAP } from '@/components/pipeline/pipelineTheme';
-import { useTranslations } from 'next-intl';
+import { NodeType } from '@workspace/typescript-interface/pipeline/node';
+import { CATEGORY_BG } from '@/components/pipeline/pipelineTheme';
+import { InputHandle } from '@/components/pipeline/nodes/handles/InputHandle';
+import { OutputHandle } from '@/components/pipeline/nodes/handles/OutputHandle';
+import { AttachmentHandle } from '@/components/pipeline/nodes/handles/AttachmentHandle';
+
+const NODE_HANDLE_POSITIONS: Record<
+    NodeType,
+    { inputs: Position; outputs: Position; attachments: Position }
+> = {
+    'base-node': { inputs: Position.Left, outputs: Position.Right, attachments: Position.Bottom },
+    'large-node': { inputs: Position.Left, outputs: Position.Right, attachments: Position.Bottom },
+    'attach-node': { inputs: Position.Top, outputs: Position.Right, attachments: Position.Bottom },
+};
 
 interface NodeWrapperProps {
     id: string;
@@ -20,15 +32,14 @@ interface NodeWrapperProps {
         viewOnly?: boolean;
         runStatus?: NodeRunStatus;
     };
-    selected?: boolean;
     className?: string;
     children: React.ReactNode;
 }
 
-export function NodeWrapper({ id, data, selected, className, children }: NodeWrapperProps) {
-    const t = useTranslations('repository.pipeline');
-    const Icon = ICON_NAME_MAP[data.definition.metadata.icon] as LucideIcon;
-    const hasAttachHandles = data.definition.handles.attachments;
+export function NodeWrapper({ id, data, className, children }: NodeWrapperProps) {
+    const nodeType = (data.definition.type ?? 'base-node') as NodeType;
+    const positions = NODE_HANDLE_POSITIONS[nodeType];
+    const handleColor = CATEGORY_BG[data.definition.category]!;
 
     const { deleteElements, getNodes } = useReactFlow();
     const { triggerAutoSave, setNodes, openDialogSettingNode } = usePipelineContext();
@@ -102,65 +113,34 @@ export function NodeWrapper({ id, data, selected, className, children }: NodeWra
                 </div>
             )}
 
-            <div
-                className={cn(
-                    'bg-card relative flex items-center gap-3 rounded-2xl border-2 p-4 shadow-lg transition-all duration-300',
-                    data.definition.isStartNode ? 'rounded-l-4xl rounded-r-2xl' : 'rounded-2xl',
-                    data.runStatus === 'running' &&
-                        'animate-pulse border-amber-500 shadow-xl shadow-amber-500/40',
-                    data.runStatus === 'completed' &&
-                        'border-green-500 shadow-xl shadow-green-500/30',
-                    data.runStatus === 'failed' && 'border-red-500 shadow-xl shadow-red-500/30',
-                    data.runStatus === 'skipped' && 'border-muted',
-                    !data.runStatus &&
-                        (selected
-                            ? cn(
-                                  'shadow-xl',
-                                  CATEGORY_BORDER[data.definition.category],
-                                  CATEGORY_GLOW[data.definition.category],
-                              )
-                            : 'border-border hover:border-accent'),
-                )}
-            >
-                {data.runStatus === 'running' && (
-                    <Loader2 className="absolute top-1 right-1 size-4 animate-spin text-amber-500" />
-                )}
-                {data.runStatus === 'completed' && (
-                    <CheckCircle2 className="absolute top-1 right-1 size-4 text-green-500" />
-                )}
-                {data.runStatus === 'failed' && (
-                    <CircleX className="absolute top-1 right-1 size-4 text-red-500" />
-                )}
-                <div
-                    className={cn(
-                        'flex size-11 items-center justify-center rounded-xl',
-                        data.definition.metadata.color,
-                    )}
-                >
-                    <Icon className="size-6" strokeWidth={1.5} />
-                </div>
-                {children}
-                {hasAttachHandles && (
-                    <span
-                        className={cn(
-                            'text-xs font-medium',
-                            selected ? 'text-foreground' : 'text-muted-foreground',
-                        )}
-                    >
-                        {t(`nodes.${data.nodeType}.name`)}
-                    </span>
-                )}
-            </div>
-            {!hasAttachHandles && (
-                <span
-                    className={cn(
-                        'mt-2 max-w-[120px] text-center text-xs font-medium transition-colors',
-                        selected ? 'text-foreground' : 'text-muted-foreground',
-                    )}
-                >
-                    {t(`nodes.${data.nodeType}.name`)}
-                </span>
-            )}
+            {children}
+
+            {data.definition.handles.inputs.map((handle) => (
+                <InputHandle
+                    key={handle.id}
+                    handle={handle}
+                    nodeId={id}
+                    handleColor={handleColor}
+                    position={positions.inputs}
+                />
+            ))}
+            {data.definition.handles.outputs.map((handle) => (
+                <OutputHandle
+                    key={handle.id}
+                    handle={handle}
+                    nodeId={id}
+                    handleColor={handleColor}
+                    position={positions.outputs}
+                />
+            ))}
+            {(data.definition.handles.attachments ?? []).map((attach) => (
+                <AttachmentHandle
+                    key={attach.id}
+                    attach={attach}
+                    handleColor={handleColor}
+                    position={positions.attachments}
+                />
+            ))}
         </div>
     );
 }

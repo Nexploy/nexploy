@@ -1,10 +1,8 @@
 import { NodeCategory, NodeId, NodeType } from './node';
-import { Position } from '@xyflow/react';
 
 export interface HandleDefinition {
     id: string;
     required?: boolean;
-    position: Position;
 }
 
 export interface NodeDefinition<TConfig = Record<string, unknown>> {

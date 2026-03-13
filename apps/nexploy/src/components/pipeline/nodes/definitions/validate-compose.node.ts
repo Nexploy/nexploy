@@ -1,6 +1,5 @@
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
-import { Position } from '@xyflow/react';
 
 export const validateComposeNodeDef: NodeDefinition = {
     id: 'validate-compose',
@@ -16,7 +15,7 @@ export const validateComposeNodeDef: NodeDefinition = {
         composePath: 'docker-compose.yml',
     },
     handles: {
-        inputs: [{ id: 'input', required: true, position: Position.Left }],
-        outputs: [{ id: 'output', position: Position.Right }],
+        inputs: [{ id: 'input', required: true }],
+        outputs: [{ id: 'output' }],
     },
 };

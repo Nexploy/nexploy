@@ -1,6 +1,5 @@
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
-import { Position } from '@xyflow/react';
 
 export const saveVersionNodeDef: NodeDefinition = {
     id: 'save-version',
@@ -14,7 +13,7 @@ export const saveVersionNodeDef: NodeDefinition = {
     },
     defaultConfig: {},
     handles: {
-        inputs: [{ id: 'input', position: Position.Top }],
+        inputs: [{ id: 'input' }],
         outputs: [],
     },
 };

@@ -6,9 +6,10 @@ interface InputHandleProps {
     handle: NodeDefinition['handles']['inputs'][number];
     nodeId: string;
     handleColor: string;
+    position: Position;
 }
 
-export function InputHandle({ handle, nodeId, handleColor }: InputHandleProps) {
+export function InputHandle({ handle, nodeId, handleColor, position }: InputHandleProps) {
     const connection = useConnection();
     const connections = useNodeConnections({ handleType: 'target', handleId: handle.id });
 
@@ -18,13 +19,12 @@ export function InputHandle({ handle, nodeId, handleColor }: InputHandleProps) {
         connection.toHandle?.id === handle.id;
     const active = connections.length > 0 || isTargetConnecting;
 
-    const pos = handle.position;
     const offsetClass =
-        pos === Position.Top
+        position === Position.Top
             ? '!-top-[3px]'
-            : pos === Position.Bottom
+            : position === Position.Bottom
               ? '!-bottom-[3px]'
-              : pos === Position.Right
+              : position === Position.Right
                 ? '!-right-[3px]'
                 : '!-left-[3px]';
 
@@ -32,7 +32,7 @@ export function InputHandle({ handle, nodeId, handleColor }: InputHandleProps) {
         <Handle
             id={handle.id}
             type="target"
-            position={pos}
+            position={position}
             className={cn(
                 '!bg-base-7 !border-card !size-4.5 !rounded-full !border-2 transition-all hover:!size-6',
                 offsetClass,

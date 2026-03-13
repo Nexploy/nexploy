@@ -7,9 +7,10 @@ interface OutputHandleProps {
     handle: NodeDefinition['handles']['outputs'][number];
     nodeId: string;
     handleColor: string;
+    position: Position;
 }
 
-export function OutputHandle({ handle, nodeId, handleColor }: OutputHandleProps) {
+export function OutputHandle({ handle, nodeId, handleColor, position }: OutputHandleProps) {
     const connection = useConnection();
     const connections = useNodeConnections({ handleType: 'source', handleId: handle.id });
 
@@ -19,13 +20,12 @@ export function OutputHandle({ handle, nodeId, handleColor }: OutputHandleProps)
         connection.fromHandle?.id === handle.id;
     const active = connections.length > 0 || isSourceConnecting;
 
-    const pos = handle.position;
     const offsetClass =
-        pos === Position.Top
+        position === Position.Top
             ? '!-top-[3px]'
-            : pos === Position.Bottom
+            : position === Position.Bottom
               ? '!-bottom-[3px]'
-              : pos === Position.Left
+              : position === Position.Left
                 ? '!-left-[3px]'
                 : '!-right-[3px]';
 
@@ -33,7 +33,7 @@ export function OutputHandle({ handle, nodeId, handleColor }: OutputHandleProps)
         <Handle
             id={handle.id}
             type="source"
-            position={pos}
+            position={position}
             className={cn(
                 '!bg-base-7 !border-card !size-4.5 !rounded-full !border-2 transition-all hover:!size-6',
                 offsetClass,
