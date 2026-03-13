@@ -29,7 +29,7 @@ export function AttachNode({ id, data, selected }: AttachNodeProps) {
         <NodeWrapper id={id} data={data}>
             <div
                 className={cn(
-                    'bg-card relative flex items-center justify-center rounded-2xl border-2 p-3 shadow-lg transition-all duration-300',
+                    'bg-card relative flex items-center justify-center rounded-2xl border-2 p-4 shadow-lg transition-all duration-300',
                     !data.runStatus &&
                         (selected
                             ? cn(

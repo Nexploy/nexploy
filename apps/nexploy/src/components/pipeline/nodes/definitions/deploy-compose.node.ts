@@ -1,3 +1,4 @@
+import { Position } from '@xyflow/react';
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
@@ -15,8 +16,8 @@ export const deployComposeNodeDef: NodeDefinition = {
         composePath: 'docker-compose.yml',
     },
     handles: {
-        inputs: [{ id: 'input', required: true }],
-        outputs: [{ id: 'output' }],
-        attachments: [{ id: 'save-version' }],
+        inputs: [{ id: 'input', position: Position.Left, required: true }],
+        outputs: [{ id: 'output', position: Position.Right }],
+        attachments: [{ id: 'save-version', position: Position.Bottom }],
     },
 };

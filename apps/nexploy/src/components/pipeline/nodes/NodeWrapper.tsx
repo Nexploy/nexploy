@@ -5,23 +5,13 @@ import { Power, Settings, Trash2 } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
 import { type NodeRunStatus } from '@/types/pipeline.type';
-import { Position, useReactFlow } from '@xyflow/react';
+import { useReactFlow } from '@xyflow/react';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
-import { NodeType } from '@workspace/typescript-interface/pipeline/node';
 import { CATEGORY_BG } from '@/components/pipeline/pipelineTheme';
 import { InputHandle } from '@/components/pipeline/nodes/handles/InputHandle';
 import { OutputHandle } from '@/components/pipeline/nodes/handles/OutputHandle';
 import { AttachmentHandle } from '@/components/pipeline/nodes/handles/AttachmentHandle';
-
-const NODE_HANDLE_POSITIONS: Record<
-    NodeType,
-    { inputs: Position; outputs: Position; attachments: Position }
-> = {
-    'base-node': { inputs: Position.Left, outputs: Position.Right, attachments: Position.Bottom },
-    'large-node': { inputs: Position.Left, outputs: Position.Right, attachments: Position.Bottom },
-    'attach-node': { inputs: Position.Top, outputs: Position.Right, attachments: Position.Bottom },
-};
 
 interface NodeWrapperProps {
     id: string;
@@ -37,8 +27,6 @@ interface NodeWrapperProps {
 }
 
 export function NodeWrapper({ id, data, className, children }: NodeWrapperProps) {
-    const nodeType = (data.definition.type ?? 'base-node') as NodeType;
-    const positions = NODE_HANDLE_POSITIONS[nodeType];
     const handleColor = CATEGORY_BG[data.definition.category]!;
 
     const { deleteElements, getNodes } = useReactFlow();
@@ -121,7 +109,7 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
                     handle={handle}
                     nodeId={id}
                     handleColor={handleColor}
-                    position={positions.inputs}
+                    position={handle.position}
                 />
             ))}
             {data.definition.handles.outputs.map((handle) => (
@@ -130,7 +118,7 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
                     handle={handle}
                     nodeId={id}
                     handleColor={handleColor}
-                    position={positions.outputs}
+                    position={handle.position}
                 />
             ))}
             {(data.definition.handles.attachments ?? []).map((attach) => (
@@ -138,7 +126,7 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
                     key={attach.id}
                     attach={attach}
                     handleColor={handleColor}
-                    position={positions.attachments}
+                    position={attach.position}
                 />
             ))}
         </div>

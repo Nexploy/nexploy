@@ -1,3 +1,4 @@
+import { Position } from '@xyflow/react';
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
@@ -16,6 +17,6 @@ export const setEnvVarsNodeDef: NodeDefinition = {
     },
     handles: {
         inputs: [],
-        outputs: [{ id: 'output' }],
+        outputs: [{ id: 'output', position: Position.Right }],
     },
 };

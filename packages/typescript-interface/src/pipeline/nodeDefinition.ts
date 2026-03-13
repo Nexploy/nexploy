@@ -1,7 +1,9 @@
 import { NodeCategory, NodeId, NodeType } from './node';
+import { Position } from '@xyflow/react';
 
 export interface HandleDefinition {
     id: string;
+    position: Position;
     required?: boolean;
 }
 
