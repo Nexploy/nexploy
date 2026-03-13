@@ -1,7 +1,6 @@
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { Handle, Position, useConnection, useNodeConnections } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
-import React from 'react';
 
 interface OutputHandleProps {
     handle: NodeDefinition['handles']['outputs'][number];
@@ -18,7 +17,11 @@ export function OutputHandle({ handle, nodeId, handleColor, position }: OutputHa
         connection.inProgress &&
         connection.fromNode?.id === nodeId &&
         connection.fromHandle?.id === handle.id;
-    const active = connections.length > 0 || isSourceConnecting;
+    const isTargetHovered =
+        connection.inProgress &&
+        connection.toNode?.id === nodeId &&
+        (!connection.toHandle?.id || connection.toHandle.id === handle.id);
+    const active = connections.length > 0 || isSourceConnecting || isTargetHovered;
 
     const offsetClass =
         position === Position.Top

@@ -16,8 +16,12 @@ export function InputHandle({ handle, nodeId, handleColor, position }: InputHand
     const isTargetConnecting =
         connection.inProgress &&
         connection.toNode?.id === nodeId &&
-        connection.toHandle?.id === handle.id;
-    const active = connections.length > 0 || isTargetConnecting;
+        (!connection.toHandle?.id || connection.toHandle.id === handle.id);
+    const isDraggingFrom =
+        connection.inProgress &&
+        connection.fromNode?.id === nodeId &&
+        connection.fromHandle?.id === handle.id;
+    const active = connections.length > 0 || isTargetConnecting || isDraggingFrom;
 
     const offsetClass =
         position === Position.Top
