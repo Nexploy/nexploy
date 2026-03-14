@@ -43,6 +43,8 @@ export function GradientEdge(props: EdgeProps) {
     const sourceColor = (sourceCategory && CATEGORY_HEX[sourceCategory]) || '#888';
     const targetColor = (targetCategory && CATEGORY_HEX[targetCategory]) || '#888';
 
+    const isAttachmentEdge = targetNode?.type === 'attach-node';
+
     const gradientId = `edge-gradient-${id}`;
 
     const [edgePath, centerX, centerY] = getBezierPath({
@@ -81,6 +83,7 @@ export function GradientEdge(props: EdgeProps) {
                     ...style,
                     stroke: `url(#${gradientId})`,
                     strokeWidth: 2,
+                    ...(isAttachmentEdge && { animationDirection: 'reverse' }),
                 }}
             />
             <EdgeToolbar edgeId={id} x={centerX} y={centerY} isVisible={hoveredEdgeId === id}>
