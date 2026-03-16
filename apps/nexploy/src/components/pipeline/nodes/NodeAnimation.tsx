@@ -73,25 +73,23 @@ export function NodeAnimation({
         );
     }
 
-    const glowStyle =
-        !data.runStatus && selected && categoryHex
-            ? { boxShadow: `0 0 24px 6px ${categoryHex}40` }
-            : undefined;
-
     return (
         <div
-            style={glowStyle}
+            style={
+                data.runStatus === 'completed'
+                    ? { boxShadow: `0 0 20px 2px ${categoryHex}50` }
+                    : undefined
+            }
             className={cn(
-                'bg-card relative flex items-center border-2 p-4 shadow-lg duration-300',
+                'bg-card relative flex items-center border-2 p-4 shadow-lg transition-[border-color,box-shadow] duration-300',
                 children ? 'gap-3' : 'justify-center',
                 rounded,
-                data.runStatus === 'completed' && 'border-green-500 shadow-xl shadow-green-500/30',
-                data.runStatus === 'failed' && 'border-red-500 shadow-xl shadow-red-500/30',
-                data.runStatus === 'skipped' && 'border-muted',
-                !data.runStatus &&
-                    (selected
-                        ? CATEGORY_BORDER[data.definition.category]
-                        : 'border-border hover:border-accent'),
+                data.runStatus === 'completed'
+                    ? CATEGORY_BORDER[data.definition.category]
+                    : selected
+                      ? CATEGORY_BORDER[data.definition.category]
+                      : 'border-border hover:border-accent',
+                (data.runStatus === 'failed' || data.runStatus === 'skipped') && 'border-border',
             )}
         >
             {data.runStatus === 'completed' && (

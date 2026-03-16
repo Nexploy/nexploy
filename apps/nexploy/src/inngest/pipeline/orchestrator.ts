@@ -228,7 +228,6 @@ export class PipelineOrchestrator {
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
             await logger.error('error', `Build failed: ${errorMessage}`);
             await logger.error('error-details', errorDetails);
-            // Fallback: ensure FAILED is set if markFailed in node catch didn't run
             try {
                 await setStatus('FAILED');
             } catch {
