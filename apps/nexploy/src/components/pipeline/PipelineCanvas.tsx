@@ -234,7 +234,6 @@ export function PipelineCanvas() {
                 defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
                 onMoveStart={onMoveStart}
                 onMoveEnd={onMoveEnd}
-                style={{ background: 'var(--background)' }}
                 proOptions={{ hideAttribution: true }}
             >
                 <Background

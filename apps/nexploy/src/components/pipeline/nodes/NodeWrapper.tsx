@@ -4,10 +4,9 @@ import React from 'react';
 import { Power, Settings, Trash2 } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
-import { type NodeRunStatus } from '@/types/pipeline.type';
 import { useReactFlow } from '@xyflow/react';
 import { usePipelineContext } from '@/contexts/PipelineContext';
-import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
+import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
 import { CATEGORY_BG } from '@/components/pipeline/pipelineTheme';
 import { InputHandle } from '@/components/pipeline/nodes/handles/InputHandle';
 import { OutputHandle } from '@/components/pipeline/nodes/handles/OutputHandle';
@@ -15,13 +14,7 @@ import { AttachmentHandle } from '@/components/pipeline/nodes/handles/Attachment
 
 interface NodeWrapperProps {
     id: string;
-    data: {
-        definition: NodeDefinition;
-        nodeType: string;
-        disabled?: boolean;
-        viewOnly?: boolean;
-        runStatus?: NodeRunStatus;
-    };
+    data: NodeData;
     className?: string;
     children: React.ReactNode;
 }

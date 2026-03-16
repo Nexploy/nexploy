@@ -39,7 +39,7 @@ export interface PipelineLogger {
     error(step: string, message: string): Promise<void>;
 }
 
-export type NodeRunStatus = 'running' | 'completed' | 'skipped' | 'failed';
+export type { NodeRunStatus } from '@workspace/typescript-interface/pipeline/node';
 
 export interface PipelineReporter {
     markCompleted(nodeId: string): Promise<void>;

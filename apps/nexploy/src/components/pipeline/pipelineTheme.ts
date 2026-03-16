@@ -58,14 +58,6 @@ export const CATEGORY_BORDER: Record<string, string> = {
     notification: 'border-pink-500',
 };
 
-export const CATEGORY_GLOW: Record<string, string> = {
-    source: 'shadow-blue-500/20',
-    build: 'shadow-orange-500/20',
-    deploy: 'shadow-green-500/20',
-    utility: 'shadow-yellow-500/20',
-    notification: 'shadow-pink-500/20',
-};
-
 export const CATEGORY_ICONS: Record<string, LucideIcon> = {
     source: GitBranch,
     build: Hammer,

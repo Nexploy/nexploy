@@ -1,3 +1,16 @@
+import { NodeDefinition } from './nodeDefinition';
+
+export type NodeRunStatus = 'running' | 'completed' | 'skipped' | 'failed';
+
+export interface NodeData {
+    nodeType: string;
+    definition: NodeDefinition;
+    config: Record<string, unknown>;
+    disabled?: boolean;
+    viewOnly?: boolean;
+    runStatus?: NodeRunStatus;
+}
+
 export type NodeId =
     | 'clone-repository'
     | 'build-docker-image'
