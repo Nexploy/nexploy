@@ -104,9 +104,7 @@ export function JoinSwarmDialog({ trigger, onJoinSuccess }: JoinSwarmDialogProps
                             placeholder={t('joinTokenPlaceholder')}
                             className="font-mono text-sm"
                         />
-                        <p className="text-muted-foreground text-xs">
-                            {t('joinTokenDescription')}
-                        </p>
+                        <p className="text-muted-foreground text-xs">{t('joinTokenDescription')}</p>
                     </div>
 
                     <div className="grid gap-2">
@@ -127,7 +125,7 @@ export function JoinSwarmDialog({ trigger, onJoinSuccess }: JoinSwarmDialogProps
                     <div className="grid gap-2">
                         <Label htmlFor="advertiseAddr">
                             {t('advertiseAddress')}{' '}
-                            <span className="text-muted-foreground">{t('optional')}</span>
+                            <span className="text-muted-foreground text-sm">{t('optional')}</span>
                         </Label>
                         <Input
                             id="advertiseAddr"

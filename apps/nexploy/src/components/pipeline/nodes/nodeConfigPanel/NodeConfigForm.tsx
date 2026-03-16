@@ -29,7 +29,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
     const { handleConfigChange, handlePaneClick } = usePipelineContext();
 
     const nodeType = node.data.nodeType as NodeId;
-    const nodeConfig = (node.data.config as Record<string, unknown>) ?? {};
+    const nodeConfig = node.data.config ?? {};
     const schema = CONFIG_SCHEMAS[nodeType];
     const ConfigComponent = CONFIG_PANELS[nodeType];
 

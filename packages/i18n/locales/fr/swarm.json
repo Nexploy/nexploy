@@ -19,7 +19,6 @@
     "listenAddressPlaceholder": "0.0.0.0:2377",
     "listenAddressDescription": "L'adresse sur laquelle ce nœud écoute le trafic swarm.",
     "managerAddressesDescription": "Une ou plusieurs adresses de managers (une par ligne).",
-    "optional": "(optionnel)",
     "initializing": "Initialisation...",
     "joining": "Connexion...",
     "leaving": "Déconnexion...",

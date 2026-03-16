@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-export const cloneRepositoryConfigSchema = z.object({});
+export const cloneRepositoryConfigSchema = z.object({
+    branch: z.string(),
+    commitHash: z.string().optional(),
+});
 
 export const buildDockerImageConfigSchema = z.object({
     dockerfilePath: z.string().min(1, 'Dockerfile path is required').default('Dockerfile'),

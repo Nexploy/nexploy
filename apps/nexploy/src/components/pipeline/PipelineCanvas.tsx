@@ -187,7 +187,6 @@ export function PipelineCanvas() {
             onContextMenu={(e) => e.preventDefault()}
             className={cn(
                 'relative flex-1 transition-all',
-                isDragOver && 'ring-primary/40 ring-2 ring-inset',
             )}
             onDragOver={onDragOver}
             onDragLeave={onDragLeave}

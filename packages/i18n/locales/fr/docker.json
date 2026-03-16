@@ -511,7 +511,7 @@
         "port": {
             "containerPort": "Port conteneur",
             "hostPort": "Port hôte",
-            "hostPortDescription": "Optionnel. Laissez vide pour exposer uniquement dans le réseau Docker.",
+            "hostPortDescription": "Laissez vide pour exposer uniquement dans le réseau Docker.",
             "protocol": "Protocole",
             "selectProtocol": "Sélectionner un protocole"
         },
@@ -596,7 +596,7 @@
     "environmentForm": {
         "environmentName": "Nom de l'environnement",
         "environmentNamePlaceholder": "ex: Production, Staging, Développement...",
-        "description": "Description (optionnel)",
+        "description": "Description",
         "descriptionPlaceholder": "Décrivez cet environnement...",
         "connectionType": "Type de connexion",
         "selectConnectionType": "Sélectionner le type de connexion",

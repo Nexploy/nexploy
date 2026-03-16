@@ -5,7 +5,7 @@ model User {
   emailVerified        Boolean               @default(false)
   image                String?
   createdAt            DateTime              @default(now())
-  updatedAt            DateTime              @default(now()) @updatedAt
+  updatedAt            DateTime              @updatedAt
   role                 String?
   banned               Boolean?              @default(false)
   banReason            String?
@@ -17,7 +17,6 @@ model User {
   repositories         Repository[]
   cloudflareCredential CloudflareCredential?
   environments         Environment[]
-  apikeys              Apikey[]
   gitAccounts          GitAccount[]
 
   @@unique([email])
@@ -37,6 +36,7 @@ model Session {
   impersonatedBy String?
 
   @@unique([token])
+  @@index([userId])
   @@map("session")
 }
 
@@ -56,6 +56,7 @@ model Account {
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
+  @@index([userId])
   @@map("account")
 }
 
@@ -65,8 +66,9 @@ model Verification {
   value      String
   expiresAt  DateTime
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
+  updatedAt  DateTime @updatedAt
 
+  @@index([identifier])
   @@map("verification")
 }
 
@@ -77,17 +79,19 @@ model TwoFactor {
   userId      String
   user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([secret])
+  @@index([userId])
   @@map("twoFactor")
 }
 
 model Apikey {
   id                  String    @id
+  configId            String    @default("default")
   name                String?
   start               String?
+  referenceId         String
   prefix              String?
   key                 String
-  userId              String
-  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   refillInterval      Int?
   refillAmount        Int?
   lastRefillAt        DateTime?
@@ -104,7 +108,8 @@ model Apikey {
   permissions         String?
   metadata            String?
 
+  @@index([configId])
+  @@index([referenceId])
   @@index([key])
-  @@index([userId])
   @@map("apikey")
 }

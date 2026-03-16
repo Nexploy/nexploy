@@ -30,6 +30,7 @@ import { useTranslations } from 'next-intl';
 export function CreateEnvironmentForm() {
     const { onSuccess } = useConfirmationDialogStore();
     const t = useTranslations('docker.environmentForm');
+    const tCommon = useTranslations('common');
 
     const { form, handleSubmitWithAction } = useHookFormAction(
         createEnvironmentAction,
@@ -98,7 +99,12 @@ export function CreateEnvironmentForm() {
                     name="description"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('description')}</FormLabel>
+                            <FormLabel>
+                                {t('description')}
+                                <span className="text-muted-foreground text-xs">
+                                    {tCommon('optional')}
+                                </span>
+                            </FormLabel>
                             <FormControl>
                                 <Textarea
                                     {...field}

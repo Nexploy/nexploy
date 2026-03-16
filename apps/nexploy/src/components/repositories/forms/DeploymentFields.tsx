@@ -51,17 +51,7 @@ export function DeploymentFields() {
                                 <SelectContent>
                                     {environments.map((env) => (
                                         <SelectItem key={env.id} value={env.id}>
-                                            <div className="flex items-center gap-2">
-                                                <span>
-                                                    {env.name}
-                                                    {env.isDefault && (
-                                                        <span className="text-muted-foreground text-xs">
-                                                            {' '}
-                                                            ({t('default')})
-                                                        </span>
-                                                    )}
-                                                </span>
-                                            </div>
+                                            {env.name}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>

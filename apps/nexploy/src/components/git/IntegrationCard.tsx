@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { statusMap } from '@/utils/statusMap';
 import { useTranslations } from 'next-intl';
-import { disconnectGitAccountAction } from '@/actions/git/gitAccount.action';
+import { disconnectGitAccountAction } from '@/actions/git/disconnectGitAccount.action';
 import Link from 'next/link';
 import { Badge } from '@workspace/ui/components/badge';
 

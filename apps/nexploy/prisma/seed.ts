@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 
 const DOCKER_API_USER_ID = 'docker-api-system';
 const DOCKER_API_KEY_NAME = 'docker-api';
+const PREFIX = 'nxp_';
 
 async function seedEnvironment() {
     const existingDefault = await prisma.environment.findFirst({

@@ -14,7 +14,9 @@ export const cloneRepositoryNodeDef: NodeDefinition<CloneRepositoryConfig> = {
         icon: 'GitClone',
         color: `${CATEGORY_BG_MUTED['source']} ${CATEGORY_TEXT['source']}`,
     },
-    defaultConfig: {},
+    defaultConfig: {
+        branch: 'main',
+    },
     handles: {
         inputs: [],
         outputs: [{ id: 'output', position: Position.Right }],

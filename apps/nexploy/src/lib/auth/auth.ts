@@ -2,7 +2,8 @@ import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { prisma } from '../../../prisma/prisma';
 import { nextCookies } from 'better-auth/next-js';
-import { admin, apiKey, twoFactor } from 'better-auth/plugins';
+import { admin, twoFactor } from 'better-auth/plugins';
+import { apiKey } from '@better-auth/api-key';
 import { permission } from '@/lib/auth/permissions';
 
 export const auth = betterAuth({

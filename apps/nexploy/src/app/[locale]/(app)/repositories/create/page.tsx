@@ -10,7 +10,6 @@ import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { repositoryCreateFormSchema } from '@workspace/schemas-zod/repository/repositoryCreate.schema';
 import { onRepositoryCreateAction } from '@/actions/repository/repositoryCreate.action';
 import { GitSourceStep } from '@/components/repositories/steps/GitSourceStep';
-import { BuildConfigurationStep } from '@/components/repositories/steps/BuildConfigurationStep';
 import { DeploymentStep } from '@/components/repositories/steps/DeploymentStep';
 import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 import { useTranslations } from 'next-intl';
@@ -93,7 +92,6 @@ export default function AddRepositoryPage() {
                 <Form {...form}>
                     <div className="space-y-5 px-5 pb-5">
                         <GitSourceStep />
-                        <BuildConfigurationStep />
                         <DeploymentStep />
                     </div>
                 </Form>

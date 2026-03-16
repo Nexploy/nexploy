@@ -12,10 +12,15 @@ import {
     CATEGORY_ICONS,
     CATEGORY_TEXT,
 } from '@/components/pipeline/pipelineTheme';
+import { useReactFlow } from '@xyflow/react';
+import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
+import { usePipelineContext } from '@/contexts/PipelineContext';
 
 export function NodeAddPanel() {
     const t = useTranslations('repository.pipeline');
     const definitions = useNodeRegistryStore((s) => s.nodes);
+    const { screenToFlowPosition } = useReactFlow();
+    const { setNodes, triggerAutoSave } = usePipelineContext();
 
     const {
         activePanel,
@@ -36,6 +41,33 @@ export function NodeAddPanel() {
     const onDragStart = (event: React.DragEvent, nodeType: NodeId) => {
         event.dataTransfer.setData('application/reactflow', nodeType);
         event.dataTransfer.effectAllowed = 'move';
+    };
+
+    const onClickAdd = (nodeType: NodeId) => {
+        const def = getNodeDefinition(nodeType);
+        if (!def) return;
+
+        const pane = document.querySelector('.react-flow__pane');
+        const rect = pane?.getBoundingClientRect();
+        const centerX = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+        const centerY = rect ? rect.top + rect.height / 2 : window.innerHeight / 2;
+        const position = screenToFlowPosition({ x: centerX, y: centerY });
+
+        setNodes((nodes) =>
+            nodes.concat({
+                id: `${nodeType}-${Date.now()}`,
+                type: def.type,
+                position: { x: position.x - 45, y: position.y - 45 },
+                data: {
+                    label: nodeType,
+                    nodeType,
+                    definition: def,
+                    config: { ...def.defaultConfig },
+                    isStartNode: def.isStartNode ?? false,
+                },
+            }),
+        );
+        triggerAutoSave();
     };
 
     const searchQuery = search.trim().toLowerCase();
@@ -117,6 +149,7 @@ export function NodeAddPanel() {
                                 def={def}
                                 label={t(`nodes.${def.id}.name`)}
                                 onDragStart={onDragStart}
+                                onClick={() => onClickAdd(def.id)}
                             />
                         ))}
 
@@ -162,6 +195,7 @@ export function NodeAddPanel() {
                                 def={def}
                                 label={t(`nodes.${def.id}.name`)}
                                 onDragStart={onDragStart}
+                                onClick={() => onClickAdd(def.id)}
                             />
                         ))}
                 </div>

@@ -9,14 +9,25 @@ export class CloneRepositoryExecutor implements INodeExecutor {
     readonly type = 'clone-repository';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { config, logger, nodeId } = ctx;
+        const { config, nodeConfig, logger, nodeId } = ctx;
 
-        const commitInfo = config.gitCommitHash
-            ? ` (commit: ${config.gitCommitHash.substring(0, 7)})`
+        const effectiveBranch =
+            (nodeConfig.branch as string | undefined) || config.gitBranch;
+        const effectiveCommitHash =
+            (nodeConfig.commitHash as string | undefined) || config.gitCommitHash;
+
+        const effectiveConfig = {
+            ...config,
+            gitBranch: effectiveBranch,
+            gitCommitHash: effectiveCommitHash || undefined,
+        };
+
+        const commitInfo = effectiveCommitHash
+            ? ` (commit: ${effectiveCommitHash.substring(0, 7)})`
             : '';
         await logger.info(
             nodeId,
-            `Cloning repository ${config.gitUrl} (branch: ${config.gitBranch}${commitInfo})`,
+            `Cloning repository ${config.gitUrl} (branch: ${effectiveBranch}${commitInfo})`,
         );
 
         const onProgress = async (progress: number, message: string) => {
@@ -24,12 +35,12 @@ export class CloneRepositoryExecutor implements INodeExecutor {
         };
 
         try {
-            const workDir = await gitService.cloneRepository(config, onProgress);
+            const workDir = await gitService.cloneRepository(effectiveConfig, onProgress);
 
-            if (config.gitCommitHash) {
+            if (effectiveCommitHash) {
                 await logger.info(
                     nodeId,
-                    `Checked out commit ${config.gitCommitHash.substring(0, 7)}`,
+                    `Checked out commit ${effectiveCommitHash.substring(0, 7)}`,
                 );
             }
 

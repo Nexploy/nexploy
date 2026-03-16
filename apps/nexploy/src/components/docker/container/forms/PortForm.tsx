@@ -33,6 +33,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
     const { closeDialog } = useConfirmationDialogStore();
     const { onPortChange } = useContainerChangesStore();
     const t = useTranslations('docker.forms');
+    const tCommon = useTranslations('common');
 
     const form = useForm<ContainerPortForm>({
         resolver: zodResolver(containerPortSchema),
@@ -93,7 +94,12 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                     name="publicPort"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('port.hostPort')}</FormLabel>
+                            <FormLabel>
+                                {t('port.hostPort')}
+                                <span className="text-muted-foreground text-xs">
+                                    {tCommon('optional')}
+                                </span>
+                            </FormLabel>
                             <FormControl>
                                 <Input
                                     type="number"

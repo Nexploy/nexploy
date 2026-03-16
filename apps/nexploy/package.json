@@ -19,8 +19,5 @@
         "db:studio": "prisma studio",
         "test": "vitest run",
         "test:watch": "vitest"
-    },
-    "prisma": {
-        "seed": "tsx prisma/seed.ts"
     }
 }
