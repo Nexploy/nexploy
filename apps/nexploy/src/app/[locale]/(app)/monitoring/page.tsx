@@ -176,9 +176,7 @@ export default function MonitoringPage() {
                         <Button
                             onClick={exportMetrics}
                             disabled={chartData.length === 0}
-                            variant="white"
                             icon={Download}
-                            size="sm"
                         >
                             {t('exportCsv')}
                         </Button>

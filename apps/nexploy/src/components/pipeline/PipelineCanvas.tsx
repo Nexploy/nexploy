@@ -176,7 +176,7 @@ export function PipelineCanvas() {
         ref: wrapperRef,
     });
 
-    const { isDragOver, onDragOver, onDragLeave, onDrop } = useDragAndDropFlow(rfInstance);
+    const { onDragOver, onDragLeave, onDrop } = useDragAndDropFlow(rfInstance);
     const { minimapVisible, onMoveStart, onMoveEnd } = useMinimap();
 
     return (
@@ -185,9 +185,7 @@ export function PipelineCanvas() {
             tabIndex={-1}
             data-panning={isSpaceHeld}
             onContextMenu={(e) => e.preventDefault()}
-            className={cn(
-                'relative flex-1 transition-all',
-            )}
+            className={cn('relative flex-1 transition-all')}
             onDragOver={onDragOver}
             onDragLeave={onDragLeave}
             onDrop={onDrop}
@@ -199,25 +197,21 @@ export function PipelineCanvas() {
                 edges={displayEdges}
                 onNodesChange={isViewingBuild ? () => {} : onNodesChange}
                 onEdgesChange={isViewingBuild ? () => {} : onEdgesChange}
-                onEdgeMouseEnter={
-                    isViewingBuild ? undefined : (_, edge) => setHoveredEdgeId(edge.id)
-                }
+                onEdgeMouseEnter={(_, edge) => setHoveredEdgeId(edge.id)}
                 onEdgeMouseLeave={isViewingBuild ? undefined : () => setHoveredEdgeId(null)}
                 onConnect={isViewingBuild ? undefined : onConnect}
                 isValidConnection={isViewingBuild ? undefined : isValidConnection}
                 onInit={setRfInstance}
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
-                onNodeDoubleClick={
-                    isViewingBuild ? undefined : (_, node) => openDialogSettingNode(node.id)
-                }
+                onNodeDoubleClick={(_, node) => openDialogSettingNode(node.id)}
                 onNodeDragStop={isViewingBuild ? undefined : triggerAutoSave}
                 onPaneClick={handlePaneClick}
                 onNodeContextMenu={isViewingBuild ? undefined : onNodeContextMenu}
                 onSelectionContextMenu={isViewingBuild ? undefined : onSelectionContextMenu}
                 nodesDraggable={!isViewingBuild}
                 nodesConnectable={!isViewingBuild}
-                elementsSelectable={!isViewingBuild}
+                elementsSelectable
                 panOnDrag={nodes.length > 0 ? [1, 2] : false}
                 panOnScroll={nodes.length > 0}
                 panOnScrollMode={PanOnScrollMode.Free}

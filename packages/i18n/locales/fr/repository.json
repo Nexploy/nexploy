@@ -350,6 +350,7 @@
         "undo": "Annuler",
         "redo": "Rétablir",
         "watching": "En observation",
+        "exitBuild": "Quitter la vue du build",
         "shortcuts": "Raccourcis clavier",
         "shortcutsList": {
             "selectAll": "Tout sélectionner",
@@ -462,6 +463,7 @@
             "varValue": "Valeur",
             "addVar": "Ajouter une variable",
             "save": "Sauvegarder",
+            "viewOnly": "lecture seule",
             "noConfig": "Aucune configuration requise pour ce nœud.",
             "cleanWorkdirInfo": "Supprime le répertoire du dépôt cloné du disque après l'exécution du pipeline.",
             "saveVersionInfo": "Enregistre le build actuel comme une nouvelle version numérotée en utilisant le tag d'image et les informations du commit.",

@@ -26,7 +26,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
     const tCommon = useTranslations('common');
 
     const params = useParams<{ repositoryId: string }>();
-    const { handleConfigChange, handlePaneClick } = usePipelineContext();
+    const { handleConfigChange, handlePaneClick, isViewingBuild } = usePipelineContext();
 
     const nodeType = node.data.nodeType as NodeId;
     const nodeConfig = node.data.config ?? {};
@@ -59,13 +59,20 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
             <form onSubmit={handleSubmitWithAction} className="flex max-h-[90vh] flex-col gap-4">
                 <DialogHeader>
                     <DialogTitle className="text-sm">
-                        {t(`nodes.${nodeType}.name` as never)}
+                        {t(`nodes.${nodeType}.name`)}
+                        {isViewingBuild && (
+                            <span className="text-muted-foreground ml-2 text-xs font-normal">
+                                ({tConfig('viewOnly')})
+                            </span>
+                        )}
                     </DialogTitle>
                 </DialogHeader>
 
                 <ScrollAreaWithShadow bottomShadow className="h-full">
                     <div className="px-6 pb-6">
-                        <ConfigComponent />
+                        <fieldset disabled={isViewingBuild}>
+                            <ConfigComponent />
+                        </fieldset>
                     </div>
                 </ScrollAreaWithShadow>
 
@@ -73,14 +80,16 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
                     <Button type="button" variant="outline" size="sm" onClick={handlePaneClick}>
                         {tCommon('cancel')}
                     </Button>
-                    <Button
-                        type="submit"
-                        size="sm"
-                        disabled={!form.formState.isDirty || action.isPending}
-                    >
-                        {action.isPending && <Loader2 className="animate-spin" />}
-                        {tConfig('save')}
-                    </Button>
+                    {!isViewingBuild && (
+                        <Button
+                            type="submit"
+                            size="sm"
+                            disabled={!form.formState.isDirty || action.isPending}
+                        >
+                            {action.isPending && <Loader2 className="animate-spin" />}
+                            {tConfig('save')}
+                        </Button>
+                    )}
                 </DialogFooter>
             </form>
         </Form>

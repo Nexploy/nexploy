@@ -58,7 +58,23 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
                 className,
             )}
         >
-            {!data.viewOnly && (
+            {data.viewOnly ? (
+                <div
+                    onDoubleClick={(e) => e.stopPropagation()}
+                    className={cn(
+                        'bg-background absolute -top-9 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1',
+                        'scale-75 opacity-0 transition-all duration-150 group-hover:scale-100 group-hover:opacity-100',
+                    )}
+                >
+                    <Button
+                        variant="ghost"
+                        onClick={() => openDialogSettingNode(id)}
+                        className="text-muted-foreground hover:text-foreground size-6"
+                    >
+                        <Settings className="size-3" />
+                    </Button>
+                </div>
+            ) : (
                 <div
                     onDoubleClick={(e) => e.stopPropagation()}
                     className={cn(

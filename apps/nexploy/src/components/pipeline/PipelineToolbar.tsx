@@ -10,6 +10,7 @@ import {
     SquareDashed,
     Trash2,
     Undo2,
+    X,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { usePipelineContext } from '@/contexts/PipelineContext';
@@ -39,6 +40,7 @@ export function PipelineToolbar() {
         triggerAutoSave,
         activeBuildId,
         activeBuild,
+        setActiveBuildId,
     } = usePipelineContext();
 
     const addSelectedNodes = useStore((s) => s.addSelectedNodes);
@@ -206,6 +208,19 @@ export function PipelineToolbar() {
                                     </>
                                 )}
                             </span>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        className="size-6"
+                                        onClick={() => setActiveBuildId(undefined)}
+                                    >
+                                        <X className="size-3" />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>{t('exitBuild')}</TooltipContent>
+                            </Tooltip>
                         </div>
                     </div>
                 )}

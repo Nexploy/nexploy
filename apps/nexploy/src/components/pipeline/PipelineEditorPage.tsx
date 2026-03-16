@@ -1,5 +1,3 @@
-'use client';
-
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { PipelineEditor } from '@/components/pipeline/PipelineEditor';
 import { PipelineProvider } from '@/contexts/PipelineContext';

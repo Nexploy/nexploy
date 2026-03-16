@@ -352,6 +352,7 @@
         "redo": "Redo",
         "watching": "Watching",
         "shortcuts": "Keyboard shortcuts",
+        "exitBuild": "Exit build view",
         "shortcutsList": {
             "selectAll": "Select all",
             "duplicate": "Duplicate",
@@ -463,6 +464,7 @@
             "varValue": "Value",
             "addVar": "Add variable",
             "save": "Save",
+            "viewOnly": "view only",
             "noConfig": "No configuration required for this node.",
             "cleanWorkdirInfo": "Removes the cloned repository directory from disk after the pipeline completes.",
             "saveVersionInfo": "Saves the current build as a new numbered version using the built image tag and commit info.",
