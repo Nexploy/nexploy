@@ -18,13 +18,20 @@ import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { NodeConfigForm } from './NodeConfigForm';
 import { NodeLogsPanel } from './NodeLogsPanel';
 import { NodeRunStatus } from '@/types/pipeline.type';
+import { StatusLive } from '@/components/shared/StatusLive';
 
 export function NodeConfigDialog() {
     const tPipeline = useTranslations('repository.pipeline');
     const tConfig = useTranslations('repository.pipeline.config');
     const tCommon = useTranslations('common');
-    const { nodes, handleResetPanelNode, isViewingBuild, activeBuildId, nodeStatuses } =
-        usePipelineContext();
+    const {
+        nodes,
+        handleResetPanelNode,
+        isViewingBuild,
+        activeBuild,
+        activeBuildId,
+        nodeStatuses,
+    } = usePipelineContext();
     const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
 
     const panelNode = panelNodeId ? (nodes.find((n) => n.id === panelNodeId) ?? null) : null;
@@ -50,12 +57,19 @@ export function NodeConfigDialog() {
             <DialogContent className="flex !h-[80%] !max-w-[80%] flex-col gap-0 !p-0">
                 {node && nodeType && (
                     <>
-                        <DialogHeader className={'border-b py-4'}>
-                            <DialogTitle className="text-sm">
+                        <DialogHeader className={'border-b p-4'}>
+                            <DialogTitle className="flex items-center gap-2 text-sm">
                                 {tPipeline(`nodes.${nodeType}.name`)}
-                                <span className="text-muted-foreground ml-2 text-xs font-normal">
+                                <span className="text-muted-foreground text-xs font-normal">
                                     ({tConfig('viewOnly')})
                                 </span>
+                                {activeBuild && (
+                                    <StatusLive
+                                        key={activeBuildId}
+                                        buildId={activeBuildId}
+                                        initialStatus={activeBuild.status}
+                                    />
+                                )}
                             </DialogTitle>
                         </DialogHeader>
 
@@ -71,7 +85,7 @@ export function NodeConfigDialog() {
                             />
                         </div>
 
-                        <DialogFooter className="bg-muted/40 border-t px-6 py-4">
+                        <DialogFooter className="bg-muted/40 border-t px-4 py-4">
                             <Button variant="outline" size="sm" onClick={handleResetPanelNode}>
                                 {tCommon('cancel')}
                             </Button>

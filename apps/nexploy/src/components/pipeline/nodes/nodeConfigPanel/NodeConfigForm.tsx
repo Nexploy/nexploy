@@ -15,6 +15,7 @@ import { saveNodeConfigAction } from '@/actions/repository/pipeline/saveNodeConf
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { CONFIG_PANELS, CONFIG_SCHEMAS } from './nodeConfigRegistry';
+import { cn } from '@workspace/ui/lib/utils';
 
 interface NodeConfigFormProps {
     node: Node;
@@ -64,14 +65,14 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
                 )}
 
                 <ScrollAreaWithShadow bottomShadow className="h-full">
-                    <div className="px-6 pb-6">
+                    <div className={cn('px-6 pb-6', isViewingBuild && 'px-4 pb-4')}>
                         <fieldset disabled={isViewingBuild} className="contents">
                             <ConfigComponent />
                         </fieldset>
                     </div>
                 </ScrollAreaWithShadow>
 
-                <DialogFooter className="px-6 pb-6">
+                <DialogFooter className={cn('px-6 pb-6', isViewingBuild && 'px-4 pb-4')}>
                     {!isViewingBuild && (
                         <>
                             <Button
