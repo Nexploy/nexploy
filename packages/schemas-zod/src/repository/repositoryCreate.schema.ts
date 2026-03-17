@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { branchNameSchema } from './branch.schema';
 
 export const repositoryCreateFormSchema = z.object({
     name: z.string().min(1, 'Project name is required'),
@@ -16,7 +15,6 @@ export const repositoryCreateFormSchema = z.object({
             error: 'Le dépôt est requis',
         },
     ),
-    branch: branchNameSchema,
     gitToken: z
         .string()
         .optional()

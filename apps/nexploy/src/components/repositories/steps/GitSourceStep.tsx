@@ -29,7 +29,7 @@ import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import Link from 'next/link';
-import { GitBranch, GitRepository } from '@workspace/typescript-interface/git/git';
+import { GitRepository } from '@workspace/typescript-interface/git/git';
 
 interface GitAccountSummary {
     id: string;
@@ -78,13 +78,6 @@ export function GitSourceStep() {
         fetcherApi,
     );
 
-    const { data: branches, isLoading: isLoadingBranches } = useSWR<GitBranch[]>(
-        selectedRepo && selectedAccount
-            ? `/api/git/branches?provider=${selectedAccount.provider}&gitAccountId=${selectedAccount.id}&repoId=${selectedRepo.id}&owner=${selectedRepo.fullName.split('/')[0]}&repoName=${selectedRepo.fullName.split('/')[1]}`
-            : null,
-        fetcherApi,
-    );
-
     const hasAccounts = accounts && accounts.length > 0;
 
     return (
@@ -124,7 +117,6 @@ export function GitSourceStep() {
                                                 setValue('gitProvider', account.provider);
                                             }
                                             setValue('repo', undefined);
-                                            setValue('branch', 'main');
                                         }}
                                         value={field.value || ''}
                                     >
@@ -187,7 +179,6 @@ export function GitSourceStep() {
                                                 if (repo) {
                                                     field.onChange(repo);
                                                     setValue('name', repo.fullName);
-                                                    setValue('branch', repo.defaultBranch);
                                                 }
                                             }}
                                             value={field.value?.id || ''}
@@ -221,39 +212,7 @@ export function GitSourceStep() {
                             />
                         )}
 
-                        {selectedRepo && selectedAccount && (
-                            <FormField
-                                control={control}
-                                name="branch"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{tSource('branch')}</FormLabel>
-                                        <Select
-                                            value={branches ? field.value : ''}
-                                            onValueChange={field.onChange}
-                                            disabled={isLoadingBranches}
-                                        >
-                                            <FormControl>
-                                                <SelectTrigger className="min-w-32">
-                                                    <SelectValue placeholder={field.value} />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {branches?.map((branch) => (
-                                                    <SelectItem
-                                                        key={branch.name}
-                                                        value={branch.name}
-                                                    >
-                                                        {branch.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        )}
+
                     </>
                 )}
             </CardContent>

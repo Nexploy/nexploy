@@ -22,7 +22,6 @@ export default function AddRepositoryPage() {
 
     const defaultValues = {
         name: '',
-        branch: 'main',
         gitToken: '',
         gitProvider: 'github' as const,
         autoDeploy: true,
