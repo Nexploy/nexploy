@@ -89,7 +89,7 @@ export function PipelineCanvas() {
         onEdgesChange,
         onConnect,
         openDialogSettingNode,
-        handlePaneClick,
+        handleResetPanelNode,
         handleSelectionChange,
         handleDuplicateSelection,
         handleDeleteSelection,
@@ -206,7 +206,7 @@ export function PipelineCanvas() {
                 edgeTypes={edgeTypes}
                 onNodeDoubleClick={(_, node) => openDialogSettingNode(node.id)}
                 onNodeDragStop={isViewingBuild ? undefined : triggerAutoSave}
-                onPaneClick={handlePaneClick}
+                onPaneClick={handleResetPanelNode}
                 onNodeContextMenu={isViewingBuild ? undefined : onNodeContextMenu}
                 onSelectionContextMenu={isViewingBuild ? undefined : onSelectionContextMenu}
                 nodesDraggable={!isViewingBuild}

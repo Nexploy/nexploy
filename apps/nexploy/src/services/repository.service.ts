@@ -150,6 +150,20 @@ export async function getRepositorieBuildLogs(repositoryId: string, buildId: str
     }
 }
 
+export async function getBuildNodeLogs(repositoryId: string, buildId: string, nodeId: string) {
+    const build = await prisma.build.findFirst({
+        where: { id: buildId, repositoryId },
+        select: { id: true },
+    });
+
+    if (!build) return null;
+
+    return prisma.log.findMany({
+        where: { buildId, step: nodeId },
+        orderBy: { createdAt: 'asc' },
+    });
+}
+
 export async function getBuilds(repositoryId: string) {
     try {
         return prisma.build.findMany({

@@ -28,7 +28,6 @@ export const GET = route
         try {
             data = await githubExchangeManifestCode(code);
         } catch (error) {
-            console.error('GitHub App manifest exchange failed:', error);
             await setToastServer({ type: 'error', message: 'GitHub App creation failed' });
             return redirectTo('/admin/integrations');
         }

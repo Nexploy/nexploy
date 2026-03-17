@@ -353,6 +353,9 @@
         "watching": "Watching",
         "shortcuts": "Keyboard shortcuts",
         "exitBuild": "Exit build view",
+        "nodeDialog": {
+            "noLogs": "No logs for this node."
+        },
         "shortcutsList": {
             "selectAll": "Select all",
             "duplicate": "Duplicate",

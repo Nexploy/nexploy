@@ -232,7 +232,7 @@ export async function deleteEnvironment(id: string) {
     try {
         await kyDocker.delete(`environments/${id}`);
     } catch (error: any) {
-        console.warn(`Failed to unregister environment from docker-api: ${error.message}`);
+        throw new Error(`Failed to unregister environment from docker-api: ${error.message}`);
     }
 }
 
@@ -264,32 +264,4 @@ export async function checkEnvironmentHealth(
     } catch {
         return 'disconnected';
     }
-}
-
-export async function checkAllEnvironmentsHealth(): Promise<
-    Record<string, EnvironmentHealthStatus>
-> {
-    const session = await getUserSession();
-    const environments = await prisma.environment.findMany({
-        where: {
-            OR: [{ userId: session?.user.id }, { userId: null }],
-            isActive: true,
-        },
-    });
-
-    const healthChecks = await Promise.allSettled(
-        environments.map(async (env) => ({
-            id: env.id,
-            status: await checkEnvironmentHealth(env),
-        })),
-    );
-
-    const results: Record<string, EnvironmentHealthStatus> = {};
-    for (const result of healthChecks) {
-        if (result.status === 'fulfilled') {
-            results[result.value.id] = result.value.status;
-        }
-    }
-
-    return results;
 }

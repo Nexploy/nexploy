@@ -6,10 +6,7 @@ import { getBaseUrl } from '@/lib/getBaseUrl';
 import { authRouteServer, route } from '@/lib/api/nextRoute';
 import dayjs from 'dayjs';
 import { Session } from '@/lib/auth/auth';
-import {
-    githubExchangeCodeForToken,
-    githubGetAuthenticatedUser,
-} from '@/lib/api/github.api';
+import { githubExchangeCodeForToken, githubGetAuthenticatedUser } from '@/lib/api/github.api';
 
 export const GET = route
     .use(authRouteServer)
@@ -138,7 +135,6 @@ export const GET = route
 
             return NextResponse.redirect(`${accountUrl}?success=connected`);
         } catch (error) {
-            console.error('[OAuth Callback Error]', error);
             return NextResponse.redirect(`${accountUrl}?error=connect_failed`);
         }
     });

@@ -143,7 +143,6 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
                 },
             });
         } catch (error) {
-            console.error('Erreur :', error);
             set({ connectionState: 'error', isConnecting: false });
         }
     },

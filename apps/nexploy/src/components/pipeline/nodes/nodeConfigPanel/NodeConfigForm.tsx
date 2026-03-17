@@ -26,7 +26,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
     const tCommon = useTranslations('common');
 
     const params = useParams<{ repositoryId: string }>();
-    const { handleConfigChange, handlePaneClick, isViewingBuild } = usePipelineContext();
+    const { handleConfigChange, handleResetPanelNode, isViewingBuild } = usePipelineContext();
 
     const nodeType = node.data.nodeType as NodeId;
     const nodeConfig = node.data.config ?? {};
@@ -43,7 +43,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
             actionProps: {
                 onSuccess: ({ data }) => {
                     if (data) handleConfigChange(node.id, data as Record<string, unknown>);
-                    handlePaneClick();
+                    handleResetPanelNode();
                 },
                 onError: ({ error }) => {
                     toast.error(error.serverError ?? tConfig('saveError'));
@@ -57,38 +57,40 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
     return (
         <Form {...form}>
             <form onSubmit={handleSubmitWithAction} className="flex max-h-[90vh] flex-col gap-4">
-                <DialogHeader>
-                    <DialogTitle className="text-sm">
-                        {t(`nodes.${nodeType}.name`)}
-                        {isViewingBuild && (
-                            <span className="text-muted-foreground ml-2 text-xs font-normal">
-                                ({tConfig('viewOnly')})
-                            </span>
-                        )}
-                    </DialogTitle>
-                </DialogHeader>
+                {!isViewingBuild && (
+                    <DialogHeader>
+                        <DialogTitle className="text-sm">{t(`nodes.${nodeType}.name`)}</DialogTitle>
+                    </DialogHeader>
+                )}
 
                 <ScrollAreaWithShadow bottomShadow className="h-full">
                     <div className="px-6 pb-6">
-                        <fieldset disabled={isViewingBuild}>
+                        <fieldset disabled={isViewingBuild} className="contents">
                             <ConfigComponent />
                         </fieldset>
                     </div>
                 </ScrollAreaWithShadow>
 
                 <DialogFooter className="px-6 pb-6">
-                    <Button type="button" variant="outline" size="sm" onClick={handlePaneClick}>
-                        {tCommon('cancel')}
-                    </Button>
                     {!isViewingBuild && (
-                        <Button
-                            type="submit"
-                            size="sm"
-                            disabled={!form.formState.isDirty || action.isPending}
-                        >
-                            {action.isPending && <Loader2 className="animate-spin" />}
-                            {tConfig('save')}
-                        </Button>
+                        <>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={handleResetPanelNode}
+                            >
+                                {tCommon('cancel')}
+                            </Button>
+                            <Button
+                                type="submit"
+                                size="sm"
+                                disabled={!form.formState.isDirty || action.isPending}
+                            >
+                                {action.isPending && <Loader2 className="animate-spin" />}
+                                {tConfig('save')}
+                            </Button>
+                        </>
                     )}
                 </DialogFooter>
             </form>

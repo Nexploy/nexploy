@@ -351,6 +351,9 @@
         "redo": "Rétablir",
         "watching": "En observation",
         "exitBuild": "Quitter la vue du build",
+        "nodeDialog": {
+            "noLogs": "Aucun log pour ce nœud."
+        },
         "shortcuts": "Raccourcis clavier",
         "shortcutsList": {
             "selectAll": "Tout sélectionner",

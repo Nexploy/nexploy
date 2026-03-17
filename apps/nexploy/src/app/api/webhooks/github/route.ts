@@ -48,7 +48,6 @@ export const POST = route.handler(async (request: Request, { body }) => {
 
         return NextResponse.json({ message: 'Build started' });
     } catch (error) {
-        console.error('[GitHub Webhook Error]', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 });

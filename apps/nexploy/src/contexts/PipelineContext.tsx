@@ -40,12 +40,13 @@ interface PipelineContextValue {
     builds: Build[];
     activeBuildId: string | undefined;
     setActiveBuildId: (id: string | undefined) => void;
+    nodeStatuses: Record<string, NodeRunStatus>;
     onNodesChange: ReturnType<typeof useNodesState>[2];
     onEdgesChange: ReturnType<typeof useEdgesState>[2];
     onConnect: (connection: Connection) => void;
     handleSelectionChange: (selection: { nodes: Node[] }) => void;
     openDialogSettingNode: (id: string) => void;
-    handlePaneClick: () => void;
+    handleResetPanelNode: () => void;
     handleConfigChange: (nodeId: string, config: Record<string, unknown>) => void;
     handleDeleteSelection: () => void;
     handleDuplicateSelection: () => void;
@@ -155,7 +156,7 @@ export function PipelineProvider({
         setPanelNodeId((prev) => (prev === id ? null : id));
     }, []);
 
-    const handlePaneClick = useCallback(() => {
+    const handleResetPanelNode = useCallback(() => {
         setSelectedNodeIds([]);
         setPanelNodeId(null);
     }, []);
@@ -265,12 +266,13 @@ export function PipelineProvider({
                 activeBuildId,
                 activeBuild,
                 setActiveBuildId,
+                nodeStatuses,
                 onNodesChange,
                 onEdgesChange,
                 onConnect,
                 handleSelectionChange,
                 openDialogSettingNode,
-                handlePaneClick,
+                handleResetPanelNode,
                 handleConfigChange,
                 handleDeleteSelection,
                 handleDuplicateSelection,
