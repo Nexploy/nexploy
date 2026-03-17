@@ -356,6 +356,13 @@
         "nodeDialog": {
             "noLogs": "No logs for this node."
         },
+        "nodeStatus": {
+            "running": "Running",
+            "completed": "Completed",
+            "failed": "Failed",
+            "skipped": "Skipped",
+            "pending": "Pending"
+        },
         "shortcutsList": {
             "selectAll": "Select all",
             "duplicate": "Duplicate",

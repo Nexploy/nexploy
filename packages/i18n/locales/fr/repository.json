@@ -354,6 +354,13 @@
         "nodeDialog": {
             "noLogs": "Aucun log pour ce nœud."
         },
+        "nodeStatus": {
+            "running": "En cours",
+            "completed": "Terminé",
+            "failed": "Échoué",
+            "skipped": "Ignoré",
+            "pending": "En attente"
+        },
         "shortcuts": "Raccourcis clavier",
         "shortcutsList": {
             "selectAll": "Tout sélectionner",

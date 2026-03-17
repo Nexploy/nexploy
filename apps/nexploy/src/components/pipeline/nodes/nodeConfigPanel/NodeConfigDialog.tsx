@@ -18,7 +18,7 @@ import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { NodeConfigForm } from './NodeConfigForm';
 import { NodeLogsPanel } from './NodeLogsPanel';
 import { NodeRunStatus } from '@/types/pipeline.type';
-import { StatusLive } from '@/components/shared/StatusLive';
+import { StatusNodeLive } from '@/components/shared/StatusNodeLive';
 
 export function NodeConfigDialog() {
     const tPipeline = useTranslations('repository.pipeline');
@@ -26,15 +26,16 @@ export function NodeConfigDialog() {
     const tCommon = useTranslations('common');
     const {
         nodes,
+        displayNodes,
         handleResetPanelNode,
         isViewingBuild,
-        activeBuild,
         activeBuildId,
         nodeStatuses,
     } = usePipelineContext();
     const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
 
-    const panelNode = panelNodeId ? (nodes.find((n) => n.id === panelNodeId) ?? null) : null;
+    const sourceNodes = isViewingBuild ? displayNodes : nodes;
+    const panelNode = panelNodeId ? (sourceNodes.find((n) => n.id === panelNodeId) ?? null) : null;
     const lastNodeRef = useRef<Node | null>(null);
     if (panelNode) lastNodeRef.current = panelNode;
 
@@ -63,13 +64,13 @@ export function NodeConfigDialog() {
                                 <span className="text-muted-foreground text-xs font-normal">
                                     ({tConfig('viewOnly')})
                                 </span>
-                                {activeBuild && (
-                                    <StatusLive
-                                        key={activeBuildId}
-                                        buildId={activeBuildId}
-                                        initialStatus={activeBuild.status}
-                                    />
-                                )}
+                                <StatusNodeLive
+                                    buildId={activeBuildId}
+                                    nodeId={node.id}
+                                    initialStatus={
+                                        nodeStatuses[node.id] as NodeRunStatus | undefined
+                                    }
+                                />
                             </DialogTitle>
                         </DialogHeader>
 
