@@ -1,5 +1,4 @@
 import { getRepositorieById } from '@/services/repository.service';
-import { ChangeDeployment } from '@/components/repositories/tabs/settings/DeploymentSettings';
 import { DangerZone } from '@/components/repositories/tabs/settings/DangerZone';
 import { notFound } from 'next/navigation';
 
@@ -13,7 +12,6 @@ export async function RepositorySettingsTab({ repositoryId }: RepositorySettings
 
     return (
         <div className="mx-5 space-y-6">
-            <ChangeDeployment repository={repository} />
             <DangerZone repository={repository} />
         </div>
     );

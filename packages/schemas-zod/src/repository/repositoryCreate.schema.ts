@@ -21,8 +21,6 @@ export const repositoryCreateFormSchema = z.object({
         .transform((value) => (value === '' ? undefined : value)),
     gitProvider: z.enum(['github', 'gitlab', 'manual']),
     gitAccountId: z.string().optional(),
-    environmentId: z.string(),
-    autoDeploy: z.boolean().default(true),
 });
 
 export type RepositoryCreateForm = z.infer<typeof repositoryCreateFormSchema>;

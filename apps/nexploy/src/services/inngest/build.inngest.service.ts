@@ -1,17 +1,11 @@
 import { prisma } from '../../../prisma/prisma';
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
-import { getGitProviderToken } from '@/services/git/git.service';
-import { getCommit, getValidToken } from '@/services/api/gitProvider.service';
 import { addBuildJob } from '@/inngest/jobs/queue';
 import { inngest } from '@/inngest/client';
 import { getRepositorieWithEnv } from '@/services/repository.service';
 import { setToastServer } from '@/lib/toastServer';
 import { decrypt } from '@/lib/encryption';
-import {
-    ResumeBuildSchemaType,
-    RetryBuildSchemaType,
-    StartBuildSchemaType,
-} from '@workspace/schemas-zod/inngest/build.schema';
+import { StartBuildSchemaType } from '@workspace/schemas-zod/inngest/build.schema';
 import { BuildStatus } from 'generated/client';
 
 export async function startBuildRepositoryInngest(
@@ -25,28 +19,9 @@ export async function startBuildRepositoryInngest(
         throw new Error('Repository not found');
     }
 
-    const oldToken = await getGitProviderToken(repository.gitProvider, {
-        gitAccountId: repository.gitAccountId ?? undefined,
-        requestedUserId: userId,
-    });
-    const token = await getValidToken(
-        oldToken,
-        repository.gitProvider,
-        userId,
-        repository.gitAccountId ?? undefined,
-    );
-
-    const commit = await getCommit(
-        repository.repositoryUrl,
-        repository.branch,
-        token.accessToken,
-        repository.gitProvider,
-        commitHash,
-    );
-
     const pipelineConfig = await prisma.pipelineConfig.findUnique({
         where: { repositoryId: repository.id },
-        select: { id: true, nodes: true, edges: true },
+        select: { nodes: true, edges: true },
     });
     if (!pipelineConfig) {
         throw new Error(
@@ -56,10 +31,6 @@ export async function startBuildRepositoryInngest(
 
     const build = await createBuild({
         repositoryId: repository.id,
-        branch: repository.branch,
-        commitHash: commit?.hash,
-        commitMessage: commit?.message,
-        environmentId: repository.environmentId,
         pipelineSnapshot: { nodes: pipelineConfig.nodes, edges: pipelineConfig.edges },
     });
 
@@ -71,20 +42,15 @@ export async function startBuildRepositoryInngest(
     }
 
     const config: BuildConfig = {
-        ...token,
         userId,
         gitAccountId: repository.gitAccountId ?? undefined,
         repositoryId: repository.id,
         gitProvider: repository.gitProvider,
         gitUrl: repository.repositoryUrl,
-        gitBranch: repository.branch,
-        gitCommitHash: commit?.hash,
-        gitCommitMessage: commit?.message,
+        gitCommitHash: commitHash,
         envVariables,
         imageName,
         imageTag: build.id,
-        autoDeploy: repository.autoDeploy,
-        environmentId: repository.environmentId,
     };
 
     await addBuildJob(build.id, config);
@@ -101,32 +67,42 @@ export async function removeBuild(buildId: string) {
 
 export async function createBuild({
     repositoryId,
-    branch,
     commitMessage,
     commitHash,
-    environmentId,
     pipelineSnapshot,
 }: {
     repositoryId: string;
-    branch: string;
     commitMessage?: string;
     commitHash?: string;
-    environmentId?: string;
     pipelineSnapshot?: object;
 }) {
     try {
         return await prisma.build.create({
             data: {
                 repositoryId,
-                branch,
                 commitMessage,
                 commitHash,
-                environmentId,
                 pipelineSnapshot,
             },
         });
     } catch {
         throw new Error('Failed to create build');
+    }
+}
+
+export async function updateBuildGitInfo(
+    buildId: string,
+    branch: string,
+    commitHash?: string,
+    commitMessage?: string,
+) {
+    try {
+        await prisma.build.update({
+            where: { id: buildId },
+            data: { branch, commitHash, commitMessage },
+        });
+    } catch {
+        throw new Error('Failed to update build git info');
     }
 }
 
@@ -173,92 +149,6 @@ export async function cancelBuildInngest(buildId: string) {
     await inngest.send({ name: 'build/cancel', data: { buildId } });
 
     return prisma.build.update({ where: { id: buildId }, data: { status: 'CANCELLED' } });
-}
-
-export async function findBuildWithEnvInngest(buildId: string) {
-    try {
-        const build = await prisma.build.findUnique({
-            where: { id: buildId },
-            include: { repository: { include: { envVariables: true } } },
-        });
-
-        if (build?.repository) {
-            build.repository.envVariables = build.repository.envVariables.map((env) => ({
-                ...env,
-                value: decrypt(env.value),
-            }));
-        }
-
-        return build;
-    } catch {
-        throw new Error('Failed to find build');
-    }
-}
-
-export async function retryBuildRepositoryInngest(
-    { buildId, environmentId }: RetryBuildSchemaType,
-    userId: string,
-    existingBuild: Awaited<ReturnType<typeof findBuildWithEnvInngest>>,
-) {
-    if (!existingBuild || !existingBuild.repository || existingBuild.status === 'COMPLETED') {
-        throw new Error('Build or Repository not found');
-    }
-
-    const repository = existingBuild.repository;
-
-    const oldToken = await getGitProviderToken(repository.gitProvider, {
-        gitAccountId: repository.gitAccountId ?? undefined,
-        requestedUserId: userId,
-    });
-    const token = await getValidToken(
-        oldToken,
-        repository.gitProvider,
-        userId,
-        repository.gitAccountId ?? undefined,
-    );
-
-    const imageName = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
-
-    const envVariables: Record<string, string> = {};
-    for (const env of repository.envVariables) {
-        envVariables[env.key] = env.value;
-    }
-
-    const config: BuildConfig = {
-        ...token,
-        userId,
-        gitAccountId: repository.gitAccountId ?? undefined,
-        repositoryId: repository.id,
-        gitProvider: repository.gitProvider,
-        gitUrl: repository.repositoryUrl,
-        gitBranch: existingBuild.branch,
-        gitCommitHash: existingBuild.commitHash || undefined,
-        gitCommitMessage: existingBuild.commitMessage || undefined,
-        envVariables,
-        imageName,
-        imageTag: buildId,
-        autoDeploy: repository.autoDeploy,
-        environmentId,
-    };
-
-    await addBuildJob(buildId, config);
-}
-
-export async function resumeBuildRepositoryInngest(
-    { buildId, environmentId }: ResumeBuildSchemaType,
-    userId: string,
-    existingBuild: Awaited<ReturnType<typeof findBuildWithEnvInngest>>,
-) {
-    if (!existingBuild || !existingBuild.repository) {
-        throw new Error('Build or Repository not found');
-    }
-    if (existingBuild.status !== 'FAILED') {
-        throw new Error('Can only resume failed builds');
-    }
-
-    await retryBuildRepositoryInngest({ buildId, environmentId }, userId, existingBuild);
-
-    await prisma.build.update({ where: { id: buildId }, data: { status: 'QUEUED' } });
 }
 
 export async function getAllBuildsInngest(repositoryId: string) {

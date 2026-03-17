@@ -39,21 +39,25 @@ export class DeployComposeExecutor implements INodeExecutor {
             }
         }
 
+        const branch = getFromAllOutputs<string>(allOutputs, 'branch');
+        const commitHash = getFromAllOutputs<string>(allOutputs, 'commitHash');
+        const commitMessage = getFromAllOutputs<string>(allOutputs, 'commitMessage');
+
         const labels: Record<string, string> = {
             [NEXPLOY_LABELS.version]: 'true',
             [NEXPLOY_LABELS.repositoryId]: config.repositoryId,
             [NEXPLOY_LABELS.buildId]: config.imageTag,
             [NEXPLOY_LABELS.imageTag]: config.imageTag,
-            [NEXPLOY_LABELS.branch]: config.gitBranch,
-            ...(config.gitCommitHash && { [NEXPLOY_LABELS.commitHash]: config.gitCommitHash }),
-            ...(config.gitCommitMessage && {
-                [NEXPLOY_LABELS.commitMessage]: config.gitCommitMessage,
-            }),
+            ...(branch && { [NEXPLOY_LABELS.branch]: branch }),
+            ...(commitHash && { [NEXPLOY_LABELS.commitHash]: commitHash }),
+            ...(commitMessage && { [NEXPLOY_LABELS.commitMessage]: commitMessage }),
         };
 
         await logger.info(nodeId, `Deploying Docker Compose stack: ${projectName}`);
 
         const onLog = async (message: string) => logger.info(nodeId, message);
+
+        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
         try {
             const result = await dockerService.deployCompose(
@@ -63,7 +67,7 @@ export class DeployComposeExecutor implements INodeExecutor {
                 envVars,
                 abortSignal,
                 onLog,
-                config.environmentId,
+                environmentId,
                 config.imageTag,
                 config.repositoryId,
                 labels,

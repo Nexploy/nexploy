@@ -27,12 +27,15 @@ export class DeployContainerExecutor implements INodeExecutor {
         await logger.info(nodeId, 'Starting container deployment');
 
         try {
-            const result = await dockerService.deployContainer(
+            const environmentId =
+                getFromAllOutputs<string>(allOutputs, 'environmentId');
+
+        const result = await dockerService.deployContainer(
                 config.repositoryId,
                 imageName,
                 config.envVariables,
                 abortSignal,
-                config.environmentId,
+                environmentId,
             );
 
             await logger.info(nodeId, `Container deployed: ${result.containerId.slice(0, 12)}`);

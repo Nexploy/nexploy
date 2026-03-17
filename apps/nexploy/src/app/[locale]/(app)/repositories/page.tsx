@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Folder, GitBranch, Github, Gitlab, Server } from 'lucide-react';
+import { Folder, Github, Gitlab, Link2 } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import {
     Empty,
@@ -21,8 +21,8 @@ import { getRepositories } from '@/services/repository.service';
 import { StatusLive } from '@/components/shared/StatusLive';
 import { RunBuildButton } from '@/components/repositories/RunBuildButton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
-import { Separator } from '@workspace/ui/components/separator';
 import { getTranslations } from 'next-intl/server';
+import { capitalizeFirstLetter } from '@/utils/capitalize';
 
 export const metadata: Metadata = {
     title: 'Repositories',
@@ -33,7 +33,7 @@ const getGitIcon = (provider: string) => {
     const p = provider.toLowerCase();
     if (p.includes('github')) return Github;
     if (p.includes('gitlab')) return Gitlab;
-    return GitBranch;
+    return Link2;
 };
 
 export default async function RepositoriesPage() {
@@ -94,34 +94,10 @@ export default async function RepositoriesPage() {
                                                             <CardTitle className="truncate text-base font-semibold">
                                                                 {repository.name}
                                                             </CardTitle>
-                                                            <CardDescription className="text-muted-foreground/80 flex items-center gap-2 truncate font-mono text-xs">
-                                                                <div
-                                                                    className={
-                                                                        'flex min-w-0 items-center gap-1 truncate'
-                                                                    }
-                                                                >
-                                                                    <GitBranch className="size-3 shrink-0" />
-                                                                    <span className={'truncate'}>
-                                                                        {repository.branch}
-                                                                    </span>
-                                                                </div>
-                                                                <Separator
-                                                                    orientation={'vertical'}
-                                                                    className={'!h-3 w-1'}
-                                                                />
-                                                                <div
-                                                                    className={
-                                                                        'flex min-w-0 items-center gap-1'
-                                                                    }
-                                                                >
-                                                                    <Server className="size-3 shrink-0" />
-                                                                    <span className={'truncate'}>
-                                                                        {
-                                                                            repository.environment
-                                                                                ?.name
-                                                                        }
-                                                                    </span>
-                                                                </div>
+                                                            <CardDescription className="text-muted-foreground/80 truncate font-mono text-xs">
+                                                                {capitalizeFirstLetter(
+                                                                    repository.gitProvider,
+                                                                )}
                                                             </CardDescription>
                                                         </div>
                                                     </div>
@@ -139,9 +115,6 @@ export default async function RepositoriesPage() {
                                                                 size={'icon'}
                                                                 showText={false}
                                                                 variant={'secondary'}
-                                                                environmentId={
-                                                                    repository.environmentId
-                                                                }
                                                                 repositoryId={repository.id}
                                                             />
                                                         </TooltipTrigger>

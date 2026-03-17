@@ -23,7 +23,8 @@ export type NodeId =
     | 'set-env-vars'
     | 'clean-workdir'
     | 'send-notification'
-    | 'save-version';
+    | 'save-version'
+    | 'set-environment';
 
 export type NodeType = 'base-node' | 'large-node' | 'attach-node';
 

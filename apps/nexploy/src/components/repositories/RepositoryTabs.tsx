@@ -2,7 +2,7 @@
 
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
-import { Globe, Hammer, Key, Rocket, Settings, Tag, Workflow } from 'lucide-react';
+import { Globe, Hammer, Key, Settings, Tag, Workflow } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { ReactNode, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
@@ -13,7 +13,6 @@ const VALID_TABS = [
     'versions',
     'env',
     'domain',
-    'deployment',
     'pipeline',
     'setting',
 ] as const;
@@ -25,7 +24,6 @@ interface RepositoryTabsProps {
         versions: ReactNode;
         env: ReactNode;
         domain: ReactNode;
-        deployment: ReactNode;
         pipeline: ReactNode;
         setting: ReactNode;
     };
@@ -78,10 +76,6 @@ export function RepositoryTabs({ children }: RepositoryTabsProps) {
                                 <Globe />
                                 {t('domains')}
                             </TabsTrigger>
-                            <TabsTrigger value="deployment">
-                                <Rocket />
-                                {t('deployment')}
-                            </TabsTrigger>
                         </div>
                     </TabsList>
                 </div>
@@ -111,11 +105,6 @@ export function RepositoryTabs({ children }: RepositoryTabsProps) {
             <TabsContent value="domain" className={'flex flex-1 overflow-hidden'}>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="pb-5">{children.domain}</div>
-                </ScrollAreaWithShadow>
-            </TabsContent>
-            <TabsContent value="deployment" className={'flex flex-1 overflow-hidden'}>
-                <ScrollAreaWithShadow className="h-full overflow-hidden">
-                    <div className="pb-5">{children.deployment}</div>
                 </ScrollAreaWithShadow>
             </TabsContent>
             <TabsContent value="setting" className={'flex flex-1 overflow-hidden'}>

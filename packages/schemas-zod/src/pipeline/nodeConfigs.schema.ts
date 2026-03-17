@@ -57,6 +57,10 @@ export const cleanWorkdirConfigSchema = z.object({});
 
 export const saveVersionConfigSchema = z.object({});
 
+export const setEnvironmentConfigSchema = z.object({
+    environmentId: z.string().min(1, 'Environment is required'),
+});
+
 export const sendNotificationConfigSchema = z.object({
     webhookUrl: z
         .string()
@@ -81,3 +85,4 @@ export type DeployContainerConfig = z.infer<typeof deployContainerConfigSchema>;
 export type WriteEnvFileConfig = z.infer<typeof writeEnvFileConfigSchema>;
 export type SaveVersionConfig = z.infer<typeof saveVersionConfigSchema>;
 export type SendNotificationConfig = z.infer<typeof sendNotificationConfigSchema>;
+export type SetEnvironmentConfig = z.infer<typeof setEnvironmentConfigSchema>;

@@ -6,8 +6,6 @@ import {
     getContainerByProjectName,
     getContainerPortMappings,
 } from '@/services/docker/container.service';
-import { getRepositorieById } from '@/services/repository.service';
-
 const TRAEFIK_SERVICE_DIR = path.join(process.cwd(), '..', '..', 'infra', 'traefik', 'service');
 
 export async function generateTraefikConfigForRepository(
@@ -26,12 +24,8 @@ export async function generateTraefikConfigForRepository(
     const projectName = `nexploy-${repositoryId}`;
 
     const containers = await getContainerByProjectName(projectName);
-
-    const repository = await getRepositorieById(repositoryId, { environment: true });
-    const environment = repository?.environment;
-    const isRemote =
-        environment?.connectionType === 'TCP' || environment?.connectionType === 'TCP_TLS';
-    const remoteHost = environment?.host;
+    const isRemote = false;
+    const remoteHost: string | undefined = undefined;
 
     const config: {
         http: {
@@ -116,10 +110,7 @@ export async function generateTraefikConfigForRepository(
         if (isRemote && remoteHost) {
             let hostPort: number | undefined;
             if (matchedContainer) {
-                const portMappings = await getContainerPortMappings(
-                    matchedContainer.Id,
-                    environment.id,
-                );
+                const portMappings = await getContainerPortMappings(matchedContainer.Id);
                 hostPort = portMappings[domain.containerPort];
             }
 

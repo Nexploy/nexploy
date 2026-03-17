@@ -1,5 +1,3 @@
-import { GitProviderToken } from '../git/git';
-
 export interface BuildLogEntry {
     createdAt: Date;
     level: 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
@@ -8,18 +6,15 @@ export interface BuildLogEntry {
     buildId: string;
 }
 
-export interface BuildConfig extends GitProviderToken {
+export interface BuildConfig {
     userId: string;
     gitAccountId?: string;
     repositoryId: string;
     gitProvider: string;
     gitUrl: string;
-    gitBranch: string;
+    gitBranch?: string;
     gitCommitHash?: string;
-    gitCommitMessage?: string;
     envVariables: Record<string, string>;
     imageName: string;
     imageTag: string;
-    autoDeploy: boolean;
-    environmentId?: string;
 }

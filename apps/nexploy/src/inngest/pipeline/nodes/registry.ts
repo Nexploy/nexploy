@@ -11,6 +11,7 @@ import { setEnvVarsExecutor } from './executors/set-env-vars.executor';
 import { cleanWorkdirExecutor } from './executors/clean-workdir.executor';
 import { sendNotificationExecutor } from './executors/send-notification.executor';
 import { saveVersionExecutor } from './executors/save-version.executor';
+import { setEnvironmentExecutor } from './executors/set-environment.executor';
 
 const executors: INodeExecutor[] = [
     // Source
@@ -29,6 +30,8 @@ const executors: INodeExecutor[] = [
     cleanWorkdirExecutor,
     // Notification
     sendNotificationExecutor,
+    // Deploy
+    setEnvironmentExecutor,
     // Versioning
     saveVersionExecutor,
 ];

@@ -1,4 +1,5 @@
 import {
+    getFromAllOutputs,
     getFromInputs,
     INodeExecutor,
     NodeExecutionContext,
@@ -11,7 +12,7 @@ export class BuildDockerImageExecutor implements INodeExecutor {
     readonly type = 'build-docker-image';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { config, inputOutputs, logger, nodeId, abortSignal } = ctx;
+        const { config, inputOutputs, allOutputs, logger, nodeId, abortSignal } = ctx;
 
         const workDir = getFromInputs<string>(inputOutputs, 'workDir');
         if (!workDir) {
@@ -31,18 +32,22 @@ export class BuildDockerImageExecutor implements INodeExecutor {
             await logger.info(nodeId, message);
         };
 
+        const branch = getFromAllOutputs<string>(allOutputs, 'branch');
+        const commitHash = getFromAllOutputs<string>(allOutputs, 'commitHash');
+        const commitMessage = getFromAllOutputs<string>(allOutputs, 'commitMessage');
+
         const labels: Record<string, string> = {
             [NEXPLOY_LABELS.version]: 'true',
             [NEXPLOY_LABELS.repositoryId]: config.repositoryId,
             [NEXPLOY_LABELS.buildId]: config.imageTag,
             [NEXPLOY_LABELS.buildType]: 'NODE_PIPELINE',
             [NEXPLOY_LABELS.imageTag]: config.imageTag,
-            [NEXPLOY_LABELS.branch]: config.gitBranch,
-            ...(config.gitCommitHash && { [NEXPLOY_LABELS.commitHash]: config.gitCommitHash }),
-            ...(config.gitCommitMessage && {
-                [NEXPLOY_LABELS.commitMessage]: config.gitCommitMessage,
-            }),
+            ...(branch && { [NEXPLOY_LABELS.branch]: branch }),
+            ...(commitHash && { [NEXPLOY_LABELS.commitHash]: commitHash }),
+            ...(commitMessage && { [NEXPLOY_LABELS.commitMessage]: commitMessage }),
         };
+
+        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
         try {
             const result = await dockerService.buildImage(
@@ -51,7 +56,7 @@ export class BuildDockerImageExecutor implements INodeExecutor {
                 dockerfilePath,
                 abortSignal,
                 onLog,
-                config.environmentId,
+                environmentId,
                 labels,
             );
 

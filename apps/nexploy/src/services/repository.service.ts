@@ -1,15 +1,7 @@
 import { RepositoryCreateForm } from '@workspace/schemas-zod/repository/repositoryCreate.schema';
 import { Session } from '@/lib/auth/auth';
 import { prisma } from '../../prisma/prisma';
-import { getGitProviderToken } from '@/services/git/git.service';
-import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { getUserSession } from '@/services/auth/auth.service';
-import { getBaseUrl } from '@/lib/getBaseUrl';
-import { getValidToken } from '@/services/api/gitProvider.service';
-import {
-    removeWebhookForRepository,
-    setupWebhookForRepository,
-} from '@/services/webhook/webhook.service';
 import { decrypt, encrypt } from '@/lib/encryption';
 import { Prisma } from 'generated/client';
 import { RepositoryPayload } from '@/types/repository.type';
@@ -19,40 +11,10 @@ export async function createRepository(
     ctx: { session: Session },
 ) {
     try {
-        let webhookConfig = null;
-        const autoDeploy = restRepositoryCreate.autoDeploy;
-
-        if (restRepositoryCreate.autoDeploy) {
-            const oldToken = await getGitProviderToken(restRepositoryCreate.gitProvider, {
-                gitAccountId: restRepositoryCreate.gitAccountId,
-                requestedUserId: ctx.session.user.id,
-            });
-            const token = await getValidToken(
-                oldToken,
-                restRepositoryCreate.gitProvider,
-                ctx.session.user.id,
-                restRepositoryCreate.gitAccountId,
-            );
-
-            const baseUrl = await getBaseUrl();
-
-            webhookConfig = await tokenGitStorage.run(token, async () => {
-                return await setupWebhookForRepository(
-                    repo.url,
-                    restRepositoryCreate.gitProvider,
-                    ctx.session.user.id,
-                    baseUrl,
-                );
-            });
-        }
-
         const repository = await prisma.repository.create({
             data: {
                 ...restRepositoryCreate,
-                autoDeploy,
                 gitId: repo.id,
-                webhookId: webhookConfig?.webhookId,
-                webhookSecret: webhookConfig?.webhookSecret,
                 repositoryUrl: repo.url,
                 userId: ctx.session.user.id,
             },
@@ -75,6 +37,7 @@ export async function getRepositorieById<
             ...(include && { include }),
         })) as RepositoryPayload<T> | null;
     } catch (error: unknown) {
+        console.log(error);
         throw new Error('Failed to get repository');
     }
 }
@@ -89,7 +52,6 @@ export function getRepositories() {
                     },
                     take: 1,
                 },
-                environment: true,
             },
             orderBy: {
                 name: 'asc',
@@ -105,7 +67,6 @@ export async function getRepositorieWithEnv(repositoryId: string) {
         const repository = await prisma.repository.findUnique({
             where: { id: repositoryId },
             include: {
-                environment: true,
                 envVariables: true,
             },
         });
@@ -177,31 +138,6 @@ export async function getBuilds(repositoryId: string) {
     }
 }
 
-export async function updateBranchRepository(newBranch: string, repositoryId: string) {
-    try {
-        return await prisma.repository.update({
-            where: { id: repositoryId },
-            data: { branch: newBranch },
-        });
-    } catch (error: unknown) {
-        throw new Error('Failed to update branch repository');
-    }
-}
-
-export async function updateDeploymentRepository(
-    data: { environmentId: string; autoDeploy: boolean },
-    repositoryId: string,
-) {
-    try {
-        return await prisma.repository.update({
-            where: { id: repositoryId },
-            data,
-        });
-    } catch (error: unknown) {
-        throw new Error('Failed to update deployment settings');
-    }
-}
-
 async function getRepositoryById(repositoryId: string) {
     try {
         const session = await getUserSession();
@@ -220,168 +156,12 @@ async function getRepositoryById(repositoryId: string) {
     }
 }
 
-async function updateRepositoryAutoDeploy(
-    repositoryId: string,
-    autoDeploy: boolean,
-    webhookConfig?: { webhookId: string; webhookSecret: string },
-) {
-    try {
-        return prisma.repository.update({
-            where: { id: repositoryId },
-            data: {
-                autoDeploy,
-                ...(webhookConfig && {
-                    webhookId: webhookConfig.webhookId,
-                    webhookSecret: webhookConfig.webhookSecret,
-                }),
-            },
-        });
-    } catch (error: unknown) {
-        throw new Error('Failed to update webhook repository');
-    }
-}
-
-export async function deleteRepository(repositoryId: string, userId: string) {
-    const repository = await getRepositoryById(repositoryId);
-
-    const oldToken = await getGitProviderToken(repository.gitProvider, {
-        gitAccountId: repository.gitAccountId ?? undefined,
-        requestedUserId: userId,
-    });
-    const token = await getValidToken(
-        oldToken,
-        repository.gitProvider,
-        userId,
-        repository.gitAccountId ?? undefined,
-    );
-
-    if (repository.webhookId) {
-        await tokenGitStorage.run(token, async () => {
-            return await removeWebhookForRepository(repositoryId);
-        });
-    }
+export async function deleteRepository(repositoryId: string) {
+    await getRepositoryById(repositoryId);
 
     await prisma.repository.delete({
         where: { id: repositoryId },
     });
-}
-
-export async function toggleAutoDeployRepository(
-    repositoryId: string,
-    autoDeploy: boolean,
-    userId: string,
-) {
-    const repository = await getRepositoryById(repositoryId);
-
-    const oldToken = await getGitProviderToken(repository.gitProvider, {
-        gitAccountId: repository.gitAccountId ?? undefined,
-        requestedUserId: userId,
-    });
-    const token = await getValidToken(
-        oldToken,
-        repository.gitProvider,
-        userId,
-        repository.gitAccountId ?? undefined,
-    );
-
-    if (autoDeploy && !repository.webhookId) {
-        const baseUrl = await getBaseUrl();
-
-        const webhookConfig = await tokenGitStorage.run(token, async () => {
-            return await setupWebhookForRepository(
-                repository.repositoryUrl,
-                repository.gitProvider,
-                userId,
-                baseUrl,
-            );
-        });
-
-        await updateRepositoryAutoDeploy(repositoryId, true, webhookConfig);
-    } else if (!autoDeploy && repository.webhookId) {
-        await tokenGitStorage.run(token, async () => {
-            return await removeWebhookForRepository(repositoryId);
-        });
-
-        await updateRepositoryAutoDeploy(repositoryId, false);
-    } else {
-        await updateRepositoryAutoDeploy(repositoryId, autoDeploy);
-    }
-
-    return { success: true, autoDeploy };
-}
-
-export async function deleteWebhookForRepository(repositoryId: string) {
-    try {
-        return await prisma.repository.update({
-            where: { id: repositoryId },
-            data: {
-                webhookId: null,
-                webhookSecret: null,
-            },
-        });
-    } catch (error: unknown) {
-        throw new Error('Failed to delete webhook for repository');
-    }
-}
-
-export async function updateDeploymentSettings(
-    repositoryId: string,
-    settings: {
-        deploymentMode: 'CONTAINER' | 'SWARM';
-        replicas: number;
-        updateParallelism: number;
-        updateDelay: string;
-        updateFailureAction: 'CONTINUE' | 'PAUSE' | 'ROLLBACK';
-        updateOrder: 'STOP_FIRST' | 'START_FIRST';
-        rollbackParallelism: number;
-        rollbackDelay: string;
-        rollbackFailureAction: 'CONTINUE' | 'PAUSE';
-        restartCondition: 'NONE' | 'ON_FAILURE' | 'ANY';
-        restartDelay: string;
-        restartMaxAttempts: number;
-        restartWindow: string;
-        cpuLimit: number | null;
-        cpuReservation: number | null;
-        memoryLimit: string | null;
-        memoryReservation: string | null;
-        placementConstraints: string[];
-        healthCheckEnabled: boolean;
-        healthCheckCommand: string | null;
-        healthCheckInterval: string;
-        healthCheckTimeout: string;
-        healthCheckRetries: number;
-        healthCheckStartPeriod: string;
-    },
-    userId: string,
-) {
-    try {
-        const repository = await prisma.repository.findFirst({
-            where: { id: repositoryId, userId },
-        });
-
-        if (!repository) {
-            throw new Error('Repository not found');
-        }
-
-        return await prisma.repository.update({
-            where: { id: repositoryId },
-            data: settings,
-        });
-    } catch (error: unknown) {
-        throw new Error('Failed to update deployment settings');
-    }
-}
-
-export async function updateEnvironmentRepository(environmentId: string, repositoryId: string) {
-    try {
-        return await prisma.repository.update({
-            where: { id: repositoryId },
-            data: { environmentId },
-            include: { environment: true },
-        });
-    } catch (error: unknown) {
-        throw new Error('Failed to update repository environment');
-    }
 }
 
 export async function updateEnvVariables(

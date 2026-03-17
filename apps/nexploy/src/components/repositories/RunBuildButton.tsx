@@ -12,14 +12,12 @@ import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 
 interface DeployButtonProps extends ComponentProps<typeof Button> {
     repositoryId: string;
-    environmentId: string;
     showText?: boolean;
     mode?: 'all' | 'onlyDeploy';
 }
 
 export function RunBuildButton({
     repositoryId,
-    environmentId,
     showText = true,
     mode = 'all',
     ...props

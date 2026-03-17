@@ -1,18 +1,19 @@
 'use client';
 
 import dayjs from 'dayjs';
-import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
 import { StatusProps } from '@workspace/ui/components/kibo-ui/status';
 import { useInngestSubscription } from '@inngest/realtime/hooks';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
-import { type NodeRunStatus } from '@/types/pipeline.type';
+import { type CommitInfo, type NodeRunStatus } from '@/types/pipeline.type';
 import { Build, BuildStatus } from 'generated/client';
 import { isBuildLive } from '@/utils/buildStatus';
 import { StatusLive } from '@/components/shared/StatusLive';
+import { cn } from '@workspace/ui/lib/utils';
+import { Skeleton } from '@workspace/ui/components/skeleton';
 
 export const STATUS_PIPELINE: Record<BuildStatus, StatusProps['status']> = {
     QUEUED: 'waiting',
@@ -43,11 +44,12 @@ export function BuildsPanelItem({
     const setNodeStatuses = usePipelineEditorStore((s) => s.setNodeStatuses);
     const processedCountRef = useRef(0);
     const prevIsSelectedRef = useRef(isSelected);
+    const [liveCommitInfo, setLiveCommitInfo] = useState<CommitInfo | null>(null);
 
     const refreshToken = useCallback(async () => {
         const result = await onGetTokenBuildIdAction({
             buildId: build.id,
-            topics: ['node-status'],
+            topics: ['node-status', 'commit-info'],
         });
         return result?.data ?? null;
     }, [build.id]);
@@ -77,11 +79,18 @@ export function BuildsPanelItem({
             if (event.topic === 'node-status' && event.data?.nodeId) {
                 updates[event.data.nodeId as string] = event.data.nodeStatus as NodeRunStatus;
             }
+            if (event.topic === 'commit-info' && event.data) {
+                setLiveCommitInfo(event.data as CommitInfo);
+            }
         }
         if (Object.keys(updates).length > 0) {
             setNodeStatuses((prev) => ({ ...prev, ...updates }));
         }
     }, [liveEvents, isSelected]);
+
+    const branch = liveCommitInfo?.branch ?? build.branch;
+    const commitHash = liveCommitInfo?.commitHash ?? build.commitHash;
+    const commitMessage = liveCommitInfo?.commitMessage ?? build.commitMessage;
 
     return (
         <Button
@@ -91,19 +100,32 @@ export function BuildsPanelItem({
             className="h-auto flex-col items-start gap-0.5 px-2.5 py-1.5"
         >
             <div className="flex w-full items-center gap-1">
-                <StatusLive key={build.id} displayType={'dot'} buildId={build.id} initialStatus={build.status} />
+                <StatusLive
+                    key={build.id}
+                    displayType={'dot'}
+                    buildId={build.id}
+                    initialStatus={build.status}
+                />
                 <span className="text-xs font-medium">#{total - index}</span>
-                <span className="text-xs font-medium">{build.branch}</span>
+                <span className="text-xs font-medium">{branch}</span>
                 <Separator orientation={'vertical'} className="!h-3" />
-                {build.commitHash && <span className="font-mono text-xs">{build.commitHash}</span>}
+                {isLive && !commitHash ? (
+                    <Skeleton className="h-3 w-14" />
+                ) : (
+                    commitHash && <span className="font-mono text-xs">{commitHash}</span>
+                )}
                 <span className="ml-auto pl-2 text-xs">
                     {dayjs(build.createdAt).locale(locale).fromNow(true)}
                 </span>
             </div>
-            {build.commitMessage && (
-                <span className={cn('max-w-[200px] truncate text-left text-xs')}>
-                    {build.commitMessage}
-                </span>
+            {isLive && !commitMessage ? (
+                <Skeleton className="h-2.5 w-32" />
+            ) : (
+                commitMessage && (
+                    <span className={cn('max-w-[200px] truncate text-left text-xs')}>
+                        {commitMessage}
+                    </span>
+                )
             )}
         </Button>
     );

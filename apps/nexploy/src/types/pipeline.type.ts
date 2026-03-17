@@ -47,11 +47,18 @@ export interface PipelineLogger {
 
 export type { NodeRunStatus } from '@workspace/typescript-interface/pipeline/node';
 
+export interface CommitInfo {
+    branch: string;
+    commitHash?: string;
+    commitMessage?: string;
+}
+
 export interface PipelineReporter {
     markCompleted(nodeId: string): Promise<void>;
     markRunning(nodeId: string): Promise<void>;
     markSkipped(nodeId: string): Promise<void>;
     markFailed(nodeId: string): Promise<void>;
+    publishCommitInfo(data: CommitInfo): Promise<void>;
 }
 
 export interface InngestStepRunner {

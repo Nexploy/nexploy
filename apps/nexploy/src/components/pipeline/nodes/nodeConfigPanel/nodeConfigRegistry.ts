@@ -10,6 +10,7 @@ import {
     saveVersionConfigSchema,
     sendNotificationConfigSchema,
     setEnvVarsConfigSchema,
+    setEnvironmentConfigSchema,
     validateDockerfileConfigSchema,
     writeEnvFileConfigSchema,
 } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -25,6 +26,7 @@ import { SetEnvVarsConfig } from '../config/SetEnvVarsConfig';
 import { CleanWorkdirConfig } from '../config/CleanWorkdirConfig';
 import { SendNotificationConfig } from '../config/SendNotificationConfig';
 import { SaveVersionConfig } from '../config/SaveVersionConfig';
+import { SetEnvironmentConfig } from '../config/SetEnvironmentConfig';
 
 export const CONFIG_SCHEMAS: Record<NodeId, any> = {
     'clone-repository': cloneRepositoryConfigSchema,
@@ -39,6 +41,7 @@ export const CONFIG_SCHEMAS: Record<NodeId, any> = {
     'clean-workdir': cleanWorkdirConfigSchema,
     'send-notification': sendNotificationConfigSchema,
     'save-version': saveVersionConfigSchema,
+    'set-environment': setEnvironmentConfigSchema,
 };
 
 export const CONFIG_PANELS: Record<NodeId, ComponentType> = {
@@ -54,4 +57,5 @@ export const CONFIG_PANELS: Record<NodeId, ComponentType> = {
     'clean-workdir': CleanWorkdirConfig,
     'send-notification': SendNotificationConfig,
     'save-version': SaveVersionConfig,
+    'set-environment': SetEnvironmentConfig,
 };

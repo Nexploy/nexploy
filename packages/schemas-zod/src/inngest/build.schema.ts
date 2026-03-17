@@ -7,20 +7,6 @@ export const startBuildSchema = z.object({
 
 export type StartBuildSchemaType = z.infer<typeof startBuildSchema>;
 
-export const retryBuildSchema = z.object({
-    buildId: z.cuid(),
-    environmentId: z.cuid(),
-});
-
-export type RetryBuildSchemaType = z.infer<typeof retryBuildSchema>;
-
-export const resumeBuildSchema = z.object({
-    buildId: z.cuid(),
-    environmentId: z.cuid(),
-});
-
-export type ResumeBuildSchemaType = z.infer<typeof resumeBuildSchema>;
-
 export const removeBuildSchema = z.object({
     buildId: z.cuid(),
 });

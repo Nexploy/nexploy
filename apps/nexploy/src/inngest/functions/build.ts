@@ -4,9 +4,8 @@ import { BuildConfig, BuildLogEntry } from '@workspace/typescript-interface/inng
 import { inngest } from '@/inngest/client';
 import { updateNodeStatus, updateStatusBuild } from '@/services/inngest/build.inngest.service';
 import { createLogInngest } from '@/services/inngest/log.inngest.service';
-import { LogLevel, PipelineReporter, PipelineStatus } from '@/types/pipeline.type';
+import { CommitInfo, LogLevel, PipelineReporter, PipelineStatus } from '@/types/pipeline.type';
 import { createPipelineLogger, pipelineOrchestrator } from '@/inngest/pipeline/orchestrator';
-import { runWithEnvironmentContextAsync } from '@/lib/environmentContext';
 import { prisma } from '../../../prisma/prisma';
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 
@@ -14,7 +13,8 @@ const createBuildChannel = (buildId: string) => {
     const channelDef = channel(`build:${buildId}`)
         .addTopic(topic('log').type<{ log: BuildLogEntry }>())
         .addTopic(topic('build-status').type<{ buildStatus: string }>())
-        .addTopic(topic('node-status').type<{ nodeId: string; nodeStatus: string }>());
+        .addTopic(topic('node-status').type<{ nodeId: string; nodeStatus: string }>())
+        .addTopic(topic('commit-info').type<CommitInfo>());
     return channelDef();
 };
 
@@ -28,7 +28,7 @@ export const buildFunction = inngest.createFunction(
     async ({ event, step, publish }) => {
         const { buildId, config } = event.data as { buildId: string; config: BuildConfig };
 
-        return await runWithEnvironmentContextAsync(config.environmentId, async () => {
+        {
             const buildChannel = createBuildChannel(buildId);
 
             const publishLog = async (stepName: string, message: string, level: LogLevel) => {
@@ -81,6 +81,9 @@ export const buildFunction = inngest.createFunction(
                         buildChannel['node-status']({ nodeId, nodeStatus: 'failed' }),
                     );
                 },
+                async publishCommitInfo(data) {
+                    await publishSafe(buildChannel['commit-info'](data));
+                },
             };
 
             const logger = createPipelineLogger(publishLog);
@@ -109,6 +112,6 @@ export const buildFunction = inngest.createFunction(
                 reporter,
                 setStatus,
             );
-        });
+        }
     },
 );

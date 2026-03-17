@@ -92,9 +92,6 @@
         "latest": "Latest Build",
         "viewLogs": "View Logs",
         "viewPipeline": "Pipeline",
-        "retry": "Retry",
-        "retrying": "Retrying...",
-        "retrySuccess": "Build restarted successfully",
         "cancel": "Cancel",
         "queued": "Queued",
         "building": "Building",
@@ -118,27 +115,16 @@
         "removeTitle": "Remove build",
         "removeDescription": "Are you sure you want to remove this build? This action is irreversible.",
         "removeSuccess": "Build removed successfully",
-        "resume": "Resume",
-        "resuming": "Resuming...",
-        "resumeSuccess": "Build resumed successfully",
-        "resumeFromStep": "Resume from step",
-        "completedStep": "(completed)",
-        "nextStep": "(next)",
         "runBuild": "Run build",
         "startSuccess": "Build started successfully",
         "buildOptions": "Build options",
         "buildOptionsDescription": "Configure build parameters",
         "startBuild": "Start build",
         "failedToStart": "Failed to start build",
-        "failedToRetry": "Failed to retry build",
         "failedToDeploy": "Failed to deploy version",
-        "failedToResume": "Failed to resume build",
         "buildNotFound": "Build or Repository not found",
         "buildNotCompleted": "Build not found or not completed",
-        "buildNotFailed": "Can only resume failed builds",
         "buildNotFromRepository": "Build does not belong to this repository",
-        "buildResumedFromStep": "Build resumed from step: {step}",
-        "buildResumed": "Build resumed successfully",
         "steps": {
             "cloneRepository": "Clone Repository",
             "prepareDockerfile": "Prepare Dockerfile",
@@ -442,6 +428,10 @@
             "save-version": {
                 "name": "Save Version",
                 "description": "Save the current build as a new version"
+            },
+            "set-environment": {
+                "name": "Set Environment",
+                "description": "Select the deployment environment for downstream nodes"
             }
         },
         "config": {
@@ -479,7 +469,10 @@
             "cleanWorkdirInfo": "Removes the cloned repository directory from disk after the pipeline completes.",
             "saveVersionInfo": "Saves the current build as a new numbered version using the built image tag and commit info.",
             "validateDockerfileInfo": "Validates that the Dockerfile exists and is readable in the work directory.",
-            "deployContainerNoConfig": "The container name, image and port mapping are inherited from the repository settings."
+            "deployContainerNoConfig": "The container name, image and port mapping are inherited from the repository settings.",
+            "environment": "Environment",
+            "selectEnvironment": "Select an environment",
+            "setEnvironmentInfo": "Sets the deployment environment for all downstream deploy nodes in this pipeline."
         },
         "validation": {
             "noSourceNode": "Pipeline must start with a Clone Repository node",

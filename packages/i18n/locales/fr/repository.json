@@ -92,9 +92,6 @@
         "latest": "Dernier build",
         "viewLogs": "Voir les logs",
         "viewPipeline": "Pipeline",
-        "retry": "Réessayer",
-        "retrying": "Relance...",
-        "retrySuccess": "Build relancé avec succès",
         "cancel": "Annuler",
         "queued": "En file d'attente",
         "building": "En construction",
@@ -118,27 +115,16 @@
         "removeTitle": "Supprimer le build",
         "removeDescription": "Êtes-vous sûr de vouloir supprimer ce build ? Cette action est irréversible.",
         "removeSuccess": "Build supprimé avec succès",
-        "resume": "Reprendre",
-        "resuming": "Reprise...",
-        "resumeSuccess": "Build repris avec succès",
-        "resumeFromStep": "Reprendre à partir de l'étape",
-        "completedStep": "(terminé)",
-        "nextStep": "(suivant)",
         "runBuild": "Lancer le build",
         "startSuccess": "Build démarré avec succès",
         "buildOptions": "Options de build",
         "buildOptionsDescription": "Configurez les paramètres de build",
         "startBuild": "Lancer le build",
         "failedToStart": "Échec du lancement du build",
-        "failedToRetry": "Échec de la relance du build",
         "failedToDeploy": "Échec du déploiement de la version",
-        "failedToResume": "Échec de la reprise du build",
         "buildNotFound": "Build ou dépôt introuvable",
         "buildNotCompleted": "Build introuvable ou non terminé",
-        "buildNotFailed": "Seuls les builds échoués peuvent être repris",
         "buildNotFromRepository": "Le build n'appartient pas à ce dépôt",
-        "buildResumedFromStep": "Build repris à l'étape : {step}",
-        "buildResumed": "Build repris avec succès",
         "steps": {
             "cloneRepository": "Cloner le dépôt",
             "prepareDockerfile": "Préparer le Dockerfile",
@@ -441,6 +427,10 @@
             "save-version": {
                 "name": "Sauvegarder la version",
                 "description": "Enregistrer le build actuel comme nouvelle version"
+            },
+            "set-environment": {
+                "name": "Définir l'environnement",
+                "description": "Sélectionner l'environnement de déploiement pour les nœuds en aval"
             }
         },
         "config": {
@@ -478,7 +468,10 @@
             "cleanWorkdirInfo": "Supprime le répertoire du dépôt cloné du disque après l'exécution du pipeline.",
             "saveVersionInfo": "Enregistre le build actuel comme une nouvelle version numérotée en utilisant le tag d'image et les informations du commit.",
             "validateDockerfileInfo": "Vérifie que le Dockerfile existe et est lisible dans le répertoire de travail.",
-            "deployContainerNoConfig": "Le nom du conteneur, l'image et le mapping de port sont hérités des paramètres du dépôt."
+            "deployContainerNoConfig": "Le nom du conteneur, l'image et le mapping de port sont hérités des paramètres du dépôt.",
+            "environment": "Environnement",
+            "selectEnvironment": "Sélectionner un environnement",
+            "setEnvironmentInfo": "Définit l'environnement de déploiement pour tous les nœuds de déploiement en aval dans ce pipeline."
         },
         "validation": {
             "noSourceNode": "Le pipeline doit commencer par un nœud de clonage du dépôt",

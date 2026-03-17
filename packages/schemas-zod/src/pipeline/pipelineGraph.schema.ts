@@ -13,6 +13,7 @@ export const nodeTypeSchema = z.enum([
     'clean-workdir',
     'send-notification',
     'save-version',
+    'set-environment',
 ]);
 
 export const pipelineNodeDataSchema = z.object({

@@ -1,4 +1,4 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { getFromAllOutputs, INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { prisma } from '../../../../../prisma/prisma';
 
 export class SaveVersionExecutor implements INodeExecutor {
@@ -21,16 +21,22 @@ export class SaveVersionExecutor implements INodeExecutor {
             }
         }
 
+        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId') ?? null;
+
         const lastVersion = await prisma.version.findFirst({
             where: {
                 repositoryId: config.repositoryId,
-                environmentId: config.environmentId ?? null,
+                environmentId,
             },
             orderBy: { versionNumber: 'desc' },
             select: { versionNumber: true },
         });
 
         const versionNumber = (lastVersion?.versionNumber ?? 0) + 1;
+
+        const branch = getFromAllOutputs<string>(allOutputs, 'branch') ?? null;
+        const commitHash = getFromAllOutputs<string>(allOutputs, 'commitHash') ?? null;
+        const commitMessage = getFromAllOutputs<string>(allOutputs, 'commitMessage') ?? null;
 
         await prisma.version.upsert({
             where: {
@@ -45,10 +51,10 @@ export class SaveVersionExecutor implements INodeExecutor {
                 imageTag: config.imageTag,
                 versionNumber,
                 buildType: 'NODE_PIPELINE',
-                branch: config.gitBranch ?? null,
-                commitHash: config.gitCommitHash ?? null,
-                commitMessage: config.gitCommitMessage ?? null,
-                environmentId: config.environmentId ?? null,
+                branch,
+                commitHash,
+                commitMessage,
+                environmentId,
                 composeConfig,
             },
         });

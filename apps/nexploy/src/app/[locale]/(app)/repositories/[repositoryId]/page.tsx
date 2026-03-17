@@ -5,12 +5,10 @@ import { RepositoryEnvTab } from '@/components/repositories/tabs/envs/Repository
 import { RepositoryDomainsTab } from '@/components/repositories/tabs/domains/RepositoryDomainsTab';
 import { RepositorySettingsTab } from '@/components/repositories/tabs/settings/RepositorySettingsTab';
 import { RepositoryVersionsTab } from '@/components/repositories/tabs/versions/RepositoryVersionsTab';
-import { ExternalLink, GitBranch, Github, Gitlab, Link2, Server } from 'lucide-react';
+import { ExternalLink, Github, Gitlab, Link2 } from 'lucide-react';
 import { RepositoryBuildsTab } from '@/components/repositories/tabs/builds/RepositoryBuildsTab';
-import { RepositoryDeploymentTab } from '@/components/repositories/tabs/deployment/RepositoryDeploymentTab';
 import { RepositoryPipelineTab } from '@/components/repositories/tabs/pipeline/RepositoryPipelineTab';
 import { getRepositorieById } from '@/services/repository.service';
-import { Separator } from '@workspace/ui/components/separator';
 import { capitalizeFirstLetter } from '@/utils/capitalize';
 import Link from 'next/link';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
@@ -30,7 +28,7 @@ const getGitIcon = (provider: string) => {
 
 export default async function RepositoryIdPage({ params }: RepositoryIdPageProps) {
     const { repositoryId } = await params;
-    const repository = await getRepositorieById(repositoryId, { environment: true });
+    const repository = await getRepositorieById(repositoryId);
     if (!repository) notFound();
 
     const GitIcon = getGitIcon(repository.gitProvider);
@@ -65,25 +63,12 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                                     }
                                 >
                                     <span>{capitalizeFirstLetter(repository.gitProvider)}</span>
-                                    <Separator orientation={'vertical'} className={'!h-3 w-1'} />
-                                    <p className="flex items-center gap-1">
-                                        <GitBranch className="size-3" />
-                                        <span>{repository.branch}</span>
-                                    </p>
-                                    <Separator orientation={'vertical'} className={'!h-3 w-1'} />
-                                    <div className={'flex items-center gap-1'}>
-                                        <Server className="size-3" />
-                                        <span className={'truncate'}>
-                                            {repository.environment?.name}
-                                        </span>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div className="mt-5 flex shrink-0 items-center gap-2">
                             <RunBuildButton
                                 repositoryId={repository.id}
-                                environmentId={repository.environmentId}
                             />
                         </div>
                     </div>
@@ -95,7 +80,6 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                             versions: <RepositoryVersionsTab repositoryId={repository.id} />,
                             env: <RepositoryEnvTab repositoryId={repository.id} />,
                             domain: <RepositoryDomainsTab repositoryId={repository.id} />,
-                            deployment: <RepositoryDeploymentTab repositoryId={repository.id} />,
                             setting: <RepositorySettingsTab repositoryId={repository.id} />,
                         }}
                     </RepositoryTabs>

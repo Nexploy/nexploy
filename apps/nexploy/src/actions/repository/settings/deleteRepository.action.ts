@@ -10,9 +10,9 @@ import { isRedirectError } from 'next/dist/client/components/redirect-error';
 export const deleteRepositoryAction = authActionServer
     .use(requirePermission('repository', 'delete'))
     .inputSchema(deleteRepositorySchema)
-    .action(async ({ parsedInput, ctx }) => {
+    .action(async ({ parsedInput }) => {
         try {
-            await deleteRepository(parsedInput.repositoryId, ctx.session.user.id);
+            await deleteRepository(parsedInput.repositoryId);
             redirect('/repositories');
         } catch (error: unknown) {
             if (isRedirectError(error)) throw error;

@@ -24,7 +24,6 @@ model Environment {
   userId String?
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  repositories Repository[]
   builds       Build[]      @relation("BuildEnvironment")
   versions     Version[]    @relation("VersionEnvironment")
 

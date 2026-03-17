@@ -11,6 +11,7 @@ import { setEnvVarsNodeDef } from './nodes/definitions/set-env-vars.node';
 import { cleanWorkdirNodeDef } from './nodes/definitions/clean-workdir.node';
 import { sendNotificationNodeDef } from './nodes/definitions/send-notification.node';
 import { saveVersionNodeDef } from './nodes/definitions/save-version.node';
+import { setEnvironmentNodeDef } from './nodes/definitions/set-environment.node';
 
 export const ALL_NODE_DEFINITIONS: NodeDefinition[] = [
     // Source
@@ -21,6 +22,7 @@ export const ALL_NODE_DEFINITIONS: NodeDefinition[] = [
     buildDockerImageNodeDef,
     pushToRegistryNodeDef,
     // Deploy
+    setEnvironmentNodeDef,
     deployContainerNodeDef,
     deployComposeNodeDef,
     // Utility

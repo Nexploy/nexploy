@@ -1,9 +1,7 @@
 import { ReactNode } from 'react';
 import { LucideIcon, Square } from 'lucide-react';
 import { onCancelBuild } from '@/actions/repository/builds/cancelBuild.action';
-import { ResumeBuildButton } from '@/components/repositories/ResumeBuildButton';
 import { RemoveBuildButton } from '@/components/repositories/RemoveBuildButton';
-import { RetryBuildButton } from '@/components/repositories/RetryBuildButton';
 import { useTranslations } from 'next-intl';
 import { BuildStatus } from 'generated/client';
 
@@ -32,8 +30,6 @@ interface UseBuildActionsProps {
     buildId: string;
     status: BuildStatus;
     mode?: 'button' | 'dropdown';
-    onResumeSuccess?: () => void;
-    onRetrySuccess?: () => void;
     onRemoveSuccess?: () => void;
 }
 
@@ -41,14 +37,10 @@ export function useBuildActions({
     buildId,
     status,
     mode = 'button',
-    onResumeSuccess,
-    onRetrySuccess,
     onRemoveSuccess,
 }: UseBuildActionsProps): BuildAction[] {
     const t = useTranslations('repository.builds');
     const isBuilding = status === 'QUEUED' || status === 'BUILDING';
-    const canResume = status === 'FAILED';
-    const canRetry = status === 'CANCELLED';
     const canRemove = status === 'COMPLETED' || status === 'FAILED' || status === 'CANCELLED';
 
     const actions: BuildAction[] = [];
@@ -64,29 +56,10 @@ export function useBuildActions({
         });
     }
 
-    if (canResume) {
-        actions.push({
-            type: 'component',
-            id: 'resume',
-            component: <ResumeBuildButton buildId={buildId} onSuccess={onResumeSuccess} />,
-        });
-    }
-
-    if (canRetry) {
-        actions.push({
-            type: 'component',
-            id: 'retry',
-            component: (
-                <RetryBuildButton mode={mode} buildId={buildId} onSuccess={onRetrySuccess} />
-            ),
-        });
-    }
-
     if (canRemove) {
         actions.push({
             type: 'component',
             id: 'remove',
-            separator: canResume || canRetry,
             component: (
                 <RemoveBuildButton mode={mode} buildId={buildId} onSuccess={onRemoveSuccess} />
             ),

@@ -3,55 +3,17 @@ model Repository {
   name String
 
   repositoryUrl String @unique
-  branch        String @default("main")
 
-  gitProvider   String
-  gitId         String @unique
-  gitAccountId  String?
-  gitAccount    GitAccount? @relation(fields: [gitAccountId], references: [id], onDelete: SetNull)
-
-  autoDeploy    Boolean @default(true)
-  webhookId     String?
-  webhookSecret String?
-
-  deploymentMode DeploymentMode @default(CONTAINER)
-
-  replicas              Int                   @default(1)
-  updateParallelism     Int                   @default(1)
-  updateDelay           String                @default("10s")
-  updateFailureAction   UpdateFailureAction   @default(PAUSE)
-  updateOrder           UpdateOrder           @default(STOP_FIRST)
-  rollbackParallelism   Int                   @default(1)
-  rollbackDelay         String                @default("10s")
-  rollbackFailureAction RollbackFailureAction @default(PAUSE)
-
-  restartCondition   RestartCondition @default(ANY)
-  restartDelay       String           @default("5s")
-  restartMaxAttempts Int              @default(3)
-  restartWindow      String           @default("120s")
-
-  cpuLimit          Float?
-  cpuReservation    Float?
-  memoryLimit       String?
-  memoryReservation String?
-
-  placementConstraints String[] @default([])
-
-  healthCheckEnabled     Boolean @default(false)
-  healthCheckCommand     String?
-  healthCheckInterval    String  @default("30s")
-  healthCheckTimeout     String  @default("10s")
-  healthCheckRetries     Int     @default(3)
-  healthCheckStartPeriod String  @default("0s")
+  gitProvider  String
+  gitId        String  @unique
+  gitAccountId String?
+  gitAccount   GitAccount? @relation(fields: [gitAccountId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  environmentId String
-  environment   Environment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
 
   build          Build[]
   envVariables   EnvVariable[]
@@ -92,11 +54,11 @@ model Build {
   id     String      @id @default(cuid())
   status BuildStatus @default(QUEUED)
 
-  branch            String
-  commitHash        String?
-  commitMessage     String?
-  nodeStatuses      Json     @default("{}")
-  pipelineSnapshot  Json?
+  branch           String?
+  commitHash       String?
+  commitMessage    String?
+  nodeStatuses     Json    @default("{}")
+  pipelineSnapshot Json?
 
   log Log[]
 
@@ -139,31 +101,4 @@ enum BuildStatus {
   COMPLETED
   FAILED
   CANCELLED
-}
-
-enum DeploymentMode {
-  CONTAINER
-  SWARM
-}
-
-enum UpdateFailureAction {
-  CONTINUE
-  PAUSE
-  ROLLBACK
-}
-
-enum UpdateOrder {
-  STOP_FIRST
-  START_FIRST
-}
-
-enum RollbackFailureAction {
-  CONTINUE
-  PAUSE
-}
-
-enum RestartCondition {
-  NONE
-  ON_FAILURE
-  ANY
 }

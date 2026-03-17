@@ -10,6 +10,7 @@ import {
     Layers,
     type LucideIcon,
     Rocket,
+    Server,
     Tag,
     Terminal,
     Trash2,
@@ -79,6 +80,7 @@ const NODE_CATEGORY: Record<string, string> = {
     'clean-workdir': 'utility',
     'send-notification': 'notification',
     'save-version': 'utility',
+    'set-environment': 'deploy',
 };
 
 export const NODE_BG_MUTED: Record<string, string> = Object.fromEntries(
@@ -102,6 +104,7 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'clean-workdir': Trash2,
     'send-notification': Bell,
     'save-version': Tag,
+    'set-environment': Server,
 };
 
 export const ICON_NAME_MAP: Record<string, LucideIcon> = {
@@ -118,6 +121,7 @@ export const ICON_NAME_MAP: Record<string, LucideIcon> = {
     Terminal,
     Bell,
     Tag,
+    Server,
 };
 
 export const TEMPLATE_ICONS: Record<string, LucideIcon> = {

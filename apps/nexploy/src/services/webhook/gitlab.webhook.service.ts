@@ -1,5 +1,4 @@
 import { WebhookPayload } from '@workspace/typescript-interface/webhook';
-import { kyGitlab } from '@/lib/api/kyGitlab';
 
 export function extractGitLabProjectId(repositoryUrl: string): string {
     try {
@@ -24,35 +23,4 @@ export function parseGitLabWebhook(payload: any): WebhookPayload | null {
         commitHash: lastCommit?.id?.substring(0, 8),
         commitMessage: lastCommit?.message,
     };
-}
-
-export function verifyGitLabWebhookToken(token: string | null, secret: string): boolean {
-    if (!token || !secret) return false;
-    return token === secret;
-}
-
-export async function createGitLabWebhook(
-    repositoryUrl: string,
-    userId: string,
-    webhookUrl: string,
-): Promise<{ webhookId: string; webhookSecret: string }> {
-    const projectId = extractGitLabProjectId(repositoryUrl);
-    const baseUrl = new URL(repositoryUrl).origin;
-
-    try {
-        const data = await kyGitlab(baseUrl)
-            .post(`v4/projects/${projectId}/hooks`, {
-                json: {
-                    url: webhookUrl,
-                    push_events: true,
-                    token: userId,
-                    enable_ssl_verification: true,
-                },
-            })
-            .json<{ id: number }>();
-
-        return { webhookId: String(data.id), webhookSecret: userId };
-    } catch (error: any) {
-        throw new Error(`Failed to create GitLab webhook: ${error.response?.status} - ${error}`);
-    }
 }

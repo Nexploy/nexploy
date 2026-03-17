@@ -4,15 +4,16 @@ import {
     NodeExecutionResult,
 } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
+import { updateBuildGitInfo } from '@/services/inngest/build.inngest.service';
 
 export class CloneRepositoryExecutor implements INodeExecutor {
     readonly type = 'clone-repository';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { config, nodeConfig, logger, nodeId } = ctx;
+        const { buildId, config, nodeConfig, logger, nodeId, reporter } = ctx;
 
         const effectiveBranch =
-            (nodeConfig.branch as string | undefined) || config.gitBranch;
+            (nodeConfig.branch as string | undefined) || config.gitBranch || 'main';
         const effectiveCommitHash =
             (nodeConfig.commitHash as string | undefined) || config.gitCommitHash;
 
@@ -22,12 +23,12 @@ export class CloneRepositoryExecutor implements INodeExecutor {
             gitCommitHash: effectiveCommitHash || undefined,
         };
 
-        const commitInfo = effectiveCommitHash
+        const commitSuffix = effectiveCommitHash
             ? ` (commit: ${effectiveCommitHash.substring(0, 7)})`
             : '';
         await logger.info(
             nodeId,
-            `Cloning repository ${config.gitUrl} (branch: ${effectiveBranch}${commitInfo})`,
+            `Cloning repository ${config.gitUrl} (branch: ${effectiveBranch}${commitSuffix})`,
         );
 
         const onProgress = async (progress: number, message: string) => {
@@ -44,11 +45,25 @@ export class CloneRepositoryExecutor implements INodeExecutor {
                 );
             }
 
-            await logger.info(nodeId, 'Repository cloned successfully');
+            const commitInfo = await gitService.getCommitInfo(workDir);
+            const resolvedHash = commitInfo?.hash ?? effectiveCommitHash;
+            const resolvedMessage = commitInfo?.message;
+
+            await updateBuildGitInfo(buildId, effectiveBranch, resolvedHash, resolvedMessage);
+            await reporter.publishCommitInfo({
+                branch: effectiveBranch,
+                commitHash: resolvedHash,
+                commitMessage: resolvedMessage,
+            });
+
+            await logger.info(
+                nodeId,
+                `Repository cloned successfully (branch: ${effectiveBranch}, commit: ${resolvedHash ?? 'unknown'})`,
+            );
 
             return {
                 success: true,
-                output: { workDir },
+                output: { workDir, branch: effectiveBranch, commitHash: resolvedHash, commitMessage: resolvedMessage },
             };
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Unknown error';

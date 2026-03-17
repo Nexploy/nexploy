@@ -10,22 +10,16 @@ import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { repositoryCreateFormSchema } from '@workspace/schemas-zod/repository/repositoryCreate.schema';
 import { onRepositoryCreateAction } from '@/actions/repository/repositoryCreate.action';
 import { GitSourceStep } from '@/components/repositories/steps/GitSourceStep';
-import { DeploymentStep } from '@/components/repositories/steps/DeploymentStep';
-import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 import { useTranslations } from 'next-intl';
-import { useEffect } from 'react';
 
 export default function AddRepositoryPage() {
     const t = useTranslations('repository.create');
     const router = useRouter();
-    const selectedEnvironmentId = useEnvironmentStore((state) => state.selectedEnvironmentId);
 
     const defaultValues = {
         name: '',
         gitToken: '',
         gitProvider: 'github' as const,
-        autoDeploy: true,
-        environmentId: selectedEnvironmentId ?? undefined,
     };
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
@@ -42,13 +36,6 @@ export default function AddRepositoryPage() {
     );
 
     const isSubmitting = action.status === 'executing';
-
-    useEffect(() => {
-        const currentValue = form.getValues('environmentId');
-        if (selectedEnvironmentId && !currentValue) {
-            form.setValue('environmentId', selectedEnvironmentId);
-        }
-    }, [selectedEnvironmentId]);
 
     return (
         <div className="flex h-full flex-1 flex-col gap-5 pt-5">
@@ -91,7 +78,6 @@ export default function AddRepositoryPage() {
                 <Form {...form}>
                     <div className="space-y-5 px-5 pb-5">
                         <GitSourceStep />
-                        <DeploymentStep />
                     </div>
                 </Form>
             </ScrollAreaWithShadow>

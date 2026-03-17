@@ -120,13 +120,11 @@ class GitService {
                 cloneArgs.push('--depth=1');
             }
 
-            cloneArgs.push(
-                '--single-branch',
-                `--branch=${buildConfig.gitBranch}`,
-                '--progress',
-                buildConfig.gitUrl,
-                workDir,
-            );
+            cloneArgs.push('--single-branch');
+            if (buildConfig.gitBranch) {
+                cloneArgs.push(`--branch=${buildConfig.gitBranch}`);
+            }
+            cloneArgs.push('--progress', buildConfig.gitUrl, workDir);
 
             try {
                 await this.exec('git', cloneArgs, { env: gitEnv }, onProgress);
@@ -199,6 +197,16 @@ class GitService {
         }
 
         return workDir;
+    }
+
+    async getCommitInfo(workDir: string): Promise<{ hash: string; message: string } | null> {
+        try {
+            const hash = await this.exec('git', ['log', '-1', '--format=%H'], { cwd: workDir });
+            const message = await this.exec('git', ['log', '-1', '--format=%s'], { cwd: workDir });
+            return { hash: hash.substring(0, 8), message };
+        } catch {
+            return null;
+        }
     }
 
     async writeEnvFile(workDir: string, envVariables: Record<string, string>): Promise<void> {

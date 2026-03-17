@@ -33,13 +33,17 @@ export class PushToRegistryExecutor implements INodeExecutor {
         }
 
         const customTag =
-            (nodeConfig.tag as string | undefined) ?? config.gitCommitHash ?? 'latest';
+            (nodeConfig.tag as string | undefined) ??
+            getFromAllOutputs<string>(allOutputs, 'commitHash') ??
+            'latest';
         const baseImageName = imageName.split(':')[0];
         const targetName = `${registry.url}/${baseImageName}:${customTag}`;
 
         await logger.info(nodeId, `Pushing image to registry: ${targetName}`);
 
         const onLog = async (message: string) => logger.info(nodeId, message);
+
+        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
         try {
             const result = await dockerService.pushToRegistry(
@@ -53,7 +57,7 @@ export class PushToRegistryExecutor implements INodeExecutor {
                 config.imageTag,
                 abortSignal,
                 onLog,
-                config.environmentId,
+                environmentId,
             );
 
             await logger.info(nodeId, `Image pushed successfully: ${result.targetName}`);
