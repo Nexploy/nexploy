@@ -116,6 +116,8 @@ function matchAndTransformWsUrl(pathname: string): MatchResult {
 }
 
 app.prepare().then(() => {
+    const openSockets = new Set<Socket>();
+
     const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
         try {
             await handle(req, res);
@@ -124,6 +126,11 @@ app.prepare().then(() => {
             res.statusCode = 500;
             res.end('Internal server error');
         }
+    });
+
+    server.on('connection', (socket: Socket) => {
+        openSockets.add(socket);
+        socket.once('close', () => openSockets.delete(socket));
     });
 
     server.on('upgrade', (req: IncomingMessage, socket: Socket, head: Buffer) => {
@@ -162,12 +169,19 @@ app.prepare().then(() => {
         console.log(`⚡ Mode: ${dev ? 'Development (Turbopack)' : 'Production'}`);
     });
 
+    let isShuttingDown = false;
     const shutdown = (signal: string) => {
+        if (isShuttingDown) return;
+        isShuttingDown = true;
         console.log(`\n${signal} received, closing server gracefully...`);
         server.close(() => {
-            console.log('✅ Server closed');
             process.exit(0);
         });
+        for (const socket of openSockets) socket.destroy();
+        setTimeout(() => {
+            console.error('⏱ Forced shutdown after timeout');
+            process.exit(1);
+        }, 5000).unref();
     };
 
     process.on('SIGTERM', () => shutdown('SIGTERM'));

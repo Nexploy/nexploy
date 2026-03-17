@@ -7,21 +7,24 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
 import { Separator } from '@workspace/ui/components/separator';
-import { onDeployDockerfileVersion } from '@/actions/repository/versions/deployVersion.action';
+import {
+    onDeployComposeVersion,
+    onDeployDockerfileVersion,
+} from '@/actions/repository/versions/deployVersion.action';
 import { Badge } from '@workspace/ui/components/badge';
 import { Version } from '@workspace/typescript-interface/docker/docker.version';
 import { useTranslations } from 'next-intl';
 
 interface RepositoryVersionsProps {
     repositoryId: string;
-    deployedImageByEnvironment: Record<string, string>;
+    deployedTagByEnvironment: Record<string, string>;
     versions: Version[];
 }
 
 export function RepositoryVersions({
     repositoryId,
     versions,
-    deployedImageByEnvironment,
+    deployedTagByEnvironment,
 }: RepositoryVersionsProps) {
     const t = useTranslations('repository.versions');
     const tBuilds = useTranslations('repository.builds');
@@ -29,10 +32,11 @@ export function RepositoryVersions({
 
     const [deployingImageTags, setDeployingImageTags] = useState<Set<string>>(new Set());
 
-    const handleDeploy = async (imageTag: string, environmentId?: string) => {
+    const handleDeploy = async (imageTag: string, environmentId?: string, isCompose?: boolean) => {
         setDeployingImageTags((prev) => new Set([...prev, imageTag]));
         try {
-            const result = await onDeployDockerfileVersion({
+            const deployAction = isCompose ? onDeployComposeVersion : onDeployDockerfileVersion;
+            const result = await deployAction({
                 imageTag,
                 repositoryId,
                 environmentId,
@@ -54,10 +58,7 @@ export function RepositoryVersions({
 
     const isCurrentVersion = (version: Version) => {
         const envKey = version.environmentId ?? '';
-        const containerImageUsed = deployedImageByEnvironment[envKey];
-        if (!containerImageUsed) return false;
-        const currentTag = containerImageUsed.split(':').at(-1) ?? '';
-        return currentTag === version.imageTag;
+        return deployedTagByEnvironment[envKey] === version.imageTag;
     };
 
     const groups = versions.reduce<Map<string | undefined, { name: string; versions: Version[] }>>(
@@ -123,7 +124,13 @@ export function RepositoryVersions({
                     <Button
                         size="sm"
                         variant={isCurrent ? 'secondary' : 'outline'}
-                        onClick={() => handleDeploy(version.imageTag, version.environmentId)}
+                        onClick={() =>
+                            handleDeploy(
+                                version.imageTag,
+                                version.environmentId,
+                                version.hasComposeConfig,
+                            )
+                        }
                         disabled={deployingImageTags.has(version.imageTag) || isCurrent}
                     >
                         {deployingImageTags.has(version.imageTag) ? (

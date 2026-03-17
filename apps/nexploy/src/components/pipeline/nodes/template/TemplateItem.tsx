@@ -9,7 +9,13 @@ import {
     TEMPLATE_ICONS,
 } from '@/components/pipeline/pipelineTheme';
 
-export function TemplateItem({ template }: { template: PipelineTemplate }) {
+export function TemplateItem({
+    template,
+    onClick,
+}: {
+    template: PipelineTemplate;
+    onClick?: () => void;
+}) {
     const t = useTranslations('repository.pipeline');
     const Icon = TEMPLATE_ICONS[template.icon] ?? FileCode2;
 
@@ -22,7 +28,8 @@ export function TemplateItem({ template }: { template: PipelineTemplate }) {
         <div
             draggable
             onDragStart={onDragStart}
-            className="border-border bg-card hover:border-accent hover:bg-muted flex cursor-grab flex-col gap-3 rounded-lg border p-3 transition-all active:cursor-grabbing active:opacity-60"
+            onClick={onClick}
+            className="border-border bg-card hover:border-accent hover:bg-muted flex cursor-grab flex-col gap-3 overflow-hidden rounded-lg border p-3 transition-all active:cursor-grabbing active:opacity-60"
         >
             <div className="flex items-center gap-2.5">
                 <div className="bg-primary/10 text-primary flex size-8 shrink-0 items-center justify-center rounded-md">

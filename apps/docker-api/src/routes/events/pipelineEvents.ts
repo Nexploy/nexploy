@@ -105,23 +105,7 @@ app.post('/stream/compose', async (c) => {
 
             const composeYamlRaw = fs.readFileSync(composeFilePath, 'utf8');
 
-            const nexployVersionRe = /\$\{?NEXPLOY_VERSION\}?/;
-            const rawServices = (yaml.parse(composeYamlRaw) as ComposeContent).services || {};
-            const versionedServiceNames = new Set(
-                buildId
-                    ? Object.entries(rawServices)
-                          .filter(([, s]) => s.image && nexployVersionRe.test(String(s.image)))
-                          .map(([name]) => name)
-                    : [],
-            );
-
             const effectiveEnvVars: Record<string, string> = { ...(envVars || {}) };
-            if (versionedServiceNames.size > 0 && buildId) {
-                effectiveEnvVars['NEXPLOY_VERSION'] = buildId;
-                sendLog(
-                    `Version tracking enabled for: ${[...versionedServiceNames].join(', ')} (tag: ${buildId})`,
-                );
-            }
 
             if (Object.keys(effectiveEnvVars).length > 0) {
                 sendLog(
@@ -205,20 +189,14 @@ app.post('/stream/compose', async (c) => {
                 .filter(([, s]) => !!s.build)
                 .map(([name]) => name);
 
-            if (labels && versionedServiceNames.size > 0) {
-                for (const serviceName of servicesToBuild) {
-                    if (!versionedServiceNames.has(serviceName)) continue;
-                    const service = composeContent.services![serviceName];
-                    if (typeof service.build === 'string') {
-                        (service as any).build = { context: service.build, labels };
-                    } else if (service.build) {
-                        (service.build as any).labels = {
-                            ...((service.build as any).labels || {}),
-                            ...labels,
-                        };
-                    }
-                    composeModified = true;
+            if (labels && Object.keys(labels).length > 0) {
+                for (const service of Object.values(composeContent.services || {})) {
+                    (service as any).labels = {
+                        ...((service as any).labels || {}),
+                        ...labels,
+                    };
                 }
+                composeModified = true;
             }
 
             if (composeModified) {
@@ -427,7 +405,6 @@ app.post('/stream/compose', async (c) => {
                 success: true,
                 containers: containerIds,
                 composeConfig: composeConfigB64,
-                versioned: versionedServiceNames.size > 0,
             };
 
             if (!isClientDisconnected && !c.req.raw.signal.aborted) {

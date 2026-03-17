@@ -66,7 +66,10 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
 
                 <ScrollAreaWithShadow bottomShadow className="h-full">
                     <div className={cn('px-6 pb-6', isViewingBuild && 'px-4 pb-4')}>
-                        <fieldset disabled={isViewingBuild} className="contents">
+                        <fieldset
+                            disabled={isViewingBuild}
+                            className={cn(isViewingBuild && 'pointer-events-none')}
+                        >
                             <ConfigComponent />
                         </fieldset>
                     </div>

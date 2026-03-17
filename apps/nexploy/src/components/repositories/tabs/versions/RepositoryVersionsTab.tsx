@@ -1,6 +1,9 @@
 import { RepositoryVersions } from '@/components/repositories/tabs/versions/RepositoryVersions';
 import { getVersionsByRepository } from '@/services/docker/version.service';
-import { getContainerByName } from '@/services/docker/container.service';
+import {
+    getContainerByName,
+    getDeployedComposeImageTag,
+} from '@/services/docker/container.service';
 
 interface RepositoryVersionsTabProps {
     repositoryId: string;
@@ -11,14 +14,24 @@ export async function RepositoryVersionsTab({ repositoryId }: RepositoryVersions
 
     const environmentIds = [...new Set(versions.map((v) => v.environmentId))];
 
-    const deployedImageByEnvironment: Record<string, string> = {};
+    const deployedTagByEnvironment: Record<string, string> = {};
 
     await Promise.all(
         environmentIds.map(async (environmentId) => {
             const key = environmentId ?? '';
+
+            // Try single container first (Dockerfile deployments)
             const containers = await getContainerByName(repositoryId, environmentId);
-            if (containers[0]?.image) {
-                deployedImageByEnvironment[key] = containers[0].image;
+            const singleImageTag = containers[0]?.image?.split(':').at(-1);
+            if (singleImageTag) {
+                deployedTagByEnvironment[key] = singleImageTag;
+                return;
+            }
+
+            // Fall back to compose stack (labels-based detection)
+            const composeImageTag = await getDeployedComposeImageTag(repositoryId, environmentId);
+            if (composeImageTag) {
+                deployedTagByEnvironment[key] = composeImageTag;
             }
         }),
     );
@@ -27,7 +40,7 @@ export async function RepositoryVersionsTab({ repositoryId }: RepositoryVersions
         <RepositoryVersions
             repositoryId={repositoryId}
             versions={versions}
-            deployedImageByEnvironment={deployedImageByEnvironment}
+            deployedTagByEnvironment={deployedTagByEnvironment}
         />
     );
 }

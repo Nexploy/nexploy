@@ -93,6 +93,12 @@ export async function deployComposeVersion(
                 projectName: `nexploy-${repositoryId}`,
                 envVars: envVariables,
                 composeConfig: version.composeConfig,
+                labels: {
+                    'nexploy.version': 'true',
+                    'nexploy.repositoryId': repositoryId,
+                    'nexploy.imageTag': imageTag,
+                    'nexploy.buildType': 'NODE_PIPELINE',
+                },
             },
             environmentId,
         } as KyDockerOptions)
@@ -125,6 +131,7 @@ export async function getVersionsByRepository(repositoryId: string): Promise<Ver
             imageFullName: `${v.repositoryId}:${v.imageTag}`,
             environmentId: v.environment?.id ?? undefined,
             environmentName: v.environment?.name ?? undefined,
+            hasComposeConfig: !!v.composeConfig,
         }));
     } catch {
         return [];

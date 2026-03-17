@@ -55,6 +55,8 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
                     id: `e-${newNodes[te.sourceIndex]!.id}-${newNodes[te.targetIndex]!.id}`,
                     source: newNodes[te.sourceIndex]!.id,
                     target: newNodes[te.targetIndex]!.id,
+                    sourceHandle: te.sourceHandle,
+                    targetHandle: te.targetHandle,
                     type: 'gradient-edge',
                 }));
 

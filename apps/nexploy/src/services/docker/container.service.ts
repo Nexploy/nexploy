@@ -33,6 +33,25 @@ export async function getContainerByProjectName(
     }
 }
 
+export async function getDeployedComposeImageTag(
+    repositoryId: string,
+    environmentId?: string,
+): Promise<string | undefined> {
+    try {
+        const projectName = `nexploy-${repositoryId}`;
+        const containers = await kyDocker
+            .get(`composes/${projectName}/list`, { environmentId } as KyDockerOptions)
+            .json<ContainerInfo[]>();
+        for (const container of containers) {
+            const tag = container.Labels?.['nexploy.imageTag'];
+            if (tag) return tag;
+        }
+        return undefined;
+    } catch {
+        return undefined;
+    }
+}
+
 export async function getContainerPortMappings(
     containerNameOrId: string,
     environmentId?: string,

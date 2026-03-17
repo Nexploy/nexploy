@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { useParams } from 'next/navigation';
 import useSWR from 'swr';
+import { useEffect } from 'react';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { GitBranch } from '@workspace/typescript-interface/git/git';
 import {
@@ -17,7 +18,9 @@ import {
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -50,6 +53,13 @@ export function CloneRepositoryConfig() {
         fetcherApi,
     );
 
+    const currentBranch = form.getValues('branch');
+    useEffect(() => {
+        if (branches && branches.length > 0 && !currentBranch) {
+            form.setValue('branch', branches[0]?.name);
+        }
+    }, [branches]);
+
     return (
         <div className="space-y-4">
             <FormField
@@ -60,9 +70,7 @@ export function CloneRepositoryConfig() {
                         <FormLabel>{t('cloneBranch')}</FormLabel>
                         <Select
                             value={field.value ?? ''}
-                            onValueChange={(v) =>
-                                field.onChange(v === '__default__' ? undefined : v)
-                            }
+                            onValueChange={field.onChange}
                             disabled={isLoadingBranches || !repo}
                         >
                             <FormControl>
@@ -72,27 +80,19 @@ export function CloneRepositoryConfig() {
                                             {t('branchLoading')}
                                         </span>
                                     ) : (
-                                        <SelectValue
-                                            placeholder={
-                                                repo
-                                                    ? `${t('branchDefault')} (${repo.branch})`
-                                                    : '...'
-                                            }
-                                        />
+                                        <SelectValue placeholder="..." />
                                     )}
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                <SelectItem value="__default__">
-                                    {repo
-                                        ? `${t('branchDefault')} (${repo.branch})`
-                                        : t('branchDefault')}
-                                </SelectItem>
-                                {branches?.map((branch) => (
-                                    <SelectItem key={branch.name} value={branch.name}>
-                                        {branch.name}
-                                    </SelectItem>
-                                ))}
+                                <SelectGroup>
+                                    <SelectLabel>{t('cloneBranch')}</SelectLabel>
+                                    {branches?.map((branch) => (
+                                        <SelectItem key={branch.name} value={branch.name}>
+                                            {branch.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectGroup>
                             </SelectContent>
                         </Select>
                         <FormMessage />

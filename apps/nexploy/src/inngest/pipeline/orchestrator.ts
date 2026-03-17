@@ -121,6 +121,10 @@ export class PipelineOrchestrator {
                 const inputOutputs: NodeOutputData[] = inputNodeIds
                     .map((id) => allOutputs.get(id))
                     .filter((o): o is NodeOutputData => o !== undefined);
+                const inputNodes = inputNodeIds.map((id) => {
+                    const inputNode = graph.nodes.find((n) => n.id === id);
+                    return { id, type: inputNode?.data.type ?? '' };
+                });
 
                 if (!reachableNodeIds.has(node.id)) {
                     await this.runSkippedNode(
@@ -178,6 +182,7 @@ export class PipelineOrchestrator {
                             config,
                             nodeId: node.id,
                             nodeConfig: node.data.config ?? {},
+                            inputNodes,
                             inputOutputs,
                             allOutputs,
                             logger,

@@ -8,11 +8,17 @@ export type NodeOutputData = Record<string, unknown>;
 
 export type NodeOutputStore = Map<string, NodeOutputData>;
 
+export interface InputNodeInfo {
+    id: string;
+    type: string;
+}
+
 export interface NodeExecutionContext {
     buildId: string;
     config: BuildConfig;
     nodeId: string;
     nodeConfig: Record<string, unknown>;
+    inputNodes: InputNodeInfo[];
     inputOutputs: NodeOutputData[];
     allOutputs: NodeOutputStore;
     logger: PipelineLogger;

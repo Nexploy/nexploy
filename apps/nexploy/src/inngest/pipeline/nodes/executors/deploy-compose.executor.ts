@@ -43,7 +43,6 @@ export class DeployComposeExecutor implements INodeExecutor {
             [NEXPLOY_LABELS.version]: 'true',
             [NEXPLOY_LABELS.repositoryId]: config.repositoryId,
             [NEXPLOY_LABELS.buildId]: config.imageTag,
-            [NEXPLOY_LABELS.buildType]: 'NODE_PIPELINE',
             [NEXPLOY_LABELS.imageTag]: config.imageTag,
             [NEXPLOY_LABELS.branch]: config.gitBranch,
             ...(config.gitCommitHash && { [NEXPLOY_LABELS.commitHash]: config.gitCommitHash }),

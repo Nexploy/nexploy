@@ -35,11 +35,12 @@ app.post(
 app.post(
     '/deploy-compose',
     handleAsync(async (c) => {
-        const { projectName, envVars, composeConfig } = await c.req.json<{
+        const { projectName, envVars, composeConfig, labels } = await c.req.json<{
             repositoryId: string;
             projectName: string;
             envVars?: Record<string, string>;
             composeConfig: string;
+            labels?: Record<string, string>;
         }>();
 
         const dockerClient = getCurrentDockerClient();
@@ -75,6 +76,13 @@ app.post(
             }
 
             const composeContent = yaml.parse(composeYaml) as Record<string, any>;
+
+            if (labels && Object.keys(labels).length > 0 && composeContent.services) {
+                for (const service of Object.values(composeContent.services) as any[]) {
+                    service.labels = { ...(service.labels || {}), ...labels };
+                }
+                fs.writeFileSync(composeFilePath, yaml.stringify(composeContent), 'utf8');
+            }
 
             try {
                 await runDockerCompose(

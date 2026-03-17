@@ -12,4 +12,5 @@ export interface Version {
     imageFullName: string;
     environmentId?: string;
     environmentName?: string;
+    hasComposeConfig?: boolean;
 }
