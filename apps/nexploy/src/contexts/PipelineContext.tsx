@@ -237,7 +237,7 @@ export function PipelineProvider({
                 ...node,
                 data: {
                     ...node.data,
-                    runStatus: nodeStatuses[node.id] ?? undefined,
+                    status: nodeStatuses[node.id] ?? undefined,
                     viewOnly: true,
                 },
             })),

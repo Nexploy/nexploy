@@ -8,7 +8,7 @@ export interface NodeData {
     config: Record<string, unknown>;
     disabled?: boolean;
     viewOnly?: boolean;
-    runStatus?: NodeRunStatus;
+    status?: NodeRunStatus;
 }
 
 export type NodeId =

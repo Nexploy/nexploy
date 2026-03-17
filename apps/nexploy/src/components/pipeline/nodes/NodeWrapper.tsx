@@ -54,7 +54,7 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
         <div
             className={cn(
                 'group relative',
-                (data.disabled || data.runStatus === 'skipped') && 'opacity-40',
+                (data.disabled || data.status === 'skipped') && 'opacity-40',
                 className,
             )}
         >

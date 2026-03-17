@@ -44,7 +44,7 @@ export function NodeAnimation({
         </div>
     );
 
-    if (data.runStatus === 'running') {
+    if (data.status === 'running') {
         return (
             <div
                 className={cn('relative p-[2px]', rounded)}
@@ -76,7 +76,7 @@ export function NodeAnimation({
     return (
         <div
             style={
-                data.runStatus === 'completed'
+                data.status === 'completed'
                     ? { boxShadow: `0 0 20px 2px ${categoryHex}50` }
                     : undefined
             }
@@ -84,18 +84,18 @@ export function NodeAnimation({
                 'bg-card relative flex items-center border-2 p-4 shadow-lg transition-[border-color,box-shadow] duration-300',
                 children ? 'gap-3' : 'justify-center',
                 rounded,
-                data.runStatus === 'completed'
+                data.status === 'completed'
                     ? CATEGORY_BORDER[data.definition.category]
                     : selected
                       ? CATEGORY_BORDER[data.definition.category]
                       : 'border-border hover:border-accent',
-                (data.runStatus === 'failed' || data.runStatus === 'skipped') && 'border-border',
+                (data.status === 'failed' || data.status === 'skipped') && 'border-border',
             )}
         >
-            {data.runStatus === 'completed' && (
+            {data.status === 'completed' && (
                 <CheckCircle2 className={cn('bg-card absolute size-4 rounded-full text-green-500', square ? 'top-1 right-1' : 'top-[11px] right-[11px]')} />
             )}
-            {data.runStatus === 'failed' && (
+            {data.status === 'failed' && (
                 <CircleX className={cn('bg-card absolute size-4 rounded-full text-red-500', square ? 'top-1 right-1' : 'top-[11px] right-[11px]')} />
             )}
             {icon}
