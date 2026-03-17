@@ -20,7 +20,7 @@ export function AttachNode({ id, data, selected }: AttachNodeProps) {
             <NodeAnimation selected={selected} data={data} />
             <span
                 className={cn(
-                    'absolute top-full left-1/2 mt-2 w-[120px] -translate-x-1/2 text-center text-xs font-medium transition-colors',
+                    'absolute top-full left-1/2 mt-2 -translate-x-1/2 text-center text-xs font-medium transition-colors',
                     selected ? 'text-foreground' : 'text-muted-foreground',
                 )}
             >

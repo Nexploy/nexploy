@@ -93,10 +93,10 @@ export function NodeAnimation({
             )}
         >
             {data.runStatus === 'completed' && (
-                <CheckCircle2 className="absolute top-1 right-1 size-4 text-green-500" />
+                <CheckCircle2 className={cn('bg-card absolute size-4 rounded-full text-green-500', square ? 'top-1 right-1' : 'top-[11px] right-[11px]')} />
             )}
             {data.runStatus === 'failed' && (
-                <CircleX className="absolute top-1 right-1 size-4 text-red-500" />
+                <CircleX className={cn('bg-card absolute size-4 rounded-full text-red-500', square ? 'top-1 right-1' : 'top-[11px] right-[11px]')} />
             )}
             {icon}
             {children}
