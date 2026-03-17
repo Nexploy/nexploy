@@ -331,6 +331,14 @@
     cursor: grabbing !important;
 }
 
+[data-viewing='true'] .react-flow__edge {
+    cursor: default !important;
+}
+
+[data-viewing='true'] .react-flow__edge path {
+    cursor: default !important;
+}
+
 @layer base {
     * {
         @apply border-border outline-ring/50;

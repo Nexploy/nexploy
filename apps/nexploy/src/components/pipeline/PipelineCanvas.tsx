@@ -184,6 +184,7 @@ export function PipelineCanvas() {
             ref={wrapperRef}
             tabIndex={-1}
             data-panning={isSpaceHeld}
+            data-viewing={isViewingBuild}
             onContextMenu={(e) => e.preventDefault()}
             className={cn('relative flex-1 transition-all')}
             onDragOver={onDragOver}
@@ -197,7 +198,9 @@ export function PipelineCanvas() {
                 edges={displayEdges}
                 onNodesChange={isViewingBuild ? () => {} : onNodesChange}
                 onEdgesChange={isViewingBuild ? () => {} : onEdgesChange}
-                onEdgeMouseEnter={(_, edge) => setHoveredEdgeId(edge.id)}
+                onEdgeMouseEnter={
+                    isViewingBuild ? undefined : (_, edge) => setHoveredEdgeId(edge.id)
+                }
                 onEdgeMouseLeave={isViewingBuild ? undefined : () => setHoveredEdgeId(null)}
                 onConnect={isViewingBuild ? undefined : onConnect}
                 isValidConnection={isViewingBuild ? undefined : isValidConnection}
@@ -211,6 +214,8 @@ export function PipelineCanvas() {
                 onSelectionContextMenu={isViewingBuild ? undefined : onSelectionContextMenu}
                 nodesDraggable={!isViewingBuild}
                 nodesConnectable={!isViewingBuild}
+                edgesFocusable={!isViewingBuild}
+                edgesReconnectable={!isViewingBuild}
                 elementsSelectable
                 panOnDrag={nodes.length > 0 ? [1, 2] : false}
                 panOnScroll={nodes.length > 0}
