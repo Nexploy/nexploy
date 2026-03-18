@@ -12,14 +12,17 @@ import {
 export function TemplateItem({
     template,
     onClick,
+    onDragStart: onDragStartProp,
 }: {
     template: PipelineTemplate;
     onClick?: () => void;
+    onDragStart?: () => void;
 }) {
     const t = useTranslations('repository.pipeline');
     const Icon = TEMPLATE_ICONS[template.icon] ?? FileCode2;
 
     const onDragStart = (e: React.DragEvent) => {
+        onDragStartProp?.();
         e.dataTransfer.setData('application/node-template', template.id);
         e.dataTransfer.effectAllowed = 'move';
     };

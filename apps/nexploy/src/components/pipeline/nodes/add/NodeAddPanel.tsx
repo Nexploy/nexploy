@@ -20,7 +20,7 @@ export function NodeAddPanel() {
     const t = useTranslations('repository.pipeline');
     const definitions = useNodeRegistryStore((s) => s.nodes);
     const { screenToFlowPosition } = useReactFlow();
-    const { setNodes, triggerAutoSave } = usePipelineContext();
+    const { setNodes, triggerAutoSave, isViewingBuild, setActiveBuildId } = usePipelineContext();
 
     const {
         activePanel,
@@ -39,11 +39,13 @@ export function NodeAddPanel() {
     }, {});
 
     const onDragStart = (event: React.DragEvent, nodeType: NodeId) => {
+        if (isViewingBuild) setActiveBuildId(undefined);
         event.dataTransfer.setData('application/reactflow', nodeType);
         event.dataTransfer.effectAllowed = 'move';
     };
 
     const onClickAdd = (nodeType: NodeId) => {
+        if (isViewingBuild) setActiveBuildId(undefined);
         const def = getNodeDefinition(nodeType);
         if (!def) return;
 

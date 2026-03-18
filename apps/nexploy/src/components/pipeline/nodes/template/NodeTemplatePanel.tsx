@@ -15,9 +15,11 @@ export function NodeTemplatePanel() {
     const { activePanel } = usePipelinePanelStore();
     const open = activePanel === 'template';
     const { screenToFlowPosition } = useReactFlow();
-    const { setNodes, setEdges, triggerAutoSave } = usePipelineContext();
+    const { setNodes, setEdges, triggerAutoSave, isViewingBuild, setActiveBuildId } =
+        usePipelineContext();
 
     const onClickAdd = (template: PipelineTemplate) => {
+        if (isViewingBuild) setActiveBuildId(undefined);
         const pane = document.querySelector('.react-flow__pane');
         const rect = pane?.getBoundingClientRect();
         const centerX = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
@@ -73,6 +75,7 @@ export function NodeTemplatePanel() {
                         key={template.id}
                         template={template}
                         onClick={() => onClickAdd(template)}
+                        onDragStart={isViewingBuild ? () => setActiveBuildId(undefined) : undefined}
                     />
                 ))}
             </div>

@@ -282,7 +282,10 @@
             "stripPath": "Strip Path",
             "stripPathDescription": "Retirer le chemin externe de la requête avant de la transférer",
             "https": "HTTPS",
-            "httpsDescription": "Provisionner automatiquement un certificat SSL"
+            "httpsDescription": "Provisionner automatiquement un certificat SSL",
+            "environment": "Environnement",
+            "selectEnvironment": "Sélectionner un environnement",
+            "environmentDescription": "L'environnement Docker où tourne le conteneur de ce domaine"
         },
         "envVars": {
             "title": "Variables d'environnement",

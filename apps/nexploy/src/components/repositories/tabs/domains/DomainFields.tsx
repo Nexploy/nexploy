@@ -9,7 +9,17 @@ import {
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@workspace/ui/components/select';
 import { CloudflareDomainSelector } from '@/components/repositories/tabs/domains/CloudflareDomainSelector';
+import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 import { useTranslations } from 'next-intl';
 
 interface DomainFieldsProps<T extends FieldValues> {
@@ -25,9 +35,41 @@ export function DomainFields<T extends FieldValues>({
 }: DomainFieldsProps<T>) {
     const t = useTranslations('repository.settings.domains');
     const cloudflareZoneId = form.watch(`domains.${index}.cloudflareZoneId` as Path<T>);
+    const environments = useEnvironmentStore((s) => s.environments);
 
     return (
         <div className="grid gap-4">
+            <FormField
+                control={form.control}
+                name={`domains.${index}.environmentId` as Path<T>}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>{t('environment')}</FormLabel>
+                        <Select
+                            value={(field.value as string) ?? ''}
+                            onValueChange={field.onChange}
+                        >
+                            <FormControl>
+                                <SelectTrigger>
+                                    <SelectValue placeholder={t('selectEnvironment')} />
+                                </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>{t('environment')}</SelectLabel>
+                                    {environments.map((env) => (
+                                        <SelectItem key={env.id} value={env.id}>
+                                            {env.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                        <FormDescription>{t('environmentDescription')}</FormDescription>
+                    </FormItem>
+                )}
+            />
+
             <CloudflareDomainSelector
                 form={form}
                 index={index}

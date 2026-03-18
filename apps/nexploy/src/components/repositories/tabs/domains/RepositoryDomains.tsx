@@ -36,6 +36,7 @@ const DEFAULT_NEW_DOMAIN: Partial<Domain> = {
     stripPath: false,
     containerPort: 3000,
     https: false,
+    environmentId: undefined,
     cloudflareZoneId: undefined,
     cloudflareZoneName: undefined,
 };
@@ -155,6 +156,7 @@ export function RepositoryDomains({
                 d.stripPath !== original.stripPath ||
                 d.containerPort !== original.containerPort ||
                 d.https !== original.https ||
+                d.environmentId !== original.environmentId ||
                 d.cloudflareZoneId !== original.cloudflareZoneId
             );
         });
