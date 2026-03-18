@@ -30,6 +30,7 @@ import { useTranslations } from 'next-intl';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import Link from 'next/link';
 import { GitRepository } from '@workspace/typescript-interface/git/git';
+import { getHostname } from '@/utils/url';
 
 interface GitAccountSummary {
     id: string;
@@ -50,14 +51,6 @@ const providerIcons: Record<string, React.ReactNode> = {
     gitlab: <Gitlab className="size-4" />,
 };
 
-function getHostname(url: string | null): string | null {
-    if (!url) return null;
-    try {
-        return new URL(url).hostname;
-    } catch {
-        return null;
-    }
-}
 
 export function GitSourceStep() {
     const { control, watch, setValue } = useFormContext();
@@ -67,7 +60,6 @@ export function GitSourceStep() {
     const { data: accounts } = useSWR<GitAccountSummary[]>('/api/git/accounts', fetcherApi);
 
     const selectedAccountId = watch('gitAccountId');
-    const selectedRepo = watch('repo');
 
     const selectedAccount = accounts?.find((a) => a.id === selectedAccountId);
 
@@ -211,8 +203,6 @@ export function GitSourceStep() {
                                 )}
                             />
                         )}
-
-
                     </>
                 )}
             </CardContent>

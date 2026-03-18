@@ -13,9 +13,7 @@ export class BuildDockerImageExecutor implements INodeExecutor {
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { config, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const workDir =
-            getFromInputs<string>(inputOutputs, 'workDir') ??
-            getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         if (!workDir) {
             throw new Error(
                 'No workDir found in input nodes — connect this node after a Clone Repository node',

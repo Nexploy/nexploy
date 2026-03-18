@@ -13,9 +13,7 @@ export class DeployComposeExecutor implements INodeExecutor {
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { config, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
 
-        const workDir =
-            getFromInputs<string>(inputOutputs, 'workDir') ??
-            getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
 
         if (!workDir) {
             throw new Error(

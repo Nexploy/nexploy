@@ -34,7 +34,7 @@
     "versions": {
         "title": "Versions",
         "noVersions": "Aucune version disponible. Les versions sont créées après un build réussi.",
-        "noEnvironment": "Aucun environnement",
+        "noEnvironment": "Environnement par défaut (actif au moment du build)",
         "deployed": "Déployée",
         "deploy": "Déployer",
         "deploySuccess": "Version déployée avec succès",
@@ -103,7 +103,7 @@
         "branch": "Branche",
         "triggeredBy": "Déclenché par",
         "noBuilds": "Aucun build",
-        "noEnvironment": "Aucun environnement",
+        "noEnvironment": "Environnement par défaut (actif au moment du build)",
         "noBuild": "Aucun build",
         "startedAt": "Démarré le",
         "finishedAt": "Terminé le",
@@ -356,7 +356,8 @@
             "duplicate": "Dupliquer",
             "toggleDisable": "Activer / désactiver",
             "delete": "Supprimer",
-            "pan": "Déplacer le canvas"
+            "pan": "Déplacer le canvas",
+            "openConfig": "Ouvrir la config du node"
         },
         "canvas": {
             "zoomOut": "Zoom arrière",

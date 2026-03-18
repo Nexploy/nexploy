@@ -1,8 +1,4 @@
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { updateBuildGitInfo } from '@/services/inngest/build.inngest.service';
 
@@ -63,7 +59,12 @@ export class CloneRepositoryExecutor implements INodeExecutor {
 
             return {
                 success: true,
-                output: { workDir, branch: effectiveBranch, commitHash: resolvedHash, commitMessage: resolvedMessage },
+                output: {
+                    workDir,
+                    branch: effectiveBranch,
+                    commitHash: resolvedHash,
+                    commitMessage: resolvedMessage,
+                },
             };
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Unknown error';

@@ -10,8 +10,10 @@ import { RepositoryBuildsTab } from '@/components/repositories/tabs/builds/Repos
 import { RepositoryPipelineTab } from '@/components/repositories/tabs/pipeline/RepositoryPipelineTab';
 import { getRepositorieById } from '@/services/repository.service';
 import { capitalizeFirstLetter } from '@/utils/capitalize';
+import { getHostname } from '@/utils/url';
 import Link from 'next/link';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
+import { Separator } from '@workspace/ui/components/separator';
 
 interface RepositoryIdPageProps {
     params: Promise<{
@@ -28,9 +30,12 @@ const getGitIcon = (provider: string) => {
 
 export default async function RepositoryIdPage({ params }: RepositoryIdPageProps) {
     const { repositoryId } = await params;
-    const repository = await getRepositorieById(repositoryId);
+    const repository = await getRepositorieById(repositoryId, {
+        gitAccount: { include: { gitProvider: { select: { baseUrl: true } } } },
+    });
     if (!repository) notFound();
 
+    const hostname = getHostname(repository.gitAccount?.gitProvider?.baseUrl);
     const GitIcon = getGitIcon(repository.gitProvider);
 
     return (
@@ -63,13 +68,20 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                                     }
                                 >
                                     <span>{capitalizeFirstLetter(repository.gitProvider)}</span>
+                                    {hostname && (
+                                        <>
+                                            <Separator
+                                                orientation={'vertical'}
+                                                className={'!h-3 w-1'}
+                                            />
+                                            <span>{hostname}</span>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </div>
                         <div className="mt-5 flex shrink-0 items-center gap-2">
-                            <RunBuildButton
-                                repositoryId={repository.id}
-                            />
+                            <RunBuildButton repositoryId={repository.id} />
                         </div>
                     </div>
 

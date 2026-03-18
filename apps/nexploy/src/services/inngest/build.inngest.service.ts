@@ -114,6 +114,14 @@ export async function updateStatusBuild(buildId: string, status: BuildStatus) {
     }
 }
 
+export async function updateBuildEnvironment(buildId: string, environmentId: string) {
+    try {
+        await prisma.build.update({ where: { id: buildId }, data: { environmentId } });
+    } catch {
+        throw new Error('Failed to update build environment');
+    }
+}
+
 export async function updateNodeStatus(
     buildId: string,
     nodeId: string,

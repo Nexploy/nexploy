@@ -23,6 +23,8 @@ import { RunBuildButton } from '@/components/repositories/RunBuildButton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { getTranslations } from 'next-intl/server';
 import { capitalizeFirstLetter } from '@/utils/capitalize';
+import { getHostname } from '@/utils/url';
+import { Separator } from '@workspace/ui/components/separator';
 
 export const metadata: Metadata = {
     title: 'Repositories',
@@ -79,6 +81,10 @@ export default async function RepositoriesPage() {
                                     const lastDeployment = repository.build?.[0];
                                     const Icon = getGitIcon(repository.gitProvider);
 
+                                    const hostname = getHostname(
+                                        repository.gitAccount?.gitProvider?.baseUrl,
+                                    );
+
                                     return (
                                         <Link
                                             href={`/repositories/${repository.id}`}
@@ -94,9 +100,22 @@ export default async function RepositoriesPage() {
                                                             <CardTitle className="truncate text-base font-semibold">
                                                                 {repository.name}
                                                             </CardTitle>
-                                                            <CardDescription className="text-muted-foreground/80 truncate font-mono text-xs">
+                                                            <CardDescription className="text-muted-foreground/80 flex items-center gap-2 truncate font-mono text-xs">
                                                                 {capitalizeFirstLetter(
                                                                     repository.gitProvider,
+                                                                )}
+                                                                {hostname && (
+                                                                    <>
+                                                                        <Separator
+                                                                            orientation={'vertical'}
+                                                                            className={'!h-3 w-1'}
+                                                                        />
+                                                                        <span
+                                                                            className={'truncate'}
+                                                                        >
+                                                                            {hostname}
+                                                                        </span>
+                                                                    </>
                                                                 )}
                                                             </CardDescription>
                                                         </div>

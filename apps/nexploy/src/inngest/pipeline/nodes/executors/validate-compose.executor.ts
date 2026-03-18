@@ -1,8 +1,8 @@
 import {
+    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    getFromAllOutputs,
 } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 
@@ -20,7 +20,8 @@ export class ValidateComposeExecutor implements INodeExecutor {
             );
         }
 
-        const composeFileName = (nodeConfig.composeFileName as string | undefined) ?? 'docker-compose.yml';
+        const composeFileName =
+            (nodeConfig.composeFileName as string | undefined) ?? 'docker-compose.yml';
         const composeFilePath = (nodeConfig.composeFilePath as string | undefined) ?? '';
         const composePath = composeFilePath
             ? `${composeFilePath.replace(/\/$/, '')}/${composeFileName}`

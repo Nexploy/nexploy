@@ -13,10 +13,7 @@ export class PushToRegistryExecutor implements INodeExecutor {
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { config, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
 
-        const imageName =
-            getFromInputs<string>(inputOutputs, 'imageName') ??
-            getFromAllOutputs<string>(allOutputs, 'imageName') ??
-            config.imageName;
+        const imageName = getFromAllOutputs<string>(allOutputs, 'imageName') ?? config.imageName;
 
         if (!imageName) {
             throw new Error(

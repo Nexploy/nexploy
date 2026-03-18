@@ -52,6 +52,11 @@ export function getRepositories() {
                     },
                     take: 1,
                 },
+                gitAccount: {
+                    include: {
+                        gitProvider: { select: { baseUrl: true } },
+                    },
+                },
             },
             orderBy: {
                 name: 'asc',

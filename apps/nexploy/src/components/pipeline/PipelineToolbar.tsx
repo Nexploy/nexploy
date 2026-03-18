@@ -7,6 +7,7 @@ import {
     Loader2,
     Power,
     Redo2,
+    Settings,
     SquareDashed,
     Trash2,
     Undo2,
@@ -36,6 +37,7 @@ export function PipelineToolbar() {
         canRedo,
         handleDeleteSelection,
         handleDuplicateSelection,
+        openDialogSettingNode,
         setNodes,
         triggerAutoSave,
         activeBuildId,
@@ -187,6 +189,26 @@ export function PipelineToolbar() {
                                 {t('shortcutsList.delete')} <Kbd>Del</Kbd>
                             </TooltipContent>
                         </Tooltip>
+                        {selectedNodeIds.length === 1 && (
+                            <>
+                                <Separator orientation="vertical" className="!h-4" />
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="size-6"
+                                            onClick={() =>
+                                                openDialogSettingNode(selectedNodeIds[0]!)
+                                            }
+                                        >
+                                            <Settings className="size-3" />
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>{t('shortcutsList.openConfig')}</TooltipContent>
+                                </Tooltip>
+                            </>
+                        )}
                     </div>
                 </div>
                 {activeBuild && (

@@ -12,9 +12,7 @@ export class ValidateDockerfileExecutor implements INodeExecutor {
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { allOutputs, logger, nodeId, nodeConfig } = ctx;
 
-        const workDir =
-            getFromInputs<string>(inputOutputs, 'workDir') ??
-            getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
 
         if (!workDir) {
             throw new Error(

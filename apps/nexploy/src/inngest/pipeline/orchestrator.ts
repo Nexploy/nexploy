@@ -17,7 +17,6 @@ import {
     PipelineStatus,
 } from '@/types/pipeline.type';
 import { getNodeExecutor } from './nodes/registry';
-import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { analyzeGraph } from './utils/graphUtils';
 import { gitService } from './services/git.service';
 import { prisma } from '../../../prisma/prisma';
@@ -152,7 +151,6 @@ export class PipelineOrchestrator {
                     continue;
                 }
 
-
                 try {
                     const nodeResult = await inngestStep.run(`node-${node.id}`, async () => {
                         await setStatus('BUILDING');
@@ -175,19 +173,26 @@ export class PipelineOrchestrator {
                             abortSignal: abortController.signal,
                         };
 
-                        const execResult = await executor.execute(ctx);
-                        if (execResult.skipped) {
-                            await reporter.markSkipped(node.id);
-                        } else {
-                            await reporter.markCompleted(node.id);
+                        try {
+                            const execResult = await executor.execute(ctx);
+                            if (execResult.skipped) {
+                                await reporter.markSkipped(node.id);
+                            } else {
+                                await reporter.markCompleted(node.id);
+                            }
+                            return execResult;
+                        } catch (execError) {
+                            const message =
+                                execError instanceof Error ? execError.message : String(execError);
+                            await logger.error(node.id, message);
+                            await reporter.markFailed(node.id);
+                            throw execError;
                         }
-                        return execResult;
                     });
 
                     const result = nodeResult as NodeExecutionResult;
                     allOutputs.set(node.id, result.output ?? {});
                 } catch (nodeError) {
-                    await reporter.markFailed(node.id);
                     await setStatus('FAILED');
                     throw nodeError;
                 }

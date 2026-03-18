@@ -12,10 +12,7 @@ export class DeployContainerExecutor implements INodeExecutor {
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { config, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const imageName =
-            getFromInputs<string>(inputOutputs, 'imageName') ??
-            getFromAllOutputs<string>(allOutputs, 'imageName') ??
-            config.imageName;
+        const imageName = getFromAllOutputs<string>(allOutputs, 'imageName') ?? config.imageName;
 
         if (!imageName) {
             throw new Error(
@@ -26,10 +23,9 @@ export class DeployContainerExecutor implements INodeExecutor {
         await logger.info(nodeId, 'Starting container deployment');
 
         try {
-            const environmentId =
-                getFromAllOutputs<string>(allOutputs, 'environmentId');
+            const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
-        const result = await dockerService.deployContainer(
+            const result = await dockerService.deployContainer(
                 config.repositoryId,
                 imageName,
                 config.envVariables,

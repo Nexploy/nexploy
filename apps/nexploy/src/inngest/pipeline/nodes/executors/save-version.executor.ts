@@ -1,4 +1,9 @@
-import { getFromAllOutputs, INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import {
+    getFromAllOutputs,
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
 import { prisma } from '../../../../../prisma/prisma';
 
 export class SaveVersionExecutor implements INodeExecutor {

@@ -38,6 +38,11 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
         deleteElements({ nodes: getTargetIds().map((nid) => ({ id: nid })) });
     };
 
+    const handleOpenSettingNode = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        openDialogSettingNode(id);
+    };
+
     const handleToggleDisabled = (e: React.MouseEvent) => {
         e.stopPropagation();
         setNodes((nodes) =>
@@ -96,7 +101,7 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
                     </Button>
                     <Button
                         variant="ghost"
-                        onClick={() => openDialogSettingNode(id)}
+                        onClick={handleOpenSettingNode}
                         className={cn(
                             'size-6',
                             data.disabled
