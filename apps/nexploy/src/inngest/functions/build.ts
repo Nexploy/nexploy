@@ -1,22 +1,13 @@
-import { channel, topic } from '@inngest/realtime';
 import dayjs from 'dayjs';
 import { BuildConfig, BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
 import { inngest } from '@/inngest/client';
 import { updateNodeStatus, updateStatusBuild } from '@/services/inngest/build.inngest.service';
 import { createLogInngest } from '@/services/inngest/log.inngest.service';
-import { CommitInfo, LogLevel, PipelineReporter, PipelineStatus } from '@/types/pipeline.type';
+import { LogLevel, PipelineReporter, PipelineStatus } from '@/types/pipeline.type';
 import { createPipelineLogger, pipelineOrchestrator } from '@/inngest/pipeline/orchestrator';
 import { prisma } from '../../../prisma/prisma';
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
-
-const createBuildChannel = (buildId: string) => {
-    const channelDef = channel(`build:${buildId}`)
-        .addTopic(topic('log').type<{ log: BuildLogEntry }>())
-        .addTopic(topic('build-status').type<{ buildStatus: string }>())
-        .addTopic(topic('node-status').type<{ nodeId: string; nodeStatus: string }>())
-        .addTopic(topic('commit-info').type<CommitInfo>());
-    return channelDef();
-};
+import { createBuildChannel } from '@/inngest/channels/build.channel';
 
 export const buildFunction = inngest.createFunction(
     {

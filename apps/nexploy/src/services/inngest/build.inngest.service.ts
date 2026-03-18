@@ -8,6 +8,7 @@ import { decrypt } from '@/lib/encryption';
 import { StartBuildSchemaType } from '@workspace/schemas-zod/inngest/build.schema';
 import { BuildStatus } from 'generated/client';
 import { createLogInngest } from '@/services/inngest/log.inngest.service';
+import { createBuildChannel } from '@/inngest/channels/build.channel';
 
 export async function startBuildRepositoryInngest(
     { repositoryId, commitHash }: StartBuildSchemaType,
@@ -203,6 +204,26 @@ export async function cancelBuildInngest(buildId: string) {
     }
 
     await Promise.all(logs.map((log) => createLogInngest(log)));
+
+    const buildChannel = createBuildChannel(buildId);
+    const publishSafe = async (payload: Parameters<typeof inngest.realtime.publish>[0]) => {
+        try {
+            await inngest.realtime.publish(payload);
+        } catch {
+            /* ignore */
+        }
+    };
+
+    const cancelledNodeIds = Object.entries(updatedNodeStatuses)
+        .filter(([, status]) => status === 'cancelled')
+        .map(([nodeId]) => nodeId);
+
+    await Promise.all([
+        ...cancelledNodeIds.map((nodeId) =>
+            publishSafe(buildChannel['node-status']({ nodeId, nodeStatus: 'cancelled' })),
+        ),
+        publishSafe(buildChannel['build-status']({ buildStatus: 'CANCELLED' })),
+    ]);
 
     await inngest.send({ name: 'build/cancel', data: { buildId } });
 }
