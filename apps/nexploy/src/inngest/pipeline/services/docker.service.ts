@@ -75,7 +75,11 @@ class DockerService {
         repositoryId?: string,
         labels?: Record<string, string>,
     ): Promise<{ success: boolean; containers?: string[]; composeConfig?: string }> {
-        return this.streamSSERequest<{ success: boolean; containers?: string[]; composeConfig?: string }>(
+        return this.streamSSERequest<{
+            success: boolean;
+            containers?: string[];
+            composeConfig?: string;
+        }>(
             'pipeline/events/stream/compose',
             { workDir, projectName, composePath, envVars, buildId, repositoryId, labels },
             signal,
@@ -98,7 +102,7 @@ class DockerService {
             const logPromises: Promise<void>[] = [];
 
             const abortHandler = () => {
-                reject(new DOMException('Request aborted', 'AbortError'));
+                reject(new DOMException('Operation aborted by user', 'AbortError'));
             };
             signal.addEventListener('abort', abortHandler);
 

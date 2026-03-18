@@ -60,6 +60,7 @@ export interface PipelineReporter {
     markRunning(nodeId: string): Promise<void>;
     markSkipped(nodeId: string): Promise<void>;
     markFailed(nodeId: string): Promise<void>;
+    markCancelled(nodeId: string): Promise<void>;
     publishCommitInfo(data: CommitInfo): Promise<void>;
 }
 

@@ -342,11 +342,13 @@
         "watching": "Watching",
         "shortcuts": "Keyboard shortcuts",
         "exitBuild": "Exit build view",
+        "stopBuild": "Stop build",
         "nodeStatus": {
             "running": "Running",
             "completed": "Completed",
             "failed": "Failed",
             "skipped": "Skipped",
+            "cancelled": "Cancelled",
             "pending": "Pending"
         },
         "shortcutsList": {

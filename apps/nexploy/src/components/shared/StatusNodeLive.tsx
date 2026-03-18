@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Badge } from '@workspace/ui/components/badge';
-import { CheckCircle2, CircleDashed, Loader2, SkipForward, XCircle } from 'lucide-react';
+import { Ban, CheckCircle2, CircleDashed, Loader2, SkipForward, XCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { useInngestSubscription } from '@inngest/realtime/hooks';
@@ -29,10 +29,7 @@ export function StatusNodeLive({ buildId, nodeId, initialStatus }: StatusNodeLiv
     });
 
     useEffect(() => {
-        if (
-            latestData?.topic === 'node-status' &&
-            latestData.data?.nodeId === nodeId
-        ) {
+        if (latestData?.topic === 'node-status' && latestData.data?.nodeId === nodeId) {
             setStatus(latestData.data.nodeStatus as NodeRunStatus);
         }
     }, [latestData, nodeId]);
@@ -64,6 +61,13 @@ export function StatusNodeLive({ buildId, nodeId, initialStatus }: StatusNodeLiv
                 <Badge variant="secondary" className="gap-1">
                     <SkipForward className="size-3" />
                     {t('skipped')}
+                </Badge>
+            );
+        case 'cancelled':
+            return (
+                <Badge variant="destructive" className="gap-1">
+                    <Ban className="size-3" />
+                    {t('cancelled')}
                 </Badge>
             );
         default:

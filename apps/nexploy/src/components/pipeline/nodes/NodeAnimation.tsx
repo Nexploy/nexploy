@@ -2,7 +2,7 @@
 
 import { cn } from '@workspace/ui/lib/utils';
 import { CATEGORY_BORDER, CATEGORY_HEX, ICON_NAME_MAP } from '@/components/pipeline/pipelineTheme';
-import { CheckCircle2, CircleX, LucideIcon } from 'lucide-react';
+import { Ban, CheckCircle2, CircleX, LucideIcon } from 'lucide-react';
 import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
 import { PropsWithChildren } from 'react';
 
@@ -89,14 +89,35 @@ export function NodeAnimation({
                     : selected
                       ? CATEGORY_BORDER[data.definition.category]
                       : 'border-border hover:border-accent',
-                (data.status === 'failed' || data.status === 'skipped') && 'border-border',
+                (data.status === 'failed' ||
+                    data.status === 'skipped' ||
+                    data.status === 'cancelled') &&
+                    'border-border',
             )}
         >
             {data.status === 'completed' && (
-                <CheckCircle2 className={cn('bg-card absolute size-4 rounded-full text-green-500', square ? 'top-1 right-1' : 'top-[11px] right-[11px]')} />
+                <CheckCircle2
+                    className={cn(
+                        'bg-card absolute size-4 rounded-full text-green-500',
+                        square ? 'top-1 right-1' : 'top-[11px] right-[11px]',
+                    )}
+                />
             )}
             {data.status === 'failed' && (
-                <CircleX className={cn('bg-card absolute size-4 rounded-full text-red-500', square ? 'top-1 right-1' : 'top-[11px] right-[11px]')} />
+                <CircleX
+                    className={cn(
+                        'bg-card absolute size-4 rounded-full text-red-500',
+                        square ? 'top-1 right-1' : 'top-[11px] right-[11px]',
+                    )}
+                />
+            )}
+            {data.status === 'cancelled' && (
+                <Ban
+                    className={cn(
+                        'bg-card absolute size-4 rounded-full text-red-500',
+                        square ? 'top-1 right-1' : 'top-[11px] right-[11px]',
+                    )}
+                />
             )}
             {icon}
             {children}

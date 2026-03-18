@@ -7,6 +7,7 @@ import {
     Power,
     Redo2,
     Settings,
+    Square,
     SquareDashed,
     Trash2,
     Undo2,
@@ -22,6 +23,7 @@ import { useStore } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
 import { StatusLive } from '@/components/shared/StatusLive';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { onCancelBuild } from '@/actions/repository/builds/cancelBuild.action';
 
 const mod = /Mac|iPhone|iPad/i.test(navigator.userAgent) ? '⌘' : 'Ctrl';
 
@@ -222,6 +224,24 @@ export function PipelineToolbar() {
                                 buildId={activeBuildId}
                                 initialStatus={activeBuild.status}
                             />
+                            {(activeBuild.status === 'QUEUED' ||
+                                activeBuild.status === 'BUILDING') && (
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            className="size-6 hover:border-destructive hover:text-destructive"
+                                            onClick={() =>
+                                                onCancelBuild({ buildId: activeBuildId! })
+                                            }
+                                        >
+                                            <Square className="size-3" />
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>{t('stopBuild')}</TooltipContent>
+                                </Tooltip>
+                            )}
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <Button

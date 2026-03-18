@@ -1,5 +1,5 @@
 import { prisma } from '../../../prisma/prisma';
-import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
+import { BuildConfig, BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
 import { addBuildJob } from '@/inngest/jobs/queue';
 import { inngest } from '@/inngest/client';
 import { getRepositorieWithEnv } from '@/services/repository.service';
@@ -7,6 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { decrypt } from '@/lib/encryption';
 import { StartBuildSchemaType } from '@workspace/schemas-zod/inngest/build.schema';
 import { BuildStatus } from 'generated/client';
+import { createLogInngest } from '@/services/inngest/log.inngest.service';
 
 export async function startBuildRepositoryInngest(
     { repositoryId, commitHash }: StartBuildSchemaType,
@@ -147,16 +148,63 @@ export async function updateNodeStatus(
 }
 
 export async function cancelBuildInngest(buildId: string) {
-    const build = await prisma.build.findUnique({ where: { id: buildId } });
+    const build = await prisma.build.findUnique({
+        where: { id: buildId },
+        select: { status: true, nodeStatuses: true, pipelineSnapshot: true },
+    });
 
     if (!build) throw new Error('Build not found');
     if (build.status !== 'QUEUED' && build.status !== 'BUILDING') {
         throw new Error('Build cannot be cancelled');
     }
 
-    await inngest.send({ name: 'build/cancel', data: { buildId } });
+    const terminalStatuses = new Set(['completed', 'skipped', 'failed', 'cancelled']);
+    const currentNodeStatuses = (build.nodeStatuses as Record<string, string>) ?? {};
+    const snapshot = build.pipelineSnapshot as { nodes: Array<{ id: string }> } | null;
 
-    return prisma.build.update({ where: { id: buildId }, data: { status: 'CANCELLED' } });
+    const updatedNodeStatuses: Record<string, string> = { ...currentNodeStatuses };
+    const runningNodeId = Object.entries(currentNodeStatuses).find(
+        ([, status]) => status === 'running',
+    )?.[0];
+
+    if (snapshot?.nodes) {
+        for (const node of snapshot.nodes) {
+            const current = currentNodeStatuses[node.id];
+            if (!current || !terminalStatuses.has(current)) {
+                updatedNodeStatuses[node.id] = 'cancelled';
+            }
+        }
+    }
+
+    await prisma.build.update({
+        where: { id: buildId },
+        data: { status: 'CANCELLED', nodeStatuses: updatedNodeStatuses },
+    });
+
+    const now = new Date();
+    const logs: BuildLogEntry[] = [
+        {
+            buildId,
+            level: 'ERROR',
+            step: 'cancel',
+            message: 'Build cancelled by user',
+            createdAt: now,
+        },
+    ];
+
+    if (runningNodeId) {
+        logs.push({
+            buildId,
+            level: 'ERROR',
+            step: runningNodeId,
+            message: 'Node interrupted: build cancelled by user',
+            createdAt: now,
+        });
+    }
+
+    await Promise.all(logs.map((log) => createLogInngest(log)));
+
+    await inngest.send({ name: 'build/cancel', data: { buildId } });
 }
 
 export async function getAllBuildsInngest(repositoryId: string) {

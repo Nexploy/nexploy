@@ -2,7 +2,7 @@
 
 import { Badge } from '@workspace/ui/components/badge';
 import { BuildStatus } from 'generated/client';
-import { CheckCircle2, Clock, Hourglass, Loader2, XCircle } from 'lucide-react';
+import { Ban, CheckCircle2, Clock, Hourglass, Loader2, XCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { useInngestSubscription } from '@inngest/realtime/hooks';
@@ -67,7 +67,7 @@ export function StatusLive({ initialStatus, buildId, displayType = 'badge' }: St
         case 'CANCELLED':
             return (
                 <Badge variant="destructive" className="gap-1">
-                    <XCircle className="size-3" />
+                    <Ban className="size-3" />
                     {t('cancelled')}
                 </Badge>
             );

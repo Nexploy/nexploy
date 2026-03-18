@@ -183,6 +183,9 @@ export class PipelineOrchestrator {
                             }
                             return execResult;
                         } catch (execError) {
+                            if (execError instanceof Error && execError.name === 'AbortError') {
+                                throw execError;
+                            }
                             const message =
                                 execError instanceof Error ? execError.message : String(execError);
                             await logger.error(node.id, message);
@@ -194,6 +197,9 @@ export class PipelineOrchestrator {
                     const result = nodeResult as NodeExecutionResult;
                     allOutputs.set(node.id, result.output ?? {});
                 } catch (nodeError) {
+                    if (nodeError instanceof Error && nodeError.name === 'AbortError') {
+                        throw nodeError;
+                    }
                     await setStatus('FAILED');
                     throw nodeError;
                 }
@@ -209,7 +215,15 @@ export class PipelineOrchestrator {
             const workDir = findWorkDir(allOutputs);
 
             if (error instanceof Error && error.name === 'AbortError') {
-                await logger.info('cancel', 'Build cancelled by user');
+                // Mark all nodes that did not reach a terminal state as cancelled.
+                // cancelBuildInngest already did this in the DB, but we also publish
+                // SSE events here so the UI updates in real time when the orchestrator
+                // still runs (i.e. the watcher fired before Inngest's cancelOn).
+                for (const node of sorted) {
+                    if (!allOutputs.has(node.id)) {
+                        await reporter.markCancelled(node.id);
+                    }
+                }
                 await setStatus('CANCELLED');
                 if (workDir) {
                     try {

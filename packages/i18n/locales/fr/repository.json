@@ -340,11 +340,13 @@
         "redo": "Rétablir",
         "watching": "En observation",
         "exitBuild": "Quitter la vue du build",
+        "stopBuild": "Arrêter le build",
         "nodeStatus": {
             "running": "En cours",
             "completed": "Terminé",
             "failed": "Échoué",
             "skipped": "Ignoré",
+            "cancelled": "Annulé",
             "pending": "En attente"
         },
         "shortcuts": "Raccourcis clavier",

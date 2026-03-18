@@ -7,7 +7,9 @@ import { Build } from 'generated/client';
 import { Separator } from '@workspace/ui/components/separator';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { StatusLive } from '@/components/shared/StatusLive';
-import { BuildDropdownActions } from '@/components/repositories/BuildDropdownActions';
+import { onCancelBuild } from '@/actions/repository/builds/cancelBuild.action';
+import { Button } from '@workspace/ui/components/button';
+import { Square } from 'lucide-react';
 import { useInngestSubscription } from '@inngest/realtime/hooks';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -100,7 +102,20 @@ export function RepositoryBuild({ repositoryId, build, index }: BuildLogsProps) 
                     </span>
                 </div>
             </div>
-            <BuildDropdownActions buildId={build.id} status={build.status} />
+            {isBuildLive(build.status) && (
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-8 shrink-0"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onCancelBuild({ buildId: build.id });
+                    }}
+                >
+                    <Square className="size-4" />
+                </Button>
+            )}
         </Link>
     );
 }
