@@ -1,6 +1,5 @@
 import {
     getFromAllOutputs,
-    getFromInputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
@@ -11,7 +10,7 @@ export class DeployContainerExecutor implements INodeExecutor {
     readonly type = 'deploy-container';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { config, inputOutputs, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { config, allOutputs, logger, nodeId, abortSignal } = ctx;
 
         const imageName =
             getFromInputs<string>(inputOutputs, 'imageName') ??

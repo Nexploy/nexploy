@@ -16,7 +16,7 @@ export const deployComposeNodeDef: NodeDefinition = {
         composePath: 'docker-compose.yml',
     },
     handles: {
-        inputs: [{ id: 'input', position: Position.Left, required: true }],
+        inputs: [{ id: 'input', position: Position.Left }],
         outputs: [{ id: 'output', position: Position.Right }],
         attachments: [{ id: 'save-version', position: Position.Bottom }],
     },

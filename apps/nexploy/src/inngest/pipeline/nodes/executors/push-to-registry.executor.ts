@@ -1,6 +1,5 @@
 import {
     getFromAllOutputs,
-    getFromInputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
@@ -12,7 +11,7 @@ export class PushToRegistryExecutor implements INodeExecutor {
     readonly type = 'push-to-registry';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { config, inputOutputs, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
+        const { config, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
 
         const imageName =
             getFromInputs<string>(inputOutputs, 'imageName') ??

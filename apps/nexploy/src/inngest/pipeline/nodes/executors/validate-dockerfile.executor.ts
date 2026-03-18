@@ -1,6 +1,5 @@
 import {
     getFromAllOutputs,
-    getFromInputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
@@ -11,7 +10,7 @@ export class ValidateDockerfileExecutor implements INodeExecutor {
     readonly type = 'validate-dockerfile';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { inputOutputs, allOutputs, logger, nodeId, nodeConfig } = ctx;
+        const { allOutputs, logger, nodeId, nodeConfig } = ctx;
 
         const workDir =
             getFromInputs<string>(inputOutputs, 'workDir') ??

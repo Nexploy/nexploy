@@ -1,6 +1,5 @@
 import {
     getFromAllOutputs,
-    getFromInputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
@@ -12,9 +11,11 @@ export class BuildDockerImageExecutor implements INodeExecutor {
     readonly type = 'build-docker-image';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { config, inputOutputs, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { config, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const workDir = getFromInputs<string>(inputOutputs, 'workDir');
+        const workDir =
+            getFromInputs<string>(inputOutputs, 'workDir') ??
+            getFromAllOutputs<string>(allOutputs, 'workDir');
         if (!workDir) {
             throw new Error(
                 'No workDir found in input nodes — connect this node after a Clone Repository node',

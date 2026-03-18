@@ -1,5 +1,5 @@
 import {
-    getFromInputs,
+    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
@@ -10,9 +10,11 @@ export class WriteEnvFileExecutor implements INodeExecutor {
     readonly type = 'write-env-file';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { config, inputOutputs, logger, nodeId } = ctx;
+        const { config, allOutputs, logger, nodeId } = ctx;
 
-        const workDir = getFromInputs<string>(inputOutputs, 'workDir');
+        const workDir =
+            getFromInputs<string>(inputOutputs, 'workDir') ??
+            getFromAllOutputs<string>(allOutputs, 'workDir');
         if (!workDir) {
             throw new Error(
                 'No workDir found in input nodes — connect this node after a Clone Repository node',

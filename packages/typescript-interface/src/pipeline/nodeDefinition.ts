@@ -4,8 +4,7 @@ import { Position } from '@xyflow/react';
 export interface HandleDefinition {
     id: string;
     position: Position;
-    required?: boolean;
-    acceptsFrom?: string;
+acceptsFrom?: string;
 }
 
 export interface NodeDefinition<TConfig = Record<string, unknown>> {

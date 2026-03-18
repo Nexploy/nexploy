@@ -1,6 +1,5 @@
 import {
     getFromAllOutputs,
-    getFromInputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
@@ -12,7 +11,7 @@ export class DeployComposeExecutor implements INodeExecutor {
     readonly type = 'deploy-compose';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { config, inputOutputs, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
+        const { config, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
 
         const workDir =
             getFromInputs<string>(inputOutputs, 'workDir') ??

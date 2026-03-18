@@ -152,21 +152,6 @@ export class PipelineOrchestrator {
                     continue;
                 }
 
-                const nodeDef = getNodeDefinition(node.data.type);
-                const hasUnconnectedRequiredInput =
-                    nodeDef?.handles.inputs.some((h) => h.required) && inputNodeIds.length === 0;
-
-                if (hasUnconnectedRequiredInput) {
-                    await this.runSkippedNode(
-                        node,
-                        'required input not connected',
-                        inngestStep,
-                        reporter,
-                        logger,
-                        allOutputs,
-                    );
-                    continue;
-                }
 
                 try {
                     const nodeResult = await inngestStep.run(`node-${node.id}`, async () => {

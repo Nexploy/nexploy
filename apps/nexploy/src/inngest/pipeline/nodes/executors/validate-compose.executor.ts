@@ -2,7 +2,6 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    getFromInputs,
     getFromAllOutputs,
 } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
@@ -11,11 +10,9 @@ export class ValidateComposeExecutor implements INodeExecutor {
     readonly type = 'validate-compose';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { inputOutputs, allOutputs, logger, nodeId, nodeConfig } = ctx;
+        const { allOutputs, logger, nodeId, nodeConfig } = ctx;
 
-        const workDir =
-            getFromInputs<string>(inputOutputs, 'workDir') ??
-            getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
 
         if (!workDir) {
             throw new Error(

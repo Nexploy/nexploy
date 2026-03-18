@@ -16,7 +16,7 @@ export const validateDockerfileNodeDef: NodeDefinition = {
         dockerfilePath: 'Dockerfile',
     },
     handles: {
-        inputs: [{ id: 'input', position: Position.Left, required: true }],
+        inputs: [{ id: 'input', position: Position.Left }],
         outputs: [{ id: 'output', position: Position.Right }],
         attachments: [],
     },
