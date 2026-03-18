@@ -21,15 +21,20 @@ import { Kbd } from '@workspace/ui/components/kbd';
 import { useStore } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
 import { StatusLive } from '@/components/shared/StatusLive';
+import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 
 const mod = /Mac|iPhone|iPad/i.test(navigator.userAgent) ? '⌘' : 'Ctrl';
 
 export function PipelineToolbar() {
     const t = useTranslations('repository.pipeline');
+
+    const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
+    const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
+    const selectedNodeIds = usePipelineEditorStore((s) => s.selectedNodeIds);
+
     const {
         isSaving,
         nodes,
-        selectedNodeIds,
         undo,
         redo,
         canUndo,
@@ -39,9 +44,7 @@ export function PipelineToolbar() {
         openDialogSettingNode,
         setNodes,
         triggerAutoSave,
-        activeBuildId,
         activeBuild,
-        setActiveBuildId,
         isViewingBuild,
     } = usePipelineContext();
 
@@ -225,7 +228,7 @@ export function PipelineToolbar() {
                                         variant="outline"
                                         size="icon"
                                         className="size-6"
-                                        onClick={() => setActiveBuildId(undefined)}
+                                        onClick={() => setActiveBuildId(null)}
                                     >
                                         <X className="size-3" />
                                     </Button>

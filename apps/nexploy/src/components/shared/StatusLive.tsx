@@ -12,7 +12,7 @@ import { STATUS_PIPELINE } from '@/components/pipeline/buildsPanel/BuildsPanelIt
 
 interface StatusBadgeProps {
     initialStatus?: BuildStatus;
-    buildId?: string;
+    buildId: string | null;
     displayType?: 'badge' | 'dot';
 }
 

@@ -15,12 +15,15 @@ import {
 import { useReactFlow } from '@xyflow/react';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { usePipelineContext } from '@/contexts/PipelineContext';
+import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 
 export function NodeAddPanel() {
     const t = useTranslations('repository.pipeline');
     const definitions = useNodeRegistryStore((s) => s.nodes);
     const { screenToFlowPosition } = useReactFlow();
-    const { setNodes, triggerAutoSave, isViewingBuild, setActiveBuildId } = usePipelineContext();
+    const { setNodes, triggerAutoSave, isViewingBuild } = usePipelineContext();
+
+    const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 
     const {
         activePanel,
@@ -39,13 +42,13 @@ export function NodeAddPanel() {
     }, {});
 
     const onDragStart = (event: React.DragEvent, nodeType: NodeId) => {
-        if (isViewingBuild) setActiveBuildId(undefined);
+        if (isViewingBuild) setActiveBuildId(null);
         event.dataTransfer.setData('application/reactflow', nodeType);
         event.dataTransfer.effectAllowed = 'move';
     };
 
     const onClickAdd = (nodeType: NodeId) => {
-        if (isViewingBuild) setActiveBuildId(undefined);
+        if (isViewingBuild) setActiveBuildId(null);
         const def = getNodeDefinition(nodeType);
         if (!def) return;
 

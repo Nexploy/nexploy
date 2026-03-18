@@ -33,13 +33,9 @@ interface PipelineContextValue {
     displayNodes: Node[];
     displayEdges: Edge[];
     isViewingBuild: boolean;
-    panelNodeId: string | null;
-    selectedNodeIds: string[];
     isSaving: boolean;
     activeBuild?: Build;
     builds: Build[];
-    activeBuildId: string | undefined;
-    setActiveBuildId: (id: string | undefined) => void;
     nodeStatuses: Record<string, NodeRunStatus>;
     onNodesChange: ReturnType<typeof useNodesState>[2];
     onEdgesChange: ReturnType<typeof useEdgesState>[2];
@@ -77,9 +73,7 @@ export function PipelineProvider({
     const [nodes, setNodes, onNodesChangeBase] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChangeBase] = useEdgesState(initialEdges);
 
-    const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
     const setPanelNodeId = usePipelineEditorStore((s) => s.setPanelNodeId);
-    const selectedNodeIds = usePipelineEditorStore((s) => s.selectedNodeIds);
     const setSelectedNodeIds = usePipelineEditorStore((s) => s.setSelectedNodeIds);
     const saveVersion = usePipelineEditorStore((s) => s.saveVersion);
     const setSaveVersion = usePipelineEditorStore((s) => s.setSaveVersion);
@@ -115,6 +109,10 @@ export function PipelineProvider({
             commit({ nodes: [...nodes], edges: [...edges] });
         }
         savePipeline({ repositoryId, graph: flowToGraph(nodes, edges) });
+
+        return () => {
+            setActiveBuildId(null);
+        };
     }, [saveVersion, nodes, edges]);
 
     const triggerAutoSave = useCallback(() => setSaveVersion((v) => v + 1), []);
@@ -259,13 +257,9 @@ export function PipelineProvider({
                 displayNodes,
                 displayEdges,
                 isViewingBuild,
-                panelNodeId,
-                selectedNodeIds,
                 isSaving,
                 builds,
-                activeBuildId,
                 activeBuild,
-                setActiveBuildId,
                 nodeStatuses,
                 onNodesChange,
                 onEdgesChange,

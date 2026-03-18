@@ -1,4 +1,5 @@
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
+import { PipelineEdge } from '@workspace/typescript-interface/pipeline/node';
 
 export type LogLevel = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
 
@@ -21,6 +22,7 @@ export interface NodeExecutionContext {
     inputNodes: InputNodeInfo[];
     inputOutputs: NodeOutputData[];
     allOutputs: NodeOutputStore;
+    edges: PipelineEdge[];
     logger: PipelineLogger;
     reporter: PipelineReporter;
     abortSignal: AbortSignal;
@@ -90,5 +92,34 @@ export function getFromAllOutputs<T>(allOutputs: NodeOutputStore, key: string): 
     for (const output of allOutputs.values()) {
         if (key in output) return output[key] as T;
     }
+    return undefined;
+}
+
+/**
+ * BFS backwards through the graph from nodeId.
+ * Returns the value from the closest ancestor that has the given key.
+ */
+export function getFromClosestAncestor<T>(
+    allOutputs: NodeOutputStore,
+    edges: PipelineEdge[],
+    nodeId: string,
+    key: string,
+): T | undefined {
+    const visited = new Set<string>();
+    const queue: string[] = [nodeId];
+
+    while (queue.length > 0) {
+        const current = queue.shift()!;
+        if (visited.has(current)) continue;
+        visited.add(current);
+
+        const parents = edges.filter((e) => e.target === current).map((e) => e.source);
+        for (const parentId of parents) {
+            const output = allOutputs.get(parentId);
+            if (output && key in output) return output[key] as T;
+            queue.push(parentId);
+        }
+    }
+
     return undefined;
 }

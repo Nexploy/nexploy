@@ -24,15 +24,11 @@ export function NodeConfigDialog() {
     const tPipeline = useTranslations('repository.pipeline');
     const tConfig = useTranslations('repository.pipeline.config');
     const tCommon = useTranslations('common');
-    const {
-        nodes,
-        displayNodes,
-        handleResetPanelNode,
-        isViewingBuild,
-        activeBuildId,
-        nodeStatuses,
-    } = usePipelineContext();
+
+    const { nodes, displayNodes, handleResetPanelNode, isViewingBuild, nodeStatuses } =
+        usePipelineContext();
     const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
+    const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
 
     const sourceNodes = isViewingBuild ? displayNodes : nodes;
     const panelNode = panelNodeId ? (sourceNodes.find((n) => n.id === panelNodeId) ?? null) : null;

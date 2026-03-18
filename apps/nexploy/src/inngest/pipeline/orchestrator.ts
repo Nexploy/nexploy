@@ -168,6 +168,7 @@ export class PipelineOrchestrator {
                             inputNodes,
                             inputOutputs,
                             allOutputs,
+                            edges: graph.edges,
                             logger,
                             reporter,
                             abortSignal: abortController.signal,

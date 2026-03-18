@@ -7,12 +7,16 @@ import { useLocale } from 'next-intl';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { BuildsPanelItem } from '@/components/pipeline/buildsPanel/BuildsPanelItem';
+import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 
 dayjs.extend(relativeTime);
 
 export function BuildsPanel() {
     const locale = useLocale();
-    const { setActiveBuildId, builds, activeBuildId } = usePipelineContext();
+
+    const { builds } = usePipelineContext();
+    const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
+    const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
 
     useEffect(() => {
         import(`dayjs/locale/${locale}`).catch(() => {});

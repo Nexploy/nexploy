@@ -9,17 +9,20 @@ import { useReactFlow } from '@xyflow/react';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { usePipelineContext } from '@/contexts/PipelineContext';
+import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 
 export function NodeTemplatePanel() {
     const t = useTranslations('repository.pipeline');
     const { activePanel } = usePipelinePanelStore();
     const open = activePanel === 'template';
     const { screenToFlowPosition } = useReactFlow();
-    const { setNodes, setEdges, triggerAutoSave, isViewingBuild, setActiveBuildId } =
-        usePipelineContext();
+
+    const { setNodes, setEdges, triggerAutoSave, isViewingBuild } = usePipelineContext();
+
+    const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 
     const onClickAdd = (template: PipelineTemplate) => {
-        if (isViewingBuild) setActiveBuildId(undefined);
+        if (isViewingBuild) setActiveBuildId(null);
         const pane = document.querySelector('.react-flow__pane');
         const rect = pane?.getBoundingClientRect();
         const centerX = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
@@ -75,7 +78,7 @@ export function NodeTemplatePanel() {
                         key={template.id}
                         template={template}
                         onClick={() => onClickAdd(template)}
-                        onDragStart={isViewingBuild ? () => setActiveBuildId(undefined) : undefined}
+                        onDragStart={isViewingBuild ? () => setActiveBuildId(null) : undefined}
                     />
                 ))}
             </div>

@@ -20,10 +20,14 @@ export class BuildDockerImageExecutor implements INodeExecutor {
             );
         }
 
-        const dockerfilePath =
+        const dockerfileName =
             (ctx.nodeConfig.dockerfilePath as string | undefined) ?? 'Dockerfile';
+        const dockerfileFilePath = ctx.nodeConfig.dockerfileFilePath as string | undefined;
+        const dockerfilePath = dockerfileFilePath
+            ? `${dockerfileFilePath.replace(/\/$/, '')}/${dockerfileName}`
+            : dockerfileName;
 
-        const imageName = config.imageName;
+        const imageName = `${config.imageName}-${nodeId}`;
 
         await logger.info(nodeId, `Building Docker image: ${imageName}`);
 

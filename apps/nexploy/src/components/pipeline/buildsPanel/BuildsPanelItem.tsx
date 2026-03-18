@@ -29,7 +29,7 @@ export interface BuildsPanelItemProps {
     total: number;
     isSelected: boolean;
     locale: string;
-    onSelect: (id: string | undefined) => void;
+    onSelect: (id: string | null) => void;
 }
 
 export function BuildsPanelItem({
@@ -96,7 +96,7 @@ export function BuildsPanelItem({
         <Button
             variant={isSelected ? 'default' : 'secondary'}
             size="sm"
-            onClick={() => onSelect(isSelected ? undefined : build.id)}
+            onClick={() => onSelect(isSelected ? null : build.id)}
             className="h-auto flex-col items-start gap-0.5 px-2.5 py-1.5"
         >
             <div className="flex w-full items-center gap-1">

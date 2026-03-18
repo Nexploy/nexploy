@@ -5,14 +5,14 @@ interface PipelineEditorStore {
     panelNodeId: string | null;
     selectedNodeIds: string[];
     saveVersion: number;
-    activeBuildId: string | undefined;
+    activeBuildId: string | null;
     builds: Array<{ id: string; [key: string]: unknown }>;
     nodeStatuses: Record<string, NodeRunStatus>;
     hoveredEdgeId: string | null;
     setPanelNodeId: (updater: string | null | ((prev: string | null) => string | null)) => void;
     setSelectedNodeIds: (updater: string[] | ((prev: string[]) => string[])) => void;
     setSaveVersion: (updater: number | ((prev: number) => number)) => void;
-    setActiveBuildId: (id: string | undefined) => void;
+    setActiveBuildId: (id: string | null) => void;
     setBuilds: (builds: Array<{ id: string; [key: string]: unknown }>) => void;
     setNodeStatuses: (
         updater:
@@ -28,7 +28,7 @@ const INITIAL_STATE = {
     panelNodeId: null,
     selectedNodeIds: [] as string[],
     saveVersion: 0,
-    activeBuildId: undefined,
+    activeBuildId: null,
     builds: [],
     nodeStatuses: {} as Record<string, NodeRunStatus>,
     hoveredEdgeId: null,

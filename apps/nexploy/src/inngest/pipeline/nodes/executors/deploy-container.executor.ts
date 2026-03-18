@@ -1,5 +1,6 @@
 import {
     getFromAllOutputs,
+    getFromClosestAncestor,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
@@ -10,13 +11,13 @@ export class DeployContainerExecutor implements INodeExecutor {
     readonly type = 'deploy-container';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { config, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { config, allOutputs, edges, logger, nodeId, abortSignal } = ctx;
 
-        const imageName = getFromAllOutputs<string>(allOutputs, 'imageName');
+        const imageName = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'imageName');
 
         if (!imageName) {
             throw new Error(
-                'No imageName found — connect this node after a Build Docker Image node',
+                'No imageName found — add a Build Docker Image node to your pipeline',
             );
         }
 
