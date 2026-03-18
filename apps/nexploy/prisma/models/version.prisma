@@ -3,7 +3,6 @@ model Version {
   repositoryId  String
   imageTag      String
   versionNumber Int      @default(1)
-  buildType     String
   branch        String?
   commitHash    String?
   commitMessage String?

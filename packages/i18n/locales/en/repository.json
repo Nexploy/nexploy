@@ -342,9 +342,6 @@
         "watching": "Watching",
         "shortcuts": "Keyboard shortcuts",
         "exitBuild": "Exit build view",
-        "nodeDialog": {
-            "noLogs": "No logs for this node."
-        },
         "nodeStatus": {
             "running": "Running",
             "completed": "Completed",
@@ -447,6 +444,8 @@
             "cloneCommitHashPlaceholder": "e.g. abc1234",
             "cloneCommitHashDescription": "Leave empty to use the latest commit of the branch",
             "dockerfilePath": "Dockerfile Path",
+            "dockerfileFilePath": "File Path",
+            "dockerfileFilePathPlaceholder": "Leave empty for repository root",
             "useRepositoryEnvVars": "Use repository environment variables",
             "script": "Script",
             "failOnError": "Fail on error",
@@ -473,7 +472,7 @@
             "cleanWorkdirInfo": "Removes the cloned repository directory from disk after the pipeline completes.",
             "saveVersionInfo": "Saves the current build as a new numbered version using the built image tag and commit info.",
             "validateDockerfileInfo": "Validates that the Dockerfile exists and is readable in the work directory.",
-            "deployContainerNoConfig": "The container name, image and port mapping are inherited from the repository settings.",
+            "deployContainerNoConfig": "The container is automatically deployed using the image built by the Build Docker Image node. Connect it after that node to deploy the result.",
             "environment": "Environment",
             "selectEnvironment": "Select an environment",
             "setEnvironmentInfo": "Sets the deployment environment for all downstream deploy nodes in this pipeline."

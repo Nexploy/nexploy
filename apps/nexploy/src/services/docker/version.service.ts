@@ -94,7 +94,6 @@ export async function deployComposeVersion(
                 envVars: envVariables,
                 composeConfig: version.composeConfig,
                 labels: {
-                    'nexploy.version': 'true',
                     'nexploy.repositoryId': repositoryId,
                     'nexploy.imageTag': imageTag,
                     'nexploy.buildType': 'NODE_PIPELINE',

@@ -2,8 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
-import { Label } from '@workspace/ui/components/label';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 
 export function ValidateComposeConfig() {
@@ -15,10 +20,14 @@ export function ValidateComposeConfig() {
                 control={form.control}
                 name="composeFileName"
                 render={({ field }) => (
-                    <FormItem className="space-y-1.5">
-                        <Label className="text-muted-foreground text-xs">{t('composeFileName')}</Label>
+                    <FormItem>
+                        <FormLabel>{t('composeFileName')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="docker-compose.yml" className="border-border bg-background text-foreground focus:border-primary h-8 text-xs" />
+                            <Input
+                                {...field}
+                                placeholder="docker-compose.yml"
+                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
+                            />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -28,10 +37,15 @@ export function ValidateComposeConfig() {
                 control={form.control}
                 name="composeFilePath"
                 render={({ field }) => (
-                    <FormItem className="space-y-1.5">
-                        <Label className="text-muted-foreground text-xs">{t('composeFilePath')}</Label>
+                    <FormItem>
+                        <FormLabel>{t('composeFilePath')}</FormLabel>
                         <FormControl>
-                            <Input {...field} value={field.value ?? ''} placeholder={t('composeFilePathPlaceholder')} className="border-border bg-background text-foreground focus:border-primary h-8 text-xs" />
+                            <Input
+                                {...field}
+                                value={field.value ?? ''}
+                                placeholder={t('composeFilePathPlaceholder')}
+                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
+                            />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

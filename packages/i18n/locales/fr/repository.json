@@ -340,9 +340,6 @@
         "redo": "Rétablir",
         "watching": "En observation",
         "exitBuild": "Quitter la vue du build",
-        "nodeDialog": {
-            "noLogs": "Aucun log pour ce nœud."
-        },
         "nodeStatus": {
             "running": "En cours",
             "completed": "Terminé",
@@ -446,6 +443,8 @@
             "cloneCommitHashPlaceholder": "ex. abc1234",
             "cloneCommitHashDescription": "Laisser vide pour utiliser le dernier commit de la branche",
             "dockerfilePath": "Chemin du Dockerfile",
+            "dockerfileFilePath": "Chemin du fichier",
+            "dockerfileFilePathPlaceholder": "Laisser vide pour la racine du dépôt",
             "useRepositoryEnvVars": "Utiliser les variables d'environnement du dépôt",
             "script": "Script",
             "failOnError": "Échouer en cas d'erreur",
@@ -472,7 +471,7 @@
             "cleanWorkdirInfo": "Supprime le répertoire du dépôt cloné du disque après l'exécution du pipeline.",
             "saveVersionInfo": "Enregistre le build actuel comme une nouvelle version numérotée en utilisant le tag d'image et les informations du commit.",
             "validateDockerfileInfo": "Vérifie que le Dockerfile existe et est lisible dans le répertoire de travail.",
-            "deployContainerNoConfig": "Le nom du conteneur, l'image et le mapping de port sont hérités des paramètres du dépôt.",
+            "deployContainerNoConfig": "Le conteneur est automatiquement déployé à partir de l'image construite par le node Build Docker Image. Connectez-le après ce node pour déployer le résultat.",
             "environment": "Environnement",
             "selectEnvironment": "Sélectionner un environnement",
             "setEnvironmentInfo": "Définit l'environnement de déploiement pour tous les nœuds de déploiement en aval dans ce pipeline."

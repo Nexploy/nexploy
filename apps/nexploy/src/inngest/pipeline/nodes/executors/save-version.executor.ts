@@ -55,7 +55,6 @@ export class SaveVersionExecutor implements INodeExecutor {
                 repositoryId: config.repositoryId,
                 imageTag: config.imageTag,
                 versionNumber,
-                buildType: 'NODE_PIPELINE',
                 branch,
                 commitHash,
                 commitMessage,

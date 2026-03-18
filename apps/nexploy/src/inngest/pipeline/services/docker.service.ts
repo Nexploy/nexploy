@@ -25,6 +25,7 @@ class DockerService {
         imageName: string,
         envVars: Record<string, string>,
         signal: AbortSignal,
+        containerName: string,
         environmentId?: string,
     ): Promise<{ containerId: string }> {
         try {
@@ -33,7 +34,7 @@ class DockerService {
                     json: {
                         repositoryId,
                         imageName,
-                        options: { envVars },
+                        options: { envVars, containerName },
                     },
                     signal,
                     environmentId,

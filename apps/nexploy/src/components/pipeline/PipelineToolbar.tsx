@@ -3,7 +3,6 @@
 import {
     Check,
     Copy,
-    GitBranch,
     Loader2,
     Power,
     Redo2,
@@ -220,18 +219,6 @@ export function PipelineToolbar() {
                                 buildId={activeBuildId}
                                 initialStatus={activeBuild.status}
                             />
-                            <span className="flex items-center gap-1 text-xs font-medium">
-                                <GitBranch className="size-3" />
-                                {activeBuild.branch}
-                                {activeBuild.commitHash && (
-                                    <>
-                                        <span className={'text-muted-foreground text-base'}>·</span>
-                                        <span className="text-muted-foreground font-mono">
-                                            {activeBuild.commitHash}
-                                        </span>
-                                    </>
-                                )}
-                            </span>
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <Button

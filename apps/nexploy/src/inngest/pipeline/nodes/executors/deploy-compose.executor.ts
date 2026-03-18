@@ -41,7 +41,6 @@ export class DeployComposeExecutor implements INodeExecutor {
         const commitMessage = getFromAllOutputs<string>(allOutputs, 'commitMessage');
 
         const labels: Record<string, string> = {
-            [NEXPLOY_LABELS.version]: 'true',
             [NEXPLOY_LABELS.repositoryId]: config.repositoryId,
             [NEXPLOY_LABELS.buildId]: config.imageTag,
             [NEXPLOY_LABELS.imageTag]: config.imageTag,

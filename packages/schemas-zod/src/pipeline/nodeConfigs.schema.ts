@@ -7,6 +7,7 @@ export const cloneRepositoryConfigSchema = z.object({
 
 export const buildDockerImageConfigSchema = z.object({
     dockerfilePath: z.string().min(1, 'Dockerfile path is required').default('Dockerfile'),
+    dockerfileFilePath: z.string().optional(),
     buildArgs: z.record(z.string(), z.string()).default({}),
 });
 

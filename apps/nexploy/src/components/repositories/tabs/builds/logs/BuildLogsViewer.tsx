@@ -1,9 +1,5 @@
 'use client';
 
-import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
-import { Button } from '@workspace/ui/components/button';
-import { ArrowDown, ArrowUp, Download } from 'lucide-react';
 import { BuildStatus } from 'generated/client';
 import dayjs from 'dayjs';
 import { BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
@@ -12,11 +8,10 @@ import { StatusLive } from '@/components/shared/StatusLive';
 import { cn } from '@workspace/ui/lib/utils';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { Realtime } from '@inngest/realtime';
-import { useLocalStorage } from 'usehooks-ts';
-import { Label } from '@workspace/ui/components/label';
-import { Switch } from '@workspace/ui/components/switch';
 import { getLogLevelColor, getLogLevelColorGradiant, parseAnsiColors } from '@/utils/color';
 import { useTranslations } from 'next-intl';
+import { LogsToolbar } from '@/components/shared/LogsToolbar';
+import { useLogsToolbar } from '@/hooks/useLogsToolbar';
 
 type BuildToken = NonNullable<Awaited<ReturnType<typeof onGetTokenBuildIdAction>>['data']>;
 type BuildMessage = Realtime.Subscribe.Token.InferMessage<BuildToken>;
@@ -40,12 +35,6 @@ export function BuildLogsViewer({
     createdAt,
 }: BuildLogsViewerProps) {
     const t = useTranslations('repository.builds.logs');
-    const [autoScroll, setAutoScroll] = useState(true);
-    const logsEndRef = useRef<HTMLDivElement>(null);
-    const logsContainerRef = useRef<HTMLDivElement>(null);
-    const lastScrollTop = useRef<number>(0);
-
-    const [showTimestamp, setShowTimestamp] = useLocalStorage('timestamp-build-log', false);
 
     const liveLogs = inngestData.data
         .filter((evt) => evt.topic === 'log' && evt.data?.log)
@@ -53,60 +42,15 @@ export function BuildLogsViewer({
 
     const logs = [...initialLogs, ...liveLogs];
 
-    useEffect(() => {
-        const logsContainer = logsContainerRef.current;
-        if (!logsContainer) return;
-
-        const handleScroll = () => {
-            const scrollHeight = logsContainer.scrollHeight;
-            const scrollTop = logsContainer.scrollTop;
-            const clientHeight = logsContainer.clientHeight;
-            const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
-
-            if (distanceFromBottom <= 5) {
-                setAutoScroll(true);
-            } else if (scrollTop < lastScrollTop.current) {
-                setAutoScroll(false);
-            }
-
-            lastScrollTop.current = scrollTop;
-        };
-
-        logsContainer.addEventListener('scroll', handleScroll, { passive: true });
-
-        return () => {
-            logsContainer.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
-
-    useEffect(() => {
-        if (!autoScroll || !logsEndRef.current) return;
-
-        const rafId = requestAnimationFrame(() => {
-            logsEndRef.current?.scrollIntoView({ behavior: 'instant', block: 'end' });
-        });
-
-        return () => cancelAnimationFrame(rafId);
-    }, [logs.length, autoScroll]);
-
-    const downloadLogs = () => {
-        const logsText = logs
-            .map(
-                (log) =>
-                    `[${dayjs(log.createdAt).toISOString()}] [${log.step}] [${log.level}] ${log.message}`,
-            )
-            .join('\n');
-
-        const blob = new Blob([logsText], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `build-${buildId.slice(-6)}-logs.txt`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    };
+    const {
+        logsContainerRef,
+        logsEndRef,
+        showTimestamp,
+        setShowTimestamp,
+        autoScroll,
+        setAutoScroll,
+        downloadLogs,
+    } = useLogsToolbar({ logs, downloadFileName: `build-${buildId.slice(-6)}-logs.txt` });
 
     return (
         <div className="flex flex-1 flex-col overflow-hidden">
@@ -118,31 +62,15 @@ export function BuildLogsViewer({
                     </span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="flex items-center space-x-2">
-                        <Label htmlFor="log-showTimestamp" className={'cursor-pointer text-xs'}>
-                            {t('showDate')}
-                        </Label>
-                        <Switch
-                            id="log-showTimestamp"
-                            className={'cursor-pointer'}
-                            onCheckedChange={(checked) => setShowTimestamp(checked)}
-                            defaultChecked={showTimestamp}
-                        />
-                    </div>
-                    {logs.length > 0 && (
-                        <Button size="sm" onClick={downloadLogs}>
-                            <Download />
-                            {t('download')}
-                        </Button>
-                    )}
-                    <Button
-                        size="sm"
-                        icon={autoScroll ? ArrowDown : ArrowUp}
-                        variant={autoScroll ? 'default' : 'white'}
-                        onClick={() => setAutoScroll((prevState) => !prevState)}
-                    >
-                        {autoScroll ? t('auto') : t('manual')}
-                    </Button>
+                    <LogsToolbar
+                        id="build-log-showTimestamp"
+                        showTimestamp={showTimestamp}
+                        onShowTimestampChange={setShowTimestamp}
+                        hasLogs={logs.length > 0}
+                        onDownload={downloadLogs}
+                        autoScroll={autoScroll}
+                        onAutoScrollToggle={() => setAutoScroll((prev) => !prev)}
+                    />
                 </div>
             </div>
             {logs.length === 0 ? (
