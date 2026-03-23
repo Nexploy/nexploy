@@ -58,41 +58,6 @@ export async function githubGetRepositoryBranches(
         .json<GithubBranch[]>();
 }
 
-export async function githubCreateWebhook(
-    owner: string,
-    repo: string,
-    webhookUrl: string,
-    secret: string,
-): Promise<{ id: number }> {
-    return kyGithub
-        .post(`repos/${owner}/${repo}/hooks`, {
-            headers: {
-                Accept: 'application/vnd.github+json',
-                'X-GitHub-Api-Version': '2022-11-28',
-            },
-            json: {
-                name: 'web',
-                active: true,
-                events: ['push'],
-                config: {
-                    url: webhookUrl,
-                    content_type: 'json',
-                    insecure_ssl: '0',
-                    secret,
-                },
-            },
-        })
-        .json<{ id: number }>();
-}
-
-export async function githubDeleteWebhook(
-    owner: string,
-    repo: string,
-    webhookId: string,
-): Promise<void> {
-    await kyGithub.delete(`repos/${owner}/${repo}/hooks/${webhookId}`).json();
-}
-
 export async function githubExchangeCodeForToken(
     code: string,
     clientId: string,
