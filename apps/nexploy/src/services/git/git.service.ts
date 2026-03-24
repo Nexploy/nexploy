@@ -157,6 +157,7 @@ export async function getBranches(
                     protected: branch.protected,
                 }));
             } catch (error: unknown) {
+                console.log(error);
                 throw new Error('Failed to fetch GitHub branches');
             }
         }

@@ -9,6 +9,8 @@ model Repository {
   gitAccountId String?
   gitAccount   GitAccount? @relation(fields: [gitAccountId], references: [id], onDelete: SetNull)
 
+  webhookId String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

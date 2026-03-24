@@ -9,12 +9,16 @@ import {
     pushToRegistryConfigSchema,
     saveVersionConfigSchema,
     sendNotificationConfigSchema,
-    setEnvVarsConfigSchema,
     setEnvironmentConfigSchema,
+    setEnvVarsConfigSchema,
     validateDockerfileConfigSchema,
+    webhookCloneConfigSchema,
     writeEnvFileConfigSchema,
 } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { toast } from 'sonner';
+import { setupWebhookAction } from '@/actions/repository/pipeline/setupWebhook.action';
 import { CloneRepositoryConfig } from '../config/CloneRepositoryConfig';
+import { WebhookCloneConfig } from '../config/WebhookCloneConfig';
 import { BuildDockerImageConfig } from '../config/BuildDockerImageConfig';
 import { ValidateDockerfileConfig } from '../config/ValidateDockerfileConfig';
 import { ValidateComposeConfig } from '../config/ValidateComposeConfig';
@@ -30,6 +34,7 @@ import { SetEnvironmentConfig } from '../config/SetEnvironmentConfig';
 
 export const CONFIG_SCHEMAS: Record<NodeId, any> = {
     'clone-repository': cloneRepositoryConfigSchema,
+    'webhook-clone': webhookCloneConfigSchema,
     'build-docker-image': buildDockerImageConfigSchema,
     'validate-dockerfile': validateDockerfileConfigSchema,
     'validate-compose': composeFileConfigSchema,
@@ -44,8 +49,26 @@ export const CONFIG_SCHEMAS: Record<NodeId, any> = {
     'set-environment': setEnvironmentConfigSchema,
 };
 
+export interface NodeActionResult {
+    reset?: boolean;
+}
+
+export const NODE_ACTIONS: Partial<
+    Record<NodeId, (repositoryId: string) => Promise<NodeActionResult | void>[]>
+> = {
+    'webhook-clone': (repositoryId) => [
+        setupWebhookAction({ repositoryId }).then((result) => {
+            if (result?.data && !result.data.configured) {
+                toast.error(result.data.error);
+                return { reset: true };
+            }
+        }),
+    ],
+};
+
 export const CONFIG_PANELS: Record<NodeId, ComponentType> = {
     'clone-repository': CloneRepositoryConfig,
+    'webhook-clone': WebhookCloneConfig,
     'build-docker-image': BuildDockerImageConfig,
     'validate-dockerfile': ValidateDockerfileConfig,
     'validate-compose': ValidateComposeConfig,

@@ -14,6 +14,7 @@ import {
 } from '@/components/pipeline/pipelineTheme';
 import { useReactFlow } from '@xyflow/react';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
+import { CONFIG_SCHEMAS } from '@/components/pipeline/nodes/nodeConfigPanel/nodeConfigRegistry';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 
@@ -67,7 +68,7 @@ export function NodeAddPanel() {
                     label: nodeType,
                     nodeType,
                     definition: def,
-                    config: { ...def.defaultConfig },
+                    config: CONFIG_SCHEMAS[nodeType]?.safeParse({}).data ?? {},
                     isStartNode: def.isStartNode ?? false,
                 },
             }),

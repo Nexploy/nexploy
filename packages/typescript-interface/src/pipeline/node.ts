@@ -13,6 +13,7 @@ export interface NodeData {
 
 export type NodeId =
     | 'clone-repository'
+    | 'webhook-clone'
     | 'build-docker-image'
     | 'deploy-container'
     | 'deploy-compose'

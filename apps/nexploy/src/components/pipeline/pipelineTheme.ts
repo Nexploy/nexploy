@@ -16,6 +16,7 @@ import {
     Trash2,
     Upload,
     Variable,
+    Webhook,
     Wrench,
 } from 'lucide-react';
 
@@ -69,6 +70,7 @@ export const CATEGORY_ICONS: Record<string, LucideIcon> = {
 
 const NODE_CATEGORY: Record<string, string> = {
     'clone-repository': 'source',
+    'webhook-clone': 'source',
     'validate-dockerfile': 'build',
     'validate-compose': 'build',
     'build-docker-image': 'build',
@@ -93,6 +95,7 @@ export const NODE_TEXT: Record<string, string> = Object.fromEntries(
 
 export const NODE_ICONS: Record<string, LucideIcon> = {
     'clone-repository': GitBranch,
+    'webhook-clone': Webhook,
     'validate-dockerfile': FileCheck,
     'validate-compose': FileSearch,
     'build-docker-image': Container,
@@ -109,6 +112,7 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
 
 export const ICON_NAME_MAP: Record<string, LucideIcon> = {
     GitClone: GitBranch,
+    Webhook,
     Container,
     Rocket,
     Layers,

@@ -13,10 +13,6 @@ export const sendNotificationNodeDef: NodeDefinition<SendNotificationConfig> = {
         icon: 'Bell',
         color: `${CATEGORY_BG_MUTED['notification']} ${CATEGORY_TEXT['notification']}`,
     },
-    defaultConfig: {
-        webhookUrl: '',
-        triggerOn: ['always'],
-    },
     handles: {
         inputs: [{ id: 'input', position: Position.Left }],
         outputs: [{ id: 'output', position: Position.Right }],

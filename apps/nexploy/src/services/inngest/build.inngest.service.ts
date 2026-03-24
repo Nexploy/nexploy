@@ -11,7 +11,7 @@ import { createLogInngest } from '@/services/inngest/log.inngest.service';
 import { createBuildChannel } from '@/inngest/channels/build.channel';
 
 export async function startBuildRepositoryInngest(
-    { repositoryId, commitHash }: StartBuildSchemaType,
+    { repositoryId, branch, commitHash }: StartBuildSchemaType,
     userId: string,
 ) {
     const repository = await getRepositorieWithEnv(repositoryId);
@@ -49,6 +49,7 @@ export async function startBuildRepositoryInngest(
         repositoryId: repository.id,
         gitProvider: repository.gitProvider,
         gitUrl: repository.repositoryUrl,
+        gitBranch: branch,
         gitCommitHash: commitHash,
         envVariables,
         imageName,

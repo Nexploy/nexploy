@@ -12,9 +12,6 @@ export const validateComposeNodeDef: NodeDefinition = {
         icon: 'FileSearch',
         color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
     },
-    defaultConfig: {
-        composePath: 'docker-compose.yml',
-    },
     handles: {
         inputs: [{ id: 'input', position: Position.Left }],
         outputs: [{ id: 'output', position: Position.Right }],

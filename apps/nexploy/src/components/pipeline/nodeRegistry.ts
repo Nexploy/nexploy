@@ -1,5 +1,6 @@
 import { type NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { cloneRepositoryNodeDef } from './nodes/definitions/clone-repository.node';
+import { webhookCloneNodeDef } from './nodes/definitions/webhook-clone.node';
 import { buildDockerImageNodeDef } from './nodes/definitions/build-docker-image.node';
 import { deployContainerNodeDef } from './nodes/definitions/deploy-container.node';
 import { deployComposeNodeDef } from './nodes/definitions/deploy-compose.node';
@@ -16,6 +17,7 @@ import { setEnvironmentNodeDef } from './nodes/definitions/set-environment.node'
 export const ALL_NODE_DEFINITIONS: NodeDefinition[] = [
     // Source
     cloneRepositoryNodeDef,
+    webhookCloneNodeDef,
     // Build
     validateDockerfileNodeDef,
     validateComposeNodeDef,

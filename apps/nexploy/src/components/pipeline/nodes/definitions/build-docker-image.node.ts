@@ -13,10 +13,6 @@ export const buildDockerImageNodeDef: NodeDefinition<BuildDockerImageConfig> = {
         icon: 'Container',
         color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
     },
-    defaultConfig: {
-        dockerfilePath: 'Dockerfile',
-        buildArgs: {},
-    },
     handles: {
         inputs: [{ id: 'input', position: Position.Left }],
         outputs: [{ id: 'output', position: Position.Right }],

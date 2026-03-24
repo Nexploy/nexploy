@@ -1,8 +1,12 @@
 import { z } from 'zod';
 
 export const cloneRepositoryConfigSchema = z.object({
-    branch: z.string(),
+    branch: z.string().default('main'),
     commitHash: z.string().optional(),
+});
+
+export const webhookCloneConfigSchema = z.object({
+    branchFilter: z.string().optional(),
 });
 
 export const buildDockerImageConfigSchema = z.object({
@@ -79,6 +83,7 @@ export type CleanWorkdirConfig = z.infer<typeof cleanWorkdirConfigSchema>;
 export type VarEntry = z.infer<typeof varEntrySchema>;
 export type SetEnvVarsConfig = z.infer<typeof setEnvVarsConfigSchema>;
 export type CloneRepositoryConfig = z.infer<typeof cloneRepositoryConfigSchema>;
+export type WebhookCloneConfig = z.infer<typeof webhookCloneConfigSchema>;
 export type BuildDockerImageConfig = z.infer<typeof buildDockerImageConfigSchema>;
 export type ValidateDockerfileConfig = z.infer<typeof validateDockerfileConfigSchema>;
 export type ComposeFileConfig = z.infer<typeof composeFileConfigSchema>;

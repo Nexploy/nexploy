@@ -388,6 +388,10 @@
                 "description": "Clone the git repository",
                 "noConfig": "No configuration required. The repository URL and branch are inherited from the repository settings."
             },
+            "webhook-clone": {
+                "name": "Webhook Clone",
+                "description": "Clone the repository using the branch and commit from an incoming Git webhook (push event)"
+            },
             "build-docker-image": {
                 "name": "Build Docker Image",
                 "description": "Build a Docker image from a Dockerfile"
@@ -438,6 +442,10 @@
             }
         },
         "config": {
+            "webhookStatusConfigured": "Webhook configured automatically",
+            "webhookBranchFilter": "Branch Filter",
+            "webhookBranchFilterPlaceholder": "e.g. main, develop, feature/*",
+            "webhookBranchFilterDescription": "Only trigger builds for matching branches. Supports comma-separated values and wildcards (e.g. feature/*). Leave empty to accept all branches.",
             "cloneBranch": "Branch",
             "cloneBranchDescription": "Override the default branch from repository settings",
             "branchDefault": "Default branch",

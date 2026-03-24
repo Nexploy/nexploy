@@ -37,6 +37,7 @@ export function NodeAnimation({
             className={cn(
                 'flex size-11 items-center justify-center',
                 iconRounded,
+                isStartNode && 'rounded-l-2xl',
                 data.definition.metadata.color,
             )}
         >

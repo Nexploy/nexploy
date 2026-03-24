@@ -1,5 +1,6 @@
 'use client';
 
+import { type FormEvent, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { type Node } from '@xyflow/react';
@@ -14,7 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { saveNodeConfigAction } from '@/actions/repository/pipeline/saveNodeConfig.action';
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { CONFIG_PANELS, CONFIG_SCHEMAS } from './nodeConfigRegistry';
+import { CONFIG_PANELS, CONFIG_SCHEMAS, NODE_ACTIONS } from './nodeConfigRegistry';
 import { cn } from '@workspace/ui/lib/utils';
 
 interface NodeConfigFormProps {
@@ -25,6 +26,8 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
     const t = useTranslations('repository.pipeline');
     const tConfig = useTranslations('repository.pipeline.config');
     const tCommon = useTranslations('common');
+
+    const [nodeActionLoading, setNodeActionLoading] = useState(false);
 
     const params = useParams<{ repositoryId: string }>();
     const { handleConfigChange, handleResetPanelNode, isViewingBuild } = usePipelineContext();
@@ -53,11 +56,23 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
         },
     );
 
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setNodeActionLoading(true);
+        const results = await Promise.all(NODE_ACTIONS[nodeType]?.(params.repositoryId) ?? []);
+        setNodeActionLoading(false);
+        if (results.some((r) => r?.reset)) {
+            form.reset(schema.safeParse({}).data ?? {});
+            return;
+        }
+        handleSubmitWithAction(e);
+    };
+
     if (!ConfigComponent) return null;
 
     return (
         <Form {...form}>
-            <form onSubmit={handleSubmitWithAction} className="flex max-h-[90vh] flex-col gap-4">
+            <form onSubmit={handleSubmit} className="flex max-h-[90vh] flex-col gap-4">
                 {!isViewingBuild && (
                     <DialogHeader>
                         <DialogTitle className="text-sm">{t(`nodes.${nodeType}.name`)}</DialogTitle>
@@ -89,9 +104,13 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
                             <Button
                                 type="submit"
                                 size="sm"
-                                disabled={!form.formState.isDirty || action.isPending}
+                                disabled={
+                                    !form.formState.isDirty || action.isPending || nodeActionLoading
+                                }
                             >
-                                {action.isPending && <Loader2 className="animate-spin" />}
+                                {(action.isPending || nodeActionLoading) && (
+                                    <Loader2 className="animate-spin" />
+                                )}
                                 {tConfig('save')}
                             </Button>
                         </>

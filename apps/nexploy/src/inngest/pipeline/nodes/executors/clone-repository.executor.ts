@@ -8,15 +8,13 @@ export class CloneRepositoryExecutor implements INodeExecutor {
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { buildId, config, nodeConfig, logger, nodeId, reporter } = ctx;
 
-        const effectiveBranch =
-            (nodeConfig.branch as string | undefined) || config.gitBranch || 'main';
-        const effectiveCommitHash =
-            (nodeConfig.commitHash as string | undefined) || config.gitCommitHash;
+        const effectiveBranch = nodeConfig.branch as string;
+        const effectiveCommitHash = nodeConfig.commitHash as string;
 
         const effectiveConfig = {
             ...config,
             gitBranch: effectiveBranch,
-            gitCommitHash: effectiveCommitHash || undefined,
+            gitCommitHash: effectiveCommitHash,
         };
 
         const commitSuffix = effectiveCommitHash

@@ -12,7 +12,6 @@ export const saveVersionNodeDef: NodeDefinition = {
         icon: 'Tag',
         color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
     },
-    defaultConfig: {},
     handles: {
         inputs: [{ id: 'input', position: Position.Top, acceptsFrom: 'save-version' }],
         outputs: [],

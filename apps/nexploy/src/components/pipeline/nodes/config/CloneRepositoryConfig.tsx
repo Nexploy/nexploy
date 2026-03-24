@@ -45,7 +45,6 @@ export function CloneRepositoryConfig() {
         `/api/repositories/${params.repositoryId}`,
         fetcherApi,
     );
-
     const { data: branches, isLoading: isLoadingBranches } = useSWR<GitBranch[]>(
         repo?.gitAccountId
             ? `/api/git/branches?provider=${repo.gitProvider}&gitAccountId=${repo.gitAccountId}&repoId=${repo.gitId}&owner=${repo.name.split('/')[0]}&repoName=${repo.name.split('/')[1]}`

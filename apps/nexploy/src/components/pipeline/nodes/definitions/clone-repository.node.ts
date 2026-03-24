@@ -1,9 +1,8 @@
 import { Position } from '@xyflow/react';
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
-import { CloneRepositoryConfig } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
-export const cloneRepositoryNodeDef: NodeDefinition<CloneRepositoryConfig> = {
+export const cloneRepositoryNodeDef: NodeDefinition = {
     id: 'clone-repository',
     type: 'base-node',
     category: 'source',
@@ -13,9 +12,6 @@ export const cloneRepositoryNodeDef: NodeDefinition<CloneRepositoryConfig> = {
         description: 'pipeline.nodes.clone-repository.description',
         icon: 'GitClone',
         color: `${CATEGORY_BG_MUTED['source']} ${CATEGORY_TEXT['source']}`,
-    },
-    defaultConfig: {
-        branch: 'main',
     },
     handles: {
         inputs: [],

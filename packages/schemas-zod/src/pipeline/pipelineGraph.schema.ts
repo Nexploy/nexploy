@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const nodeTypeSchema = z.enum([
     'clone-repository',
+    'webhook-clone',
     'build-docker-image',
     'deploy-container',
     'deploy-compose',

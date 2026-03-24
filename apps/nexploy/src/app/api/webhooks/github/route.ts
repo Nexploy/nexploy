@@ -31,6 +31,8 @@ export const POST = route.handler(async (request: Request, { body }) => {
         await startBuildRepositoryInngest(
             {
                 repositoryId: repo.id,
+                branch: parsed.branch,
+                commitHash: parsed.commitHash,
             },
             repo.userId,
         );

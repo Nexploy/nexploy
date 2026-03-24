@@ -18,7 +18,7 @@ export interface NodeDefinition<TConfig = Record<string, unknown>> {
         icon: string;
         color: string;
     };
-    defaultConfig: TConfig;
+    defaultConfig?: TConfig;
     handles: {
         inputs: HandleDefinition[];
         outputs: HandleDefinition[];
