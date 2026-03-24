@@ -98,7 +98,7 @@ export class PipelineOrchestrator {
         let sorted: PipelineNode[];
         let reachableNodeIds: Set<string>;
         try {
-            ({ sorted, reachableNodeIds } = analyzeGraph(graph));
+            ({ sorted, reachableNodeIds } = analyzeGraph(graph, config.triggerSource));
         } catch (err) {
             throw new Error(`Invalid pipeline graph: ${err instanceof Error ? err.message : err}`);
         }

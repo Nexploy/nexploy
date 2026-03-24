@@ -35,6 +35,7 @@ export const POST = route.handler(async (request: Request, { body }) => {
                 commitHash: parsed.commitHash,
             },
             repo.userId,
+            'webhook',
         );
 
         return NextResponse.json({ message: 'Build started' });

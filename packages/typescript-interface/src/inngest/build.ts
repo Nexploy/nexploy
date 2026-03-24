@@ -17,4 +17,5 @@ export interface BuildConfig {
     envVariables: Record<string, string>;
     imageName: string;
     imageTag: string;
+    triggerSource: 'manual' | 'webhook';
 }

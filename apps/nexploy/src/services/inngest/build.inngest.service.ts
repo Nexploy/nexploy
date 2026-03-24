@@ -13,6 +13,7 @@ import { createBuildChannel } from '@/inngest/channels/build.channel';
 export async function startBuildRepositoryInngest(
     { repositoryId, branch, commitHash }: StartBuildSchemaType,
     userId: string,
+    triggerSource: 'manual' | 'webhook' = 'manual',
 ) {
     const repository = await getRepositorieWithEnv(repositoryId);
 
@@ -54,6 +55,7 @@ export async function startBuildRepositoryInngest(
         envVariables,
         imageName,
         imageTag: build.id,
+        triggerSource,
     };
 
     await addBuildJob(build.id, config);

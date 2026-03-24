@@ -5,7 +5,10 @@ export interface GraphAnalysis {
     reachableNodeIds: Set<string>;
 }
 
-export function analyzeGraph(graph: PipelineGraph): GraphAnalysis {
+export function analyzeGraph(
+    graph: PipelineGraph,
+    triggerSource: 'manual' | 'webhook' = 'manual',
+): GraphAnalysis {
     const nodeMap = new Map(graph.nodes.map((n) => [n.id, n]));
 
     const directed = new Map<string, string[]>(graph.nodes.map((n) => [n.id, []]));
@@ -39,9 +42,19 @@ export function analyzeGraph(graph: PipelineGraph): GraphAnalysis {
         throw new Error('Pipeline contains a cycle');
     }
 
-    const startNodeIds = new Set(
-        graph.nodes.filter((n) => n.data.isStartNode === true).map((n) => n.id),
-    );
+    // Determine start nodes based on trigger source:
+    // - webhook: only webhook-clone nodes are entry points
+    // - manual: all isStartNode nodes except webhook-clone
+    const startNodeIds =
+        triggerSource === 'webhook'
+            ? new Set(graph.nodes.filter((n) => n.data.type === 'webhook-clone').map((n) => n.id))
+            : new Set(
+                  graph.nodes
+                      .filter(
+                          (n) => n.data.isStartNode === true && n.data.type !== 'webhook-clone',
+                      )
+                      .map((n) => n.id),
+              );
     const reachableNodeIds = new Set<string>(startNodeIds);
     const bfsQueue = [...startNodeIds];
 
