@@ -1,5 +1,5 @@
 import { type ComponentType } from 'react';
-import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeId, NodeLifecycleCallbacks } from '@workspace/typescript-interface/pipeline/node';
 import {
     buildDockerImageConfigSchema,
     cleanWorkdirConfigSchema,
@@ -17,6 +17,7 @@ import {
 } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { toast } from 'sonner';
 import { setupWebhookAction } from '@/actions/repository/pipeline/setupWebhook.action';
+import { teardownWebhookAction } from '@/actions/repository/pipeline/teardownWebhook.action';
 import { CloneRepositoryConfig } from '../config/CloneRepositoryConfig';
 import { WebhookCloneConfig } from '../config/WebhookCloneConfig';
 import { BuildDockerImageConfig } from '../config/BuildDockerImageConfig';
@@ -49,21 +50,20 @@ export const CONFIG_SCHEMAS: Record<NodeId, any> = {
     'set-environment': setEnvironmentConfigSchema,
 };
 
-export interface NodeActionResult {
-    reset?: boolean;
-}
-
-export const NODE_ACTIONS: Partial<
-    Record<NodeId, (repositoryId: string) => Promise<NodeActionResult | void>[]>
-> = {
-    'webhook-clone': (repositoryId) => [
-        setupWebhookAction({ repositoryId }).then((result) => {
+export const NODE_LIFECYCLE: Partial<Record<NodeId, NodeLifecycleCallbacks>> = {
+    'webhook-clone': {
+        onAdd: async (repositoryId) => {
+            const result = await setupWebhookAction({ repositoryId });
             if (result?.data && !result.data.configured) {
                 toast.error(result.data.error);
-                return { reset: true };
             }
-        }),
-    ],
+        },
+        onRemove: async (repositoryId, remaining) => {
+            if (remaining === 0) {
+                await teardownWebhookAction({ repositoryId });
+            }
+        },
+    },
 };
 
 export const CONFIG_PANELS: Record<NodeId, ComponentType> = {

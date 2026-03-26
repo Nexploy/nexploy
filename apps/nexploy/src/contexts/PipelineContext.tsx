@@ -18,9 +18,10 @@ import {
     useEdgesState,
     useNodesState,
 } from '@xyflow/react';
-import { type PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeId, type PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { flowToGraph, graphToFlow } from '@/components/pipeline/utils/graphConvert';
 import { usePipelineHistory } from '@/hooks/usePipelineHistory';
+import { NODE_LIFECYCLE } from '@/components/pipeline/nodes/nodeConfigPanel/nodeConfigRegistry';
 import { useAction } from 'next-safe-action/hooks';
 import { savePipelineAction } from '@/actions/repository/pipeline/savePipeline.action';
 import { useParams } from 'next/navigation';
@@ -46,6 +47,7 @@ interface PipelineContextValue {
     handleConfigChange: (nodeId: string, config: Record<string, unknown>) => void;
     handleDeleteSelection: () => void;
     handleDuplicateSelection: () => void;
+    handleNodeAdded: (nodeType: NodeId) => void;
     triggerAutoSave: () => void;
     undo: () => void;
     redo: () => void;
@@ -117,12 +119,48 @@ export function PipelineProvider({
 
     const triggerAutoSave = useCallback(() => setSaveVersion((v) => v + 1), []);
 
+    const handleNodeAdded = useCallback(
+        (nodeType: NodeId) => {
+            const lifecycle = NODE_LIFECYCLE[nodeType];
+            if (lifecycle?.onAdd) {
+                lifecycle.onAdd(repositoryId);
+            }
+        },
+        [repositoryId],
+    );
+
+    const fireRemoveLifecycle = useCallback(
+        (removedNodes: Node[]) => {
+            const remaining = nodes.filter((n) => !removedNodes.some((r) => r.id === n.id));
+            const seen = new Set<string>();
+            for (const removed of removedNodes) {
+                const nodeType = removed.data.nodeType as NodeId;
+                if (seen.has(nodeType)) continue;
+                seen.add(nodeType);
+                const lifecycle = NODE_LIFECYCLE[nodeType];
+                if (lifecycle?.onRemove) {
+                    const remainingCount = remaining.filter(
+                        (n) => n.data.nodeType === nodeType,
+                    ).length;
+                    lifecycle.onRemove(repositoryId, remainingCount);
+                }
+            }
+        },
+        [nodes, repositoryId],
+    );
+
     const onNodesChange: typeof onNodesChangeBase = useCallback(
         (changes) => {
+            const removeChanges = changes.filter((c) => c.type === 'remove');
+            if (removeChanges.length > 0) {
+                const removedIds = new Set(removeChanges.map((c) => c.id));
+                const removedNodes = nodes.filter((n) => removedIds.has(n.id));
+                fireRemoveLifecycle(removedNodes);
+                setSaveVersion((v) => v + 1);
+            }
             onNodesChangeBase(changes);
-            if (changes.some((c) => c.type === 'remove')) setSaveVersion((v) => v + 1);
         },
-        [onNodesChangeBase],
+        [onNodesChangeBase, nodes, fireRemoveLifecycle],
     );
 
     const onEdgesChange: typeof onEdgesChangeBase = useCallback(
@@ -199,6 +237,8 @@ export function PipelineProvider({
     const handleDeleteSelection = useCallback(() => {
         const selectedIds = new Set(nodes.filter((n) => n.selected).map((n) => n.id));
         if (selectedIds.size === 0) return;
+        const deletedNodes = nodes.filter((n) => selectedIds.has(n.id));
+        fireRemoveLifecycle(deletedNodes);
         setNodes((nds) => nds.filter((n) => !selectedIds.has(n.id)));
         setEdges((eds) =>
             eds.filter((e) => !selectedIds.has(e.source) && !selectedIds.has(e.target)),
@@ -206,7 +246,7 @@ export function PipelineProvider({
         setSelectedNodeIds([]);
         setPanelNodeId(null);
         setSaveVersion((v) => v + 1);
-    }, [nodes, setNodes, setEdges]);
+    }, [nodes, setNodes, setEdges, fireRemoveLifecycle]);
 
     const activeBuild = builds.find((b) => b.id === activeBuildId);
     const isViewingBuild = !!activeBuild?.pipelineSnapshot;
@@ -270,6 +310,7 @@ export function PipelineProvider({
                 handleConfigChange,
                 handleDeleteSelection,
                 handleDuplicateSelection,
+                handleNodeAdded,
                 triggerAutoSave,
                 undo,
                 redo,

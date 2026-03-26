@@ -22,7 +22,7 @@ export function NodeAddPanel() {
     const t = useTranslations('repository.pipeline');
     const definitions = useNodeRegistryStore((s) => s.nodes);
     const { screenToFlowPosition } = useReactFlow();
-    const { setNodes, triggerAutoSave, isViewingBuild } = usePipelineContext();
+    const { setNodes, triggerAutoSave, handleNodeAdded, isViewingBuild } = usePipelineContext();
 
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 
@@ -74,6 +74,7 @@ export function NodeAddPanel() {
             }),
         );
         triggerAutoSave();
+        handleNodeAdded(nodeType);
     };
 
     const searchQuery = search.trim().toLowerCase();

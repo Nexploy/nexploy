@@ -8,7 +8,7 @@ import { getTemplate } from '@/components/pipeline/nodes/template/pipelineTempla
 
 export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
     const [isDragOver, setIsDragOver] = useState(false);
-    const { setNodes, setEdges, triggerAutoSave } = usePipelineContext();
+    const { setNodes, setEdges, triggerAutoSave, handleNodeAdded } = usePipelineContext();
 
     const onDragOver = useCallback((event: React.DragEvent) => {
         event.preventDefault();
@@ -91,8 +91,9 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
 
             setNodes((node) => node.concat(newNode));
             triggerAutoSave();
+            handleNodeAdded(nodeType);
         },
-        [rfInstance, setNodes, setEdges, triggerAutoSave],
+        [rfInstance, setNodes, setEdges, triggerAutoSave, handleNodeAdded],
     );
 
     return { isDragOver, onDragOver, onDragLeave, onDrop };
