@@ -217,14 +217,12 @@ export function PipelineToolbar() {
                 {activeBuild && (
                     <div className="flex items-center gap-1.5">
                         <Separator orientation="vertical" className="!h-4" />
-                        <div className="flex items-center gap-1.5">
+                        <div key={activeBuildId} className="flex items-center gap-1.5">
                             <StatusLive
-                                key={activeBuildId}
                                 buildId={activeBuildId}
                                 initialStatus={activeBuild.status}
                             />
                             <StopBuild
-                                key={activeBuildId}
                                 buildId={activeBuildId!}
                                 initialStatus={activeBuild.status}
                             />
