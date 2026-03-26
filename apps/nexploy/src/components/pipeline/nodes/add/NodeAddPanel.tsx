@@ -59,9 +59,10 @@ export function NodeAddPanel() {
         const centerY = rect ? rect.top + rect.height / 2 : window.innerHeight / 2;
         const position = screenToFlowPosition({ x: centerX, y: centerY });
 
+        const nodeId = `${nodeType}-${Date.now()}`;
         setNodes((nodes) =>
             nodes.concat({
-                id: `${nodeType}-${Date.now()}`,
+                id: nodeId,
                 type: def.type,
                 position: { x: position.x - 45, y: position.y - 45 },
                 data: {
@@ -74,7 +75,7 @@ export function NodeAddPanel() {
             }),
         );
         triggerAutoSave();
-        handleNodeAdded(nodeType);
+        handleNodeAdded(nodeType, nodeId);
     };
 
     const searchQuery = search.trim().toLowerCase();

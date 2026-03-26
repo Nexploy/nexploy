@@ -15,7 +15,6 @@ import {
     webhookCloneConfigSchema,
     writeEnvFileConfigSchema,
 } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { toast } from 'sonner';
 import { setupWebhookAction } from '@/actions/repository/pipeline/setupWebhook.action';
 import { teardownWebhookAction } from '@/actions/repository/pipeline/teardownWebhook.action';
 import { CloneRepositoryConfig } from '../config/CloneRepositoryConfig';
@@ -55,8 +54,9 @@ export const NODE_LIFECYCLE: Partial<Record<NodeId, NodeLifecycleCallbacks>> = {
         onAdd: async (repositoryId) => {
             const result = await setupWebhookAction({ repositoryId });
             if (result?.data && !result.data.configured) {
-                toast.error(result.data.error);
+                return { success: false, error: result.data.error };
             }
+            return { success: true };
         },
         onRemove: async (repositoryId, remaining) => {
             if (remaining === 0) {

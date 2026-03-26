@@ -22,6 +22,7 @@ import { type NodeId, type PipelineGraph } from '@workspace/typescript-interface
 import { flowToGraph, graphToFlow } from '@/components/pipeline/utils/graphConvert';
 import { usePipelineHistory } from '@/hooks/usePipelineHistory';
 import { NODE_LIFECYCLE } from '@/components/pipeline/nodes/nodeConfigPanel/nodeConfigRegistry';
+import { toast } from 'sonner';
 import { useAction } from 'next-safe-action/hooks';
 import { savePipelineAction } from '@/actions/repository/pipeline/savePipeline.action';
 import { useParams } from 'next/navigation';
@@ -47,7 +48,7 @@ interface PipelineContextValue {
     handleConfigChange: (nodeId: string, config: Record<string, unknown>) => void;
     handleDeleteSelection: () => void;
     handleDuplicateSelection: () => void;
-    handleNodeAdded: (nodeType: NodeId) => void;
+    handleNodeAdded: (nodeType: NodeId, nodeId: string) => void;
     triggerAutoSave: () => void;
     undo: () => void;
     redo: () => void;
@@ -120,13 +121,18 @@ export function PipelineProvider({
     const triggerAutoSave = useCallback(() => setSaveVersion((v) => v + 1), []);
 
     const handleNodeAdded = useCallback(
-        (nodeType: NodeId) => {
+        (nodeType: NodeId, nodeId: string) => {
             const lifecycle = NODE_LIFECYCLE[nodeType];
-            if (lifecycle?.onAdd) {
-                lifecycle.onAdd(repositoryId);
-            }
+            if (!lifecycle?.onAdd) return;
+            lifecycle.onAdd(repositoryId).then((result) => {
+                if (!result.success) {
+                    toast.error(result.error);
+                    setNodes((nds) => nds.filter((n) => n.id !== nodeId));
+                    setSaveVersion((v) => v + 1);
+                }
+            });
         },
-        [repositoryId],
+        [repositoryId, setNodes],
     );
 
     const fireRemoveLifecycle = useCallback(

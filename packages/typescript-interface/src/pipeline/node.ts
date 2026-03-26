@@ -58,7 +58,12 @@ export interface PipelineGraph {
     edges: PipelineEdge[];
 }
 
+export interface NodeLifecycleResult {
+    success: boolean;
+    error?: string;
+}
+
 export interface NodeLifecycleCallbacks {
-    onAdd?: (repositoryId: string) => Promise<void>;
+    onAdd?: (repositoryId: string) => Promise<NodeLifecycleResult>;
     onRemove?: (repositoryId: string, remainingNodesOfType: number) => Promise<void>;
 }

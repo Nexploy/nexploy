@@ -91,7 +91,7 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
 
             setNodes((node) => node.concat(newNode));
             triggerAutoSave();
-            handleNodeAdded(nodeType);
+            handleNodeAdded(nodeType, newNode.id);
         },
         [rfInstance, setNodes, setEdges, triggerAutoSave, handleNodeAdded],
     );
