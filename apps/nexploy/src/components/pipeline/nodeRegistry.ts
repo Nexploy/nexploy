@@ -13,6 +13,13 @@ import { cleanWorkdirNodeDef } from './nodes/definitions/clean-workdir.node';
 import { sendNotificationNodeDef } from './nodes/definitions/send-notification.node';
 import { saveVersionNodeDef } from './nodes/definitions/save-version.node';
 import { setEnvironmentNodeDef } from './nodes/definitions/set-environment.node';
+import { startContainerNodeDef } from './nodes/definitions/start-container.node';
+import { stopContainerNodeDef } from './nodes/definitions/stop-container.node';
+import { restartContainerNodeDef } from './nodes/definitions/restart-container.node';
+import { removeContainerNodeDef } from './nodes/definitions/remove-container.node';
+import { pullImageNodeDef } from './nodes/definitions/pull-image.node';
+import { createNetworkNodeDef } from './nodes/definitions/create-network.node';
+import { createVolumeNodeDef } from './nodes/definitions/create-volume.node';
 
 export const ALL_NODE_DEFINITIONS: NodeDefinition[] = [
     // Source
@@ -35,6 +42,14 @@ export const ALL_NODE_DEFINITIONS: NodeDefinition[] = [
     sendNotificationNodeDef,
     // Versioning
     saveVersionNodeDef,
+    // Docker Actions
+    pullImageNodeDef,
+    startContainerNodeDef,
+    stopContainerNodeDef,
+    restartContainerNodeDef,
+    removeContainerNodeDef,
+    createNetworkNodeDef,
+    createVolumeNodeDef,
 ];
 
 const nodeRegistry = new Map<string, NodeDefinition>(

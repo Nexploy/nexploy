@@ -13,6 +13,13 @@ import { cleanWorkdirExecutor } from './executors/clean-workdir.executor';
 import { sendNotificationExecutor } from './executors/send-notification.executor';
 import { saveVersionExecutor } from './executors/save-version.executor';
 import { setEnvironmentExecutor } from './executors/set-environment.executor';
+import { startContainerExecutor } from './executors/start-container.executor';
+import { stopContainerExecutor } from './executors/stop-container.executor';
+import { restartContainerExecutor } from './executors/restart-container.executor';
+import { removeContainerExecutor } from './executors/remove-container.executor';
+import { pullImageExecutor } from './executors/pull-image.executor';
+import { createNetworkExecutor } from './executors/create-network.executor';
+import { createVolumeExecutor } from './executors/create-volume.executor';
 
 const executors: INodeExecutor[] = [
     // Source
@@ -36,6 +43,14 @@ const executors: INodeExecutor[] = [
     setEnvironmentExecutor,
     // Versioning
     saveVersionExecutor,
+    // Docker Actions
+    startContainerExecutor,
+    stopContainerExecutor,
+    restartContainerExecutor,
+    removeContainerExecutor,
+    pullImageExecutor,
+    createNetworkExecutor,
+    createVolumeExecutor,
 ];
 
 const executorRegistry = new Map(executors.map((e) => [e.type, e]));

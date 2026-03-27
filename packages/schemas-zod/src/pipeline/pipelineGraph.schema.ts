@@ -15,6 +15,13 @@ export const nodeTypeSchema = z.enum([
     'send-notification',
     'save-version',
     'set-environment',
+    'start-container',
+    'stop-container',
+    'restart-container',
+    'remove-container',
+    'pull-image',
+    'create-network',
+    'create-volume',
 ]);
 
 export const pipelineNodeDataSchema = z.object({

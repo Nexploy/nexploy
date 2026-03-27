@@ -5,7 +5,11 @@ import {
     cleanWorkdirConfigSchema,
     cloneRepositoryConfigSchema,
     composeFileConfigSchema,
+    containerActionConfigSchema,
+    createNetworkConfigSchema,
+    createVolumeConfigSchema,
     deployContainerConfigSchema,
+    pullImageConfigSchema,
     pushToRegistryConfigSchema,
     saveVersionConfigSchema,
     sendNotificationConfigSchema,
@@ -31,6 +35,13 @@ import { CleanWorkdirConfig } from '../config/CleanWorkdirConfig';
 import { SendNotificationConfig } from '../config/SendNotificationConfig';
 import { SaveVersionConfig } from '../config/SaveVersionConfig';
 import { SetEnvironmentConfig } from '../config/SetEnvironmentConfig';
+import { StartContainerConfig } from '../config/StartContainerConfig';
+import { StopContainerConfig } from '../config/StopContainerConfig';
+import { RestartContainerConfig } from '../config/RestartContainerConfig';
+import { RemoveContainerConfig } from '../config/RemoveContainerConfig';
+import { PullImageConfig } from '../config/PullImageConfig';
+import { CreateNetworkConfig } from '../config/CreateNetworkConfig';
+import { CreateVolumeConfig } from '../config/CreateVolumeConfig';
 
 export const CONFIG_SCHEMAS: Record<NodeId, any> = {
     'clone-repository': cloneRepositoryConfigSchema,
@@ -47,6 +58,13 @@ export const CONFIG_SCHEMAS: Record<NodeId, any> = {
     'send-notification': sendNotificationConfigSchema,
     'save-version': saveVersionConfigSchema,
     'set-environment': setEnvironmentConfigSchema,
+    'start-container': containerActionConfigSchema,
+    'stop-container': containerActionConfigSchema,
+    'restart-container': containerActionConfigSchema,
+    'remove-container': containerActionConfigSchema,
+    'pull-image': pullImageConfigSchema,
+    'create-network': createNetworkConfigSchema,
+    'create-volume': createVolumeConfigSchema,
 };
 
 export const NODE_LIFECYCLE: Partial<Record<NodeId, NodeLifecycleCallbacks>> = {
@@ -81,4 +99,11 @@ export const CONFIG_PANELS: Record<NodeId, ComponentType> = {
     'send-notification': SendNotificationConfig,
     'save-version': SaveVersionConfig,
     'set-environment': SetEnvironmentConfig,
+    'start-container': StartContainerConfig,
+    'stop-container': StopContainerConfig,
+    'restart-container': RestartContainerConfig,
+    'remove-container': RemoveContainerConfig,
+    'pull-image': PullImageConfig,
+    'create-network': CreateNetworkConfig,
+    'create-volume': CreateVolumeConfig,
 };

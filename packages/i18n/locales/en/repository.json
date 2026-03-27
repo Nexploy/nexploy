@@ -439,6 +439,34 @@
             "set-environment": {
                 "name": "Set Environment",
                 "description": "Select the deployment environment for downstream nodes"
+            },
+            "start-container": {
+                "name": "Start Container",
+                "description": "Start an existing Docker container by name"
+            },
+            "stop-container": {
+                "name": "Stop Container",
+                "description": "Stop a running Docker container by name"
+            },
+            "restart-container": {
+                "name": "Restart Container",
+                "description": "Restart a Docker container by name"
+            },
+            "remove-container": {
+                "name": "Remove Container",
+                "description": "Stop and remove a Docker container by name"
+            },
+            "pull-image": {
+                "name": "Pull Image",
+                "description": "Pull a Docker image from a registry"
+            },
+            "create-network": {
+                "name": "Create Network",
+                "description": "Create a Docker network"
+            },
+            "create-volume": {
+                "name": "Create Volume",
+                "description": "Create a Docker volume"
             }
         },
         "config": {
@@ -485,7 +513,19 @@
             "deployContainerNoConfig": "The container is automatically deployed using the image built by the Build Docker Image node. Connect it after that node to deploy the result.",
             "environment": "Environment",
             "selectEnvironment": "Select an environment",
-            "setEnvironmentInfo": "Sets the deployment environment for all downstream deploy nodes in this pipeline."
+            "setEnvironmentInfo": "Sets the deployment environment for all downstream deploy nodes in this pipeline.",
+            "containerName": "Container Name",
+            "containerNamePlaceholder": "e.g. my-app-container",
+            "noContainersFound": "No containers found",
+            "pullImageName": "Image Name",
+            "pullImageNamePlaceholder": "e.g. nginx:latest",
+            "networkName": "Network Name",
+            "networkNamePlaceholder": "e.g. my-network",
+            "networkDriver": "Driver",
+            "volumeName": "Volume Name",
+            "volumeNamePlaceholder": "e.g. my-volume",
+            "volumeDriver": "Driver",
+            "volumeDriverPlaceholder": "Leave empty for default driver"
         },
         "validation": {
             "noSourceNode": "Pipeline must start with a Clone Repository node",

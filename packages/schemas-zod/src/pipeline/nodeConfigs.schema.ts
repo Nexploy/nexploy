@@ -78,6 +78,29 @@ export const sendNotificationConfigSchema = z.object({
     message: z.string().optional(),
 });
 
+export const containerActionConfigSchema = z.object({
+    containerId: z.string().min(1, 'Container ID is required'),
+});
+
+export const pullImageConfigSchema = z.object({
+    imageName: z.string().min(1, 'Image name is required'),
+});
+
+export const createNetworkConfigSchema = z.object({
+    name: z.string().min(1, 'Network name is required'),
+    driver: z.string().default('bridge'),
+});
+
+export const createVolumeConfigSchema = z.object({
+    name: z.string().min(1, 'Volume name is required'),
+    driver: z.string().optional(),
+});
+
+export type ContainerActionConfig = z.infer<typeof containerActionConfigSchema>;
+export type PullImageConfig = z.infer<typeof pullImageConfigSchema>;
+export type CreateNetworkConfig = z.infer<typeof createNetworkConfigSchema>;
+export type CreateVolumeConfig = z.infer<typeof createVolumeConfigSchema>;
+
 export type PushToRegistryConfig = z.infer<typeof pushToRegistryConfigSchema>;
 export type CleanWorkdirConfig = z.infer<typeof cleanWorkdirConfigSchema>;
 export type VarEntry = z.infer<typeof varEntrySchema>;

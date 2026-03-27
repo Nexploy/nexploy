@@ -1,16 +1,23 @@
 import {
     Bell,
+    CircleX,
     Container,
+    Download,
     FileCheck,
     FileCode2,
     FileKey,
     FileSearch,
     GitBranch,
     Hammer,
+    HardDrive,
     Layers,
     type LucideIcon,
+    Network,
+    Play,
     Rocket,
+    RotateCcw,
     Server,
+    Square,
     Tag,
     Terminal,
     Trash2,
@@ -83,6 +90,13 @@ const NODE_CATEGORY: Record<string, string> = {
     'send-notification': 'notification',
     'save-version': 'utility',
     'set-environment': 'deploy',
+    'start-container': 'deploy',
+    'stop-container': 'deploy',
+    'restart-container': 'deploy',
+    'remove-container': 'deploy',
+    'pull-image': 'build',
+    'create-network': 'utility',
+    'create-volume': 'utility',
 };
 
 export const NODE_BG_MUTED: Record<string, string> = Object.fromEntries(
@@ -108,6 +122,13 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'send-notification': Bell,
     'save-version': Tag,
     'set-environment': Server,
+    'start-container': Play,
+    'stop-container': Square,
+    'restart-container': RotateCcw,
+    'remove-container': CircleX,
+    'pull-image': Download,
+    'create-network': Network,
+    'create-volume': HardDrive,
 };
 
 export const ICON_NAME_MAP: Record<string, LucideIcon> = {
@@ -126,6 +147,13 @@ export const ICON_NAME_MAP: Record<string, LucideIcon> = {
     Bell,
     Tag,
     Server,
+    Play,
+    Square,
+    RotateCcw,
+    CircleX,
+    Download,
+    Network,
+    HardDrive,
 };
 
 export const TEMPLATE_ICONS: Record<string, LucideIcon> = {

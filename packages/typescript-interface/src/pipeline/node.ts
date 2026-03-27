@@ -25,7 +25,14 @@ export type NodeId =
     | 'clean-workdir'
     | 'send-notification'
     | 'save-version'
-    | 'set-environment';
+    | 'set-environment'
+    | 'start-container'
+    | 'stop-container'
+    | 'restart-container'
+    | 'remove-container'
+    | 'pull-image'
+    | 'create-network'
+    | 'create-volume';
 
 export type NodeType = 'base-node' | 'large-node' | 'attach-node';
 
