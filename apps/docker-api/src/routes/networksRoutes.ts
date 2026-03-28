@@ -2,9 +2,15 @@ import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { networksStateManager } from '@/managers/networksStateManager';
-import { filterNexployNetworks } from '@workspace/shared/nexployFilter';
 import { getTranslations } from '@/middleware/locale.middleware';
 import { HttpError } from '@workspace/shared/http-error';
+import { zValidator } from '@hono/zod-validator';
+import {
+    networkCreateSchema,
+    networkDeleteSchema,
+    networkIdParamSchema,
+} from '@workspace/schemas-zod/docker/network/networkAction.schema';
+import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
 
 const app = new Hono();
 
@@ -15,23 +21,11 @@ app.post(
     }),
 );
 
-app.get(
-    '/',
-    handleAsync(async () => {
-        const allNetworks = networksStateManager.getAllNetworks();
-        return filterNexployNetworks(allNetworks);
-    }),
-);
-
 app.post(
     '/create',
+    zValidator('json', networkCreateSchema),
     handleAsync(async (c) => {
-        const { name, driver = 'bridge', ...options } = await c.req.json();
-
-        if (!name) {
-            const t = getTranslations(c, 'docker');
-            throw new HttpError(t('errors.networkNameRequired'), 400);
-        }
+        const { name, driver = 'bridge', ...options } = getValidatedJson(c, networkCreateSchema);
 
         const networkExists = networksStateManager.getByName(name);
         if (networkExists) {
@@ -52,57 +46,11 @@ app.post(
     }),
 );
 
-app.post(
-    '/:id/connect',
-    handleAsync(async (c) => {
-        const { containerId } = await c.req.json();
-        const networkId = c.req.param('id');
-
-        if (!containerId) {
-            const t = getTranslations(c, 'docker');
-            throw new HttpError(t('errors.containerIdRequired'), 400);
-        }
-
-        const network = docker.getNetwork(networkId);
-        await network.connect({ Container: containerId });
-
-        return {
-            networkId,
-            containerId,
-            connected: true,
-        };
-    }),
-);
-
-app.post(
-    '/:id/disconnect',
-    handleAsync(async (c) => {
-        const { containerId, force = false } = await c.req.json();
-        const networkId = c.req.param('id');
-
-        if (!containerId) {
-            const t = getTranslations(c, 'docker');
-            throw new HttpError(t('errors.containerIdRequired'), 400);
-        }
-
-        const network = docker.getNetwork(networkId);
-        await network.disconnect({
-            Container: containerId,
-            Force: force,
-        });
-
-        return {
-            networkId,
-            containerId,
-            disconnected: true,
-        };
-    }),
-);
-
 app.get(
     '/:id',
+    zValidator('param', networkIdParamSchema),
     handleAsync(async (c) => {
-        const networkId = c.req.param('id');
+        const { id: networkId } = getValidatedParam(c, networkIdParamSchema);
         const network = docker.getNetwork(networkId);
 
         return await network.inspect();
@@ -111,13 +59,9 @@ app.get(
 
 app.post(
     '/delete',
+    zValidator('json', networkDeleteSchema),
     handleAsync(async (c) => {
-        const { networkIds, force = false } = await c.req.json();
-
-        if (!networkIds || networkIds.length === 0) {
-            const t = getTranslations(c, 'docker');
-            throw new HttpError(t('errors.noNetworkIdsProvided'), 400);
-        }
+        const { networkIds, force } = getValidatedJson(c, networkDeleteSchema);
 
         const BUILTIN_NETWORKS = new Set(['bridge', 'host', 'none']);
 

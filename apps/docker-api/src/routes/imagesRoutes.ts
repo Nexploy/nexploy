@@ -4,6 +4,14 @@ import { Hono } from 'hono';
 import { imagesStateManager } from '@/managers/imagesStateManager';
 import { getTranslations } from '@/middleware/locale.middleware';
 import { HttpError } from '@workspace/shared/http-error';
+import { zValidator } from '@hono/zod-validator';
+import {
+    imageDeleteSchema,
+    imageIdParamSchema,
+    imageMirrorSchema,
+} from '@workspace/schemas-zod/docker/image/imageAction.schema';
+import { imagePullSchema } from '@workspace/schemas-zod/docker/image/imagePullAction.schema';
+import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
 
 const app = new Hono();
 
@@ -21,26 +29,11 @@ app.get(
     }),
 );
 
-app.get(
-    '/name/:name',
-    handleAsync(async (c) => {
-        const name = c.req.param('name');
-        return imagesStateManager.getByName(name);
-    }),
-);
-
-app.get(
-    '/id/:id',
-    handleAsync(async (c) => {
-        const id = c.req.param('id');
-        return imagesStateManager.getById(id);
-    }),
-);
-
 app.post(
     '/pull',
+    zValidator('json', imagePullSchema),
     handleAsync(async (c) => {
-        const { imageName } = await c.req.json();
+        const { imageName } = getValidatedJson(c, imagePullSchema);
 
         const imageExists = imagesStateManager.checkIfExistByName(imageName);
         if (imageExists) {
@@ -65,32 +58,22 @@ app.post(
 
 app.get(
     '/:id/history',
+    zValidator('param', imageIdParamSchema),
     handleAsync(async (c) => {
-        const id = c.req.param('id');
+        const { id } = getValidatedParam(c, imageIdParamSchema);
         const image = docker.getImage(id);
         return await image.history();
     }),
 );
 
 app.post(
-    '/:id/tag',
-    handleAsync(async (c) => {
-        const { repo, tag } = await c.req.json();
-        const image = docker.getImage(c.req.param('imageId'));
-
-        return await image.tag({ repo, tag });
-    }),
-);
-
-app.post(
     '/mirror',
+    zValidator('json', imageMirrorSchema),
     handleAsync(async (c) => {
-        const { sourceImage, sourceAuth, targetName, targetAuth } = await c.req.json<{
-            sourceImage: string;
-            sourceAuth?: { username: string; password: string; serveraddress?: string };
-            targetName: string;
-            targetAuth: { serveraddress: string; username: string; password: string };
-        }>();
+        const { sourceImage, sourceAuth, targetName, targetAuth } = getValidatedJson(
+            c,
+            imageMirrorSchema,
+        );
 
         let sourceExistedBefore = false;
         try {
@@ -146,8 +129,9 @@ app.post(
 
 app.post(
     '/delete',
+    zValidator('json', imageDeleteSchema),
     handleAsync(async (c) => {
-        const { imageIds, force } = await c.req.json();
+        const { imageIds, force } = getValidatedJson(c, imageDeleteSchema);
 
         if (imageIds.length === 0) {
             const t = getTranslations(c, 'docker');

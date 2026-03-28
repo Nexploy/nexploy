@@ -24,8 +24,6 @@ vi.mock('@/utils/dockerClient', () => ({
 vi.mock('@/managers/imagesStateManager', () => ({
     imagesStateManager: {
         getAllImages: vi.fn(),
-        getByName: vi.fn(),
-        getById: vi.fn(),
         checkIfExistByName: vi.fn(),
         hardRefresh: vi.fn(),
     },
@@ -52,49 +50,6 @@ describe('GET /api/images/', () => {
 
         expect(res.status).toBe(200);
         expect(json).toEqual(images);
-    });
-});
-
-describe('GET /api/images/name/:name', () => {
-    beforeEach(() => vi.clearAllMocks());
-
-    it('returns image by name', async () => {
-        const image = { id: 'sha256:abc', tags: ['nginx:latest'] };
-        vi.mocked(imagesStateManager.getByName).mockReturnValue(image as any);
-
-        const res = await app.request('/api/images/name/nginx:latest');
-        const json = await res.json();
-
-        expect(res.status).toBe(200);
-        expect(json).toEqual(image);
-        expect(imagesStateManager.getByName).toHaveBeenCalledWith('nginx:latest');
-    });
-
-    it('returns { ok: true } when image not found by name (null → handleAsync fallback)', async () => {
-        vi.mocked(imagesStateManager.getByName).mockReturnValue(null as any);
-
-        const res = await app.request('/api/images/name/unknown:latest');
-        const json = await res.json();
-
-        // handleAsync: c.json(result ?? { ok: true }) — null triggers the fallback
-        expect(res.status).toBe(200);
-        expect(json).toEqual({ ok: true });
-    });
-});
-
-describe('GET /api/images/id/:id', () => {
-    beforeEach(() => vi.clearAllMocks());
-
-    it('returns image by id', async () => {
-        const image = { id: 'sha256:abc' };
-        vi.mocked(imagesStateManager.getById).mockReturnValue(image as any);
-
-        const res = await app.request('/api/images/id/sha256:abc');
-        const json = await res.json();
-
-        expect(res.status).toBe(200);
-        expect(json).toEqual(image);
-        expect(imagesStateManager.getById).toHaveBeenCalledWith('sha256:abc');
     });
 });
 

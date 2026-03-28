@@ -5,6 +5,7 @@ import {
     NodeExecutionResult,
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
+import { runDockerAction } from '@/inngest/pipeline/utils/dockerAction';
 
 export class StartContainerExecutor implements INodeExecutor {
     readonly type = 'start-container';
@@ -16,20 +17,18 @@ export class StartContainerExecutor implements INodeExecutor {
         if (!containerId) throw new Error('Container ID is required');
 
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const opts = { signal: abortSignal, environmentId } as KyDockerOptions;
 
         await logger.info(nodeId, `Starting container: ${containerId}`);
 
-        await kyDocker.post(`container/${containerId}/start`, {
-            signal: abortSignal,
-            environmentId,
-        } as KyDockerOptions);
+        const warning = await runDockerAction(
+            () => kyDocker.post(`container/${containerId}/start`, opts),
+            logger, nodeId, { containerId },
+        );
+        if (warning) return warning;
 
         await logger.info(nodeId, `Container started: ${containerId}`);
-
-        return {
-            success: true,
-            output: { containerId },
-        };
+        return { success: true, output: { containerId } };
     }
 }
 

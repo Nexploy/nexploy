@@ -45,3 +45,12 @@ export const networkActionsSchema = z.object({
     action: z.enum(['delete', 'prune']),
     force: z.boolean().optional(),
 });
+
+export const networkDeleteSchema = z.object({
+    networkIds: z.array(z.string()).min(1),
+    force: z.boolean().optional().default(false),
+});
+
+export const networkIdParamSchema = z.object({
+    id: z.string().min(1),
+});

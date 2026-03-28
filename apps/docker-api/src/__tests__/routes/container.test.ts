@@ -1,8 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
-import { containersStateManager } from '@/managers/containersStateManager';
-import { dockerStatusManager } from '@/managers/dockerStatusManager';
 import containerRoutes from '@/routes/containerRoutes';
 
 const app = new Hono();
@@ -28,20 +26,6 @@ vi.mock('@/utils/dockerClient', () => ({
     docker: {
         createContainer: vi.fn(),
         getContainer: vi.fn(),
-    },
-}));
-
-vi.mock('@/managers/containersStateManager', () => ({
-    containersStateManager: {
-        getContainer: vi.fn(),
-        getStats: vi.fn(),
-        getAllStates: vi.fn(),
-    },
-}));
-
-vi.mock('@/managers/dockerStatusManager', () => ({
-    dockerStatusManager: {
-        getStatus: vi.fn().mockReturnValue('connected'),
     },
 }));
 
@@ -283,60 +267,6 @@ describe('DELETE /api/container/:id/remove', () => {
         expect(res.status).toBe(200);
         expect(mockContainer.stop).not.toHaveBeenCalled();
         expect(mockContainer.remove).toHaveBeenCalledOnce();
-    });
-});
-
-describe('GET /api/container/:id (state from store)', () => {
-    beforeEach(() => vi.clearAllMocks());
-
-    it('returns container state with docker status and timestamp', async () => {
-        const containerState = { id: 'abc123', name: '/web', state: 'running' };
-        vi.mocked(containersStateManager.getContainer).mockReturnValue(containerState as any);
-        vi.mocked(dockerStatusManager.getStatus).mockReturnValue('connected' as any);
-
-        const res = await app.request('/api/container/abc123');
-        const json = await res.json();
-
-        expect(res.status).toBe(200);
-        expect(json.container).toEqual(containerState);
-        expect(json.dockerStatus).toBe('connected');
-        expect(json.timestamp).toBeTypeOf('number');
-    });
-
-    it('returns 404 when container is not in store', async () => {
-        vi.mocked(containersStateManager.getContainer).mockReturnValue(undefined as any);
-
-        const res = await app.request('/api/container/notexist');
-        expect(res.status).toBe(404);
-        const json = await res.json();
-        expect(json.message).toBeDefined();
-    });
-});
-
-describe('GET /api/container/status', () => {
-    it('returns container stats with timestamp', async () => {
-        const stats = { total: 5, running: 3, stopped: 2 };
-        vi.mocked(containersStateManager.getStats).mockReturnValue(stats as any);
-
-        const res = await app.request('/api/container/status');
-        const json = await res.json();
-
-        expect(res.status).toBe(200);
-        expect(json).toMatchObject(stats);
-        expect(json.timestamp).toBeTypeOf('number');
-    });
-});
-
-describe('GET /api/container/current', () => {
-    it('returns all container states', async () => {
-        const states = [{ id: 'c1' }, { id: 'c2' }];
-        vi.mocked(containersStateManager.getAllStates).mockReturnValue(states as any);
-
-        const res = await app.request('/api/container/current');
-        const json = await res.json();
-
-        expect(res.status).toBe(200);
-        expect(json).toEqual(states);
     });
 });
 

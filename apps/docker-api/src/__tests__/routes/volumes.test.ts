@@ -9,7 +9,6 @@ const app = new Hono();
 app.route('/api/volumes', volumesRoutes);
 
 const mockVolume = {
-    inspect: vi.fn(),
     remove: vi.fn(),
 };
 
@@ -23,7 +22,6 @@ vi.mock('@/utils/dockerClient', () => ({
 
 vi.mock('@/managers/volumesStateManager', () => ({
     volumesStateManager: {
-        getAllVolumes: vi.fn(),
         getState: vi.fn(),
         hardRefresh: vi.fn(),
     },
@@ -37,21 +35,6 @@ vi.mock('@/middleware/locale.middleware', () => ({
 vi.mock('@/utils/logger', () => ({
     logger: { debug: vi.fn(), error: vi.fn(), info: vi.fn(), warn: vi.fn() },
 }));
-
-describe('GET /api/volumes/', () => {
-    beforeEach(() => vi.clearAllMocks());
-
-    it('returns all volumes', async () => {
-        const volumes = [{ Name: 'vol1', Driver: 'local' }];
-        vi.mocked(volumesStateManager.getAllVolumes).mockReturnValue(volumes as any);
-
-        const res = await app.request('/api/volumes');
-        const json = await res.json();
-
-        expect(res.status).toBe(200);
-        expect(json).toEqual(volumes);
-    });
-});
 
 describe('POST /api/volumes/hardRefresh', () => {
     beforeEach(() => vi.clearAllMocks());
@@ -101,25 +84,6 @@ describe('POST /api/volumes/create', () => {
         });
 
         expect(res.status).toBe(500);
-    });
-});
-
-describe('GET /api/volumes/:name/inspect', () => {
-    beforeEach(() => {
-        vi.clearAllMocks();
-        vi.mocked(docker.getVolume).mockReturnValue(mockVolume as any);
-    });
-
-    it('returns volume inspection data', async () => {
-        const data = { Name: 'vol1', Driver: 'local', Mountpoint: '/var/lib/docker/volumes/vol1' };
-        mockVolume.inspect.mockResolvedValue(data);
-
-        const res = await app.request('/api/volumes/vol1/inspect');
-        const json = await res.json();
-
-        expect(res.status).toBe(200);
-        expect(json).toEqual(data);
-        expect(docker.getVolume).toHaveBeenCalledWith('vol1');
     });
 });
 

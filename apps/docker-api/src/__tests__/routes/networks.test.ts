@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
 import { networksStateManager } from '@/managers/networksStateManager';
-import { filterNexployNetworks } from '@workspace/shared/nexployFilter';
 import networksRoutes from '@/routes/networksRoutes';
 
 const app = new Hono();
@@ -10,7 +9,6 @@ app.route('/api/networks', networksRoutes);
 
 const mockNetwork = {
     inspect: vi.fn(),
-    connect: vi.fn(),
     disconnect: vi.fn(),
     remove: vi.fn(),
 };
@@ -24,14 +22,9 @@ vi.mock('@/utils/dockerClient', () => ({
 
 vi.mock('@/managers/networksStateManager', () => ({
     networksStateManager: {
-        getAllNetworks: vi.fn(),
         getByName: vi.fn(),
         hardRefresh: vi.fn(),
     },
-}));
-
-vi.mock('@workspace/shared/nexployFilter', () => ({
-    filterNexployNetworks: vi.fn((n: any[]) => n),
 }));
 
 vi.mock('@/middleware/locale.middleware', () => ({
@@ -42,23 +35,6 @@ vi.mock('@/middleware/locale.middleware', () => ({
 vi.mock('@/utils/logger', () => ({
     logger: { debug: vi.fn(), error: vi.fn(), info: vi.fn(), warn: vi.fn() },
 }));
-
-describe('GET /api/networks/', () => {
-    beforeEach(() => vi.clearAllMocks());
-
-    it('returns filtered nexploy networks', async () => {
-        const networks = [{ Id: 'n1', Name: 'web' }];
-        vi.mocked(networksStateManager.getAllNetworks).mockReturnValue(networks as any);
-        vi.mocked(filterNexployNetworks).mockReturnValue(networks as any);
-
-        const res = await app.request('/api/networks');
-        const json = await res.json();
-
-        expect(res.status).toBe(200);
-        expect(json).toEqual(networks);
-        expect(filterNexployNetworks).toHaveBeenCalledWith(networks);
-    });
-});
 
 describe('POST /api/networks/hardRefresh', () => {
     beforeEach(() => vi.clearAllMocks());
@@ -90,10 +66,12 @@ describe('POST /api/networks/create', () => {
 
         expect(res.status).toBe(200);
         expect(json).toEqual({ id: 'net123', name: 'my-net' });
-        expect(docker.createNetwork).toHaveBeenCalledWith({
-            Name: 'my-net',
-            Driver: 'bridge',
-        });
+        expect(docker.createNetwork).toHaveBeenCalledWith(
+            expect.objectContaining({
+                Name: 'my-net',
+                Driver: 'bridge',
+            }),
+        );
     });
 
     it('returns 400 when name is missing', async () => {
@@ -135,70 +113,6 @@ describe('GET /api/networks/:id', () => {
         expect(res.status).toBe(200);
         expect(json).toEqual(data);
         expect(docker.getNetwork).toHaveBeenCalledWith('net123');
-    });
-});
-
-describe('POST /api/networks/:id/connect', () => {
-    beforeEach(() => {
-        vi.clearAllMocks();
-        vi.mocked(docker.getNetwork).mockReturnValue(mockNetwork as any);
-    });
-
-    it('connects a container to a network', async () => {
-        mockNetwork.connect.mockResolvedValue(undefined);
-
-        const res = await app.request('/api/networks/net123/connect', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ containerId: 'c1' }),
-        });
-        const json = await res.json();
-
-        expect(res.status).toBe(200);
-        expect(json).toEqual({ networkId: 'net123', containerId: 'c1', connected: true });
-        expect(mockNetwork.connect).toHaveBeenCalledWith({ Container: 'c1' });
-    });
-
-    it('returns 400 when containerId is missing', async () => {
-        const res = await app.request('/api/networks/net123/connect', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({}),
-        });
-
-        expect(res.status).toBe(400);
-    });
-});
-
-describe('POST /api/networks/:id/disconnect', () => {
-    beforeEach(() => {
-        vi.clearAllMocks();
-        vi.mocked(docker.getNetwork).mockReturnValue(mockNetwork as any);
-    });
-
-    it('disconnects a container from a network', async () => {
-        mockNetwork.disconnect.mockResolvedValue(undefined);
-
-        const res = await app.request('/api/networks/net123/disconnect', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ containerId: 'c1', force: false }),
-        });
-        const json = await res.json();
-
-        expect(res.status).toBe(200);
-        expect(json).toEqual({ networkId: 'net123', containerId: 'c1', disconnected: true });
-        expect(mockNetwork.disconnect).toHaveBeenCalledWith({ Container: 'c1', Force: false });
-    });
-
-    it('returns 400 when containerId is missing', async () => {
-        const res = await app.request('/api/networks/net123/disconnect', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({}),
-        });
-
-        expect(res.status).toBe(400);
     });
 });
 

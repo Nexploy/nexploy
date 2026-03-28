@@ -12,5 +12,13 @@ export const volumeCreateSchema = z.object({
     labels: z.record(z.string(), z.string()).optional(),
 });
 
+export const volumeDeleteSchema = z.object({
+    volumeNames: z.array(z.string()).min(1),
+});
+
+export const volumeNameParamSchema = z.object({
+    name: z.string().min(1),
+});
+
 export type VolumeActions = z.infer<typeof volumeActionsSchema>;
 export type VolumeCreate = z.infer<typeof volumeCreateSchema>;

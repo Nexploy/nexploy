@@ -827,6 +827,8 @@
         "volumeAlreadyExists": "Volume {name} already exists.",
         "networkAlreadyExists": "Network {name} already exists.",
         "containerNotFound": "Container '{id}' not found",
+      "containerAlreadyStarted": "Container '{id}' is already running.",
+      "containerAlreadyStopped": "Container '{id}' is already stopped.",
         "noImageIdsProvided": "No image IDs provided.",
         "noVolumeNamesProvided": "No volume names provided.",
         "noNetworkIdsProvided": "No network IDs provided.",

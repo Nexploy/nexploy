@@ -67,47 +67,6 @@ describe('GET /api/composes/:project/list', () => {
     });
 });
 
-describe('GET /api/composes/:project', () => {
-    beforeEach(() => vi.clearAllMocks());
-
-    it('returns simplified container info for compose project', async () => {
-        vi.mocked(docker.listContainers).mockResolvedValue(COMPOSE_CONTAINERS as any);
-
-        const res = await app.request('/api/composes/myproject');
-        const json = await res.json();
-
-        expect(res.status).toBe(200);
-        expect(json).toEqual([
-            {
-                id: 'c1',
-                name: '/myproject_web_1',
-                image: 'nginx:latest',
-                state: 'running',
-                status: 'Up 2 hours',
-            },
-            {
-                id: 'c2',
-                name: '/myproject_db_1',
-                image: 'postgres:15',
-                state: 'running',
-                status: 'Up 2 hours',
-            },
-        ]);
-    });
-
-    it('returns empty array when no containers match project', async () => {
-        vi.mocked(docker.listContainers).mockResolvedValue([
-            { ...COMPOSE_CONTAINERS[0], Labels: { 'com.docker.compose.project': 'other' } },
-        ] as any);
-
-        const res = await app.request('/api/composes/myproject');
-        const json = await res.json();
-
-        expect(res.status).toBe(200);
-        expect(json).toEqual([]);
-    });
-});
-
 describe('POST /api/composes/:project/start', () => {
     beforeEach(() => {
         vi.clearAllMocks();

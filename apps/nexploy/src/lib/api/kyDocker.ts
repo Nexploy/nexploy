@@ -13,6 +13,7 @@ export const kyDocker = ky.create({
             async (error) => {
                 try {
                     const body = await error.response.json<{ message: string }>();
+                    console.log(body);
                     if (body?.message) {
                         error.message = body.message;
                     }

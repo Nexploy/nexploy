@@ -4,6 +4,12 @@ import { Hono } from 'hono';
 import { volumesStateManager } from '@/managers/volumesStateManager';
 import { getTranslations } from '@/middleware/locale.middleware';
 import { HttpError } from '@workspace/shared/http-error';
+import { zValidator } from '@hono/zod-validator';
+import {
+    volumeCreateSchema,
+    volumeDeleteSchema,
+} from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
+import { getValidatedJson } from '@/helpers/validation';
 
 const app = new Hono();
 
@@ -14,17 +20,11 @@ app.post(
     }),
 );
 
-app.get(
-    '/',
-    handleAsync(async () => {
-        return volumesStateManager.getAllVolumes();
-    }),
-);
-
 app.post(
     '/create',
+    zValidator('json', volumeCreateSchema),
     handleAsync(async (c) => {
-        const { name, driver, driverOpts, labels } = await c.req.json();
+        const { name, driver, driverOpts, labels } = getValidatedJson(c, volumeCreateSchema);
 
         const volumeExists = volumesStateManager.getState(name);
         if (volumeExists) {
@@ -43,25 +43,11 @@ app.post(
     }),
 );
 
-app.get(
-    '/:name/inspect',
-    handleAsync(async (c) => {
-        const volumeName = c.req.param('name');
-        const volume = docker.getVolume(volumeName);
-
-        return await volume.inspect();
-    }),
-);
-
 app.post(
     '/delete',
+    zValidator('json', volumeDeleteSchema),
     handleAsync(async (c) => {
-        const { volumeNames } = await c.req.json();
-
-        if (!volumeNames || volumeNames.length === 0) {
-            const t = getTranslations(c, 'docker');
-            throw new HttpError(t('errors.noVolumeNamesProvided'), 400);
-        }
+        const { volumeNames } = getValidatedJson(c, volumeDeleteSchema);
 
         const force = c.req.query('force') === 'true';
 

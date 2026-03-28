@@ -105,22 +105,4 @@ app.post(
     }),
 );
 
-app.get(
-    '/:project',
-    handleAsync(async (c) => {
-        const project = c.req.param('project');
-        const containers = await docker.listContainers({ all: true });
-        const composeContainers = containers.filter(
-            (c) => c.Labels['com.docker.compose.project'] === project,
-        );
-        return composeContainers.map((c) => ({
-            id: c.Id,
-            name: c.Names[0],
-            image: c.Image,
-            state: c.State,
-            status: c.Status,
-        }));
-    }),
-);
-
 export default app;

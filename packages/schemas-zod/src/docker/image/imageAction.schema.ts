@@ -17,3 +17,25 @@ export const imageActionsSchema = z.object({
     force: z.boolean().optional(),
     imageIds: z.array(z.string()),
 });
+
+export const imageDeleteSchema = z.object({
+    imageIds: z.array(z.string()).min(1),
+    force: z.boolean().optional(),
+});
+
+const imageAuthSchema = z.object({
+    username: z.string(),
+    password: z.string(),
+    serveraddress: z.string().optional(),
+});
+
+export const imageMirrorSchema = z.object({
+    sourceImage: z.string().min(1),
+    sourceAuth: imageAuthSchema.optional(),
+    targetName: z.string().min(1),
+    targetAuth: imageAuthSchema.extend({ serveraddress: z.string() }),
+});
+
+export const imageIdParamSchema = z.object({
+    id: z.string().min(1),
+});
