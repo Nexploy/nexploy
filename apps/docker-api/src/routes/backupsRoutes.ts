@@ -22,7 +22,6 @@ async function ensureAlpineImage(): Promise<void> {
     }
 }
 
-// GET /api/backups/download/:volumeName
 app.get('/download/:volumeName', async (c) => {
     const volumeName = c.req.param('volumeName');
 

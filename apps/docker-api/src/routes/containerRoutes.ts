@@ -11,6 +11,8 @@ import { containerParamSchema } from '@workspace/schemas-zod/docker/container/co
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
+import { containersStateManager } from '@/managers/containersStateManager';
+import { dockerStatusManager } from '@/managers/dockerStatusManager';
 
 const NAMED_VOLUME_REGEX = /\/var\/lib\/docker\/volumes\/([^/]+)\/_data/;
 
@@ -343,6 +345,44 @@ app.delete(
         if (containerInfo.State.Running) await container.stop();
 
         return await container.remove();
+    }),
+);
+
+app.get(
+    '/status',
+    handleAsync(async () => {
+        const stats = containersStateManager.getStats();
+        return {
+            ...stats,
+            timestamp: Date.now(),
+        };
+    }),
+);
+
+app.get(
+    '/current',
+    handleAsync(async () => {
+        return containersStateManager.getAllStates();
+    }),
+);
+
+app.get(
+    '/:id',
+    zValidator('param', containerParamSchema),
+    handleAsync(async (c) => {
+        const { id } = getValidatedParam(c, containerParamSchema);
+        const container = containersStateManager.getContainer(id);
+
+        if (!container) {
+            const t = getTranslations(c, 'docker');
+            throw new HttpError(t('errors.containerNotFound', { id }), 404);
+        }
+
+        return {
+            container,
+            dockerStatus: dockerStatusManager.getStatus(),
+            timestamp: Date.now(),
+        };
     }),
 );
 

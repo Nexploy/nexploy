@@ -14,3 +14,7 @@ export const composesActionsSchema = z.object({
     action: z.enum(composesActions),
     stackName: z.string(),
 });
+
+export const composeProjectParamSchema = z.object({
+    project: z.string().min(1),
+});

@@ -4,13 +4,17 @@ import { handleAsync } from '@/helpers/handleAsync';
 import { swarmStateManager } from '@/managers/swarmStateManager';
 import { getTranslations } from '@/middleware/locale.middleware';
 import { HttpError } from '@workspace/shared/http-error';
+import { zValidator } from '@hono/zod-validator';
+import { nodeIdParamSchema } from '@workspace/schemas-zod/docker/swarm/nodeAction.schema';
+import { getValidatedParam } from '@/helpers/validation';
 
 const app = new Hono();
 
 app.post(
     '/:id/promote',
+    zValidator('param', nodeIdParamSchema),
     handleAsync(async (c) => {
-        const nodeId = c.req.param('id');
+        const { id: nodeId } = getValidatedParam(c, nodeIdParamSchema);
 
         const node = docker.getNode(nodeId);
         const nodeInfo = await node.inspect();
@@ -35,8 +39,9 @@ app.post(
 
 app.post(
     '/:id/demote',
+    zValidator('param', nodeIdParamSchema),
     handleAsync(async (c) => {
-        const nodeId = c.req.param('id');
+        const { id: nodeId } = getValidatedParam(c, nodeIdParamSchema);
 
         const node = docker.getNode(nodeId);
         const nodeInfo = await node.inspect();
@@ -61,8 +66,9 @@ app.post(
 
 app.post(
     '/:id/drain',
+    zValidator('param', nodeIdParamSchema),
     handleAsync(async (c) => {
-        const nodeId = c.req.param('id');
+        const { id: nodeId } = getValidatedParam(c, nodeIdParamSchema);
 
         const node = docker.getNode(nodeId);
         const nodeInfo = await node.inspect();
@@ -82,8 +88,9 @@ app.post(
 
 app.post(
     '/:id/activate',
+    zValidator('param', nodeIdParamSchema),
     handleAsync(async (c) => {
-        const nodeId = c.req.param('id');
+        const { id: nodeId } = getValidatedParam(c, nodeIdParamSchema);
 
         const node = docker.getNode(nodeId);
         const nodeInfo = await node.inspect();
@@ -103,8 +110,9 @@ app.post(
 
 app.post(
     '/:id/pause',
+    zValidator('param', nodeIdParamSchema),
     handleAsync(async (c) => {
-        const nodeId = c.req.param('id');
+        const { id: nodeId } = getValidatedParam(c, nodeIdParamSchema);
 
         const node = docker.getNode(nodeId);
         const nodeInfo = await node.inspect();

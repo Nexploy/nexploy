@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+export const nodeIdParamSchema = z.object({
+    id: z.string().min(1),
+});
+
 export const swarmNodeActionSchema = z.object({
     nodeId: z.string().min(1),
     action: z.enum(['promote', 'demote', 'drain', 'activate', 'pause', 'remove']),

@@ -74,4 +74,24 @@ app.post(
     }),
 );
 
+app.post(
+    '/logout',
+    handleAsync(async (c) => {
+        const { serveraddress } = await c.req.json<{ serveraddress: string }>();
+
+        const configPath = path.join(os.homedir(), '.docker', 'config.json');
+
+        try {
+            const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+            if (config.auths?.[serveraddress]) {
+                delete config.auths[serveraddress];
+                fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
+                logger.info({ serveraddress }, 'Docker credentials removed from config.json');
+            }
+        } catch {}
+
+        return { success: true };
+    }),
+);
+
 export default app;

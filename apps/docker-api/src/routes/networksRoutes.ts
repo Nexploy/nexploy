@@ -3,7 +3,6 @@ import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { networksStateManager } from '@/managers/networksStateManager';
 import { getTranslations } from '@/middleware/locale.middleware';
-import { HttpError } from '@workspace/shared/http-error';
 import { zValidator } from '@hono/zod-validator';
 import {
     networkCreateSchema,
@@ -11,6 +10,7 @@ import {
     networkIdParamSchema,
 } from '@workspace/schemas-zod/docker/network/networkAction.schema';
 import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
+import { filterNexployNetworks } from '@workspace/shared/nexployFilter';
 
 const app = new Hono();
 
@@ -18,6 +18,14 @@ app.post(
     '/hardRefresh',
     handleAsync(async () => {
         return await networksStateManager.hardRefresh();
+    }),
+);
+
+app.get(
+    '/',
+    handleAsync(async () => {
+        const allNetworks = networksStateManager.getAllNetworks();
+        return filterNexployNetworks(allNetworks);
     }),
 );
 

@@ -39,3 +39,7 @@ export const imageMirrorSchema = z.object({
 export const imageIdParamSchema = z.object({
     id: z.string().min(1),
 });
+
+export const imageNameParamSchema = z.object({
+    name: z.string().min(1),
+});

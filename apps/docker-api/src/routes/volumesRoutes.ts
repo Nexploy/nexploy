@@ -3,11 +3,11 @@ import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { volumesStateManager } from '@/managers/volumesStateManager';
 import { getTranslations } from '@/middleware/locale.middleware';
-import { HttpError } from '@workspace/shared/http-error';
 import { zValidator } from '@hono/zod-validator';
 import {
     volumeCreateSchema,
     volumeDeleteSchema,
+    volumeNameParamSchema,
 } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 import { getValidatedJson } from '@/helpers/validation';
 
@@ -17,6 +17,18 @@ app.post(
     '/hardRefresh',
     handleAsync(async () => {
         return await volumesStateManager.hardRefresh();
+    }),
+);
+
+app.get(
+    '/:name/inspect',
+    zValidator('param', volumeNameParamSchema),
+    handleAsync(async (c) => {
+        const { name: volumeName } = getValidatedJson(c, volumeNameParamSchema);
+
+        const volume = docker.getVolume(volumeName);
+
+        return await volume.inspect();
     }),
 );
 

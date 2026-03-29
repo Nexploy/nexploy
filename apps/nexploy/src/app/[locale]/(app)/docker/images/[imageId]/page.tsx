@@ -10,7 +10,7 @@ export default async function ImagePage({ params }: { params: Promise<{ imageId:
 
     let imageName: string;
     try {
-        const image = await kyDocker.get(`images/id/${imageId}`).json<Image>();
+        const image = await kyDocker.get(`images/${imageId}`).json<Image>();
         imageName = image.name.flat().join('|');
     } catch (e) {
         notFound();

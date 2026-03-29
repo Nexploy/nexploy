@@ -8,6 +8,7 @@ import { zValidator } from '@hono/zod-validator';
 import {
     imageDeleteSchema,
     imageIdParamSchema,
+    imageNameParamSchema,
     imageMirrorSchema,
 } from '@workspace/schemas-zod/docker/image/imageAction.schema';
 import { imagePullSchema } from '@workspace/schemas-zod/docker/image/imagePullAction.schema';
@@ -26,6 +27,33 @@ app.get(
     '/',
     handleAsync(async () => {
         return imagesStateManager.getAllImages();
+    }),
+);
+
+app.get(
+    '/name/:name',
+    zValidator('param', imageNameParamSchema),
+    handleAsync(async (c) => {
+        const { name } = getValidatedParam(c, imageNameParamSchema);
+        return imagesStateManager.getByName(name);
+    }),
+);
+
+app.get(
+    '/id/:id',
+    zValidator('param', imageIdParamSchema),
+    handleAsync(async (c) => {
+        const { id } = getValidatedParam(c, imageIdParamSchema);
+        return imagesStateManager.getById(id);
+    }),
+);
+
+app.get(
+    '/:id',
+    zValidator('param', imageIdParamSchema),
+    handleAsync(async (c) => {
+        const { id } = getValidatedParam(c, imageIdParamSchema);
+        return imagesStateManager.getById(id);
     }),
 );
 
@@ -63,6 +91,17 @@ app.get(
         const { id } = getValidatedParam(c, imageIdParamSchema);
         const image = docker.getImage(id);
         return await image.history();
+    }),
+);
+
+app.post(
+    '/:id/tag',
+    zValidator('param', imageIdParamSchema),
+    handleAsync(async (c) => {
+        const { id } = getValidatedParam(c, imageIdParamSchema);
+        const { repo, tag } = await c.req.json<{ repo: string; tag: string }>();
+        const image = docker.getImage(id);
+        return await image.tag({ repo, tag });
     }),
 );
 

@@ -32,7 +32,7 @@ export function LabelItem({
 
     return (
         <div className="bg-muted/60 flex items-center justify-between gap-2 rounded-md p-2">
-            <div className="flex min-w-0 flex-1 gap-1">
+            <div className="flex min-w-0 flex-1 items-center gap-1">
                 <code className="flex items-center gap-2 text-sm leading-none">
                     <span className="text-primary shrink-0 truncate text-xs font-semibold">
                         {displayLabel.key}
