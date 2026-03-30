@@ -1,22 +1,13 @@
 'use client';
 
 import { ReactNode, useState } from 'react';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@workspace/ui/components/dialog';
 import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input';
-import { Label } from '@workspace/ui/components/label';
 import { Play } from 'lucide-react';
 import { toast } from 'sonner';
 import { onInitSwarmAction } from '@/actions/docker/swarm/init.action';
 import { onSwarmRefreshAction } from '@/actions/docker/swarm/refresh.action';
+import { detectPublicIpAction } from '@/actions/network/detectPublicIp.action';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
 
 interface InitSwarmDialogProps {
@@ -24,98 +15,91 @@ interface InitSwarmDialogProps {
     onInitSuccess?: () => void;
 }
 
-export function InitSwarmDialog({ trigger, onInitSuccess }: InitSwarmDialogProps) {
-    const [open, setOpen] = useState(false);
+function InitSwarmConfirmContent({
+    advertiseAddr,
+    onInitSuccess,
+}: {
+    advertiseAddr: string;
+    onInitSuccess?: () => void;
+}) {
     const [isLoading, setIsLoading] = useState(false);
-    const [advertiseAddr, setAdvertiseAddr] = useState('');
-    const [listenAddr, setListenAddr] = useState('0.0.0.0:2377');
+    const { closeDialog } = useConfirmationDialogStore();
     const t = useTranslations('swarm');
     const tCommon = useTranslations('common');
 
-    const handleInit = async () => {
-        if (!advertiseAddr) {
-            toast.error(t('advertiseAddressRequired'));
-            return;
-        }
-
+    const handleConfirm = async () => {
         setIsLoading(true);
         try {
             await onInitSwarmAction({
-                listenAddr,
                 advertiseAddr,
+                listenAddr: '0.0.0.0:2377',
             });
-
             toast.success(t('swarmInitializedSuccess'));
-            setOpen(false);
-            resetForm();
-
+            closeDialog();
             await onSwarmRefreshAction();
             onInitSuccess?.();
-        } catch (err: any) {
-            toast.error(err.message);
         } finally {
             setIsLoading(false);
         }
     };
 
-    const resetForm = () => {
-        setAdvertiseAddr('');
-        setListenAddr('0.0.0.0:2377');
+    return (
+        <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={closeDialog} disabled={isLoading}>
+                {tCommon('cancel')}
+            </Button>
+            <Button onClick={handleConfirm} disabled={isLoading}>
+                {isLoading ? t('initializing') : t('initializeSwarm')}
+            </Button>
+        </div>
+    );
+}
+
+export function InitSwarmDialog({ trigger, onInitSuccess }: InitSwarmDialogProps) {
+    const [isDetecting, setIsDetecting] = useState(false);
+    const { openDialog } = useConfirmationDialogStore();
+    const t = useTranslations('swarm');
+
+    const handleClick = async () => {
+        setIsDetecting(true);
+        let ip: string;
+
+        try {
+            const result = await detectPublicIpAction();
+            if (!result?.data?.ip) {
+                toast.error(t('failedToDetectIp'));
+                return;
+            }
+            ip = result.data.ip;
+        } catch {
+            toast.error(t('failedToDetectIp'));
+            return;
+        } finally {
+            setIsDetecting(false);
+        }
+
+        const advertiseAddr = `${ip}:2377`;
+
+        openDialog({
+            title: t('initializeSwarmTitle'),
+            description: t('initializeSwarmConfirmDescription', { ip: advertiseAddr }),
+            content: (
+                <InitSwarmConfirmContent
+                    advertiseAddr={advertiseAddr}
+                    onInitSuccess={onInitSuccess}
+                />
+            ),
+        });
     };
 
-    return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                {trigger || (
-                    <Button>
-                        <Play className="mr-2 size-4" />
-                        {t('initializeSwarm')}
-                    </Button>
-                )}
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>{t('initializeSwarmTitle')}</DialogTitle>
-                    <DialogDescription>{t('initializeSwarmDescription')}</DialogDescription>
-                </DialogHeader>
-
-                <div className="grid gap-4 py-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="advertiseAddr">{t('advertiseAddress')}</Label>
-                        <Input
-                            id="advertiseAddr"
-                            value={advertiseAddr}
-                            onChange={(e) => setAdvertiseAddr(e.target.value)}
-                            placeholder={t('advertiseAddressPlaceholder')}
-                        />
-                        <p className="text-muted-foreground text-xs">
-                            {t('advertiseAddressDescriptionInit')}
-                        </p>
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label htmlFor="listenAddr">{t('listenAddress')}</Label>
-                        <Input
-                            id="listenAddr"
-                            value={listenAddr}
-                            onChange={(e) => setListenAddr(e.target.value)}
-                            placeholder={t('listenAddressPlaceholder')}
-                        />
-                        <p className="text-muted-foreground text-xs">
-                            {t('listenAddressDescription')}
-                        </p>
-                    </div>
-                </div>
-
-                <DialogFooter>
-                    <Button variant="outline" onClick={() => setOpen(false)}>
-                        {tCommon('cancel')}
-                    </Button>
-                    <Button onClick={handleInit} disabled={isLoading}>
-                        {isLoading ? t('initializing') : t('initializeSwarm')}
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+    return trigger ? (
+        <div onClick={handleClick} className="cursor-pointer">
+            {trigger}
+        </div>
+    ) : (
+        <Button onClick={handleClick} disabled={isDetecting}>
+            <Play className="mr-2 size-4" />
+            {isDetecting ? t('detectingIp') : t('initializeSwarm')}
+        </Button>
     );
 }

@@ -37,7 +37,6 @@ export async function getRepositorieById<
             ...(include && { include }),
         })) as RepositoryPayload<T> | null;
     } catch (error: unknown) {
-        console.log(error);
         throw new Error('Failed to get repository');
     }
 }

@@ -8,6 +8,8 @@ import { useSwarmStore } from '@/stores/docker/useSwarmStore';
 import { SwarmNotActive } from './SwarmNotActive';
 import { SwarmOverview } from './SwarmOverview';
 import { NodesTable } from './NodesTable';
+import { ServicesTable } from './ServicesTable';
+import { CreateServiceDialog } from './CreateServiceDialog';
 import { LeaveSwarmDialog } from './LeaveSwarmDialog';
 import { toast } from 'sonner';
 import { onSwarmRefreshAction } from '@/actions/docker/swarm/refresh.action';
@@ -79,12 +81,19 @@ export function SwarmPage() {
                         <TabsList className="mx-5 w-fit">
                             <TabsTrigger value="overview">{t('overview')}</TabsTrigger>
                             <TabsTrigger value="nodes">{t('nodes')}</TabsTrigger>
+                            <TabsTrigger value="services">{t('services')}</TabsTrigger>
                         </TabsList>
                         <TabsContent value="overview" className="mt-6 flex-1 overflow-auto pb-6">
                             <SwarmOverview />
                         </TabsContent>
                         <TabsContent value="nodes" className="mt-6 flex-1 overflow-auto pb-6">
                             <NodesTable />
+                        </TabsContent>
+                        <TabsContent value="services" className="mt-6 flex-1 overflow-auto pb-6">
+                            <div className="mb-4 flex justify-end px-5">
+                                <CreateServiceDialog />
+                            </div>
+                            <ServicesTable />
                         </TabsContent>
                     </Tabs>
                 ) : (

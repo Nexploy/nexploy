@@ -28,7 +28,7 @@ export function LogsToolbar({
     const t = useTranslations('repository.builds.logs');
 
     return (
-        <>
+        <div className={'flex items-center gap-2'}>
             <div className="flex items-center space-x-2">
                 <Label htmlFor={id} className="cursor-pointer text-xs">
                     {t('showDate')}
@@ -54,6 +54,6 @@ export function LogsToolbar({
             >
                 {autoScroll ? t('auto') : t('manual')}
             </Button>
-        </>
+        </div>
     );
 }

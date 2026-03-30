@@ -17,8 +17,6 @@ import { useTranslations } from 'next-intl';
 import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { NodeConfigForm } from './NodeConfigForm';
 import { NodeLogsPanel } from './NodeLogsPanel';
-import { NodeRunStatus } from '@/types/pipeline.type';
-import { StatusNodeLive } from '@/components/shared/StatusNodeLive';
 
 export function NodeConfigDialog() {
     const tPipeline = useTranslations('repository.pipeline');
@@ -60,13 +58,6 @@ export function NodeConfigDialog() {
                                 <span className="text-muted-foreground text-xs font-normal">
                                     ({tConfig('viewOnly')})
                                 </span>
-                                <StatusNodeLive
-                                    buildId={activeBuildId}
-                                    nodeId={node.id}
-                                    initialStatus={
-                                        nodeStatuses[node.id] as NodeRunStatus | undefined
-                                    }
-                                />
                             </DialogTitle>
                         </DialogHeader>
 
@@ -78,7 +69,7 @@ export function NodeConfigDialog() {
                             <NodeLogsPanel
                                 buildId={activeBuildId}
                                 nodeId={node.id}
-                                nodeStatus={nodeStatuses[node.id] as NodeRunStatus | undefined}
+                                nodeStatus={nodeStatuses[node.id]}
                             />
                         </div>
 

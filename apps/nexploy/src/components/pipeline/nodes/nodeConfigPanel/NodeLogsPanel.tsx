@@ -14,6 +14,7 @@ import { NodeRunStatus } from '@/types/pipeline.type';
 import { useTranslations } from 'next-intl';
 import { LogsToolbar } from '@/components/shared/LogsToolbar';
 import { useLogsToolbar } from '@/hooks/useLogsToolbar';
+import { StatusNodeLive } from '@/components/shared/StatusNodeLive';
 
 interface NodeLogsPanelProps {
     buildId: string;
@@ -63,7 +64,8 @@ export function NodeLogsPanel({ buildId, nodeId, nodeStatus }: NodeLogsPanelProp
 
     return (
         <div className="flex flex-1 flex-col overflow-hidden">
-            <div className="flex items-center justify-end gap-2 border-b p-2">
+            <div className="flex items-center justify-between gap-2 border-b p-2">
+                <StatusNodeLive buildId={buildId} nodeId={nodeId} initialStatus={nodeStatus} />
                 <LogsToolbar
                     id="node-log-showTimestamp"
                     showTimestamp={showTimestamp}

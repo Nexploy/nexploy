@@ -61,17 +61,15 @@ export function BuildLogsViewer({
                         {t('started')} {dayjs(createdAt).format('DD/MM/YYYY HH:mm:ss')}
                     </span>
                 </div>
-                <div className="flex items-center gap-2">
-                    <LogsToolbar
-                        id="build-log-showTimestamp"
-                        showTimestamp={showTimestamp}
-                        onShowTimestampChange={setShowTimestamp}
-                        hasLogs={logs.length > 0}
-                        onDownload={downloadLogs}
-                        autoScroll={autoScroll}
-                        onAutoScrollToggle={() => setAutoScroll((prev) => !prev)}
-                    />
-                </div>
+                <LogsToolbar
+                    id="build-log-showTimestamp"
+                    showTimestamp={showTimestamp}
+                    onShowTimestampChange={setShowTimestamp}
+                    hasLogs={logs.length > 0}
+                    onDownload={downloadLogs}
+                    autoScroll={autoScroll}
+                    onAutoScrollToggle={() => setAutoScroll((prev) => !prev)}
+                />
             </div>
             {logs.length === 0 ? (
                 <div className="bg-muted/30 text-muted-foreground flex flex-1 items-center justify-center pb-12 font-mono text-sm">

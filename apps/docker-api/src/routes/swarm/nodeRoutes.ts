@@ -130,4 +130,27 @@ app.post(
     }),
 );
 
+app.delete(
+    '/:id',
+    zValidator('param', nodeIdParamSchema),
+    handleAsync(async (c) => {
+        const { id: nodeId } = getValidatedParam(c, nodeIdParamSchema);
+
+        let force = false;
+        try {
+            const body = await c.req.json();
+            force = !!body?.force;
+        } catch {
+            force = false;
+        }
+
+        const node = docker.getNode(nodeId);
+        await node.remove({ force });
+
+        await swarmStateManager.hardRefresh();
+
+        return { success: true };
+    }),
+);
+
 export default app;
