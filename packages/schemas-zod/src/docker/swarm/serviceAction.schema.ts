@@ -24,7 +24,7 @@ export const createServiceSchema = z.object({
     env: z.array(z.string()).optional(),
     networks: z.array(z.string()).optional(),
     constraints: z.array(z.string()).optional(),
-    labels: z.record(z.string()).optional(),
+    labels: z.record(z.string(), z.string()).optional(),
     command: z.array(z.string()).optional(),
 });
 

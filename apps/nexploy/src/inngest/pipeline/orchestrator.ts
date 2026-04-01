@@ -104,6 +104,7 @@ export class PipelineOrchestrator {
         }
 
         const cancellationWatcher = this.startCancellationWatcher(buildId, abortController);
+        const branchSkippedNodeIds = new Set<string>();
 
         try {
             await inngestStep.run('pipeline-init', async () => {
@@ -129,6 +130,29 @@ export class PipelineOrchestrator {
                     await this.runSkippedNode(
                         node,
                         'not connected to a start node',
+                        inngestStep,
+                        reporter,
+                        logger,
+                        allOutputs,
+                    );
+                    continue;
+                }
+
+                // Propagate branch skip: if all inputs come from skipped branches, skip this node too
+                if (!branchSkippedNodeIds.has(node.id)) {
+                    const inputEdges = graph.edges.filter((e) => e.target === node.id);
+                    if (
+                        inputEdges.length > 0 &&
+                        inputEdges.every((e) => branchSkippedNodeIds.has(e.source))
+                    ) {
+                        branchSkippedNodeIds.add(node.id);
+                    }
+                }
+
+                if (branchSkippedNodeIds.has(node.id)) {
+                    await this.runSkippedNode(
+                        node,
+                        'condition branch not taken',
                         inngestStep,
                         reporter,
                         logger,
@@ -196,6 +220,17 @@ export class PipelineOrchestrator {
 
                     const result = nodeResult as NodeExecutionResult;
                     allOutputs.set(node.id, result.output ?? {});
+
+                    // For condition nodes, mark the losing branch targets as skipped
+                    if (node.data.type === 'condition') {
+                        const passed = !!(result.output?.passed);
+                        const losingHandle = passed ? 'false' : 'true';
+                        for (const edge of graph.edges) {
+                            if (edge.source === node.id && edge.sourceHandle === losingHandle) {
+                                branchSkippedNodeIds.add(edge.target);
+                            }
+                        }
+                    }
                 } catch (nodeError) {
                     if (nodeError instanceof Error && nodeError.name === 'AbortError') {
                         throw nodeError;

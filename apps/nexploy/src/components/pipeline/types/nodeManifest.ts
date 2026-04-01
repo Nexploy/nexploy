@@ -6,7 +6,7 @@ import { type NodeLifecycleCallbacks } from '@workspace/typescript-interface/pip
 export interface NodeManifest {
     type: string;
     definition: NodeDefinition;
-    configSchema: ZodTypeAny;
-    configPanel: ComponentType;
+    configSchema?: ZodTypeAny;
+    configPanel?: ComponentType;
     lifecycle?: NodeLifecycleCallbacks;
 }

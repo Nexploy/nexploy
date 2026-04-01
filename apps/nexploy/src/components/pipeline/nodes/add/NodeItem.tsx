@@ -34,7 +34,7 @@ export function NodeItem({
             >
                 <Icon className="size-3.5" strokeWidth={1.5} />
             </div>
-            <span className="text-foreground truncate text-xs font-medium">{label}</span>
+            <span className="text-foreground text-xs font-medium">{label}</span>
         </div>
     );
 }

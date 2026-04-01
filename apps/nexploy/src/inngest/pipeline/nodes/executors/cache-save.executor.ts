@@ -1,0 +1,62 @@
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
+
+export class CacheSaveExecutor implements INodeExecutor {
+    readonly type = 'cache-save';
+
+    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
+
+        const volumeName = nodeConfig.volumeName as string;
+        const sourcePath = nodeConfig.sourcePath as string;
+        const cacheKey = nodeConfig.cacheKey as string | undefined;
+
+        if (!volumeName) throw new Error('Volume name is required');
+        if (!sourcePath) throw new Error('Source path is required');
+
+        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
+        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+
+        if (!workDir) {
+            await logger.warn(nodeId, 'No workDir found in pipeline outputs — skipping cache save');
+            return { success: true, output: { saved: false }, skipped: true };
+        }
+
+        await logger.info(nodeId, `Saving cache ${sourcePath} → volume "${volumeName}"${cacheKey ? ` (key: ${cacheKey})` : ''}`);
+
+        try {
+            const result = await kyDocker
+                .post('volumes/cache/save', {
+                    json: {
+                        volumeName,
+                        sourcePath,
+                        workDir,
+                        ...(cacheKey && { cacheKey }),
+                    },
+                    signal: abortSignal,
+                    environmentId,
+                    timeout: 120000,
+                } as KyDockerOptions)
+                .json<{ saved: boolean; files?: number; sizeBytes?: number }>();
+
+            const mb = ((result.sizeBytes ?? 0) / 1024 / 1024).toFixed(2);
+            await logger.info(nodeId, `Cache saved (${result.files ?? 0} files, ${mb} MB)`);
+
+            return {
+                success: true,
+                output: {
+                    saved: result.saved,
+                    files: result.files ?? 0,
+                    sizeBytes: result.sizeBytes ?? 0,
+                    volumeName,
+                },
+            };
+        } catch (error) {
+            // Cache save failure is non-fatal — log and continue
+            await logger.warn(nodeId, `Cache save failed (continuing): ${error instanceof Error ? error.message : 'Unknown error'}`);
+            return { success: true, output: { saved: false, error: true }, skipped: false };
+        }
+    }
+}
+
+export const cacheSaveExecutor = new CacheSaveExecutor();

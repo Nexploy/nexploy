@@ -17,6 +17,7 @@ import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { CONFIG_SCHEMAS } from '@/components/pipeline/nodes/nodeConfigPanel/nodeConfigRegistry';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 
 export function NodeAddPanel() {
     const t = useTranslations('repository.pipeline');
@@ -149,64 +150,70 @@ export function NodeAddPanel() {
                     </div>
                 )}
 
-                <div className="flex flex-1 flex-col gap-2 p-2">
-                    {isSearching &&
-                        searchResults.map((def) => (
-                            <NodeItem
-                                key={def.id}
-                                def={def}
-                                label={t(`nodes.${def.id}.name`)}
-                                onDragStart={onDragStart}
-                                onClick={() => onClickAdd(def.id)}
-                            />
-                        ))}
+                <ScrollAreaWithShadow
+                    bottomShadow
+                    className={'h-full overflow-hidden'}
+                    colorShadow="from-sidebar via-sidebar/50"
+                >
+                    <div className="grid grid-cols-1 gap-2 p-2">
+                        {isSearching &&
+                            searchResults.map((def) => (
+                                <NodeItem
+                                    key={def.id}
+                                    def={def}
+                                    label={t(`nodes.${def.id}.name`)}
+                                    onDragStart={onDragStart}
+                                    onClick={() => onClickAdd(def.id)}
+                                />
+                            ))}
 
-                    {!isSearching &&
-                        !activeCategory &&
-                        Object.entries(grouped).map(([category, defs]) => (
-                            <button
-                                key={category}
-                                onClick={() => openCategory(category)}
-                                className="border-border bg-card hover:bg-muted flex cursor-pointer items-center gap-2 rounded-lg border px-1.5 py-1.5 transition-all"
-                            >
-                                <div className={'flex flex-1 items-center gap-2'}>
-                                    {(() => {
-                                        const Icon = CATEGORY_ICONS[category] ?? Wrench;
-                                        return (
-                                            <div
-                                                className={cn(
-                                                    'flex size-7 shrink-0 items-center justify-center rounded-md',
-                                                    CATEGORY_BG_MUTED[category],
-                                                    CATEGORY_TEXT[category],
-                                                )}
-                                            >
-                                                <Icon className="size-3.5" strokeWidth={1.5} />
-                                            </div>
-                                        );
-                                    })()}
-                                    <span className="truncate text-xs">
-                                        {t(`categories.${category}`)}
-                                    </span>
-                                </div>
-                                <div className="text-muted-foreground flex items-center gap-1">
-                                    <span className="text-[10px]">{defs.length}</span>
-                                    <ChevronRight className="size-3.5" />
-                                </div>
-                            </button>
-                        ))}
+                        {!isSearching &&
+                            !activeCategory &&
+                            Object.entries(grouped).map(([category, defs]) => (
+                                <button
+                                    key={category}
+                                    onClick={() => openCategory(category)}
+                                    className="border-border bg-card hover:bg-muted flex cursor-pointer items-center gap-2 rounded-lg border px-1.5 py-1.5 transition-all"
+                                >
+                                    <div className={'flex flex-1 items-center gap-2'}>
+                                        {(() => {
+                                            const Icon = CATEGORY_ICONS[category] ?? Wrench;
+                                            return (
+                                                <div
+                                                    className={cn(
+                                                        'flex size-7 shrink-0 items-center justify-center rounded-md',
+                                                        CATEGORY_BG_MUTED[category],
+                                                        CATEGORY_TEXT[category],
+                                                    )}
+                                                >
+                                                    <Icon className="size-3.5" strokeWidth={1.5} />
+                                                </div>
+                                            );
+                                        })()}
+                                        <span className="truncate text-xs">
+                                            {t(`categories.${category}`)}
+                                        </span>
+                                    </div>
+                                    <div className="text-muted-foreground flex items-center gap-1">
+                                        <span className="text-[10px]">{defs.length}</span>
+                                        <ChevronRight className="size-3.5" />
+                                    </div>
+                                </button>
+                            ))}
 
-                    {!isSearching &&
-                        activeCategory &&
-                        grouped[activeCategory]?.map((def) => (
-                            <NodeItem
-                                key={def.id}
-                                def={def}
-                                label={t(`nodes.${def.id}.name`)}
-                                onDragStart={onDragStart}
-                                onClick={() => onClickAdd(def.id)}
-                            />
-                        ))}
-                </div>
+                        {!isSearching &&
+                            activeCategory &&
+                            grouped[activeCategory]?.map((def) => (
+                                <NodeItem
+                                    key={def.id}
+                                    def={def}
+                                    label={t(`nodes.${def.id}.name`)}
+                                    onDragStart={onDragStart}
+                                    onClick={() => onClickAdd(def.id)}
+                                />
+                            ))}
+                    </div>
+                </ScrollAreaWithShadow>
             </div>
         </div>
     );

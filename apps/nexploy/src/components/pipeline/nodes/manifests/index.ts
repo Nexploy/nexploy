@@ -20,6 +20,36 @@ import { restartContainerManifest } from './restart-container.manifest';
 import { removeContainerManifest } from './remove-container.manifest';
 import { createNetworkManifest } from './create-network.manifest';
 import { createVolumeManifest } from './create-volume.manifest';
+import { waitForHealthManifest } from './wait-for-health.manifest';
+import { waitForUrlManifest } from './wait-for-url.manifest';
+import { waitForPortManifest } from './wait-for-port.manifest';
+import { delayManifest } from './delay.manifest';
+import { conditionManifest } from './condition.manifest';
+import { runScriptManifest } from './run-script.manifest';
+import { runCommandInContainerManifest } from './run-command-in-container.manifest';
+import { runTestsManifest } from './run-tests.manifest';
+// HTTP / Webhooks
+import { httpRequestManifest } from './http-request.manifest';
+import { updateCommitStatusManifest } from './update-commit-status.manifest';
+// Image Management
+import { tagImageManifest } from './tag-image.manifest';
+import { scanImageManifest } from './scan-image.manifest';
+import { pruneImagesManifest } from './prune-images.manifest';
+import { templateFileManifest } from './template-file.manifest';
+import { uploadArtifactManifest } from './upload-artifact.manifest';
+import { downloadFileManifest } from './download-file.manifest';
+import { runMigrationManifest } from './run-migration.manifest';
+import { backupDatabaseManifest } from './backup-database.manifest';
+import { deployStackManifest } from './deploy-stack.manifest';
+import { updateServiceManifest } from './update-service.manifest';
+import { scaleServiceManifest } from './scale-service.manifest';
+import { checkContainerLogsManifest } from './check-container-logs.manifest';
+// Cache
+import { cacheRestoreManifest } from './cache-restore.manifest';
+import { cacheSaveManifest } from './cache-save.manifest';
+import { gitTagManifest } from './git-tag.manifest';
+import { gitCloneExtraManifest } from './git-clone-extra.manifest';
+import { fetchSecretsManifest } from './fetch-secrets.manifest';
 
 export const allBuiltinManifests: NodeManifest[] = [
     // Source
@@ -50,4 +80,42 @@ export const allBuiltinManifests: NodeManifest[] = [
     removeContainerManifest,
     createNetworkManifest,
     createVolumeManifest,
+    // Flow Control
+    waitForHealthManifest,
+    waitForUrlManifest,
+    waitForPortManifest,
+    delayManifest,
+    conditionManifest,
+    // Script Execution
+    runScriptManifest,
+    runCommandInContainerManifest,
+    runTestsManifest,
+    // HTTP / Webhooks
+    httpRequestManifest,
+    updateCommitStatusManifest,
+    // Image Management
+    tagImageManifest,
+    scanImageManifest,
+    pruneImagesManifest,
+    // Files & Artifacts
+    templateFileManifest,
+    uploadArtifactManifest,
+    downloadFileManifest,
+    // Database
+    runMigrationManifest,
+    backupDatabaseManifest,
+    // Docker Swarm
+    deployStackManifest,
+    updateServiceManifest,
+    scaleServiceManifest,
+    // Monitoring
+    checkContainerLogsManifest,
+    // Cache
+    cacheRestoreManifest,
+    cacheSaveManifest,
+    // Git
+    gitTagManifest,
+    gitCloneExtraManifest,
+    // Secrets
+    fetchSecretsManifest,
 ];

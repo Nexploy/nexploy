@@ -467,6 +467,114 @@
             "create-volume": {
                 "name": "Create Volume",
                 "description": "Create a Docker volume"
+            },
+            "wait-for-health": {
+                "name": "Wait for Health",
+                "description": "Wait until a Docker container passes its healthcheck"
+            },
+            "wait-for-url": {
+                "name": "Wait for URL",
+                "description": "Poll a URL until it returns the expected HTTP status"
+            },
+            "wait-for-port": {
+                "name": "Wait for Port",
+                "description": "TCP check until a port is open on the given host"
+            },
+            "delay": {
+                "name": "Delay",
+                "description": "Pause the pipeline for a fixed number of seconds"
+            },
+            "condition": {
+                "name": "Condition",
+                "description": "Gate the pipeline on a value from a previous node output"
+            },
+            "run-script": {
+                "name": "Run Script",
+                "description": "Execute a shell script in the work directory"
+            },
+            "run-command-in-container": {
+                "name": "Run Command in Container",
+                "description": "Execute a command inside a running Docker container"
+            },
+            "run-tests": {
+                "name": "Run Tests",
+                "description": "Run a test suite in an ephemeral Docker container"
+            },
+            "http-request": {
+                "name": "HTTP Request",
+                "description": "Make an HTTP request to an external URL"
+            },
+            "update-commit-status": {
+                "name": "Update Commit Status",
+                "description": "Update a GitHub or GitLab commit status"
+            },
+            "tag-image": {
+                "name": "Tag Image",
+                "description": "Add a tag to a local Docker image"
+            },
+            "scan-image": {
+                "name": "Scan Image",
+                "description": "Security scan a Docker image with Trivy"
+            },
+            "prune-images": {
+                "name": "Prune Images",
+                "description": "Remove unused Docker images to free disk space"
+            },
+            "template-file": {
+                "name": "Template File",
+                "description": "Replace {{VAR}} placeholders in a file with pipeline values"
+            },
+            "upload-artifact": {
+                "name": "Upload Artifact",
+                "description": "Upload a file or folder to S3 or MinIO"
+            },
+            "download-file": {
+                "name": "Download File",
+                "description": "Download a file from a URL into the work directory"
+            },
+            "run-migration": {
+                "name": "Run Migration",
+                "description": "Run database migrations in an ephemeral container"
+            },
+            "backup-database": {
+                "name": "Backup Database",
+                "description": "Dump a PostgreSQL or MySQL database to a file"
+            },
+            "deploy-stack": {
+                "name": "Deploy Stack",
+                "description": "Deploy a Docker Swarm stack from a Compose file"
+            },
+            "update-service": {
+                "name": "Update Service",
+                "description": "Update a Docker Swarm service to a new image"
+            },
+            "scale-service": {
+                "name": "Scale Service",
+                "description": "Change the number of replicas for a Swarm service"
+            },
+            "check-container-logs": {
+                "name": "Check Container Logs",
+                "description": "Search container logs for a regex pattern"
+            },
+            "cache-restore": {
+                "name": "Cache Restore",
+                "description": "Restore a build cache from a Docker volume into the work directory"
+            },
+            "cache-save": {
+                "name": "Cache Save",
+                "description": "Save a directory from the work directory into a Docker volume cache"
+            },
+            "git-tag": {
+                "name": "Git Tag",
+                "description": "Create and push a git tag to the remote"
+            },
+            "git-clone-extra": {
+                "name": "Git Clone Extra",
+                "description": "Clone an additional repository into a work directory subdirectory"
+            },
+            "fetch-secrets": {
+                "name": "Fetch Secrets",
+                "description": "Fetch secrets from Vault, Doppler, or a .env file"
             }
         },
         "config": {
@@ -525,7 +633,100 @@
             "volumeName": "Volume Name",
             "volumeNamePlaceholder": "e.g. my-volume",
             "volumeDriver": "Driver",
-            "volumeDriverPlaceholder": "Leave empty for default driver"
+            "volumeDriverPlaceholder": "Leave empty for default driver",
+            "timeoutSeconds": "Timeout (seconds)",
+            "intervalSeconds": "Interval (seconds)",
+            "url": "URL",
+            "httpMethod": "HTTP Method",
+            "expectedStatus": "Expected Status Code",
+            "host": "Host",
+            "port": "Port",
+            "delaySeconds": "Delay (seconds)",
+            "conditionKey": "Output Key",
+            "conditionOperator": "Operator",
+            "conditionValue": "Expected Value",
+            "operatorEquals": "Equals",
+            "operatorNotEquals": "Not Equals",
+            "operatorContains": "Contains",
+            "operatorStartsWith": "Starts With",
+            "operatorEndsWith": "Ends With",
+            "shell": "Shell",
+            "continueOnError": "Continue on Error",
+            "command": "Command",
+            "workdir": "Working Directory",
+            "testImage": "Container Image",
+            "testCommand": "Test Command",
+            "httpHeaders": "Headers",
+            "httpBody": "Request Body",
+            "commitStatusProvider": "Provider",
+            "commitStatusToken": "Access Token",
+            "commitStatusOwner": "Owner / Organization",
+            "commitStatusRepo": "Repository",
+            "commitStatusSha": "Commit SHA",
+            "commitStatusState": "Status State",
+            "commitStatusDescription": "Description",
+            "commitStatusDescriptionPlaceholder": "Build succeeded",
+            "sourceImage": "Source Image",
+            "sourceTag": "Source Tag",
+            "targetTag": "Target Tag",
+            "scanImage": "Image",
+            "scanTag": "Tag",
+            "scanSeverity": "Minimum Severity",
+            "exitOnVulnerabilities": "Fail on Vulnerabilities",
+            "pruneOnlyDangling": "Only Dangling Images",
+            "pruneOlderThan": "Older Than",
+            "pruneFilter": "Label Filter",
+            "templateInputPath": "Input File Path",
+            "templateOutputPath": "Output File Path",
+            "templateVariables": "Variables",
+            "s3Endpoint": "S3 / MinIO Endpoint",
+            "s3Bucket": "Bucket",
+            "s3AccessKey": "Access Key",
+            "s3SecretKey": "Secret Key",
+            "artifactSourcePath": "Source Path",
+            "artifactDestinationPath": "Destination Path",
+            "useSSL": "Use SSL",
+            "downloadDestination": "Destination Directory",
+            "downloadFilename": "Filename",
+            "downloadFilenamePlaceholder": "Leave empty to use filename from URL",
+            "migrationImage": "Docker Image",
+            "migrationCommand": "Migration Command",
+            "migrationDatabaseUrl": "Database URL",
+            "dbType": "Database Type",
+            "dbName": "Database Name",
+            "dbUsername": "Username",
+            "dbPassword": "Password",
+            "backupOutputPath": "Output Path",
+            "stackName": "Stack Name",
+            "stackPrune": "Prune Removed Services",
+            "serviceName": "Service Name",
+            "serviceImage": "Image",
+            "serviceTag": "Tag",
+            "serviceForceUpdate": "Force Update",
+            "serviceReplicas": "Replicas",
+            "logPattern": "Pattern (regex)",
+            "logSince": "Since",
+            "logFailIfFound": "Fail if Pattern Found",
+            "cacheVolumeName": "Volume Name",
+            "cachePath": "Cache Path",
+            "cacheKey": "Cache Key",
+            "cacheKeyPlaceholder": "Leave empty for default key",
+            "cacheSourcePath": "Source Path",
+            "gitTagName": "Tag Name",
+            "gitTagMessage": "Message",
+            "gitTagMessagePlaceholder": "Leave empty for lightweight tag",
+            "gitRemote": "Remote",
+            "gitCloneUrl": "Repository URL",
+            "gitCloneTargetDir": "Target Directory",
+            "gitCloneToken": "Access Token",
+            "gitCloneTokenPlaceholder": "Leave empty for public repositories",
+            "secretsProvider": "Secrets Provider",
+            "secretsVaultEndpoint": "Vault Endpoint",
+            "secretsToken": "Token",
+            "secretsPath": "Secret Path",
+            "secretsOutputAs": "Output As",
+            "secretsOutputEnvVars": "Pipeline env vars",
+            "secretsOutputJsonFile": "JSON file (secrets.json)"
         },
         "validation": {
             "noSourceNode": "Pipeline must start with a Clone Repository node",

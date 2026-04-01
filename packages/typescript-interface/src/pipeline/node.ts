@@ -32,7 +32,45 @@ export type NodeId =
     | 'remove-container'
     | 'pull-image'
     | 'create-network'
-    | 'create-volume';
+    | 'create-volume'
+    // Flow Control
+    | 'wait-for-health'
+    | 'wait-for-url'
+    | 'wait-for-port'
+    | 'delay'
+    | 'condition'
+    // Script Execution
+    | 'run-script'
+    | 'run-command-in-container'
+    | 'run-tests'
+    // HTTP / Webhooks
+    | 'http-request'
+    | 'update-commit-status'
+    // Image Management
+    | 'tag-image'
+    | 'scan-image'
+    | 'prune-images'
+    // Files & Artifacts
+    | 'template-file'
+    | 'upload-artifact'
+    | 'download-file'
+    // Database
+    | 'run-migration'
+    | 'backup-database'
+    // Docker Swarm
+    | 'deploy-stack'
+    | 'update-service'
+    | 'scale-service'
+    // Monitoring
+    | 'check-container-logs'
+    // Cache
+    | 'cache-restore'
+    | 'cache-save'
+    // Git
+    | 'git-tag'
+    | 'git-clone-extra'
+    // Secrets
+    | 'fetch-secrets';
 
 export type NodeType = 'base-node' | 'large-node' | 'attach-node';
 

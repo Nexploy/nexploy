@@ -1,0 +1,74 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { useFormContext } from 'react-hook-form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
+import { Input } from '@workspace/ui/components/input';
+
+export function DownloadFileConfig() {
+    const t = useTranslations('repository.pipeline.config');
+    const form = useFormContext();
+
+    return (
+        <div className="space-y-4">
+            <FormField
+                control={form.control}
+                name="url"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>{t('url')}</FormLabel>
+                        <FormControl>
+                            <Input
+                                {...field}
+                                placeholder="https://example.com/file.zip"
+                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
+                            />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="destinationPath"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>{t('downloadDestination')}</FormLabel>
+                        <FormControl>
+                            <Input
+                                {...field}
+                                placeholder="./downloads"
+                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
+                            />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="filename"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>{t('downloadFilename')}</FormLabel>
+                        <FormControl>
+                            <Input
+                                {...field}
+                                value={field.value ?? ''}
+                                placeholder={t('downloadFilenamePlaceholder')}
+                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
+                            />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                    </FormItem>
+                )}
+            />
+        </div>
+    );
+}

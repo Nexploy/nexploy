@@ -8,14 +8,7 @@ import { ReactNode, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 
-const VALID_TABS = [
-    'builds',
-    'versions',
-    'env',
-    'domain',
-    'pipeline',
-    'setting',
-] as const;
+const VALID_TABS = ['builds', 'versions', 'env', 'domain', 'pipeline', 'setting'] as const;
 type TabValue = (typeof VALID_TABS)[number];
 
 interface RepositoryTabsProps {
@@ -86,7 +79,9 @@ export function RepositoryTabs({ children }: RepositoryTabsProps) {
                     </TabsTrigger>
                 </TabsList>
             </div>
-            <TabsContent value="pipeline">{children.pipeline}</TabsContent>
+            <TabsContent value="pipeline" className={'overflow-hidden'}>
+                {children.pipeline}
+            </TabsContent>
             <TabsContent value="builds" className={'flex flex-1 overflow-hidden'}>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="pb-5">{children.builds}</div>

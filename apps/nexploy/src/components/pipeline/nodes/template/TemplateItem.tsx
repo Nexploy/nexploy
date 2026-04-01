@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
 import { PipelineTemplate } from '@/components/pipeline/nodes/template/pipelineTemplates';
-import { FileCode2, Terminal } from 'lucide-react';
+import { FileCode2 } from 'lucide-react';
 import {
     NODE_BG_MUTED,
     NODE_ICONS,
@@ -34,23 +34,23 @@ export function TemplateItem({
             onClick={onClick}
             className="border-border bg-card hover:border-accent hover:bg-muted flex cursor-grab flex-col gap-3 overflow-hidden rounded-lg border p-3 transition-all active:cursor-grabbing active:opacity-60"
         >
-            <div className="flex items-center gap-2.5">
+            <div className="flex gap-2.5">
                 <div className="bg-primary/10 text-primary flex size-8 shrink-0 items-center justify-center rounded-md">
                     <Icon className="size-4" strokeWidth={1.5} />
                 </div>
-                <div className="min-w-0">
-                    <p className="text-foreground truncate text-xs font-semibold">
-                        {t(`templates.${template.id}.name` as never)}
+                <div className="flex flex-col gap-0.5">
+                    <p className="text-foreground line-clamp-2 text-xs font-semibold">
+                        {t(`templates.${template.id}.name`)}
                     </p>
-                    <p className="text-muted-foreground truncate text-[10px]">
-                        {t(`templates.${template.id}.description` as never)}
+                    <p className="text-muted-foreground line-clamp-2 text-[10px] leading-3">
+                        {t(`templates.${template.id}.description`)}
                     </p>
                 </div>
             </div>
 
             <div className="flex items-center gap-1">
                 {template.nodes.map((node, i) => {
-                    const NodeIcon = NODE_ICONS[node.type] ?? Terminal;
+                    const NodeIcon = NODE_ICONS[node.type]!;
                     return (
                         <div key={i} className="flex items-center gap-1">
                             <div

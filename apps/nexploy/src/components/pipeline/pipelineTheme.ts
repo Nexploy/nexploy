@@ -1,25 +1,42 @@
 import {
+    ArrowUpDown,
     Bell,
     CircleX,
     Container,
+    Database,
     Download,
     FileCheck,
+    FileCode,
     FileCode2,
     FileKey,
     FileSearch,
+    FlaskConical,
+    FolderInput,
+    FolderOutput,
     GitBranch,
+    GitCommit,
+    GitFork,
+    Globe,
     Hammer,
     HardDrive,
+    HeartPulse,
+    KeyRound,
     Layers,
     type LucideIcon,
+    Milestone,
     Network,
     Play,
+    RefreshCw,
     Rocket,
     RotateCcw,
+    ScrollText,
     Server,
+    ShieldCheck,
     Square,
+    SquareTerminal,
     Tag,
     Terminal,
+    Timer,
     Trash2,
     Upload,
     Variable,
@@ -97,6 +114,44 @@ const NODE_CATEGORY: Record<string, string> = {
     'pull-image': 'build',
     'create-network': 'utility',
     'create-volume': 'utility',
+    // Flow Control
+    'wait-for-health': 'utility',
+    'wait-for-url': 'utility',
+    'wait-for-port': 'utility',
+    'delay': 'utility',
+    'condition': 'utility',
+    // Script Execution
+    'run-script': 'utility',
+    'run-command-in-container': 'utility',
+    'run-tests': 'utility',
+    // HTTP / Webhooks
+    'http-request': 'utility',
+    'update-commit-status': 'utility',
+    // Image Management
+    'tag-image': 'build',
+    'scan-image': 'build',
+    'prune-images': 'build',
+    // Files & Artifacts
+    'template-file': 'utility',
+    'upload-artifact': 'utility',
+    'download-file': 'utility',
+    // Database
+    'run-migration': 'utility',
+    'backup-database': 'utility',
+    // Docker Swarm
+    'deploy-stack': 'deploy',
+    'update-service': 'deploy',
+    'scale-service': 'deploy',
+    // Monitoring
+    'check-container-logs': 'utility',
+    // Cache
+    'cache-restore': 'utility',
+    'cache-save': 'utility',
+    // Git
+    'git-tag': 'source',
+    'git-clone-extra': 'source',
+    // Secrets
+    'fetch-secrets': 'utility',
 };
 
 export const NODE_BG_MUTED: Record<string, string> = Object.fromEntries(
@@ -129,6 +184,44 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'pull-image': Download,
     'create-network': Network,
     'create-volume': HardDrive,
+    // Flow Control
+    'wait-for-health': HeartPulse,
+    'wait-for-url': Globe,
+    'wait-for-port': Network,
+    'delay': Timer,
+    'condition': GitBranch,
+    // Script Execution
+    'run-script': Terminal,
+    'run-command-in-container': SquareTerminal,
+    'run-tests': FlaskConical,
+    // HTTP / Webhooks
+    'http-request': Webhook,
+    'update-commit-status': GitCommit,
+    // Image Management
+    'tag-image': Tag,
+    'scan-image': ShieldCheck,
+    'prune-images': Trash2,
+    // Files & Artifacts
+    'template-file': FileCode,
+    'upload-artifact': Upload,
+    'download-file': Download,
+    // Database
+    'run-migration': Database,
+    'backup-database': HardDrive,
+    // Docker Swarm
+    'deploy-stack': Layers,
+    'update-service': RefreshCw,
+    'scale-service': ArrowUpDown,
+    // Monitoring
+    'check-container-logs': ScrollText,
+    // Cache
+    'cache-restore': FolderInput,
+    'cache-save': FolderOutput,
+    // Git
+    'git-tag': Milestone,
+    'git-clone-extra': GitFork,
+    // Secrets
+    'fetch-secrets': KeyRound,
 };
 
 export const ICON_NAME_MAP: Record<string, LucideIcon> = {
@@ -154,6 +247,25 @@ export const ICON_NAME_MAP: Record<string, LucideIcon> = {
     Download,
     Network,
     HardDrive,
+    // New icons
+    HeartPulse,
+    Globe,
+    Timer,
+    GitBranch,
+    SquareTerminal,
+    FlaskConical,
+    GitCommit,
+    ShieldCheck,
+    FileCode,
+    Database,
+    RefreshCw,
+    ArrowUpDown,
+    ScrollText,
+    FolderInput,
+    FolderOutput,
+    Milestone,
+    GitFork,
+    KeyRound,
 };
 
 export const TEMPLATE_ICONS: Record<string, LucideIcon> = {

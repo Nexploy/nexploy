@@ -42,6 +42,12 @@ export function OutputHandle({ handle, nodeId, handleColor, position }: OutputHa
                 offsetClass,
                 active && handleColor,
             )}
-        />
+        >
+            {handle.label && (
+                <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-[7px] font-bold text-white">
+                    {handle.label[0].toUpperCase()}
+                </span>
+            )}
+        </Handle>
     );
 }

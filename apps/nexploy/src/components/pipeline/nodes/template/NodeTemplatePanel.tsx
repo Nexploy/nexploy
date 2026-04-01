@@ -11,6 +11,7 @@ import { CONFIG_SCHEMAS } from '@/components/pipeline/nodes/nodeConfigPanel/node
 import { NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 
 export function NodeTemplatePanel() {
     const t = useTranslations('repository.pipeline');
@@ -76,16 +77,22 @@ export function NodeTemplatePanel() {
                 {t('templates.title')}
             </span>
 
-            <div className="flex flex-1 flex-col gap-1.5 p-2">
-                {PIPELINE_TEMPLATES.map((template) => (
-                    <TemplateItem
-                        key={template.id}
-                        template={template}
-                        onClick={() => onClickAdd(template)}
-                        onDragStart={isViewingBuild ? () => setActiveBuildId(null) : undefined}
-                    />
-                ))}
-            </div>
+            <ScrollAreaWithShadow
+                bottomShadow
+                className={'h-full overflow-hidden'}
+                colorShadow="from-sidebar via-sidebar/50"
+            >
+                <div className="grid grid-cols-1 gap-2 p-2">
+                    {PIPELINE_TEMPLATES.map((template) => (
+                        <TemplateItem
+                            key={template.id}
+                            template={template}
+                            onClick={() => onClickAdd(template)}
+                            onDragStart={isViewingBuild ? () => setActiveBuildId(null) : undefined}
+                        />
+                    ))}
+                </div>
+            </ScrollAreaWithShadow>
         </div>
     );
 }

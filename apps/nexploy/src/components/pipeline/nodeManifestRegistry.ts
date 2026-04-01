@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { type NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { type NodeManifest } from './types/nodeManifest';
 import { allBuiltinManifests } from './nodes/manifests';
@@ -25,7 +26,7 @@ export function getNodeDefinition(type: string): NodeDefinition | undefined {
 }
 
 export function getConfigSchema(type: string) {
-    return getManifest(type)?.configSchema;
+    return getManifest(type)?.configSchema ?? z.object({});
 }
 
 export function getConfigPanel(type: string) {
