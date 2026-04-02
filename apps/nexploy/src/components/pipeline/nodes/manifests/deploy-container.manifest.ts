@@ -3,6 +3,7 @@ import { deployContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nod
 import { DeployContainerConfig } from '../config/DeployContainerConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Rocket } from 'lucide-react';
 
 export const deployContainerManifest: NodeManifest = {
     type: 'deploy-container',
@@ -13,7 +14,7 @@ export const deployContainerManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.deploy-container.name',
             description: 'pipeline.nodes.deploy-container.description',
-            icon: 'Rocket',
+            icon: Rocket,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },
         handles: {

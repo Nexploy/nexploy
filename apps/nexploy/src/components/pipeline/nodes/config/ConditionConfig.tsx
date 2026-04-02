@@ -4,8 +4,6 @@ import { useTranslations } from 'next-intl';
 import { useReactFlow } from '@xyflow/react';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
-import { ICON_NAME_MAP } from '@/components/pipeline/pipelineTheme';
-import { Terminal } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 
 export function ConditionConfig() {
@@ -33,10 +31,8 @@ export function ConditionConfig() {
                 ) : (
                     inputNodes.map((node) => {
                         const data = node.data as unknown as NodeData;
-                        const Icon =
-                            (data.definition?.metadata.icon
-                                ? ICON_NAME_MAP[data.definition.metadata.icon]
-                                : undefined) ?? Terminal;
+                        const Icon = data.definition?.metadata.icon;
+
                         return (
                             <div
                                 key={node.id}

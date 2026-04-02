@@ -3,6 +3,7 @@ import { ScanImageConfig } from '../config/ScanImageConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 import { Position } from '@xyflow/react';
+import { ShieldCheck } from 'lucide-react';
 
 export const scanImageManifest: NodeManifest = {
     type: 'scan-image',
@@ -13,7 +14,7 @@ export const scanImageManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.scan-image.name',
             description: 'pipeline.nodes.scan-image.description',
-            icon: 'ShieldCheck',
+            icon: ShieldCheck,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },
         defaultConfig: {

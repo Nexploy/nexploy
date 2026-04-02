@@ -14,6 +14,12 @@ import {
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 import { Button } from '@workspace/ui/components/button';
+import {
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    useSidebar,
+} from '@workspace/ui/components/sidebar';
 import { Check, ChevronsUpDown, MoreHorizontal, Pencil, Plus, Trash } from 'lucide-react';
 import { CreateEnvironmentForm } from '@/components/sidebar/environment/CreateEnvironmentForm';
 import { EditEnvironmentForm } from '@/components/sidebar/environment/EditEnvironmentForm';
@@ -24,12 +30,13 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
 
-interface DropdownEnvironment {
+interface DropdownEnvironmentProps {
     environments: Environment[];
 }
 
-export function DropdownEnvironment({ environments }: DropdownEnvironment) {
+export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) {
     const router = useRouter();
+    const { isMobile, state } = useSidebar();
 
     useEffect(() => initializeEnvironmentStore(environments), []);
 
@@ -48,6 +55,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
     const tCommon = useTranslations('common');
 
     const currentEnvironment = getSelectedEnvironment();
+    const isSidebarExpanded = state === 'expanded' || isMobile;
 
     const handleEnvironmentAdd = () => {
         openDialog({
@@ -64,7 +72,6 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
 
     const handleEnvironmentsChange = async (environmentId: string) => {
         if (environmentId === selectedEnvironmentId) return;
-
         selectEnvironment(environmentId);
         router.refresh();
     };
@@ -92,13 +99,8 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
                 removeEnvironment(environment.id);
 
                 if (selectedEnvironmentId === environment.id) {
-                    const remainingEnvironments = storeEnvironments.filter(
-                        (env) => env.id !== environment.id,
-                    );
-                    if (remainingEnvironments.length) {
-                        const firstEnv = remainingEnvironments[0];
-                        selectEnvironment(firstEnv!.id);
-                    }
+                    const remaining = storeEnvironments.filter((env) => env.id !== environment.id);
+                    if (remaining.length) selectEnvironment(remaining[0]!.id);
                 }
 
                 router.refresh();
@@ -107,85 +109,82 @@ export function DropdownEnvironment({ environments }: DropdownEnvironment) {
     };
 
     return (
-        <>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="aspect-square w-16 !p-0 group-data-[state=collapsed]:justify-start group-data-[state=collapsed]:!bg-transparent"
-                        title={currentEnvironment?.name || t('noEnvironment')}
+        <SidebarMenu className="w-fit self-center">
+            <SidebarMenuItem>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <SidebarMenuButton className="aspect-square w-16 group-data-[state=collapsed]:justify-start group-data-[state=collapsed]:!bg-transparent group-data-[state=collapsed]:p-0!">
+                            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg font-semibold">
+                                {currentEnvironment?.name?.charAt(0).toUpperCase() ?? '?'}
+                            </div>
+                            <ChevronsUpDown className="group-data-[state=collapsed]:hidden" />
+                        </SidebarMenuButton>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                        className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                        align="start"
+                        side={isSidebarExpanded ? 'bottom' : 'right'}
+                        sideOffset={4}
                     >
-                        <div className="bg-sidebar-primary text-sidebar-primary-foreground flex size-8 items-center justify-center rounded font-semibold">
-                            {currentEnvironment?.name?.charAt(0).toUpperCase() || '?'}
-                        </div>
-                        <ChevronsUpDown />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                    className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                    align="start"
-                    side="bottom"
-                    sideOffset={4}
-                >
-                    <DropdownMenuLabel className="text-muted-foreground text-xs">
-                        {t('environments')}
-                    </DropdownMenuLabel>
-                    {storeEnvironments.map((environment) => (
-                        <div key={environment.id} className="flex items-center">
-                            <DropdownMenuItem
-                                onClick={() => handleEnvironmentsChange(environment.id)}
-                                className="flex-1 gap-2"
-                            >
-                                <div className="bg-background flex size-6 items-center justify-center rounded-sm border">
-                                    <span className="text-xs font-medium">
-                                        {environment.name.charAt(0).toUpperCase()}
-                                    </span>
-                                </div>
-                                <span className="flex-1">{environment.name}</span>
-                                {selectedEnvironmentId === environment.id && (
-                                    <Check className="ml-auto" size={16} />
-                                )}
-                            </DropdownMenuItem>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-8 w-8 p-0"
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
-                                        <MoreHorizontal className="h-4 w-4" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    <DropdownMenuItem
-                                        onClick={(e) => handleEnvironmentEdit(environment)}
-                                    >
-                                        <Pencil className="mr-2 h-4 w-4" />
-                                        {t('edit')}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem
-                                        variant="destructive"
-                                        onClick={(e) => handleEnvironmentDelete(environment)}
-                                    >
-                                        <Trash className="mr-2 h-4 w-4" />
-                                        {t('delete')}
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                    ))}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem className="gap-2 p-2" onClick={handleEnvironmentAdd}>
-                        <div className="bg-background flex size-6 items-center justify-center rounded-md border border-dashed">
-                            <Plus size={14} />
-                        </div>
-                        <span>{t('addEnvironment')}</span>
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </>
+                        <DropdownMenuLabel className="text-muted-foreground text-xs">
+                            {t('environments')}
+                        </DropdownMenuLabel>
+                        {storeEnvironments.map((environment) => (
+                            <div key={environment.id} className="flex items-center">
+                                <DropdownMenuItem
+                                    onClick={() => handleEnvironmentsChange(environment.id)}
+                                    className="flex-1 gap-2"
+                                >
+                                    <div className="bg-background flex size-6 items-center justify-center rounded-sm border">
+                                        <span className="text-xs font-medium">
+                                            {environment.name.charAt(0).toUpperCase()}
+                                        </span>
+                                    </div>
+                                    <span className="flex-1">{environment.name}</span>
+                                    {selectedEnvironmentId === environment.id && (
+                                        <Check className="ml-auto size-4" />
+                                    )}
+                                </DropdownMenuItem>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="size-7 shrink-0 p-0"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <MoreHorizontal className="size-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent side={'right'} align="start">
+                                        <DropdownMenuItem
+                                            onClick={() => handleEnvironmentEdit(environment)}
+                                        >
+                                            <Pencil />
+                                            {t('edit')}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem
+                                            variant="destructive"
+                                            onClick={() => handleEnvironmentDelete(environment)}
+                                        >
+                                            <Trash />
+                                            {t('delete')}
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                        ))}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="gap-2 p-2" onClick={handleEnvironmentAdd}>
+                            <div className="bg-background flex size-6 items-center justify-center rounded-md border border-dashed">
+                                <Plus size={14} />
+                            </div>
+                            <span>{t('addEnvironment')}</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </SidebarMenuItem>
+        </SidebarMenu>
     );
 }

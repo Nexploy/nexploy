@@ -3,6 +3,7 @@ import { gitTagConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.
 import { GitTagConfig } from '../config/GitTagConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Milestone } from 'lucide-react';
 
 export const gitTagManifest: NodeManifest = {
     type: 'git-tag',
@@ -13,7 +14,7 @@ export const gitTagManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.git-tag.name',
             description: 'pipeline.nodes.git-tag.description',
-            icon: 'Milestone',
+            icon: Milestone,
             color: `${CATEGORY_BG_MUTED['source']} ${CATEGORY_TEXT['source']}`,
         },
         defaultConfig: {

@@ -3,6 +3,7 @@ import { buildDockerImageConfigSchema } from '@workspace/schemas-zod/pipeline/no
 import { BuildDockerImageConfig } from '../config/BuildDockerImageConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Container } from 'lucide-react';
 
 export const buildDockerImageManifest: NodeManifest = {
     type: 'build-docker-image',
@@ -13,7 +14,7 @@ export const buildDockerImageManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.build-docker-image.name',
             description: 'pipeline.nodes.build-docker-image.description',
-            icon: 'Container',
+            icon: Container,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },
         handles: {

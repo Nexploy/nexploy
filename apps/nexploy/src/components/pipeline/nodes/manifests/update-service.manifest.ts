@@ -3,6 +3,7 @@ import { UpdateServiceConfig } from '../config/UpdateServiceConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 import { Position } from '@xyflow/react';
+import { RefreshCw } from 'lucide-react';
 
 export const updateServiceManifest: NodeManifest = {
     type: 'update-service',
@@ -13,7 +14,7 @@ export const updateServiceManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.update-service.name',
             description: 'pipeline.nodes.update-service.description',
-            icon: 'RefreshCw',
+            icon: RefreshCw,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },
         defaultConfig: {

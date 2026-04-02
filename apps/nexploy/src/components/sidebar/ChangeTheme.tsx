@@ -1,7 +1,7 @@
 'use client';
 
 import { Check, Monitor, Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
+import { useTheme, type DefaultTheme } from '@wrksz/themes/client';
 import { useTranslations } from 'next-intl';
 import {
     DropdownMenuItem,
@@ -10,7 +10,7 @@ import {
     DropdownMenuSubTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 
-const THEMES: { name: string; labelKey: 'light' | 'dark' | 'system'; icon: typeof Sun }[] = [
+const THEMES: { name: DefaultTheme; labelKey: 'light' | 'dark' | 'system'; icon: typeof Sun }[] = [
     { name: 'light', labelKey: 'light', icon: Sun },
     { name: 'dark', labelKey: 'dark', icon: Moon },
     { name: 'system', labelKey: 'system', icon: Monitor },

@@ -3,6 +3,7 @@ import { UpdateCommitStatusConfig } from '../config/UpdateCommitStatusConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 import { Position } from '@xyflow/react';
+import { GitCommit } from 'lucide-react';
 
 export const updateCommitStatusManifest: NodeManifest = {
     type: 'update-commit-status',
@@ -13,7 +14,7 @@ export const updateCommitStatusManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.update-commit-status.name',
             description: 'pipeline.nodes.update-commit-status.description',
-            icon: 'GitCommit',
+            icon: GitCommit,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         defaultConfig: {

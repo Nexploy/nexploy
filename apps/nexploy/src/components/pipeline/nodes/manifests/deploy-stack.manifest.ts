@@ -3,6 +3,7 @@ import { deployStackConfigSchema } from '@workspace/schemas-zod/pipeline/nodeCon
 import { DeployStackConfig } from '../config/DeployStackConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Layers } from 'lucide-react';
 
 export const deployStackManifest: NodeManifest = {
     type: 'deploy-stack',
@@ -13,7 +14,7 @@ export const deployStackManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.deploy-stack.name',
             description: 'pipeline.nodes.deploy-stack.description',
-            icon: 'Layers',
+            icon: Layers,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },
         defaultConfig: {

@@ -3,6 +3,7 @@ import { downloadFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeCo
 import { DownloadFileConfig } from '../config/DownloadFileConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Download } from 'lucide-react';
 
 export const downloadFileManifest: NodeManifest = {
     type: 'download-file',
@@ -13,7 +14,7 @@ export const downloadFileManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.download-file.name',
             description: 'pipeline.nodes.download-file.description',
-            icon: 'Download',
+            icon: Download,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         defaultConfig: {

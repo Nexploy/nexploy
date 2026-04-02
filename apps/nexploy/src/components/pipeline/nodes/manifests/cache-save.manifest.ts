@@ -3,6 +3,7 @@ import { cacheSaveConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfi
 import { CacheSaveConfig } from '../config/CacheSaveConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { FolderOutput } from 'lucide-react';
 
 export const cacheSaveManifest: NodeManifest = {
     type: 'cache-save',
@@ -13,7 +14,7 @@ export const cacheSaveManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.cache-save.name',
             description: 'pipeline.nodes.cache-save.description',
-            icon: 'FolderOutput',
+            icon: FolderOutput,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         defaultConfig: {

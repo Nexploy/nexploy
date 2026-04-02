@@ -3,6 +3,7 @@ import { delayConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.s
 import { DelayConfig } from '../config/DelayConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Timer } from 'lucide-react';
 
 export const delayManifest: NodeManifest = {
     type: 'delay',
@@ -13,7 +14,7 @@ export const delayManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.delay.name',
             description: 'pipeline.nodes.delay.description',
-            icon: 'Timer',
+            icon: Timer,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         defaultConfig: {

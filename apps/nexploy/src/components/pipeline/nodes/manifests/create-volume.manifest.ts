@@ -3,6 +3,7 @@ import { createVolumeConfigSchema } from '@workspace/schemas-zod/pipeline/nodeCo
 import { CreateVolumeConfig } from '../config/CreateVolumeConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { HardDrive } from 'lucide-react';
 
 export const createVolumeManifest: NodeManifest = {
     type: 'create-volume',
@@ -13,7 +14,7 @@ export const createVolumeManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.create-volume.name',
             description: 'pipeline.nodes.create-volume.description',
-            icon: 'HardDrive',
+            icon: HardDrive,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         defaultConfig: {

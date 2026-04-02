@@ -3,6 +3,7 @@ import { WriteEnvFileConfig } from '../config/WriteEnvFileConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 import { Position } from '@xyflow/react';
+import { FileKey } from 'lucide-react';
 
 export const writeEnvFileManifest: NodeManifest = {
     type: 'write-env-file',
@@ -13,7 +14,7 @@ export const writeEnvFileManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.write-env-file.name',
             description: 'pipeline.nodes.write-env-file.description',
-            icon: 'FileKey',
+            icon: FileKey,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         handles: {

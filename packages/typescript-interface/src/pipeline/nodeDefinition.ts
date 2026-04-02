@@ -1,5 +1,6 @@
 import { NodeCategory, NodeId, NodeType } from './node';
 import { Position } from '@xyflow/react';
+import { LucideIcon } from 'lucide-react';
 
 export interface HandleDefinition {
     id: string;
@@ -16,7 +17,7 @@ export interface NodeDefinition<TConfig = Record<string, unknown>> {
     metadata: {
         name: string;
         description: string;
-        icon: string;
+        icon: LucideIcon;
         color: string;
     };
     defaultConfig?: TConfig;

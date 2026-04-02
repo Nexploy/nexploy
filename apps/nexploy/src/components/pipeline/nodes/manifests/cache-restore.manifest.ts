@@ -3,6 +3,7 @@ import { cacheRestoreConfigSchema } from '@workspace/schemas-zod/pipeline/nodeCo
 import { CacheRestoreConfig } from '../config/CacheRestoreConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { FolderInput } from 'lucide-react';
 
 export const cacheRestoreManifest: NodeManifest = {
     type: 'cache-restore',
@@ -13,7 +14,7 @@ export const cacheRestoreManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.cache-restore.name',
             description: 'pipeline.nodes.cache-restore.description',
-            icon: 'FolderInput',
+            icon: FolderInput,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         defaultConfig: {

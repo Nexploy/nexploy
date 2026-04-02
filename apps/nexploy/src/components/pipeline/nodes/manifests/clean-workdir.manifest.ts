@@ -3,6 +3,7 @@ import { cleanWorkdirConfigSchema } from '@workspace/schemas-zod/pipeline/nodeCo
 import { CleanWorkdirConfig } from '../config/CleanWorkdirConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Trash2 } from 'lucide-react';
 
 export const cleanWorkdirManifest: NodeManifest = {
     type: 'clean-workdir',
@@ -13,7 +14,7 @@ export const cleanWorkdirManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.clean-workdir.name',
             description: 'pipeline.nodes.clean-workdir.description',
-            icon: 'Trash2',
+            icon: Trash2,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         handles: {

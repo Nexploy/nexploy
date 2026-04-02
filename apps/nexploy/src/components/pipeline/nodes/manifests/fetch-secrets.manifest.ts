@@ -3,6 +3,7 @@ import { fetchSecretsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeCo
 import { FetchSecretsConfig } from '../config/FetchSecretsConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { KeyRound } from 'lucide-react';
 
 export const fetchSecretsManifest: NodeManifest = {
     type: 'fetch-secrets',
@@ -13,7 +14,7 @@ export const fetchSecretsManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.fetch-secrets.name',
             description: 'pipeline.nodes.fetch-secrets.description',
-            icon: 'KeyRound',
+            icon: KeyRound,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         defaultConfig: {

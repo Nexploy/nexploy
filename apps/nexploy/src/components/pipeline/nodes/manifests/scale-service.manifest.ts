@@ -3,6 +3,7 @@ import { ScaleServiceConfig } from '../config/ScaleServiceConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { Position } from '@xyflow/react';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { ArrowUpDown } from 'lucide-react';
 
 export const scaleServiceManifest: NodeManifest = {
     type: 'scale-service',
@@ -13,7 +14,7 @@ export const scaleServiceManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.scale-service.name',
             description: 'pipeline.nodes.scale-service.description',
-            icon: 'ArrowUpDown',
+            icon: ArrowUpDown,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },
         defaultConfig: {

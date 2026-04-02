@@ -3,6 +3,7 @@ import { RunScriptConfig } from '../config/RunScriptConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 import { Position } from '@xyflow/react';
+import { Terminal } from 'lucide-react';
 
 export const runScriptManifest: NodeManifest = {
     type: 'run-script',
@@ -13,7 +14,7 @@ export const runScriptManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.run-script.name',
             description: 'pipeline.nodes.run-script.description',
-            icon: 'Terminal',
+            icon: Terminal,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         defaultConfig: {

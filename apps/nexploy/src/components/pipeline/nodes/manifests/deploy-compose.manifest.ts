@@ -3,6 +3,7 @@ import { composeFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeCon
 import { DeployComposeConfig } from '../config/DeployComposeConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Layers } from 'lucide-react';
 
 export const deployComposeManifest: NodeManifest = {
     type: 'deploy-compose',
@@ -13,7 +14,7 @@ export const deployComposeManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.deploy-compose.name',
             description: 'pipeline.nodes.deploy-compose.description',
-            icon: 'Layers',
+            icon: Layers,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },
         handles: {

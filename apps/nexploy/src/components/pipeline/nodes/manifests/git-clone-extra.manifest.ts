@@ -3,6 +3,7 @@ import { gitCloneExtraConfigSchema } from '@workspace/schemas-zod/pipeline/nodeC
 import { GitCloneExtraConfig } from '../config/GitCloneExtraConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { GitFork } from 'lucide-react';
 
 export const gitCloneExtraManifest: NodeManifest = {
     type: 'git-clone-extra',
@@ -13,7 +14,7 @@ export const gitCloneExtraManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.git-clone-extra.name',
             description: 'pipeline.nodes.git-clone-extra.description',
-            icon: 'GitFork',
+            icon: GitFork,
             color: `${CATEGORY_BG_MUTED['source']} ${CATEGORY_TEXT['source']}`,
         },
         defaultConfig: {

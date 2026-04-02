@@ -629,7 +629,7 @@
             "noContainersFound": "No containers found",
             "containersLoading": "Loading containers...",
             "containerUnavailable": "Container unavailable",
-            "containerStaleWarning": "This container is not available in the selected environment. Please select another one.",
+            "containerStaleWarning": "This container is no longer available.",
             "pullImageName": "Image Name",
             "pullImageNamePlaceholder": "e.g. nginx:latest",
             "networkName": "Network Name",

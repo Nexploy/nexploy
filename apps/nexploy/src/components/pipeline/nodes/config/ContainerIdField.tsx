@@ -53,6 +53,8 @@ export function ContainerIdField() {
 
     const { containers, isLoading } = useEnvironmentContainers(environmentId);
 
+    const savedContainerName = form.watch('containerName');
+
     return (
         <FormField
             control={form.control}
@@ -72,7 +74,16 @@ export function ContainerIdField() {
                             {environmentId ? (
                                 <Select
                                     value={field.value ?? ''}
-                                    onValueChange={field.onChange}
+                                    onValueChange={(value) => {
+                                        field.onChange(value);
+                                        const container = containers.find((c) => c.id === value);
+                                        if (container) {
+                                            form.setValue(
+                                                'containerName',
+                                                stripLeadingSlash(container.name),
+                                            );
+                                        }
+                                    }}
                                     disabled={isLoading}
                                 >
                                     <SelectTrigger className={'!pl-0 data-[placeholder]:!pl-3'}>
@@ -84,7 +95,9 @@ export function ContainerIdField() {
                                         ) : isStale ? (
                                             <span className="flex items-center gap-1.5 pl-3 text-xs">
                                                 <AlertTriangle className="h-3 w-3 shrink-0" />
-                                                {t('containerUnavailable')}
+                                                {savedContainerName
+                                                    ? savedContainerName
+                                                    : t('containerUnavailable')}
                                             </span>
                                         ) : (
                                             <SelectValue

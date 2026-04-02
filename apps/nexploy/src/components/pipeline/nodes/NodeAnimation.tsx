@@ -1,8 +1,8 @@
 'use client';
 
 import { cn } from '@workspace/ui/lib/utils';
-import { CATEGORY_BORDER, CATEGORY_HEX, ICON_NAME_MAP } from '@/components/pipeline/pipelineTheme';
-import { Ban, CheckCircle2, CircleX, LucideIcon } from 'lucide-react';
+import { CATEGORY_BORDER, CATEGORY_HEX } from '@/components/pipeline/pipelineTheme';
+import { Ban, CheckCircle2, CircleX } from 'lucide-react';
 import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
 import { PropsWithChildren } from 'react';
 
@@ -18,7 +18,7 @@ export function NodeAnimation({
     square = false,
     children,
 }: PropsWithChildren<NodeAnimationProps>) {
-    const Icon = ICON_NAME_MAP[data.definition.metadata.icon] as LucideIcon;
+    const Icon = data.definition.metadata.icon;
     const isStartNode = data.definition.isStartNode;
     const categoryHex = CATEGORY_HEX[data.definition.category];
 

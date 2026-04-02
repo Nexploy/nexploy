@@ -3,6 +3,7 @@ import { httpRequestConfigSchema } from '@workspace/schemas-zod/pipeline/nodeCon
 import { HttpRequestConfig } from '../config/HttpRequestConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Webhook } from 'lucide-react';
 
 export const httpRequestManifest: NodeManifest = {
     type: 'http-request',
@@ -13,7 +14,7 @@ export const httpRequestManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.http-request.name',
             description: 'pipeline.nodes.http-request.description',
-            icon: 'Webhook',
+            icon: Webhook,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         defaultConfig: {

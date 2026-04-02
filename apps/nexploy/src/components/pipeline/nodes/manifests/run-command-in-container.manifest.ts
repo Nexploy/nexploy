@@ -3,6 +3,7 @@ import { runCommandInContainerConfigSchema } from '@workspace/schemas-zod/pipeli
 import { RunCommandInContainerConfig } from '../config/RunCommandInContainerConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { SquareTerminal } from 'lucide-react';
 
 export const runCommandInContainerManifest: NodeManifest = {
     type: 'run-command-in-container',
@@ -13,7 +14,7 @@ export const runCommandInContainerManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.run-command-in-container.name',
             description: 'pipeline.nodes.run-command-in-container.description',
-            icon: 'SquareTerminal',
+            icon: SquareTerminal,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         defaultConfig: {

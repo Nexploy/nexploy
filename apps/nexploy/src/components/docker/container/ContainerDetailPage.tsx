@@ -62,16 +62,9 @@ export function ContainerDetailPage() {
                     {!container ? (
                         <Skeleton className="h-6 w-40" />
                     ) : (
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <h1 className="line-clamp-1 text-3xl font-semibold tracking-tight break-all">
-                                    {container.name}
-                                </h1>
-                            </TooltipTrigger>
-                            <TooltipContent className={'max-w-md break-all'}>
-                                {container.name}
-                            </TooltipContent>
-                        </Tooltip>
+                        <h1 className="text-3xl font-semibold tracking-tight break-all">
+                            {container.name}
+                        </h1>
                     )}
                     <p className="text-muted-foreground text-sm">{t('description')}</p>
                 </div>

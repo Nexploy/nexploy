@@ -2,6 +2,7 @@ import { Position } from '@xyflow/react';
 import { ConditionConfig } from '../config/ConditionConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Split } from 'lucide-react';
 
 export const conditionManifest: NodeManifest = {
     type: 'condition',
@@ -12,7 +13,7 @@ export const conditionManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.condition.name',
             description: 'pipeline.nodes.condition.description',
-            icon: 'GitBranch',
+            icon: Split,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         defaultConfig: {},

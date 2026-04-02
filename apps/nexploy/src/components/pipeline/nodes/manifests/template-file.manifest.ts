@@ -3,6 +3,7 @@ import { TemplateFileConfig } from '../config/TemplateFileConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 import { Position } from '@xyflow/react';
+import { FileCode } from 'lucide-react';
 
 export const templateFileManifest: NodeManifest = {
     type: 'template-file',
@@ -13,7 +14,7 @@ export const templateFileManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.template-file.name',
             description: 'pipeline.nodes.template-file.description',
-            icon: 'FileCode',
+            icon: FileCode,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         defaultConfig: {

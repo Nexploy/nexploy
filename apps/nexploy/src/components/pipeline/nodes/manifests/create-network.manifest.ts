@@ -3,6 +3,7 @@ import { createNetworkConfigSchema } from '@workspace/schemas-zod/pipeline/nodeC
 import { CreateNetworkConfig } from '../config/CreateNetworkConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Network } from 'lucide-react';
 
 export const createNetworkManifest: NodeManifest = {
     type: 'create-network',
@@ -13,7 +14,7 @@ export const createNetworkManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.create-network.name',
             description: 'pipeline.nodes.create-network.description',
-            icon: 'Network',
+            icon: Network,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         defaultConfig: {

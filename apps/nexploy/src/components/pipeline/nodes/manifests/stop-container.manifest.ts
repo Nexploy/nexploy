@@ -3,6 +3,7 @@ import { StopContainerConfig } from '../config/StopContainerConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 import { Position } from '@xyflow/react';
+import { Square } from 'lucide-react';
 
 export const stopContainerManifest: NodeManifest = {
     type: 'stop-container',
@@ -13,7 +14,7 @@ export const stopContainerManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.stop-container.name',
             description: 'pipeline.nodes.stop-container.description',
-            icon: 'Square',
+            icon: Square,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },
         defaultConfig: {

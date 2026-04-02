@@ -3,6 +3,7 @@ import { RunMigrationConfig } from '../config/RunMigrationConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { Position } from '@xyflow/react';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Database } from 'lucide-react';
 
 export const runMigrationManifest: NodeManifest = {
     type: 'run-migration',
@@ -13,7 +14,7 @@ export const runMigrationManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.run-migration.name',
             description: 'pipeline.nodes.run-migration.description',
-            icon: 'Database',
+            icon: Database,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         defaultConfig: {

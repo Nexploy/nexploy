@@ -628,7 +628,7 @@
             "noContainersFound": "Aucun conteneur trouvé",
             "containersLoading": "Chargement des conteneurs...",
             "containerUnavailable": "Conteneur indisponible",
-            "containerStaleWarning": "Ce conteneur n'est pas disponible dans l'environnement sélectionné. Veuillez en choisir un autre.",
+            "containerStaleWarning": "Ce container n'est plus disponible.",
             "pullImageName": "Nom de l'image",
             "pullImageNamePlaceholder": "ex. nginx:latest",
             "networkName": "Nom du réseau",

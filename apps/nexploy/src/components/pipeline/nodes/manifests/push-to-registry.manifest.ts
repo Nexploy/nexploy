@@ -3,6 +3,7 @@ import { pushToRegistryConfigSchema } from '@workspace/schemas-zod/pipeline/node
 import { PushToRegistryConfig } from '../config/PushToRegistryConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Upload } from 'lucide-react';
 
 export const pushToRegistryManifest: NodeManifest = {
     type: 'push-to-registry',
@@ -13,7 +14,7 @@ export const pushToRegistryManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.push-to-registry.name',
             description: 'pipeline.nodes.push-to-registry.description',
-            icon: 'Upload',
+            icon: Upload,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },
         handles: {

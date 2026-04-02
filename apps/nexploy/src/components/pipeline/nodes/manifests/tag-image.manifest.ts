@@ -3,6 +3,7 @@ import { TagImageConfig } from '../config/TagImageConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 import { Position } from '@xyflow/react';
+import { Tag } from 'lucide-react';
 
 export const tagImageManifest: NodeManifest = {
     type: 'tag-image',
@@ -13,7 +14,7 @@ export const tagImageManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.tag-image.name',
             description: 'pipeline.nodes.tag-image.description',
-            icon: 'Tag',
+            icon: Tag,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },
         defaultConfig: {

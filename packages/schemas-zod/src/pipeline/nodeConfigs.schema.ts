@@ -80,6 +80,7 @@ export const sendNotificationConfigSchema = z.object({
 
 export const containerActionConfigSchema = z.object({
     containerId: z.string().min(1, 'Container ID is required'),
+    containerName: z.string().optional(),
 });
 
 export const pullImageConfigSchema = z.object({

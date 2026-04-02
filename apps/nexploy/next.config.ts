@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     env: {
         appVersion: rootPackage.version,
     },
+    allowedDevOrigins: ['192.168.1.250'],
     reactStrictMode: false,
     transpilePackages: ['@workspace/ui', '@workspace/i18n', '@workspace/shared'],
 };

@@ -1,4 +1,4 @@
-import { ElementType } from 'react';
+import { ElementType, JSX } from 'react';
 
 export interface SidebarNavGroup {
     titleKey: string;
@@ -10,7 +10,7 @@ export interface SidebarItem {
     icon: ElementType;
     href: string;
     className?: string;
-    hasActionIcon?: boolean;
+    actionIcon?: JSX.Element;
     enableCollapsible?: boolean;
     children?: SidebarItem[];
 }

@@ -3,6 +3,7 @@ import { SetEnvironmentConfig } from '../config/SetEnvironmentConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 import { Position } from '@xyflow/react';
+import { Server } from 'lucide-react';
 
 export const setEnvironmentManifest: NodeManifest = {
     type: 'set-environment',
@@ -13,7 +14,7 @@ export const setEnvironmentManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.set-environment.name',
             description: 'pipeline.nodes.set-environment.description',
-            icon: 'Server',
+            icon: Server,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },
         handles: {

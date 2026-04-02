@@ -3,6 +3,7 @@ import { pruneImagesConfigSchema } from '@workspace/schemas-zod/pipeline/nodeCon
 import { PruneImagesConfig } from '../config/PruneImagesConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Trash2 } from 'lucide-react';
 
 export const pruneImagesManifest: NodeManifest = {
     type: 'prune-images',
@@ -13,7 +14,7 @@ export const pruneImagesManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.prune-images.name',
             description: 'pipeline.nodes.prune-images.description',
-            icon: 'Trash2',
+            icon: Trash2,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },
         defaultConfig: {

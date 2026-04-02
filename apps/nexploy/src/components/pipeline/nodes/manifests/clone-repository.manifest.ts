@@ -3,6 +3,7 @@ import { cloneRepositoryConfigSchema } from '@workspace/schemas-zod/pipeline/nod
 import { CloneRepositoryConfig } from '../config/CloneRepositoryConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { GitBranch } from 'lucide-react';
 
 export const cloneRepositoryManifest: NodeManifest = {
     type: 'clone-repository',
@@ -14,7 +15,7 @@ export const cloneRepositoryManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.clone-repository.name',
             description: 'pipeline.nodes.clone-repository.description',
-            icon: 'GitClone',
+            icon: GitBranch,
             color: `${CATEGORY_BG_MUTED['source']} ${CATEGORY_TEXT['source']}`,
         },
         handles: {

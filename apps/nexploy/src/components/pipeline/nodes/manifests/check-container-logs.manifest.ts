@@ -3,6 +3,7 @@ import { checkContainerLogsConfigSchema } from '@workspace/schemas-zod/pipeline/
 import { CheckContainerLogsConfig } from '../config/CheckContainerLogsConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { ScrollText } from 'lucide-react';
 
 export const checkContainerLogsManifest: NodeManifest = {
     type: 'check-container-logs',
@@ -13,7 +14,7 @@ export const checkContainerLogsManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.check-container-logs.name',
             description: 'pipeline.nodes.check-container-logs.description',
-            icon: 'ScrollText',
+            icon: ScrollText,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         defaultConfig: {

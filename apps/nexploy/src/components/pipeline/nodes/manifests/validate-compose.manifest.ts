@@ -3,6 +3,7 @@ import { ValidateComposeConfig } from '../config/ValidateComposeConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 import { Position } from '@xyflow/react';
+import { FileSearch } from 'lucide-react';
 
 export const validateComposeManifest: NodeManifest = {
     type: 'validate-compose',
@@ -13,7 +14,7 @@ export const validateComposeManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.validate-compose.name',
             description: 'pipeline.nodes.validate-compose.description',
-            icon: 'FileSearch',
+            icon: FileSearch,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },
         handles: {

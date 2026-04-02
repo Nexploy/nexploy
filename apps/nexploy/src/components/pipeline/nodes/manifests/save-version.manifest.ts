@@ -3,6 +3,7 @@ import { SaveVersionConfig } from '../config/SaveVersionConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { Position } from '@xyflow/react';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Tag } from 'lucide-react';
 
 export const saveVersionManifest: NodeManifest = {
     type: 'save-version',
@@ -13,7 +14,7 @@ export const saveVersionManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.save-version.name',
             description: 'pipeline.nodes.save-version.description',
-            icon: 'Tag',
+            icon: Tag,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         handles: {

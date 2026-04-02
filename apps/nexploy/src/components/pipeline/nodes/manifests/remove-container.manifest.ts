@@ -3,6 +3,7 @@ import { containerActionConfigSchema } from '@workspace/schemas-zod/pipeline/nod
 import { RemoveContainerConfig } from '../config/RemoveContainerConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { CircleX } from 'lucide-react';
 
 export const removeContainerManifest: NodeManifest = {
     type: 'remove-container',
@@ -13,7 +14,7 @@ export const removeContainerManifest: NodeManifest = {
         metadata: {
             name: 'pipeline.nodes.remove-container.name',
             description: 'pipeline.nodes.remove-container.description',
-            icon: 'CircleX',
+            icon: CircleX,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },
         defaultConfig: {
