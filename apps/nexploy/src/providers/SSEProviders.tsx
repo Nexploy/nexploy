@@ -15,16 +15,6 @@ import { useSwarmStore } from '@/stores/docker/useSwarmStore';
 import { useRequestsStore } from '@/stores/traefik/useRequestsStore';
 import { useMonitoringStore } from '@/stores/monitoring/useMonitoringStore';
 
-const DEFAULT_SSE_CONNECTIONS: SSEChannel[] = [
-    'docker',
-    'containers',
-    'images',
-    'volumes',
-    'networks',
-    'events',
-];
-const DEFAULT_SSE_PARAMS: SSEParams = {};
-
 type ExtractConnectParams<T> = T extends (params: infer P) => void ? P : never;
 
 type SSEParams = {
@@ -46,6 +36,16 @@ interface SSEProviderProps extends PropsWithChildren {
     connections?: SSEChannel[];
     params?: SSEParams;
 }
+
+const DEFAULT_SSE_CONNECTIONS: SSEChannel[] = [
+    'docker',
+    'containers',
+    'images',
+    'volumes',
+    'networks',
+    'events',
+];
+const DEFAULT_SSE_PARAMS: SSEParams = {};
 
 export function SSEProvider({
     children,
@@ -135,34 +135,7 @@ export function SSEProvider({
                 else disconnectFns[conn]?.();
             });
         };
-    }, [
-        memoizedParams,
-        memoizedConnections,
-        containerConnect,
-        containerDisconnect,
-        containersConnect,
-        containersDisconnect,
-        dockerConnect,
-        dockerDisconnect,
-        eventsConnect,
-        eventsDisconnect,
-        imageConnect,
-        imageDisconnect,
-        networksConnect,
-        networksDisconnect,
-        volumesConnect,
-        volumesDisconnect,
-        containerLogsConnect,
-        containerLogsDisconnect,
-        containerStatsConnect,
-        containerStatsDisconnect,
-        swarmConnect,
-        swarmDisconnect,
-        traefikConnect,
-        traefikDisconnect,
-        monitoringConnect,
-        monitoringDisconnect,
-    ]);
+    }, [memoizedParams, memoizedConnections]);
 
     return children;
 }

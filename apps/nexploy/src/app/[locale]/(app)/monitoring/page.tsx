@@ -89,7 +89,7 @@ export default function MonitoringPage() {
                 description: `${metrics?.hostname || 'Unknown'} • ${metrics?.platform || 'Unknown'}`,
             },
         ],
-        [metrics, t],
+        [metrics],
     );
 
     const chartCards = useMemo(
@@ -139,7 +139,7 @@ export default function MonitoringPage() {
                 },
             },
         ],
-        [t],
+        [],
     );
 
     return (

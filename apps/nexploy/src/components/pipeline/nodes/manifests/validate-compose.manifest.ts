@@ -1,11 +1,27 @@
 import { composeFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { validateComposeNodeDef } from '../definitions/validate-compose.node';
 import { ValidateComposeConfig } from '../config/ValidateComposeConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
+import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import { Position } from '@xyflow/react';
 
 export const validateComposeManifest: NodeManifest = {
     type: 'validate-compose',
-    definition: validateComposeNodeDef,
+    definition: {
+        id: 'validate-compose',
+        type: 'base-node',
+        category: 'build',
+        metadata: {
+            name: 'pipeline.nodes.validate-compose.name',
+            description: 'pipeline.nodes.validate-compose.description',
+            icon: 'FileSearch',
+            color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
+        },
+        handles: {
+            inputs: [{ id: 'input', position: Position.Left }],
+            outputs: [{ id: 'output', position: Position.Right }],
+            attachments: [],
+        },
+    },
     configSchema: composeFileConfigSchema,
     configPanel: ValidateComposeConfig,
 };

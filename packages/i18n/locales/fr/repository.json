@@ -466,6 +466,114 @@
             "create-volume": {
                 "name": "Créer le volume",
                 "description": "Créer un volume Docker"
+            },
+            "backup-database": {
+                "name": "Sauvegarde de base de données",
+                "description": "Exporte une base de données PostgreSQL ou MySQL vers un fichier"
+            },
+            "cache-restore": {
+                "name": "Restaurer le cache",
+                "description": "Restaure un cache de build depuis un volume Docker vers le répertoire de travail"
+            },
+            "cache-save": {
+                "name": "Sauvegarder le cache",
+                "description": "Sauvegarde un répertoire du dossier de travail dans un volume Docker"
+            },
+            "check-container-logs": {
+                "name": "Vérifier les logs du conteneur",
+                "description": "Recherche un pattern regex dans les logs d'un conteneur"
+            },
+            "condition": {
+                "name": "Condition",
+                "description": "Conditionne la pipeline sur les données de sortie d'un nœud précédent"
+            },
+            "delay": {
+                "name": "Délai",
+                "description": "Met la pipeline en pause pendant un nombre de secondes fixe"
+            },
+            "deploy-stack": {
+                "name": "Déployer une stack",
+                "description": "Déploie une stack Docker Swarm depuis un fichier Compose"
+            },
+            "download-file": {
+                "name": "Télécharger un fichier",
+                "description": "Télécharge un fichier depuis une URL dans le répertoire de travail"
+            },
+            "fetch-secrets": {
+                "name": "Récupérer les secrets",
+                "description": "Récupère des secrets depuis Vault, Doppler ou un fichier .env"
+            },
+            "git-clone-extra": {
+                "name": "Cloner un dépôt supplémentaire",
+                "description": "Clone un dépôt supplémentaire dans un sous-répertoire du dossier de travail"
+            },
+            "git-tag": {
+                "name": "Tag Git",
+                "description": "Crée et pousse un tag Git vers le dépôt distant"
+            },
+            "http-request": {
+                "name": "Requête HTTP",
+                "description": "Effectue une requête HTTP vers une URL externe"
+            },
+            "prune-images": {
+                "name": "Nettoyer les images",
+                "description": "Supprime les images Docker inutilisées pour libérer de l'espace disque"
+            },
+            "run-command-in-container": {
+                "name": "Exécuter une commande dans un conteneur",
+                "description": "Exécute une commande dans un conteneur Docker en cours d'exécution"
+            },
+            "run-migration": {
+                "name": "Exécuter les migrations",
+                "description": "Lance les migrations de base de données dans un conteneur éphémère"
+            },
+            "run-script": {
+                "name": "Exécuter un script",
+                "description": "Exécute un script shell dans le répertoire de travail"
+            },
+            "run-tests": {
+                "name": "Exécuter les tests",
+                "description": "Lance une suite de tests dans un conteneur Docker éphémère"
+            },
+            "scale-service": {
+                "name": "Mettre à l'échelle un service",
+                "description": "Modifie le nombre de réplicas d'un service Swarm"
+            },
+            "scan-image": {
+                "name": "Scanner l'image",
+                "description": "Analyse de sécurité d'une image Docker avec Trivy"
+            },
+            "tag-image": {
+                "name": "Tagger l'image",
+                "description": "Ajoute un tag à une image Docker locale"
+            },
+            "template-file": {
+                "name": "Fichier template",
+                "description": "Remplace les placeholders {{VAR}} dans un fichier par les valeurs de la pipeline"
+            },
+            "update-commit-status": {
+                "name": "Mettre à jour le statut du commit",
+                "description": "Met à jour le statut d'un commit GitHub ou GitLab"
+            },
+            "update-service": {
+                "name": "Mettre à jour un service",
+                "description": "Met à jour un service Docker Swarm vers une nouvelle image"
+            },
+            "upload-artifact": {
+                "name": "Uploader un artefact",
+                "description": "Uploade un fichier ou un dossier vers S3 ou MinIO"
+            },
+            "wait-for-health": {
+                "name": "Attendre le healthcheck",
+                "description": "Attend qu'un conteneur Docker passe son healthcheck"
+            },
+            "wait-for-port": {
+                "name": "Attendre un port",
+                "description": "Vérifie par TCP qu'un port est ouvert sur l'hôte donné"
+            },
+            "wait-for-url": {
+                "name": "Attendre une URL",
+                "description": "Interroge une URL jusqu'à ce qu'elle retourne le statut HTTP attendu"
             }
         },
         "config": {
@@ -513,9 +621,14 @@
             "environment": "Environnement",
             "selectEnvironment": "Sélectionner un environnement",
             "setEnvironmentInfo": "Définit l'environnement de déploiement pour tous les nœuds de déploiement en aval dans ce pipeline.",
-            "containerName": "Nom du conteneur",
-            "containerNamePlaceholder": "ex. mon-conteneur",
+            "containerName": "ID du conteneur",
+            "containerNamePlaceholder": "ex. abc123def456",
+            "containerNoEnvironmentHint": "Reliez ce nœud à un nœud <bold>Définir un environnement</bold> pour sélectionner un conteneur dans une liste.",
+            "containersSelectLabel": "Liste des conteneurs",
             "noContainersFound": "Aucun conteneur trouvé",
+            "containersLoading": "Chargement des conteneurs...",
+            "containerUnavailable": "Conteneur indisponible",
+            "containerStaleWarning": "Ce conteneur n'est pas disponible dans l'environnement sélectionné. Veuillez en choisir un autre.",
             "pullImageName": "Nom de l'image",
             "pullImageNamePlaceholder": "ex. nginx:latest",
             "networkName": "Nom du réseau",
@@ -524,7 +637,102 @@
             "volumeName": "Nom du volume",
             "volumeNamePlaceholder": "ex. mon-volume",
             "volumeDriver": "Driver",
-            "volumeDriverPlaceholder": "Laisser vide pour le driver par défaut"
+            "volumeDriverPlaceholder": "Laisser vide pour le driver par défaut",
+            "artifactDestinationPath": "Chemin de destination",
+            "artifactSourcePath": "Chemin source",
+            "backupOutputPath": "Chemin de sortie",
+            "cacheKey": "Clé de cache",
+            "cacheKeyPlaceholder": "Laisser vide pour la clé par défaut",
+            "cachePath": "Chemin du cache",
+            "cacheSourcePath": "Chemin source",
+            "cacheVolumeName": "Nom du volume",
+            "command": "Commande",
+            "commitStatusDescription": "Description",
+            "commitStatusDescriptionPlaceholder": "Build réussi",
+            "commitStatusOwner": "Propriétaire / Organisation",
+            "commitStatusProvider": "Fournisseur",
+            "commitStatusRepo": "Dépôt",
+            "commitStatusSha": "SHA du commit",
+            "commitStatusState": "État du statut",
+            "commitStatusToken": "Jeton d'accès",
+            "conditionKey": "Clé de sortie",
+            "conditionOperator": "Opérateur",
+            "conditionValue": "Valeur attendue",
+            "continueOnError": "Continuer en cas d'erreur",
+            "dbName": "Nom de la base de données",
+            "dbPassword": "Mot de passe",
+            "dbType": "Type de base de données",
+            "dbUsername": "Nom d'utilisateur",
+            "delaySeconds": "Délai (secondes)",
+            "downloadDestination": "Répertoire de destination",
+            "downloadFilename": "Nom du fichier",
+            "downloadFilenamePlaceholder": "Laisser vide pour utiliser le nom du fichier depuis l'URL",
+            "exitOnVulnerabilities": "Échouer si vulnérabilités trouvées",
+            "expectedStatus": "Code de statut attendu",
+            "gitCloneTargetDir": "Répertoire cible",
+            "gitCloneToken": "Jeton d'accès",
+            "gitCloneTokenPlaceholder": "Laisser vide pour les dépôts publics",
+            "gitCloneUrl": "URL du dépôt",
+            "gitRemote": "Remote",
+            "gitTagMessage": "Message",
+            "gitTagMessagePlaceholder": "Laisser vide pour un tag léger",
+            "gitTagName": "Nom du tag",
+            "host": "Hôte",
+            "httpBody": "Corps de la requête",
+            "httpHeaders": "En-têtes",
+            "httpMethod": "Méthode HTTP",
+            "intervalSeconds": "Intervalle (secondes)",
+            "logFailIfFound": "Échouer si le pattern est trouvé",
+            "logPattern": "Pattern (regex)",
+            "logSince": "Depuis",
+            "migrationCommand": "Commande de migration",
+            "migrationDatabaseUrl": "URL de la base de données",
+            "migrationImage": "Image Docker",
+            "operatorContains": "Contient",
+            "operatorEndsWith": "Se termine par",
+            "operatorEquals": "Égal à",
+            "operatorNotEquals": "Différent de",
+            "operatorStartsWith": "Commence par",
+            "port": "Port",
+            "pruneFilter": "Filtre par label",
+            "pruneOlderThan": "Plus ancien que",
+            "pruneOnlyDangling": "Uniquement les images orphelines",
+            "s3AccessKey": "Clé d'accès",
+            "s3Bucket": "Bucket",
+            "s3Endpoint": "Endpoint S3 / MinIO",
+            "s3SecretKey": "Clé secrète",
+            "scanImage": "Image",
+            "scanSeverity": "Sévérité minimale",
+            "scanTag": "Tag",
+            "secretsOutputAs": "Sortir sous forme de",
+            "secretsOutputEnvVars": "Variables d'environnement pipeline",
+            "secretsOutputJsonFile": "Fichier JSON (secrets.json)",
+            "secretsPath": "Chemin du secret",
+            "secretsProvider": "Fournisseur de secrets",
+            "secretsToken": "Jeton",
+            "secretsVaultEndpoint": "Endpoint Vault",
+            "serviceForceUpdate": "Forcer la mise à jour",
+            "serviceImage": "Image",
+            "serviceName": "Nom du service",
+            "serviceReplicas": "Réplicas",
+            "serviceTag": "Tag",
+            "shell": "Shell",
+            "sourceImage": "Image source",
+            "sourceTag": "Tag source",
+            "stackName": "Nom de la stack",
+            "stackPrune": "Supprimer les services retirés",
+            "targetTag": "Tag cible",
+            "templateInputPath": "Chemin du fichier d'entrée",
+            "templateOutputPath": "Chemin du fichier de sortie",
+            "templateVariables": "Variables",
+            "testCommand": "Commande de test",
+            "testImage": "Image du conteneur",
+            "timeoutSeconds": "Timeout (secondes)",
+            "url": "URL",
+            "useSSL": "Utiliser SSL",
+            "workdir": "Répertoire de travail",
+            "conditionInputNodes": "Nœuds d'entrée connectés",
+            "conditionNoInputs": "Aucun nœud d'entrée connecté"
         },
         "validation": {
             "noSourceNode": "Le pipeline doit commencer par un nœud de clonage du dépôt",

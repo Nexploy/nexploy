@@ -1,11 +1,33 @@
 import { runMigrationConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { runMigrationNodeDef } from '../definitions/run-migration.node';
 import { RunMigrationConfig } from '../config/RunMigrationConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
+import { Position } from '@xyflow/react';
+import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const runMigrationManifest: NodeManifest = {
     type: 'run-migration',
-    definition: runMigrationNodeDef,
+    definition: {
+        id: 'run-migration',
+        type: 'base-node',
+        category: 'utility',
+        metadata: {
+            name: 'pipeline.nodes.run-migration.name',
+            description: 'pipeline.nodes.run-migration.description',
+            icon: 'Database',
+            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+        },
+        defaultConfig: {
+            image: '',
+            command: '',
+            databaseUrl: '',
+            workdir: '',
+        },
+        handles: {
+            inputs: [{ id: 'input', position: Position.Left }],
+            outputs: [{ id: 'output', position: Position.Right }],
+            attachments: [],
+        },
+    },
     configSchema: runMigrationConfigSchema,
     configPanel: RunMigrationConfig,
 };

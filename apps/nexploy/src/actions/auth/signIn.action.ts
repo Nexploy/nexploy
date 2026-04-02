@@ -18,7 +18,7 @@ export const onSignInAction = actionServer
     .action(async ({ parsedInput: { email, password } }) => {
         try {
             await signInUser(email, password);
-            redirect('/', RedirectType.replace);
+            redirect('/repositories', RedirectType.replace);
         } catch (error: any) {
             if (isRedirectError(error)) throw error;
             if (error instanceof Error) {

@@ -116,6 +116,10 @@ function matchAndTransformWsUrl(pathname: string): MatchResult {
 }
 
 app.prepare().then(() => {
+    if (typeof (global as any).gc === 'function') {
+        setInterval(() => (global as any).gc(), 30_000);
+    }
+
     const openSockets = new Set<Socket>();
 
     const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {

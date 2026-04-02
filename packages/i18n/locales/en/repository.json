@@ -622,9 +622,14 @@
             "environment": "Environment",
             "selectEnvironment": "Select an environment",
             "setEnvironmentInfo": "Sets the deployment environment for all downstream deploy nodes in this pipeline.",
-            "containerName": "Container Name",
-            "containerNamePlaceholder": "e.g. my-app-container",
+            "containerName": "Container ID",
+            "containerNamePlaceholder": "e.g. abc123def456",
+            "containerNoEnvironmentHint": "Connect this node to a <bold>Set Environment</bold> node to pick a container from a list.",
+            "containersSelectLabel": "Containers list",
             "noContainersFound": "No containers found",
+            "containersLoading": "Loading containers...",
+            "containerUnavailable": "Container unavailable",
+            "containerStaleWarning": "This container is not available in the selected environment. Please select another one.",
             "pullImageName": "Image Name",
             "pullImageNamePlaceholder": "e.g. nginx:latest",
             "networkName": "Network Name",
@@ -726,7 +731,9 @@
             "secretsPath": "Secret Path",
             "secretsOutputAs": "Output As",
             "secretsOutputEnvVars": "Pipeline env vars",
-            "secretsOutputJsonFile": "JSON file (secrets.json)"
+            "secretsOutputJsonFile": "JSON file (secrets.json)",
+            "conditionInputNodes": "Connected input nodes",
+            "conditionNoInputs": "No input nodes connected"
         },
         "validation": {
             "noSourceNode": "Pipeline must start with a Clone Repository node",

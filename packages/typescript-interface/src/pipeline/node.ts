@@ -5,7 +5,7 @@ export type NodeRunStatus = 'running' | 'completed' | 'skipped' | 'failed' | 'ca
 export interface NodeData {
     nodeType: string;
     definition: NodeDefinition;
-    config: Record<string, unknown>;
+    config: Record<string, any>;
     disabled?: boolean;
     viewOnly?: boolean;
     status?: NodeRunStatus;

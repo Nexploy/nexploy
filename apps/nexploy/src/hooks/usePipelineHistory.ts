@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { type Edge, type Node } from '@xyflow/react';
+import { Edge, Node } from '@xyflow/react';
 
 type Snapshot = { nodes: Node[]; edges: Edge[] };
 

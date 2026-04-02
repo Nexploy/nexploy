@@ -17,7 +17,7 @@ import {
     PipelineStatus,
 } from '@/types/pipeline.type';
 import { getNodeExecutor } from './nodes/registry';
-import { analyzeGraph } from './utils/graphUtils';
+import { analyzeGraph } from './utils/graphQueries';
 import { gitService } from './services/git.service';
 import { prisma } from '../../../prisma/prisma';
 
@@ -223,7 +223,7 @@ export class PipelineOrchestrator {
 
                     // For condition nodes, mark the losing branch targets as skipped
                     if (node.data.type === 'condition') {
-                        const passed = !!(result.output?.passed);
+                        const passed = !!result.output?.passed;
                         const losingHandle = passed ? 'false' : 'true';
                         for (const edge of graph.edges) {
                             if (edge.source === node.id && edge.sourceHandle === losingHandle) {

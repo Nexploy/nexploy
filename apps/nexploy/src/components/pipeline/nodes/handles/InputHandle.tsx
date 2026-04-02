@@ -8,9 +8,19 @@ interface InputHandleProps {
     handleColor: string;
     position: Position;
     square?: boolean;
+    index: number;
+    total: number;
 }
 
-export function InputHandle({ handle, nodeId, handleColor, position, square }: InputHandleProps) {
+export function InputHandle({
+    handle,
+    nodeId,
+    handleColor,
+    position,
+    square,
+    index,
+    total,
+}: InputHandleProps) {
     const connection = useConnection();
     const connections = useNodeConnections({ handleType: 'target', handleId: handle.id });
 
@@ -33,11 +43,20 @@ export function InputHandle({ handle, nodeId, handleColor, position, square }: I
                 ? '!-right-[3px]'
                 : '!-left-[3px]';
 
+    const offset = total > 1 ? `${((index + 1) / (total + 1)) * 100}%` : undefined;
+    const positionStyle =
+        offset === undefined
+            ? undefined
+            : position === Position.Left || position === Position.Right
+              ? { top: offset }
+              : { left: offset };
+
     return (
         <Handle
             id={handle.id}
             type="target"
             position={position}
+            style={positionStyle}
             className={cn(
                 '!bg-base-7 !border-card !size-4.5 !border-2 transition-all hover:!size-6',
                 square ? '!rounded-[2px]' : '!rounded-full',

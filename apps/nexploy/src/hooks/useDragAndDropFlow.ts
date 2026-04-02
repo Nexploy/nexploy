@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { type Edge, type Node, type ReactFlowInstance } from '@xyflow/react';
+import { Edge, Node, ReactFlowInstance } from '@xyflow/react';
 import { NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { CONFIG_SCHEMAS } from '@/components/pipeline/nodes/nodeConfigPanel/nodeConfigRegistry';

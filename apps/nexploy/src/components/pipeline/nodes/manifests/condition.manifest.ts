@@ -1,7 +1,29 @@
-import { conditionNodeDef } from '../definitions/condition.node';
+import { Position } from '@xyflow/react';
+import { ConditionConfig } from '../config/ConditionConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
+import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const conditionManifest: NodeManifest = {
     type: 'condition',
-    definition: conditionNodeDef,
+    definition: {
+        id: 'condition',
+        type: 'base-node',
+        category: 'utility',
+        metadata: {
+            name: 'pipeline.nodes.condition.name',
+            description: 'pipeline.nodes.condition.description',
+            icon: 'GitBranch',
+            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+        },
+        defaultConfig: {},
+        handles: {
+            inputs: [{ id: 'input', position: Position.Left }],
+            outputs: [
+                { id: 'true', position: Position.Right, label: 'true' },
+                { id: 'false', position: Position.Right, label: 'false' },
+            ],
+            attachments: [],
+        },
+    },
+    configPanel: ConditionConfig,
 };

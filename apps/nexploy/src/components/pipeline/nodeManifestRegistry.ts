@@ -25,6 +25,10 @@ export function getNodeDefinition(type: string): NodeDefinition | undefined {
     return getManifest(type)?.definition;
 }
 
+export function hasConfigSchema(type: string): boolean {
+    return !!getManifest(type)?.configSchema;
+}
+
 export function getConfigSchema(type: string) {
     return getManifest(type)?.configSchema ?? z.object({});
 }

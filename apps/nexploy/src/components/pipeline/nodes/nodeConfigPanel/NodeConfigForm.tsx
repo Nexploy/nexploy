@@ -15,7 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { saveNodeConfigAction } from '@/actions/repository/pipeline/saveNodeConfig.action';
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { CONFIG_PANELS, CONFIG_SCHEMAS } from './nodeConfigRegistry';
+import { CONFIG_PANELS, CONFIG_SCHEMAS, HAS_CONFIG_SCHEMA } from './nodeConfigRegistry';
 import { cn } from '@workspace/ui/lib/utils';
 
 interface NodeConfigFormProps {
@@ -34,6 +34,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
     const nodeConfig = node.data.config ?? {};
     const schema = CONFIG_SCHEMAS[nodeType];
     const ConfigComponent = CONFIG_PANELS[nodeType];
+    const hasSchema = HAS_CONFIG_SCHEMA[nodeType];
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         saveNodeConfigAction.bind(null, params.repositoryId, node.id),
@@ -43,8 +44,8 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
                 defaultValues: { ...(schema.safeParse({}).data ?? {}), ...nodeConfig },
             },
             actionProps: {
-                onSuccess: ({ data }) => {
-                    if (data) handleConfigChange(node.id, data as Record<string, unknown>);
+                onSuccess: ({ data: config }) => {
+                    if (config) handleConfigChange(node.id, config);
                     handleResetPanelNode();
                 },
                 onError: ({ error }) => {
@@ -81,7 +82,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
                 </ScrollAreaWithShadow>
 
                 <DialogFooter className={cn('px-6 pb-6', isViewingBuild && 'px-4 pb-4')}>
-                    {!isViewingBuild && (
+                    {!isViewingBuild && hasSchema && (
                         <>
                             <Button
                                 type="button"
@@ -96,9 +97,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
                                 size="sm"
                                 disabled={!form.formState.isDirty || action.isPending}
                             >
-                                {action.isPending && (
-                                    <Loader2 className="animate-spin" />
-                                )}
+                                {action.isPending && <Loader2 className="animate-spin" />}
                                 {tConfig('save')}
                             </Button>
                         </>

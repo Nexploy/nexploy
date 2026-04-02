@@ -6,9 +6,10 @@ export class ConditionExecutor implements INodeExecutor {
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { inputOutputs, logger, nodeId } = ctx;
 
+        console.log(inputOutputs);
+
         const passed =
-            inputOutputs.length > 0 &&
-            inputOutputs.some((o) => Object.keys(o).length > 0);
+            inputOutputs.length > 0 && inputOutputs.some((o) => Object.keys(o).length > 0);
 
         await logger.info(
             nodeId,

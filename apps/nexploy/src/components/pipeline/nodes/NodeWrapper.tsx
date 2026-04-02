@@ -119,7 +119,7 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
 
             {children}
 
-            {data.definition.handles.inputs.map((handle) => (
+            {data.definition.handles.inputs.map((handle, index, arr) => (
                 <InputHandle
                     key={handle.id}
                     handle={handle}
@@ -127,15 +127,19 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
                     handleColor={handleColor}
                     position={handle.position}
                     square={isAttachNode}
+                    index={index}
+                    total={arr.length}
                 />
             ))}
-            {data.definition.handles.outputs.map((handle) => (
+            {data.definition.handles.outputs.map((handle, index, arr) => (
                 <OutputHandle
                     key={handle.id}
                     handle={handle}
                     nodeId={id}
                     handleColor={handleColor}
                     position={handle.position}
+                    index={index}
+                    total={arr.length}
                 />
             ))}
             {data.definition.handles.attachments.map((attach) => (

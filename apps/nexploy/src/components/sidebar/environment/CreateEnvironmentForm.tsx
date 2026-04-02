@@ -26,6 +26,7 @@ import { DownloadCertScriptButton } from './DownloadCertScriptButton';
 import { createEnvironmentAction } from '@/actions/environment/createEnvironment.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 export function CreateEnvironmentForm() {
     const { onSuccess } = useConfirmationDialogStore();
@@ -46,6 +47,7 @@ export function CreateEnvironmentForm() {
             },
             actionProps: {
                 onSuccess: ({ data }) => {
+                    toast.success(t('createSuccess'));
                     if (data && onSuccess) onSuccess(data);
                 },
             },

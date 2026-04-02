@@ -1,11 +1,30 @@
+import { Position } from '@xyflow/react';
 import { createVolumeConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { createVolumeNodeDef } from '../definitions/create-volume.node';
 import { CreateVolumeConfig } from '../config/CreateVolumeConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
+import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 
 export const createVolumeManifest: NodeManifest = {
     type: 'create-volume',
-    definition: createVolumeNodeDef,
+    definition: {
+        id: 'create-volume',
+        type: 'base-node',
+        category: 'utility',
+        metadata: {
+            name: 'pipeline.nodes.create-volume.name',
+            description: 'pipeline.nodes.create-volume.description',
+            icon: 'HardDrive',
+            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+        },
+        defaultConfig: {
+            name: '',
+        },
+        handles: {
+            inputs: [{ id: 'input', position: Position.Left }],
+            outputs: [{ id: 'output', position: Position.Right }],
+            attachments: [],
+        },
+    },
     configSchema: createVolumeConfigSchema,
     configPanel: CreateVolumeConfig,
 };

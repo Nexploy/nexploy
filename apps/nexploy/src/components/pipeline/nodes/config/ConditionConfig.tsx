@@ -1,87 +1,63 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
-import { Input } from '@workspace/ui/components/input';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
+import { useReactFlow } from '@xyflow/react';
+import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
+import { ICON_NAME_MAP } from '@/components/pipeline/pipelineTheme';
+import { Terminal } from 'lucide-react';
+import { cn } from '@workspace/ui/lib/utils';
 
 export function ConditionConfig() {
-    const t = useTranslations('repository.pipeline.config');
-    const form = useFormContext();
+    const t = useTranslations('repository.pipeline');
+    const { getNodes, getEdges } = useReactFlow();
+    const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
+
+    const nodes = getNodes();
+    const edges = getEdges();
+
+    const inputNodes = edges
+        .filter((e) => e.target === panelNodeId)
+        .map((e) => nodes.find((n) => n.id === e.source))
+        .filter((n): n is NonNullable<typeof n> => n !== undefined);
 
     return (
-        <div className="space-y-4">
-            <FormField
-                control={form.control}
-                name="key"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('conditionKey')}</FormLabel>
-                        <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="imageName"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
+        <div className="space-y-3">
+            <p className="text-muted-foreground text-xs">{t('nodes.condition.description')}</p>
+            <div className="space-y-1.5">
+                <p className="text-xs font-medium">{t('config.conditionInputNodes')}</p>
+                {inputNodes.length === 0 ? (
+                    <p className="text-muted-foreground text-xs italic">
+                        {t('config.conditionNoInputs')}
+                    </p>
+                ) : (
+                    inputNodes.map((node) => {
+                        const data = node.data as unknown as NodeData;
+                        const Icon =
+                            (data.definition?.metadata.icon
+                                ? ICON_NAME_MAP[data.definition.metadata.icon]
+                                : undefined) ?? Terminal;
+                        return (
+                            <div
+                                key={node.id}
+                                className="border-border bg-muted/40 flex items-center gap-2 rounded-md border px-2 py-1.5"
+                            >
+                                <div
+                                    className={cn(
+                                        'flex size-5 shrink-0 items-center justify-center rounded-sm',
+                                        data.definition?.metadata.color,
+                                    )}
+                                >
+                                    <Icon className="size-3" strokeWidth={1.5} />
+                                </div>
+                                <span className="text-foreground text-xs font-medium">
+                                    {t(`nodes.${data.nodeType}.name`)}
+                                </span>
+                            </div>
+                        );
+                    })
                 )}
-            />
-            <FormField
-                control={form.control}
-                name="operator"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('conditionOperator')}</FormLabel>
-                        <Select value={field.value} onValueChange={field.onChange}>
-                            <FormControl>
-                                <SelectTrigger className="h-8 text-xs">
-                                    <SelectValue />
-                                </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                                <SelectItem value="equals">{t('operatorEquals')}</SelectItem>
-                                <SelectItem value="not-equals">{t('operatorNotEquals')}</SelectItem>
-                                <SelectItem value="contains">{t('operatorContains')}</SelectItem>
-                                <SelectItem value="starts-with">{t('operatorStartsWith')}</SelectItem>
-                                <SelectItem value="ends-with">{t('operatorEndsWith')}</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-            />
-            <FormField
-                control={form.control}
-                name="value"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('conditionValue')}</FormLabel>
-                        <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="expected-value"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-            />
+            </div>
         </div>
     );
 }

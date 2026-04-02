@@ -624,6 +624,7 @@
         "certAlreadyConfigured": "Certificat déjà configuré",
         "certAlreadyConfiguredPaste": "Certificat déjà configuré. Collez un nouveau contenu pour le remplacer.",
         "certReplace": "Remplacer",
+        "createSuccess": "Environnement créé avec succès",
         "adding": "Ajout...",
         "addEnvironment": "Ajouter l'environnement",
         "updating": "Mise à jour...",

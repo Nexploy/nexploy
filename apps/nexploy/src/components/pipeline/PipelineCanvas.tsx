@@ -55,6 +55,7 @@ export function PipelineCanvas() {
             const sourceNode = nodes.find((n) => n.id === connection.source);
             const targetNode = nodes.find((n) => n.id === connection.target);
             if (!sourceNode || !targetNode) return false;
+            if (connection.source === connection.target) return false;
 
             const sourceDef = sourceNode.data.definition as NodeDefinition | undefined;
 

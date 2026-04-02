@@ -1,7 +1,7 @@
 'use client';
 
-import { ContainerNameField } from './ContainerNameField';
+import { ContainerIdField } from './ContainerIdField';
 
 export function RemoveContainerConfig() {
-    return <ContainerNameField />;
+    return <ContainerIdField />;
 }

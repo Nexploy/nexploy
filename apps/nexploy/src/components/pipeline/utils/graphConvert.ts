@@ -1,4 +1,4 @@
-import { type Edge, type Node } from '@xyflow/react';
+import { Edge, Node } from '@xyflow/react';
 import { NodeId, PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 
