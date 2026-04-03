@@ -102,6 +102,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                 <DialogContent
                     showCloseButton={false}
                     onOpenAutoFocus={(e) => e.preventDefault()}
+                    aria-describedby={undefined}
                     className="gap-0 overflow-hidden border border-neutral-800 bg-black p-0 sm:max-w-5/6"
                 >
                     <SSEProvider

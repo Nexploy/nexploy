@@ -1,11 +1,10 @@
-import { PrismaClient } from '../generated/client';
 import { auth } from '@/lib/auth/auth';
+import { getPrismaClient } from './getPrismaClient';
 
-const prisma = new PrismaClient();
+const prisma = getPrismaClient();
 
 const DOCKER_API_USER_ID = 'docker-api-system';
 const DOCKER_API_KEY_NAME = 'docker-api';
-const PREFIX = 'nxp_';
 
 async function seedEnvironment() {
     const existingDefault = await prisma.environment.findFirst({

@@ -81,6 +81,7 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                 <DialogContent
                     showCloseButton={false}
                     onOpenAutoFocus={(e) => e.preventDefault()}
+                    aria-describedby={undefined}
                     className="gap-0 overflow-hidden border border-neutral-800 bg-black p-0 sm:max-w-5/6"
                 >
                     <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 p-2 pl-3">

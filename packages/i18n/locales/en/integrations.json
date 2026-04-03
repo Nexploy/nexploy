@@ -52,7 +52,8 @@
                 "step3": "Copy the Application ID and Secret",
                 "useCustomUrl": "Use a custom GitLab instance",
                 "customUrlLabel": "GitLab Instance URL",
-                "customUrlPlaceholder": "https://gitlab.mycompany.com"
+                "customUrlPlaceholder": "https://gitlab.mycompany.com",
+                "createApp": "Create GitLab App"
             }
         }
     },

@@ -26,10 +26,28 @@ function AccordionItem({
 function AccordionTrigger({
     className,
     children,
+    position = 'right',
+    showChevron = true,
+    classNameChevron,
+    headerChildren,
     ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
+}: React.ComponentProps<typeof AccordionPrimitive.Trigger> & {
+    position?: 'left' | 'right';
+    showChevron?: boolean;
+    classNameChevron?: string;
+    headerChildren?: React.ReactNode;
+}) {
+    const chevron = showChevron ? (
+        <ChevronDownIcon
+            className={cn(
+                'text-muted-foreground pointer-events-none size-4 self-center transition-transform duration-200',
+                classNameChevron,
+            )}
+        />
+    ) : null;
+
     return (
-        <AccordionPrimitive.Header className="flex">
+        <AccordionPrimitive.Header className="flex items-center">
             <AccordionPrimitive.Trigger
                 data-slot="accordion-trigger"
                 className={cn(
@@ -42,11 +60,13 @@ function AccordionTrigger({
                     children
                 ) : (
                     <>
+                        {position === 'left' && chevron}
                         {children}
-                        <ChevronDownIcon className="text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" />
+                        {position === 'right' && chevron}
                     </>
                 )}
             </AccordionPrimitive.Trigger>
+            {headerChildren}
         </AccordionPrimitive.Header>
     );
 }

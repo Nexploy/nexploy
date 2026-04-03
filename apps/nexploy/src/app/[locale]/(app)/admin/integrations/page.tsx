@@ -3,7 +3,7 @@ import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { getUserSession } from '@/services/auth/auth.service';
 import { getCloudflareCredentialInfo } from '@/services/cloudflare.service';
 import { getAllGitProviders } from '@/services/oauthProvider.service';
-import { ChevronDownIcon, Cloud, GitBranch, Plug } from 'lucide-react';
+import { Cloud, GitBranch, Plug } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import {
     Accordion,
@@ -62,32 +62,33 @@ export default async function IntegrationsPage() {
                                     className="bg-card rounded-lg border !border-b"
                                 >
                                     <AccordionTrigger
-                                        asChild
+                                        position={'left'}
+                                        showChevron={!!hasGithubApps}
+                                        classNameChevron={'size-5'}
                                         className={cn(
                                             'px-4 hover:no-underline',
                                             hasGithubApps && 'cursor-pointer',
                                         )}
-                                    >
-                                        <div className="flex w-full flex-1">
-                                            {!!hasGithubApps && (
-                                                <ChevronDownIcon className="text-muted-foreground size-5 self-center transition-transform duration-200" />
-                                            )}
-                                            <div className="flex min-w-0 flex-1 items-center gap-3">
-                                                <div className="bg-muted flex size-10 items-center justify-center rounded-lg">
-                                                    <SiGithub className="size-5" />
-                                                </div>
-                                                <div className="flex min-w-0 flex-col text-left">
-                                                    <span>{t('github.title')}</span>
-                                                    <span className="text-muted-foreground text-xs font-normal">
-                                                        (
-                                                        {t('oauth.instanceCount', {
-                                                            count: providers.github.length,
-                                                        })}
-                                                        )
-                                                    </span>
-                                                </div>
+                                        headerChildren={
+                                            <div className="pr-4">
+                                                <IntegrationsAddButtons provider="github" />
                                             </div>
-                                            <IntegrationsAddButtons provider="github" />
+                                        }
+                                    >
+                                        <div className="flex min-w-0 flex-1 items-center gap-3">
+                                            <div className="bg-muted flex size-10 items-center justify-center rounded-lg">
+                                                <SiGithub className="size-5" />
+                                            </div>
+                                            <div className="flex min-w-0 flex-col text-left">
+                                                <span>{t('github.title')}</span>
+                                                <span className="text-muted-foreground text-xs font-normal">
+                                                    (
+                                                    {t('oauth.instanceCount', {
+                                                        count: providers.github.length,
+                                                    })}
+                                                    )
+                                                </span>
+                                            </div>
                                         </div>
                                     </AccordionTrigger>
                                     {!!hasGithubApps && (
@@ -112,32 +113,33 @@ export default async function IntegrationsPage() {
                                     className="bg-card rounded-lg border !border-b"
                                 >
                                     <AccordionTrigger
-                                        asChild
+                                        position={'left'}
+                                        showChevron={!!hasGitlabApps}
+                                        classNameChevron={'size-5'}
                                         className={cn(
                                             'px-4 hover:no-underline',
                                             hasGitlabApps && 'cursor-pointer',
                                         )}
-                                    >
-                                        <div className="flex w-full flex-1">
-                                            {!!hasGitlabApps && (
-                                                <ChevronDownIcon className="text-muted-foreground size-5 self-center transition-transform duration-200" />
-                                            )}
-                                            <div className="flex min-w-0 flex-1 items-center gap-3">
-                                                <div className="bg-muted flex size-10 items-center justify-center rounded-lg">
-                                                    <SiGitlab className="size-5" />
-                                                </div>
-                                                <div className="flex min-w-0 flex-col text-left">
-                                                    <span>{t('gitlab.title')}</span>
-                                                    <span className="text-muted-foreground text-xs font-normal">
-                                                        (
-                                                        {t('oauth.instanceCount', {
-                                                            count: providers.gitlab.length,
-                                                        })}
-                                                        )
-                                                    </span>
-                                                </div>
+                                        headerChildren={
+                                            <div className="pr-4">
+                                                <IntegrationsAddButtons provider="gitlab" />
                                             </div>
-                                            <IntegrationsAddButtons provider="gitlab" />
+                                        }
+                                    >
+                                        <div className="flex min-w-0 flex-1 items-center gap-3">
+                                            <div className="bg-muted flex size-10 items-center justify-center rounded-lg">
+                                                <SiGitlab className="size-5" />
+                                            </div>
+                                            <div className="flex min-w-0 flex-col text-left">
+                                                <span>{t('gitlab.title')}</span>
+                                                <span className="text-muted-foreground text-xs font-normal">
+                                                    (
+                                                    {t('oauth.instanceCount', {
+                                                        count: providers.gitlab.length,
+                                                    })}
+                                                    )
+                                                </span>
+                                            </div>
                                         </div>
                                     </AccordionTrigger>
                                     {!!hasGitlabApps && (
