@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { MouseEvent, useState } from 'react';
 import { ContainerCard } from '@/components/docker/containers/ContainerCard';
-import { ChevronDownIcon, Layers, Play, RotateCw, Square, Trash2 } from 'lucide-react';
+import { Layers, Play, RotateCw, Square, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
 import {
@@ -62,9 +62,12 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
     return (
         <Accordion type="single" collapsible defaultValue={stackName}>
             <AccordionItem value={stackName} className="bg-card rounded-lg border !border-b">
-                <AccordionTrigger asChild className="cursor-pointer px-4 py-4 hover:no-underline">
+                <AccordionTrigger
+                    position={'left'}
+                    classNameChevron={'size-5'}
+                    className="cursor-pointer px-4 hover:no-underline"
+                >
                     <div className="flex w-full flex-1">
-                        <ChevronDownIcon className="text-muted-foreground size-5 self-center transition-transform duration-200" />
                         <div className="flex min-w-0 flex-1 items-center gap-3">
                             <div className="bg-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
                                 <Layers className="text-primary h-5 w-5" />
