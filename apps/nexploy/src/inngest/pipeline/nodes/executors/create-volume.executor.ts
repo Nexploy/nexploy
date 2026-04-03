@@ -5,9 +5,11 @@ import {
     NodeExecutionResult,
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
+import { createVolumeConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class CreateVolumeExecutor implements INodeExecutor {
     readonly type = 'create-volume';
+    readonly configSchema = createVolumeConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;

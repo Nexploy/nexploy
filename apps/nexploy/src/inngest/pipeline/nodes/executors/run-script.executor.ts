@@ -3,9 +3,11 @@ import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import { runScriptConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class RunScriptExecutor implements INodeExecutor {
     readonly type = 'run-script';
+    readonly configSchema = runScriptConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;

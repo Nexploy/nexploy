@@ -2,7 +2,7 @@
 
 import { cn } from '@workspace/ui/lib/utils';
 import { CATEGORY_BORDER, CATEGORY_HEX } from '@/components/pipeline/pipelineTheme';
-import { Ban, CheckCircle2, CircleX } from 'lucide-react';
+import { AlertCircle, Ban, CheckCircle2, CircleX } from 'lucide-react';
 import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
 import { PropsWithChildren } from 'react';
 
@@ -87,9 +87,11 @@ export function NodeAnimation({
                 rounded,
                 data.status === 'completed'
                     ? CATEGORY_BORDER[data.definition.category]
-                    : selected
-                      ? CATEGORY_BORDER[data.definition.category]
-                      : 'border-border hover:border-accent',
+                    : data.status === 'not-configured'
+                      ? 'border-yellow-500/50'
+                      : selected
+                        ? CATEGORY_BORDER[data.definition.category]
+                        : 'border-border hover:border-accent',
                 (data.status === 'failed' ||
                     data.status === 'skipped' ||
                     data.status === 'cancelled') &&
@@ -116,6 +118,14 @@ export function NodeAnimation({
                 <Ban
                     className={cn(
                         'bg-card absolute size-4 rounded-full text-red-500',
+                        square ? 'top-1 right-1' : 'top-[11px] right-[11px]',
+                    )}
+                />
+            )}
+            {data.status === 'not-configured' && (
+                <AlertCircle
+                    className={cn(
+                        'bg-card absolute size-4 rounded-full text-yellow-500',
                         square ? 'top-1 right-1' : 'top-[11px] right-[11px]',
                     )}
                 />

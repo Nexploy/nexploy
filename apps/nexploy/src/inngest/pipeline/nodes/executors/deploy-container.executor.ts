@@ -6,9 +6,11 @@ import {
     NodeExecutionResult,
 } from '@/types/pipeline.type';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
+import { deployContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class DeployContainerExecutor implements INodeExecutor {
     readonly type = 'deploy-container';
+    readonly configSchema = deployContainerConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { config, allOutputs, edges, logger, nodeId, abortSignal } = ctx;

@@ -2,6 +2,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as crypto from 'node:crypto';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import { uploadArtifactConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 function hmacSha256(key: Buffer | string, data: string): Buffer {
     return crypto.createHmac('sha256', key).update(data).digest();
@@ -89,6 +90,7 @@ async function uploadToS3(
 
 export class UploadArtifactExecutor implements INodeExecutor {
     readonly type = 'upload-artifact';
+    readonly configSchema = uploadArtifactConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId } = ctx;

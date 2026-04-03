@@ -1,9 +1,11 @@
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { updateBuildGitInfo } from '@/services/inngest/build.inngest.service';
+import { cloneRepositoryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class CloneRepositoryExecutor implements INodeExecutor {
     readonly type = 'clone-repository';
+    readonly configSchema = cloneRepositoryConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { buildId, config, nodeConfig, logger, nodeId, reporter } = ctx;

@@ -5,9 +5,11 @@ import {
     NodeExecutionResult,
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
+import { pullImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class PullImageExecutor implements INodeExecutor {
     readonly type = 'pull-image';
+    readonly configSchema = pullImageConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;

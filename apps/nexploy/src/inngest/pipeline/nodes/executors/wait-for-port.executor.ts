@@ -1,5 +1,6 @@
 import * as net from 'node:net';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { waitForPortConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 function checkPort(host: string, port: number, timeoutMs: number): Promise<boolean> {
     return new Promise((resolve) => {
@@ -24,6 +25,7 @@ function checkPort(host: string, port: number, timeoutMs: number): Promise<boole
 
 export class WaitForPortExecutor implements INodeExecutor {
     readonly type = 'wait-for-port';
+    readonly configSchema = waitForPortConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, logger, nodeId, abortSignal } = ctx;

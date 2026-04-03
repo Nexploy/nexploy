@@ -6,9 +6,11 @@ import {
 } from '@/types/pipeline.type';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { getDefaultRegistry } from '@/services/registry.service';
+import { pushToRegistryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class PushToRegistryExecutor implements INodeExecutor {
     readonly type = 'push-to-registry';
+    readonly configSchema = pushToRegistryConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { config, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;

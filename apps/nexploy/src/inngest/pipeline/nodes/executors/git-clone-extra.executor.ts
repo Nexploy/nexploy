@@ -1,6 +1,7 @@
 import * as childProcess from 'node:child_process';
 import * as path from 'node:path';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import { gitCloneExtraConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 function spawnGit(args: string[], cwd: string, env?: Record<string, string>): Promise<{ stdout: string; stderr: string; code: number }> {
     return new Promise((resolve) => {
@@ -19,6 +20,7 @@ function spawnGit(args: string[], cwd: string, env?: Record<string, string>): Pr
 
 export class GitCloneExtraExecutor implements INodeExecutor {
     readonly type = 'git-clone-extra';
+    readonly configSchema = gitCloneExtraConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId } = ctx;

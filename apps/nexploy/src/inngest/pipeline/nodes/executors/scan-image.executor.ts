@@ -1,8 +1,10 @@
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
+import { scanImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class ScanImageExecutor implements INodeExecutor {
     readonly type = 'scan-image';
+    readonly configSchema = scanImageConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;

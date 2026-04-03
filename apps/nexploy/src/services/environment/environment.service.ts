@@ -21,27 +21,6 @@ export async function getUserEnvironments() {
     }
 }
 
-export async function getActiveEnvironments() {
-    try {
-        return prisma.environment.findMany({
-            where: { isActive: true },
-            orderBy: [{ isDefault: 'desc' }, { createdAt: 'asc' }],
-        });
-    } catch {
-        throw new Error('Failed to get active environments');
-    }
-}
-
-export async function getDefaultEnvironment() {
-    try {
-        return prisma.environment.findFirst({
-            where: { isDefault: true, isActive: true },
-        });
-    } catch {
-        throw new Error('Failed to get default environment');
-    }
-}
-
 export async function getEnvironmentById(id: string) {
     try {
         return prisma.environment.findUnique({
@@ -195,23 +174,6 @@ export async function updateEnvironment(environmentData: EnvironmentSchemaType) 
     return environment;
 }
 
-export async function setDefaultEnvironment(id: string) {
-    try {
-        await prisma.$transaction([
-            prisma.environment.updateMany({
-                where: { isDefault: true },
-                data: { isDefault: false },
-            }),
-            prisma.environment.update({
-                where: { id },
-                data: { isDefault: true },
-            }),
-        ]);
-    } catch {
-        throw new Error('Failed to set default environment');
-    }
-}
-
 export async function deleteEnvironment(id: string) {
     const environment = await prisma.environment.findUnique({
         where: { id },
@@ -233,35 +195,5 @@ export async function deleteEnvironment(id: string) {
         await kyDocker.delete(`environments/${id}`);
     } catch (error: any) {
         throw new Error(`Failed to unregister environment from docker-api: ${error.message}`);
-    }
-}
-
-export type EnvironmentHealthStatus = 'connected' | 'disconnected' | 'unknown';
-
-export async function checkEnvironmentHealth(
-    environment: Environment,
-): Promise<EnvironmentHealthStatus> {
-    try {
-        const config = {
-            id: environment.id,
-            name: environment.name,
-            connectionType: environment.connectionType,
-            socketPath: environment.socketPath || undefined,
-            host: environment.host || undefined,
-            port: environment.port || undefined,
-            tlsCert: environment.tlsCert ? decrypt(environment.tlsCert) : undefined,
-            tlsKey: environment.tlsKey ? decrypt(environment.tlsKey) : undefined,
-            tlsCa: environment.tlsCa ? decrypt(environment.tlsCa) : undefined,
-            description: environment.description || undefined,
-        };
-
-        await kyDocker.post('environments/validate', {
-            json: config,
-            timeout: 5000,
-        });
-
-        return 'connected';
-    } catch {
-        return 'disconnected';
     }
 }

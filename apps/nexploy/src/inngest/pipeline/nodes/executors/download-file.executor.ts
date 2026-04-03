@@ -6,9 +6,11 @@ import {
     NodeExecutionContext,
     NodeExecutionResult,
 } from '@/types/pipeline.type';
+import { downloadFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class DownloadFileExecutor implements INodeExecutor {
     readonly type = 'download-file';
+    readonly configSchema = downloadFileConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;

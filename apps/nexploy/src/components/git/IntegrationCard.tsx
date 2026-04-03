@@ -92,7 +92,10 @@ export function IntegrationCard({
                     {t('disconnect')}
                 </Button>
             ) : (
-                <Link href={`/api/git/oauth/connect?gitProviderId=${gitProviderId}`}>
+                <Link
+                    prefetch={false}
+                    href={`/api/git/oauth/connect?gitProviderId=${gitProviderId}`}
+                >
                     <Button icon={Plus} disabled={isLoading} isLoading={isLoading}>
                         {t('connect')}
                     </Button>

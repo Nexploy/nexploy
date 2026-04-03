@@ -1,9 +1,11 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import { fetchSecretsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class FetchSecretsExecutor implements INodeExecutor {
     readonly type = 'fetch-secrets';
+    readonly configSchema = fetchSecretsConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;

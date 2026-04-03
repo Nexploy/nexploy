@@ -5,9 +5,11 @@ import {
     NodeExecutionResult,
 } from '@/types/pipeline.type';
 import { prisma } from '../../../../../prisma/prisma';
+import { saveVersionConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class SaveVersionExecutor implements INodeExecutor {
     readonly type = 'save-version';
+    readonly configSchema = saveVersionConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { config, logger, nodeId, inputNodes, allOutputs } = ctx;

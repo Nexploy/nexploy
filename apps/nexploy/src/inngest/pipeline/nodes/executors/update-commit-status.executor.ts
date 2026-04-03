@@ -1,7 +1,9 @@
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { updateCommitStatusConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class UpdateCommitStatusExecutor implements INodeExecutor {
     readonly type = 'update-commit-status';
+    readonly configSchema = updateCommitStatusConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, logger, nodeId, abortSignal } = ctx;

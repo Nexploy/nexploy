@@ -1,9 +1,5 @@
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
-import {
-    PipelineEdge,
-    PipelineGraph,
-    PipelineNode,
-} from '@workspace/typescript-interface/pipeline/node';
+import { PipelineEdge, PipelineGraph, PipelineNode, } from '@workspace/typescript-interface/pipeline/node';
 import {
     InngestStepRunner,
     LogLevel,
@@ -138,7 +134,6 @@ export class PipelineOrchestrator {
                     continue;
                 }
 
-                // Propagate branch skip: if all inputs come from skipped branches, skip this node too
                 if (!branchSkippedNodeIds.has(node.id)) {
                     const inputEdges = graph.edges.filter((e) => e.target === node.id);
                     if (
@@ -173,6 +168,24 @@ export class PipelineOrchestrator {
                         mergedInputs,
                     );
                     continue;
+                }
+
+                if (executor.configSchema) {
+                    const validation = executor.configSchema.safeParse(node.data.config ?? {});
+                    if (!validation.success) {
+                        await inngestStep.run(`node-${node.id}`, async () => {
+                            await reporter.markNotConfigured(node.id);
+                            await logger.error(
+                                node.id,
+                                `${node.data.type}: Node is not configured — ${validation.error.issues.map((i) => i.message).join(', ')}`,
+                            );
+                        });
+                        await setStatus('FAILED');
+                        return {
+                            success: false,
+                            error: `Node ${node.data.type} is not configured`,
+                        };
+                    }
                 }
 
                 try {
@@ -221,15 +234,8 @@ export class PipelineOrchestrator {
                     const result = nodeResult as NodeExecutionResult;
                     allOutputs.set(node.id, result.output ?? {});
 
-                    // For condition nodes, mark the losing branch targets as skipped
-                    if (node.data.type === 'condition') {
-                        const passed = !!result.output?.passed;
-                        const losingHandle = passed ? 'false' : 'true';
-                        for (const edge of graph.edges) {
-                            if (edge.source === node.id && edge.sourceHandle === losingHandle) {
-                                branchSkippedNodeIds.add(edge.target);
-                            }
-                        }
+                    for (const targetId of result.skippedBranchTargets ?? []) {
+                        branchSkippedNodeIds.add(targetId);
                     }
                 } catch (nodeError) {
                     if (nodeError instanceof Error && nodeError.name === 'AbortError') {

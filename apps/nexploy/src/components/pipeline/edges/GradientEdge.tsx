@@ -10,6 +10,7 @@ import {
     useViewport,
 } from '@xyflow/react';
 import { type NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
+import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
 import { CATEGORY_HEX } from '@/components/pipeline/pipelineTheme';
 import { Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
@@ -36,6 +37,13 @@ export function GradientEdge(props: EdgeProps) {
 
     const sourceNode = nodes.find((n) => n.id === source);
     const targetNode = nodes.find((n) => n.id === target);
+
+    const sourceData = sourceNode?.data as NodeData | undefined;
+    const targetData = targetNode?.data as NodeData | undefined;
+
+    const isSourceDimmed = sourceData?.disabled || sourceData?.status === 'skipped';
+    const isTargetDimmed = targetData?.disabled || targetData?.status === 'skipped';
+    const isDimmed = isSourceDimmed || isTargetDimmed;
 
     const sourceCategory = (sourceNode?.data?.definition as NodeDefinition)?.category;
     const targetCategory = (targetNode?.data?.definition as NodeDefinition)?.category;
@@ -83,6 +91,8 @@ export function GradientEdge(props: EdgeProps) {
                     ...style,
                     stroke: `url(#${gradientId})`,
                     strokeWidth: 2,
+                    opacity: isDimmed ? 0.4 : 1,
+                    transition: 'opacity 0.2s',
                     ...(isAttachmentEdge && { animationDirection: 'reverse' }),
                 }}
             />

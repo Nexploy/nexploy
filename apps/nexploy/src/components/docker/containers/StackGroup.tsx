@@ -65,45 +65,8 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                 <AccordionTrigger
                     position={'left'}
                     classNameChevron={'size-5'}
-                    className="cursor-pointer px-4 hover:no-underline"
-                >
-                    <div className="flex w-full flex-1">
-                        <div className="flex min-w-0 flex-1 items-center gap-3">
-                            <div className="bg-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
-                                <Layers className="text-primary h-5 w-5" />
-                            </div>
-                            <div className="flex min-w-0 flex-col text-left">
-                                <h1 className="line-clamp-1 text-base font-semibold break-all">
-                                    {stackName}
-                                </h1>
-                                <div className="text-muted-foreground flex items-center gap-2 text-xs">
-                                    <span>
-                                        {containers.length} {t('container')}
-                                    </span>
-                                    {runningCount > 0 && (
-                                        <>
-                                            <span>•</span>
-                                            <span className="text-online font-medium">
-                                                {runningCount} {t('active')}
-                                            </span>
-                                        </>
-                                    )}
-                                    {stoppedCount > 0 && (
-                                        <>
-                                            <span>•</span>
-                                            <span className="text-offline">
-                                                {stoppedCount} {t('stopped')}
-                                            </span>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div
-                            className="flex items-center gap-3"
-                            onClick={(e) => e.stopPropagation()}
-                        >
+                    headerChildren={
+                        <div className="flex items-center gap-3 pr-5">
                             <Status status={allRunning ? 'online' : 'offline'}>
                                 <StatusIndicator />
                                 <StatusLabel>{allRunning ? t('up') : t('down')}</StatusLabel>
@@ -157,6 +120,39 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                                 >
                                     <span className="sr-only">{t('delete')}</span>
                                 </Button>
+                            </div>
+                        </div>
+                    }
+                    className="cursor-pointer px-4 hover:no-underline"
+                >
+                    <div className="flex flex-1 gap-3">
+                        <div className="bg-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
+                            <Layers className="text-primary h-5 w-5" />
+                        </div>
+                        <div className="flex flex-col">
+                            <h1 className="line-clamp-1 text-base leading-snug font-semibold break-all">
+                                {stackName}
+                            </h1>
+                            <div className="text-muted-foreground flex items-center gap-2 text-xs">
+                                <span>
+                                    {containers.length} {t('container')}
+                                </span>
+                                {runningCount > 0 && (
+                                    <>
+                                        <span>•</span>
+                                        <span className="text-online font-medium">
+                                            {runningCount} {t('active')}
+                                        </span>
+                                    </>
+                                )}
+                                {stoppedCount > 0 && (
+                                    <>
+                                        <span>•</span>
+                                        <span className="text-offline">
+                                            {stoppedCount} {t('stopped')}
+                                        </span>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>

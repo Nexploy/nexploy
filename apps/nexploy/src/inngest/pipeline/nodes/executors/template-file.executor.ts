@@ -1,6 +1,7 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import { templateFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 interface VarEntry {
     id: string;
@@ -10,6 +11,7 @@ interface VarEntry {
 
 export class TemplateFileExecutor implements INodeExecutor {
     readonly type = 'template-file';
+    readonly configSchema = templateFileConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId } = ctx;

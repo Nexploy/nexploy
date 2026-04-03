@@ -1,8 +1,10 @@
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
+import { backupDatabaseConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class BackupDatabaseExecutor implements INodeExecutor {
     readonly type = 'backup-database';
+    readonly configSchema = backupDatabaseConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;

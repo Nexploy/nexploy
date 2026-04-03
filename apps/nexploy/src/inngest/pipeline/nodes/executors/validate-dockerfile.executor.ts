@@ -5,9 +5,11 @@ import {
     NodeExecutionResult,
 } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
+import { validateDockerfileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class ValidateDockerfileExecutor implements INodeExecutor {
     readonly type = 'validate-dockerfile';
+    readonly configSchema = validateDockerfileConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { allOutputs, logger, nodeId, nodeConfig } = ctx;

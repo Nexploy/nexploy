@@ -6,9 +6,11 @@ import {
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { runDockerAction } from '@/inngest/pipeline/utils/dockerAction';
+import { containerActionConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class StartContainerExecutor implements INodeExecutor {
     readonly type = 'start-container';
+    readonly configSchema = containerActionConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;

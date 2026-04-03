@@ -1,5 +1,6 @@
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 import { PipelineEdge } from '@workspace/typescript-interface/pipeline/node';
+import { z } from 'zod';
 
 export type LogLevel = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
 
@@ -32,10 +33,13 @@ export interface NodeExecutionResult {
     success: boolean;
     output: NodeOutputData;
     skipped?: boolean;
+    /** Node IDs whose branch should be marked as skipped (set by nodes that control branching) */
+    skippedBranchTargets?: string[];
 }
 
 export interface INodeExecutor {
     readonly type: string;
+    readonly configSchema?: z.ZodTypeAny;
     execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult>;
 }
 
@@ -61,6 +65,7 @@ export interface PipelineReporter {
     markSkipped(nodeId: string): Promise<void>;
     markFailed(nodeId: string): Promise<void>;
     markCancelled(nodeId: string): Promise<void>;
+    markNotConfigured(nodeId: string): Promise<void>;
     publishCommitInfo(data: CommitInfo): Promise<void>;
 }
 

@@ -1,4 +1,5 @@
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { httpRequestConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 interface HeaderEntry {
     id: string;
@@ -8,6 +9,7 @@ interface HeaderEntry {
 
 export class HttpRequestExecutor implements INodeExecutor {
     readonly type = 'http-request';
+    readonly configSchema = httpRequestConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, logger, nodeId, abortSignal } = ctx;

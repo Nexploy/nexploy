@@ -5,9 +5,11 @@ import {
     NodeExecutionResult,
 } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
+import { writeEnvFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class WriteEnvFileExecutor implements INodeExecutor {
     readonly type = 'write-env-file';
+    readonly configSchema = writeEnvFileConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { config, allOutputs, logger, nodeId } = ctx;

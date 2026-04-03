@@ -1,5 +1,6 @@
 import * as childProcess from 'node:child_process';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import { gitTagConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 function execGit(args: string[], cwd: string): Promise<{ stdout: string; stderr: string; code: number }> {
     return new Promise((resolve) => {
@@ -14,6 +15,7 @@ function execGit(args: string[], cwd: string): Promise<{ stdout: string; stderr:
 
 export class GitTagExecutor implements INodeExecutor {
     readonly type = 'git-tag';
+    readonly configSchema = gitTagConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId } = ctx;

@@ -1,6 +1,6 @@
 import { NodeDefinition } from './nodeDefinition';
 
-export type NodeRunStatus = 'running' | 'completed' | 'skipped' | 'failed' | 'cancelled';
+export type NodeRunStatus = 'running' | 'completed' | 'skipped' | 'failed' | 'cancelled' | 'not-configured';
 
 export interface NodeData {
     nodeType: string;

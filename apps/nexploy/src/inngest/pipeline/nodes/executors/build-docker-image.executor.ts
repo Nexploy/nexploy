@@ -6,9 +6,11 @@ import {
 } from '@/types/pipeline.type';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
+import { buildDockerImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class BuildDockerImageExecutor implements INodeExecutor {
     readonly type = 'build-docker-image';
+    readonly configSchema = buildDockerImageConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { config, allOutputs, logger, nodeId, abortSignal } = ctx;

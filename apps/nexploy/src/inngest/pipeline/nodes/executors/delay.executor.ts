@@ -1,7 +1,9 @@
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { delayConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class DelayExecutor implements INodeExecutor {
     readonly type = 'delay';
+    readonly configSchema = delayConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, logger, nodeId, abortSignal } = ctx;

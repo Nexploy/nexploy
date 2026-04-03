@@ -1,9 +1,11 @@
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { getFromAllOutputs } from '@/types/pipeline.type';
+import { waitForHealthConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class WaitForHealthExecutor implements INodeExecutor {
     readonly type = 'wait-for-health';
+    readonly configSchema = waitForHealthConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;

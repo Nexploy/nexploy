@@ -6,9 +6,11 @@ import {
 } from '@/types/pipeline.type';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
+import { composeFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class DeployComposeExecutor implements INodeExecutor {
     readonly type = 'deploy-compose';
+    readonly configSchema = composeFileConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { config, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;

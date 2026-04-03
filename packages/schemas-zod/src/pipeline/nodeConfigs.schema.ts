@@ -69,10 +69,7 @@ export const setEnvironmentConfigSchema = z.object({
 export const sendNotificationConfigSchema = z.object({
     webhookUrl: z
         .string()
-        .refine(
-            (v) => v === '' || z.string().url().safeParse(v).success,
-            'Webhook URL must be a valid URL',
-        )
+        .refine((v) => v === '' || z.url().safeParse(v).success, 'Webhook URL must be a valid URL')
         .default(''),
     triggerOn: z.array(z.enum(['success', 'failure', 'always'])).default(['always']),
     message: z.string().optional(),
@@ -194,7 +191,9 @@ export const pruneImagesConfigSchema = z.object({
 export const templateFileConfigSchema = z.object({
     inputPath: z.string().min(1, 'Input path is required'),
     outputPath: z.string().min(1, 'Output path is required'),
-    variables: z.array(z.object({ id: z.string(), key: z.string(), value: z.string() })).default([]),
+    variables: z
+        .array(z.object({ id: z.string(), key: z.string(), value: z.string() }))
+        .default([]),
 });
 
 export const uploadArtifactConfigSchema = z.object({

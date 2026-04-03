@@ -1,6 +1,7 @@
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { updateBuildGitInfo } from '@/services/inngest/build.inngest.service';
+import { webhookCloneConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 function matchesBranchFilter(branch: string, filter: string): boolean {
     const patterns = filter
@@ -19,6 +20,7 @@ function matchesBranchFilter(branch: string, filter: string): boolean {
 
 export class WebhookCloneExecutor implements INodeExecutor {
     readonly type = 'webhook-clone';
+    readonly configSchema = webhookCloneConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { buildId, config, nodeConfig, logger, nodeId, reporter } = ctx;

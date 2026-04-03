@@ -158,23 +158,23 @@ export function ContainerIdField() {
                                     </SelectContent>
                                 </Select>
                             ) : (
-                                <>
+                                <div className="flex flex-col gap-1.5">
                                     <Input
                                         {...field}
                                         placeholder={t('containerNamePlaceholder')}
                                         className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                                     />
-                                    <p className="text-muted-foreground flex items-start gap-1 text-xs">
+                                    <div className="text-muted-foreground flex items-start gap-1 text-xs">
                                         <Info className="mt-0.5 h-3 w-3 shrink-0" />
-                                        <div>
+                                        <span>
                                             {t.rich('containerNoEnvironmentHint', {
                                                 bold: (chunks) => (
                                                     <span className="font-bold">{chunks}</span>
                                                 ),
                                             })}
-                                        </div>
-                                    </p>
-                                </>
+                                        </span>
+                                    </div>
+                                </div>
                             )}
                         </FormControl>
                         {isStale && (
