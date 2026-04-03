@@ -3,7 +3,6 @@
 import { useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Github } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
@@ -16,6 +15,7 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import { SiGithub } from '@icons-pack/react-simple-icons';
 import { useTranslations } from 'next-intl';
 import {
     githubSetupSchema,
@@ -136,7 +136,7 @@ export function GitHubAppSetupForm() {
                     <div className="flex justify-end">
                         <Button
                             type="button"
-                            icon={Github}
+                            icon={SiGithub}
                             onClick={form.handleSubmit(handleCreate)}
                         >
                             {t('createApp')}

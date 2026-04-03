@@ -78,8 +78,8 @@ export const buildFunction = inngest.createFunction(
                         buildChannel['node-status']({ nodeId, nodeStatus: 'cancelled' }),
                     );
                 },
-                async publish(topicPayload) {
-                    await publishSafe(topicPayload);
+                async publishCommitInfo(data) {
+                    await publishSafe(buildChannel['commit-info'](data));
                 },
             };
 
