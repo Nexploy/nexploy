@@ -13,9 +13,6 @@ export class CacheSaveExecutor implements INodeExecutor {
         const sourcePath = nodeConfig.sourcePath as string;
         const cacheKey = nodeConfig.cacheKey as string | undefined;
 
-        if (!volumeName) throw new Error('Volume name is required');
-        if (!sourcePath) throw new Error('Source path is required');
-
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 

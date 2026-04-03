@@ -15,9 +15,7 @@ export class CreateNetworkExecutor implements INodeExecutor {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
         const name = nodeConfig.name as string;
-        if (!name) throw new Error('Network name is required');
-
-        const driver = (nodeConfig.driver as string | undefined) ?? 'bridge';
+        const driver = nodeConfig.driver as string;
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
         await logger.info(nodeId, `Creating Docker network: ${name} (driver: ${driver})`);

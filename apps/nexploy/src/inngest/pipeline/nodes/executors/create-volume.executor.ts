@@ -15,8 +15,6 @@ export class CreateVolumeExecutor implements INodeExecutor {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
         const name = nodeConfig.name as string;
-        if (!name) throw new Error('Volume name is required');
-
         const driver = nodeConfig.driver as string | undefined;
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 

@@ -101,11 +101,7 @@ export class UploadArtifactExecutor implements INodeExecutor {
         const secretKey = nodeConfig.secretKey as string;
         const sourcePath = nodeConfig.sourcePath as string;
         const destinationPath = nodeConfig.destinationPath as string;
-        const useSSL = (nodeConfig.useSSL as boolean | undefined) ?? true;
-
-        if (!endpoint || !bucket || !accessKey || !secretKey || !sourcePath || !destinationPath) {
-            throw new Error('endpoint, bucket, accessKey, secretKey, sourcePath and destinationPath are all required');
-        }
+        const useSSL = nodeConfig.useSSL as boolean;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const base = workDir ?? process.cwd();

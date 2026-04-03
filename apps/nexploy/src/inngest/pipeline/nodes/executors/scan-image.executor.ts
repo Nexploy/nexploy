@@ -10,11 +10,9 @@ export class ScanImageExecutor implements INodeExecutor {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
         const image = nodeConfig.image as string;
-        const tag = (nodeConfig.tag as string | undefined) ?? 'latest';
-        const severity = (nodeConfig.severity as string | undefined) ?? 'HIGH';
-        const exitOnVulnerabilities = (nodeConfig.exitOnVulnerabilities as boolean | undefined) ?? true;
-
-        if (!image) throw new Error('Image is required');
+        const tag = nodeConfig.tag as string;
+        const severity = nodeConfig.severity as string;
+        const exitOnVulnerabilities = nodeConfig.exitOnVulnerabilities as boolean;
 
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
         const fullImage = `${image}:${tag}`;

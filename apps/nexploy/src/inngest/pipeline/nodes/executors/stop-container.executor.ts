@@ -16,8 +16,6 @@ export class StopContainerExecutor implements INodeExecutor {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
         const containerId = nodeConfig.containerId as string;
-        if (!containerId) throw new Error('Container ID is required');
-
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
         const opts = { signal: abortSignal, environmentId } as KyDockerOptions;
 

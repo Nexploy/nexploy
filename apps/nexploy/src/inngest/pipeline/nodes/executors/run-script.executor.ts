@@ -13,10 +13,8 @@ export class RunScriptExecutor implements INodeExecutor {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
         const script = nodeConfig.script as string;
-        if (!script) throw new Error('Script is required');
-
-        const shell = (nodeConfig.shell as string | undefined) ?? 'bash';
-        const continueOnError = (nodeConfig.continueOnError as boolean | undefined) ?? false;
+        const shell = nodeConfig.shell as string;
+        const continueOnError = nodeConfig.continueOnError as boolean;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
 

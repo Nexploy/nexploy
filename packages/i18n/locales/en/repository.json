@@ -349,7 +349,8 @@
             "failed": "Failed",
             "skipped": "Skipped",
             "cancelled": "Cancelled",
-            "pending": "Pending"
+            "pending": "Pending",
+            "notConfigured": "Not configured"
         },
         "shortcutsList": {
             "selectAll": "Select all",

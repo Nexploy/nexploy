@@ -12,11 +12,7 @@ export class RunMigrationExecutor implements INodeExecutor {
         const image = nodeConfig.image as string;
         const command = nodeConfig.command as string;
         const databaseUrl = nodeConfig.databaseUrl as string;
-        const workdir = (nodeConfig.workdir as string | undefined);
-
-        if (!image) throw new Error('Image is required');
-        if (!command) throw new Error('Migration command is required');
-        if (!databaseUrl) throw new Error('Database URL is required');
+        const workdir = nodeConfig.workdir as string | undefined;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');

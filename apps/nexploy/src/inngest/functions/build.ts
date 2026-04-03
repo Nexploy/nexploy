@@ -42,7 +42,7 @@ export const buildFunction = inngest.createFunction(
                 }
             };
 
-            const setStatus = async (status: PipelineStatus) => {
+            const setStatusBuild = async (status: PipelineStatus) => {
                 await updateStatusBuild(buildId, status);
                 await publishSafe(buildChannel['build-status']({ buildStatus: status }));
             };
@@ -113,7 +113,7 @@ export const buildFunction = inngest.createFunction(
                 step,
                 logger,
                 reporter,
-                setStatus,
+                setStatusBuild,
             );
         }
     },

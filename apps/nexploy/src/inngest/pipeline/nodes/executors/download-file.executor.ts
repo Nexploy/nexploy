@@ -19,9 +19,6 @@ export class DownloadFileExecutor implements INodeExecutor {
         const destinationPath = nodeConfig.destinationPath as string;
         const filename = nodeConfig.filename as string | undefined;
 
-        if (!url) throw new Error('URL is required');
-        if (!destinationPath) throw new Error('Destination path is required');
-
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const base = workDir ?? process.cwd();
 

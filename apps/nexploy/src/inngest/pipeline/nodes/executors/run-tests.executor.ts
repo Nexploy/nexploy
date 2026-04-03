@@ -11,9 +11,6 @@ export class RunTestsExecutor implements INodeExecutor {
 
         const command = nodeConfig.command as string;
         const image = nodeConfig.image as string;
-        if (!command) throw new Error('Test command is required');
-        if (!image) throw new Error('Image is required');
-
         const workdir = (nodeConfig.workdir as string | undefined) ?? '/workspace';
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');

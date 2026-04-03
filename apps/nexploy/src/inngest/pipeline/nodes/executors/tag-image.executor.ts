@@ -10,11 +10,8 @@ export class TagImageExecutor implements INodeExecutor {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
         const sourceImage = nodeConfig.sourceImage as string;
-        const sourceTag = (nodeConfig.sourceTag as string | undefined) ?? 'latest';
+        const sourceTag = nodeConfig.sourceTag as string;
         const targetTag = nodeConfig.targetTag as string;
-
-        if (!sourceImage) throw new Error('Source image is required');
-        if (!targetTag) throw new Error('Target tag is required');
 
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
         const source = `${sourceImage}:${sourceTag}`;

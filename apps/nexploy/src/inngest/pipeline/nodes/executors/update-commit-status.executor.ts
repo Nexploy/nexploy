@@ -17,10 +17,6 @@ export class UpdateCommitStatusExecutor implements INodeExecutor {
         const description = nodeConfig.description as string | undefined;
         const targetUrl = nodeConfig.targetUrl as string | undefined;
 
-        if (!provider || !token || !owner || !repo || !sha || !state) {
-            throw new Error('provider, token, owner, repo, sha and state are all required');
-        }
-
         await logger.info(nodeId, `Updating ${provider} commit status for ${owner}/${repo}@${sha.slice(0, 8)} → ${state}`);
 
         if (provider === 'github') {

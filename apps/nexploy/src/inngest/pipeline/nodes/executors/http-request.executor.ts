@@ -15,13 +15,11 @@ export class HttpRequestExecutor implements INodeExecutor {
         const { nodeConfig, logger, nodeId, abortSignal } = ctx;
 
         const url = nodeConfig.url as string;
-        if (!url) throw new Error('URL is required');
-
-        const method = (nodeConfig.method as string | undefined) ?? 'POST';
-        const headersArr = (nodeConfig.headers as HeaderEntry[] | undefined) ?? [];
+        const method = nodeConfig.method as string;
+        const headersArr = nodeConfig.headers as HeaderEntry[];
         const body = nodeConfig.body as string | undefined;
-        const expectedStatus = (nodeConfig.expectedStatus as number | undefined) ?? 200;
-        const continueOnError = (nodeConfig.continueOnError as boolean | undefined) ?? false;
+        const expectedStatus = nodeConfig.expectedStatus as number;
+        const continueOnError = nodeConfig.continueOnError as boolean;
 
         const headers: Record<string, string> = {};
         for (const h of headersArr) {

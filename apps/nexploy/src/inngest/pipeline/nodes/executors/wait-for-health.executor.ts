@@ -11,10 +11,8 @@ export class WaitForHealthExecutor implements INodeExecutor {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
         const containerName = nodeConfig.containerName as string;
-        if (!containerName) throw new Error('Container name is required');
-
-        const timeout = (nodeConfig.timeout as number | undefined) ?? 60;
-        const interval = (nodeConfig.interval as number | undefined) ?? 5;
+        const timeout = nodeConfig.timeout as number;
+        const interval = nodeConfig.interval as number;
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
         await logger.info(nodeId, `Waiting for container "${containerName}" to be healthy (timeout: ${timeout}s)`);

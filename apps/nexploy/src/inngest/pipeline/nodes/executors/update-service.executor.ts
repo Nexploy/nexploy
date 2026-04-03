@@ -11,11 +11,8 @@ export class UpdateServiceExecutor implements INodeExecutor {
 
         const serviceName = nodeConfig.serviceName as string;
         const image = nodeConfig.image as string;
-        const tag = (nodeConfig.tag as string | undefined) ?? 'latest';
-        const forceUpdate = (nodeConfig.forceUpdate as boolean | undefined) ?? false;
-
-        if (!serviceName) throw new Error('Service name is required');
-        if (!image) throw new Error('Image is required');
+        const tag = nodeConfig.tag as string;
+        const forceUpdate = nodeConfig.forceUpdate as boolean;
 
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
         const fullImage = `${image}:${tag}`;

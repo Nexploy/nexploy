@@ -10,9 +10,7 @@ export class ScaleServiceExecutor implements INodeExecutor {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
         const serviceName = nodeConfig.serviceName as string;
-        const replicas = (nodeConfig.replicas as number | undefined) ?? 1;
-
-        if (!serviceName) throw new Error('Service name is required');
+        const replicas = nodeConfig.replicas as number;
 
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 

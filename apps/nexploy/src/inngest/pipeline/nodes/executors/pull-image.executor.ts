@@ -14,12 +14,7 @@ export class PullImageExecutor implements INodeExecutor {
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const imageName =
-            (nodeConfig.imageName as string | undefined) ??
-            getFromAllOutputs<string>(allOutputs, 'imageName');
-
-        if (!imageName) throw new Error('Image name is required');
-
+        const imageName = nodeConfig.imageName as string;
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
         await logger.info(nodeId, `Pulling image: ${imageName}`);

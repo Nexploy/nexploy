@@ -13,9 +13,6 @@ export class CacheRestoreExecutor implements INodeExecutor {
         const cachePath = nodeConfig.cachePath as string;
         const cacheKey = nodeConfig.cacheKey as string | undefined;
 
-        if (!volumeName) throw new Error('Volume name is required');
-        if (!cachePath) throw new Error('Cache path is required');
-
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 

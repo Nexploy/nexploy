@@ -22,9 +22,7 @@ export class GitTagExecutor implements INodeExecutor {
 
         const tagName = nodeConfig.tagName as string;
         const message = nodeConfig.message as string | undefined;
-        const remote = (nodeConfig.remote as string | undefined) ?? 'origin';
-
-        if (!tagName) throw new Error('Tag name is required');
+        const remote = nodeConfig.remote as string;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         if (!workDir) throw new Error('No workDir found — run a clone node first');

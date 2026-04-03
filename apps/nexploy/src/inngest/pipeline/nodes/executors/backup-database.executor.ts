@@ -11,15 +11,11 @@ export class BackupDatabaseExecutor implements INodeExecutor {
 
         const dbType = nodeConfig.dbType as string;
         const host = nodeConfig.host as string;
-        const port = (nodeConfig.port as number | undefined) ?? 5432;
+        const port = nodeConfig.port as number;
         const database = nodeConfig.database as string;
         const username = nodeConfig.username as string;
         const password = nodeConfig.password as string;
         const outputPath = nodeConfig.outputPath as string;
-
-        if (!dbType || !host || !database || !username || !password || !outputPath) {
-            throw new Error('dbType, host, database, username, password and outputPath are all required');
-        }
 
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 

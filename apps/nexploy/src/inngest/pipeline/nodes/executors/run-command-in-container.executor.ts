@@ -11,8 +11,6 @@ export class RunCommandInContainerExecutor implements INodeExecutor {
 
         const containerName = nodeConfig.containerName as string;
         const command = nodeConfig.command as string;
-        if (!containerName) throw new Error('Container name is required');
-        if (!command) throw new Error('Command is required');
 
         const workdir = nodeConfig.workdir as string | undefined;
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');

@@ -2,7 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { Badge } from '@workspace/ui/components/badge';
-import { Ban, CheckCircle2, CircleDashed, Loader2, SkipForward, XCircle } from 'lucide-react';
+import {
+    Ban,
+    CheckCircle2,
+    CircleDashed,
+    Loader2,
+    Settings2,
+    SkipForward,
+    XCircle,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { useInngestSubscription } from '@inngest/realtime/hooks';
@@ -68,6 +76,13 @@ export function StatusNodeLive({ buildId, nodeId, initialStatus }: StatusNodeLiv
                 <Badge variant="destructive" className="gap-1">
                     <Ban className="size-3" />
                     {t('cancelled')}
+                </Badge>
+            );
+        case 'not-configured':
+            return (
+                <Badge variant="warning" className="gap-1">
+                    <Settings2 className="size-3" />
+                    {t('notConfigured')}
                 </Badge>
             );
         default:

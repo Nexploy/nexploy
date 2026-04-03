@@ -67,10 +67,7 @@ export const setEnvironmentConfigSchema = z.object({
 });
 
 export const sendNotificationConfigSchema = z.object({
-    webhookUrl: z
-        .string()
-        .refine((v) => v === '' || z.url().safeParse(v).success, 'Webhook URL must be a valid URL')
-        .default(''),
+    webhookUrl: z.url('Webhook URL must be a valid URL').min(1, 'Webhook URL is required'),
     triggerOn: z.array(z.enum(['success', 'failure', 'always'])).default(['always']),
     message: z.string().optional(),
 });

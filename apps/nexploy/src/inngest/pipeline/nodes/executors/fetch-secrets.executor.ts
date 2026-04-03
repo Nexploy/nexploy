@@ -14,11 +14,7 @@ export class FetchSecretsExecutor implements INodeExecutor {
         const endpoint = nodeConfig.endpoint as string | undefined;
         const token = nodeConfig.token as string;
         const secretPath = nodeConfig.secretPath as string;
-        const outputAs = (nodeConfig.outputAs as string | undefined) ?? 'env-vars';
-
-        if (!provider) throw new Error('Provider is required');
-        if (!token) throw new Error('Token is required');
-        if (!secretPath) throw new Error('Secret path is required');
+        const outputAs = nodeConfig.outputAs as string;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
 

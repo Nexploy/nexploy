@@ -26,12 +26,9 @@ export class GitCloneExtraExecutor implements INodeExecutor {
         const { nodeConfig, allOutputs, logger, nodeId } = ctx;
 
         const repoUrl = nodeConfig.repoUrl as string;
-        const branch = (nodeConfig.branch as string | undefined) ?? 'main';
+        const branch = nodeConfig.branch as string;
         const targetDir = nodeConfig.targetDir as string;
         const token = nodeConfig.token as string | undefined;
-
-        if (!repoUrl) throw new Error('Repository URL is required');
-        if (!targetDir) throw new Error('Target directory is required');
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         if (!workDir) throw new Error('No workDir found — run a clone node first');

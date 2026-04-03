@@ -22,8 +22,7 @@ export class ValidateComposeExecutor implements INodeExecutor {
             );
         }
 
-        const composeFileName =
-            (nodeConfig.composeFileName as string | undefined) ?? 'docker-compose.yml';
+        const composeFileName = nodeConfig.composeFileName as string;
         const composeFilePath = (nodeConfig.composeFilePath as string | undefined) ?? '';
         const composePath = composeFilePath
             ? `${composeFilePath.replace(/\/$/, '')}/${composeFileName}`

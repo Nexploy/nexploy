@@ -32,11 +32,8 @@ export class WaitForPortExecutor implements INodeExecutor {
 
         const host = nodeConfig.host as string;
         const port = nodeConfig.port as number;
-        if (!host) throw new Error('Host is required');
-        if (!port) throw new Error('Port is required');
-
-        const timeout = (nodeConfig.timeout as number | undefined) ?? 60;
-        const interval = (nodeConfig.interval as number | undefined) ?? 3;
+        const timeout = nodeConfig.timeout as number;
+        const interval = nodeConfig.interval as number;
 
         await logger.info(nodeId, `Waiting for ${host}:${port} to be open (timeout: ${timeout}s)`);
 

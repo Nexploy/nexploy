@@ -1,5 +1,9 @@
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
-import { PipelineEdge, PipelineGraph, PipelineNode, } from '@workspace/typescript-interface/pipeline/node';
+import {
+    PipelineEdge,
+    PipelineGraph,
+    PipelineNode,
+} from '@workspace/typescript-interface/pipeline/node';
 import {
     InngestStepRunner,
     LogLevel,
@@ -86,7 +90,7 @@ export class PipelineOrchestrator {
         inngestStep: InngestStepRunner,
         logger: PipelineLogger,
         reporter: PipelineReporter,
-        setStatus: (status: PipelineStatus) => Promise<void>,
+        setStatusBuild: (status: PipelineStatus) => Promise<void>,
     ): Promise<PipelineResult> {
         const abortController = new AbortController();
         const allOutputs: NodeOutputStore = new Map();
@@ -104,7 +108,7 @@ export class PipelineOrchestrator {
 
         try {
             await inngestStep.run('pipeline-init', async () => {
-                await setStatus('BUILDING');
+                await setStatusBuild('BUILDING');
             });
 
             for (const node of sorted) {
@@ -175,12 +179,12 @@ export class PipelineOrchestrator {
                     if (!validation.success) {
                         await inngestStep.run(`node-${node.id}`, async () => {
                             await reporter.markNotConfigured(node.id);
-                            await logger.error(
+                            await logger.warn(
                                 node.id,
                                 `${node.data.type}: Node is not configured — ${validation.error.issues.map((i) => i.message).join(', ')}`,
                             );
                         });
-                        await setStatus('FAILED');
+                        await setStatusBuild('FAILED');
                         return {
                             success: false,
                             error: `Node ${node.data.type} is not configured`,
@@ -190,7 +194,7 @@ export class PipelineOrchestrator {
 
                 try {
                     const nodeResult = await inngestStep.run(`node-${node.id}`, async () => {
-                        await setStatus('BUILDING');
+                        await setStatusBuild('BUILDING');
                         await reporter.markRunning(node.id);
 
                         if (abortController.signal.aborted) {
@@ -241,13 +245,13 @@ export class PipelineOrchestrator {
                     if (nodeError instanceof Error && nodeError.name === 'AbortError') {
                         throw nodeError;
                     }
-                    await setStatus('FAILED');
+                    await setStatusBuild('FAILED');
                     throw nodeError;
                 }
             }
 
             await inngestStep.run('pipeline-complete', async () => {
-                await setStatus('COMPLETED');
+                await setStatusBuild('COMPLETED');
             });
 
             return { success: true };
@@ -256,16 +260,12 @@ export class PipelineOrchestrator {
             const workDir = findWorkDir(allOutputs);
 
             if (error instanceof Error && error.name === 'AbortError') {
-                // Mark all nodes that did not reach a terminal state as cancelled.
-                // cancelBuildInngest already did this in the DB, but we also publish
-                // SSE events here so the UI updates in real time when the orchestrator
-                // still runs (i.e. the watcher fired before Inngest's cancelOn).
                 for (const node of sorted) {
                     if (!allOutputs.has(node.id)) {
                         await reporter.markCancelled(node.id);
                     }
                 }
-                await setStatus('CANCELLED');
+                await setStatusBuild('CANCELLED');
                 if (workDir) {
                     try {
                         await gitService.cleanup(workDir);
@@ -280,7 +280,7 @@ export class PipelineOrchestrator {
             await logger.error('error', `Build failed: ${errorMessage}`);
             await logger.error('error-details', errorDetails);
             try {
-                await setStatus('FAILED');
+                await setStatusBuild('FAILED');
             } catch {
                 /* ignore */
             }

@@ -8,13 +8,8 @@ export class SendNotificationExecutor implements INodeExecutor {
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { config, logger, nodeId, nodeConfig, abortSignal } = ctx;
 
-        const webhookUrl = (nodeConfig.webhookUrl as string | undefined) ?? '';
+        const webhookUrl = nodeConfig.webhookUrl as string;
         const customMessage = nodeConfig.message as string | undefined;
-
-        if (!webhookUrl) {
-            await logger.warn(nodeId, 'No webhook URL configured, skipping');
-            return { success: true, output: { sent: false }, skipped: true };
-        }
 
         const payload = {
             buildId: config.imageTag,

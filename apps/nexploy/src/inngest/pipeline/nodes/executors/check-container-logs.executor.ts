@@ -12,11 +12,8 @@ export class CheckContainerLogsExecutor implements INodeExecutor {
         const containerName = nodeConfig.containerName as string;
         const pattern = nodeConfig.pattern as string;
         const since = nodeConfig.since as string | undefined;
-        const timeout = (nodeConfig.timeout as number | undefined) ?? 30;
-        const failIfFound = (nodeConfig.failIfFound as boolean | undefined) ?? false;
-
-        if (!containerName) throw new Error('Container name is required');
-        if (!pattern) throw new Error('Pattern is required');
+        const timeout = nodeConfig.timeout as number;
+        const failIfFound = nodeConfig.failIfFound as boolean;
 
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
         const regex = new RegExp(pattern);

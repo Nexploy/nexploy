@@ -10,10 +10,8 @@ export class DeployStackExecutor implements INodeExecutor {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
         const stackName = nodeConfig.stackName as string;
-        const composeFilePath = (nodeConfig.composeFilePath as string | undefined) ?? 'docker-compose.yml';
-        const prune = (nodeConfig.prune as boolean | undefined) ?? false;
-
-        if (!stackName) throw new Error('Stack name is required');
+        const composeFilePath = nodeConfig.composeFilePath as string;
+        const prune = nodeConfig.prune as boolean;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');

@@ -22,7 +22,7 @@ export class ValidateDockerfileExecutor implements INodeExecutor {
             );
         }
 
-        const dockerfilePath = (nodeConfig.dockerfilePath as string | undefined) ?? 'Dockerfile';
+        const dockerfilePath = nodeConfig.dockerfilePath as string;
 
         await logger.info(nodeId, `Validating Dockerfile: ${dockerfilePath}`);
 

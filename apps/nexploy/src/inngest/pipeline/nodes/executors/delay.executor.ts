@@ -8,7 +8,7 @@ export class DelayExecutor implements INodeExecutor {
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { nodeConfig, logger, nodeId, abortSignal } = ctx;
 
-        const seconds = (nodeConfig.seconds as number | undefined) ?? 5;
+        const seconds = nodeConfig.seconds as number;
 
         await logger.info(nodeId, `Delaying pipeline by ${seconds} second(s)`);
 

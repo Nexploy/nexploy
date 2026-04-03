@@ -9,13 +9,7 @@ export class SetEnvironmentExecutor implements INodeExecutor {
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { buildId, nodeConfig, logger, nodeId } = ctx;
 
-        const environmentId = nodeConfig.environmentId as string | undefined;
-
-        if (!environmentId) {
-            throw new Error(
-                'No environment selected — configure this node with a target environment',
-            );
-        }
+        const environmentId = nodeConfig.environmentId as string;
 
         await updateBuildEnvironment(buildId, environmentId);
 

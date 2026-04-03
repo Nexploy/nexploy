@@ -347,7 +347,8 @@
             "failed": "Échoué",
             "skipped": "Ignoré",
             "cancelled": "Annulé",
-            "pending": "En attente"
+            "pending": "En attente",
+            "notConfigured": "Non configuré"
         },
         "shortcuts": "Raccourcis clavier",
         "shortcutsList": {

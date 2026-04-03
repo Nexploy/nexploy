@@ -18,10 +18,7 @@ export class TemplateFileExecutor implements INodeExecutor {
 
         const inputPath = nodeConfig.inputPath as string;
         const outputPath = nodeConfig.outputPath as string;
-        const variables = (nodeConfig.variables as VarEntry[] | undefined) ?? [];
-
-        if (!inputPath) throw new Error('Input path is required');
-        if (!outputPath) throw new Error('Output path is required');
+        const variables = nodeConfig.variables as VarEntry[];
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const base = workDir ?? process.cwd();

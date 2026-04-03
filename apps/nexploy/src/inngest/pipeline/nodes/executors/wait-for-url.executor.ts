@@ -9,12 +9,10 @@ export class WaitForUrlExecutor implements INodeExecutor {
         const { nodeConfig, logger, nodeId, abortSignal } = ctx;
 
         const url = nodeConfig.url as string;
-        if (!url) throw new Error('URL is required');
-
-        const expectedStatus = (nodeConfig.expectedStatus as number | undefined) ?? 200;
-        const timeout = (nodeConfig.timeout as number | undefined) ?? 60;
-        const interval = (nodeConfig.interval as number | undefined) ?? 5;
-        const method = (nodeConfig.method as string | undefined) ?? 'GET';
+        const expectedStatus = nodeConfig.expectedStatus as number;
+        const timeout = nodeConfig.timeout as number;
+        const interval = nodeConfig.interval as number;
+        const method = nodeConfig.method as string;
 
         await logger.info(nodeId, `Waiting for ${method} ${url} to return ${expectedStatus} (timeout: ${timeout}s)`);
 
