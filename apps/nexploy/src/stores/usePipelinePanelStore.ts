@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type PipelinePanel = 'palette' | 'template';
+export type PipelinePanel = 'palette' | 'template' | 'test';
 
 interface PipelinePanelStore {
     activePanel: PipelinePanel | null;

@@ -6,11 +6,11 @@
     "addRepository": "Add Repository",
     "importRepository": "Import Repository",
     "create": {
-        "title": "New Project",
+        "title": "New Repository",
         "description": "Create and deploy a new application from Git",
         "back": "Back",
-        "creating": "Creating...",
-        "createProject": "Create Project"
+        "adding": "Adding...",
+        "addRepository": "Add Repository"
     },
     "selectRepository": "Select a repository",
     "searchRepositories": "Search repositories...",

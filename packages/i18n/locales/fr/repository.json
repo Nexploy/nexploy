@@ -6,11 +6,11 @@
     "addRepository": "Ajouter un dépôt",
     "importRepository": "Importer un dépôt",
     "create": {
-        "title": "Nouveau projet",
+        "title": "Nouveau dépôt",
         "description": "Créer et déployer une nouvelle application depuis Git",
         "back": "Retour",
-        "creating": "Création en cours...",
-        "createProject": "Créer le projet"
+        "adding": "Ajout en cours...",
+        "addRepository": "Ajouter le dépôt"
     },
     "selectRepository": "Sélectionner un dépôt",
     "searchRepositories": "Rechercher des dépôts...",

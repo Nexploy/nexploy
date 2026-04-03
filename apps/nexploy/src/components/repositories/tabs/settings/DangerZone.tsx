@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent } from '@workspace/ui/components/card';
-import { Loader2, Trash2 } from 'lucide-react';
+import { Loader2, OctagonAlert, Trash2 } from 'lucide-react';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -14,7 +14,6 @@ import {
     AlertDialogTrigger,
 } from '@workspace/ui/components/alert-dialog';
 import { Button } from '@workspace/ui/components/button';
-import { Label } from '@workspace/ui/components/label';
 import { Input } from '@workspace/ui/components/input';
 import { useAction } from 'next-safe-action/hooks';
 import { deleteRepositoryAction } from '@/actions/repository/settings/deleteRepository.action';
@@ -47,14 +46,16 @@ export function DangerZone({ repository }: DangerZoneProps) {
         <Card className="border-destructive">
             <CardHeaderWithIcon
                 isDestructive
-                icon={Trash2}
+                icon={OctagonAlert}
                 title={t('title')}
                 description={t('description')}
             />
             <CardContent>
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
-                        <Button variant="destructive">{t('deleteButton')}</Button>
+                        <Button icon={Trash2} variant="destructive">
+                            {t('deleteButton')}
+                        </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                         <AlertDialogHeader>
@@ -64,11 +65,11 @@ export function DangerZone({ repository }: DangerZoneProps) {
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <div className="py-4">
-                            <Label htmlFor="confirm-name">
-                                {t.rich('confirmLabel', {
+                            <span className={'flex items-center text-sm leading-none font-medium'}>
+                                {t('confirmLabel', {
                                     name: repository.name,
                                 })}
-                            </Label>
+                            </span>
                             <Input
                                 id="confirm-name"
                                 value={confirmName}

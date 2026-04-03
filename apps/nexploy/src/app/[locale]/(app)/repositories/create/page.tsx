@@ -16,17 +16,10 @@ export default function AddRepositoryPage() {
     const t = useTranslations('repository.create');
     const router = useRouter();
 
-    const defaultValues = {
-        name: '',
-        gitToken: '',
-        gitProvider: 'github' as const,
-    };
-
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onRepositoryCreateAction,
         zodResolver(repositoryCreateFormSchema),
         {
-            formProps: { defaultValues },
             actionProps: {
                 onSuccess: ({ data }) => {
                     if (data) router.push(`/repositories/${data}`);
@@ -69,7 +62,7 @@ export default function AddRepositoryPage() {
                         disabled={isSubmitting}
                         onClick={handleSubmitWithAction}
                     >
-                        {isSubmitting ? t('creating') : t('createProject')}
+                        {isSubmitting ? t('adding') : t('addRepository')}
                     </Button>
                 </div>
             </div>

@@ -67,6 +67,12 @@ export async function getRepositories(
     const oldToken = await getGitProviderToken(provider, { gitAccountId });
     const token = await getValidToken(oldToken, provider, userId, gitAccountId);
 
+    const existingRepos = await prisma.repository.findMany({
+        where: { userId, gitProvider: provider },
+        select: { gitId: true },
+    });
+    const existingGitIds = new Set(existingRepos.map((r) => r.gitId));
+
     switch (provider) {
         case 'github': {
             const allRepos = await tokenGitStorage.run(token, async () => {
@@ -88,15 +94,17 @@ export async function getRepositories(
                 return true;
             });
 
-            return repositories.map((repo: GithubRepo) => ({
-                id: String(repo.id),
-                name: repo.name,
-                fullName: repo.full_name,
-                url: repo.clone_url,
-                private: repo.private,
-                visibility: repo.visibility,
-                defaultBranch: repo.default_branch,
-            }));
+            return repositories
+                .filter((repo: GithubRepo) => !existingGitIds.has(String(repo.id)))
+                .map((repo: GithubRepo) => ({
+                    id: String(repo.id),
+                    name: repo.name,
+                    fullName: repo.full_name,
+                    url: repo.clone_url,
+                    private: repo.private,
+                    visibility: repo.visibility,
+                    defaultBranch: repo.default_branch,
+                }));
         }
         case 'gitlab': {
             try {
@@ -114,14 +122,16 @@ export async function getRepositories(
                         .json<GitlabRepo[]>();
                 });
 
-                return repositories.map((repo: GitlabRepo) => ({
-                    id: String(repo.id),
-                    name: repo.name,
-                    fullName: repo.path_with_namespace,
-                    url: repo.http_url_to_repo,
-                    private: repo.visibility === 'private',
-                    defaultBranch: repo.default_branch,
-                }));
+                return repositories
+                    .filter((repo: GitlabRepo) => !existingGitIds.has(String(repo.id)))
+                    .map((repo: GitlabRepo) => ({
+                        id: String(repo.id),
+                        name: repo.name,
+                        fullName: repo.path_with_namespace,
+                        url: repo.http_url_to_repo,
+                        private: repo.visibility === 'private',
+                        defaultBranch: repo.default_branch,
+                    }));
             } catch (error: unknown) {
                 throw new Error('Failed to fetch GitLab repositories');
             }
