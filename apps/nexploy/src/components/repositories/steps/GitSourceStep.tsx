@@ -85,7 +85,7 @@ export function GitSourceStep() {
                     <div className="text-muted-foreground flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-8 text-center">
                         <div className="text-sm">{t('noAccounts')}</div>
                         <Button asChild>
-                            <Link href="/account">{t('connectAccount')}</Link>
+                            <Link href="/account#integrations">{t('connectAccount')}</Link>
                         </Button>
                     </div>
                 ) : (

@@ -1,6 +1,7 @@
 import { User } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { AccountDetailsSection } from '@/components/account/AccountDetailsSection';
+import { ScrollToHash } from '@/components/account/ScrollToHash';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
@@ -31,7 +32,9 @@ export default async function AccountPage() {
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden px-5">
                     <div className={'space-y-8 pb-5'}>
-                        <AccountDetailsSection />
+                        <ScrollToHash>
+                            <AccountDetailsSection />
+                        </ScrollToHash>
                     </div>
                 </ScrollAreaWithShadow>
             </div>
