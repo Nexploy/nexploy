@@ -23,7 +23,8 @@ import {
 } from '@workspace/ui/components/select';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
-import { BookMarked, Building2, GitBranch as GitBranchIcon, Github, Gitlab } from 'lucide-react';
+import { BookMarked, Building2, GitBranch as GitBranchIcon } from 'lucide-react';
+import { providerIcons } from '@/components/git/providerIcons';
 import { useFormContext } from 'react-hook-form';
 import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
@@ -45,12 +46,6 @@ interface GitAccountSummary {
         baseUrl: string | null;
     };
 }
-
-const providerIcons: Record<string, React.ReactNode> = {
-    github: <Github className="size-4" />,
-    gitlab: <Gitlab className="size-4" />,
-};
-
 
 export function GitSourceStep() {
     const { control, watch, setValue } = useFormContext();

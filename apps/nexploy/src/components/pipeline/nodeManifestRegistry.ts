@@ -4,7 +4,7 @@ import { type NodeManifest } from './types/nodeManifest';
 import { allBuiltinManifests } from './nodes/manifests';
 
 const builtinRegistry = new Map<string, NodeManifest>(
-    (allBuiltinManifests as NodeManifest[]).map((m) => [m.type, m] as [string, NodeManifest]),
+    allBuiltinManifests.map((m) => [m.type, m] as [string, NodeManifest]),
 );
 
 const customRegistry = new Map<string, NodeManifest>();

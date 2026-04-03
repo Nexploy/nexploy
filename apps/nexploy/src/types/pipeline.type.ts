@@ -61,7 +61,7 @@ export interface PipelineReporter {
     markSkipped(nodeId: string): Promise<void>;
     markFailed(nodeId: string): Promise<void>;
     markCancelled(nodeId: string): Promise<void>;
-    publishCommitInfo(data: CommitInfo): Promise<void>;
+    publish(topicPayload: any): Promise<void>;
 }
 
 export interface InngestStepRunner {

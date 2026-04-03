@@ -20,43 +20,32 @@ import { removeContainerExecutor } from './executors/remove-container.executor';
 import { pullImageExecutor } from './executors/pull-image.executor';
 import { createNetworkExecutor } from './executors/create-network.executor';
 import { createVolumeExecutor } from './executors/create-volume.executor';
-// Flow Control
 import { waitForHealthExecutor } from './executors/wait-for-health.executor';
 import { waitForUrlExecutor } from './executors/wait-for-url.executor';
 import { waitForPortExecutor } from './executors/wait-for-port.executor';
 import { delayExecutor } from './executors/delay.executor';
 import { conditionExecutor } from './executors/condition.executor';
-// Script Execution
 import { runScriptExecutor } from './executors/run-script.executor';
 import { runCommandInContainerExecutor } from './executors/run-command-in-container.executor';
 import { runTestsExecutor } from './executors/run-tests.executor';
-// HTTP / Webhooks
 import { httpRequestExecutor } from './executors/http-request.executor';
 import { updateCommitStatusExecutor } from './executors/update-commit-status.executor';
-// Image Management
 import { tagImageExecutor } from './executors/tag-image.executor';
 import { scanImageExecutor } from './executors/scan-image.executor';
 import { pruneImagesExecutor } from './executors/prune-images.executor';
-// Files & Artifacts
 import { templateFileExecutor } from './executors/template-file.executor';
 import { uploadArtifactExecutor } from './executors/upload-artifact.executor';
 import { downloadFileExecutor } from './executors/download-file.executor';
-// Database
 import { runMigrationExecutor } from './executors/run-migration.executor';
 import { backupDatabaseExecutor } from './executors/backup-database.executor';
-// Docker Swarm
 import { deployStackExecutor } from './executors/deploy-stack.executor';
 import { updateServiceExecutor } from './executors/update-service.executor';
 import { scaleServiceExecutor } from './executors/scale-service.executor';
-// Monitoring
 import { checkContainerLogsExecutor } from './executors/check-container-logs.executor';
-// Cache
 import { cacheRestoreExecutor } from './executors/cache-restore.executor';
 import { cacheSaveExecutor } from './executors/cache-save.executor';
-// Git
 import { gitTagExecutor } from './executors/git-tag.executor';
 import { gitCloneExtraExecutor } from './executors/git-clone-extra.executor';
-// Secrets
 import { fetchSecretsExecutor } from './executors/fetch-secrets.executor';
 
 const executors: INodeExecutor[] = [

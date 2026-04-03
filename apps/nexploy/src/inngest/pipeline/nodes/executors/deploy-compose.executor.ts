@@ -21,9 +21,8 @@ export class DeployComposeExecutor implements INodeExecutor {
             );
         }
 
-        const composeFileName =
-            (nodeConfig.composeFileName as string | undefined) ?? 'docker-compose.yml';
-        const composeFilePath = (nodeConfig.composeFilePath as string | undefined) ?? '';
+        const composeFileName = nodeConfig.composeFileName as string | undefined;
+        const composeFilePath = nodeConfig.composeFilePath as string | undefined;
         const composePath = composeFilePath
             ? `${composeFilePath.replace(/\/$/, '')}/${composeFileName}`
             : composeFileName;

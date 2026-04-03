@@ -1,14 +1,9 @@
-import { Github, Gitlab } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { IntegrationCard } from '@/components/git/IntegrationCard';
+import { providerIcons } from '@/components/git/providerIcons';
 import { getAllGitProviders } from '@/services/oauthProvider.service';
 import { listGitAccounts } from '@/services/git/git.service';
 import { getUserSession } from '@/services/auth/auth.service';
-
-const providerIcons: Record<string, React.ReactNode> = {
-    github: <Github className="size-5" />,
-    gitlab: <Gitlab className="size-5" />,
-};
 
 export async function AcountIntegrations() {
     const session = await getUserSession();

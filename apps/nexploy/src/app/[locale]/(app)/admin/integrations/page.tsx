@@ -3,7 +3,7 @@ import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { getUserSession } from '@/services/auth/auth.service';
 import { getCloudflareCredentialInfo } from '@/services/cloudflare.service';
 import { getAllGitProviders } from '@/services/oauthProvider.service';
-import { ChevronDownIcon, Cloud, GitBranch, Github, Gitlab, Plug } from 'lucide-react';
+import { ChevronDownIcon, Cloud, GitBranch, Plug } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import {
     Accordion,
@@ -13,8 +13,8 @@ import {
 } from '@workspace/ui/components/accordion';
 import { IntegrationsAddButtons } from '@/components/admin/integrations/IntegrationsAddButtons';
 import { CloudflareIntegrationCard } from '@/components/admin/integrations/CloudflareIntegrationCard';
-import * as React from 'react';
 import { cn } from '@workspace/ui/lib/utils';
+import { SiGithub, SiGitlab } from '@icons-pack/react-simple-icons';
 
 export default async function IntegrationsPage() {
     const [session, t, providers] = await Promise.all([
@@ -74,7 +74,7 @@ export default async function IntegrationsPage() {
                                             )}
                                             <div className="flex min-w-0 flex-1 items-center gap-3">
                                                 <div className="bg-muted flex size-10 items-center justify-center rounded-lg">
-                                                    <Github className="size-5" />
+                                                    <SiGithub className="size-5" />
                                                 </div>
                                                 <div className="flex min-w-0 flex-col text-left">
                                                     <span>{t('github.title')}</span>
@@ -124,7 +124,7 @@ export default async function IntegrationsPage() {
                                             )}
                                             <div className="flex min-w-0 flex-1 items-center gap-3">
                                                 <div className="bg-muted flex size-10 items-center justify-center rounded-lg">
-                                                    <Gitlab className="size-5" />
+                                                    <SiGitlab className="size-5" />
                                                 </div>
                                                 <div className="flex min-w-0 flex-col text-left">
                                                     <span>{t('gitlab.title')}</span>

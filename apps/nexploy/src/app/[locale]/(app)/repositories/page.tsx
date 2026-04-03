@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { Folder, Github, Gitlab, Link2 } from 'lucide-react';
+import { Folder, Link2 } from 'lucide-react';
+import { SiGithub, SiGitlab } from '@icons-pack/react-simple-icons';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import {
     Empty,
@@ -20,7 +21,6 @@ import {
 import { getRepositories } from '@/services/repository.service';
 import { StatusLive } from '@/components/shared/StatusLive';
 import { RunBuildButton } from '@/components/repositories/RunBuildButton';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { getTranslations } from 'next-intl/server';
 import { capitalizeFirstLetter } from '@/utils/capitalize';
 import { getHostname } from '@/utils/url';
@@ -33,8 +33,8 @@ export const metadata: Metadata = {
 
 const getGitIcon = (provider: string) => {
     const p = provider.toLowerCase();
-    if (p.includes('github')) return Github;
-    if (p.includes('gitlab')) return Gitlab;
+    if (p.includes('github')) return SiGithub;
+    if (p.includes('gitlab')) return SiGitlab;
     return Link2;
 };
 
@@ -127,20 +127,12 @@ export default async function RepositoriesPage() {
                                                         buildId={lastDeployment?.id ?? null}
                                                         initialStatus={lastDeployment?.status}
                                                     />
-                                                    <Tooltip>
-                                                        <TooltipTrigger asChild>
-                                                            <RunBuildButton
-                                                                mode={'onlyDeploy'}
-                                                                size={'icon'}
-                                                                showText={false}
-                                                                variant={'secondary'}
-                                                                repositoryId={repository.id}
-                                                            />
-                                                        </TooltipTrigger>
-                                                        <TooltipContent>
-                                                            {t('runBuild')}
-                                                        </TooltipContent>
-                                                    </Tooltip>
+                                                    <RunBuildButton
+                                                        size={'icon'}
+                                                        showText={false}
+                                                        variant={'secondary'}
+                                                        repositoryId={repository.id}
+                                                    />
                                                 </CardFooter>
                                             </Card>
                                         </Link>

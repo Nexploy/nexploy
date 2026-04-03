@@ -5,7 +5,8 @@ import { RepositoryEnvTab } from '@/components/repositories/tabs/envs/Repository
 import { RepositoryDomainsTab } from '@/components/repositories/tabs/domains/RepositoryDomainsTab';
 import { RepositorySettingsTab } from '@/components/repositories/tabs/settings/RepositorySettingsTab';
 import { RepositoryVersionsTab } from '@/components/repositories/tabs/versions/RepositoryVersionsTab';
-import { ExternalLink, Github, Gitlab, Link2 } from 'lucide-react';
+import { ExternalLink, Link2 } from 'lucide-react';
+import { SiGithub, SiGitlab } from '@icons-pack/react-simple-icons';
 import { RepositoryBuildsTab } from '@/components/repositories/tabs/builds/RepositoryBuildsTab';
 import { RepositoryPipelineTab } from '@/components/repositories/tabs/pipeline/RepositoryPipelineTab';
 import { getRepositorieById } from '@/services/repository.service';
@@ -23,8 +24,8 @@ interface RepositoryIdPageProps {
 
 const getGitIcon = (provider: string) => {
     const p = provider.toLowerCase();
-    if (p.includes('github')) return Github;
-    if (p.includes('gitlab')) return Gitlab;
+    if (p.includes('github')) return SiGithub;
+    if (p.includes('gitlab')) return SiGitlab;
     return Link2;
 };
 
@@ -80,9 +81,7 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                                 </div>
                             </div>
                         </div>
-                        <div className="mt-5 flex shrink-0 items-center gap-2">
-                            <RunBuildButton repositoryId={repository.id} />
-                        </div>
+                        <RunBuildButton className={'mt-5'} repositoryId={repository.id} />
                     </div>
 
                     <RepositoryTabs>
