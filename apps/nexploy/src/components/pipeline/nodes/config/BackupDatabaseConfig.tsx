@@ -30,7 +30,7 @@ export function BackupDatabaseConfig() {
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>{t('dbType')}</FormLabel>
-                        <Select value={field.value} onValueChange={field.onChange}>
+                        <Select {...field} onValueChange={field.onChange}>
                             <FormControl>
                                 <SelectTrigger className="h-8 text-xs">
                                     <SelectValue />

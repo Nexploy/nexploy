@@ -12,7 +12,6 @@ export const webhookCloneConfigSchema = z.object({
 export const buildDockerImageConfigSchema = z.object({
     dockerfilePath: z.string().min(1, 'Dockerfile path is required').default('Dockerfile'),
     dockerfileFilePath: z.string().optional(),
-    buildArgs: z.record(z.string(), z.string()).default({}),
 });
 
 export const validateDockerfileConfigSchema = z.object({
@@ -57,10 +56,6 @@ export const setEnvVarsConfigSchema = z.object({
 export const pushToRegistryConfigSchema = z.object({
     tag: z.string().optional(),
 });
-
-export const cleanWorkdirConfigSchema = z.object({});
-
-export const saveVersionConfigSchema = z.object({});
 
 export const setEnvironmentConfigSchema = z.object({
     environmentId: z.string().min(1, 'Environment is required'),
@@ -109,7 +104,7 @@ export const waitForUrlConfigSchema = z.object({
 
 export const waitForPortConfigSchema = z.object({
     host: z.string().min(1, 'Host is required'),
-    port: z.number().min(1).max(65535),
+    port: z.number().min(1).max(65535).default(80),
     timeout: z.number().default(60),
     interval: z.number().default(3),
 });
@@ -118,7 +113,9 @@ export const delayConfigSchema = z.object({
     seconds: z.number().min(1).default(5),
 });
 
-export const conditionConfigSchema = z.object({});
+export const conditionConfigSchema = z.object({
+    operator: z.enum(['and', 'or']).default('and'),
+});
 
 // ─── Script Execution ────────────────────────────────────────────────────────
 
@@ -152,7 +149,7 @@ export const httpRequestConfigSchema = z.object({
 });
 
 export const updateCommitStatusConfigSchema = z.object({
-    provider: z.enum(['github', 'gitlab']),
+    provider: z.enum(['github', 'gitlab']).default('github'),
     token: z.string().min(1, 'Token is required'),
     owner: z.string().min(1, 'Owner is required'),
     repo: z.string().min(1, 'Repository is required'),
@@ -219,7 +216,7 @@ export const runMigrationConfigSchema = z.object({
 });
 
 export const backupDatabaseConfigSchema = z.object({
-    dbType: z.enum(['postgres', 'mysql']),
+    dbType: z.enum(['postgres', 'mysql']).default('postgres'),
     host: z.string().min(1, 'Host is required'),
     port: z.number().default(5432),
     database: z.string().min(1, 'Database is required'),
@@ -290,68 +287,9 @@ export const gitCloneExtraConfigSchema = z.object({
 // ─── Secrets ─────────────────────────────────────────────────────────────────
 
 export const fetchSecretsConfigSchema = z.object({
-    provider: z.enum(['vault', 'doppler', 'env-file']),
+    provider: z.enum(['vault', 'doppler', 'env-file']).default('vault'),
     endpoint: z.string().optional(),
     token: z.string().min(1, 'Token is required'),
     secretPath: z.string().min(1, 'Secret path is required'),
     outputAs: z.enum(['env-vars', 'json-file']).default('env-vars'),
 });
-
-export type ContainerActionConfig = z.infer<typeof containerActionConfigSchema>;
-export type PullImageConfig = z.infer<typeof pullImageConfigSchema>;
-export type CreateNetworkConfig = z.infer<typeof createNetworkConfigSchema>;
-export type CreateVolumeConfig = z.infer<typeof createVolumeConfigSchema>;
-
-export type PushToRegistryConfig = z.infer<typeof pushToRegistryConfigSchema>;
-export type CleanWorkdirConfig = z.infer<typeof cleanWorkdirConfigSchema>;
-export type VarEntry = z.infer<typeof varEntrySchema>;
-export type SetEnvVarsConfig = z.infer<typeof setEnvVarsConfigSchema>;
-export type CloneRepositoryConfig = z.infer<typeof cloneRepositoryConfigSchema>;
-export type WebhookCloneConfig = z.infer<typeof webhookCloneConfigSchema>;
-export type BuildDockerImageConfig = z.infer<typeof buildDockerImageConfigSchema>;
-export type ValidateDockerfileConfig = z.infer<typeof validateDockerfileConfigSchema>;
-export type ComposeFileConfig = z.infer<typeof composeFileConfigSchema>;
-export type DeployContainerConfig = z.infer<typeof deployContainerConfigSchema>;
-export type WriteEnvFileConfig = z.infer<typeof writeEnvFileConfigSchema>;
-export type SaveVersionConfig = z.infer<typeof saveVersionConfigSchema>;
-export type SendNotificationConfig = z.infer<typeof sendNotificationConfigSchema>;
-export type SetEnvironmentConfig = z.infer<typeof setEnvironmentConfigSchema>;
-
-// Flow Control
-export type WaitForHealthConfig = z.infer<typeof waitForHealthConfigSchema>;
-export type WaitForUrlConfig = z.infer<typeof waitForUrlConfigSchema>;
-export type WaitForPortConfig = z.infer<typeof waitForPortConfigSchema>;
-export type DelayConfig = z.infer<typeof delayConfigSchema>;
-export type ConditionConfig = z.infer<typeof conditionConfigSchema>;
-// Script Execution
-export type RunScriptConfig = z.infer<typeof runScriptConfigSchema>;
-export type RunCommandInContainerConfig = z.infer<typeof runCommandInContainerConfigSchema>;
-export type RunTestsConfig = z.infer<typeof runTestsConfigSchema>;
-// HTTP / Webhooks
-export type HttpRequestConfig = z.infer<typeof httpRequestConfigSchema>;
-export type UpdateCommitStatusConfig = z.infer<typeof updateCommitStatusConfigSchema>;
-// Image Management
-export type TagImageConfig = z.infer<typeof tagImageConfigSchema>;
-export type ScanImageConfig = z.infer<typeof scanImageConfigSchema>;
-export type PruneImagesConfig = z.infer<typeof pruneImagesConfigSchema>;
-// Files & Artifacts
-export type TemplateFileConfig = z.infer<typeof templateFileConfigSchema>;
-export type UploadArtifactConfig = z.infer<typeof uploadArtifactConfigSchema>;
-export type DownloadFileConfig = z.infer<typeof downloadFileConfigSchema>;
-// Database
-export type RunMigrationConfig = z.infer<typeof runMigrationConfigSchema>;
-export type BackupDatabaseConfig = z.infer<typeof backupDatabaseConfigSchema>;
-// Docker Swarm
-export type DeployStackConfig = z.infer<typeof deployStackConfigSchema>;
-export type UpdateServiceConfig = z.infer<typeof updateServiceConfigSchema>;
-export type ScaleServiceConfig = z.infer<typeof scaleServiceConfigSchema>;
-// Monitoring
-export type CheckContainerLogsConfig = z.infer<typeof checkContainerLogsConfigSchema>;
-// Cache
-export type CacheRestoreConfig = z.infer<typeof cacheRestoreConfigSchema>;
-export type CacheSaveConfig = z.infer<typeof cacheSaveConfigSchema>;
-// Git
-export type GitTagConfig = z.infer<typeof gitTagConfigSchema>;
-export type GitCloneExtraConfig = z.infer<typeof gitCloneExtraConfigSchema>;
-// Secrets
-export type FetchSecretsConfig = z.infer<typeof fetchSecretsConfigSchema>;

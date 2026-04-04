@@ -70,7 +70,7 @@ export function NodeAddPanel() {
                     label: nodeType,
                     nodeType,
                     definition: def,
-                    config: CONFIG_SCHEMAS[nodeType]?.safeParse({}).data ?? {},
+                    config: CONFIG_SCHEMAS[nodeType]?.partial().safeParse({}).data ?? {},
                     isStartNode: def.isStartNode ?? false,
                 },
             }),

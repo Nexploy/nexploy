@@ -17,11 +17,6 @@ export const runCommandInContainerManifest: NodeManifest = {
             icon: SquareTerminal,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
-        defaultConfig: {
-            containerName: '',
-            command: '',
-            workdir: '',
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

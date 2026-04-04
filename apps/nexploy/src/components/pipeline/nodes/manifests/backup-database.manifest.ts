@@ -17,15 +17,6 @@ export const backupDatabaseManifest: NodeManifest = {
             icon: HardDrive,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
-        defaultConfig: {
-            dbType: 'postgres',
-            host: '',
-            port: 5432,
-            database: '',
-            username: '',
-            password: '',
-            outputPath: '',
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

@@ -17,11 +17,6 @@ export const waitForHealthManifest: NodeManifest = {
             icon: HeartPulse,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
-        defaultConfig: {
-            containerName: '',
-            timeout: 60,
-            interval: 5,
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

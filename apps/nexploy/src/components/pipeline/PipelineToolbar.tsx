@@ -10,7 +10,6 @@ import {
     SquareDashed,
     Trash2,
     Undo2,
-    X,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { usePipelineContext } from '@/contexts/PipelineContext';
@@ -30,7 +29,6 @@ export function PipelineToolbar() {
     const t = useTranslations('repository.pipeline');
 
     const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
-    const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
     const selectedNodeIds = usePipelineEditorStore((s) => s.selectedNodeIds);
 
     const {
@@ -226,19 +224,6 @@ export function PipelineToolbar() {
                                 buildId={activeBuildId!}
                                 initialStatus={activeBuild.status}
                             />
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        className="size-6"
-                                        onClick={() => setActiveBuildId(null)}
-                                    >
-                                        <X className="size-3" />
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>{t('exitBuild')}</TooltipContent>
-                            </Tooltip>
                         </div>
                     </div>
                 )}

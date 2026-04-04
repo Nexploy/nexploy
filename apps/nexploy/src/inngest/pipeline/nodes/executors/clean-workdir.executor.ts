@@ -5,11 +5,9 @@ import {
     NodeExecutionResult,
 } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
-import { cleanWorkdirConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class CleanWorkdirExecutor implements INodeExecutor {
     readonly type = 'clean-workdir';
-    readonly configSchema = cleanWorkdirConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { inputOutputs, allOutputs, logger, nodeId } = ctx;

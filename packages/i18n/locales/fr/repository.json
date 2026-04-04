@@ -340,7 +340,9 @@
         "undo": "Annuler",
         "redo": "Rétablir",
         "watching": "En observation",
-        "exitBuild": "Quitter la vue du build",
+        "exitBuild": "Quitter l'aperçu du build",
+        "exitBuildEsc": "Appuyer sur Esc pour quitter",
+        "viewingBuild": "Aperçu du build #{number}",
         "stopBuild": "Arrêter le build",
         "nodeStatus": {
             "running": "En cours",
@@ -734,6 +736,9 @@
             "url": "URL",
             "useSSL": "Utiliser SSL",
             "workdir": "Répertoire de travail",
+            "conditionMode": "Opérateur",
+            "conditionModeAndDesc": "Toutes les entrées doivent réussir",
+            "conditionModeOrDesc": "Au moins une doit réussir",
             "conditionInputNodes": "Nœuds d'entrée connectés",
             "conditionNoInputs": "Aucun nœud d'entrée connecté"
         },

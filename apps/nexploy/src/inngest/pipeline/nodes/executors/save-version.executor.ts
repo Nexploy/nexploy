@@ -5,18 +5,15 @@ import {
     NodeExecutionResult,
 } from '@/types/pipeline.type';
 import { prisma } from '../../../../../prisma/prisma';
-import { saveVersionConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class SaveVersionExecutor implements INodeExecutor {
     readonly type = 'save-version';
-    readonly configSchema = saveVersionConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { config, logger, nodeId, inputNodes, allOutputs } = ctx;
 
         await logger.info(nodeId, 'Saving version...');
 
-        // Retrieve composeConfig if a deploy-compose node is connected
         let composeConfig: string | null = null;
         for (const inputNode of inputNodes) {
             if (inputNode.type === 'deploy-compose') {

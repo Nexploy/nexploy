@@ -17,11 +17,6 @@ export const tagImageManifest: NodeManifest = {
             icon: Tag,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },
-        defaultConfig: {
-            sourceImage: '',
-            sourceTag: 'latest',
-            targetTag: '',
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

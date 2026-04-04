@@ -17,12 +17,6 @@ export const gitCloneExtraManifest: NodeManifest = {
             icon: GitFork,
             color: `${CATEGORY_BG_MUTED['source']} ${CATEGORY_TEXT['source']}`,
         },
-        defaultConfig: {
-            repoUrl: '',
-            branch: 'main',
-            targetDir: '',
-            token: '',
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

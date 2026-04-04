@@ -17,11 +17,6 @@ export const deployStackManifest: NodeManifest = {
             icon: Layers,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },
-        defaultConfig: {
-            stackName: '',
-            composeFilePath: 'docker-compose.yml',
-            prune: false,
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

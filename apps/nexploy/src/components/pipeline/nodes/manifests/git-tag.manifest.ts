@@ -17,11 +17,6 @@ export const gitTagManifest: NodeManifest = {
             icon: Milestone,
             color: `${CATEGORY_BG_MUTED['source']} ${CATEGORY_TEXT['source']}`,
         },
-        defaultConfig: {
-            tagName: '',
-            message: '',
-            remote: 'origin',
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

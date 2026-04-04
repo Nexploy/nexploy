@@ -6,14 +6,23 @@ export class ConditionExecutor implements INodeExecutor {
     readonly configSchema = conditionConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { inputOutputs, logger, nodeId, edges } = ctx;
+        const { inputOutputs, config, logger, nodeId, edges } = ctx;
 
-        const passed =
-            inputOutputs.length > 0 && inputOutputs.some((o) => Object.keys(o).length > 0);
+        const parsed = conditionConfigSchema.safeParse(config);
+        const operator = parsed.success ? parsed.data.operator : 'and';
+
+        const hasData = (o: Record<string, unknown>) => Object.keys(o).length > 0;
+
+        let passed: boolean;
+        if (operator === 'and') {
+            passed = inputOutputs.length > 0 && inputOutputs.every(hasData);
+        } else {
+            passed = inputOutputs.length > 0 && inputOutputs.some(hasData);
+        }
 
         await logger.info(
             nodeId,
-            `Condition evaluated: ${passed ? 'true' : 'false'} (${inputOutputs.length} input(s), ${passed ? 'at least one has data' : 'none have data'})`,
+            `Condition [${operator.toUpperCase()}] evaluated: ${passed ? 'true' : 'false'} (${inputOutputs.length} input(s))`,
         );
 
         const losingHandle = passed ? 'false' : 'true';

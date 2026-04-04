@@ -17,12 +17,6 @@ export const updateServiceManifest: NodeManifest = {
             icon: RefreshCw,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },
-        defaultConfig: {
-            serviceName: '',
-            image: '',
-            tag: 'latest',
-            forceUpdate: false,
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

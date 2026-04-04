@@ -41,7 +41,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
         zodResolver(schema),
         {
             formProps: {
-                defaultValues: { ...(schema.safeParse({}).data ?? {}), ...nodeConfig },
+                defaultValues: { ...(schema.partial().safeParse({}).data ?? {}), ...nodeConfig },
             },
             actionProps: {
                 onSuccess: ({ data: config }) => {

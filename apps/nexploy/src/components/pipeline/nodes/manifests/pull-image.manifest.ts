@@ -17,9 +17,6 @@ export const pullImageManifest: NodeManifest = {
             icon: Download,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },
-        defaultConfig: {
-            imageName: '',
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

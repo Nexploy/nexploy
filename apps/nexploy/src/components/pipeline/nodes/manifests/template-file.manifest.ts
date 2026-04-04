@@ -17,11 +17,6 @@ export const templateFileManifest: NodeManifest = {
             icon: FileCode,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
-        defaultConfig: {
-            inputPath: '',
-            outputPath: '',
-            variables: [],
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

@@ -1,4 +1,3 @@
-import { saveVersionConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { SaveVersionConfig } from '../config/SaveVersionConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { Position } from '@xyflow/react';
@@ -23,6 +22,5 @@ export const saveVersionManifest: NodeManifest = {
             attachments: [],
         },
     },
-    configSchema: saveVersionConfigSchema,
     configPanel: SaveVersionConfig,
 };

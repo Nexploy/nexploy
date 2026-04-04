@@ -17,11 +17,6 @@ export const pruneImagesManifest: NodeManifest = {
             icon: Trash2,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },
-        defaultConfig: {
-            filter: '',
-            olderThan: '',
-            dangling: true,
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

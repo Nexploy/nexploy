@@ -17,10 +17,6 @@ export const createNetworkManifest: NodeManifest = {
             icon: Network,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
-        defaultConfig: {
-            name: '',
-            driver: 'bridge',
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

@@ -342,7 +342,9 @@
         "redo": "Redo",
         "watching": "Watching",
         "shortcuts": "Keyboard shortcuts",
-        "exitBuild": "Exit build view",
+        "exitBuild": "Exit build preview",
+        "exitBuildEsc": "Press Esc to exit",
+        "viewingBuild": "Viewing build #{number}",
         "stopBuild": "Stop build",
         "nodeStatus": {
             "running": "Running",
@@ -735,6 +737,9 @@
             "secretsOutputAs": "Output As",
             "secretsOutputEnvVars": "Pipeline env vars",
             "secretsOutputJsonFile": "JSON file (secrets.json)",
+            "conditionMode": "Operator",
+            "conditionModeAndDesc": "All inputs must succeed",
+            "conditionModeOrDesc": "At least one must succeed",
             "conditionInputNodes": "Connected input nodes",
             "conditionNoInputs": "No input nodes connected"
         },

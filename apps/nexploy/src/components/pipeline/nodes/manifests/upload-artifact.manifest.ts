@@ -17,15 +17,6 @@ export const uploadArtifactManifest: NodeManifest = {
             icon: Upload,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
-        defaultConfig: {
-            endpoint: '',
-            bucket: '',
-            accessKey: '',
-            secretKey: '',
-            sourcePath: '',
-            destinationPath: '',
-            useSSL: true,
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

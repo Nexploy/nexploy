@@ -17,12 +17,6 @@ export const waitForPortManifest: NodeManifest = {
             icon: Network,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
-        defaultConfig: {
-            host: '',
-            port: 80,
-            timeout: 60,
-            interval: 3,
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

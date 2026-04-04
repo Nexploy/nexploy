@@ -1,15 +1,9 @@
 'use client';
 
-import {
-    createContext,
-    type ReactNode,
-    useCallback,
-    useContext,
-    useEffect,
-    useMemo,
-    useRef,
-} from 'react';
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useRef, } from 'react';
+import useSWR from 'swr';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { fetcherApi } from '@/lib/api/fetcherApi';
 import {
     addEdge,
     type Connection,
@@ -17,6 +11,7 @@ import {
     type Node,
     useEdgesState,
     useNodesState,
+    useReactFlow,
 } from '@xyflow/react';
 import { type NodeId, type PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { flowToGraph, graphToFlow } from '@/components/pipeline/utils/graphConvert';
@@ -69,12 +64,15 @@ export function PipelineProvider({
     builds?: Build[];
     children: ReactNode;
 }) {
-    const { nodes: initialNodes, edges: initialEdges } = graphToFlow(initialGraph);
     const { repositoryId } = useParams<{ repositoryId: string }>();
+    const { nodes: initialNodes, edges: initialEdges } = graphToFlow(initialGraph);
 
     const isUndoRedoRef = useRef(false);
+    const committedVersionRef = useRef(0);
+
     const [nodes, setNodes, onNodesChangeBase] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChangeBase] = useEdgesState(initialEdges);
+    const { fitView } = useReactFlow();
 
     const setPanelNodeId = usePipelineEditorStore((s) => s.setPanelNodeId);
     const setSelectedNodeIds = usePipelineEditorStore((s) => s.setSelectedNodeIds);
@@ -86,7 +84,6 @@ export function PipelineProvider({
     const setNodeStatuses = usePipelineEditorStore((s) => s.setNodeStatuses);
 
     const { execute: savePipeline, isPending: isSaving } = useAction(savePipelineAction);
-    const committedVersionRef = useRef(0);
 
     const onRestore = useCallback(
         (snapshot: { nodes: Node[]; edges: Edge[] }) => {
@@ -103,20 +100,45 @@ export function PipelineProvider({
         edges: initialEdges,
     });
 
-    useEffect(() => {
-        if (saveVersion === 0 || saveVersion === committedVersionRef.current) return;
-        committedVersionRef.current = saveVersion;
-        if (isUndoRedoRef.current) {
-            isUndoRedoRef.current = false;
-        } else {
-            commit({ nodes: [...nodes], edges: [...edges] });
-        }
-        savePipeline({ repositoryId, graph: flowToGraph(nodes, edges) });
+    useSWR<{ nodeStatuses: Record<string, NodeRunStatus> }>(
+        activeBuildId ? `/api/repositories/${repositoryId}/builds/${activeBuildId}` : null,
+        fetcherApi,
+        {
+            onSuccess: (buildData) => {
+                setNodeStatuses(buildData?.nodeStatuses);
+                fitView({ padding: 0.3 });
+            },
+        },
+    );
 
-        return () => {
-            setActiveBuildId(null);
+    const activeBuild = builds.find((b) => b.id === activeBuildId);
+    const isViewingBuild = !!activeBuild?.pipelineSnapshot;
+
+    const snapshotFlow = useMemo(() => {
+        if (!isViewingBuild) return null;
+        return graphToFlow(activeBuild.pipelineSnapshot as unknown as PipelineGraph);
+    }, [activeBuild]);
+
+    const { displayNodes, displayEdges } = useMemo(() => {
+        if (!snapshotFlow) return { displayNodes: nodes, displayEdges: edges };
+        return {
+            displayNodes: snapshotFlow.nodes.map((node) => ({
+                ...node,
+                data: {
+                    ...node.data,
+                    status: nodeStatuses[node.id] ?? undefined,
+                    viewOnly: true,
+                },
+            })),
+            displayEdges: snapshotFlow.edges.map((edge) => ({
+                ...edge,
+                animated:
+                    nodeStatuses[edge.source] === 'running' ||
+                    (nodeStatuses[edge.source] === 'completed' &&
+                        nodeStatuses[edge.target] === 'running'),
+            })),
         };
-    }, [saveVersion, nodes, edges]);
+    }, [snapshotFlow, nodeStatuses, nodes, edges]);
 
     const triggerAutoSave = useCallback(() => setSaveVersion((v) => v + 1), []);
 
@@ -254,46 +276,22 @@ export function PipelineProvider({
         setSaveVersion((v) => v + 1);
     }, [nodes, setNodes, setEdges, fireRemoveLifecycle]);
 
-    const activeBuild = builds.find((b) => b.id === activeBuildId);
-    const isViewingBuild = !!activeBuild?.pipelineSnapshot;
+    useEffect(() => {
+        if (saveVersion === 0 || saveVersion === committedVersionRef.current) return;
+        committedVersionRef.current = saveVersion;
+        if (isUndoRedoRef.current) {
+            isUndoRedoRef.current = false;
+        } else {
+            commit({ nodes: [...nodes], edges: [...edges] });
+        }
+        savePipeline({ repositoryId, graph: flowToGraph(nodes, edges) });
+    }, [saveVersion, nodes, edges]);
 
     useEffect(() => {
-        if (!activeBuildId) {
-            setNodeStatuses({});
-            return;
-        }
-        fetch(`/api/repositories/${repositoryId}/builds/${activeBuildId}`)
-            .then((r) => r.json())
-            .then((data: { nodeStatuses: Record<string, NodeRunStatus> }) => {
-                setNodeStatuses(data.nodeStatuses ?? {});
-            });
-    }, [activeBuildId, repositoryId]);
-
-    const snapshotFlow = useMemo(() => {
-        if (!activeBuild?.pipelineSnapshot) return null;
-        return graphToFlow(activeBuild.pipelineSnapshot as unknown as PipelineGraph);
-    }, [activeBuild]);
-
-    const { displayNodes, displayEdges } = useMemo(() => {
-        if (!snapshotFlow) return { displayNodes: nodes, displayEdges: edges };
-        return {
-            displayNodes: snapshotFlow.nodes.map((node) => ({
-                ...node,
-                data: {
-                    ...node.data,
-                    status: nodeStatuses[node.id] ?? undefined,
-                    viewOnly: true,
-                },
-            })),
-            displayEdges: snapshotFlow.edges.map((edge) => ({
-                ...edge,
-                animated:
-                    nodeStatuses[edge.source] === 'running' ||
-                    (nodeStatuses[edge.source] === 'completed' &&
-                        nodeStatuses[edge.target] === 'running'),
-            })),
+        return () => {
+            setActiveBuildId(null);
         };
-    }, [snapshotFlow, nodeStatuses, nodes, edges]);
+    }, []);
 
     return (
         <PipelineContext.Provider

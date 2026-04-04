@@ -17,12 +17,6 @@ export const scanImageManifest: NodeManifest = {
             icon: ShieldCheck,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },
-        defaultConfig: {
-            image: '',
-            tag: 'latest',
-            severity: 'HIGH',
-            exitOnVulnerabilities: true,
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

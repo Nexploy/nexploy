@@ -42,7 +42,7 @@ export function NodeTestPanel() {
                     nodeType: tn.type as NodeId,
                     definition: def,
                     config: {
-                        ...(CONFIG_SCHEMAS[tn.type]?.safeParse({}).data ?? {}),
+                        ...(CONFIG_SCHEMAS[tn.type]?.partial().safeParse({}).data ?? {}),
                         ...(tn.config ?? {}),
                     },
                     isStartNode: def?.isStartNode ?? false,

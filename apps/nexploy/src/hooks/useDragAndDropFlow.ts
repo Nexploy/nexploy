@@ -47,7 +47,7 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
                             nodeType: tn.type,
                             definition: def,
                             config: {
-                                ...(CONFIG_SCHEMAS[tn.type]?.safeParse({}).data ?? {}),
+                                ...(CONFIG_SCHEMAS[tn.type]?.partial().safeParse({}).data ?? {}),
                                 ...(tn.config ?? {}),
                             },
                             isStartNode: def?.isStartNode ?? false,
@@ -84,7 +84,7 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
                     label: nodeType,
                     nodeType,
                     definition: def,
-                    config: CONFIG_SCHEMAS[nodeType]?.safeParse({}).data ?? {},
+                    config: CONFIG_SCHEMAS[nodeType]?.partial().safeParse({}).data ?? {},
                     isStartNode: def.isStartNode ?? false,
                 },
             };

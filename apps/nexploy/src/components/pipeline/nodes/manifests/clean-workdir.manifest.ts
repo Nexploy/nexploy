@@ -1,5 +1,4 @@
 import { Position } from '@xyflow/react';
-import { cleanWorkdirConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { CleanWorkdirConfig } from '../config/CleanWorkdirConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
@@ -23,6 +22,5 @@ export const cleanWorkdirManifest: NodeManifest = {
             attachments: [],
         },
     },
-    configSchema: cleanWorkdirConfigSchema,
     configPanel: CleanWorkdirConfig,
 };

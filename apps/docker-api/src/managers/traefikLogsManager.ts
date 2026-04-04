@@ -5,8 +5,8 @@ import { BaseStateManager } from '@/lib/BaseStateManager';
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
-
 import { TRAEFIK_CONTAINER_NAME } from '@/lib/config';
+
 const MAX_REQUESTS = 500;
 
 interface TraefikLogEvent {
@@ -228,6 +228,7 @@ export class TraefikLogsManager extends BaseStateManager {
 
     private parseLine(line: string): void {
         const cleanLine = this.stripDockerHeader(line);
+        console.log('LINE:', JSON.stringify(cleanLine.slice(0, 200)));
         if (!cleanLine) return;
 
         try {
@@ -302,7 +303,6 @@ export class TraefikLogsManager extends BaseStateManager {
         };
 
         this.emit('request', event);
-        this.emit('traefik-request', event);
     }
 
     protected onStop(): void {

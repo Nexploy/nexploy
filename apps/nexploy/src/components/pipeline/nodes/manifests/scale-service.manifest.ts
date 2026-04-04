@@ -17,10 +17,6 @@ export const scaleServiceManifest: NodeManifest = {
             icon: ArrowUpDown,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },
-        defaultConfig: {
-            serviceName: '',
-            replicas: 1,
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

@@ -3,6 +3,7 @@ import { ConditionConfig } from '../config/ConditionConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 import { Split } from 'lucide-react';
+import { conditionConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export const conditionManifest: NodeManifest = {
     type: 'condition',
@@ -16,7 +17,6 @@ export const conditionManifest: NodeManifest = {
             icon: Split,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
-        defaultConfig: {},
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [
@@ -26,5 +26,6 @@ export const conditionManifest: NodeManifest = {
             attachments: [],
         },
     },
+    configSchema: conditionConfigSchema,
     configPanel: ConditionConfig,
 };

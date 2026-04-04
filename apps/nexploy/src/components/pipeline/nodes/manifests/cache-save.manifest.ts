@@ -17,11 +17,6 @@ export const cacheSaveManifest: NodeManifest = {
             icon: FolderOutput,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
-        defaultConfig: {
-            volumeName: '',
-            sourcePath: '',
-            cacheKey: '',
-        },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],

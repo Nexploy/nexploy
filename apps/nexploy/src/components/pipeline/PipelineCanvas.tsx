@@ -31,6 +31,7 @@ import { ButtonPanel } from '@/components/pipeline/nodes/ButtonPanel';
 import { useHotkeys } from '@/lib/useHotKeys';
 import { NodeContextMenu, type NodeContextMenuState } from '@/components/pipeline/NodeContextMenu';
 import { BuildsPanel } from '@/components/pipeline/buildsPanel/BuildsPanel';
+import { BuildPreviewBanner } from '@/components/pipeline/BuildPreviewBanner';
 import { LargeNode } from '@/components/pipeline/nodes/types/LargeNode';
 import { BaseNode } from '@/components/pipeline/nodes/types/BaseNode';
 import { AttachNode } from '@/components/pipeline/nodes/types/AttachNode';
@@ -49,6 +50,8 @@ export function PipelineCanvas() {
     const wrapperRef = useRef<HTMLDivElement>(null);
 
     const setHoveredEdgeId = usePipelineEditorStore((s) => s.setHoveredEdgeId);
+    const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
+    const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 
     const isValidConnection = useCallback<IsValidConnection>(
         (connection) => {
@@ -89,6 +92,7 @@ export function PipelineCanvas() {
         displayNodes,
         displayEdges,
         isViewingBuild,
+        builds,
         onNodesChange,
         onEdgesChange,
         onConnect,
@@ -102,6 +106,9 @@ export function PipelineCanvas() {
         triggerAutoSave,
         setNodes,
     } = usePipelineContext();
+
+    const activeBuildIndex = builds.findIndex((b) => b.id === activeBuildId);
+    const activeBuildNumber = activeBuildIndex !== -1 ? builds.length - activeBuildIndex : null;
 
     const openContextMenu = useCallback((event: React.MouseEvent, nodeId: string) => {
         event.preventDefault();
@@ -179,6 +186,13 @@ export function PipelineCanvas() {
         capture: true,
         ref: wrapperRef,
     });
+    useHotkeys(
+        'escape',
+        () => {
+            if (isViewingBuild) setActiveBuildId(null);
+        },
+        { preventDefault: true, ref: wrapperRef },
+    );
 
     const { onDragOver, onDragLeave, onDrop } = useDragAndDropFlow(rfInstance);
     const { minimapVisible, onMoveStart, onMoveEnd } = useMinimap();
@@ -244,6 +258,12 @@ export function PipelineCanvas() {
                     size={1.5}
                     color="var(--base-6)"
                 />
+                {isViewingBuild && activeBuildNumber !== null && (
+                    <BuildPreviewBanner
+                        buildNumber={activeBuildNumber}
+                        onExit={() => setActiveBuildId(null)}
+                    />
+                )}
                 {displayNodes.length > 0 && (
                     <Panel className={'!m-2'} position="bottom-left">
                         <div className="flex gap-1.5">
