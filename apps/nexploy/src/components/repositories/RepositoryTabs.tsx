@@ -37,6 +37,12 @@ export function RepositoryTabs({ children }: RepositoryTabsProps) {
         }
     }, [searchParams]);
 
+    useEffect(() => {
+        return () => {
+            setTab('pipeline');
+        };
+    }, []);
+
     return (
         <Tabs
             value={tab}

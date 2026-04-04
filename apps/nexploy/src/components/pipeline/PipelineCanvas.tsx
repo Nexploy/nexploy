@@ -17,12 +17,13 @@ import {
     useStore,
 } from '@xyflow/react';
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
-import { Maximize, Minus, Plus } from 'lucide-react';
+import { Maximize, Minus, Paintbrush, Plus } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
 import { GradientEdge } from '@/components/pipeline/edges/GradientEdge';
 import { useDragAndDropFlow } from '@/hooks/useDragAndDropFlow';
+import { useAutoLayout } from '@/hooks/useAutoLayout';
 import { useMinimap } from '@/hooks/useMinimap';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
@@ -80,6 +81,8 @@ export function PipelineCanvas() {
         },
         [getNodes],
     );
+
+    const handleAutoLayout = useAutoLayout();
 
     const {
         nodes,
@@ -270,6 +273,15 @@ export function PipelineCanvas() {
                                 title={t('canvas.zoomIn')}
                             >
                                 <Plus />
+                            </Button>
+                            <Button
+                                variant="secondary"
+                                size="icon"
+                                className="size-8"
+                                onClick={handleAutoLayout}
+                                title={t('canvas.autoLayout')}
+                            >
+                                <Paintbrush />
                             </Button>
                         </div>
                     </Panel>

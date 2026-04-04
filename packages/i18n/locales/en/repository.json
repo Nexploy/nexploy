@@ -363,7 +363,8 @@
         "canvas": {
             "zoomOut": "Zoom out",
             "fitView": "Fit view",
-            "zoomIn": "Zoom in"
+            "zoomIn": "Zoom in",
+            "autoLayout": "Auto-arrange nodes"
         },
         "nodeCount": "{count, plural, one {# node} other {# nodes}}",
         "disabledCount": "{count, plural, one {# disabled} other {# disabled}}",

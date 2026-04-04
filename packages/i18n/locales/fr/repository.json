@@ -362,7 +362,8 @@
         "canvas": {
             "zoomOut": "Zoom arrière",
             "fitView": "Ajuster la vue",
-            "zoomIn": "Zoom avant"
+            "zoomIn": "Zoom avant",
+            "autoLayout": "Réorganiser les nœuds"
         },
         "nodeCount": "{count, plural, one {# nœud} other {# nœuds}}",
         "disabledCount": "{count, plural, one {# désactivé} other {# désactivés}}",
