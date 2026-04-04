@@ -242,7 +242,7 @@ export function PipelineCanvas() {
                 selectionMode={SelectionMode.Partial}
                 selectionOnDrag={!isViewingBuild}
                 onSelectionChange={isViewingBuild ? undefined : handleSelectionChange}
-                deleteKeyCode={null}
+                deleteKeyCode={undefined}
                 fitView
                 fitViewOptions={{ padding: 0.3 }}
                 defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}

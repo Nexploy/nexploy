@@ -2,6 +2,7 @@ import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDef
 import { Handle, Position, useConnection, useNodeConnections } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import { useTranslations } from 'next-intl';
 
 interface OutputHandleProps {
     handle: NodeDefinition['handles']['outputs'][number];
@@ -20,6 +21,8 @@ export function OutputHandle({
     index,
     total,
 }: OutputHandleProps) {
+    const t = useTranslations('repository.pipeline');
+    const displayLabel = handle.labelKey && t(handle.labelKey);
     const connection = useConnection();
     const connections = useNodeConnections({ handleType: 'source', handleId: handle.id });
 
@@ -64,16 +67,16 @@ export function OutputHandle({
                         active && handleColor,
                     )}
                 >
-                    {handle.label && (
+                    {displayLabel && (
                         <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-[7px] font-bold">
-                            {handle.label[0]!.toUpperCase()}
+                            {displayLabel[0]!.toUpperCase()}
                         </span>
                     )}
                 </Handle>
             </TooltipTrigger>
-            {handle.label && (
+            {displayLabel && (
                 <TooltipContent className="flex items-center gap-1.5">
-                    {handle.label}
+                    {displayLabel}
                 </TooltipContent>
             )}
         </Tooltip>

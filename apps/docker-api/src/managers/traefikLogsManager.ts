@@ -228,7 +228,6 @@ export class TraefikLogsManager extends BaseStateManager {
 
     private parseLine(line: string): void {
         const cleanLine = this.stripDockerHeader(line);
-        console.log('LINE:', JSON.stringify(cleanLine.slice(0, 200)));
         if (!cleanLine) return;
 
         try {

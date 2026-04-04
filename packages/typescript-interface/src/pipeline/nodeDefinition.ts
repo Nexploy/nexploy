@@ -5,7 +5,7 @@ import { LucideIcon } from 'lucide-react';
 export interface HandleDefinition {
     id: string;
     position: Position;
-    label?: string;
+    labelKey?: string;
     acceptsFrom?: string;
 }
 

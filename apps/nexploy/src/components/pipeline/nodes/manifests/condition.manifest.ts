@@ -20,8 +20,8 @@ export const conditionManifest: NodeManifest = {
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [
-                { id: 'true', position: Position.Right, label: 'true' },
-                { id: 'false', position: Position.Right, label: 'false' },
+                { id: 'true', position: Position.Right, labelKey: 'nodes.condition.outputTrue' },
+                { id: 'false', position: Position.Right, labelKey: 'nodes.condition.outputFalse' },
             ],
             attachments: [],
         },
