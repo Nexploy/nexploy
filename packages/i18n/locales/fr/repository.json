@@ -384,6 +384,7 @@
         "node": {
             "enable": "Activer le nœud",
             "disable": "Désactiver le nœud",
+            "openConfig": "Ouvrir la configuration",
             "delete": "Supprimer le nœud"
         },
         "nodes": {

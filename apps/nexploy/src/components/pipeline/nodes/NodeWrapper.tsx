@@ -5,7 +5,7 @@ import { Power, Settings, Trash2 } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
 import { useReactFlow } from '@xyflow/react';
-import { usePipelineContext } from '@/contexts/PipelineContext';
+import { usePipelineActions } from '@/contexts/PipelineContext';
 import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
 import { CATEGORY_BG } from '@/components/pipeline/pipelineTheme';
 import { InputHandle } from '@/components/pipeline/nodes/handles/InputHandle';
@@ -24,7 +24,7 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
     const isAttachNode = data.definition.type === 'attach-node';
 
     const { deleteElements, getNodes } = useReactFlow();
-    const { triggerAutoSave, setNodes, openDialogSettingNode } = usePipelineContext();
+    const { triggerAutoSave, setNodes, openDialogSettingNode } = usePipelineActions();
 
     const getTargetIds = () => {
         const selectedIds = getNodes()

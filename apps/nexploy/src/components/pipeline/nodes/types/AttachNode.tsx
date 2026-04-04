@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { cn } from '@workspace/ui/lib/utils';
 import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
 import { NodeWrapper } from '@/components/pipeline/nodes/NodeWrapper';
@@ -12,7 +13,7 @@ interface AttachNodeProps {
     selected?: boolean;
 }
 
-export function AttachNode({ id, data, selected }: AttachNodeProps) {
+export const AttachNode = memo(({ id, data, selected }: AttachNodeProps) => {
     const t = useTranslations('repository.pipeline');
 
     return (
@@ -28,4 +29,4 @@ export function AttachNode({ id, data, selected }: AttachNodeProps) {
             </span>
         </NodeWrapper>
     );
-}
+});

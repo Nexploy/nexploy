@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { cn } from '@workspace/ui/lib/utils';
 import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
 import { NodeWrapper } from '@/components/pipeline/nodes/NodeWrapper';
@@ -12,7 +13,7 @@ interface BaseNodeProps {
     selected?: boolean;
 }
 
-export function BaseNode({ id, data, selected }: BaseNodeProps) {
+export const BaseNode = memo(({ id, data, selected }: BaseNodeProps) => {
     const t = useTranslations('repository.pipeline');
 
     return (
@@ -28,4 +29,4 @@ export function BaseNode({ id, data, selected }: BaseNodeProps) {
             </span>
         </NodeWrapper>
     );
-}
+});

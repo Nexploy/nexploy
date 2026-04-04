@@ -1,14 +1,6 @@
 'use client';
 
-import {
-    createContext,
-    type ReactNode,
-    useCallback,
-    useContext,
-    useEffect,
-    useMemo,
-    useRef,
-} from 'react';
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useRef, } from 'react';
 import useSWR from 'swr';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { fetcherApi } from '@/lib/api/fetcherApi';
@@ -32,7 +24,22 @@ import { useParams } from 'next/navigation';
 import { type NodeRunStatus } from '@/types/pipeline.type';
 import { Build } from 'generated/client';
 
-interface PipelineContextValue {
+interface PipelineActionsContextValue {
+    setNodes: ReturnType<typeof useNodesState>[1];
+    setEdges: ReturnType<typeof useEdgesState>[1];
+    onEdgesChange: ReturnType<typeof useEdgesState>[2];
+    onConnect: (connection: Connection) => void;
+    handleSelectionChange: (selection: { nodes: Node[] }) => void;
+    openDialogSettingNode: (id: string) => void;
+    handleResetPanelNode: () => void;
+    handleConfigChange: (nodeId: string, config: Record<string, unknown>) => void;
+    handleNodeAdded: (nodeType: NodeId, nodeId: string) => void;
+    triggerAutoSave: () => void;
+    undo: () => void;
+    redo: () => void;
+}
+
+interface PipelineStateContextValue {
     nodes: Node[];
     edges: Edge[];
     displayNodes: Node[];
@@ -42,26 +49,17 @@ interface PipelineContextValue {
     activeBuild?: Build;
     builds: Build[];
     nodeStatuses: Record<string, NodeRunStatus>;
-    onNodesChange: ReturnType<typeof useNodesState>[2];
-    onEdgesChange: ReturnType<typeof useEdgesState>[2];
-    onConnect: (connection: Connection) => void;
-    handleSelectionChange: (selection: { nodes: Node[] }) => void;
-    openDialogSettingNode: (id: string) => void;
-    handleResetPanelNode: () => void;
-    handleConfigChange: (nodeId: string, config: Record<string, unknown>) => void;
-    handleDeleteSelection: () => void;
-    handleDuplicateSelection: () => void;
-    handleNodeAdded: (nodeType: NodeId, nodeId: string) => void;
-    triggerAutoSave: () => void;
-    undo: () => void;
-    redo: () => void;
     canUndo: boolean;
     canRedo: boolean;
-    setNodes: ReturnType<typeof useNodesState>[1];
-    setEdges: ReturnType<typeof useEdgesState>[1];
+    onNodesChange: ReturnType<typeof useNodesState>[2];
+    handleDuplicateSelection: () => void;
+    handleDeleteSelection: () => void;
 }
 
-const PipelineContext = createContext<PipelineContextValue | null>(null);
+interface PipelineContextValue extends PipelineActionsContextValue, PipelineStateContextValue {}
+
+const PipelineActionsContext = createContext<PipelineActionsContextValue | null>(null);
+const PipelineStateContext = createContext<PipelineStateContextValue | null>(null);
 
 export function PipelineProvider({
     initialGraph,
@@ -165,40 +163,6 @@ export function PipelineProvider({
         [repositoryId, setNodes],
     );
 
-    const fireRemoveLifecycle = useCallback(
-        (removedNodes: Node[]) => {
-            const remaining = nodes.filter((n) => !removedNodes.some((r) => r.id === n.id));
-            const seen = new Set<string>();
-            for (const removed of removedNodes) {
-                const nodeType = removed.data.nodeType as NodeId;
-                if (seen.has(nodeType)) continue;
-                seen.add(nodeType);
-                const lifecycle = NODE_LIFECYCLE[nodeType];
-                if (lifecycle?.onRemove) {
-                    const remainingCount = remaining.filter(
-                        (n) => n.data.nodeType === nodeType,
-                    ).length;
-                    lifecycle.onRemove(repositoryId, remainingCount);
-                }
-            }
-        },
-        [nodes, repositoryId],
-    );
-
-    const onNodesChange: typeof onNodesChangeBase = useCallback(
-        (changes) => {
-            const removeChanges = changes.filter((c) => c.type === 'remove');
-            if (removeChanges.length > 0) {
-                const removedIds = new Set(removeChanges.map((c) => c.id));
-                const removedNodes = nodes.filter((n) => removedIds.has(n.id));
-                fireRemoveLifecycle(removedNodes);
-                setSaveVersion((v) => v + 1);
-            }
-            onNodesChangeBase(changes);
-        },
-        [onNodesChangeBase, nodes, fireRemoveLifecycle],
-    );
-
     const onEdgesChange: typeof onEdgesChangeBase = useCallback(
         (changes) => {
             onEdgesChangeBase(changes);
@@ -240,6 +204,40 @@ export function PipelineProvider({
             );
         },
         [setNodes],
+    );
+
+    const fireRemoveLifecycle = useCallback(
+        (removedNodes: Node[]) => {
+            const remaining = nodes.filter((n) => !removedNodes.some((r) => r.id === n.id));
+            const seen = new Set<string>();
+            for (const removed of removedNodes) {
+                const nodeType = removed.data.nodeType as NodeId;
+                if (seen.has(nodeType)) continue;
+                seen.add(nodeType);
+                const lifecycle = NODE_LIFECYCLE[nodeType];
+                if (lifecycle?.onRemove) {
+                    const remainingCount = remaining.filter(
+                        (n) => n.data.nodeType === nodeType,
+                    ).length;
+                    lifecycle.onRemove(repositoryId, remainingCount);
+                }
+            }
+        },
+        [nodes, repositoryId],
+    );
+
+    const onNodesChange: typeof onNodesChangeBase = useCallback(
+        (changes) => {
+            const removeChanges = changes.filter((c) => c.type === 'remove');
+            if (removeChanges.length > 0) {
+                const removedIds = new Set(removeChanges.map((c) => c.id));
+                const removedNodes = nodes.filter((n) => removedIds.has(n.id));
+                fireRemoveLifecycle(removedNodes);
+                setSaveVersion((v) => v + 1);
+            }
+            onNodesChangeBase(changes);
+        },
+        [onNodesChangeBase, nodes, fireRemoveLifecycle],
     );
 
     const handleDuplicateSelection = useCallback(() => {
@@ -305,44 +303,95 @@ export function PipelineProvider({
         };
     }, []);
 
+    const actionsValue = useMemo<PipelineActionsContextValue>(
+        () => ({
+            setNodes,
+            setEdges,
+            onEdgesChange,
+            onConnect,
+            handleSelectionChange,
+            openDialogSettingNode,
+            handleResetPanelNode,
+            handleConfigChange,
+            handleNodeAdded,
+            triggerAutoSave,
+            undo,
+            redo,
+        }),
+        [
+            setNodes,
+            setEdges,
+            onEdgesChange,
+            onConnect,
+            handleSelectionChange,
+            openDialogSettingNode,
+            handleResetPanelNode,
+            handleConfigChange,
+            handleNodeAdded,
+            triggerAutoSave,
+            undo,
+            redo,
+        ],
+    );
+
+    const stateValue = useMemo<PipelineStateContextValue>(
+        () => ({
+            nodes,
+            edges,
+            displayNodes,
+            displayEdges,
+            isViewingBuild,
+            isSaving,
+            builds,
+            activeBuild,
+            nodeStatuses,
+            canUndo,
+            canRedo,
+            onNodesChange,
+            handleDuplicateSelection,
+            handleDeleteSelection,
+        }),
+        [
+            nodes,
+            edges,
+            displayNodes,
+            displayEdges,
+            isViewingBuild,
+            isSaving,
+            builds,
+            activeBuild,
+            nodeStatuses,
+            canUndo,
+            canRedo,
+            onNodesChange,
+            handleDuplicateSelection,
+            handleDeleteSelection,
+        ],
+    );
+
     return (
-        <PipelineContext.Provider
-            value={{
-                nodes,
-                edges,
-                displayNodes,
-                displayEdges,
-                isViewingBuild,
-                isSaving,
-                builds,
-                activeBuild,
-                nodeStatuses,
-                onNodesChange,
-                onEdgesChange,
-                onConnect,
-                handleSelectionChange,
-                openDialogSettingNode,
-                handleResetPanelNode,
-                handleConfigChange,
-                handleDeleteSelection,
-                handleDuplicateSelection,
-                handleNodeAdded,
-                triggerAutoSave,
-                undo,
-                redo,
-                canUndo,
-                canRedo,
-                setNodes,
-                setEdges,
-            }}
-        >
-            {children}
-        </PipelineContext.Provider>
+        <PipelineActionsContext.Provider value={actionsValue}>
+            <PipelineStateContext.Provider value={stateValue}>
+                {children}
+            </PipelineStateContext.Provider>
+        </PipelineActionsContext.Provider>
     );
 }
 
-export function usePipelineContext() {
-    const ctx = useContext(PipelineContext);
-    if (!ctx) throw new Error('usePipelineContext must be used within PipelineProvider');
+export function usePipelineActions(): PipelineActionsContextValue {
+    const ctx = useContext(PipelineActionsContext);
+    if (!ctx) throw new Error('usePipelineActions must be used within PipelineProvider');
     return ctx;
+}
+
+export function usePipelineState(): PipelineStateContextValue {
+    const ctx = useContext(PipelineStateContext);
+    if (!ctx) throw new Error('usePipelineState must be used within PipelineProvider');
+    return ctx;
+}
+
+export function usePipelineContext(): PipelineContextValue {
+    const actions = usePipelineActions();
+    const state = usePipelineState();
+    return useMemo(() => ({ ...actions, ...state }), [actions, state]);
 }

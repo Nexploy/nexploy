@@ -17,7 +17,7 @@ export function BuildPreviewBanner({ buildNumber, onExit }: BuildPreviewBannerPr
     const t = useTranslations('repository.pipeline');
 
     return (
-        <Panel className="!m-3" position="top-center">
+        <Panel position="top-center">
             <div className="bg-background/90 border-border flex items-center gap-2 rounded-lg border px-3 py-1.5 shadow-sm backdrop-blur-sm">
                 <span className="text-muted-foreground text-xs">
                     {t('viewingBuild', { number: buildNumber })}

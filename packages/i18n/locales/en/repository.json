@@ -385,6 +385,7 @@
         "node": {
             "enable": "Enable node",
             "disable": "Disable node",
+            "openConfig": "Open configuration",
             "delete": "Delete node"
         },
         "nodes": {

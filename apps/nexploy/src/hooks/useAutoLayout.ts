@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Position, useReactFlow } from '@xyflow/react';
-import { usePipelineContext } from '@/contexts/PipelineContext';
+import { usePipelineActions } from '@/contexts/PipelineContext';
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 
 const H_GAP = 80;
@@ -59,7 +59,7 @@ function spreadNodes(
 
 export function useAutoLayout() {
     const { getNodes, getEdges, fitView } = useReactFlow();
-    const { setNodes, triggerAutoSave } = usePipelineContext();
+    const { setNodes, triggerAutoSave } = usePipelineActions();
 
     return useCallback(() => {
         const currentNodes = getNodes();

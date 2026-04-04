@@ -31,10 +31,10 @@ import { ButtonPanel } from '@/components/pipeline/nodes/ButtonPanel';
 import { useHotkeys } from '@/lib/useHotKeys';
 import { NodeContextMenu, type NodeContextMenuState } from '@/components/pipeline/NodeContextMenu';
 import { BuildsPanel } from '@/components/pipeline/buildsPanel/BuildsPanel';
-import { BuildPreviewBanner } from '@/components/pipeline/BuildPreviewBanner';
 import { LargeNode } from '@/components/pipeline/nodes/types/LargeNode';
 import { BaseNode } from '@/components/pipeline/nodes/types/BaseNode';
 import { AttachNode } from '@/components/pipeline/nodes/types/AttachNode';
+import { BuildPreviewBanner } from '@/components/pipeline/BuildPreviewBanner';
 
 const nodeTypes = { 'base-node': BaseNode, 'large-node': LargeNode, 'attach-node': AttachNode };
 const edgeTypes = { 'gradient-edge': GradientEdge };
@@ -210,6 +210,12 @@ export function PipelineCanvas() {
             onDrop={onDrop}
         >
             <BuildsPanel />
+            {isViewingBuild && activeBuildNumber !== null && (
+                <BuildPreviewBanner
+                    buildNumber={activeBuildNumber}
+                    onExit={() => setActiveBuildId(null)}
+                />
+            )}
             <ButtonPanel />
             <ReactFlow
                 nodes={displayNodes}
@@ -258,12 +264,6 @@ export function PipelineCanvas() {
                     size={1.5}
                     color="var(--base-6)"
                 />
-                {isViewingBuild && activeBuildNumber !== null && (
-                    <BuildPreviewBanner
-                        buildNumber={activeBuildNumber}
-                        onExit={() => setActiveBuildId(null)}
-                    />
-                )}
                 {displayNodes.length > 0 && (
                     <Panel className={'!m-2'} position="bottom-left">
                         <div className="flex gap-1.5">

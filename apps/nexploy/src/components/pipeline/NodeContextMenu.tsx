@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import { useTranslations } from 'next-intl';
 import { Power, Trash2 } from 'lucide-react';
-import { usePipelineContext } from '@/contexts/PipelineContext';
+import { usePipelineActions } from '@/contexts/PipelineContext';
 import {
     ContextMenu,
     ContextMenuContent,
@@ -27,7 +27,7 @@ interface NodeContextMenuProps {
 export function NodeContextMenu({ menu, onClose }: NodeContextMenuProps) {
     const t = useTranslations('repository.pipeline');
     const { deleteElements, getNodes } = useReactFlow();
-    const { triggerAutoSave, setNodes } = usePipelineContext();
+    const { triggerAutoSave, setNodes } = usePipelineActions();
     const triggerRef = useRef<HTMLSpanElement>(null);
 
     useEffect(() => {

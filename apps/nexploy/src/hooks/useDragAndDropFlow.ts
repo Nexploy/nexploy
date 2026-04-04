@@ -3,12 +3,12 @@ import { Edge, Node, ReactFlowInstance } from '@xyflow/react';
 import { NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { CONFIG_SCHEMAS } from '@/components/pipeline/nodes/nodeConfigPanel/nodeConfigRegistry';
-import { usePipelineContext } from '@/contexts/PipelineContext';
+import { usePipelineActions } from '@/contexts/PipelineContext';
 import { getTemplate } from '@/components/pipeline/nodes/template/pipelineTemplates';
 
 export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
     const [isDragOver, setIsDragOver] = useState(false);
-    const { setNodes, setEdges, triggerAutoSave, handleNodeAdded } = usePipelineContext();
+    const { setNodes, setEdges, triggerAutoSave, handleNodeAdded } = usePipelineActions();
 
     const onDragOver = useCallback((event: React.DragEvent) => {
         event.preventDefault();
