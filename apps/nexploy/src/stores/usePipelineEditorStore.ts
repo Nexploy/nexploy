@@ -6,21 +6,18 @@ interface PipelineEditorStore {
     selectedNodeIds: string[];
     saveVersion: number;
     activeBuildId: string | null;
-    builds: Array<{ id: string; [key: string]: unknown }>;
     nodeStatuses: Record<string, NodeRunStatus>;
     hoveredEdgeId: string | null;
     setPanelNodeId: (updater: string | null | ((prev: string | null) => string | null)) => void;
     setSelectedNodeIds: (updater: string[] | ((prev: string[]) => string[])) => void;
     setSaveVersion: (updater: number | ((prev: number) => number)) => void;
     setActiveBuildId: (id: string | null) => void;
-    setBuilds: (builds: Array<{ id: string; [key: string]: unknown }>) => void;
     setNodeStatuses: (
         updater:
             | Record<string, NodeRunStatus>
             | ((prev: Record<string, NodeRunStatus>) => Record<string, NodeRunStatus>),
     ) => void;
     setHoveredEdgeId: (id: string | null) => void;
-    activeBuild: { id: string; [key: string]: unknown } | undefined;
     reset: () => void;
 }
 
@@ -50,15 +47,10 @@ export const usePipelineEditorStore = create<PipelineEditorStore>((set, get) => 
             saveVersion: typeof updater === 'function' ? updater(s.saveVersion) : updater,
         })),
     setActiveBuildId: (activeBuildId) => set({ activeBuildId }),
-    setBuilds: (builds) => set({ builds }),
     setHoveredEdgeId: (hoveredEdgeId) => set({ hoveredEdgeId }),
     setNodeStatuses: (updater) =>
         set((s) => ({
             nodeStatuses: typeof updater === 'function' ? updater(s.nodeStatuses) : updater,
         })),
-    get activeBuild() {
-        const { builds, activeBuildId } = get();
-        return builds.find((b) => b.id === activeBuildId);
-    },
     reset: () => set(INITIAL_STATE),
 }));

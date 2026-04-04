@@ -407,8 +407,8 @@
                 "description": "Deploy a Docker container from the built image"
             },
             "write-env-file": {
-                "name": "Write Env File",
-                "description": "Write environment variables to .env file"
+                "name": "Repository Environment Variables",
+                "description": "Write repository environment variables to .env file"
             },
             "send-notification": {
                 "name": "Send Notification",
@@ -601,7 +601,7 @@
             "dockerfilePath": "Dockerfile Path",
             "dockerfileFilePath": "File Path",
             "dockerfileFilePathPlaceholder": "Leave empty for repository root",
-            "useRepositoryEnvVars": "Use repository environment variables",
+            "envVarsInfo": "This node writes all repository environment variables to a .env file in the working directory.",
             "script": "Script",
             "failOnError": "Fail on error",
             "webhookUrl": "Webhook URL",

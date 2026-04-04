@@ -21,12 +21,7 @@ export class WriteEnvFileExecutor implements INodeExecutor {
             );
         }
 
-        const useRepositoryEnvVars =
-            (ctx.nodeConfig.useRepositoryEnvVars as boolean | undefined) !== false;
-
-        const envVariables: Record<string, string> = useRepositoryEnvVars
-            ? config.envVariables
-            : {};
+        const envVariables: Record<string, string> = config.envVariables;
 
         const envCount = Object.keys(envVariables).length;
 

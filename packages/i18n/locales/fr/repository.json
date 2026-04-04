@@ -406,8 +406,8 @@
                 "description": "Déployer un conteneur Docker depuis l'image construite"
             },
             "write-env-file": {
-                "name": "Écrire le fichier .env",
-                "description": "Écrire les variables d'environnement dans le fichier .env"
+                "name": "Variables d'environnement du dépôt",
+                "description": "Écrire les variables d'environnement du dépôt dans le fichier .env"
             },
             "send-notification": {
                 "name": "Envoyer une notification",
@@ -600,7 +600,7 @@
             "dockerfilePath": "Chemin du Dockerfile",
             "dockerfileFilePath": "Chemin du fichier",
             "dockerfileFilePathPlaceholder": "Laisser vide pour la racine du dépôt",
-            "useRepositoryEnvVars": "Utiliser les variables d'environnement du dépôt",
+            "envVarsInfo": "Ce nœud écrit toutes les variables d'environnement du dépôt dans un fichier .env dans le répertoire de travail.",
             "script": "Script",
             "failOnError": "Échouer en cas d'erreur",
             "webhookUrl": "URL du webhook",

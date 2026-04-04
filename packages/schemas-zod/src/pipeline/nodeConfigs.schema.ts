@@ -39,9 +39,7 @@ export const deployContainerConfigSchema = z.object({
         .default([]),
 });
 
-export const writeEnvFileConfigSchema = z.object({
-    useRepositoryEnvVars: z.boolean().default(true),
-});
+export const writeEnvFileConfigSchema = z.object({});
 
 export const varEntrySchema = z.object({
     id: z.string(),
