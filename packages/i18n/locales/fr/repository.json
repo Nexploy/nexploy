@@ -589,6 +589,7 @@
             "cloneBranch": "Branche",
             "cloneBranchDescription": "Remplacer la branche par défaut des paramètres du dépôt",
             "branchDefault": "Branche par défaut",
+            "repoLoading": "Chargement du dépôt...",
             "branchLoading": "Chargement des branches...",
             "cloneCommitHash": "Hash du commit",
             "cloneCommitHashPlaceholder": "ex. abc1234",

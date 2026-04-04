@@ -41,7 +41,7 @@ export function CloneRepositoryConfig() {
     const form = useFormContext();
     const params = useParams<{ repositoryId: string }>();
 
-    const { data: repo } = useSWR<RepositoryGitMeta>(
+    const { data: repo, isLoading: isLoadingRepo } = useSWR<RepositoryGitMeta>(
         `/api/repositories/${params.repositoryId}`,
         fetcherApi,
     );
@@ -70,11 +70,15 @@ export function CloneRepositoryConfig() {
                         <Select
                             value={field.value ?? ''}
                             onValueChange={field.onChange}
-                            disabled={isLoadingBranches || !repo}
+                            disabled={isLoadingRepo || isLoadingBranches || !repo}
                         >
                             <FormControl>
                                 <SelectTrigger>
-                                    {isLoadingBranches ? (
+                                    {isLoadingRepo ? (
+                                        <span className="text-muted-foreground">
+                                            {t('repoLoading')}
+                                        </span>
+                                    ) : isLoadingBranches ? (
                                         <span className="text-muted-foreground">
                                             {t('branchLoading')}
                                         </span>

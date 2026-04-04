@@ -590,6 +590,7 @@
             "cloneBranch": "Branch",
             "cloneBranchDescription": "Override the default branch from repository settings",
             "branchDefault": "Default branch",
+            "repoLoading": "Loading repository...",
             "branchLoading": "Loading branches...",
             "cloneCommitHash": "Commit Hash",
             "cloneCommitHashPlaceholder": "e.g. abc1234",

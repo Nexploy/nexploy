@@ -28,7 +28,7 @@ export function BuildsPanel() {
         <div className="absolute z-10">
             <ScrollAreaWithShadow
                 bottomShadow
-                className="h-[100px] transition-all duration-300 hover:h-[250px]"
+                className="h-[100px] transition-[height] duration-200 hover:h-[250px]"
             >
                 <div className={'m-2 flex flex-col gap-1'}>
                     {builds.map((build, index) => (

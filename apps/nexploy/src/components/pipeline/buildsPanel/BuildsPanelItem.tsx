@@ -97,7 +97,7 @@ export function BuildsPanelItem({
             variant={isSelected ? 'default' : 'secondary'}
             size="sm"
             onClick={() => onSelect(isSelected ? null : build.id)}
-            className="h-auto flex-col items-start gap-0.5 px-2.5 py-1.5"
+            className="h-auto flex-col items-start gap-0.5 px-2.5 py-1.5 duration-0"
         >
             <div className="flex w-full items-center gap-1">
                 <StatusLive

@@ -1,6 +1,14 @@
 'use client';
 
-import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useRef, } from 'react';
+import {
+    createContext,
+    type ReactNode,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useRef,
+} from 'react';
 import useSWR from 'swr';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { fetcherApi } from '@/lib/api/fetcherApi';
@@ -286,6 +294,10 @@ export function PipelineProvider({
         }
         savePipeline({ repositoryId, graph: flowToGraph(nodes, edges) });
     }, [saveVersion, nodes, edges]);
+
+    useEffect(() => {
+        fitView({ padding: 0.3 });
+    }, [activeBuildId]);
 
     useEffect(() => {
         return () => {
