@@ -103,8 +103,8 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                         color: 'var(--color-cpuPercent)',
                     },
                 ],
-                formatValue: (value: ValueType) => {
-                    const numValue = typeof value === 'number' ? value : parseFloat(String(value));
+                formatValue: (value?: ValueType) => {
+                    const numValue = parseFloat(String(value));
                     return `${numValue.toFixed(3)}%`;
                 },
             },
@@ -125,8 +125,8 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                         color: 'var(--color-memoryUsage)',
                     },
                 ],
-                formatValue: (value: ValueType) => {
-                    const numValue = typeof value === 'number' ? value : parseFloat(String(value));
+                formatValue: (value?: ValueType) => {
+                    const numValue = parseFloat(String(value));
                     return formatBytes(numValue);
                 },
             },
@@ -157,8 +157,8 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                         color: 'var(--color-networkTx)',
                     },
                 ],
-                formatValue: (value: ValueType) => {
-                    const numValue = typeof value === 'number' ? value : parseFloat(String(value));
+                formatValue: (value?: ValueType) => {
+                    const numValue = parseFloat(String(value));
                     return formatBytes(numValue);
                 },
             },
@@ -189,8 +189,8 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                         color: 'var(--color-blockWrite)',
                     },
                 ],
-                formatValue: (value: ValueType) => {
-                    const numValue = typeof value === 'number' ? value : parseFloat(String(value));
+                formatValue: (value?: ValueType) => {
+                    const numValue = parseFloat(String(value));
                     return formatBytes(numValue);
                 },
             },
@@ -221,6 +221,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                 <DialogContent
                     showCloseButton={false}
                     onOpenAutoFocus={(e) => e.preventDefault()}
+                    aria-describedby={undefined}
                     className="gap-0 overflow-x-visible overflow-y-hidden p-0 sm:max-w-5/6"
                 >
                     <SSEProvider
