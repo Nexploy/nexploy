@@ -37,5 +37,8 @@
     "deleteEnvironmentConfirm": "Êtes-vous sûr de vouloir supprimer \"{name}\" ? Cette action est irréversible.",
     "noEnvironment": "Aucun environnement",
     "edit": "Modifier",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "updateAvailable": "Mise à jour disponible",
+    "updateDescription": "La version {version} est disponible.",
+    "update": "Mettre à jour"
 }

@@ -37,5 +37,8 @@
     "deleteEnvironmentConfirm": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
     "noEnvironment": "No environment",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "updateAvailable": "Update available",
+    "updateDescription": "Version {version} is available.",
+    "update": "Update"
 }

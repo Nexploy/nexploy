@@ -406,7 +406,7 @@
                 "description": "Déployer un conteneur Docker depuis l'image construite"
             },
             "write-env-file": {
-                "name": "Variables d'environnement du dépôt",
+                "name": "Variables d'environnement",
                 "description": "Écrire les variables d'environnement du dépôt dans le fichier .env"
             },
             "send-notification": {

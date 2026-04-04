@@ -9,6 +9,7 @@ import { AccountMenu } from '@/components/sidebar/AccountMenu';
 import { NexployLogo } from '@/components/sidebar/NexployLogo';
 import { SidebarNav } from '@/components/sidebar/SidebarNav';
 import { Environment } from '@/components/sidebar/environment/Environment';
+import { UpdateBanner } from '@/components/sidebar/UpdateBanner';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset';
@@ -41,6 +42,7 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
                 <SidebarNav />
             </SidebarContent>
             <SidebarFooter>
+                <UpdateBanner />
                 <AccountMenu />
             </SidebarFooter>
         </Sidebar>

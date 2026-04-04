@@ -407,7 +407,7 @@
                 "description": "Deploy a Docker container from the built image"
             },
             "write-env-file": {
-                "name": "Repository Environment Variables",
+                "name": "Environment Variables",
                 "description": "Write repository environment variables to .env file"
             },
             "send-notification": {
