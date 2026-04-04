@@ -24,21 +24,15 @@ function outputHandleIdx(
     return idx >= 0 ? idx : 0;
 }
 
-/**
- * Spreads nodes vertically so none overlap, keeping them as close as possible to
- * their desired Y (barycenter of predecessors). Returns a map of id → top-y.
- */
 function spreadNodes(
     ids: string[],
     desiredCenterY: Map<string, number>,
     effHeights: Map<string, number>,
 ): Map<string, number> {
-    // Sort by desired center Y
     const sorted = [...ids].sort(
         (a, b) => (desiredCenterY.get(a) ?? 0) - (desiredCenterY.get(b) ?? 0),
     );
 
-    // Forward pass: push nodes down to avoid overlaps
     const topY = new Map<string, number>();
     let lastBottom = -Infinity;
     for (const id of sorted) {
@@ -49,7 +43,6 @@ function spreadNodes(
         lastBottom = y + h;
     }
 
-    // Re-center: shift the whole column so its center of mass matches the desired one
     const desiredMean =
         sorted.reduce((s, id) => s + (desiredCenterY.get(id) ?? 0), 0) / sorted.length;
     const actualMean =
@@ -74,13 +67,11 @@ export function useAutoLayout() {
 
         const nodeById = new Map(currentNodes.map((n) => [n.id, n]));
 
-        // Separate attach-nodes from main nodes
         const attachNodeIds = new Set(
             currentNodes.filter((n) => n.type === 'attach-node').map((n) => n.id),
         );
         const mainNodes = currentNodes.filter((n) => !attachNodeIds.has(n.id));
 
-        // Build successor / predecessor maps for main nodes only
         const inDegree = new Map<string, number>();
         const succ = new Map<string, { targetId: string; handleIdx: number }[]>();
         const pred = new Map<string, string[]>();
@@ -101,10 +92,8 @@ export function useAutoLayout() {
             pred.get(edge.target)?.push(edge.source);
         }
 
-        // Sort successor lists by handle index (preserves true/false order, etc.)
         for (const [, list] of succ) list.sort((a, b) => a.handleIdx - b.handleIdx);
 
-        // Kahn's BFS — longest-path layer assignment
         const layers = new Map<string, number>();
         const layerOrder = new Map<string, number>();
         const queue: string[] = [];
@@ -140,7 +129,6 @@ export function useAutoLayout() {
             }
         }
 
-        // Group by layer, sorted within each layer by layerOrder
         const layerGroups = new Map<number, string[]>();
         for (const [id, layer] of layers) {
             if (!layerGroups.has(layer)) layerGroups.set(layer, []);
@@ -150,7 +138,6 @@ export function useAutoLayout() {
             ids.sort((a, b) => (layerOrder.get(a) ?? 0) - (layerOrder.get(b) ?? 0));
         }
 
-        // Compute column x positions using measured widths
         const maxLayerCount = Math.max(0, ...layerGroups.keys()) + 1;
         const columnX: number[] = [];
         let curX = 0;
@@ -163,7 +150,6 @@ export function useAutoLayout() {
             curX += maxW + H_GAP;
         }
 
-        // Build effective-height map
         const effHeights = new Map<string, number>();
         for (const node of mainNodes) {
             effHeights.set(
@@ -172,7 +158,6 @@ export function useAutoLayout() {
             );
         }
 
-        // Position main nodes layer by layer using barycenter heuristic
         const positionMap = new Map<string, { x: number; y: number }>();
 
         const sortedLayers = [...layerGroups.keys()].sort((a, b) => a - b);
@@ -181,7 +166,6 @@ export function useAutoLayout() {
             const x = columnX[layer] ?? 0;
 
             if (layer === 0) {
-                // Source nodes: distribute evenly, centered at Y=0
                 const totalH =
                     ids.reduce((s, id) => s + (effHeights.get(id) ?? FALLBACK_SIZE), 0) +
                     (ids.length - 1) * V_GAP;
@@ -192,7 +176,6 @@ export function useAutoLayout() {
                     y += h + V_GAP;
                 }
             } else {
-                // Desired center Y = mean center Y of predecessors
                 const desiredCenterY = new Map<string, number>();
                 for (const id of ids) {
                     const preds = pred.get(id) ?? [];
@@ -216,7 +199,6 @@ export function useAutoLayout() {
             }
         }
 
-        // Position attach-nodes relative to their parent
         for (const edge of currentEdges) {
             if (!attachNodeIds.has(edge.target)) continue;
             const parent = nodeById.get(edge.source);
@@ -260,7 +242,6 @@ export function useAutoLayout() {
             positionMap.set(edge.target, { x: ax, y: ay });
         }
 
-        // Fallback: keep position for orphaned attach-nodes
         for (const id of attachNodeIds) {
             if (!positionMap.has(id)) {
                 const node = nodeById.get(id);

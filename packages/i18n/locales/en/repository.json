@@ -142,7 +142,8 @@
             "download": "Download",
             "auto": "Auto",
             "manual": "Manual",
-            "noLogs": "No logs available"
+            "noLogs": "No logs available",
+            "loading": "Loading logs..."
         }
     },
     "swarmConfig": {

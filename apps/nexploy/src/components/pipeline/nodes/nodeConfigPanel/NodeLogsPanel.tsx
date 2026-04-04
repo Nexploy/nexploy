@@ -28,7 +28,7 @@ export function NodeLogsPanel({ buildId, nodeId, nodeStatus }: NodeLogsPanelProp
 
     const isLive = nodeStatus === 'running';
 
-    const { data: initialLogs = [] } = useSWR<BuildLogEntry[]>(
+    const { data: initialLogs = [], isLoading } = useSWR<BuildLogEntry[]>(
         `/api/repositories/${params.repositoryId}/builds/${buildId}/nodes/${nodeId}/logs`,
         fetcherApi,
     );
@@ -81,8 +81,12 @@ export function NodeLogsPanel({ buildId, nodeId, nodeStatus }: NodeLogsPanelProp
                 bottomShadow
                 className="h-full font-mono text-xs"
             >
-                {logs.length === 0 ? (
-                    <div className="text-muted-foreground flex flex-1 items-center justify-center py-8">
+                {isLoading ? (
+                    <div className="text-muted-foreground flex flex-1 items-center justify-center py-4">
+                        {t('loading')}
+                    </div>
+                ) : logs.length === 0 ? (
+                    <div className="text-muted-foreground flex flex-1 items-center justify-center py-4">
                         {t('noLogs')}
                     </div>
                 ) : (

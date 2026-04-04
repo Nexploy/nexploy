@@ -142,7 +142,8 @@
             "download": "Télécharger",
             "auto": "Auto",
             "manual": "Manuel",
-            "noLogs": "Aucun log disponible"
+            "noLogs": "Aucun log disponible",
+            "loading": "Chargement des logs..."
         }
     },
     "swarmConfig": {
