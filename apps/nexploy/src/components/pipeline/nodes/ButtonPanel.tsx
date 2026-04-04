@@ -1,3 +1,4 @@
+import { Panel } from '@xyflow/react';
 import { FlaskConical, Plus, Workflow } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { usePipelinePanelStore } from '@/stores/usePipelinePanelStore';
@@ -8,7 +9,7 @@ export function ButtonPanel() {
     const { activePanel, togglePanel } = usePipelinePanelStore();
 
     return (
-        <div className="absolute top-2 right-2 z-10 flex flex-col items-center gap-1.5">
+        <Panel position="top-right" className="!m-2 flex flex-col items-center gap-1.5">
             <Button
                 variant={activePanel === 'palette' ? 'default' : 'secondary'}
                 size="icon"
@@ -40,6 +41,6 @@ export function ButtonPanel() {
                     <FlaskConical />
                 </Button>
             )}
-        </div>
+        </Panel>
     );
 }

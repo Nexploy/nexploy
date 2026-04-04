@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { useEffect } from 'react';
 import { useLocale } from 'next-intl';
+import { Panel } from '@xyflow/react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { BuildsPanelItem } from '@/components/pipeline/buildsPanel/BuildsPanelItem';
@@ -25,7 +26,7 @@ export function BuildsPanel() {
     if (builds.length === 0) return null;
 
     return (
-        <div className="absolute z-10">
+        <Panel position="top-left" className="!m-0">
             <ScrollAreaWithShadow
                 bottomShadow
                 className="h-[100px] transition-[height] duration-200 hover:h-[250px]"
@@ -44,6 +45,6 @@ export function BuildsPanel() {
                     ))}
                 </div>
             </ScrollAreaWithShadow>
-        </div>
+        </Panel>
     );
 }

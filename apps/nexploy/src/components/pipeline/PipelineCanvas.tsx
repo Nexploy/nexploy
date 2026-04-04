@@ -204,19 +204,11 @@ export function PipelineCanvas() {
             data-panning={isSpaceHeld}
             data-viewing={isViewingBuild}
             onContextMenu={(e) => e.preventDefault()}
-            className={cn('relative flex-1 transition-all')}
+            className={cn('relative flex-1 transition-all outline-none')}
             onDragOver={onDragOver}
             onDragLeave={onDragLeave}
             onDrop={onDrop}
         >
-            <BuildsPanel />
-            {isViewingBuild && activeBuildNumber !== null && (
-                <BuildPreviewBanner
-                    buildNumber={activeBuildNumber}
-                    onExit={() => setActiveBuildId(null)}
-                />
-            )}
-            <ButtonPanel />
             <ReactFlow
                 nodes={displayNodes}
                 edges={displayEdges}
@@ -264,6 +256,14 @@ export function PipelineCanvas() {
                     size={1.5}
                     color="var(--base-6)"
                 />
+                <BuildsPanel />
+                <ButtonPanel />
+                {isViewingBuild && activeBuildNumber !== null && (
+                    <BuildPreviewBanner
+                        buildNumber={activeBuildNumber}
+                        onExit={() => setActiveBuildId(null)}
+                    />
+                )}
                 {displayNodes.length > 0 && (
                     <Panel className={'!m-2'} position="bottom-left">
                         <div className="flex gap-1.5">
