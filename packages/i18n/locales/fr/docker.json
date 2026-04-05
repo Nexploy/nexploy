@@ -688,6 +688,11 @@
             "n8n": "Plateforme d'automatisation de workflows"
         }
     },
+    "networkScope": {
+        "scope": "Scope",
+        "selectScope": "Sélectionner un scope",
+        "scopeDescription": "La portée du réseau (local, global ou swarm)"
+    },
     "networkDriver": {
         "driver": "Driver",
         "selectDriver": "Sélectionner un driver",
@@ -707,9 +712,6 @@
         "networkNameDescription": "Un nom unique pour identifier le réseau (ex: app-network, backend-net)",
         "checkDuplicate": "Vérifier les doublons",
         "checkDuplicateDescription": "Vérifie si un réseau avec le même nom existe déjà",
-        "scope": "Scope",
-        "selectScope": "Sélectionner un scope",
-        "scopeDescription": "La portée du réseau (local, global ou swarm)",
         "enableIPv4": "Activer IPv4",
         "enableIPv4Description": "Active le support du protocole IPv4",
         "enableIPv6": "Activer IPv6",

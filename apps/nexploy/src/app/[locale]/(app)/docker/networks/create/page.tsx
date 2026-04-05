@@ -3,52 +3,22 @@
 import { useRouter } from 'next/navigation';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowLeft, Network, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Network, Plus } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
-import { NetworkDriverSelect } from '@/components/docker/network/NetworkDriverSelect';
+import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { onNetworkCreateAction } from '@/actions/docker/network/networkCreate.action';
 import { toast } from 'sonner';
 import { networkCreateSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';
-import { useIpamConfig } from '@/hooks/useIpamConfig';
-import { useKeyValueState } from '@/hooks/useKeyValueState';
-import { CheckboxField } from '@/components/forms/CheckboxField';
-import { Separator } from '@workspace/ui/components/separator';
 import { AdvancedConfig } from '@/components/docker/network/create/AdvancedConfig';
+import { NetworkBasicConfig } from '@/components/docker/network/create/NetworkBasicConfig';
+import { NetworkIpamConfig } from '@/components/docker/network/create/NetworkIpamConfig';
+import { NetworkConfigFromExisting } from '@/components/docker/network/create/NetworkConfigFromExisting';
 import { useTranslations } from 'next-intl';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
-
-const NETWORK_SCOPES = ['local', 'global', 'swarm'] as const;
 
 export default function CreateNetworkPage() {
     const t = useTranslations('docker.createNetworkPage');
-    const tScopes = useTranslations('docker.scopes');
     const router = useRouter();
-    const auxAddressState = useKeyValueState();
-    const ipamConfig = useIpamConfig();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onNetworkCreateAction,
@@ -81,23 +51,6 @@ export default function CreateNetworkPage() {
     );
 
     const isSubmitting = action.status === 'executing';
-
-    const handleAddIpamConfig = () => {
-        if (auxAddressState.key.trim() && auxAddressState.value.trim()) {
-            ipamConfig.addAuxAddress(auxAddressState.key, auxAddressState.value);
-            auxAddressState.reset();
-        }
-
-        const newConfigs = ipamConfig.addConfig();
-        if (newConfigs) {
-            form.setValue('ipam.config', newConfigs);
-        }
-    };
-
-    const handleRemoveIpamConfig = (index: number) => {
-        const newConfigs = ipamConfig.removeConfig(index);
-        form.setValue('ipam.config', newConfigs);
-    };
 
     return (
         <div className="flex h-full flex-1 flex-col gap-4 pt-5">
@@ -137,306 +90,10 @@ export default function CreateNetworkPage() {
 
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
                         <div className="space-y-4 overflow-hidden px-5 pb-5">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>{t('basicConfig')}</CardTitle>
-                                    <CardDescription>{t('configureParams')}</CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <FormField
-                                        control={form.control}
-                                        name="name"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>{t('networkName')}</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        placeholder={t('networkNamePlaceholder')}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                                <FormDescription>
-                                                    {t('networkNameDescription')}
-                                                </FormDescription>
-                                            </FormItem>
-                                        )}
-                                    />
-
-                                    <CheckboxField
-                                        control={form.control}
-                                        name="checkDuplicate"
-                                        label={t('checkDuplicate')}
-                                        description={t('checkDuplicateDescription')}
-                                    />
-
-                                    <NetworkDriverSelect />
-
-                                    <FormField
-                                        control={form.control}
-                                        name="scope"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>{t('scope')}</FormLabel>
-                                                <Select
-                                                    onValueChange={field.onChange}
-                                                    defaultValue={field.value}
-                                                >
-                                                    <FormControl>
-                                                        <SelectTrigger className="min-w-30">
-                                                            <SelectValue
-                                                                placeholder={t('selectScope')}
-                                                            />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        {NETWORK_SCOPES.map((scope) => (
-                                                            <SelectItem key={scope} value={scope}>
-                                                                {tScopes(scope)}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                                <FormDescription>
-                                                    {t('scopeDescription')}
-                                                </FormDescription>
-                                            </FormItem>
-                                        )}
-                                    />
-
-                                    <div className="space-y-4 pt-2">
-                                        <CheckboxField
-                                            control={form.control}
-                                            name="enableIPv4"
-                                            label={t('enableIPv4')}
-                                            description={t('enableIPv4Description')}
-                                        />
-                                        <CheckboxField
-                                            control={form.control}
-                                            name="enableIPv6"
-                                            label={t('enableIPv6')}
-                                            description={t('enableIPv6Description')}
-                                        />
-                                        <CheckboxField
-                                            control={form.control}
-                                            name="internal"
-                                            label={t('internalNetwork')}
-                                            description={t('internalNetworkDescription')}
-                                        />
-                                        <CheckboxField
-                                            control={form.control}
-                                            name="attachable"
-                                            label={t('attachable')}
-                                            description={t('attachableDescription')}
-                                        />
-                                        <CheckboxField
-                                            control={form.control}
-                                            name="ingress"
-                                            label={t('ingress')}
-                                            description={t('ingressDescription')}
-                                        />
-                                        <CheckboxField
-                                            control={form.control}
-                                            name="configOnly"
-                                            label={t('configOnly')}
-                                            description={t('configOnlyDescription')}
-                                        />
-                                    </div>
-                                </CardContent>
-                            </Card>
-
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>{t('ipamConfig')}</CardTitle>
-                                    <CardDescription>{t('ipamConfigDescription')}</CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <FormField
-                                        control={form.control}
-                                        name="ipam.driver"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>{t('ipamDriver')}</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        value={field.value ?? ''}
-                                                        placeholder="default"
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                                <FormDescription>
-                                                    {t('ipamDriverDescription')}
-                                                </FormDescription>
-                                            </FormItem>
-                                        )}
-                                    />
-
-                                    <div className="space-y-4">
-                                        <FormLabel>{t('ipConfigurations')}</FormLabel>
-                                        <FormDescription>
-                                            {t('ipConfigurationsDescription')}
-                                        </FormDescription>
-
-                                        <div className="space-y-8">
-                                            <div className="flex flex-1 gap-2">
-                                                <Input
-                                                    placeholder={t('subnetPlaceholder')}
-                                                    value={ipamConfig.subnet}
-                                                    onChange={(e) =>
-                                                        ipamConfig.setSubnet(e.target.value)
-                                                    }
-                                                />
-                                                <Input
-                                                    placeholder={t('ipRangePlaceholder')}
-                                                    value={ipamConfig.ipRange}
-                                                    onChange={(e) =>
-                                                        ipamConfig.setIpRange(e.target.value)
-                                                    }
-                                                />
-                                                <Input
-                                                    placeholder={t('gatewayPlaceholder')}
-                                                    value={ipamConfig.gateway}
-                                                    onChange={(e) =>
-                                                        ipamConfig.setGateway(e.target.value)
-                                                    }
-                                                />
-
-                                                <Button
-                                                    type="button"
-                                                    size={'icon'}
-                                                    disabled={
-                                                        !(
-                                                            ipamConfig.gateway &&
-                                                            ipamConfig.ipRange &&
-                                                            ipamConfig.subnet
-                                                        )
-                                                    }
-                                                    variant="outline"
-                                                    icon={Plus}
-                                                    onClick={handleAddIpamConfig}
-                                                ></Button>
-                                            </div>
-                                        </div>
-
-                                        {ipamConfig.configs.map((config, index) => (
-                                            <div
-                                                key={index}
-                                                className="bg-card rounded-lg border p-4 shadow-sm"
-                                            >
-                                                <div className="flex justify-between">
-                                                    <span className="text-base leading-none font-semibold">
-                                                        {t('configuration')} {index + 1}
-                                                    </span>
-                                                    <Button
-                                                        type="button"
-                                                        variant="destructive"
-                                                        size="icon"
-                                                        icon={Trash2}
-                                                        onClick={() =>
-                                                            handleRemoveIpamConfig(index)
-                                                        }
-                                                    />
-                                                </div>
-
-                                                <div className="flex flex-col gap-2">
-                                                    {config.subnet && (
-                                                        <div className="flex items-start gap-2">
-                                                            <span className="text-muted-foreground min-w-[120px] text-sm font-medium">
-                                                                {t('subnet')}
-                                                            </span>
-                                                            <code className="bg-muted rounded px-2 py-0.5 font-mono text-sm">
-                                                                {config.subnet}
-                                                            </code>
-                                                        </div>
-                                                    )}
-                                                    <Separator />
-                                                    {config.ipRange && (
-                                                        <div className="flex items-start gap-2">
-                                                            <span className="text-muted-foreground min-w-[120px] text-sm font-medium">
-                                                                {t('ipRange')}
-                                                            </span>
-                                                            <code className="bg-muted rounded px-2 py-0.5 font-mono text-sm">
-                                                                {config.ipRange}
-                                                            </code>
-                                                        </div>
-                                                    )}
-                                                    <Separator />
-                                                    {config.gateway && (
-                                                        <div className="flex items-start gap-2">
-                                                            <span className="text-muted-foreground min-w-[120px] text-sm font-medium">
-                                                                {t('gateway')}
-                                                            </span>
-                                                            <code className="bg-muted rounded px-2 py-0.5 font-mono text-sm">
-                                                                {config.gateway}
-                                                            </code>
-                                                        </div>
-                                                    )}
-                                                    {config.auxAddress &&
-                                                        Object.keys(config.auxAddress).length >
-                                                            0 && (
-                                                            <div className="border-t pt-2">
-                                                                <p className="mb-2 text-sm font-medium">
-                                                                    {t('auxAddresses')}
-                                                                </p>
-                                                                <div className="space-y-1.5 pl-4">
-                                                                    {Object.entries(
-                                                                        config.auxAddress,
-                                                                    ).map(([k, v]) => (
-                                                                        <div
-                                                                            key={k}
-                                                                            className="flex items-center gap-2"
-                                                                        >
-                                                                            <span className="text-muted-foreground text-sm">
-                                                                                {k}:
-                                                                            </span>
-                                                                            <code className="bg-muted rounded px-2 py-0.5 font-mono text-sm">
-                                                                                {v}
-                                                                            </code>
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </CardContent>
-                            </Card>
-
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>{t('configFromExisting')}</CardTitle>
-                                    <CardDescription>
-                                        {t('configFromExistingDescription')}
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <FormField
-                                        control={form.control}
-                                        name="configFrom.network"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>{t('sourceNetworkName')}</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        placeholder={t('sourceNetworkPlaceholder')}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                                <FormDescription>
-                                                    {t('sourceNetworkDescription')}
-                                                </FormDescription>
-                                            </FormItem>
-                                        )}
-                                    />
-                                </CardContent>
-                            </Card>
-
-                            <AdvancedConfig form={form} />
+                            <NetworkBasicConfig />
+                            <NetworkIpamConfig />
+                            <NetworkConfigFromExisting />
+                            <AdvancedConfig />
                         </div>
                     </ScrollAreaWithShadow>
                 </form>

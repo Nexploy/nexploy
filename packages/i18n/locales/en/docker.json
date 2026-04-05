@@ -688,6 +688,11 @@
             "n8n": "Workflow automation platform"
         }
     },
+    "networkScope": {
+        "scope": "Scope",
+        "selectScope": "Select a scope",
+        "scopeDescription": "The scope of the network (local, global, or swarm)"
+    },
     "networkDriver": {
         "driver": "Driver",
         "selectDriver": "Select a driver",
@@ -707,9 +712,6 @@
         "networkNameDescription": "A unique name to identify the network (e.g., app-network, backend-net)",
         "checkDuplicate": "Check for duplicates",
         "checkDuplicateDescription": "Check if a network with the same name already exists",
-        "scope": "Scope",
-        "selectScope": "Select a scope",
-        "scopeDescription": "The scope of the network (local, global, or swarm)",
         "enableIPv4": "Enable IPv4",
         "enableIPv4Description": "Enable IPv4 protocol support",
         "enableIPv6": "Enable IPv6",

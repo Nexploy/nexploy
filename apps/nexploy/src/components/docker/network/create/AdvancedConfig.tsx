@@ -1,10 +1,8 @@
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { useFormContext } from 'react-hook-form';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import {
     FormControl,
     FormDescription,
@@ -16,16 +14,10 @@ import {
 import { KeyValueInput, KeyValueList } from '@/components/forms/KeyValue';
 import { Button } from '@workspace/ui/components/button';
 import { useKeyValueState } from '@/hooks/useKeyValueState';
-import { UseFormReturn } from 'react-hook-form';
-import { NetworkCreateForm } from '@workspace/schemas-zod/docker/network/networkAction.schema';
-import { useTranslations } from 'next-intl';
 
-interface AdvancedConfigProps {
-    form: UseFormReturn<NetworkCreateForm>;
-}
-
-export function AdvancedConfig({ form }: AdvancedConfigProps) {
+export function AdvancedConfig() {
     const t = useTranslations('docker.advancedConfig');
+    const form = useFormContext();
     const optionState = useKeyValueState();
     const labelState = useKeyValueState();
 
