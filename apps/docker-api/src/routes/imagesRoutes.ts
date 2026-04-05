@@ -80,7 +80,9 @@ app.post(
             });
         });
 
-        return { imageName };
+        const imageInfo = await docker.getImage(imageName).inspect();
+
+        return { imageName, imageId: imageInfo.Id };
     }),
 );
 

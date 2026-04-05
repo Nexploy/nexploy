@@ -751,6 +751,11 @@
             "none": "Aucune connectivité réseau"
         }
     },
+    "volumeDriver": {
+        "driver": "Driver",
+        "selectDriver": "Sélectionner un driver",
+        "driverDescription": "Le driver de stockage pour ce volume"
+    },
     "createVolumePage": {
         "title": "Nouveau volume",
         "description": "Créer un nouveau volume Docker",
@@ -764,15 +769,14 @@
         "volumeName": "Nom du volume",
         "volumeNamePlaceholder": "mon-volume",
         "volumeNameDescription": "Un nom unique pour identifier le volume (ex: postgres-data, app-logs)",
-        "driver": "Driver",
-        "selectDriver": "Sélectionner un driver",
-        "driverDescription": "Le driver de stockage pour ce volume",
         "driverOptions": "Options du driver",
+        "driverOptionsCardDescription": "Configurez les options de montage et de stockage spécifiques au driver",
         "keyPlaceholder": "Clé (ex: type)",
         "valuePlaceholder": "Valeur (ex: nfs)",
         "optionsAdded": "Options ajoutées :",
         "driverOptionsDescription": "Options spécifiques au driver. Exemples :",
         "labels": "Labels",
+        "labelsCardDescription": "Ajoutez des métadonnées pour organiser et identifier ce volume",
         "labelsAdded": "Labels ajoutés :",
         "labelsDescription": "Métadonnées pour organiser et identifier le volume. Exemples :"
     },

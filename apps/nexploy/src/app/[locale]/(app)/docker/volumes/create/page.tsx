@@ -3,49 +3,21 @@
 import { useRouter } from 'next/navigation';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowLeft, HardDrive, Plus, X } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowLeft, HardDrive, Plus } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
+import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { onVolumeCreateAction } from '@/actions/docker/volume/volumeCreate.action';
 import { toast } from 'sonner';
 import { volumeCreateSchema } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 import { useTranslations } from 'next-intl';
-
-const VOLUME_DRIVERS = ['local', 'nfs', 'cifs'] as const;
+import { VolumeBasicConfig } from '@/components/docker/volume/create/VolumeBasicConfig';
+import { VolumeDriverOptions } from '@/components/docker/volume/create/VolumeDriverOptions';
+import { VolumeLabels } from '@/components/docker/volume/create/VolumeLabels';
 
 export default function CreateVolumePage() {
     const t = useTranslations('docker.createVolumePage');
-    const tDrivers = useTranslations('docker.volumeDrivers');
     const router = useRouter();
-    const [driverOptKey, setDriverOptKey] = useState('');
-    const [driverOptValue, setDriverOptValue] = useState('');
-    const [labelKey, setLabelKey] = useState('');
-    const [labelValue, setLabelValue] = useState('');
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onVolumeCreateAction,
@@ -73,47 +45,11 @@ export default function CreateVolumePage() {
 
     const isSubmitting = action.status === 'executing';
 
-    const addDriverOpt = () => {
-        if (driverOptKey.trim() && driverOptValue.trim()) {
-            const currentOpts = form.getValues('driverOpts') || {};
-            form.setValue('driverOpts', {
-                ...currentOpts,
-                [driverOptKey.trim()]: driverOptValue.trim(),
-            });
-            setDriverOptKey('');
-            setDriverOptValue('');
-        }
-    };
-
-    const removeDriverOpt = (key: string) => {
-        const currentOpts = form.getValues('driverOpts') || {};
-        const { [key]: _, ...rest } = currentOpts;
-        form.setValue('driverOpts', rest);
-    };
-
-    const addLabel = () => {
-        if (labelKey.trim() && labelValue.trim()) {
-            const currentLabels = form.getValues('labels') || {};
-            form.setValue('labels', {
-                ...currentLabels,
-                [labelKey.trim()]: labelValue.trim(),
-            });
-            setLabelKey('');
-            setLabelValue('');
-        }
-    };
-
-    const removeLabel = (key: string) => {
-        const currentLabels = form.getValues('labels') || {};
-        const { [key]: _, ...rest } = currentLabels;
-        form.setValue('labels', rest);
-    };
-
     return (
         <div className="flex h-full flex-1 flex-col pt-5">
             <Form {...form}>
                 <form
-                    className={'flex flex-1 flex-col gap-5 overflow-hidden'}
+                    className="flex flex-1 flex-col gap-5 overflow-hidden"
                     onSubmit={handleSubmitWithAction}
                 >
                     <div className="flex justify-between gap-4 px-5">
@@ -146,305 +82,10 @@ export default function CreateVolumePage() {
                     </div>
 
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
-                        <div className="space-y-4 overflow-hidden px-5 pb-5">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>{t('configuration')}</CardTitle>
-                                    <CardDescription>{t('configureParams')}</CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <FormField
-                                        control={form.control}
-                                        name="name"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>{t('volumeName')}</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        placeholder={t('volumeNamePlaceholder')}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                                <FormDescription>
-                                                    {t('volumeNameDescription')}
-                                                </FormDescription>
-                                            </FormItem>
-                                        )}
-                                    />
-
-                                    <FormField
-                                        control={form.control}
-                                        name="driver"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>{t('driver')}</FormLabel>
-                                                <Select
-                                                    onValueChange={field.onChange}
-                                                    defaultValue={field.value}
-                                                >
-                                                    <FormControl>
-                                                        <SelectTrigger className={'min-w-30'}>
-                                                            <SelectValue
-                                                                placeholder={t('selectDriver')}
-                                                            />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        {VOLUME_DRIVERS.map((driver) => (
-                                                            <SelectItem key={driver} value={driver}>
-                                                                {tDrivers(driver)}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                                <FormDescription>
-                                                    {t('driverDescription')}
-                                                </FormDescription>
-                                            </FormItem>
-                                        )}
-                                    />
-
-                                    <FormField
-                                        control={form.control}
-                                        name="driverOpts"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>{t('driverOptions')}</FormLabel>
-                                                <FormControl>
-                                                    <div className="space-y-3">
-                                                        <div className="flex gap-2">
-                                                            <Input
-                                                                placeholder={t('keyPlaceholder')}
-                                                                value={driverOptKey}
-                                                                onChange={(e) =>
-                                                                    setDriverOptKey(e.target.value)
-                                                                }
-                                                                onKeyDown={(e) => {
-                                                                    if (e.key === 'Enter') {
-                                                                        e.preventDefault();
-                                                                        addDriverOpt();
-                                                                    }
-                                                                }}
-                                                                className="flex-1"
-                                                            />
-                                                            <Input
-                                                                placeholder={t('valuePlaceholder')}
-                                                                value={driverOptValue}
-                                                                onChange={(e) =>
-                                                                    setDriverOptValue(
-                                                                        e.target.value,
-                                                                    )
-                                                                }
-                                                                onKeyDown={(e) => {
-                                                                    if (e.key === 'Enter') {
-                                                                        e.preventDefault();
-                                                                        addDriverOpt();
-                                                                    }
-                                                                }}
-                                                                className="flex-1"
-                                                            />
-                                                            <Button
-                                                                type="button"
-                                                                variant="outline"
-                                                                size="icon"
-                                                                onClick={addDriverOpt}
-                                                                disabled={
-                                                                    !driverOptKey.trim() ||
-                                                                    !driverOptValue.trim()
-                                                                }
-                                                            >
-                                                                <Plus className="size-4" />
-                                                            </Button>
-                                                        </div>
-                                                        {field.value &&
-                                                            Object.keys(field.value).length > 0 && (
-                                                                <code className="space-y-2">
-                                                                    <p className="text-sm font-medium">
-                                                                        {t('optionsAdded')}
-                                                                    </p>
-                                                                    <div className="space-y-2">
-                                                                        {Object.entries(
-                                                                            field.value,
-                                                                        ).map(
-                                                                            (
-                                                                                [key, value],
-                                                                                index,
-                                                                            ) => (
-                                                                                <div
-                                                                                    key={index}
-                                                                                    className="bg-muted flex items-center justify-between rounded-md p-1 px-2 transition-colors"
-                                                                                >
-                                                                                    <code className="flex items-center gap-1">
-                                                                                        <code className="bg-background rounded px-2 py-1 font-mono text-sm">
-                                                                                            {key}
-                                                                                        </code>
-                                                                                        <span className="text-muted-foreground">
-                                                                                            =
-                                                                                        </span>
-                                                                                        <code className="bg-background rounded px-2 py-1 font-mono text-sm">
-                                                                                            {value}
-                                                                                        </code>
-                                                                                    </code>
-                                                                                    <Button
-                                                                                        type="button"
-                                                                                        size="icon"
-                                                                                        variant="destructiveGhost"
-                                                                                        onClick={() =>
-                                                                                            removeDriverOpt(
-                                                                                                key,
-                                                                                            )
-                                                                                        }
-                                                                                    >
-                                                                                        <X />
-                                                                                    </Button>
-                                                                                </div>
-                                                                            ),
-                                                                        )}
-                                                                    </div>
-                                                                </code>
-                                                            )}
-                                                    </div>
-                                                </FormControl>
-                                                <FormMessage />
-                                                <FormDescription>
-                                                    {t('driverOptionsDescription')}{' '}
-                                                    <code className="bg-muted rounded px-1 py-0.5 text-xs">
-                                                        type=nfs
-                                                    </code>
-                                                    ,{' '}
-                                                    <code className="bg-muted rounded px-1 py-0.5 text-xs">
-                                                        o=addr=192.168.1.1
-                                                    </code>
-                                                    ,{' '}
-                                                    <code className="bg-muted rounded px-1 py-0.5 text-xs">
-                                                        device=/path/to/dir
-                                                    </code>
-                                                </FormDescription>
-                                            </FormItem>
-                                        )}
-                                    />
-
-                                    <FormField
-                                        control={form.control}
-                                        name="labels"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>{t('labels')}</FormLabel>
-                                                <FormControl>
-                                                    <div className="space-y-3">
-                                                        <div className="flex gap-2">
-                                                            <Input
-                                                                placeholder={t('keyPlaceholder')}
-                                                                value={labelKey}
-                                                                onChange={(e) =>
-                                                                    setLabelKey(e.target.value)
-                                                                }
-                                                                onKeyDown={(e) => {
-                                                                    if (e.key === 'Enter') {
-                                                                        e.preventDefault();
-                                                                        addLabel();
-                                                                    }
-                                                                }}
-                                                                className="flex-1"
-                                                            />
-                                                            <Input
-                                                                placeholder={t('valuePlaceholder')}
-                                                                value={labelValue}
-                                                                onChange={(e) =>
-                                                                    setLabelValue(e.target.value)
-                                                                }
-                                                                onKeyDown={(e) => {
-                                                                    if (e.key === 'Enter') {
-                                                                        e.preventDefault();
-                                                                        addLabel();
-                                                                    }
-                                                                }}
-                                                                className="flex-1"
-                                                            />
-                                                            <Button
-                                                                type="button"
-                                                                variant="outline"
-                                                                size="icon"
-                                                                onClick={addLabel}
-                                                                disabled={
-                                                                    !labelKey.trim() ||
-                                                                    !labelValue.trim()
-                                                                }
-                                                            >
-                                                                <Plus className="size-4" />
-                                                            </Button>
-                                                        </div>
-                                                        {field.value &&
-                                                            Object.keys(field.value).length > 0 && (
-                                                                <div className="space-y-2">
-                                                                    <p className="text-sm font-medium">
-                                                                        {t('labelsAdded')}
-                                                                    </p>
-                                                                    <div className="space-y-2">
-                                                                        {Object.entries(
-                                                                            field.value,
-                                                                        ).map(
-                                                                            (
-                                                                                [key, value],
-                                                                                index,
-                                                                            ) => (
-                                                                                <div
-                                                                                    key={index}
-                                                                                    className="bg-muted flex items-center justify-between rounded-md p-1 px-2 transition-colors"
-                                                                                >
-                                                                                    <code className="flex items-center gap-1">
-                                                                                        <code className="bg-background rounded px-2 py-1 font-mono text-sm">
-                                                                                            {key}
-                                                                                        </code>
-                                                                                        <span className="text-muted-foreground">
-                                                                                            =
-                                                                                        </span>
-                                                                                        <code className="bg-background rounded px-2 py-1 font-mono text-sm">
-                                                                                            {value}
-                                                                                        </code>
-                                                                                    </code>
-                                                                                    <Button
-                                                                                        type="button"
-                                                                                        variant="destructiveGhost"
-                                                                                        size="icon"
-                                                                                        onClick={() =>
-                                                                                            removeLabel(
-                                                                                                key,
-                                                                                            )
-                                                                                        }
-                                                                                    >
-                                                                                        <X />
-                                                                                    </Button>
-                                                                                </div>
-                                                                            ),
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                            )}
-                                                    </div>
-                                                </FormControl>
-                                                <FormMessage />
-                                                <FormDescription>
-                                                    {t('labelsDescription')}{' '}
-                                                    <code className="bg-muted rounded px-1 py-0.5 text-xs">
-                                                        env=production
-                                                    </code>
-                                                    ,{' '}
-                                                    <code className="bg-muted rounded px-1 py-0.5 text-xs">
-                                                        app=backend
-                                                    </code>
-                                                    ,{' '}
-                                                    <code className="bg-muted rounded px-1 py-0.5 text-xs">
-                                                        team=devops
-                                                    </code>
-                                                </FormDescription>
-                                            </FormItem>
-                                        )}
-                                    />
-                                </CardContent>
-                            </Card>
+                        <div className="flex flex-col gap-4 overflow-hidden px-5 pb-5">
+                            <VolumeBasicConfig />
+                            <VolumeDriverOptions />
+                            <VolumeLabels />
                         </div>
                     </ScrollAreaWithShadow>
                 </form>

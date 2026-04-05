@@ -13,7 +13,7 @@ export const onImagePullAction = authActionServer
         try {
             return await kyDocker
                 .post('images/pull', { json: { imageName }, timeout: false })
-                .json<{ imageName: string; id: string; alreadyExists: boolean }>();
+                .json<{ imageName: string; imageId: string }>();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({

@@ -89,7 +89,7 @@ export default function CreateNetworkPage() {
                     </div>
 
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
-                        <div className="space-y-4 overflow-hidden px-5 pb-5">
+                        <div className="flex flex-col gap-4 overflow-hidden px-5 pb-5">
                             <NetworkBasicConfig />
                             <NetworkIpamConfig />
                             <NetworkConfigFromExisting />
