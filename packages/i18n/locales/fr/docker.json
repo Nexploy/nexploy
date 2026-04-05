@@ -688,6 +688,11 @@
             "n8n": "Plateforme d'automatisation de workflows"
         }
     },
+    "networkDriver": {
+        "driver": "Driver",
+        "selectDriver": "Sélectionner un driver",
+        "driverDescription": "Le type de réseau à créer"
+    },
     "createNetworkPage": {
         "title": "Nouveau réseau",
         "description": "Créer un nouveau réseau Docker",
@@ -702,9 +707,6 @@
         "networkNameDescription": "Un nom unique pour identifier le réseau (ex: app-network, backend-net)",
         "checkDuplicate": "Vérifier les doublons",
         "checkDuplicateDescription": "Vérifie si un réseau avec le même nom existe déjà",
-        "driver": "Driver",
-        "selectDriver": "Sélectionner un driver",
-        "driverDescription": "Le type de réseau à créer",
         "scope": "Scope",
         "selectScope": "Sélectionner un scope",
         "scopeDescription": "La portée du réseau (local, global ou swarm)",

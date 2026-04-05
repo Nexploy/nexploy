@@ -10,6 +10,7 @@ import { NexployLogo } from '@/components/sidebar/NexployLogo';
 import { SidebarNav } from '@/components/sidebar/SidebarNav';
 import { Environment } from '@/components/sidebar/environment/Environment';
 import { UpdateBanner } from '@/components/sidebar/UpdateBanner';
+import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset';
@@ -38,8 +39,14 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
                 </Link>
                 <Environment />
             </SidebarHeader>
-            <SidebarContent>
-                <SidebarNav />
+            <SidebarContent className="overflow-hidden">
+                <ScrollAreaWithShadow
+                    bottomShadow
+                    className="h-full"
+                    colorShadow={'from-sidebar via-sidebar/50'}
+                >
+                    <SidebarNav />
+                </ScrollAreaWithShadow>
             </SidebarContent>
             <SidebarFooter>
                 <UpdateBanner />

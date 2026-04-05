@@ -8,8 +8,6 @@ import { SidebarMenu, SidebarMenuItem } from '@workspace/ui/components/sidebar';
 export function UpdateBanner() {
     const t = useTranslations('navigation');
 
-    return null;
-
     return (
         <SidebarMenu className="group-data-[state=collapsed]:hidden">
             <SidebarMenuItem>

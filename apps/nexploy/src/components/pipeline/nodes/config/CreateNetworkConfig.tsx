@@ -10,6 +10,7 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
+import { NetworkDriverSelect } from '@/components/docker/network/NetworkDriverSelect';
 
 export function CreateNetworkConfig() {
     const t = useTranslations('repository.pipeline.config');
@@ -24,33 +25,13 @@ export function CreateNetworkConfig() {
                     <FormItem>
                         <FormLabel>{t('networkName')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder={t('networkNamePlaceholder')}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} placeholder={t('networkNamePlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
                 )}
             />
-            <FormField
-                control={form.control}
-                name="driver"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('networkDriver')}</FormLabel>
-                        <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="bridge"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-            />
+            <NetworkDriverSelect messageClassName="text-xs" />
         </div>
     );
 }

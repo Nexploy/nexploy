@@ -22,13 +22,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@workspace/ui/components/form';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
+import { NetworkDriverSelect } from '@/components/docker/network/NetworkDriverSelect';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { onNetworkCreateAction } from '@/actions/docker/network/networkCreate.action';
 import { toast } from 'sonner';
@@ -39,8 +33,13 @@ import { CheckboxField } from '@/components/forms/CheckboxField';
 import { Separator } from '@workspace/ui/components/separator';
 import { AdvancedConfig } from '@/components/docker/network/create/AdvancedConfig';
 import { useTranslations } from 'next-intl';
-
-const NETWORK_DRIVERS = ['bridge', 'host', 'overlay', 'macvlan', 'none'] as const;
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@workspace/ui/components/select';
 
 const NETWORK_SCOPES = ['local', 'global', 'swarm'] as const;
 
@@ -171,39 +170,7 @@ export default function CreateNetworkPage() {
                                         description={t('checkDuplicateDescription')}
                                     />
 
-                                    <FormField
-                                        control={form.control}
-                                        name="driver"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>{t('driver')}</FormLabel>
-                                                <Select
-                                                    onValueChange={field.onChange}
-                                                    defaultValue={field.value}
-                                                >
-                                                    <FormControl>
-                                                        <SelectTrigger className="min-w-30">
-                                                            <SelectValue
-                                                                placeholder={t('selectDriver')}
-                                                            />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        {NETWORK_DRIVERS.map((driver) => (
-                                                            <SelectItem key={driver} value={driver}>
-                                                                {driver.charAt(0).toUpperCase() +
-                                                                    driver.slice(1)}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                                <FormDescription>
-                                                    {t('driverDescription')}
-                                                </FormDescription>
-                                            </FormItem>
-                                        )}
-                                    />
+                                    <NetworkDriverSelect />
 
                                     <FormField
                                         control={form.control}
