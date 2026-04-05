@@ -1,0 +1,205 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { useFormContext } from 'react-hook-form';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@workspace/ui/components/card';
+import {
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
+import { Input } from '@workspace/ui/components/input';
+import { Label } from '@workspace/ui/components/label';
+import { Switch } from '@workspace/ui/components/switch';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@workspace/ui/components/select';
+import {
+    InputAutoComplete,
+    InputAutoCompleteOption,
+} from '@workspace/ui/components/search-command';
+
+interface ContainerBasicConfigProps {
+    listImages: InputAutoCompleteOption[];
+}
+
+export function ContainerBasicConfig({ listImages }: ContainerBasicConfigProps) {
+    const t = useTranslations('docker.createContainer');
+    const tCommon = useTranslations('common');
+    const form = useFormContext();
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>{t('basicConfig')}</CardTitle>
+                <CardDescription>{t('basicConfigDescription')}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('containerName')}</FormLabel>
+                            <FormControl>
+                                <Input placeholder={t('containerNamePlaceholder')} {...field} />
+                            </FormControl>
+                            <FormDescription>{t('containerNameDescription')}</FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="image"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('dockerImage')}</FormLabel>
+                            <FormControl>
+                                <InputAutoComplete
+                                    options={listImages}
+                                    heading={t('availableImages')}
+                                    autoComplete="off"
+                                    placeholder="postgres:latest"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormDescription>{t('dockerImageDescription')}</FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <div className="grid gap-4 md:grid-cols-2">
+                    <FormField
+                        control={form.control}
+                        name="hostname"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>
+                                    {t('hostname')}{' '}
+                                    <span className="text-muted-foreground text-xs">
+                                        {tCommon('optional')}
+                                    </span>
+                                </FormLabel>
+                                <FormControl>
+                                    <Input placeholder={t('hostnamePlaceholder')} {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="network"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>
+                                    {t('network')}{' '}
+                                    <span className="text-muted-foreground text-xs">
+                                        {tCommon('optional')}
+                                    </span>
+                                </FormLabel>
+                                <FormControl>
+                                    <Input placeholder={t('networkPlaceholder')} {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+
+                <FormField
+                    control={form.control}
+                    name="restart"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('restartPolicy')}</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={t('selectPolicy')} />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectItem value="no">{t('restartNever')}</SelectItem>
+                                    <SelectItem value="always">{t('restartAlways')}</SelectItem>
+                                    <SelectItem value="on-failure">
+                                        {t('restartOnFailure')}
+                                    </SelectItem>
+                                    <SelectItem value="unless-stopped">
+                                        {t('restartUnlessStopped')}
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <div className="space-y-4">
+                    <FormField
+                        control={form.control}
+                        name="autoRemove"
+                        render={({ field }) => (
+                            <FormItem>
+                                <Label className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
+                                    <div className="flex flex-col gap-0.5">
+                                        <span className="text-base">{t('autoRemove')}</span>
+                                        <FormDescription className="m-0">
+                                            {t('autoRemoveDescription')}
+                                        </FormDescription>
+                                    </div>
+                                    <FormControl>
+                                        <Switch
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </Label>
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="privileged"
+                        render={({ field }) => (
+                            <FormItem>
+                                <Label className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
+                                    <div className="flex flex-col gap-0.5">
+                                        <span className="text-base">{t('privilegedMode')}</span>
+                                        <FormDescription className="m-0">
+                                            {t('privilegedModeDescription')}
+                                        </FormDescription>
+                                    </div>
+                                    <FormControl>
+                                        <Switch
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </Label>
+                            </FormItem>
+                        )}
+                    />
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
