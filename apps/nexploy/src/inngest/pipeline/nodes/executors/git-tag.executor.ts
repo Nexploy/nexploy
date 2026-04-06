@@ -52,7 +52,7 @@ export class GitTagExecutor implements INodeExecutor {
         }
 
         await logger.info(nodeId, `Tag "${tagName}" pushed to ${remote}`);
-        return { success: true, output: { tagName, remote } };
+        return { output: { tagName, remote } };
     }
 }
 

@@ -33,7 +33,7 @@ export class WaitForHealthExecutor implements INodeExecutor {
                 const healthStatus = result?.State?.Health?.Status;
                 if (healthStatus === 'healthy') {
                     await logger.info(nodeId, `Container "${containerName}" is healthy`);
-                    return { success: true, output: { containerName, healthy: true } };
+                    return { output: { containerName, healthy: true } };
                 }
 
                 await logger.debug(nodeId, `Health status: ${healthStatus ?? 'unknown'}, retrying in ${interval}s`);

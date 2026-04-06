@@ -18,7 +18,7 @@ export class CacheSaveExecutor implements INodeExecutor {
 
         if (!workDir) {
             await logger.warn(nodeId, 'No workDir found in pipeline outputs — skipping cache save');
-            return { success: true, output: { saved: false }, skipped: true };
+            return { output: { saved: false }, skipped: true };
         }
 
         await logger.info(nodeId, `Saving cache ${sourcePath} → volume "${volumeName}"${cacheKey ? ` (key: ${cacheKey})` : ''}`);
@@ -42,7 +42,6 @@ export class CacheSaveExecutor implements INodeExecutor {
             await logger.info(nodeId, `Cache saved (${result.files ?? 0} files, ${mb} MB)`);
 
             return {
-                success: true,
                 output: {
                     saved: result.saved,
                     files: result.files ?? 0,
@@ -53,7 +52,7 @@ export class CacheSaveExecutor implements INodeExecutor {
         } catch (error) {
             // Cache save failure is non-fatal — log and continue
             await logger.warn(nodeId, `Cache save failed (continuing): ${error instanceof Error ? error.message : 'Unknown error'}`);
-            return { success: true, output: { saved: false, error: true }, skipped: false };
+            return { output: { saved: false, error: true }, skipped: false };
         }
     }
 }

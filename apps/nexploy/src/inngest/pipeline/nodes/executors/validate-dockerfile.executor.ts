@@ -31,7 +31,6 @@ export class ValidateDockerfileExecutor implements INodeExecutor {
             await logger.info(nodeId, `Dockerfile validated: ${dockerfilePath}`);
 
             return {
-                success: true,
                 output: { workDir, dockerfilePath },
             };
         } catch (error) {

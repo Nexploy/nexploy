@@ -20,19 +20,19 @@ export class CleanWorkdirExecutor implements INodeExecutor {
 
         if (!workDir) {
             await logger.info(nodeId, 'No work directory to clean up');
-            return { success: true, output: {}, skipped: true };
+            return { output: {}, skipped: true };
         }
 
         try {
             await gitService.cleanup(workDir);
             await logger.info(nodeId, `Work directory cleaned: ${workDir}`);
-            return { success: true, output: { cleaned: workDir } };
+            return { output: { cleaned: workDir } };
         } catch (error) {
             await logger.warn(
                 nodeId,
                 `Cleanup warning: ${error instanceof Error ? error.message : 'Unknown error'}`,
             );
-            return { success: true, output: { cleaned: workDir } };
+            return { output: { cleaned: workDir } };
         }
     }
 }

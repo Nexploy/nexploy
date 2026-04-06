@@ -45,7 +45,7 @@ export class WaitForPortExecutor implements INodeExecutor {
             const open = await checkPort(host, port, Math.min(interval * 1000, 5000));
             if (open) {
                 await logger.info(nodeId, `Port ${host}:${port} is open`);
-                return { success: true, output: { host, port, open: true } };
+                return { output: { host, port, open: true } };
             }
 
             await logger.debug(nodeId, `Port ${host}:${port} not yet open, retrying in ${interval}s`);

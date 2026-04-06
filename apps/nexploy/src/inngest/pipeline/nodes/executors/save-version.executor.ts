@@ -65,7 +65,6 @@ export class SaveVersionExecutor implements INodeExecutor {
         await logger.info(nodeId, `Version v${versionNumber} saved (tag: ${config.imageTag})`);
 
         return {
-            success: true,
             output: { versionNumber },
         };
     }

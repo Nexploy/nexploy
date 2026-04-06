@@ -27,8 +27,12 @@ export const kyDocker = ky.create({
                 let environmentId = (options as KyDockerOptions).environmentId;
 
                 if (!environmentId) {
-                    const cookieStore = await cookies();
-                    environmentId = cookieStore.get('X-Docker-Environment')?.value;
+                    try {
+                        const cookieStore = await cookies();
+                        environmentId = cookieStore.get('X-Docker-Environment')?.value;
+                    } catch {
+                        /* empty */
+                    }
                 }
 
                 if (environmentId) {

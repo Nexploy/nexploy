@@ -35,7 +35,6 @@ export class UpdateServiceExecutor implements INodeExecutor {
             await logger.info(nodeId, `Service "${serviceName}" updated to ${fullImage}`);
 
             return {
-                success: true,
                 output: { serviceName, image, tag, fullImage },
             };
         } catch (error) {

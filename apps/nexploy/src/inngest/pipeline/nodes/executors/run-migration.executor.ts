@@ -47,7 +47,7 @@ export class RunMigrationExecutor implements INodeExecutor {
             }
 
             await logger.info(nodeId, 'Database migrations completed successfully');
-            return { success: true, output: { exitCode: result.exitCode, migrated: true } };
+            return { output: { exitCode: result.exitCode, migrated: true } };
         } catch (error) {
             throw new Error(`Migration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }

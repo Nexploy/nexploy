@@ -32,16 +32,17 @@ export class CreateNetworkExecutor implements INodeExecutor {
             await logger.info(nodeId, `Network created: ${name}`);
 
             return {
-                success: true,
                 output: { networkId: result.id, networkName: name },
             };
         } catch (error) {
             const msg = error instanceof Error ? error.message.toLowerCase() : '';
             if (msg.includes('already') || msg.includes('existe')) {
                 await logger.info(nodeId, `Network already exists: ${name}`);
-                return { success: true, output: { networkName: name }, skipped: true };
+                return { output: { networkName: name }, skipped: true };
             }
-            throw new Error(`Failed to create network: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            throw new Error(
+                `Failed to create network: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            );
         }
     }
 }

@@ -60,7 +60,7 @@ export class GitCloneExtraExecutor implements INodeExecutor {
         }
 
         await logger.info(nodeId, `Repository cloned to ${targetDir}`);
-        return { success: true, output: { repoUrl, branch, targetDir: cloneDest } };
+        return { output: { repoUrl, branch, targetDir: cloneDest } };
     }
 }
 

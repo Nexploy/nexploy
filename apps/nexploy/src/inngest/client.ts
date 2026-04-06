@@ -1,6 +1,7 @@
 import { EventSchemas, Inngest } from 'inngest';
 import { realtimeMiddleware } from '@inngest/realtime/middleware';
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
+import { BackupScheduleStartEvent } from '@workspace/typescript-interface/aws/backupSchedule';
 
 type Events = {
     'build/start': {
@@ -12,6 +13,12 @@ type Events = {
     'build/cancel': {
         data: {
             buildId: string;
+        };
+    };
+    'backup/schedule.start': { data: BackupScheduleStartEvent };
+    'backup/schedule.cancel': {
+        data: {
+            id: string;
         };
     };
 };

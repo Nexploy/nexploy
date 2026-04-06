@@ -57,6 +57,27 @@
             }
         }
     },
+    "aws": {
+        "title": "Amazon Web Services",
+        "description": "Add AWS accounts to enable S3 backups",
+        "displayName": "Account Name",
+        "displayNamePlaceholder": "e.g. Production, Backup",
+        "accessKeyIdLabel": "Access Key ID",
+        "accessKeyIdPlaceholder": "AKIAIOSFODNN7EXAMPLE",
+        "secretAccessKeyLabel": "Secret Access Key",
+        "secretAccessKeyPlaceholder": "Your AWS secret access key",
+        "regionLabel": "Region",
+        "regionPlaceholder": "us-east-1",
+        "addTitle": "Add AWS Account",
+        "addDescription": "Enter your AWS IAM credentials. The user must have S3 write permissions.",
+        "addAccount": "Add Account",
+        "add": "Add",
+        "addedSuccess": "AWS account added successfully",
+        "addFailed": "Failed to add AWS account",
+        "deletedSuccess": "AWS account removed",
+        "configured": "Configured",
+        "instanceCount": "{count, plural, =0 {No accounts} one {# account} other {# accounts}}"
+    },
     "cloudflare": {
         "title": "Cloudflare",
         "description": "Manage DNS records and tunnels with Cloudflare",

@@ -30,10 +30,8 @@ export interface NodeExecutionContext {
 }
 
 export interface NodeExecutionResult {
-    success: boolean;
     output: NodeOutputData;
     skipped?: boolean;
-    /** Node IDs whose branch should be marked as skipped (set by nodes that control branching) */
     skippedBranchTargets?: string[];
 }
 

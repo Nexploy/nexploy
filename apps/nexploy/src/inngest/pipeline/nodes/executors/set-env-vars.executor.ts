@@ -24,13 +24,12 @@ export class SetEnvVarsExecutor implements INodeExecutor {
 
         if (count === 0) {
             await logger.info(nodeId, 'No variables defined, skipping');
-            return { success: true, output: { vars: {} }, skipped: true };
+            return { output: { vars: {} }, skipped: true };
         }
 
         await logger.info(nodeId, `Injecting ${count} environment variable(s) into the pipeline`);
 
         return {
-            success: true,
             output: { vars },
         };
     }

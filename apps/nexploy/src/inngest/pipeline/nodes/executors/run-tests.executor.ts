@@ -44,7 +44,7 @@ export class RunTestsExecutor implements INodeExecutor {
             }
 
             await logger.info(nodeId, 'Tests passed successfully');
-            return { success: true, output: { exitCode: result.exitCode, testsPassed: true } };
+            return { output: { exitCode: result.exitCode, testsPassed: true } };
         } catch (error) {
             throw new Error(`Test run failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }

@@ -18,7 +18,7 @@ export const setEnvVarsManifest: NodeManifest = {
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         handles: {
-            inputs: [],
+            inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],
             attachments: [],
         },

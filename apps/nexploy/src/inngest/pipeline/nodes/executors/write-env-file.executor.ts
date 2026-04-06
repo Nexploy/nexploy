@@ -5,11 +5,9 @@ import {
     NodeExecutionResult,
 } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
-import { writeEnvFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 export class WriteEnvFileExecutor implements INodeExecutor {
     readonly type = 'write-env-file';
-    readonly configSchema = writeEnvFileConfigSchema;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { config, allOutputs, logger, nodeId } = ctx;
@@ -27,7 +25,7 @@ export class WriteEnvFileExecutor implements INodeExecutor {
 
         if (envCount === 0) {
             await logger.info(nodeId, 'No environment variables to write');
-            return { success: true, output: {}, skipped: true };
+            return { output: {}, skipped: true };
         }
 
         await logger.info(nodeId, `Writing ${envCount} environment variables`);
@@ -35,7 +33,7 @@ export class WriteEnvFileExecutor implements INodeExecutor {
         try {
             await gitService.writeEnvFile(workDir, envVariables);
             await logger.info(nodeId, 'Environment file written successfully');
-            return { success: true, output: {} };
+            return { output: {} };
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Unknown error';
             throw new Error(`Failed to write environment file: ${message}`);

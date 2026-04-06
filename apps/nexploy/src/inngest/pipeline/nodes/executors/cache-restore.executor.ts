@@ -18,7 +18,7 @@ export class CacheRestoreExecutor implements INodeExecutor {
 
         if (!workDir) {
             await logger.warn(nodeId, 'No workDir found in pipeline outputs — skipping cache restore');
-            return { success: true, output: { restored: false }, skipped: true };
+            return { output: { restored: false }, skipped: true };
         }
 
         await logger.info(nodeId, `Restoring cache from volume "${volumeName}" → ${cachePath}${cacheKey ? ` (key: ${cacheKey})` : ''}`);
@@ -44,11 +44,11 @@ export class CacheRestoreExecutor implements INodeExecutor {
                 await logger.info(nodeId, 'No cache found — starting fresh');
             }
 
-            return { success: true, output: { restored: result.restored, files: result.files ?? 0, volumeName, cachePath } };
+            return { output: { restored: result.restored, files: result.files ?? 0, volumeName, cachePath } };
         } catch (error) {
             // Cache restore failure is non-fatal — log and continue
             await logger.warn(nodeId, `Cache restore failed (continuing): ${error instanceof Error ? error.message : 'Unknown error'}`);
-            return { success: true, output: { restored: false, error: true }, skipped: false };
+            return { output: { restored: false, error: true }, skipped: false };
         }
     }
 }

@@ -78,7 +78,6 @@ export class DeployComposeExecutor implements INodeExecutor {
             );
 
             return {
-                success: true,
                 output: {
                     projectName,
                     containers: result.containers ?? [],

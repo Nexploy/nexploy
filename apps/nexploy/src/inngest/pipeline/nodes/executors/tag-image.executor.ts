@@ -33,7 +33,6 @@ export class TagImageExecutor implements INodeExecutor {
 
             await logger.info(nodeId, `Image tagged as ${sourceImage}:${targetTag}`);
             return {
-                success: true,
                 output: { sourceImage, sourceTag, targetTag, taggedImage: `${sourceImage}:${targetTag}` },
             };
         } catch (error) {

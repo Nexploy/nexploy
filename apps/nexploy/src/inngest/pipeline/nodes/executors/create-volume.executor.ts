@@ -32,14 +32,13 @@ export class CreateVolumeExecutor implements INodeExecutor {
             await logger.info(nodeId, `Volume created: ${result.volumeName}`);
 
             return {
-                success: true,
                 output: { volumeName: result.volumeName },
             };
         } catch (error) {
             const msg = error instanceof Error ? error.message.toLowerCase() : '';
             if (msg.includes('already') || msg.includes('existe')) {
                 await logger.info(nodeId, `Volume already exists: ${name}`);
-                return { success: true, output: { volumeName: name }, skipped: true };
+                return { output: { volumeName: name }, skipped: true };
             }
             throw new Error(`Failed to create volume: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }

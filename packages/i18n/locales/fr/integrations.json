@@ -57,6 +57,27 @@
             }
         }
     },
+    "aws": {
+        "title": "Amazon Web Services",
+        "description": "Ajoutez des comptes AWS pour activer les sauvegardes S3",
+        "displayName": "Nom du compte",
+        "displayNamePlaceholder": "ex. Production, Backup",
+        "accessKeyIdLabel": "Identifiant de clé d'accès",
+        "accessKeyIdPlaceholder": "AKIAIOSFODNN7EXAMPLE",
+        "secretAccessKeyLabel": "Clé d'accès secrète",
+        "secretAccessKeyPlaceholder": "Votre clé d'accès secrète AWS",
+        "regionLabel": "Région",
+        "regionPlaceholder": "us-east-1",
+        "addTitle": "Ajouter un compte AWS",
+        "addDescription": "Entrez vos identifiants IAM AWS. L'utilisateur doit avoir les permissions d'écriture S3.",
+        "addAccount": "Ajouter un compte",
+        "add": "Ajouter",
+        "addedSuccess": "Compte AWS ajouté avec succès",
+        "addFailed": "Échec de l'ajout du compte AWS",
+        "deletedSuccess": "Compte AWS supprimé",
+        "configured": "Configuré",
+        "instanceCount": "{count, plural, =0 {Aucun compte} one {# compte} other {# comptes}}"
+    },
     "cloudflare": {
         "title": "Cloudflare",
         "description": "Gérez les enregistrements DNS et les tunnels avec Cloudflare",

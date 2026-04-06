@@ -41,7 +41,6 @@ export class WebhookCloneExecutor implements INodeExecutor {
                 `Branch "${branch}" does not match filter "${branchFilter}" — skipping`,
             );
             return {
-                success: true,
                 output: { skipped: true, reason: 'branch-filter' },
             };
         }
@@ -86,7 +85,6 @@ export class WebhookCloneExecutor implements INodeExecutor {
             );
 
             return {
-                success: true,
                 output: {
                     workDir,
                     branch,

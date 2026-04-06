@@ -62,13 +62,13 @@ export class CheckContainerLogsExecutor implements INodeExecutor {
             if (failIfFound) {
                 throw new Error(`Pattern "${pattern}" was found in container logs (failIfFound = true)`);
             }
-            return { success: true, output: { found: true, matchedLine, containerName } };
+            return { output: { found: true, matchedLine, containerName } };
         } else {
             await logger.info(nodeId, `Pattern not found in container logs within ${timeout}s`);
             if (!failIfFound) {
                 throw new Error(`Pattern "${pattern}" was not found in container "${containerName}" logs within ${timeout}s`);
             }
-            return { success: true, output: { found: false, containerName } };
+            return { output: { found: false, containerName } };
         }
     }
 }

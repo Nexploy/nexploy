@@ -30,7 +30,7 @@ export class StopContainerExecutor implements INodeExecutor {
         if (warning) return warning;
 
         await logger.info(nodeId, `Container stopped: ${containerId}`);
-        return { success: true, output: { containerId } };
+        return { output: { containerId } };
     }
 }
 

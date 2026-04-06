@@ -48,7 +48,6 @@ export class ScanImageExecutor implements INodeExecutor {
             }
 
             return {
-                success: true,
                 output: {
                     image,
                     tag,

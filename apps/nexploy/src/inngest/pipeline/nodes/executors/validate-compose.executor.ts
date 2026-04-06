@@ -36,7 +36,6 @@ export class ValidateComposeExecutor implements INodeExecutor {
             await logger.info(nodeId, `Docker Compose file validated: ${resolvedPath}`);
 
             return {
-                success: true,
                 output: { workDir, composePath: resolvedPath },
             };
         } catch (error) {

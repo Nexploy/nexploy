@@ -39,7 +39,6 @@ export class DeployStackExecutor implements INodeExecutor {
             );
 
             return {
-                success: true,
                 output: {
                     stackName,
                     services: result.services ?? 0,

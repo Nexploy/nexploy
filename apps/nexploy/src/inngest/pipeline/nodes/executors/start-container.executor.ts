@@ -28,7 +28,7 @@ export class StartContainerExecutor implements INodeExecutor {
         if (warning) return warning;
 
         await logger.info(nodeId, `Container started: ${containerId}`);
-        return { success: true, output: { containerId } };
+        return { output: { containerId } };
     }
 }
 

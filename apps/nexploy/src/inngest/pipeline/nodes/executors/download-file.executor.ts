@@ -52,7 +52,6 @@ export class DownloadFileExecutor implements INodeExecutor {
         );
 
         return {
-            success: true,
             output: {
                 url,
                 outputFile,

@@ -31,7 +31,7 @@ export class PullImageExecutor implements INodeExecutor {
             const msg = error instanceof Error ? error.message.toLowerCase() : '';
             if (msg.includes('already') || msg.includes('existe')) {
                 await logger.info(nodeId, `Image already exists locally: ${imageName}`);
-                return { success: true, output: { imageName }, skipped: true };
+                return { output: { imageName }, skipped: true };
             }
             throw new Error(`Failed to pull image: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
@@ -39,7 +39,6 @@ export class PullImageExecutor implements INodeExecutor {
         await logger.info(nodeId, `Image pulled successfully: ${imageName}`);
 
         return {
-            success: true,
             output: { imageName },
         };
     }

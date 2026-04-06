@@ -13,6 +13,13 @@ import { getValidatedJson } from '@/helpers/validation';
 
 const app = new Hono();
 
+app.get(
+    '/',
+    handleAsync(async () => {
+        return volumesStateManager.getAllVolumes();
+    }),
+);
+
 app.post(
     '/hardRefresh',
     handleAsync(async () => {

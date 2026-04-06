@@ -21,7 +21,7 @@ export class DelayExecutor implements INodeExecutor {
         });
 
         await logger.info(nodeId, `Delay of ${seconds}s complete`);
-        return { success: true, output: { delayed: seconds } };
+        return { output: { delayed: seconds } };
     }
 }
 

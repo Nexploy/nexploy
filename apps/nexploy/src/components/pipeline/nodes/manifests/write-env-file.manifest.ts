@@ -1,4 +1,3 @@
-import { writeEnvFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { WriteEnvFileConfig } from '../config/WriteEnvFileConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
@@ -23,6 +22,5 @@ export const writeEnvFileManifest: NodeManifest = {
             attachments: [],
         },
     },
-    configSchema: writeEnvFileConfigSchema,
     configPanel: WriteEnvFileConfig,
 };

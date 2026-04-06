@@ -1,0 +1,12 @@
+model AwsCredential {
+  id              String           @id @default(cuid())
+  displayName     String
+  accessKeyId     String
+  secretAccessKey String
+  region          String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  schedules       BackupSchedule[]
+
+  @@map("aws_credential")
+}

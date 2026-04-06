@@ -33,7 +33,7 @@ export class SendNotificationExecutor implements INodeExecutor {
             }
 
             await logger.info(nodeId, 'Notification sent successfully');
-            return { success: true, output: { sent: true } };
+            return { output: { sent: true } };
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Unknown error';
             throw new Error(`Failed to send notification: ${message}`);

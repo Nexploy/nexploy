@@ -25,7 +25,7 @@ export class WaitForUrlExecutor implements INodeExecutor {
                 const response = await fetch(url, { method, signal: abortSignal });
                 if (response.status === expectedStatus) {
                     await logger.info(nodeId, `URL ${url} returned ${response.status}`);
-                    return { success: true, output: { url, status: response.status } };
+                    return { output: { url, status: response.status } };
                 }
                 await logger.debug(nodeId, `Got ${response.status}, expected ${expectedStatus}, retrying in ${interval}s`);
             } catch (err) {

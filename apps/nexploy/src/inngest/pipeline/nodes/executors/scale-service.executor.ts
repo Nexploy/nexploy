@@ -28,7 +28,7 @@ export class ScaleServiceExecutor implements INodeExecutor {
 
             await logger.info(nodeId, `Service "${serviceName}" scaled to ${replicas} replica(s)`);
 
-            return { success: true, output: { serviceName, replicas } };
+            return { output: { serviceName, replicas } };
         } catch (error) {
             throw new Error(`Failed to scale service: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }

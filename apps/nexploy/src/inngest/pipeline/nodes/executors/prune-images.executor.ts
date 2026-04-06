@@ -37,7 +37,6 @@ export class PruneImagesExecutor implements INodeExecutor {
             await logger.info(nodeId, `Pruned ${result.removedImages ?? 0} images, reclaimed ${mb} MB`);
 
             return {
-                success: true,
                 output: {
                     removedImages: result.removedImages ?? 0,
                     reclaimedSpace: result.reclaimedSpace ?? 0,

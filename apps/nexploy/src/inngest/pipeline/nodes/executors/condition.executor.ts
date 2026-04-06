@@ -31,7 +31,6 @@ export class ConditionExecutor implements INodeExecutor {
             .map((e) => e.target);
 
         return {
-            success: true,
             output: { passed, branch: passed ? 'true' : 'false' },
             skippedBranchTargets,
         };

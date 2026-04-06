@@ -28,7 +28,7 @@ export class RestartContainerExecutor implements INodeExecutor {
         if (warning) return warning;
 
         await logger.info(nodeId, `Container restarted: ${containerId}`);
-        return { success: true, output: { containerId } };
+        return { output: { containerId } };
     }
 }
 

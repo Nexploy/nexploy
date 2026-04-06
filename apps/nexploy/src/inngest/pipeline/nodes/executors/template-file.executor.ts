@@ -67,7 +67,7 @@ export class TemplateFileExecutor implements INodeExecutor {
         await fs.writeFile(resolvedOutput, result, 'utf-8');
 
         await logger.info(nodeId, `Template file written to ${outputPath} (${replaced} substitutions)`);
-        return { success: true, output: { inputPath, outputPath, substitutions: replaced } };
+        return { output: { inputPath, outputPath, substitutions: replaced } };
     }
 }
 

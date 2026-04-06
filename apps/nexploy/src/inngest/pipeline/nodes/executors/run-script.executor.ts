@@ -63,13 +63,13 @@ export class RunScriptExecutor implements INodeExecutor {
                 const msg = `Script exited with code ${exitCode}`;
                 if (continueOnError) {
                     await logger.warn(nodeId, `${msg} (continuing due to continueOnError)`);
-                    return { success: true, output: { exitCode }, skipped: false };
+                    return { output: { exitCode }, skipped: false };
                 }
                 throw new Error(msg);
             }
 
             await logger.info(nodeId, `Script completed successfully (exit code 0)`);
-            return { success: true, output: { exitCode: 0 } };
+            return { output: { exitCode: 0 } };
         } finally {
             await fs.rm(tmpDir, { recursive: true, force: true }).catch(() => void 0);
         }

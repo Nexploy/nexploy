@@ -63,7 +63,7 @@ export class BackupDatabaseExecutor implements INodeExecutor {
             }
 
             await logger.info(nodeId, `Database backup completed successfully to ${outputPath}`);
-            return { success: true, output: { dbType, database, outputPath, backed: true } };
+            return { output: { dbType, database, outputPath, backed: true } };
         } catch (error) {
             throw new Error(`Database backup failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }

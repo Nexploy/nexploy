@@ -16,7 +16,6 @@ export class SetEnvironmentExecutor implements INodeExecutor {
         await logger.info(nodeId, `Environment set: ${environmentId}`);
 
         return {
-            success: true,
             output: { environmentId },
         };
     }

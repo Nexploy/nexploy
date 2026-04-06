@@ -42,7 +42,6 @@ export class DeployContainerExecutor implements INodeExecutor {
             await logger.info(nodeId, `Container deployed: ${result.containerId.slice(0, 12)}`);
 
             return {
-                success: true,
                 output: {
                     containerId: result.containerId,
                     imageName,

@@ -74,7 +74,7 @@ export class UpdateCommitStatusExecutor implements INodeExecutor {
         }
 
         await logger.info(nodeId, `Commit status updated to "${state}"`);
-        return { success: true, output: { provider, state, sha } };
+        return { output: { provider, state, sha } };
     }
 }
 

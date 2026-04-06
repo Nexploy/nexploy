@@ -13,7 +13,7 @@ export async function runDockerAction(
     } catch (error) {
         if (error instanceof HTTPError && error.response.status === 409) {
             await logger.warn(nodeId, error.message);
-            return { success: true, output };
+            return { output };
         }
         throw error;
     }

@@ -68,7 +68,6 @@ export class BuildDockerImageExecutor implements INodeExecutor {
             );
 
             return {
-                success: true,
                 output: {
                     imageId: result.imageId,
                     imageName,

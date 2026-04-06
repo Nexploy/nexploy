@@ -58,7 +58,6 @@ export class CloneRepositoryExecutor implements INodeExecutor {
             );
 
             return {
-                success: true,
                 output: {
                     workDir,
                     branch: effectiveBranch,

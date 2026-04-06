@@ -76,7 +76,6 @@ export class FetchSecretsExecutor implements INodeExecutor {
         if (outputAs === 'env-vars') {
             // Return secrets as pipeline outputs so downstream nodes can use them
             return {
-                success: true,
                 output: {
                     secretCount: count,
                     provider,
@@ -90,7 +89,6 @@ export class FetchSecretsExecutor implements INodeExecutor {
             await fs.writeFile(outputFile, JSON.stringify(secrets, null, 2), 'utf-8');
             await logger.info(nodeId, `Secrets written to secrets.json (${count} entries)`);
             return {
-                success: true,
                 output: { secretCount: count, provider, secretsFile: outputFile },
             };
         }

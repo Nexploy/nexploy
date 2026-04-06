@@ -1,34 +1,11 @@
-import { ProviderInstanceCard } from '@/components/admin/integrations/ProviderInstanceCard';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
-import { getUserSession } from '@/services/auth/auth.service';
-import { getCloudflareCredentialInfo } from '@/services/cloudflare.service';
-import { getAllGitProviders } from '@/services/oauthProvider.service';
-import { Cloud, GitBranch, Plug } from 'lucide-react';
+import { Plug } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from '@workspace/ui/components/accordion';
-import { IntegrationsAddButtons } from '@/components/admin/integrations/IntegrationsAddButtons';
-import { CloudflareIntegrationCard } from '@/components/admin/integrations/CloudflareIntegrationCard';
-import { cn } from '@workspace/ui/lib/utils';
-import { SiGithub, SiGitlab } from '@icons-pack/react-simple-icons';
+import { GitProvidersSection } from '@/components/admin/integrations/GitProvidersSection';
+import { CloudInfrastructureSection } from '@/components/admin/integrations/CloudInfrastructureSection';
 
 export default async function IntegrationsPage() {
-    const [session, t, providers] = await Promise.all([
-        getUserSession(),
-        getTranslations('integrations'),
-        getAllGitProviders(),
-    ]);
-
-    const cloudflareInfo = session
-        ? await getCloudflareCredentialInfo(session.user.id)
-        : { isConnected: false };
-
-    const hasGithubApps = providers.github.length;
-    const hasGitlabApps = providers.gitlab.length;
+    const t = await getTranslations('integrations');
 
     return (
         <div className="flex h-full flex-1 flex-col pt-5">
@@ -47,130 +24,8 @@ export default async function IntegrationsPage() {
 
                 <ScrollAreaWithShadow className="h-full overflow-hidden px-5">
                     <div className="space-y-6 pb-5">
-                        <section className="space-y-3">
-                            <div className="flex items-center gap-2">
-                                <GitBranch className="text-muted-foreground size-4" />
-                                <h2 className="text-sm font-medium">{t('gitProviders')}</h2>
-                            </div>
-                            <Accordion
-                                type="multiple"
-                                className={'flex flex-col gap-3'}
-                                defaultValue={['github', 'gitlab']}
-                            >
-                                <AccordionItem
-                                    value="github"
-                                    className="bg-card rounded-lg border !border-b"
-                                >
-                                    <AccordionTrigger
-                                        position={'left'}
-                                        showChevron={!!hasGithubApps}
-                                        classNameChevron={'size-5'}
-                                        className={cn(
-                                            'px-4 hover:no-underline',
-                                            hasGithubApps && 'cursor-pointer',
-                                        )}
-                                        headerChildren={
-                                            <div className="pr-4">
-                                                <IntegrationsAddButtons provider="github" />
-                                            </div>
-                                        }
-                                    >
-                                        <div className="flex min-w-0 flex-1 items-center gap-3">
-                                            <div className="bg-muted flex size-10 items-center justify-center rounded-lg">
-                                                <SiGithub className="size-5" />
-                                            </div>
-                                            <div className="flex min-w-0 flex-col text-left">
-                                                <span>{t('github.title')}</span>
-                                                <span className="text-muted-foreground text-xs font-normal">
-                                                    (
-                                                    {t('oauth.instanceCount', {
-                                                        count: providers.github.length,
-                                                    })}
-                                                    )
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </AccordionTrigger>
-                                    {!!hasGithubApps && (
-                                        <AccordionContent className="bg-muted/40 border-t p-5">
-                                            <div className="space-y-2">
-                                                {providers.github.map((instance) => (
-                                                    <ProviderInstanceCard
-                                                        key={instance.id}
-                                                        id={instance.id}
-                                                        displayName={instance.displayName}
-                                                        appName={instance.appName}
-                                                        maskedClientId={instance.maskedClientId}
-                                                    />
-                                                ))}
-                                            </div>
-                                        </AccordionContent>
-                                    )}
-                                </AccordionItem>
-
-                                <AccordionItem
-                                    value="gitlab"
-                                    className="bg-card rounded-lg border !border-b"
-                                >
-                                    <AccordionTrigger
-                                        position={'left'}
-                                        showChevron={!!hasGitlabApps}
-                                        classNameChevron={'size-5'}
-                                        className={cn(
-                                            'px-4 hover:no-underline',
-                                            hasGitlabApps && 'cursor-pointer',
-                                        )}
-                                        headerChildren={
-                                            <div className="pr-4">
-                                                <IntegrationsAddButtons provider="gitlab" />
-                                            </div>
-                                        }
-                                    >
-                                        <div className="flex min-w-0 flex-1 items-center gap-3">
-                                            <div className="bg-muted flex size-10 items-center justify-center rounded-lg">
-                                                <SiGitlab className="size-5" />
-                                            </div>
-                                            <div className="flex min-w-0 flex-col text-left">
-                                                <span>{t('gitlab.title')}</span>
-                                                <span className="text-muted-foreground text-xs font-normal">
-                                                    (
-                                                    {t('oauth.instanceCount', {
-                                                        count: providers.gitlab.length,
-                                                    })}
-                                                    )
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </AccordionTrigger>
-                                    {!!hasGitlabApps && (
-                                        <AccordionContent className="bg-muted/40 border-t p-5">
-                                            <div className="space-y-2">
-                                                {providers.gitlab.map((instance) => (
-                                                    <ProviderInstanceCard
-                                                        key={instance.id}
-                                                        id={instance.id}
-                                                        displayName={instance.displayName}
-                                                        appName={instance.appName}
-                                                        maskedClientId={instance.maskedClientId}
-                                                    />
-                                                ))}
-                                            </div>
-                                        </AccordionContent>
-                                    )}
-                                </AccordionItem>
-                            </Accordion>
-                        </section>
-                        <section className="space-y-3">
-                            <div className="flex items-center gap-2">
-                                <Cloud className="text-muted-foreground size-4" />
-                                <h2 className="text-sm font-medium">{t('cloudInfrastructure')}</h2>
-                            </div>
-                            <div className="space-y-2">
-                                <CloudflareIntegrationCard
-                                    isConnected={cloudflareInfo.isConnected}
-                                />
-                            </div>
-                        </section>
+                        <GitProvidersSection />
+                        <CloudInfrastructureSection />
                     </div>
                 </ScrollAreaWithShadow>
             </div>

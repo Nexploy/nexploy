@@ -38,7 +38,7 @@ export class RunCommandInContainerExecutor implements INodeExecutor {
             }
 
             await logger.info(nodeId, `Command completed successfully (exit code 0)`);
-            return { success: true, output: { exitCode: result.exitCode } };
+            return { output: { exitCode: result.exitCode } };
         } catch (error) {
             throw new Error(`Failed to exec in container: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }

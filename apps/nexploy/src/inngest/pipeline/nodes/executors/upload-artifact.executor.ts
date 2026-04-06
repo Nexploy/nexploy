@@ -126,13 +126,13 @@ export class UploadArtifactExecutor implements INodeExecutor {
                 }
             }
             await logger.info(nodeId, `Uploaded ${uploaded} files to s3://${bucket}/${destinationPath}`);
-            return { success: true, output: { uploaded, bucket, destinationPath } };
+            return { output: { uploaded, bucket, destinationPath } };
         } else {
             const fileBuffer = fs.readFileSync(resolvedSource);
             const contentType = 'application/octet-stream';
             await uploadToS3(endpoint, bucket, accessKey, secretKey, useSSL, destinationPath, fileBuffer, contentType);
             await logger.info(nodeId, `Uploaded to s3://${bucket}/${destinationPath}`);
-            return { success: true, output: { uploaded: 1, bucket, destinationPath } };
+            return { output: { uploaded: 1, bucket, destinationPath } };
         }
     }
 }

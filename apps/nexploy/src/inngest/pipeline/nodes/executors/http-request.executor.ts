@@ -47,19 +47,19 @@ export class HttpRequestExecutor implements INodeExecutor {
                 const msg = `HTTP request returned ${response.status}, expected ${expectedStatus}`;
                 if (continueOnError) {
                     await logger.warn(nodeId, `${msg} (continuing due to continueOnError)`);
-                    return { success: true, output: { status: response.status, continued: true }, skipped: false };
+                    return { output: { status: response.status, continued: true }, skipped: false };
                 }
                 throw new Error(msg);
             }
 
             await logger.info(nodeId, `HTTP request completed successfully`);
-            return { success: true, output: { status: response.status, body: responseText.slice(0, 1000) } };
+            return { output: { status: response.status, body: responseText.slice(0, 1000) } };
         } catch (error) {
             if ((error as Error).name === 'AbortError') throw new Error('Aborted');
             const msg = error instanceof Error ? error.message : 'Unknown error';
             if (continueOnError) {
                 await logger.warn(nodeId, `Request failed: ${msg} (continuing due to continueOnError)`);
-                return { success: true, output: { failed: true, error: msg }, skipped: false };
+                return { output: { failed: true, error: msg }, skipped: false };
             }
             throw new Error(`HTTP request failed: ${msg}`);
         }

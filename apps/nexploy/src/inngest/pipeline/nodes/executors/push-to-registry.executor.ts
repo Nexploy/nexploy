@@ -61,7 +61,6 @@ export class PushToRegistryExecutor implements INodeExecutor {
             await logger.info(nodeId, `Image pushed successfully: ${result.targetName}`);
 
             return {
-                success: true,
                 output: {
                     targetName: result.targetName,
                     registryUrl: registry.url,
