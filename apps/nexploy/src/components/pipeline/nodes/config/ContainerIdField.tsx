@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -85,12 +91,12 @@ export function ContainerIdField() {
                                         }
                                     >
                                         {isLoading ? (
-                                            <span className="text-muted-foreground flex items-center gap-2 pl-3 text-xs">
+                                            <span className="text-muted-foreground flex items-center gap-2 pl-3">
                                                 <Loader2 className="h-3 w-3 animate-spin" />
                                                 {t('containersLoading')}
                                             </span>
                                         ) : isStale ? (
-                                            <span className="flex items-center gap-1.5 pl-3 text-xs">
+                                            <span className="flex items-center gap-1.5 pl-3">
                                                 <AlertTriangle className="h-3 w-3 shrink-0" />
                                                 {savedContainerName
                                                     ? savedContainerName
@@ -106,7 +112,7 @@ export function ContainerIdField() {
                                         <SelectGroup>
                                             <SelectLabel>{t('containersSelectLabel')}</SelectLabel>
                                             {containers.length === 0 ? (
-                                                <div className="text-muted-foreground px-2 py-1.5 text-xs">
+                                                <div className="text-muted-foreground px-2 py-1.5">
                                                     {t('noContainersFound')}
                                                 </div>
                                             ) : (

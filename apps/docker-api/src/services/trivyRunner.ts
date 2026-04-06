@@ -11,18 +11,14 @@ export function getSeveritiesAbove(severity: Severity): string {
     return SEVERITY_ORDER.slice(0, idx + 1).join(',');
 }
 
-export async function runTrivyContainer(
-    cmd: string[],
-    trivyVersion = 'canary',
-): Promise<{ stdout: string; stderr: string; exitCode: number }> {
+async function ensureTrivyImage(trivyVersion: string): Promise<string> {
     const docker = getCurrentDockerClient();
-    const TRIVY_IMAGE = `${TRIVY_IMAGE_BASE}:${trivyVersion}`;
-
+    const image = `${TRIVY_IMAGE_BASE}:${trivyVersion}`;
     try {
-        await docker.getImage(TRIVY_IMAGE).inspect();
+        await docker.getImage(image).inspect();
     } catch {
         await new Promise<void>((resolve, reject) => {
-            docker.pull(TRIVY_IMAGE, (err: any, stream: any) => {
+            docker.pull(image, (err: any, stream: any) => {
                 if (err) return reject(err);
                 docker.modem.followProgress(stream, (error: any) => {
                     if (error) return reject(error);
@@ -31,17 +27,52 @@ export async function runTrivyContainer(
             });
         });
     }
+    return image;
+}
 
-    const container = await docker.createContainer({
-        Image: TRIVY_IMAGE,
-        Cmd: cmd,
-        HostConfig: {
-            Binds: ['/var/run/docker.sock:/var/run/docker.sock'],
-            AutoRemove: false,
-        },
+async function getOrCreateDaemonContainer(trivyVersion: string) {
+    const docker = getCurrentDockerClient();
+    const name = `nexploy-trivy-${trivyVersion}`;
+    const image = await ensureTrivyImage(trivyVersion);
+
+    try {
+        const container = docker.getContainer(name);
+        const info = await container.inspect();
+        if (!info.State.Running) {
+            await container.start();
+        }
+        return container;
+    } catch {
+        const container = await docker.createContainer({
+            Image: image,
+            name,
+            Entrypoint: ['sleep', 'infinity'],
+            Cmd: [],
+            HostConfig: {
+                Binds: ['/var/run/docker.sock:/var/run/docker.sock'],
+                AutoRemove: false,
+                RestartPolicy: { Name: 'unless-stopped' },
+            },
+        });
+        await container.start();
+        return container;
+    }
+}
+
+export async function runTrivyContainer(
+    cmd: string[],
+    trivyVersion = 'canary',
+): Promise<{ stdout: string; stderr: string; exitCode: number }> {
+    const docker = getCurrentDockerClient();
+    const container = await getOrCreateDaemonContainer(trivyVersion);
+
+    const exec = await container.exec({
+        Cmd: ['trivy', ...cmd],
+        AttachStdout: true,
+        AttachStderr: true,
     });
 
-    const stream = await container.attach({ stream: true, stdout: true, stderr: true });
+    const stream = await exec.start({ hijack: true, stdin: false });
 
     let stdout = '';
     let stderr = '';
@@ -64,13 +95,10 @@ export async function runTrivyContainer(
         docker.modem.demuxStream(stream, stdoutSink, stderrSink);
         stream.on('end', resolve);
         stream.on('error', reject);
-        container.start().catch(reject);
     });
 
-    const { StatusCode: exitCode } = await container.wait();
-    await container.remove({ force: true }).catch(() => {});
-
-    return { stdout, stderr, exitCode };
+    const { ExitCode: exitCode } = await exec.inspect();
+    return { stdout, stderr, exitCode: exitCode ?? 0 };
 }
 
 export interface ScanImageResult {
@@ -89,14 +117,19 @@ export async function scanImage(
     const fullImage = `${image}:${tag}`;
     const severities = getSeveritiesAbove(severity);
 
-    const { stdout, stderr, exitCode } = await runTrivyContainer([
-        'image',
-        '--format', 'json',
-        '--severity', severities,
-        '--no-progress',
-        '--quiet',
-        fullImage,
-    ], trivyVersion);
+    const { stdout, stderr, exitCode } = await runTrivyContainer(
+        [
+            'image',
+            '--format',
+            'json',
+            '--severity',
+            severities,
+            '--no-progress',
+            '--quiet',
+            fullImage,
+        ],
+        trivyVersion,
+    );
 
     if (exitCode !== 0 && !stdout.trim()) {
         throw new Error(`Trivy scan failed: ${stderr.trim() || 'unknown error'}`);
@@ -132,7 +165,9 @@ export async function scanImage(
             lines.push('');
             lines.push('Top vulnerabilities:');
             for (const v of top) {
-                lines.push(`  [${v.Severity}] ${v.VulnerabilityID ?? '?'} - ${v.Title ?? 'no title'}`);
+                lines.push(
+                    `  [${v.Severity}] ${v.VulnerabilityID ?? '?'} - ${v.Title ?? 'no title'}`,
+                );
             }
             if (allVulns.length > 10) lines.push(`  ... and ${allVulns.length - 10} more`);
         }
