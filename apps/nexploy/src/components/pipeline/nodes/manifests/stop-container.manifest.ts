@@ -12,8 +12,8 @@ export const stopContainerManifest: NodeManifest = {
         type: 'base-node',
         category: 'deploy',
         metadata: {
-            name: 'pipeline.nodes.stop-container.name',
-            description: 'pipeline.nodes.stop-container.description',
+            name: 'stop-container.name',
+            description: 'stop-container.description',
             icon: Square,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },

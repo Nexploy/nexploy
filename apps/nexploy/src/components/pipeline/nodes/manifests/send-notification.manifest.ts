@@ -10,12 +10,12 @@ export const sendNotificationManifest: NodeManifest = {
     definition: {
         id: 'send-notification',
         type: 'base-node',
-        category: 'notification',
+        category: 'integration',
         metadata: {
-            name: 'pipeline.nodes.send-notification.name',
-            description: 'pipeline.nodes.send-notification.description',
+            name: 'send-notification.name',
+            description: 'send-notification.description',
             icon: Bell,
-            color: `${CATEGORY_BG_MUTED['notification']} ${CATEGORY_TEXT['notification']}`,
+            color: `${CATEGORY_BG_MUTED['integration']} ${CATEGORY_TEXT['integration']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

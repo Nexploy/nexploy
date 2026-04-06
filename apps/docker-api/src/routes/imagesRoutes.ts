@@ -1,4 +1,3 @@
-import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { imagesStateManager } from '@/managers/imagesStateManager';
@@ -8,13 +7,30 @@ import { zValidator } from '@hono/zod-validator';
 import {
     imageDeleteSchema,
     imageIdParamSchema,
-    imageNameParamSchema,
     imageMirrorSchema,
+    imageNameParamSchema,
 } from '@workspace/schemas-zod/docker/image/imageAction.schema';
 import { imagePullSchema } from '@workspace/schemas-zod/docker/image/imagePullAction.schema';
 import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
+import { scanImage, type Severity } from '@/services/trivyRunner';
+import { pullImage, mirrorImage } from '@/services/imageService';
+import { docker } from '@/utils/dockerClient';
 
 const app = new Hono();
+
+app.post(
+    '/scan',
+    handleAsync(async (c) => {
+        const { image, tag, severity, trivyVersion } = await c.req.json<{
+            image: string;
+            tag: string;
+            severity: Severity;
+            trivyVersion?: string;
+        }>();
+
+        return await scanImage(image, tag, severity, trivyVersion);
+    }),
+);
 
 app.post(
     '/hardRefresh',
@@ -69,20 +85,7 @@ app.post(
             throw new Error(t('errors.imageAlreadyExists', { imageName }));
         }
 
-        await new Promise((resolve, reject) => {
-            docker.pull(imageName, (err: any, stream: NodeJS.ReadableStream) => {
-                if (err) return reject(err);
-
-                docker.modem.followProgress(stream, (error: any, output: any) => {
-                    if (error) return reject(error);
-                    resolve(output);
-                });
-            });
-        });
-
-        const imageInfo = await docker.getImage(imageName).inspect();
-
-        return { imageName, imageId: imageInfo.Id };
+        return await pullImage(imageName);
     }),
 );
 
@@ -91,8 +94,7 @@ app.get(
     zValidator('param', imageIdParamSchema),
     handleAsync(async (c) => {
         const { id } = getValidatedParam(c, imageIdParamSchema);
-        const image = docker.getImage(id);
-        return await image.history();
+        return await docker.getImage(id).history();
     }),
 );
 
@@ -102,8 +104,7 @@ app.post(
     handleAsync(async (c) => {
         const { id } = getValidatedParam(c, imageIdParamSchema);
         const { repo, tag } = await c.req.json<{ repo: string; tag: string }>();
-        const image = docker.getImage(id);
-        return await image.tag({ repo, tag });
+        return await docker.getImage(id).tag({ repo, tag });
     }),
 );
 
@@ -116,55 +117,7 @@ app.post(
             imageMirrorSchema,
         );
 
-        let sourceExistedBefore = false;
-        try {
-            await docker.getImage(sourceImage).inspect();
-            sourceExistedBefore = true;
-        } catch {
-            sourceExistedBefore = false;
-        }
-
-        await new Promise((resolve, reject) => {
-            const pullOptions: Record<string, unknown> = {};
-            if (sourceAuth) {
-                pullOptions.authconfig = sourceAuth;
-            }
-            (docker.pull as any)(sourceImage, pullOptions, (err: any, stream: any) => {
-                if (err) return reject(err);
-                docker.modem.followProgress(stream, (error: any, output: any) => {
-                    if (error) return reject(error);
-                    resolve(output);
-                });
-            });
-        });
-
-        await new Promise((resolve, reject) => {
-            const taggedImage = docker.getImage(targetName);
-            (taggedImage.push as any)({ authconfig: targetAuth }, (err: any, stream: any) => {
-                if (err) return reject(err);
-                docker.modem.followProgress(
-                    stream,
-                    (error: any, output: any) => {
-                        if (error) return reject(error);
-                        resolve(output);
-                    },
-                    (event: any) => {
-                        if (event.error) reject(new Error(event.error));
-                    },
-                );
-            });
-        });
-
-        try {
-            await docker.getImage(targetName).remove();
-        } catch {}
-        if (!sourceExistedBefore) {
-            try {
-                await docker.getImage(sourceImage).remove();
-            } catch {}
-        }
-
-        return { success: true, targetName };
+        return await mirrorImage(sourceImage, sourceAuth, targetName, targetAuth);
     }),
 );
 
@@ -179,12 +132,7 @@ app.post(
             throw new HttpError(t('errors.noImageIdsProvided'), 400);
         }
 
-        await Promise.all(
-            imageIds.map(async (imageId: string) => {
-                const image = docker.getImage(imageId);
-                return await image.remove({ force });
-            }),
-        );
+        await Promise.all(imageIds.map((id: string) => docker.getImage(id).remove({ force })));
 
         return { deleted: imageIds };
     }),

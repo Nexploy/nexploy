@@ -10,12 +10,12 @@ export const cacheRestoreManifest: NodeManifest = {
     definition: {
         id: 'cache-restore',
         type: 'base-node',
-        category: 'utility',
+        category: 'files',
         metadata: {
-            name: 'pipeline.nodes.cache-restore.name',
-            description: 'pipeline.nodes.cache-restore.description',
+            name: 'cache-restore.name',
+            description: 'cache-restore.description',
             icon: FolderInput,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['files']} ${CATEGORY_TEXT['files']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

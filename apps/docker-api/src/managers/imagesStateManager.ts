@@ -573,19 +573,17 @@ export class ImagesStateManager extends BaseStateManager {
             throw new DOMException('Push aborted before start', 'AbortError');
         }
 
-        // Parse targetName into repo and tag
         const lastSlash = targetName.lastIndexOf('/');
         const nameAndTag = lastSlash >= 0 ? targetName.slice(lastSlash + 1) : targetName;
         const colonIdx = nameAndTag.lastIndexOf(':');
         const targetTag = colonIdx >= 0 ? nameAndTag.slice(colonIdx + 1) : 'latest';
-        const targetRepo = colonIdx >= 0 ? targetName.slice(0, targetName.lastIndexOf(':')) : targetName;
+        const targetRepo =
+            colonIdx >= 0 ? targetName.slice(0, targetName.lastIndexOf(':')) : targetName;
 
-        // Tag the image
         const image = this.docker.getImage(imageName);
         await image.tag({ repo: targetRepo, tag: targetTag });
         onLog(`Tagged ${imageName} as ${targetRepo}:${targetTag}`);
 
-        // Push the tagged image
         return new Promise((resolve, reject) => {
             const taggedImage = this.docker.getImage(targetName);
             (taggedImage.push as any)({ authconfig: auth }, (err: any, stream: any) => {

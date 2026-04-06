@@ -10,12 +10,12 @@ export const waitForHealthManifest: NodeManifest = {
     definition: {
         id: 'wait-for-health',
         type: 'base-node',
-        category: 'utility',
+        category: 'flow',
         metadata: {
-            name: 'pipeline.nodes.wait-for-health.name',
-            description: 'pipeline.nodes.wait-for-health.description',
+            name: 'wait-for-health.name',
+            description: 'wait-for-health.description',
             icon: HeartPulse,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['flow']} ${CATEGORY_TEXT['flow']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

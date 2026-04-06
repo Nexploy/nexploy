@@ -10,12 +10,12 @@ export const templateFileManifest: NodeManifest = {
     definition: {
         id: 'template-file',
         type: 'base-node',
-        category: 'utility',
+        category: 'files',
         metadata: {
-            name: 'pipeline.nodes.template-file.name',
-            description: 'pipeline.nodes.template-file.description',
+            name: 'template-file.name',
+            description: 'template-file.description',
             icon: FileCode,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['files']} ${CATEGORY_TEXT['files']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

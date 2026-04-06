@@ -10,12 +10,12 @@ export const downloadFileManifest: NodeManifest = {
     definition: {
         id: 'download-file',
         type: 'base-node',
-        category: 'utility',
+        category: 'files',
         metadata: {
-            name: 'pipeline.nodes.download-file.name',
-            description: 'pipeline.nodes.download-file.description',
+            name: 'download-file.name',
+            description: 'download-file.description',
             icon: Download,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['files']} ${CATEGORY_TEXT['files']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

@@ -166,6 +166,7 @@ export const tagImageConfigSchema = z.object({
 export const scanImageConfigSchema = z.object({
     image: z.string().min(1, 'Image is required').default(''),
     tag: z.string().default('latest'),
+    trivyVersion: z.string().default('canary'),
     severity: z.enum(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']).default('HIGH'),
     exitOnVulnerabilities: z.boolean().default(true),
 });

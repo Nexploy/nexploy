@@ -10,12 +10,12 @@ export const httpRequestManifest: NodeManifest = {
     definition: {
         id: 'http-request',
         type: 'base-node',
-        category: 'utility',
+        category: 'integration',
         metadata: {
-            name: 'pipeline.nodes.http-request.name',
-            description: 'pipeline.nodes.http-request.description',
+            name: 'http-request.name',
+            description: 'http-request.description',
             icon: Webhook,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['integration']} ${CATEGORY_TEXT['integration']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

@@ -12,8 +12,8 @@ export const startContainerManifest: NodeManifest = {
         type: 'base-node',
         category: 'deploy',
         metadata: {
-            name: 'pipeline.nodes.start-container.name',
-            description: 'pipeline.nodes.start-container.description',
+            name: 'start-container.name',
+            description: 'start-container.description',
             icon: Play,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },

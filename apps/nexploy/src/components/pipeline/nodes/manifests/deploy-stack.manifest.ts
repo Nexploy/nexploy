@@ -12,8 +12,8 @@ export const deployStackManifest: NodeManifest = {
         type: 'base-node',
         category: 'deploy',
         metadata: {
-            name: 'pipeline.nodes.deploy-stack.name',
-            description: 'pipeline.nodes.deploy-stack.description',
+            name: 'deploy-stack.name',
+            description: 'deploy-stack.description',
             icon: Layers,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },

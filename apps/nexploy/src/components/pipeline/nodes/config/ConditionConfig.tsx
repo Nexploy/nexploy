@@ -24,8 +24,6 @@ export function ConditionConfig() {
 
     return (
         <div className="space-y-4">
-            <p className="text-muted-foreground text-xs">{t('nodes.condition.description')}</p>
-
             <FormField
                 control={form.control}
                 name="operator"

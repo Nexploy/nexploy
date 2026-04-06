@@ -12,8 +12,8 @@ export const createVolumeManifest: NodeManifest = {
         type: 'base-node',
         category: 'utility',
         metadata: {
-            name: 'pipeline.nodes.create-volume.name',
-            description: 'pipeline.nodes.create-volume.description',
+            name: 'create-volume.name',
+            description: 'create-volume.description',
             icon: HardDrive,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },

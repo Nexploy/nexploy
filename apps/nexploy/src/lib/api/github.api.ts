@@ -1,4 +1,4 @@
-import { kyGithub } from '@/lib/api/kyGithub';
+import { kyGithubApi, kyGithubPublic, KyGithubOptions } from '@/lib/api/kyGithub';
 import { GithubRepo } from '@workspace/typescript-interface/git/repository/github.repository';
 import { GithubBranch } from '@workspace/typescript-interface/git/branch/github.branch';
 import {
@@ -19,7 +19,7 @@ export async function githubGetCommit(
     repoPath: string,
     ref: string,
 ): Promise<GitHubCommitResponse> {
-    return kyGithub
+    return kyGithubApi
         .get(`repos/${repoPath}/commits/${ref}`, {
             headers: { Accept: 'application/vnd.github.v3+json' },
         })
@@ -29,7 +29,7 @@ export async function githubGetCommit(
 export async function githubGetUserInstallations(): Promise<{
     installations: { id: number }[];
 }> {
-    return kyGithub
+    return kyGithubApi
         .get('user/installations', {
             headers: { Accept: 'application/vnd.github+json' },
         })
@@ -39,7 +39,7 @@ export async function githubGetUserInstallations(): Promise<{
 export async function githubGetInstallationRepositories(
     installationId: number,
 ): Promise<{ repositories: GithubRepo[] }> {
-    return kyGithub
+    return kyGithubApi
         .get(`user/installations/${installationId}/repositories`, {
             headers: { Accept: 'application/vnd.github+json' },
             searchParams: { per_page: '100' },
@@ -51,7 +51,7 @@ export async function githubGetRepositoryBranches(
     owner: string,
     repo: string,
 ): Promise<GithubBranch[]> {
-    return kyGithub
+    return kyGithubApi
         .get(`repos/${owner}/${repo}/branches`, {
             headers: { Accept: 'application/vnd.github+json' },
         })
@@ -64,7 +64,7 @@ export async function githubCreateWebhook(
     webhookUrl: string,
     secret: string,
 ): Promise<{ id: number }> {
-    return kyGithub
+    return kyGithubApi
         .post(`repos/${owner}/${repo}/hooks`, {
             headers: {
                 Accept: 'application/vnd.github+json',
@@ -90,7 +90,7 @@ export async function githubDeleteWebhook(
     repo: string,
     webhookId: string,
 ): Promise<void> {
-    await kyGithub.delete(`repos/${owner}/${repo}/hooks/${webhookId}`).json();
+    await kyGithubApi.delete(`repos/${owner}/${repo}/hooks/${webhookId}`).json();
 }
 
 export async function githubExchangeCodeForToken(
@@ -99,20 +99,17 @@ export async function githubExchangeCodeForToken(
     clientSecret: string,
     redirectUri: string,
 ): Promise<GitHubTokenResponse> {
-    const response = await fetch('https://github.com/login/oauth/access_token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-        },
-        body: JSON.stringify({
-            client_id: clientId,
-            client_secret: clientSecret,
-            code,
-            redirect_uri: redirectUri,
-        }),
-    });
-    return response.json();
+    return kyGithubPublic
+        .post('login/oauth/access_token', {
+            headers: { 'Content-Type': 'application/json' },
+            json: {
+                client_id: clientId,
+                client_secret: clientSecret,
+                code,
+                redirect_uri: redirectUri,
+            },
+        })
+        .json<GitHubTokenResponse>();
 }
 
 export async function githubRefreshAccessToken(
@@ -120,49 +117,30 @@ export async function githubRefreshAccessToken(
     clientId: string,
     clientSecret: string,
 ): Promise<GitHubTokenResponse> {
-    const body = new URLSearchParams({
-        client_id: clientId,
-        client_secret: clientSecret,
-        grant_type: 'refresh_token',
-        refresh_token: refreshToken,
-    });
-
-    const response = await fetch('https://github.com/login/oauth/access_token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Accept: 'application/json',
-        },
-        body,
-    });
-
-    if (!response.ok) {
-        const message = await response.text();
-        throw new Error(
-            `Failed to refresh GitHub token. Status ${response.status}. Message: ${message}`,
-        );
-    }
-
-    return response.json();
+    return kyGithubPublic
+        .post('login/oauth/access_token', {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                client_id: clientId,
+                client_secret: clientSecret,
+                grant_type: 'refresh_token',
+                refresh_token: refreshToken,
+            }),
+        })
+        .json<GitHubTokenResponse>();
 }
 
-export async function githubGetAuthenticatedUser(accessToken: string): Promise<GitHubUserResponse> {
-    const response = await fetch('https://api.github.com/user', {
-        headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    return response.json();
+export async function githubGetAuthenticatedUser(): Promise<GitHubUserResponse> {
+    return kyGithubApi.get('user').json<GitHubUserResponse>();
 }
 
 export async function githubExchangeManifestCode(code: string): Promise<GitHubManifestResponse> {
-    const response = await fetch(`https://api.github.com/app-manifests/${code}/conversions`, {
-        method: 'POST',
-        headers: { Accept: 'application/vnd.github+json' },
-    });
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`GitHub App manifest exchange failed: ${errorText}`);
-    }
-
-    return response.json();
+    return kyGithubApi
+        .post(`app-manifests/${code}/conversions`, {
+            headers: { Accept: 'application/vnd.github+json' },
+            withAuth: false,
+        } as KyGithubOptions)
+        .json<GitHubManifestResponse>();
 }

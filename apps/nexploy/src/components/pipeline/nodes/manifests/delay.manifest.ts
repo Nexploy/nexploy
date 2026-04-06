@@ -10,12 +10,12 @@ export const delayManifest: NodeManifest = {
     definition: {
         id: 'delay',
         type: 'base-node',
-        category: 'utility',
+        category: 'flow',
         metadata: {
-            name: 'pipeline.nodes.delay.name',
-            description: 'pipeline.nodes.delay.description',
+            name: 'delay.name',
+            description: 'delay.description',
             icon: Timer,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['flow']} ${CATEGORY_TEXT['flow']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

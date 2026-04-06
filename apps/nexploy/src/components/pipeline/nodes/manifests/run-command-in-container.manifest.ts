@@ -10,12 +10,12 @@ export const runCommandInContainerManifest: NodeManifest = {
     definition: {
         id: 'run-command-in-container',
         type: 'base-node',
-        category: 'utility',
+        category: 'script',
         metadata: {
-            name: 'pipeline.nodes.run-command-in-container.name',
-            description: 'pipeline.nodes.run-command-in-container.description',
+            name: 'run-command-in-container.name',
+            description: 'run-command-in-container.description',
             icon: SquareTerminal,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['script']} ${CATEGORY_TEXT['script']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

@@ -74,7 +74,17 @@ export type NodeId =
 
 export type NodeType = 'base-node' | 'large-node' | 'attach-node';
 
-export type NodeCategory = 'source' | 'build' | 'deploy' | 'utility' | 'notification';
+export type NodeCategory =
+    | 'source'
+    | 'build'
+    | 'deploy'
+    | 'script'
+    | 'database'
+    | 'flow'
+    | 'config'
+    | 'files'
+    | 'integration'
+    | 'utility';
 
 export interface PipelineNodeData {
     type: NodeId;

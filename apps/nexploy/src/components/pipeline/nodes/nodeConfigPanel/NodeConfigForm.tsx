@@ -2,12 +2,17 @@
 
 import { type FormEvent } from 'react';
 import { useTranslations } from 'next-intl';
-import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeData, type NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { type Node } from '@xyflow/react';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { Button } from '@workspace/ui/components/button';
 import { Loader2 } from 'lucide-react';
-import { DialogFooter, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
+import {
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@workspace/ui/components/dialog';
 import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
@@ -23,9 +28,13 @@ interface NodeConfigFormProps {
 }
 
 export function NodeConfigForm({ node }: NodeConfigFormProps) {
-    const t = useTranslations('repository.pipeline');
+    const t = useTranslations('repository.pipeline.nodes');
     const tConfig = useTranslations('repository.pipeline.config');
     const tCommon = useTranslations('common');
+
+    const data = node.data as unknown as NodeData;
+    const nodeName = data.definition?.metadata.name;
+    const nodeDesc = data.definition?.metadata.description;
 
     const params = useParams<{ repositoryId: string }>();
     const { handleConfigChange, handleResetPanelNode, isViewingBuild } = usePipelineContext();
@@ -59,14 +68,44 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
         handleSubmitWithAction(e);
     };
 
-    if (!ConfigComponent) return null;
+    if (!ConfigComponent) {
+        return (
+            <div className="flex max-h-[90vh] flex-col gap-4">
+                {!isViewingBuild && (
+                    <DialogHeader>
+                        <DialogTitle>{t(nodeName)}</DialogTitle>
+                        {nodeDesc && (
+                            <DialogDescription className={'text-xs'}>
+                                {t(nodeDesc)}
+                            </DialogDescription>
+                        )}
+                    </DialogHeader>
+                )}
+                <DialogFooter className="px-6 pb-6">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleResetPanelNode}
+                    >
+                        {tCommon('close')}
+                    </Button>
+                </DialogFooter>
+            </div>
+        );
+    }
 
     return (
         <Form {...form}>
             <form onSubmit={handleSubmit} className="flex max-h-[90vh] flex-col gap-4">
                 {!isViewingBuild && (
                     <DialogHeader>
-                        <DialogTitle className="text-sm">{t(`nodes.${nodeType}.name`)}</DialogTitle>
+                        <DialogTitle>{t(nodeName)}</DialogTitle>
+                        {nodeDesc && (
+                            <DialogDescription className={'text-xs'}>
+                                {t(nodeDesc)}
+                            </DialogDescription>
+                        )}
                     </DialogHeader>
                 )}
 

@@ -12,8 +12,8 @@ export const removeContainerManifest: NodeManifest = {
         type: 'base-node',
         category: 'deploy',
         metadata: {
-            name: 'pipeline.nodes.remove-container.name',
-            description: 'pipeline.nodes.remove-container.description',
+            name: 'remove-container.name',
+            description: 'remove-container.description',
             icon: CircleX,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },

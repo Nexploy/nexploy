@@ -11,6 +11,7 @@ import {
 } from '@workspace/schemas-zod/docker/network/networkAction.schema';
 import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
 import { filterNexployNetworks } from '@workspace/shared/nexployFilter';
+import { deleteNetworks } from '@/services/networkService';
 
 const app = new Hono();
 
@@ -24,8 +25,7 @@ app.post(
 app.get(
     '/',
     handleAsync(async () => {
-        const allNetworks = networksStateManager.getAllNetworks();
-        return filterNexployNetworks(allNetworks);
+        return filterNexployNetworks(networksStateManager.getAllNetworks());
     }),
 );
 
@@ -41,16 +41,8 @@ app.post(
             throw new Error(t('errors.networkAlreadyExists', { name }));
         }
 
-        const network = await docker.createNetwork({
-            Name: name,
-            Driver: driver,
-            ...options,
-        });
-
-        return {
-            id: network.id,
-            name,
-        };
+        const network = await docker.createNetwork({ Name: name, Driver: driver, ...options });
+        return { id: network.id, name };
     }),
 );
 
@@ -59,9 +51,7 @@ app.get(
     zValidator('param', networkIdParamSchema),
     handleAsync(async (c) => {
         const { id: networkId } = getValidatedParam(c, networkIdParamSchema);
-        const network = docker.getNetwork(networkId);
-
-        return await network.inspect();
+        return await docker.getNetwork(networkId).inspect();
     }),
 );
 
@@ -70,63 +60,7 @@ app.post(
     zValidator('json', networkDeleteSchema),
     handleAsync(async (c) => {
         const { networkIds, force } = getValidatedJson(c, networkDeleteSchema);
-
-        const BUILTIN_NETWORKS = new Set(['bridge', 'host', 'none']);
-
-        const results = await Promise.all(
-            networkIds.map(async (networkId: string) => {
-                const network = docker.getNetwork(networkId);
-                const info = await network.inspect();
-
-                if (BUILTIN_NETWORKS.has(info.Name)) {
-                    return { type: 'skipped', id: networkId, name: info.Name, reason: 'builtin' };
-                }
-
-                if (!force) {
-                    const isComposeNetwork = !!info.Labels?.['com.docker.compose.project'];
-                    if (isComposeNetwork) {
-                        return {
-                            type: 'skipped',
-                            id: networkId,
-                            name: info.Name,
-                            reason: 'compose_stack',
-                        };
-                    }
-
-                    const connectedContainers = Object.keys(info.Containers || {});
-                    if (connectedContainers.length > 0) {
-                        return {
-                            type: 'skipped',
-                            id: networkId,
-                            name: info.Name,
-                            reason: 'has_containers',
-                        };
-                    }
-                } else {
-                    const connectedContainers = Object.keys(info.Containers || {});
-                    await Promise.all(
-                        connectedContainers.map((containerId) =>
-                            network.disconnect({ Container: containerId, Force: true }),
-                        ),
-                    );
-                }
-
-                await network.remove();
-                return { type: 'deleted', id: networkId };
-            }),
-        );
-
-        const deleted: string[] = [];
-        const skipped: { id: string; name: string; reason: string }[] = [];
-        for (const result of results) {
-            if (result.type === 'deleted') {
-                deleted.push(result.id);
-            } else {
-                skipped.push({ id: result.id, name: result.name!, reason: result.reason! });
-            }
-        }
-
-        return { deleted, skipped };
+        return await deleteNetworks(networkIds, force);
     }),
 );
 

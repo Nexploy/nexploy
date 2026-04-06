@@ -10,12 +10,12 @@ export const runTestsManifest: NodeManifest = {
     definition: {
         id: 'run-tests',
         type: 'base-node',
-        category: 'utility',
+        category: 'script',
         metadata: {
-            name: 'pipeline.nodes.run-tests.name',
-            description: 'pipeline.nodes.run-tests.description',
+            name: 'run-tests.name',
+            description: 'run-tests.description',
             icon: FlaskConical,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['script']} ${CATEGORY_TEXT['script']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

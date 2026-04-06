@@ -142,9 +142,7 @@ export function NodeAddPanel() {
                                 );
                             })()}
                             <span className="text-foreground text-xs font-medium">
-                                {t(
-                                    `categories.${activeCategory as 'source' | 'build' | 'deploy' | 'utility' | 'notification'}`,
-                                )}
+                                {t(`categories.${activeCategory}`)}
                             </span>
                         </button>
                     </div>

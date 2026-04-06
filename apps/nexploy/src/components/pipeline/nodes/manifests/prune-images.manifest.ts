@@ -12,8 +12,8 @@ export const pruneImagesManifest: NodeManifest = {
         type: 'base-node',
         category: 'build',
         metadata: {
-            name: 'pipeline.nodes.prune-images.name',
-            description: 'pipeline.nodes.prune-images.description',
+            name: 'prune-images.name',
+            description: 'prune-images.description',
             icon: Trash2,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },

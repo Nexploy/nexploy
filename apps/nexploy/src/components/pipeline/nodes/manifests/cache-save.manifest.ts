@@ -10,12 +10,12 @@ export const cacheSaveManifest: NodeManifest = {
     definition: {
         id: 'cache-save',
         type: 'base-node',
-        category: 'utility',
+        category: 'files',
         metadata: {
-            name: 'pipeline.nodes.cache-save.name',
-            description: 'pipeline.nodes.cache-save.description',
+            name: 'cache-save.name',
+            description: 'cache-save.description',
             icon: FolderOutput,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['files']} ${CATEGORY_TEXT['files']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

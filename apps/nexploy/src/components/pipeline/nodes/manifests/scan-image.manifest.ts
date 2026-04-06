@@ -12,8 +12,8 @@ export const scanImageManifest: NodeManifest = {
         type: 'base-node',
         category: 'build',
         metadata: {
-            name: 'pipeline.nodes.scan-image.name',
-            description: 'pipeline.nodes.scan-image.description',
+            name: 'scan-image.name',
+            description: 'scan-image.description',
             icon: ShieldCheck,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },

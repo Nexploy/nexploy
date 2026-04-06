@@ -12,8 +12,8 @@ export const deployComposeManifest: NodeManifest = {
         type: 'large-node',
         category: 'deploy',
         metadata: {
-            name: 'pipeline.nodes.deploy-compose.name',
-            description: 'pipeline.nodes.deploy-compose.description',
+            name: 'deploy-compose.name',
+            description: 'deploy-compose.description',
             icon: Layers,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },

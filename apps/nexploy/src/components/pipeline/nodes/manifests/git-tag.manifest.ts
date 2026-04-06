@@ -12,8 +12,8 @@ export const gitTagManifest: NodeManifest = {
         type: 'base-node',
         category: 'source',
         metadata: {
-            name: 'pipeline.nodes.git-tag.name',
-            description: 'pipeline.nodes.git-tag.description',
+            name: 'git-tag.name',
+            description: 'git-tag.description',
             icon: Milestone,
             color: `${CATEGORY_BG_MUTED['source']} ${CATEGORY_TEXT['source']}`,
         },

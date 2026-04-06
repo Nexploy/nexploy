@@ -10,12 +10,12 @@ export const backupVolumeS3Manifest: NodeManifest = {
     definition: {
         id: 'backup-volume-s3',
         type: 'base-node',
-        category: 'utility',
+        category: 'database',
         metadata: {
-            name: 'pipeline.nodes.backup-volume-s3.name',
-            description: 'pipeline.nodes.backup-volume-s3.description',
+            name: 'backup-volume-s3.name',
+            description: 'backup-volume-s3.description',
             icon: CloudBackup,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['database']} ${CATEGORY_TEXT['database']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

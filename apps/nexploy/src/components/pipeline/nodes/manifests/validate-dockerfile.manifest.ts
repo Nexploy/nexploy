@@ -12,8 +12,8 @@ export const validateDockerfileManifest: NodeManifest = {
         type: 'base-node',
         category: 'build',
         metadata: {
-            name: 'pipeline.nodes.validate-dockerfile.name',
-            description: 'pipeline.nodes.validate-dockerfile.description',
+            name: 'validate-dockerfile.name',
+            description: 'validate-dockerfile.description',
             icon: FileCheck,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },

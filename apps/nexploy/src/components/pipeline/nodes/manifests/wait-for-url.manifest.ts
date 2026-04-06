@@ -10,12 +10,12 @@ export const waitForUrlManifest: NodeManifest = {
     definition: {
         id: 'wait-for-url',
         type: 'base-node',
-        category: 'utility',
+        category: 'flow',
         metadata: {
-            name: 'pipeline.nodes.wait-for-url.name',
-            description: 'pipeline.nodes.wait-for-url.description',
+            name: 'wait-for-url.name',
+            description: 'wait-for-url.description',
             icon: Globe,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['flow']} ${CATEGORY_TEXT['flow']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

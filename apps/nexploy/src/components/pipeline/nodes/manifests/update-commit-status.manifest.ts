@@ -10,12 +10,12 @@ export const updateCommitStatusManifest: NodeManifest = {
     definition: {
         id: 'update-commit-status',
         type: 'base-node',
-        category: 'utility',
+        category: 'integration',
         metadata: {
-            name: 'pipeline.nodes.update-commit-status.name',
-            description: 'pipeline.nodes.update-commit-status.description',
+            name: 'update-commit-status.name',
+            description: 'update-commit-status.description',
             icon: GitCommit,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['integration']} ${CATEGORY_TEXT['integration']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

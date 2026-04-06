@@ -12,8 +12,8 @@ export const buildDockerImageManifest: NodeManifest = {
         type: 'base-node',
         category: 'build',
         metadata: {
-            name: 'pipeline.nodes.build-docker-image.name',
-            description: 'pipeline.nodes.build-docker-image.description',
+            name: 'build-docker-image.name',
+            description: 'build-docker-image.description',
             icon: Container,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },

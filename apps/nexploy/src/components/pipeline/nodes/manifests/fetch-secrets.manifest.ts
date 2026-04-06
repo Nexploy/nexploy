@@ -10,12 +10,12 @@ export const fetchSecretsManifest: NodeManifest = {
     definition: {
         id: 'fetch-secrets',
         type: 'base-node',
-        category: 'utility',
+        category: 'config',
         metadata: {
-            name: 'pipeline.nodes.fetch-secrets.name',
-            description: 'pipeline.nodes.fetch-secrets.description',
+            name: 'fetch-secrets.name',
+            description: 'fetch-secrets.description',
             icon: KeyRound,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['config']} ${CATEGORY_TEXT['config']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

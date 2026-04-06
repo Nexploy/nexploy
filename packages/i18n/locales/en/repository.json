@@ -378,8 +378,13 @@
             "source": "Source",
             "build": "Build",
             "deploy": "Deploy",
-            "utility": "Utility",
-            "notification": "Notification"
+            "script": "Scripts",
+            "database": "Database",
+            "flow": "Flow Control",
+            "config": "Configuration",
+            "files": "Files & Cache",
+            "integration": "Integrations",
+            "utility": "Utility"
         },
         "deleteSelection": "Delete {count} nodes",
         "node": {
@@ -390,13 +395,10 @@
         },
         "nodes": {
             "clone-repository": {
-                "name": "Clone Repository",
-                "description": "Clone the git repository",
-                "noConfig": "No configuration required. The repository URL and branch are inherited from the repository settings."
+                "name": "Clone Repository"
             },
             "webhook-clone": {
-                "name": "Webhook Clone",
-                "description": "Clone the repository using the branch and commit from an incoming Git webhook (push event)"
+                "name": "Webhook Clone"
             },
             "build-docker-image": {
                 "name": "Build Docker Image",
@@ -408,7 +410,7 @@
             },
             "write-env-file": {
                 "name": "Environment Variables",
-                "description": "Write repository environment variables to .env file"
+                "description": "This node writes all repository environment variables to a .env file in the working directory."
             },
             "send-notification": {
                 "name": "Send Notification",
@@ -436,7 +438,7 @@
             },
             "clean-workdir": {
                 "name": "Clean Work Dir",
-                "description": "Remove the cloned repository from disk"
+                "description": "Removes the cloned repository directory"
             },
             "save-version": {
                 "name": "Save Version",
@@ -518,7 +520,7 @@
             },
             "tag-image": {
                 "name": "Tag Image",
-                "description": "Add a tag to a local Docker image"
+                "description": "Add a tag to a Docker image"
             },
             "scan-image": {
                 "name": "Scan Image",
@@ -586,7 +588,7 @@
             }
         },
         "config": {
-            "webhookStatusConfigured": "Webhook configured automatically",
+            "webhookStatusConfigured": "Webhook configured",
             "webhookBranchFilter": "Branch Filter",
             "webhookBranchFilterPlaceholder": "e.g. main, develop, feature/*",
             "webhookBranchFilterDescription": "Only trigger builds for matching branches. Supports comma-separated values and wildcards (e.g. feature/*). Leave empty to accept all branches.",
@@ -601,7 +603,6 @@
             "dockerfilePath": "Dockerfile Path",
             "dockerfileFilePath": "File Path",
             "dockerfileFilePathPlaceholder": "Leave empty for repository root",
-            "envVarsInfo": "This node writes all repository environment variables to a .env file in the working directory.",
             "script": "Script",
             "failOnError": "Fail on error",
             "webhookUrl": "Webhook URL",
@@ -684,6 +685,9 @@
             "sourceTag": "Source Tag",
             "targetTag": "Target Tag",
             "scanImage": "Image",
+            "scanImagePlaceholder": "Select an image...",
+            "noImagesAvailable": "No images available",
+            "trivyVersion": "Trivy version",
             "scanTag": "Tag",
             "scanSeverity": "Minimum Severity",
             "exitOnVulnerabilities": "Fail on Vulnerabilities",

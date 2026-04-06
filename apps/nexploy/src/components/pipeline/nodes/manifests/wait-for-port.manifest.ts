@@ -10,12 +10,12 @@ export const waitForPortManifest: NodeManifest = {
     definition: {
         id: 'wait-for-port',
         type: 'base-node',
-        category: 'utility',
+        category: 'flow',
         metadata: {
-            name: 'pipeline.nodes.wait-for-port.name',
-            description: 'pipeline.nodes.wait-for-port.description',
+            name: 'wait-for-port.name',
+            description: 'wait-for-port.description',
             icon: Network,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['flow']} ${CATEGORY_TEXT['flow']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

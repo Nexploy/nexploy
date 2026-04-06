@@ -1,4 +1,9 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import {
+    getFromAllOutputs,
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { scanImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
@@ -12,12 +17,16 @@ export class ScanImageExecutor implements INodeExecutor {
         const image = nodeConfig.image as string;
         const tag = nodeConfig.tag as string;
         const severity = nodeConfig.severity as string;
+        const trivyVersion = (nodeConfig.trivyVersion as string | undefined) ?? 'canary';
         const exitOnVulnerabilities = nodeConfig.exitOnVulnerabilities as boolean;
 
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
         const fullImage = `${image}:${tag}`;
 
-        await logger.info(nodeId, `Scanning image ${fullImage} for ${severity}+ vulnerabilities using Trivy`);
+        await logger.info(
+            nodeId,
+            `Scanning image ${fullImage} for ${severity}+ vulnerabilities using Trivy`,
+        );
 
         try {
             const result = await kyDocker
@@ -26,12 +35,18 @@ export class ScanImageExecutor implements INodeExecutor {
                         image,
                         tag,
                         severity,
+                        trivyVersion,
                     },
                     signal: abortSignal,
                     environmentId,
-                    timeout: 300000, // 5 min — pulling trivy can take time
+                    timeout: 300000,
                 } as KyDockerOptions)
-                .json<{ vulnerabilities: number; output: string; critical: number; high: number }>();
+                .json<{
+                    vulnerabilities: number;
+                    output: string;
+                    critical: number;
+                    high: number;
+                }>();
 
             if (result.output) {
                 for (const line of result.output.split('\n')) {
@@ -39,7 +54,10 @@ export class ScanImageExecutor implements INodeExecutor {
                 }
             }
 
-            await logger.info(nodeId, `Scan complete: ${result.vulnerabilities} vulnerabilities found (CRITICAL: ${result.critical}, HIGH: ${result.high})`);
+            await logger.info(
+                nodeId,
+                `Scan complete: ${result.vulnerabilities} vulnerabilities found (CRITICAL: ${result.critical}, HIGH: ${result.high})`,
+            );
 
             if (result.vulnerabilities > 0 && exitOnVulnerabilities) {
                 throw new Error(
@@ -57,7 +75,9 @@ export class ScanImageExecutor implements INodeExecutor {
                 },
             };
         } catch (error) {
-            throw new Error(`Image scan failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            throw new Error(
+                `Image scan failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            );
         }
     }
 }

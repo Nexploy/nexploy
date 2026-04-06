@@ -1,4 +1,3 @@
-import { WriteEnvFileConfig } from '../config/WriteEnvFileConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 import { Position } from '@xyflow/react';
@@ -9,12 +8,12 @@ export const writeEnvFileManifest: NodeManifest = {
     definition: {
         id: 'write-env-file',
         type: 'base-node',
-        category: 'utility',
+        category: 'config',
         metadata: {
-            name: 'pipeline.nodes.write-env-file.name',
-            description: 'pipeline.nodes.write-env-file.description',
+            name: 'write-env-file.name',
+            description: 'write-env-file.description',
             icon: FileKey,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['config']} ${CATEGORY_TEXT['config']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
@@ -22,5 +21,4 @@ export const writeEnvFileManifest: NodeManifest = {
             attachments: [],
         },
     },
-    configPanel: WriteEnvFileConfig,
 };

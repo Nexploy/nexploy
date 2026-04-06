@@ -10,12 +10,12 @@ export const uploadArtifactManifest: NodeManifest = {
     definition: {
         id: 'upload-artifact',
         type: 'base-node',
-        category: 'utility',
+        category: 'files',
         metadata: {
-            name: 'pipeline.nodes.upload-artifact.name',
-            description: 'pipeline.nodes.upload-artifact.description',
+            name: 'upload-artifact.name',
+            description: 'upload-artifact.description',
             icon: Upload,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['files']} ${CATEGORY_TEXT['files']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

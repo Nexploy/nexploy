@@ -11,8 +11,8 @@ export const saveVersionManifest: NodeManifest = {
         type: 'attach-node',
         category: 'utility',
         metadata: {
-            name: 'pipeline.nodes.save-version.name',
-            description: 'pipeline.nodes.save-version.description',
+            name: 'save-version.name',
+            description: 'save-version.description',
             icon: Tag,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },

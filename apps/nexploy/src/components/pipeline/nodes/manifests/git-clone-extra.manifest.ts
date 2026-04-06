@@ -12,8 +12,8 @@ export const gitCloneExtraManifest: NodeManifest = {
         type: 'base-node',
         category: 'source',
         metadata: {
-            name: 'pipeline.nodes.git-clone-extra.name',
-            description: 'pipeline.nodes.git-clone-extra.description',
+            name: 'git-clone-extra.name',
+            description: 'git-clone-extra.description',
             icon: GitFork,
             color: `${CATEGORY_BG_MUTED['source']} ${CATEGORY_TEXT['source']}`,
         },

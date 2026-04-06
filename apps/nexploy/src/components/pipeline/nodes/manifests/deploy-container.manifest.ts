@@ -12,8 +12,8 @@ export const deployContainerManifest: NodeManifest = {
         type: 'large-node',
         category: 'deploy',
         metadata: {
-            name: 'pipeline.nodes.deploy-container.name',
-            description: 'pipeline.nodes.deploy-container.description',
+            name: 'deploy-container.name',
+            description: 'deploy-container.description',
             icon: Rocket,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },

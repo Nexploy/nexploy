@@ -10,12 +10,12 @@ export const conditionManifest: NodeManifest = {
     definition: {
         id: 'condition',
         type: 'base-node',
-        category: 'utility',
+        category: 'flow',
         metadata: {
-            name: 'pipeline.nodes.condition.name',
-            description: 'pipeline.nodes.condition.description',
+            name: 'condition.name',
+            description: 'condition.description',
             icon: Split,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['flow']} ${CATEGORY_TEXT['flow']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

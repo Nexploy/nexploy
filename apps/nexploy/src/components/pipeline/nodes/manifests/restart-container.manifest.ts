@@ -12,8 +12,8 @@ export const restartContainerManifest: NodeManifest = {
         type: 'base-node',
         category: 'deploy',
         metadata: {
-            name: 'pipeline.nodes.restart-container.name',
-            description: 'pipeline.nodes.restart-container.description',
+            name: 'restart-container.name',
+            description: 'restart-container.description',
             icon: RotateCcw,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },

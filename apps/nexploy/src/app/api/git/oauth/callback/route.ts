@@ -7,6 +7,7 @@ import { authRouteServer, route } from '@/lib/api/nextRoute';
 import dayjs from 'dayjs';
 import { Session } from '@/lib/auth/auth';
 import { githubExchangeCodeForToken, githubGetAuthenticatedUser } from '@/lib/api/github.api';
+import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { oauthCallbackQuerySchema } from '@workspace/schemas-zod/git/gitAccount.schema';
 
 export const GET = route
@@ -72,7 +73,10 @@ export const GET = route
                         expiresAt = dayjs().add(tokenData.expires_in, 'second').toDate();
                     }
 
-                    const userData = await githubGetAuthenticatedUser(accessToken);
+                    const userData = await tokenGitStorage.run(
+                        { accessToken, refreshToken, accessTokenExpiresAt: expiresAt },
+                        async () => githubGetAuthenticatedUser(),
+                    );
 
                     providerAccountId = String(userData.id);
                     providerUsername = userData.login;

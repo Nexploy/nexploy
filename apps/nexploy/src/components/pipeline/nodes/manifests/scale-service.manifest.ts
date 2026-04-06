@@ -12,8 +12,8 @@ export const scaleServiceManifest: NodeManifest = {
         type: 'base-node',
         category: 'deploy',
         metadata: {
-            name: 'pipeline.nodes.scale-service.name',
-            description: 'pipeline.nodes.scale-service.description',
+            name: 'scale-service.name',
+            description: 'scale-service.description',
             icon: ArrowUpDown,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },

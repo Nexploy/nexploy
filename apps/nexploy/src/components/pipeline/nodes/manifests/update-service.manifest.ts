@@ -12,8 +12,8 @@ export const updateServiceManifest: NodeManifest = {
         type: 'base-node',
         category: 'deploy',
         metadata: {
-            name: 'pipeline.nodes.update-service.name',
-            description: 'pipeline.nodes.update-service.description',
+            name: 'update-service.name',
+            description: 'update-service.description',
             icon: RefreshCw,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },

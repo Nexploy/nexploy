@@ -16,7 +16,7 @@ export interface NodeDefinition<TConfig = Record<string, unknown>> {
     isStartNode?: boolean;
     metadata: {
         name: string;
-        description: string;
+        description?: string;
         icon: LucideIcon;
         color: string;
     };

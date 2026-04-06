@@ -10,12 +10,12 @@ export const runMigrationManifest: NodeManifest = {
     definition: {
         id: 'run-migration',
         type: 'base-node',
-        category: 'utility',
+        category: 'database',
         metadata: {
-            name: 'pipeline.nodes.run-migration.name',
-            description: 'pipeline.nodes.run-migration.description',
+            name: 'run-migration.name',
+            description: 'run-migration.description',
             icon: Database,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['database']} ${CATEGORY_TEXT['database']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

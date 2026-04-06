@@ -12,8 +12,8 @@ export const setEnvironmentManifest: NodeManifest = {
         type: 'base-node',
         category: 'deploy',
         metadata: {
-            name: 'pipeline.nodes.set-environment.name',
-            description: 'pipeline.nodes.set-environment.description',
+            name: 'set-environment.name',
+            description: 'set-environment.description',
             icon: Server,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },

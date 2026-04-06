@@ -12,8 +12,8 @@ export const pullImageManifest: NodeManifest = {
         type: 'base-node',
         category: 'build',
         metadata: {
-            name: 'pipeline.nodes.pull-image.name',
-            description: 'pipeline.nodes.pull-image.description',
+            name: 'pull-image.name',
+            description: 'pull-image.description',
             icon: Download,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },

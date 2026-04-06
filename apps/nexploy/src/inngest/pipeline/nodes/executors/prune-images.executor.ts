@@ -1,4 +1,4 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import { getFromAllOutputs, INodeExecutor, NodeExecutionContext, NodeExecutionResult, } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { pruneImagesConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
@@ -34,7 +34,10 @@ export class PruneImagesExecutor implements INodeExecutor {
                 .json<{ reclaimedSpace: number; removedImages: number }>();
 
             const mb = ((result.reclaimedSpace ?? 0) / 1024 / 1024).toFixed(2);
-            await logger.info(nodeId, `Pruned ${result.removedImages ?? 0} images, reclaimed ${mb} MB`);
+            await logger.info(
+                nodeId,
+                `Pruned ${result.removedImages ?? 0} images, reclaimed ${mb} MB`,
+            );
 
             return {
                 output: {
@@ -43,7 +46,9 @@ export class PruneImagesExecutor implements INodeExecutor {
                 },
             };
         } catch (error) {
-            throw new Error(`Failed to prune images: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            throw new Error(
+                `Failed to prune images: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            );
         }
     }
 }

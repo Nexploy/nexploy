@@ -15,7 +15,6 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { SiGithub } from '@icons-pack/react-simple-icons';
 import { useTranslations } from 'next-intl';
 import {
     githubSetupSchema,
@@ -134,11 +133,7 @@ export function GitHubAppSetupForm() {
                 <form ref={manifestFormRef} action={target} method="post">
                     <input type="hidden" name="manifest" value={manifestJson} />
                     <div className="flex justify-end">
-                        <Button
-                            type="button"
-                            icon={SiGithub}
-                            onClick={form.handleSubmit(handleCreate)}
-                        >
+                        <Button type="button" onClick={form.handleSubmit(handleCreate)}>
                             {t('createApp')}
                         </Button>
                     </div>

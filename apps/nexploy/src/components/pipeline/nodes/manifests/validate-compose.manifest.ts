@@ -12,8 +12,8 @@ export const validateComposeManifest: NodeManifest = {
         type: 'base-node',
         category: 'build',
         metadata: {
-            name: 'pipeline.nodes.validate-compose.name',
-            description: 'pipeline.nodes.validate-compose.description',
+            name: 'validate-compose.name',
+            description: 'validate-compose.description',
             icon: FileSearch,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },

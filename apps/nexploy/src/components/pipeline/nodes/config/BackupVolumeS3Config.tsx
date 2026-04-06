@@ -103,11 +103,7 @@ export function BackupVolumeS3Config() {
                     <FormItem>
                         <FormLabel>{t('s3BucketName')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder={tAdmin('s3BucketNamePlaceholder')}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 font-mono text-xs"
-                            />
+                            <Input {...field} placeholder={tAdmin('s3BucketNamePlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

@@ -10,12 +10,12 @@ export const runScriptManifest: NodeManifest = {
     definition: {
         id: 'run-script',
         type: 'base-node',
-        category: 'utility',
+        category: 'script',
         metadata: {
-            name: 'pipeline.nodes.run-script.name',
-            description: 'pipeline.nodes.run-script.description',
+            name: 'run-script.name',
+            description: 'run-script.description',
             icon: Terminal,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['script']} ${CATEGORY_TEXT['script']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

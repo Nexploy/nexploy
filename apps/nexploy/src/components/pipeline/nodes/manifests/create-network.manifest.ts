@@ -12,8 +12,8 @@ export const createNetworkManifest: NodeManifest = {
         type: 'base-node',
         category: 'utility',
         metadata: {
-            name: 'pipeline.nodes.create-network.name',
-            description: 'pipeline.nodes.create-network.description',
+            name: 'create-network.name',
+            description: 'create-network.description',
             icon: Network,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },

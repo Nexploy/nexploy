@@ -12,8 +12,8 @@ export const tagImageManifest: NodeManifest = {
         type: 'base-node',
         category: 'build',
         metadata: {
-            name: 'pipeline.nodes.tag-image.name',
-            description: 'pipeline.nodes.tag-image.description',
+            name: 'tag-image.name',
+            description: 'tag-image.description',
             icon: Tag,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },

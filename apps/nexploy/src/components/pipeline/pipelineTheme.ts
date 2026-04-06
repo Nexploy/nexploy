@@ -13,6 +13,7 @@ import {
     FileSearch,
     FlaskConical,
     FolderInput,
+    FolderOpen,
     FolderOutput,
     GitBranch,
     GitCommit,
@@ -33,6 +34,7 @@ import {
     ScrollText,
     Server,
     ShieldCheck,
+    SlidersHorizontal,
     Square,
     SquareTerminal,
     Tag,
@@ -42,6 +44,7 @@ import {
     Upload,
     Variable,
     Webhook,
+    Workflow,
     Wrench,
 } from 'lucide-react';
 
@@ -49,48 +52,78 @@ export const CATEGORY_BG_MUTED: Record<string, string> = {
     source: 'bg-blue-500/10',
     build: 'bg-orange-500/10',
     deploy: 'bg-green-500/10',
+    script: 'bg-purple-500/10',
+    database: 'bg-teal-500/10',
+    flow: 'bg-sky-500/10',
+    config: 'bg-slate-500/10',
+    files: 'bg-indigo-500/10',
+    integration: 'bg-rose-500/10',
     utility: 'bg-yellow-500/10',
-    notification: 'bg-pink-500/10',
 };
 
 export const CATEGORY_BG: Record<string, string> = {
     source: '!bg-blue-500',
     build: '!bg-orange-500',
     deploy: '!bg-green-500',
+    script: '!bg-purple-500',
+    database: '!bg-teal-500',
+    flow: '!bg-sky-500',
+    config: '!bg-slate-500',
+    files: '!bg-indigo-500',
+    integration: '!bg-rose-500',
     utility: '!bg-yellow-500',
-    notification: '!bg-pink-500',
 };
 
 export const CATEGORY_TEXT: Record<string, string> = {
     source: 'text-blue-600',
     build: 'text-orange-600',
     deploy: 'text-green-600',
+    script: 'text-purple-600',
+    database: 'text-teal-600',
+    flow: 'text-sky-600',
+    config: 'text-slate-600',
+    files: 'text-indigo-600',
+    integration: 'text-rose-600',
     utility: 'text-yellow-600',
-    notification: 'text-pink-600',
 };
 
 export const CATEGORY_HEX: Record<string, string> = {
     source: '#2b7fff',
     build: '#ff6900',
     deploy: '#00c951',
+    script: '#a855f7',
+    database: '#14b8a6',
+    flow: '#0ea5e9',
+    config: '#64748b',
+    files: '#6366f1',
+    integration: '#f43f5e',
     utility: '#efb100',
-    notification: '#f6339a',
 };
 
 export const CATEGORY_BORDER: Record<string, string> = {
     source: 'border-blue-500',
     build: 'border-orange-500',
     deploy: 'border-green-500',
+    script: 'border-purple-500',
+    database: 'border-teal-500',
+    flow: 'border-sky-500',
+    config: 'border-slate-500',
+    files: 'border-indigo-500',
+    integration: 'border-rose-500',
     utility: 'border-yellow-500',
-    notification: 'border-pink-500',
 };
 
 export const CATEGORY_ICONS: Record<string, LucideIcon> = {
     source: GitBranch,
     build: Hammer,
     deploy: Rocket,
+    script: Terminal,
+    database: Database,
+    flow: Workflow,
+    config: SlidersHorizontal,
+    files: FolderOpen,
+    integration: Webhook,
     utility: Wrench,
-    notification: Bell,
 };
 
 const NODE_CATEGORY: Record<string, string> = {
@@ -102,10 +135,10 @@ const NODE_CATEGORY: Record<string, string> = {
     'push-to-registry': 'build',
     'deploy-container': 'deploy',
     'deploy-compose': 'deploy',
-    'write-env-file': 'utility',
-    'set-env-vars': 'utility',
+    'write-env-file': 'config',
+    'set-env-vars': 'config',
     'clean-workdir': 'utility',
-    'send-notification': 'notification',
+    'send-notification': 'integration',
     'save-version': 'utility',
     'set-environment': 'deploy',
     'start-container': 'deploy',
@@ -116,29 +149,29 @@ const NODE_CATEGORY: Record<string, string> = {
     'create-network': 'utility',
     'create-volume': 'utility',
     // Flow Control
-    'wait-for-health': 'utility',
-    'wait-for-url': 'utility',
-    'wait-for-port': 'utility',
-    delay: 'utility',
-    condition: 'utility',
+    'wait-for-health': 'flow',
+    'wait-for-url': 'flow',
+    'wait-for-port': 'flow',
+    delay: 'flow',
+    condition: 'flow',
     // Script Execution
-    'run-script': 'utility',
-    'run-command-in-container': 'utility',
-    'run-tests': 'utility',
+    'run-script': 'script',
+    'run-command-in-container': 'script',
+    'run-tests': 'script',
     // HTTP / Webhooks
-    'http-request': 'utility',
-    'update-commit-status': 'utility',
+    'http-request': 'integration',
+    'update-commit-status': 'integration',
     // Image Management
     'tag-image': 'build',
     'scan-image': 'build',
     'prune-images': 'build',
     // Files & Artifacts
-    'template-file': 'utility',
-    'upload-artifact': 'utility',
-    'download-file': 'utility',
+    'template-file': 'files',
+    'upload-artifact': 'files',
+    'download-file': 'files',
     // Database
-    'run-migration': 'utility',
-    'backup-volume-s3': 'utility',
+    'run-migration': 'database',
+    'backup-volume-s3': 'database',
     // Docker Swarm
     'deploy-stack': 'deploy',
     'update-service': 'deploy',
@@ -146,13 +179,13 @@ const NODE_CATEGORY: Record<string, string> = {
     // Monitoring
     'check-container-logs': 'utility',
     // Cache
-    'cache-restore': 'utility',
-    'cache-save': 'utility',
+    'cache-restore': 'files',
+    'cache-save': 'files',
     // Git
     'git-tag': 'source',
     'git-clone-extra': 'source',
-    // Secrets
-    'fetch-secrets': 'utility',
+    // Secrets & Config
+    'fetch-secrets': 'config',
 };
 
 export const NODE_BG_MUTED: Record<string, string> = Object.fromEntries(

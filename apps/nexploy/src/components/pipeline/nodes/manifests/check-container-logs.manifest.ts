@@ -12,8 +12,8 @@ export const checkContainerLogsManifest: NodeManifest = {
         type: 'base-node',
         category: 'utility',
         metadata: {
-            name: 'pipeline.nodes.check-container-logs.name',
-            description: 'pipeline.nodes.check-container-logs.description',
+            name: 'check-container-logs.name',
+            description: 'check-container-logs.description',
             icon: ScrollText,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },

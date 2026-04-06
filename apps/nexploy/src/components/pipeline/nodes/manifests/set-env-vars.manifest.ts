@@ -10,12 +10,12 @@ export const setEnvVarsManifest: NodeManifest = {
     definition: {
         id: 'set-env-vars',
         type: 'base-node',
-        category: 'utility',
+        category: 'config',
         metadata: {
-            name: 'pipeline.nodes.set-env-vars.name',
-            description: 'pipeline.nodes.set-env-vars.description',
+            name: 'set-env-vars.name',
+            description: 'set-env-vars.description',
             icon: Variable,
-            color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
+            color: `${CATEGORY_BG_MUTED['config']} ${CATEGORY_TEXT['config']}`,
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],

@@ -13,8 +13,7 @@ export const cloneRepositoryManifest: NodeManifest = {
         category: 'source',
         isStartNode: true,
         metadata: {
-            name: 'pipeline.nodes.clone-repository.name',
-            description: 'pipeline.nodes.clone-repository.description',
+            name: 'clone-repository.name',
             icon: GitBranch,
             color: `${CATEGORY_BG_MUTED['source']} ${CATEGORY_TEXT['source']}`,
         },

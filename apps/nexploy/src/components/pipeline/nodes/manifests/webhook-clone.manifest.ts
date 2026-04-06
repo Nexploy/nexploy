@@ -15,8 +15,7 @@ export const webhookCloneManifest: NodeManifest = {
         category: 'source',
         isStartNode: true,
         metadata: {
-            name: 'pipeline.nodes.webhook-clone.name',
-            description: 'pipeline.nodes.webhook-clone.description',
+            name: 'webhook-clone.name',
             icon: Webhook,
             color: `${CATEGORY_BG_MUTED['source']} ${CATEGORY_TEXT['source']}`,
         },

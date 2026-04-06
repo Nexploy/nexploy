@@ -12,8 +12,8 @@ export const pushToRegistryManifest: NodeManifest = {
         type: 'base-node',
         category: 'build',
         metadata: {
-            name: 'pipeline.nodes.push-to-registry.name',
-            description: 'pipeline.nodes.push-to-registry.description',
+            name: 'push-to-registry.name',
+            description: 'push-to-registry.description',
             icon: Upload,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },
