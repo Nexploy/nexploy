@@ -56,7 +56,7 @@ export type NodeId =
     | 'download-file'
     // Database
     | 'run-migration'
-    | 'backup-database'
+    | 'backup-volume-s3'
     // Docker Swarm
     | 'deploy-stack'
     | 'update-service'

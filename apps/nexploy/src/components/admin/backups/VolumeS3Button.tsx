@@ -38,15 +38,17 @@ export function VolumeS3Button({ volumeName, awsAccounts, initialSchedules }: Vo
     return (
         <Tooltip>
             <TooltipTrigger asChild>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleClick}
-                    icon={CloudBackup}
-                    disabled={awsAccounts.length === 0}
-                >
-                    {t('uploadToS3')}
-                </Button>
+                <div>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleClick}
+                        icon={CloudBackup}
+                        disabled={awsAccounts.length === 0}
+                    >
+                        {t('uploadToS3')}
+                    </Button>
+                </div>
             </TooltipTrigger>
             {awsAccounts.length === 0 && <TooltipContent>{t('noAwsAccounts')}</TooltipContent>}
         </Tooltip>

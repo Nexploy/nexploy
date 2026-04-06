@@ -1,9 +1,7 @@
 import { Panel } from '@xyflow/react';
-import { FlaskConical, Plus, Workflow } from 'lucide-react';
+import { Plus, Workflow } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { usePipelinePanelStore } from '@/stores/usePipelinePanelStore';
-
-const isDev = process.env.NODE_ENV !== 'production';
 
 export function ButtonPanel() {
     const { activePanel, togglePanel } = usePipelinePanelStore();
@@ -29,18 +27,6 @@ export function ButtonPanel() {
             >
                 <Workflow />
             </Button>
-
-            {isDev && (
-                <Button
-                    variant={activePanel === 'test' ? 'default' : 'secondary'}
-                    size="icon"
-                    onClick={() => togglePanel('test')}
-                    className="size-8 text-orange-500"
-                    title="Test panel (dev only)"
-                >
-                    <FlaskConical />
-                </Button>
-            )}
         </Panel>
     );
 }

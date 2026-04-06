@@ -473,10 +473,6 @@
                 "name": "Créer le volume",
                 "description": "Créer un volume Docker"
             },
-            "backup-database": {
-                "name": "Sauvegarde de base de données",
-                "description": "Exporte une base de données PostgreSQL ou MySQL vers un fichier"
-            },
             "cache-restore": {
                 "name": "Restaurer le cache",
                 "description": "Restaure un cache de build depuis un volume Docker vers le répertoire de travail"
@@ -534,6 +530,10 @@
             "run-migration": {
                 "name": "Exécuter les migrations",
                 "description": "Lance les migrations de base de données dans un conteneur éphémère"
+            },
+            "backup-volume-s3": {
+                "name": "Sauvegarder le volume sur S3",
+                "description": "Archive un volume Docker et l'envoie vers un bucket S3"
             },
             "run-script": {
                 "name": "Exécuter un script",
@@ -740,6 +740,7 @@
             "url": "URL",
             "useSSL": "Utiliser SSL",
             "workdir": "Répertoire de travail",
+            "s3BucketName": "Nom du bucket S3",
             "conditionMode": "Opérateur",
             "conditionModeAndDesc": "Toutes les entrées doivent réussir",
             "conditionModeOrDesc": "Au moins une doit réussir",

@@ -2,6 +2,7 @@ import {
     ArrowUpDown,
     Bell,
     CircleX,
+    CloudBackup,
     Container,
     Database,
     Download,
@@ -137,7 +138,7 @@ const NODE_CATEGORY: Record<string, string> = {
     'download-file': 'utility',
     // Database
     'run-migration': 'utility',
-    'backup-database': 'utility',
+    'backup-volume-s3': 'utility',
     // Docker Swarm
     'deploy-stack': 'deploy',
     'update-service': 'deploy',
@@ -207,7 +208,7 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'download-file': Download,
     // Database
     'run-migration': Database,
-    'backup-database': HardDrive,
+    'backup-volume-s3': CloudBackup,
     // Docker Swarm
     'deploy-stack': Layers,
     'update-service': RefreshCw,

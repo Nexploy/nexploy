@@ -39,7 +39,7 @@ import { templateFileManifest } from './template-file.manifest';
 import { uploadArtifactManifest } from './upload-artifact.manifest';
 import { downloadFileManifest } from './download-file.manifest';
 import { runMigrationManifest } from './run-migration.manifest';
-import { backupDatabaseManifest } from './backup-database.manifest';
+import { backupVolumeS3Manifest } from './backup-volume-s3.manifest';
 import { deployStackManifest } from './deploy-stack.manifest';
 import { updateServiceManifest } from './update-service.manifest';
 import { scaleServiceManifest } from './scale-service.manifest';
@@ -103,7 +103,7 @@ export const allBuiltinManifests: NodeManifest[] = [
     downloadFileManifest,
     // Database
     runMigrationManifest,
-    backupDatabaseManifest,
+    backupVolumeS3Manifest,
     // Docker Swarm
     deployStackManifest,
     updateServiceManifest,

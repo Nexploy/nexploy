@@ -211,14 +211,10 @@ export const runMigrationConfigSchema = z.object({
     workdir: z.string().optional(),
 });
 
-export const backupDatabaseConfigSchema = z.object({
-    dbType: z.enum(['postgres', 'mysql']).default('postgres'),
-    host: z.string().min(1, 'Host is required').default(''),
-    port: z.number().default(5432),
-    database: z.string().min(1, 'Database is required').default(''),
-    username: z.string().min(1, 'Username is required').default(''),
-    password: z.string().min(1, 'Password is required').default(''),
-    outputPath: z.string().min(1, 'Output path is required').default(''),
+export const backupVolumeS3ConfigSchema = z.object({
+    volumeName: z.string().min(1, 'Volume name is required').default(''),
+    accountId: z.string().min(1, 'AWS account ID is required').default(''),
+    bucket: z.string().min(1, 'Bucket name is required').default(''),
 });
 
 // ─── Docker Swarm ─────────────────────────────────────────────────────────────

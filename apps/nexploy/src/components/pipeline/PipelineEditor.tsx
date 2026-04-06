@@ -5,9 +5,6 @@ import { NodeTemplatePanel } from '@/components/pipeline/nodes/template/NodeTemp
 import { PipelineCanvas } from '@/components/pipeline/PipelineCanvas';
 import { PipelineToolbar } from '@/components/pipeline/PipelineToolbar';
 import { NodeConfigDialog } from '@/components/pipeline/nodes/nodeConfigPanel/NodeConfigDialog';
-import { NodeTestPanel } from '@/components/pipeline/nodes/test/NodeTestPanel';
-
-const isDev = process.env.NODE_ENV !== 'production';
 
 export function PipelineEditor() {
     return (
@@ -17,7 +14,6 @@ export function PipelineEditor() {
                 <PipelineCanvas />
                 <NodeTemplatePanel />
                 <NodeAddPanel />
-                {isDev && <NodeTestPanel />}
             </div>
             <NodeConfigDialog />
         </div>

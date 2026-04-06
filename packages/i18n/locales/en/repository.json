@@ -544,9 +544,9 @@
                 "name": "Run Migration",
                 "description": "Run database migrations in an ephemeral container"
             },
-            "backup-database": {
-                "name": "Backup Database",
-                "description": "Dump a PostgreSQL or MySQL database to a file"
+            "backup-volume-s3": {
+                "name": "Backup Volume to S3",
+                "description": "Archive a Docker volume and upload it to an S3 bucket"
             },
             "deploy-stack": {
                 "name": "Deploy Stack",
@@ -741,6 +741,7 @@
             "secretsOutputAs": "Output As",
             "secretsOutputEnvVars": "Pipeline env vars",
             "secretsOutputJsonFile": "JSON file (secrets.json)",
+            "s3BucketName": "S3 Bucket Name",
             "conditionMode": "Operator",
             "conditionModeAndDesc": "All inputs must succeed",
             "conditionModeOrDesc": "At least one must succeed",
