@@ -12,3 +12,7 @@ export const githubSetupSchema = z
     });
 
 export type GitHubSetupValues = z.infer<typeof githubSetupSchema>;
+
+export const githubSetupCallbackQuerySchema = z.object({
+    code: z.string().optional(),
+});

@@ -1,18 +1,13 @@
 import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { getBackupSchedulesForVolume } from '@/services/backupSchedule.service';
+import { backupSchedulesQuerySchema } from '@workspace/schemas-zod/aws/aws.schema';
 
 export const GET = route
     .use(authRouteServer)
     .use(requirePermission('backup', 'read'))
-    .handler(async (request) => {
-        const { searchParams } = new URL(request.url);
-        const volumeName = searchParams.get('volume');
-
-        if (!volumeName) {
-            return NextResponse.json({ error: 'volume parameter is required' }, { status: 400 });
-        }
-
-        const schedules = await getBackupSchedulesForVolume(volumeName);
+    .query(backupSchedulesQuerySchema)
+    .handler(async (_, { query }) => {
+        const schedules = await getBackupSchedulesForVolume(query.volume);
         return NextResponse.json(schedules);
     });

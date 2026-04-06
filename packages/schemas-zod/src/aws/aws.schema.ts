@@ -19,4 +19,18 @@ export const awsDeleteAccountSchema = z.object({
     id: z.string().min(1),
 });
 
+export const downloadVolumeQuerySchema = z.object({
+    volume: z.string().min(1),
+});
+
+export const uploadToS3QuerySchema = z.object({
+    volume: z.string().min(1),
+    bucket: z.string().min(1),
+    accountId: z.string().min(1),
+});
+
+export const backupSchedulesQuerySchema = z.object({
+    volume: z.string().min(1),
+});
+
 export type AwsAddAccountInput = z.infer<typeof awsAddAccountSchema>;

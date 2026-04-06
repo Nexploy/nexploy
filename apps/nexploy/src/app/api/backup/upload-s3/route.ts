@@ -3,6 +3,7 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { getAwsCredentials } from '@/services/aws.service';
 import * as crypto from 'node:crypto';
+import { uploadToS3QuerySchema } from '@workspace/schemas-zod/aws/aws.schema';
 
 function hmacSha256(key: Buffer | string, data: string): Buffer {
     return crypto.createHmac('sha256', key).update(data).digest();
@@ -70,21 +71,9 @@ async function uploadToS3(
 export const POST = route
     .use(authRouteServer)
     .use(requirePermission('backup', 'create'))
-    .handler(async (request) => {
-        const { searchParams } = new URL(request.url);
-        const volumeName = searchParams.get('volume');
-        const bucket = searchParams.get('bucket');
-        const accountId = searchParams.get('accountId');
-
-        if (!volumeName) {
-            return NextResponse.json({ error: 'volume parameter is required' }, { status: 400 });
-        }
-        if (!bucket) {
-            return NextResponse.json({ error: 'bucket parameter is required' }, { status: 400 });
-        }
-        if (!accountId) {
-            return NextResponse.json({ error: 'accountId parameter is required' }, { status: 400 });
-        }
+    .query(uploadToS3QuerySchema)
+    .handler(async (_, { query }) => {
+        const { volume: volumeName, bucket, accountId } = query;
 
         const awsCredentials = await getAwsCredentials(accountId);
 

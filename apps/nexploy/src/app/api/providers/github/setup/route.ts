@@ -5,16 +5,17 @@ import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { setToastServer } from '@/lib/toastServer';
 import { getBaseUrl } from '@/lib/getBaseUrl';
 import { githubExchangeManifestCode } from '@/lib/api/github.api';
+import { githubSetupCallbackQuerySchema } from '@workspace/schemas-zod/git/githubSetup.schema';
 
 export const GET = route
     .use(authRouteServer)
     .use(requirePermission('gitProvider', 'create'))
-    .handler(async (request) => {
+    .query(githubSetupCallbackQuerySchema)
+    .handler(async (_, { query }: { query: { code?: string } }) => {
         const baseUrl = await getBaseUrl();
         const redirectTo = (path: string) => NextResponse.redirect(`${baseUrl}${path}`);
 
-        const url = new URL(request.url);
-        const code = url.searchParams.get('code');
+        const { code } = query;
         if (!code) {
             await setToastServer({ type: 'error', message: 'Missing code from GitHub' });
             return redirectTo('/admin/integrations');

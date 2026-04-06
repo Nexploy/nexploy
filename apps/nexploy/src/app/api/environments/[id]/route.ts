@@ -2,13 +2,15 @@ import { NextResponse } from 'next/server';
 import { prisma } from '../../../../../prisma/prisma';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { decrypt } from '@/lib/encryption';
+import { idParamSchema } from '@workspace/schemas-zod/api/params.schema';
 
 export const GET = route
     .use(authRouteServer)
     .use(requirePermission('environment', 'read'))
+    .params(idParamSchema)
     .handler(async (_, { params }) => {
     try {
-        const { id } = await params;
+        const { id } = params;
 
         const environment = await prisma.environment.findUnique({
             where: {

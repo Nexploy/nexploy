@@ -3,12 +3,14 @@ import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { prisma } from '../../../../../../prisma/prisma';
 import { decrypt } from '@/lib/encryption';
 import { kyRegistry } from '@/lib/api/kyRegistry';
+import { idParamSchema } from '@workspace/schemas-zod/api/params.schema';
 
 export const GET = route
     .use(authRouteServer)
     .use(requirePermission('registry', 'read'))
-    .handler(async (_, { params }: { params: Promise<{ id: string }> }) => {
-        const { id } = await params;
+    .params(idParamSchema)
+    .handler(async (_, { params }) => {
+        const { id } = params;
 
         const registry = await prisma.dockerRegistry.findUnique({
             where: { id },

@@ -2,17 +2,15 @@ import { getRepositories } from '@/services/git/git.service';
 import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { Session } from '@/lib/auth/auth';
+import { getRepositoriesSchema } from '@workspace/schemas-zod/git/git.schema';
+import { z } from 'zod';
 
 export const GET = route
     .use(authRouteServer)
     .use(requirePermission('repository', 'read'))
-    .handler(async (request, { ctx }: { ctx: { session: Session } }) => {
-        const { searchParams } = new URL(request.url);
-        const provider = searchParams.get('provider');
-        const gitAccountId = searchParams.get('gitAccountId');
-
-        if (!provider || !gitAccountId)
-            return NextResponse.json({ error: 'Invalid provider' }, { status: 400 });
+    .query(getRepositoriesSchema)
+    .handler(async (_, { ctx, query }: { ctx: { session: Session }; query: z.infer<typeof getRepositoriesSchema> }) => {
+        const { provider, gitAccountId } = query;
 
         try {
             const repositories = await getRepositories(provider, gitAccountId, ctx.session.user.id);
