@@ -4,8 +4,11 @@ model BackupSchedule {
   bucket       String
   awsAccountId String
   awsAccount   AwsCredential @relation(fields: [awsAccountId], references: [id], onDelete: Cascade)
-  frequency    Frequency
-  lastRunAt    DateTime?
+  frequency       Frequency
+  scheduledHour   Int       @default(0)
+  scheduledMinute Int       @default(0)
+  scheduledDay    Int?
+  lastRunAt       DateTime?
   nextRunAt    DateTime
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt

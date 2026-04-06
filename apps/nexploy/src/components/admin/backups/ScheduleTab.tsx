@@ -40,10 +40,44 @@ const frequencyKeys = {
     MONTHLY: 'frequencyMonthly',
 } as const;
 
+const DAY_OF_WEEK_KEYS = [
+    'sunday',
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday',
+] as const;
+
+const DAYS_OF_MONTH = Array.from({ length: 31 }, (_, i) => i + 1);
+
 interface ScheduleTabProps {
     volumeName: string;
     awsAccounts: AwsAccountInfo[];
     initialSchedules: BackupSchedule[];
+}
+
+function formatScheduleDetail(
+    s: BackupSchedule,
+    t: ReturnType<typeof useTranslations<'admin'>>,
+): string {
+    const h = String(s.scheduledHour).padStart(2, '0');
+    const m = String(s.scheduledMinute).padStart(2, '0');
+    const time = `${h}:${m}`;
+
+    switch (s.frequency) {
+        case 'HOURLY':
+            return `:${String(s.scheduledMinute).padStart(2, '0')}`;
+        case 'DAILY':
+            return `${t('at')} ${time}`;
+        case 'WEEKLY': {
+            const dayKey = DAY_OF_WEEK_KEYS[(s.scheduledDay ?? 1) % 7] ?? 'monday';
+            return `${t(dayKey)} ${t('at')} ${time}`;
+        }
+        case 'MONTHLY':
+            return `${t('at')} ${time} (${t('scheduledDayOfMonth').toLowerCase()} ${s.scheduledDay ?? 1})`;
+    }
 }
 
 export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: ScheduleTabProps) {
@@ -60,6 +94,9 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
                     bucket: '',
                     awsAccountId: awsAccounts[0]?.id ?? '',
                     frequency: 'DAILY',
+                    scheduledHour: 0,
+                    scheduledMinute: 0,
+                    scheduledDay: undefined,
                 },
             },
             actionProps: {
@@ -71,6 +108,9 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
                         bucket: '',
                         awsAccountId: form.getValues('awsAccountId'),
                         frequency: form.getValues('frequency'),
+                        scheduledHour: 0,
+                        scheduledMinute: 0,
+                        scheduledDay: undefined,
                     });
                 },
                 onError: ({ error }) => {
@@ -80,6 +120,7 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
         },
     );
 
+    const frequency = form.watch('frequency');
     const isSubmitting = action.status === 'executing';
 
     const handleDelete = async (id: string) => {
@@ -144,7 +185,20 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>{t('frequency')}</FormLabel>
-                                <Select value={field.value} onValueChange={field.onChange}>
+                                <Select
+                                    value={field.value}
+                                    onValueChange={(val) => {
+                                        field.onChange(val);
+                                        form.setValue(
+                                            'scheduledDay',
+                                            val === 'WEEKLY'
+                                                ? 1
+                                                : val === 'MONTHLY'
+                                                  ? 1
+                                                  : undefined,
+                                        );
+                                    }}
+                                >
                                     <FormControl>
                                         <SelectTrigger>
                                             <SelectValue />
@@ -172,6 +226,142 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
                             </FormItem>
                         )}
                     />
+
+                    {frequency === 'WEEKLY' && (
+                        <FormField
+                            control={form.control}
+                            name="scheduledDay"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{t('scheduledDayOfWeek')}</FormLabel>
+                                    <Select
+                                        value={String(field.value ?? 1)}
+                                        onValueChange={(v) => field.onChange(Number(v))}
+                                    >
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectLabel>{t('scheduledDayOfWeek')}</SelectLabel>
+                                                {DAY_OF_WEEK_KEYS.map((key, i) => (
+                                                    <SelectItem key={i} value={String(i)}>
+                                                        {t(key)}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    )}
+
+                    {frequency === 'MONTHLY' && (
+                        <FormField
+                            control={form.control}
+                            name="scheduledDay"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{t('scheduledDayOfMonth')}</FormLabel>
+                                    <Select
+                                        value={String(field.value ?? 1)}
+                                        onValueChange={(v) => field.onChange(Number(v))}
+                                    >
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectLabel>
+                                                    {t('scheduledDayOfMonth')}
+                                                </SelectLabel>
+                                                {DAYS_OF_MONTH.map((d) => (
+                                                    <SelectItem key={d} value={String(d)}>
+                                                        {d}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    )}
+
+                    {frequency === 'HOURLY' ? (
+                        <FormField
+                            control={form.control}
+                            name="scheduledMinute"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{t('atMinute')}</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="number"
+                                            min={0}
+                                            max={59}
+                                            {...field}
+                                            onChange={(e) => field.onChange(Number(e.target.value))}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    ) : (
+                        <div className="grid grid-cols-2 gap-3">
+                            <FormField
+                                control={form.control}
+                                name="scheduledHour"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>{t('scheduledHour')}</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                min={0}
+                                                max={23}
+                                                {...field}
+                                                onChange={(e) =>
+                                                    field.onChange(Number(e.target.value))
+                                                }
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="scheduledMinute"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>{t('scheduledMinute')}</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                min={0}
+                                                max={59}
+                                                {...field}
+                                                onChange={(e) =>
+                                                    field.onChange(Number(e.target.value))
+                                                }
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    )}
+
                     <DialogFooter>
                         <Button type="submit" disabled={isSubmitting} isLoading={isSubmitting}>
                             <Clock className="size-4" />
@@ -194,7 +384,7 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
                             <div className="flex flex-col gap-0.5">
                                 <span className="text-sm font-medium">{s.bucket}</span>
                                 <span className="text-muted-foreground text-xs">
-                                    {t(frequencyKeys[s.frequency])}
+                                    {t(frequencyKeys[s.frequency])} — {formatScheduleDetail(s, t)}
                                 </span>
                                 <span className="text-muted-foreground text-xs">
                                     {t('lastRun')}:{' '}

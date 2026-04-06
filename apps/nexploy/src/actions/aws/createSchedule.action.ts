@@ -9,8 +9,16 @@ export const createBackupScheduleAction = authActionServer
     .use(requirePermission('backup', 'create'))
     .inputSchema(createBackupScheduleSchema)
     .action(async ({ parsedInput }) => {
-        const { volumeName, bucket, awsAccountId, frequency } = parsedInput;
-        const schedule = await createBackupSchedule(volumeName, bucket, awsAccountId, frequency);
+        const { volumeName, bucket, awsAccountId, frequency, scheduledHour, scheduledMinute, scheduledDay } = parsedInput;
+        const schedule = await createBackupSchedule(
+            volumeName,
+            bucket,
+            awsAccountId,
+            frequency,
+            scheduledHour,
+            scheduledMinute,
+            scheduledDay,
+        );
 
         await inngest.send({
             name: 'backup/schedule.start',
@@ -20,6 +28,9 @@ export const createBackupScheduleAction = authActionServer
                 bucket: schedule.bucket,
                 awsAccountId: schedule.awsAccountId,
                 frequency: schedule.frequency,
+                scheduledHour: schedule.scheduledHour,
+                scheduledMinute: schedule.scheduledMinute,
+                scheduledDay: schedule.scheduledDay ?? undefined,
                 nextRunAt: schedule.nextRunAt.toISOString(),
             },
         });

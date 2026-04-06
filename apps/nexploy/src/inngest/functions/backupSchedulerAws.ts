@@ -13,7 +13,17 @@ export const backupSchedulerAwsFunction = inngest.createFunction(
     },
     { event: 'backup/schedule.start' },
     async ({ event, step }) => {
-        const { id, volumeName, bucket, awsAccountId, frequency, nextRunAt } = event.data;
+        const {
+            id,
+            volumeName,
+            bucket,
+            awsAccountId,
+            frequency,
+            scheduledHour = 0,
+            scheduledMinute = 0,
+            scheduledDay,
+            nextRunAt,
+        } = event.data;
 
         await step.sleepUntil('wait-until-scheduled', nextRunAt);
 
@@ -37,12 +47,12 @@ export const backupSchedulerAwsFunction = inngest.createFunction(
                 }),
             );
 
-            await markScheduleRan(id, frequency);
+            await markScheduleRan(id);
 
             return { objectKey };
         });
 
-        const nextAt = getNextRunAt(frequency);
+        const nextAt = getNextRunAt(frequency, scheduledHour, scheduledMinute, scheduledDay);
 
         await step.sendEvent('reschedule', {
             name: 'backup/schedule.start',
@@ -52,6 +62,9 @@ export const backupSchedulerAwsFunction = inngest.createFunction(
                 bucket,
                 awsAccountId,
                 frequency,
+                scheduledHour,
+                scheduledMinute,
+                scheduledDay,
                 nextRunAt: nextAt.toISOString(),
             },
         });

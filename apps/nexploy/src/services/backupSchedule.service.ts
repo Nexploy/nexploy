@@ -1,23 +1,49 @@
 import { BackupSchedule, Frequency } from 'generated/client';
 import { prisma } from '../../prisma/prisma';
 
-export function getNextRunAt(frequency: Frequency, from = new Date()): Date {
-    const date = new Date(from);
+export function getNextRunAt(
+    frequency: Frequency,
+    scheduledHour = 0,
+    scheduledMinute = 0,
+    scheduledDay?: number,
+): Date {
+    const now = new Date();
+
     switch (frequency) {
-        case 'HOURLY':
-            date.setHours(date.getHours() + 1);
-            break;
-        case 'DAILY':
-            date.setDate(date.getDate() + 1);
-            break;
-        case 'WEEKLY':
-            date.setDate(date.getDate() + 7);
-            break;
-        case 'MONTHLY':
-            date.setMonth(date.getMonth() + 1);
-            break;
+        case 'HOURLY': {
+            const candidate = new Date(now);
+            candidate.setMinutes(scheduledMinute, 0, 0);
+            if (candidate <= now) candidate.setHours(candidate.getHours() + 1);
+            return candidate;
+        }
+        case 'DAILY': {
+            const candidate = new Date(now);
+            candidate.setHours(scheduledHour, scheduledMinute, 0, 0);
+            if (candidate <= now) candidate.setDate(candidate.getDate() + 1);
+            return candidate;
+        }
+        case 'WEEKLY': {
+            const targetDay = scheduledDay ?? 1;
+            const candidate = new Date(now);
+            candidate.setHours(scheduledHour, scheduledMinute, 0, 0);
+            const currentDay = candidate.getDay();
+            let daysUntil = (targetDay - currentDay + 7) % 7;
+            if (daysUntil === 0 && candidate <= now) daysUntil = 7;
+            candidate.setDate(candidate.getDate() + daysUntil);
+            return candidate;
+        }
+        case 'MONTHLY': {
+            const targetDay = scheduledDay ?? 1;
+            const candidate = new Date(now);
+            candidate.setDate(targetDay);
+            candidate.setHours(scheduledHour, scheduledMinute, 0, 0);
+            if (candidate <= now) {
+                candidate.setMonth(candidate.getMonth() + 1);
+                candidate.setDate(targetDay);
+            }
+            return candidate;
+        }
     }
-    return date;
 }
 
 export async function getBackupSchedulesForVolume(volumeName: string): Promise<BackupSchedule[]> {
@@ -36,6 +62,9 @@ export async function createBackupSchedule(
     bucket: string,
     awsAccountId: string,
     frequency: Frequency,
+    scheduledHour: number,
+    scheduledMinute: number,
+    scheduledDay?: number,
 ): Promise<BackupSchedule> {
     try {
         return prisma.backupSchedule.create({
@@ -44,7 +73,10 @@ export async function createBackupSchedule(
                 bucket,
                 awsAccountId,
                 frequency,
-                nextRunAt: getNextRunAt(frequency),
+                scheduledHour,
+                scheduledMinute,
+                scheduledDay,
+                nextRunAt: getNextRunAt(frequency, scheduledHour, scheduledMinute, scheduledDay),
             },
         });
     } catch {
@@ -60,11 +92,20 @@ export async function deleteBackupSchedule(id: string): Promise<void> {
     }
 }
 
-export async function markScheduleRan(id: string, frequency: Frequency): Promise<void> {
+export async function markScheduleRan(id: string): Promise<void> {
     try {
+        const schedule = await prisma.backupSchedule.findUniqueOrThrow({ where: { id } });
         await prisma.backupSchedule.update({
             where: { id },
-            data: { lastRunAt: new Date(), nextRunAt: getNextRunAt(frequency) },
+            data: {
+                lastRunAt: new Date(),
+                nextRunAt: getNextRunAt(
+                    schedule.frequency,
+                    schedule.scheduledHour,
+                    schedule.scheduledMinute,
+                    schedule.scheduledDay ?? undefined,
+                ),
+            },
         });
     } catch {
         throw new Error('Failed to mark schedule as ran');
