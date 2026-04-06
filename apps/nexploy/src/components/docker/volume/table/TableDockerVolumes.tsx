@@ -72,7 +72,7 @@ export function TableDockerVolumes() {
     const lastUpdate = useVolumeStore((state) => state.lastUpdate);
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
-    const columns = useMemo(() => getColumnsTableVolumes(t), []);
+    const columns = useMemo(() => getColumnsTableVolumes(t), [t]);
 
     const isLoading = !volumes.length && !lastUpdate;
     const isEmpty = !volumes.length && !!lastUpdate;

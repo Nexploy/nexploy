@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -22,7 +16,6 @@ import {
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { findAncestor } from '@/inngest/pipeline/utils/graphQueries';
 import * as React from 'react';
 import { useMemo } from 'react';
@@ -68,7 +61,7 @@ export function ContainerIdField() {
                     !containers.find((container) => container.id === field.value);
 
                 return (
-                    <FormItem>
+                    <FormItem className={'flex-1'}>
                         <FormLabel>{t('containerName')}</FormLabel>
                         <FormControl>
                             {environmentId ? (
@@ -86,7 +79,11 @@ export function ContainerIdField() {
                                     }}
                                     disabled={isLoading}
                                 >
-                                    <SelectTrigger className={'!pl-0 data-[placeholder]:!pl-3'}>
+                                    <SelectTrigger
+                                        className={
+                                            'w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3'
+                                        }
+                                    >
                                         {isLoading ? (
                                             <span className="text-muted-foreground flex items-center gap-2 pl-3 text-xs">
                                                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -119,10 +116,10 @@ export function ContainerIdField() {
                                                         <SelectItem
                                                             key={container.id}
                                                             value={container.id}
-                                                            className="pl-0 text-xs"
+                                                            className="pl-0"
                                                         >
                                                             <Status
-                                                                className="m-0 max-w-72 rounded-none border-0 p-0 pl-2.5"
+                                                                className="m-0 flex-1 rounded-none border-0 p-0 pl-2.5 text-sm"
                                                                 status={
                                                                     container.state === 'running'
                                                                         ? 'online'
@@ -131,24 +128,9 @@ export function ContainerIdField() {
                                                                 variant="outline"
                                                             >
                                                                 <StatusIndicator className="pl-2" />
-                                                                {name.length >= 50 ? (
-                                                                    <Tooltip>
-                                                                        <TooltipTrigger asChild>
-                                                                            <span className="truncate">
-                                                                                {name}
-                                                                            </span>
-                                                                        </TooltipTrigger>
-                                                                        <TooltipContent>
-                                                                            <span className="truncate">
-                                                                                {name}
-                                                                            </span>
-                                                                        </TooltipContent>
-                                                                    </Tooltip>
-                                                                ) : (
-                                                                    <span className="truncate">
-                                                                        {name}
-                                                                    </span>
-                                                                )}
+                                                                <span className="truncate">
+                                                                    {name}
+                                                                </span>
                                                             </Status>
                                                         </SelectItem>
                                                     );
@@ -159,11 +141,7 @@ export function ContainerIdField() {
                                 </Select>
                             ) : (
                                 <div className="flex flex-col gap-1.5">
-                                    <Input
-                                        {...field}
-                                        placeholder={t('containerNamePlaceholder')}
-                                        className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                                    />
+                                    <Input {...field} placeholder={t('containerNamePlaceholder')} />
                                     <div className="text-muted-foreground flex items-start gap-1 text-xs">
                                         <Info className="mt-0.5 h-3 w-3 shrink-0" />
                                         <span>

@@ -21,7 +21,9 @@ import {
 } from '@workspace/ui/components/select';
 import { Input } from '@workspace/ui/components/input';
 import { useImageStore } from '@/stores/docker/useImageStore';
+import * as React from 'react';
 import { useEffect, useMemo } from 'react';
+import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
 
 export function ScanImageConfig() {
     const t = useTranslations('repository.pipeline.config');
@@ -31,15 +33,18 @@ export function ScanImageConfig() {
     const selectedImage = form.watch('image');
 
     const imageNames = useMemo(() => {
-        const names = new Set<string>();
+        const map = new Map<string, number>();
         for (const img of images) {
             for (const repoTag of img.repoTags ?? []) {
                 if (repoTag === '<none>:<none>') continue;
                 const name = repoTag.split(':')[0];
-                if (name) names.add(name);
+                if (!name) continue;
+                map.set(name, (map.get(name) ?? 0) + img.containersUsed);
             }
         }
-        return Array.from(names).sort();
+        return Array.from(map.entries())
+            .map(([name, containersUsed]) => ({ name, containersUsed }))
+            .sort((a, b) => a.name.localeCompare(b.name));
     }, [images]);
 
     const availableTags = useMemo(() => {
@@ -55,6 +60,11 @@ export function ScanImageConfig() {
         }
         return Array.from(tags).sort();
     }, [images, selectedImage]);
+
+    const selectedImageInfo = useMemo(
+        () => imageNames.find((img) => img.name === selectedImage) ?? null,
+        [imageNames, selectedImage],
+    );
 
     useEffect(() => {
         if (availableTags.length === 0) return;
@@ -73,32 +83,47 @@ export function ScanImageConfig() {
                     render={({ field }) => (
                         <FormItem className={'min-w-0 flex-1'}>
                             <FormLabel>{t('scanImage')}</FormLabel>
-                            <Select value={field.value} onValueChange={field.onChange}>
-                                <FormControl>
-                                    <SelectTrigger className="w-full overflow-hidden">
+                            <FormControl>
+                                <Select value={field.value} onValueChange={field.onChange}>
+                                    <SelectTrigger className="w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3">
                                         <SelectValue
                                             className={'truncate'}
                                             placeholder={t('scanImagePlaceholder')}
                                         />
                                     </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>{t('scanImage')}</SelectLabel>
-                                        {imageNames.length === 0 ? (
-                                            <SelectItem value="__empty__" disabled>
-                                                {t('noImagesAvailable')}
-                                            </SelectItem>
-                                        ) : (
-                                            imageNames.map((name) => (
-                                                <SelectItem key={name} value={name}>
-                                                    <p className="truncate">{name}</p>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>{t('scanImage')}</SelectLabel>
+                                            {imageNames.length === 0 ? (
+                                                <SelectItem value="__empty__" disabled>
+                                                    {t('noImagesAvailable')}
                                                 </SelectItem>
-                                            ))
-                                        )}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
+                                            ) : (
+                                                imageNames.map(({ name, containersUsed }) => (
+                                                    <SelectItem
+                                                        key={name}
+                                                        value={name}
+                                                        className="pl-0"
+                                                    >
+                                                        <Status
+                                                            className="m-0 flex-1 rounded-none border-0 p-0 pl-2.5 text-sm"
+                                                            status={
+                                                                containersUsed > 0
+                                                                    ? 'online'
+                                                                    : 'offline'
+                                                            }
+                                                            variant="outline"
+                                                        >
+                                                            <StatusIndicator className="pl-2" />
+                                                            <span className="truncate">{name}</span>
+                                                        </Status>
+                                                    </SelectItem>
+                                                ))
+                                            )}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </FormControl>
                             <FormMessage className="text-xs" />
                         </FormItem>
                     )}
