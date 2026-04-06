@@ -77,7 +77,7 @@ export default async function BackupsPage() {
                                         />
                                         <Tooltip>
                                             <TooltipTrigger>
-                                                <Button variant="outline" size="sm" asChild>
+                                                <Button variant="outline" size="icon" asChild>
                                                     <a
                                                         href={`/api/backup/download?volume=${encodeURIComponent(volume.name)}`}
                                                         download

@@ -1,14 +1,7 @@
 import ky from 'ky';
 import * as crypto from 'node:crypto';
 import { getTokenAwsStorage } from '@/lib/storage/token-aws-storage';
-
-function hmacSha256(key: Buffer | string, data: string): Buffer {
-    return crypto.createHmac('sha256', key).update(data).digest();
-}
-
-function sha256Hex(data: string | Buffer): string {
-    return crypto.createHash('sha256').update(data).digest('hex');
-}
+import { hmacSha256, sha256Hex } from './crypto-utils';
 
 export const kyS3 = ky.create({
     timeout: false,
