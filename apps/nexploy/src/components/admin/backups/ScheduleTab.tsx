@@ -9,14 +9,8 @@ import { Clock, Trash2 } from 'lucide-react';
 import dayjs from 'dayjs';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Switch } from '@workspace/ui/components/switch';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -52,6 +46,11 @@ const DAY_OF_WEEK_KEYS = [
 
 const DAYS_OF_MONTH = Array.from({ length: 31 }, (_, i) => i + 1);
 
+function to24h(hour12: number, period: 'AM' | 'PM'): number {
+    if (period === 'AM') return hour12 === 12 ? 0 : hour12;
+    return hour12 === 12 ? 12 : hour12 + 12;
+}
+
 interface ScheduleTabProps {
     volumeName: string;
     awsAccounts: AwsAccountInfo[];
@@ -61,14 +60,16 @@ interface ScheduleTabProps {
 function formatScheduleDetail(
     s: BackupSchedule,
     t: ReturnType<typeof useTranslations<'admin'>>,
+    is12h: boolean,
 ): string {
-    const h = String(s.scheduledHour).padStart(2, '0');
     const m = String(s.scheduledMinute).padStart(2, '0');
-    const time = `${h}:${m}`;
+    const time = is12h
+        ? `${s.scheduledHour % 12 || 12}:${m} ${s.scheduledHour < 12 ? 'AM' : 'PM'}`
+        : `${String(s.scheduledHour).padStart(2, '0')}:${m}`;
 
     switch (s.frequency) {
         case 'HOURLY':
-            return `:${String(s.scheduledMinute).padStart(2, '0')}`;
+            return `:${m}`;
         case 'DAILY':
             return `${t('at')} ${time}`;
         case 'WEEKLY': {
@@ -83,6 +84,7 @@ function formatScheduleDetail(
 export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: ScheduleTabProps) {
     const t = useTranslations('admin');
     const [schedules, setSchedules] = useState<BackupSchedule[]>(initialSchedules);
+    const [is12h, setIs12h] = useState(false);
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         createBackupScheduleAction,
@@ -184,7 +186,13 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
                         name="frequency"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>{t('frequency')}</FormLabel>
+                                <div className="flex items-center justify-between">
+                                    <FormLabel>{t('frequency')}</FormLabel>
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="text-muted-foreground text-xs">12h</span>
+                                        <Switch checked={is12h} onCheckedChange={setIs12h} />
+                                    </div>
+                                </div>
                                 <Select
                                     value={field.value}
                                     onValueChange={(val) => {
@@ -320,23 +328,73 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
                             <FormField
                                 control={form.control}
                                 name="scheduledHour"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{t('scheduledHour')}</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="number"
-                                                min={0}
-                                                max={23}
-                                                {...field}
-                                                onChange={(e) =>
-                                                    field.onChange(Number(e.target.value))
-                                                }
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
+                                render={({ field }) => {
+                                    const hour12 = (field.value ?? 0) % 12 || 12;
+                                    const period = (field.value ?? 0) < 12 ? 'AM' : 'PM';
+                                    return (
+                                        <FormItem>
+                                            <FormLabel>{t('scheduledHour')}</FormLabel>
+                                            {is12h ? (
+                                                <div className="flex gap-1.5">
+                                                    <FormControl>
+                                                        <Input
+                                                            type="number"
+                                                            min={1}
+                                                            max={12}
+                                                            value={hour12}
+                                                            className="w-16"
+                                                            onChange={(e) => {
+                                                                const h = Math.min(
+                                                                    12,
+                                                                    Math.max(
+                                                                        1,
+                                                                        Number(e.target.value) || 1,
+                                                                    ),
+                                                                );
+                                                                field.onChange(to24h(h, period));
+                                                            }}
+                                                        />
+                                                    </FormControl>
+                                                    <Select
+                                                        value={period}
+                                                        onValueChange={(v) =>
+                                                            field.onChange(
+                                                                to24h(hour12, v as 'AM' | 'PM'),
+                                                            )
+                                                        }
+                                                    >
+                                                        <SelectTrigger className="w-20">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectGroup>
+                                                                <SelectItem value="AM">
+                                                                    AM
+                                                                </SelectItem>
+                                                                <SelectItem value="PM">
+                                                                    PM
+                                                                </SelectItem>
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+                                            ) : (
+                                                <FormControl>
+                                                    <Input
+                                                        type="number"
+                                                        min={0}
+                                                        max={23}
+                                                        {...field}
+                                                        onChange={(e) =>
+                                                            field.onChange(Number(e.target.value))
+                                                        }
+                                                    />
+                                                </FormControl>
+                                            )}
+                                            <FormMessage />
+                                        </FormItem>
+                                    );
+                                }}
                             />
                             <FormField
                                 control={form.control}
@@ -384,7 +442,8 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
                             <div className="flex flex-col gap-0.5">
                                 <span className="text-sm font-medium">{s.bucket}</span>
                                 <span className="text-muted-foreground text-xs">
-                                    {t(frequencyKeys[s.frequency])} — {formatScheduleDetail(s, t)}
+                                    {t(frequencyKeys[s.frequency])} —{' '}
+                                    {formatScheduleDetail(s, t, is12h)}
                                 </span>
                                 <span className="text-muted-foreground text-xs">
                                     {t('lastRun')}:{' '}
