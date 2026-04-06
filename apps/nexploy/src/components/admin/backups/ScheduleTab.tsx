@@ -5,12 +5,19 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
-import { Clock, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import dayjs from 'dayjs';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -422,7 +429,6 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
 
                     <DialogFooter>
                         <Button type="submit" disabled={isSubmitting} isLoading={isSubmitting}>
-                            <Clock className="size-4" />
                             {t('createSchedule')}
                         </Button>
                     </DialogFooter>

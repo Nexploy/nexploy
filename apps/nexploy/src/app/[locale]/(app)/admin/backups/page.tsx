@@ -8,6 +8,7 @@ import { formatBytes } from '@/utils/formatBytes';
 import { getAllAwsAccounts } from '@/services/aws.service';
 import { getBackupSchedulesForVolume } from '@/services/backupSchedule.service';
 import { VolumeS3Button } from '@/components/admin/backups/VolumeS3Button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 export default async function BackupsPage() {
     const [t, volumes, awsAccounts] = await Promise.all([
@@ -69,20 +70,24 @@ export default async function BackupsPage() {
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <Button variant="outline" size="sm" asChild>
-                                            <a
-                                                href={`/api/backup/download?volume=${encodeURIComponent(volume.name)}`}
-                                                download
-                                            >
-                                                <Download className="size-4" />
-                                                {t('downloadBackup')}
-                                            </a>
-                                        </Button>
                                         <VolumeS3Button
                                             volumeName={volume.name}
                                             awsAccounts={awsAccounts}
                                             initialSchedules={allSchedules[index] ?? []}
                                         />
+                                        <Tooltip>
+                                            <TooltipTrigger>
+                                                <Button variant="outline" size="sm" asChild>
+                                                    <a
+                                                        href={`/api/backup/download?volume=${encodeURIComponent(volume.name)}`}
+                                                        download
+                                                    >
+                                                        <Download className="size-4" />
+                                                    </a>
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>{t('downloadBackup')}</TooltipContent>
+                                        </Tooltip>
                                     </div>
                                 </div>
                             ))}

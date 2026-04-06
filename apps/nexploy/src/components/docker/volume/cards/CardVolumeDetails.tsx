@@ -86,29 +86,15 @@ export function CardVolumeDetails({ volume }: CardVolumeDetailsProps) {
                         </span>
                     </div>
 
-                    {volume.usageData && (
-                        <>
-                            <div className="flex items-center gap-4 border-b pb-3">
-                                <span className="text-muted-foreground w-32 shrink-0 text-sm font-medium">
-                                    {t('size')}
-                                </span>
-                                <span className="text-sm">
-                                    {formatBytes(volume.usageData.Size)}
-                                </span>
-                            </div>
-                            <div className="flex items-center gap-4 border-b pb-3">
-                                <span className="text-muted-foreground w-32 shrink-0 text-sm font-medium">
-                                    {t('refCount')}
-                                </span>
-                                <Badge
-                                    variant={
-                                        volume.usageData.RefCount > 0 ? 'default' : 'secondary'
-                                    }
-                                >
-                                    {volume.usageData.RefCount}
-                                </Badge>
-                            </div>
-                        </>
+                    {volume.usageData && volume.usageData.Size >= 0 && (
+                        <div className="flex items-center gap-4 border-b pb-3">
+                            <span className="text-muted-foreground w-32 shrink-0 text-sm font-medium">
+                                {t('size')}
+                            </span>
+                            <span className="text-sm font-medium">
+                                {formatBytes(volume.usageData.Size)}
+                            </span>
+                        </div>
                     )}
 
                     <div className="flex gap-4">

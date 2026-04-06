@@ -47,6 +47,13 @@ export type Labels = {
     [key: string]: string;
 };
 
+export interface ContainersMount {
+    type: string;
+    name?: string;
+    source: string;
+    destination: string;
+}
+
 export interface Containers {
     id: string;
     name: string;
@@ -58,6 +65,7 @@ export interface Containers {
     health?: string;
     exitCode?: number;
     error?: string;
+    mounts: ContainersMount[];
     timestamp: number;
 }
 

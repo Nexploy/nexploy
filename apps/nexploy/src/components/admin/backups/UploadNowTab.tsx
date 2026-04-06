@@ -4,7 +4,6 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
-import { Upload } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import {
@@ -111,7 +110,6 @@ export function UploadNowTab({ volumeName, awsAccounts }: UploadNowTabProps) {
 
                 <DialogFooter>
                     <Button type="submit" disabled={isSubmitting} isLoading={isSubmitting}>
-                        <Upload className="size-4" />
                         {t('uploadNow')}
                     </Button>
                 </DialogFooter>

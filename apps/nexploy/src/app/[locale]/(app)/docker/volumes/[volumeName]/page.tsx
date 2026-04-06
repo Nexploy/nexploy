@@ -30,7 +30,7 @@ export default async function VolumePage({ params }: { params: Promise<{ volumeN
 
     return (
         <BreadcrumbProvider segments={{ volumeName }}>
-            <SSEProvider connections={['volumes']}>
+            <SSEProvider connections={['volumes', 'containers']}>
                 <VolumeDetailPage volumeName={volumeName} />
             </SSEProvider>
         </BreadcrumbProvider>

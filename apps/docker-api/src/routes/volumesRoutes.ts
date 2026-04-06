@@ -9,7 +9,7 @@ import {
     volumeDeleteSchema,
     volumeNameParamSchema,
 } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
-import { getValidatedJson } from '@/helpers/validation';
+import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
 
 const app = new Hono();
 
@@ -31,7 +31,7 @@ app.get(
     '/:name/inspect',
     zValidator('param', volumeNameParamSchema),
     handleAsync(async (c) => {
-        const { name: volumeName } = getValidatedJson(c, volumeNameParamSchema);
+        const { name: volumeName } = getValidatedParam(c, volumeNameParamSchema);
 
         const volume = docker.getVolume(volumeName);
 

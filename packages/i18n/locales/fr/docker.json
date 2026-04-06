@@ -231,6 +231,10 @@
         "title": "Conteneurs connectés",
         "noContainers": "Aucun conteneur connecté à ce réseau"
     },
+    "volumeContainers": {
+        "title": "Conteneurs utilisant ce volume",
+        "noContainers": "Aucun conteneur n'utilise ce volume"
+    },
     "volumeDetail": {
         "description": "Détails et informations du volume Docker",
         "deleteVolume": "Supprimer ce volume",
@@ -244,7 +248,6 @@
         "scope": "Portée",
         "created": "Créé le",
         "size": "Taille",
-        "refCount": "Conteneurs utilisant",
         "labels": "Labels",
         "noLabels": "Aucun label"
     },

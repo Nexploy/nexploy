@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Upload } from 'lucide-react';
+import { CloudBackup } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { S3BackupForm } from '@/components/admin/backups/S3BackupForm';
@@ -42,9 +42,9 @@ export function VolumeS3Button({ volumeName, awsAccounts, initialSchedules }: Vo
                     variant="outline"
                     size="sm"
                     onClick={handleClick}
+                    icon={CloudBackup}
                     disabled={awsAccounts.length === 0}
                 >
-                    <Upload className="size-4" />
                     {t('uploadToS3')}
                 </Button>
             </TooltipTrigger>

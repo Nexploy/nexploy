@@ -4,7 +4,6 @@ import { Card, CardContent } from '@workspace/ui/components/card';
 import { Container } from 'lucide-react';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
-import CopyButton from '@/components/shared/CopyButton';
 import { useTranslations } from 'next-intl';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
 import { useContainersStore } from '@/stores/docker/useContainersStore';
@@ -37,23 +36,13 @@ export function CardNetworkContainers({ network }: CardNetworkContainersProps) {
                             const displayName = container?.name || containerId.substring(0, 12);
 
                             return (
-                                <div
+                                <Link
                                     key={containerId}
-                                    className="flex items-center gap-2 border-b pb-2 last:border-b-0"
+                                    href={`/docker/containers/${containerId}`}
+                                    className="text-primary flex items-center gap-2 truncate border-b pb-2 text-sm last:border-b-0 hover:underline"
                                 >
-                                    <Link
-                                        href={`/docker/containers/${containerId}`}
-                                        className="text-primary truncate text-sm hover:underline"
-                                    >
-                                        {displayName}
-                                    </Link>
-                                    <CopyButton
-                                        textToCopy={containerId}
-                                        className="size-6"
-                                        size="icon"
-                                        variant="ghost"
-                                    />
-                                </div>
+                                    {displayName}
+                                </Link>
                             );
                         })}
                     </div>

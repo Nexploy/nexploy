@@ -1,4 +1,5 @@
 import { logger } from '@/utils/logger';
+import { kyNexploy } from '@/lib/kyNexploy';
 import { ImageInfo, ImageInspectInfo } from 'dockerode';
 import {
     Image,
@@ -191,32 +192,16 @@ export class ImagesStateManager extends BaseStateManager {
             `Syncing version delete for image ${oldState.id} with repositoryId ${repositoryId} and imageTag ${imageTag}`,
         );
 
-        const nexployUrl = process.env.NEXPLOY_API_URL;
-        const apiKey = process.env.NEXPLOY_API_KEY;
-
-        if (!nexployUrl || !apiKey) {
+        if (!process.env.NEXPLOY_API_URL || !process.env.NEXPLOY_API_KEY) {
             logger.warn('Cannot sync version delete: NEXPLOY_API_URL or NEXPLOY_API_KEY not set');
             return;
         }
 
         try {
-            const response = await fetch(`${nexployUrl}/api/internal/versions/sync-delete`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': apiKey,
-                },
-                body: JSON.stringify({ repositoryId, imageTag }),
+            await kyNexploy.post('internal/versions/sync-delete', {
+                json: { repositoryId, imageTag },
             });
-
-            if (!response.ok) {
-                logger.warn(
-                    { repositoryId, imageTag, status: response.status },
-                    'Failed to sync version delete to nexploy',
-                );
-            } else {
-                logger.debug({ repositoryId, imageTag }, 'Version sync delete sent to nexploy');
-            }
+            logger.debug({ repositoryId, imageTag }, 'Version sync delete sent to nexploy');
         } catch (err) {
             logger.warn(
                 { err, repositoryId, imageTag },

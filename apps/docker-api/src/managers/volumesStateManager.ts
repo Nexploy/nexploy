@@ -1,5 +1,5 @@
-import { docker } from '@/utils/dockerClient';
 import { logger } from '@/utils/logger';
+import { kyNexploy } from '@/lib/kyNexploy';
 import { VolumeInspectInfo } from 'dockerode';
 import {
     Volume,
@@ -8,6 +8,9 @@ import {
     VolumeStateChanges,
 } from '@workspace/typescript-interface/docker/docker.volume';
 import { BaseStateManager } from '@/lib/BaseStateManager';
+import { getCurrentEnvironmentId } from '@/lib/dockerContext';
+import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 
 export class VolumesStateManager extends BaseStateManager {
     private volumes: Map<string, Volume> = new Map();
@@ -127,6 +130,7 @@ export class VolumesStateManager extends BaseStateManager {
                     };
                     this.emit('volume-removed', volumeRemovedData);
                     logger.debug({ volumeName }, 'Volume destroyed');
+                    void this.syncVolumeDelete(oldState.name);
                 }
                 return;
             }
@@ -221,6 +225,22 @@ export class VolumesStateManager extends BaseStateManager {
         return this.volumes.get(volumeName);
     }
 
+    private async syncVolumeDelete(volumeName: string): Promise<void> {
+        if (!process.env.NEXPLOY_API_URL || !process.env.NEXPLOY_API_KEY) {
+            logger.warn('Cannot sync volume delete: NEXPLOY_API_URL or NEXPLOY_API_KEY not set');
+            return;
+        }
+
+        try {
+            await kyNexploy.post('internal/volumes/sync-delete', {
+                json: { volumeName },
+            });
+            logger.debug({ volumeName }, 'Volume delete synced to nexploy');
+        } catch (err) {
+            logger.warn({ err, volumeName }, 'Error calling nexploy volume sync-delete');
+        }
+    }
+
     async hardRefresh(): Promise<void> {
         logger.info('Starting hard refresh of volume state');
 
@@ -279,10 +299,6 @@ export class VolumesStateManager extends BaseStateManager {
         }
     }
 }
-
-import { getCurrentEnvironmentId } from '@/lib/dockerContext';
-import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
-import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 
 export function getVolumesStateManager(): VolumesStateManager {
     const environmentId = getCurrentEnvironmentId();

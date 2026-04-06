@@ -4,6 +4,7 @@ import { HardDrive, Trash } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
 import { useVolumeStore } from '@/stores/docker/useVolumeStore';
 import { CardVolumeDetails } from '@/components/docker/volume/cards/CardVolumeDetails';
+import { CardVolumeContainers } from '@/components/docker/volume/cards/CardVolumeContainers';
 
 import { Button } from '@workspace/ui/components/button';
 import { Skeleton } from '@workspace/ui/components/skeleton';
@@ -76,6 +77,7 @@ export function VolumeDetailPage({ volumeName }: VolumeDetailPageProps) {
             <ScrollAreaWithShadow className="h-full overflow-hidden">
                 <div className="flex flex-col gap-5 px-5 pb-5">
                     <CardVolumeDetails volume={volume} />
+                    <CardVolumeContainers volumeName={volumeName} isLoading={!volume} />
                 </div>
             </ScrollAreaWithShadow>
         </div>

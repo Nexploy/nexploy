@@ -292,6 +292,12 @@ export class ContainersStateManager extends BaseStateManager {
             status: container.Status,
             ports: Array.from(portsMap.values()),
             state: this.normalizeState(container.State),
+            mounts: (container.Mounts || []).map((m) => ({
+                type: m.Type,
+                name: m.Name,
+                source: m.Source,
+                destination: m.Destination,
+            })),
             timestamp: Date.now(),
         };
     }
@@ -347,6 +353,12 @@ export class ContainersStateManager extends BaseStateManager {
             health: info.State?.Health?.Status,
             exitCode: info.State?.ExitCode,
             error: info.State?.Error,
+            mounts: (info.Mounts || []).map((m) => ({
+                type: m.Type,
+                name: m.Name,
+                source: m.Source,
+                destination: m.Destination,
+            })),
             timestamp: Date.now(),
         };
     }

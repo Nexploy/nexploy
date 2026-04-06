@@ -92,6 +92,15 @@ export async function deleteBackupSchedule(id: string): Promise<void> {
     }
 }
 
+export async function deleteBackupSchedulesByVolume(volumeName: string): Promise<number> {
+    try {
+        const result = await prisma.backupSchedule.deleteMany({ where: { volumeName } });
+        return result.count;
+    } catch {
+        throw new Error('Failed to delete backup schedules for volume');
+    }
+}
+
 export async function markScheduleRan(id: string): Promise<void> {
     try {
         const schedule = await prisma.backupSchedule.findUniqueOrThrow({ where: { id } });
