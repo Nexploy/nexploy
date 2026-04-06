@@ -10,7 +10,9 @@ import { Button } from '@workspace/ui/components/button';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -87,8 +89,11 @@ export function ContainerPorts() {
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="tcp">TCP</SelectItem>
-                                                        <SelectItem value="udp">UDP</SelectItem>
+                                                        <SelectGroup>
+                                                            <SelectLabel>{t('protocol')}</SelectLabel>
+                                                            <SelectItem value="tcp">TCP</SelectItem>
+                                                            <SelectItem value="udp">UDP</SelectItem>
+                                                        </SelectGroup>
                                                     </SelectContent>
                                                 </Select>
                                             </FormControl>

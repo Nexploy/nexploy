@@ -13,7 +13,9 @@ import {
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -44,11 +46,14 @@ export function NetworkScopeSelect({ name = 'scope', messageClassName }: Network
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                            {NETWORK_SCOPES.map((scope) => (
-                                <SelectItem key={scope} value={scope}>
-                                    {tScopes(scope)}
-                                </SelectItem>
-                            ))}
+                            <SelectGroup>
+                                <SelectLabel>{t('scope')}</SelectLabel>
+                                {NETWORK_SCOPES.map((scope) => (
+                                    <SelectItem key={scope} value={scope}>
+                                        {tScopes(scope)}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
                         </SelectContent>
                     </Select>
                     <FormMessage className={messageClassName} />

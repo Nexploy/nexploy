@@ -573,6 +573,7 @@
         "addPort": "Ajouter un port",
         "hostPort": "Port hôte",
         "containerPort": "Port conteneur",
+        "protocol": "Protocole",
         "noPortsConfigured": "Aucun port configuré",
         "envVars": "Variables d'environnement",
         "envVarsDescription": "Variables à injecter dans le conteneur",

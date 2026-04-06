@@ -14,7 +14,9 @@ import { Switch } from '@workspace/ui/components/switch';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -72,10 +74,13 @@ export function ScanImageConfig() {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                <SelectItem value="CRITICAL">CRITICAL</SelectItem>
-                                <SelectItem value="HIGH">HIGH</SelectItem>
-                                <SelectItem value="MEDIUM">MEDIUM</SelectItem>
-                                <SelectItem value="LOW">LOW</SelectItem>
+                                <SelectGroup>
+                                    <SelectLabel>{t('scanSeverity')}</SelectLabel>
+                                    <SelectItem value="CRITICAL">CRITICAL</SelectItem>
+                                    <SelectItem value="HIGH">HIGH</SelectItem>
+                                    <SelectItem value="MEDIUM">MEDIUM</SelectItem>
+                                    <SelectItem value="LOW">LOW</SelectItem>
+                                </SelectGroup>
                             </SelectContent>
                         </Select>
                         <FormMessage className="text-xs" />

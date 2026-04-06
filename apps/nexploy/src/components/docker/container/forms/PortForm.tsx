@@ -13,7 +13,9 @@ import { Input } from '@workspace/ui/components/input';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -152,9 +154,12 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value="tcp">TCP</SelectItem>
-                                    <SelectItem value="udp">UDP</SelectItem>
-                                    <SelectItem value="sctp">SCTP</SelectItem>
+                                    <SelectGroup>
+                                        <SelectLabel>{t('port.protocol')}</SelectLabel>
+                                        <SelectItem value="tcp">TCP</SelectItem>
+                                        <SelectItem value="udp">UDP</SelectItem>
+                                        <SelectItem value="sctp">SCTP</SelectItem>
+                                    </SelectGroup>
                                 </SelectContent>
                             </Select>
                             <FormMessage />

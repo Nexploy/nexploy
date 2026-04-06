@@ -9,7 +9,9 @@ import { Textarea } from '@workspace/ui/components/textarea';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -139,11 +141,14 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                                         <SelectValue placeholder={t('selectConnectionType')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="UNIX_SOCKET">
-                                            {t('unixSocket')}
-                                        </SelectItem>
-                                        <SelectItem value="TCP">{t('tcp')}</SelectItem>
-                                        <SelectItem value="TCP_TLS">{t('tcpTls')}</SelectItem>
+                                        <SelectGroup>
+                                            <SelectLabel>{t('connectionType')}</SelectLabel>
+                                            <SelectItem value="UNIX_SOCKET">
+                                                {t('unixSocket')}
+                                            </SelectItem>
+                                            <SelectItem value="TCP">{t('tcp')}</SelectItem>
+                                            <SelectItem value="TCP_TLS">{t('tcpTls')}</SelectItem>
+                                        </SelectGroup>
                                     </SelectContent>
                                 </Select>
                             </FormControl>

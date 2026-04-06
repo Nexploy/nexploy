@@ -573,6 +573,7 @@
         "addPort": "Add Port",
         "hostPort": "Host port",
         "containerPort": "Container port",
+        "protocol": "Protocol",
         "noPortsConfigured": "No ports configured",
         "envVars": "Environment Variables",
         "envVarsDescription": "Variables to inject into the container",

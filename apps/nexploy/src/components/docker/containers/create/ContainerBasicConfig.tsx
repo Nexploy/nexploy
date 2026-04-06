@@ -23,7 +23,9 @@ import { Switch } from '@workspace/ui/components/switch';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -137,14 +139,17 @@ export function ContainerBasicConfig({ listImages }: ContainerBasicConfigProps) 
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value="no">{t('restartNever')}</SelectItem>
-                                    <SelectItem value="always">{t('restartAlways')}</SelectItem>
-                                    <SelectItem value="on-failure">
-                                        {t('restartOnFailure')}
-                                    </SelectItem>
-                                    <SelectItem value="unless-stopped">
-                                        {t('restartUnlessStopped')}
-                                    </SelectItem>
+                                    <SelectGroup>
+                                        <SelectLabel>{t('restartPolicy')}</SelectLabel>
+                                        <SelectItem value="no">{t('restartNever')}</SelectItem>
+                                        <SelectItem value="always">{t('restartAlways')}</SelectItem>
+                                        <SelectItem value="on-failure">
+                                            {t('restartOnFailure')}
+                                        </SelectItem>
+                                        <SelectItem value="unless-stopped">
+                                            {t('restartUnlessStopped')}
+                                        </SelectItem>
+                                    </SelectGroup>
                                 </SelectContent>
                             </Select>
                             <FormMessage />

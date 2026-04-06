@@ -13,7 +13,9 @@ import { Input } from '@workspace/ui/components/input';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -37,8 +39,11 @@ export function BackupDatabaseConfig() {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                <SelectItem value="postgres">PostgreSQL</SelectItem>
-                                <SelectItem value="mysql">MySQL</SelectItem>
+                                <SelectGroup>
+                                    <SelectLabel>{t('dbType')}</SelectLabel>
+                                    <SelectItem value="postgres">PostgreSQL</SelectItem>
+                                    <SelectItem value="mysql">MySQL</SelectItem>
+                                </SelectGroup>
                             </SelectContent>
                         </Select>
                         <FormMessage className="text-xs" />

@@ -121,6 +121,7 @@
     "frequencyHourly": "Toutes les heures",
     "frequencyDaily": "Tous les jours",
     "frequencyWeekly": "Toutes les semaines",
+    "frequencyMonthly": "Tous les mois",
     "createSchedule": "Créer la planification",
     "activeSchedules": "Planifications actives",
     "lastRun": "Dernier run",

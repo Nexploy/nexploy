@@ -13,6 +13,9 @@ export function getNextRunAt(frequency: Frequency, from = new Date()): Date {
         case 'WEEKLY':
             date.setDate(date.getDate() + 7);
             break;
+        case 'MONTHLY':
+            date.setMonth(date.getMonth() + 1);
+            break;
     }
     return date;
 }

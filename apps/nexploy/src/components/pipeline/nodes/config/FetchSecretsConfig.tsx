@@ -13,7 +13,9 @@ import { Input } from '@workspace/ui/components/input';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -38,9 +40,12 @@ export function FetchSecretsConfig() {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                <SelectItem value="vault">HashiCorp Vault</SelectItem>
-                                <SelectItem value="doppler">Doppler</SelectItem>
-                                <SelectItem value="env-file">.env File</SelectItem>
+                                <SelectGroup>
+                                    <SelectLabel>{t('secretsProvider')}</SelectLabel>
+                                    <SelectItem value="vault">HashiCorp Vault</SelectItem>
+                                    <SelectItem value="doppler">Doppler</SelectItem>
+                                    <SelectItem value="env-file">.env File</SelectItem>
+                                </SelectGroup>
                             </SelectContent>
                         </Select>
                         <FormMessage className="text-xs" />
@@ -115,8 +120,11 @@ export function FetchSecretsConfig() {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                <SelectItem value="env-vars">{t('secretsOutputEnvVars')}</SelectItem>
-                                <SelectItem value="json-file">{t('secretsOutputJsonFile')}</SelectItem>
+                                <SelectGroup>
+                                    <SelectLabel>{t('secretsOutputAs')}</SelectLabel>
+                                    <SelectItem value="env-vars">{t('secretsOutputEnvVars')}</SelectItem>
+                                    <SelectItem value="json-file">{t('secretsOutputJsonFile')}</SelectItem>
+                                </SelectGroup>
                             </SelectContent>
                         </Select>
                         <FormMessage className="text-xs" />

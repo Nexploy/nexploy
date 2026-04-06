@@ -17,7 +17,9 @@ import { Plus, Trash2 } from 'lucide-react';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -60,9 +62,12 @@ export function HttpRequestConfig() {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                {['GET', 'POST', 'PUT', 'DELETE', 'PATCH'].map((m) => (
-                                    <SelectItem key={m} value={m}>{m}</SelectItem>
-                                ))}
+                                <SelectGroup>
+                                    <SelectLabel>{t('httpMethod')}</SelectLabel>
+                                    {['GET', 'POST', 'PUT', 'DELETE', 'PATCH'].map((m) => (
+                                        <SelectItem key={m} value={m}>{m}</SelectItem>
+                                    ))}
+                                </SelectGroup>
                             </SelectContent>
                         </Select>
                         <FormMessage className="text-xs" />

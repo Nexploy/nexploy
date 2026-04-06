@@ -17,7 +17,9 @@ import {
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -173,11 +175,14 @@ export function MirrorImageSection({ registries }: MirrorImageSectionProps) {
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        {registries.map((registry) => (
-                                            <SelectItem key={registry.id} value={registry.id}>
-                                                {registry.name} ({registry.url})
-                                            </SelectItem>
-                                        ))}
+                                        <SelectGroup>
+                                            <SelectLabel>{t('targetRegistryLabel')}</SelectLabel>
+                                            {registries.map((registry) => (
+                                                <SelectItem key={registry.id} value={registry.id}>
+                                                    {registry.name} ({registry.url})
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />

@@ -121,6 +121,7 @@
     "frequencyHourly": "Every hour",
     "frequencyDaily": "Every day",
     "frequencyWeekly": "Every week",
+    "frequencyMonthly": "Every month",
     "createSchedule": "Create schedule",
     "activeSchedules": "Active schedules",
     "lastRun": "Last run",

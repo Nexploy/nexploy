@@ -17,7 +17,9 @@ import {
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -113,6 +115,8 @@ export function GitSourceStep() {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
+                                            <SelectGroup>
+                                            <SelectLabel>{t('account')}</SelectLabel>
                                             {accounts?.map((account) => {
                                                 const isOrg =
                                                     account.gitProvider.ownerType ===
@@ -146,6 +150,7 @@ export function GitSourceStep() {
                                                     </SelectItem>
                                                 );
                                             })}
+                                            </SelectGroup>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
@@ -183,14 +188,17 @@ export function GitSourceStep() {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {repos?.map((repo) => (
-                                                    <SelectItem key={repo.id} value={repo.id}>
-                                                        <span className="flex items-center gap-2">
-                                                            <BookMarked />
-                                                            {repo.fullName || repo.name}
-                                                        </span>
-                                                    </SelectItem>
-                                                ))}
+                                                <SelectGroup>
+                                                    <SelectLabel>{tSource('repository')}</SelectLabel>
+                                                    {repos?.map((repo) => (
+                                                        <SelectItem key={repo.id} value={repo.id}>
+                                                            <span className="flex items-center gap-2">
+                                                                <BookMarked />
+                                                                {repo.fullName || repo.name}
+                                                            </span>
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectGroup>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />

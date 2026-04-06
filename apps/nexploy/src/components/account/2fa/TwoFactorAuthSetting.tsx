@@ -24,7 +24,7 @@ export function TwoFactorAuthSetting() {
     };
 
     return (
-        <DialogFooter className="justify-betwee flex w-full flex-row pt-4">
+        <DialogFooter>
             <Button variant="destructive" onClick={handleDisable2FA}>
                 {t('disableButton')}
             </Button>

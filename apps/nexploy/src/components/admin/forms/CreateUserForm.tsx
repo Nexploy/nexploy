@@ -13,7 +13,9 @@ import { Input } from '@workspace/ui/components/input';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -155,9 +157,12 @@ export function CreateUserForm() {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value="read">{t('readRole')}</SelectItem>
-                                    <SelectItem value="readWrite">{t('readWriteRole')}</SelectItem>
-                                    <SelectItem value="admin">{t('adminRole')}</SelectItem>
+                                    <SelectGroup>
+                                        <SelectLabel>{t('role')}</SelectLabel>
+                                        <SelectItem value="read">{t('readRole')}</SelectItem>
+                                        <SelectItem value="readWrite">{t('readWriteRole')}</SelectItem>
+                                        <SelectItem value="admin">{t('adminRole')}</SelectItem>
+                                    </SelectGroup>
                                 </SelectContent>
                             </Select>
                             <FormMessage />

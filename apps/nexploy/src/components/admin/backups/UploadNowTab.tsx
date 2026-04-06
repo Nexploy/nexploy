@@ -18,7 +18,9 @@ import {
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -45,7 +47,7 @@ export function UploadNowTab({ volumeName, awsAccounts }: UploadNowTabProps) {
                 defaultValues: {
                     volumeName,
                     bucket: '',
-                    accountId: awsAccounts[0]?.id ?? '',
+                    accountId: awsAccounts[0]?.id,
                 },
             },
             actionProps: {
@@ -78,11 +80,14 @@ export function UploadNowTab({ volumeName, awsAccounts }: UploadNowTabProps) {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    {awsAccounts.map((a) => (
-                                        <SelectItem key={a.id} value={a.id}>
-                                            {a.displayName} — {a.region}
-                                        </SelectItem>
-                                    ))}
+                                    <SelectGroup>
+                                        <SelectLabel>{t('awsAccount')}</SelectLabel>
+                                        {awsAccounts.map((a) => (
+                                            <SelectItem key={a.id} value={a.id}>
+                                                {a.displayName} — {a.region}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
                                 </SelectContent>
                             </Select>
                             <FormMessage />
@@ -105,12 +110,7 @@ export function UploadNowTab({ volumeName, awsAccounts }: UploadNowTabProps) {
                 />
 
                 <DialogFooter>
-                    <Button
-                        type="submit"
-                        className="w-full"
-                        disabled={isSubmitting}
-                        isLoading={isSubmitting}
-                    >
+                    <Button type="submit" disabled={isSubmitting} isLoading={isSubmitting}>
                         <Upload className="size-4" />
                         {t('uploadNow')}
                     </Button>

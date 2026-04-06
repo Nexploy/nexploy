@@ -13,7 +13,9 @@ import { Input } from '@workspace/ui/components/input';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -54,9 +56,12 @@ export function WaitForUrlConfig() {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                <SelectItem value="GET">GET</SelectItem>
-                                <SelectItem value="POST">POST</SelectItem>
-                                <SelectItem value="HEAD">HEAD</SelectItem>
+                                <SelectGroup>
+                                    <SelectLabel>{t('httpMethod')}</SelectLabel>
+                                    <SelectItem value="GET">GET</SelectItem>
+                                    <SelectItem value="POST">POST</SelectItem>
+                                    <SelectItem value="HEAD">HEAD</SelectItem>
+                                </SelectGroup>
                             </SelectContent>
                         </Select>
                         <FormMessage className="text-xs" />

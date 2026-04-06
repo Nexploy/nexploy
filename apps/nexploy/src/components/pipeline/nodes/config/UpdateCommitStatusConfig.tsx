@@ -13,7 +13,9 @@ import { Input } from '@workspace/ui/components/input';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -37,8 +39,11 @@ export function UpdateCommitStatusConfig() {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                <SelectItem value="github">GitHub</SelectItem>
-                                <SelectItem value="gitlab">GitLab</SelectItem>
+                                <SelectGroup>
+                                    <SelectLabel>{t('commitStatusProvider')}</SelectLabel>
+                                    <SelectItem value="github">GitHub</SelectItem>
+                                    <SelectItem value="gitlab">GitLab</SelectItem>
+                                </SelectGroup>
                             </SelectContent>
                         </Select>
                         <FormMessage className="text-xs" />
@@ -127,10 +132,13 @@ export function UpdateCommitStatusConfig() {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                <SelectItem value="pending">pending</SelectItem>
-                                <SelectItem value="success">success</SelectItem>
-                                <SelectItem value="failure">failure</SelectItem>
-                                <SelectItem value="error">error</SelectItem>
+                                <SelectGroup>
+                                    <SelectLabel>{t('commitStatusState')}</SelectLabel>
+                                    <SelectItem value="pending">pending</SelectItem>
+                                    <SelectItem value="success">success</SelectItem>
+                                    <SelectItem value="failure">failure</SelectItem>
+                                    <SelectItem value="error">error</SelectItem>
+                                </SelectGroup>
                             </SelectContent>
                         </Select>
                         <FormMessage className="text-xs" />

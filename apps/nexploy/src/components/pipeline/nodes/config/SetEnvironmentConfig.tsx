@@ -6,7 +6,9 @@ import { FormControl, FormField, FormItem, FormLabel } from '@workspace/ui/compo
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -32,11 +34,14 @@ export function SetEnvironmentConfig() {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                {environments.map((env) => (
-                                    <SelectItem key={env.id} value={env.id} className="text-xs">
-                                        {env.name}
-                                    </SelectItem>
-                                ))}
+                                <SelectGroup>
+                                    <SelectLabel>{t('environment')}</SelectLabel>
+                                    {environments.map((env) => (
+                                        <SelectItem key={env.id} value={env.id} className="text-xs">
+                                            {env.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectGroup>
                             </SelectContent>
                         </Select>
                     </FormItem>

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const backupFrequencies = ['HOURLY', 'DAILY', 'WEEKLY'] as const;
+export const backupFrequencies = ['HOURLY', 'DAILY', 'WEEKLY', 'MONTHLY'] as const;
 
 export const createBackupScheduleSchema = z.object({
     volumeName: z.string().min(1),

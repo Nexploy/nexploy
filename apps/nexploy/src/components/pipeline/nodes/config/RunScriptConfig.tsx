@@ -13,7 +13,9 @@ import { Textarea } from '@workspace/ui/components/textarea';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -38,8 +40,11 @@ export function RunScriptConfig() {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                <SelectItem value="bash">bash</SelectItem>
-                                <SelectItem value="sh">sh</SelectItem>
+                                <SelectGroup>
+                                    <SelectLabel>{t('shell')}</SelectLabel>
+                                    <SelectItem value="bash">bash</SelectItem>
+                                    <SelectItem value="sh">sh</SelectItem>
+                                </SelectGroup>
                             </SelectContent>
                         </Select>
                         <FormMessage className="text-xs" />

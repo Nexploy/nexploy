@@ -20,7 +20,9 @@ import {
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -29,11 +31,13 @@ import { createBackupScheduleAction } from '@/actions/aws/createSchedule.action'
 import { deleteBackupScheduleAction } from '@/actions/aws/deleteSchedule.action';
 import { AwsAccountInfo } from '@workspace/typescript-interface/aws/aws';
 import { BackupSchedule } from 'generated/client';
+import { DialogFooter } from '@workspace/ui/components/dialog';
 
 const frequencyKeys = {
     HOURLY: 'frequencyHourly',
     DAILY: 'frequencyDaily',
     WEEKLY: 'frequencyWeekly',
+    MONTHLY: 'frequencyMonthly',
 } as const;
 
 interface ScheduleTabProps {
@@ -105,11 +109,14 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        {awsAccounts.map((a) => (
-                                            <SelectItem key={a.id} value={a.id}>
-                                                {a.displayName} — {a.region}
-                                            </SelectItem>
-                                        ))}
+                                        <SelectGroup>
+                                            <SelectLabel>{t('awsAccount')}</SelectLabel>
+                                            {awsAccounts.map((a) => (
+                                                <SelectItem key={a.id} value={a.id}>
+                                                    {a.displayName} — {a.region}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -144,29 +151,33 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="HOURLY">
-                                            {t('frequencyHourly')}
-                                        </SelectItem>
-                                        <SelectItem value="DAILY">{t('frequencyDaily')}</SelectItem>
-                                        <SelectItem value="WEEKLY">
-                                            {t('frequencyWeekly')}
-                                        </SelectItem>
+                                        <SelectGroup>
+                                            <SelectLabel>{t('frequency')}</SelectLabel>
+                                            <SelectItem value="HOURLY">
+                                                {t('frequencyHourly')}
+                                            </SelectItem>
+                                            <SelectItem value="DAILY">
+                                                {t('frequencyDaily')}
+                                            </SelectItem>
+                                            <SelectItem value="WEEKLY">
+                                                {t('frequencyWeekly')}
+                                            </SelectItem>
+                                            <SelectItem value="MONTHLY">
+                                                {t('frequencyMonthly')}
+                                            </SelectItem>
+                                        </SelectGroup>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-
-                    <Button
-                        type="submit"
-                        className="w-full"
-                        disabled={isSubmitting}
-                        isLoading={isSubmitting}
-                    >
-                        <Clock className="size-4" />
-                        {t('createSchedule')}
-                    </Button>
+                    <DialogFooter>
+                        <Button type="submit" disabled={isSubmitting} isLoading={isSubmitting}>
+                            <Clock className="size-4" />
+                            {t('createSchedule')}
+                        </Button>
+                    </DialogFooter>
                 </form>
             </Form>
 
@@ -192,8 +203,7 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
                                         : t('never')}
                                 </span>
                                 <span className="text-muted-foreground text-xs">
-                                    {t('nextRun')}:{' '}
-                                    {dayjs(s.nextRunAt).format('DD/MM/YYYY HH:mm')}
+                                    {t('nextRun')}: {dayjs(s.nextRunAt).format('DD/MM/YYYY HH:mm')}
                                 </span>
                             </div>
                             <Button variant="ghost" size="icon" onClick={() => handleDelete(s.id)}>

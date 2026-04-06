@@ -22,7 +22,9 @@ import {
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -82,16 +84,19 @@ export function NetworkForm() {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    {availableNetworks.map((network) => (
-                                        <SelectItem key={network.id} value={network.name}>
-                                            <div className="flex items-center gap-2">
-                                                <span>{network.name}</span>
-                                                <span className="text-muted-foreground text-xs">
-                                                    ({network.driver})
-                                                </span>
-                                            </div>
-                                        </SelectItem>
-                                    ))}
+                                    <SelectGroup>
+                                        <SelectLabel>{t('network.network')}</SelectLabel>
+                                        {availableNetworks.map((network) => (
+                                            <SelectItem key={network.id} value={network.name}>
+                                                <div className="flex items-center gap-2">
+                                                    <span>{network.name}</span>
+                                                    <span className="text-muted-foreground text-xs">
+                                                        ({network.driver})
+                                                    </span>
+                                                </div>
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
                                 </SelectContent>
                             </Select>
                             <FormMessage />
