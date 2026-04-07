@@ -25,10 +25,6 @@
     },
     "noMatchingRequests": "Aucune requête ne correspond aux filtres.",
     "requestsPerPage": "Requêtes par page :",
-    "sizeLabel": "Taille",
     "perPage": "Par page",
-    "all": "Tous",
-    "pageOf": "Page {current} sur {total}",
-    "previous": "Précédent",
-    "next": "Suivant"
+    "all": "Tous"
 }

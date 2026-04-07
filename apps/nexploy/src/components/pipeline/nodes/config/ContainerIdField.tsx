@@ -2,14 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
-import { Input } from '@workspace/ui/components/input';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -26,11 +19,8 @@ import { findAncestor } from '@/inngest/pipeline/utils/graphQueries';
 import * as React from 'react';
 import { useMemo } from 'react';
 import { useEnvironmentContainers } from '@/hooks/sse/useEnvironmentContainers';
-import { AlertTriangle, Info, Loader2 } from 'lucide-react';
-
-function stripLeadingSlash(name: string) {
-    return name.startsWith('/') ? name.slice(1) : name;
-}
+import { AlertTriangle, Loader2 } from 'lucide-react';
+import { stripLeadingSlash } from '@/utils/url';
 
 export function ContainerIdField() {
     const t = useTranslations('repository.pipeline.config');
@@ -61,105 +51,84 @@ export function ContainerIdField() {
             render={({ field }) => {
                 const isStale =
                     !isLoading &&
-                    !!environmentId &&
                     !!field.value &&
                     containers.length >= 0 &&
                     !containers.find((container) => container.id === field.value);
 
                 return (
                     <FormItem className={'flex-1'}>
-                        <FormLabel>{t('containerName')}</FormLabel>
+                        <FormLabel>{t('container')}</FormLabel>
                         <FormControl>
-                            {environmentId ? (
-                                <Select
-                                    value={field.value ?? ''}
-                                    onValueChange={(value) => {
-                                        field.onChange(value);
-                                        const container = containers.find((c) => c.id === value);
-                                        if (container) {
-                                            form.setValue(
-                                                'containerName',
-                                                stripLeadingSlash(container.name),
-                                            );
-                                        }
-                                    }}
-                                    disabled={isLoading}
+                            <Select
+                                value={field.value ?? ''}
+                                onValueChange={(value) => {
+                                    field.onChange(value);
+                                    const container = containers.find((c) => c.id === value);
+                                    if (container) {
+                                        form.setValue(
+                                            'containerName',
+                                            stripLeadingSlash(container.name),
+                                        );
+                                    }
+                                }}
+                                disabled={isLoading}
+                            >
+                                <SelectTrigger
+                                    className={
+                                        'w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3'
+                                    }
                                 >
-                                    <SelectTrigger
-                                        className={
-                                            'w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3'
-                                        }
-                                    >
-                                        {isLoading ? (
-                                            <span className="text-muted-foreground flex items-center gap-2 pl-3">
-                                                <Loader2 className="h-3 w-3 animate-spin" />
-                                                {t('containersLoading')}
-                                            </span>
-                                        ) : isStale ? (
-                                            <span className="flex items-center gap-1.5 pl-3">
-                                                <AlertTriangle className="h-3 w-3 shrink-0" />
-                                                {savedContainerName
-                                                    ? savedContainerName
-                                                    : t('containerUnavailable')}
-                                            </span>
-                                        ) : (
-                                            <SelectValue
-                                                placeholder={t('containerNamePlaceholder')}
-                                            />
-                                        )}
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectLabel>{t('containersSelectLabel')}</SelectLabel>
-                                            {containers.length === 0 ? (
-                                                <div className="text-muted-foreground px-2 py-1.5">
-                                                    {t('noContainersFound')}
-                                                </div>
-                                            ) : (
-                                                containers.map((container) => {
-                                                    const name = stripLeadingSlash(container.name);
-                                                    return (
-                                                        <SelectItem
-                                                            key={container.id}
-                                                            value={container.id}
-                                                            className="pl-0"
-                                                        >
-                                                            <Status
-                                                                className="m-0 flex-1 rounded-none border-0 p-0 pl-2.5 text-sm"
-                                                                status={
-                                                                    container.state === 'running'
-                                                                        ? 'online'
-                                                                        : 'offline'
-                                                                }
-                                                                variant="outline"
-                                                            >
-                                                                <StatusIndicator className="pl-2" />
-                                                                <span className="truncate">
-                                                                    {name}
-                                                                </span>
-                                                            </Status>
-                                                        </SelectItem>
-                                                    );
-                                                })
-                                            )}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            ) : (
-                                <div className="flex flex-col gap-1.5">
-                                    <Input {...field} placeholder={t('containerNamePlaceholder')} />
-                                    <div className="text-muted-foreground flex items-start gap-1 text-xs">
-                                        <Info className="mt-0.5 h-3 w-3 shrink-0" />
-                                        <span>
-                                            {t.rich('containerNoEnvironmentHint', {
-                                                bold: (chunks) => (
-                                                    <span className="font-bold">{chunks}</span>
-                                                ),
-                                            })}
+                                    {isLoading ? (
+                                        <span className="text-muted-foreground flex items-center gap-2">
+                                            <Loader2 className="h-3 w-3 animate-spin" />
+                                            {t('containersLoading')}
                                         </span>
-                                    </div>
-                                </div>
-                            )}
+                                    ) : isStale ? (
+                                        <span className="flex items-center gap-1.5 pl-3">
+                                            <AlertTriangle className="h-3 w-3 shrink-0" />
+                                            {savedContainerName
+                                                ? savedContainerName
+                                                : t('containerUnavailable')}
+                                        </span>
+                                    ) : (
+                                        <SelectValue placeholder={t('containerNamePlaceholder')} />
+                                    )}
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>{t('containersSelectLabel')}</SelectLabel>
+                                        {containers.length === 0 ? (
+                                            <div className="text-muted-foreground px-2 py-1.5 text-sm">
+                                                {t('noContainersFound')}
+                                            </div>
+                                        ) : (
+                                            containers.map((container) => {
+                                                const name = stripLeadingSlash(container.name);
+                                                return (
+                                                    <SelectItem
+                                                        key={container.id}
+                                                        value={container.id}
+                                                        className="pl-0"
+                                                    >
+                                                        <Status
+                                                            className="m-0 flex-1 rounded-none border-0 p-0 pl-2.5 text-sm"
+                                                            status={
+                                                                container.state === 'running'
+                                                                    ? 'online'
+                                                                    : 'offline'
+                                                            }
+                                                            variant="outline"
+                                                        >
+                                                            <StatusIndicator className="pl-2" />
+                                                            <span className="truncate">{name}</span>
+                                                        </Status>
+                                                    </SelectItem>
+                                                );
+                                            })
+                                        )}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                         </FormControl>
                         {isStale && (
                             <p className="flex items-start gap-1 text-xs text-amber-500">

@@ -25,10 +25,6 @@
     },
     "noMatchingRequests": "No requests match the filters.",
     "requestsPerPage": "Requests per page:",
-    "sizeLabel": "Size",
     "perPage": "Per page",
-    "all": "All",
-    "pageOf": "Page {current} of {total}",
-    "previous": "Previous",
-    "next": "Next"
+    "all": "All"
 }

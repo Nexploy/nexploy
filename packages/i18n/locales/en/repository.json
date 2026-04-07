@@ -446,23 +446,23 @@
             },
             "set-environment": {
                 "name": "Set Environment",
-                "description": "Select the deployment environment for downstream nodes"
+                "description": "Sets the deployment environment for all downstream nodes in this pipeline"
             },
             "start-container": {
                 "name": "Start Container",
-                "description": "Start an existing Docker container by name"
+                "description": "Start an existing Docker container"
             },
             "stop-container": {
                 "name": "Stop Container",
-                "description": "Stop a running Docker container by name"
+                "description": "Stop a running Docker container"
             },
             "restart-container": {
                 "name": "Restart Container",
-                "description": "Restart a Docker container by name"
+                "description": "Restart a Docker container"
             },
             "remove-container": {
                 "name": "Remove Container",
-                "description": "Stop and remove a Docker container by name"
+                "description": "Remove a Docker container"
             },
             "pull-image": {
                 "name": "Pull Image",
@@ -635,9 +635,8 @@
             "deployContainerNoConfig": "The container is automatically deployed using the image built by the Build Docker Image node. Connect it after that node to deploy the result.",
             "environment": "Environment",
             "selectEnvironment": "Select an environment",
-            "setEnvironmentInfo": "Sets the deployment environment for all downstream deploy nodes in this pipeline.",
-            "containerName": "Container ID",
-            "containerNamePlaceholder": "e.g. abc123def456",
+            "container": "Container",
+            "containerNamePlaceholder": "Select a container",
             "containerNoEnvironmentHint": "Connect this node to a <bold>Set Environment</bold> node to pick a container from a list.",
             "containersSelectLabel": "Containers list",
             "noContainersFound": "No containers found",
@@ -653,8 +652,15 @@
             "networkName": "Network Name",
             "networkNamePlaceholder": "e.g. my-network",
             "networkDriver": "Driver",
+            "volume": "Volume",
             "volumeName": "Volume Name",
-            "volumeNamePlaceholder": "e.g. my-volume",
+            "volumeNamePlaceholder": "Select a volume",
+            "volumesLoading": "Loading volumes...",
+            "volumesSelectLabel": "Volumes list",
+            "noVolumesFound": "No volumes found",
+            "volumeUnavailable": "Volume unavailable",
+            "volumeStaleWarning": "This volume is no longer available.",
+            "volumeNoEnvironmentHint": "Connect this node to a <bold>Set Environment</bold> node to pick a volume from a list.",
             "volumeDriver": "Driver",
             "volumeDriverPlaceholder": "Leave empty for default driver",
             "timeoutSeconds": "Timeout (seconds)",

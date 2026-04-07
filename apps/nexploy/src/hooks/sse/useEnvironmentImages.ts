@@ -3,20 +3,18 @@
 import { useEffect, useState } from 'react';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { Image, ImageEvent } from '@workspace/typescript-interface/docker/docker.image';
+import { useImageStore } from '@/stores/docker/useImageStore';
 
-export function useEnvironmentImages(environmentId: string | null | undefined): {
+export function useEnvironmentImages(environmentId?: string): {
     images: Image[];
     isLoading: boolean;
 } {
+    const globalImages = useImageStore((s) => s.images);
     const [images, setImages] = useState<Image[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        if (!environmentId) {
-            setImages([]);
-            setIsLoading(false);
-            return;
-        }
+        if (!environmentId) return;
 
         setIsLoading(true);
 
@@ -82,6 +80,10 @@ export function useEnvironmentImages(environmentId: string | null | undefined): 
             setIsLoading(false);
         };
     }, [environmentId]);
+
+    if (!environmentId) {
+        return { images: globalImages, isLoading: false };
+    }
 
     return { images, isLoading };
 }

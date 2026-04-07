@@ -33,6 +33,7 @@ import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 
 export default function RequestsPage() {
     const t = useTranslations('requests');
+    const tCommon = useTranslations('common');
 
     const environments = useEnvironmentStore((s) => s.environments);
     const defaultLocalEnvironment = environments.find((env) => env.isDefault);
@@ -312,7 +313,7 @@ export default function RequestsPage() {
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
-                                                <SelectLabel>{t('sizeLabel')}</SelectLabel>
+                                                <SelectLabel>{tCommon('size')}</SelectLabel>
                                                 {PAGE_SIZE_OPTIONS.map((size) => (
                                                     <SelectItem key={size} value={`${size}`}>
                                                         {size}
@@ -327,7 +328,7 @@ export default function RequestsPage() {
                                 {!isShowingAll && (
                                     <div className="flex items-center gap-2">
                                         <span className="text-muted-foreground text-sm">
-                                            {t('pageOf', {
+                                            {tCommon('pageOf', {
                                                 current: currentPage + 1,
                                                 total: totalPages,
                                             })}
@@ -342,7 +343,7 @@ export default function RequestsPage() {
                                                 disabled={currentPage === 0}
                                             >
                                                 <ChevronLeft className="h-4 w-4" />
-                                                {t('previous')}
+                                                {tCommon('previous')}
                                             </Button>
                                             <Button
                                                 variant="outline"
@@ -354,7 +355,7 @@ export default function RequestsPage() {
                                                 }
                                                 disabled={currentPage >= totalPages - 1}
                                             >
-                                                {t('next')}
+                                                {tCommon('next')}
                                                 <ChevronRight className="h-4 w-4" />
                                             </Button>
                                         </div>

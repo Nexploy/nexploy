@@ -445,23 +445,23 @@
             },
             "set-environment": {
                 "name": "Définir l'environnement",
-                "description": "Sélectionner l'environnement de déploiement pour les nœuds en aval"
+                "description": "Définit l'environnement de déploiement pour tous les nœuds en aval dans ce pipeline"
             },
             "start-container": {
                 "name": "Démarrer le conteneur",
-                "description": "Démarrer un conteneur Docker existant par son nom"
+                "description": "Démarrer un conteneur Docker existant"
             },
             "stop-container": {
                 "name": "Arrêter le conteneur",
-                "description": "Arrêter un conteneur Docker en cours d'exécution par son nom"
+                "description": "Arrêter un conteneur Docker en cours d'exécution"
             },
             "restart-container": {
                 "name": "Redémarrer le conteneur",
-                "description": "Redémarrer un conteneur Docker par son nom"
+                "description": "Redémarrer un conteneur Docker"
             },
             "remove-container": {
                 "name": "Supprimer le conteneur",
-                "description": "Arrêter et supprimer un conteneur Docker par son nom"
+                "description": "Supprimer un conteneur Docker"
             },
             "pull-image": {
                 "name": "Télécharger l'image",
@@ -634,9 +634,8 @@
             "deployContainerNoConfig": "Le conteneur est automatiquement déployé à partir de l'image construite par le node Build Docker Image. Connectez-le après ce node pour déployer le résultat.",
             "environment": "Environnement",
             "selectEnvironment": "Sélectionner un environnement",
-            "setEnvironmentInfo": "Définit l'environnement de déploiement pour tous les nœuds de déploiement en aval dans ce pipeline.",
-            "containerName": "ID du conteneur",
-            "containerNamePlaceholder": "ex. abc123def456",
+            "container": "Conteneur",
+            "containerNamePlaceholder": "Sélectionner un conteneur",
             "containerNoEnvironmentHint": "Reliez ce nœud à un nœud <bold>Définir un environnement</bold> pour sélectionner un conteneur dans une liste.",
             "containersSelectLabel": "Liste des conteneurs",
             "noContainersFound": "Aucun conteneur trouvé",
@@ -652,8 +651,15 @@
             "networkName": "Nom du réseau",
             "networkNamePlaceholder": "ex. mon-réseau",
             "networkDriver": "Driver",
+            "volume": "Volume",
             "volumeName": "Nom du volume",
-            "volumeNamePlaceholder": "ex. mon-volume",
+            "volumeNamePlaceholder": "Sélectionner un volume",
+            "volumesLoading": "Chargement des volumes...",
+            "volumesSelectLabel": "Liste des volumes",
+            "noVolumesFound": "Aucun volume trouvé",
+            "volumeUnavailable": "Volume indisponible",
+            "volumeStaleWarning": "Ce volume n'est plus disponible.",
+            "volumeNoEnvironmentHint": "Reliez ce nœud à un nœud <bold>Définir un environnement</bold> pour sélectionner un volume dans une liste.",
             "volumeDriver": "Driver",
             "volumeDriverPlaceholder": "Laisser vide pour le driver par défaut",
             "artifactDestinationPath": "Chemin de destination",

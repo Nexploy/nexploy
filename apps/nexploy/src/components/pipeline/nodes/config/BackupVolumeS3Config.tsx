@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
+import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import {
@@ -10,7 +11,6 @@ import {
     FormLabel,
     FormMessage,
 } from '@workspace/ui/components/form';
-import { Input } from '@workspace/ui/components/input';
 import {
     Select,
     SelectContent,
@@ -21,51 +21,104 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { type AwsAccountInfo } from '@workspace/typescript-interface/aws/aws';
-import { useVolumeStore } from '@/stores/docker/useVolumeStore';
+import { usePipelineContext } from '@/contexts/PipelineContext';
+import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { findAncestor } from '@/inngest/pipeline/utils/graphQueries';
+import { useEnvironmentVolumes } from '@/hooks/sse/useEnvironmentVolumes';
+import { AlertTriangle, Loader2 } from 'lucide-react';
+import { fetcherApi } from '@/lib/api/fetcherApi';
+import { Input } from '@workspace/ui/components/input';
 
 export function BackupVolumeS3Config() {
     const t = useTranslations('repository.pipeline.config');
     const tAdmin = useTranslations('admin');
     const form = useFormContext();
 
-    const volumes = useVolumeStore((s) => s.volumes);
-    const [awsAccounts, setAwsAccounts] = useState<AwsAccountInfo[]>([]);
+    const { nodes, edges } = usePipelineContext();
+    const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
 
-    useEffect(() => {
-        fetch('/api/aws/accounts')
-            .then((r) => r.json())
-            .then(setAwsAccounts)
-            .catch(() => {});
+    const environmentId = useMemo(() => {
+        if (!panelNodeId) return null;
+        const ancestor = findAncestor(
+            panelNodeId,
+            nodes,
+            edges,
+            (data) => data.nodeType === 'set-environment' && !data.disabled,
+        );
+        return ancestor?.data.config?.environmentId;
     }, []);
+
+    const { volumes, isLoading } = useEnvironmentVolumes(environmentId);
+    const { data: awsAccounts = [] } = useSWR<AwsAccountInfo[]>('/api/aws/accounts', fetcherApi);
 
     return (
         <div className="space-y-4">
             <FormField
                 control={form.control}
                 name="volumeName"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('volumeName')}</FormLabel>
-                        <Select value={field.value ?? ''} onValueChange={field.onChange}>
+                render={({ field }) => {
+                    const isStale =
+                        !isLoading &&
+                        !!field.value &&
+                        volumes.length >= 0 &&
+                        !volumes.find((v) => v.name === field.value);
+
+                    return (
+                        <FormItem>
+                            <FormLabel>{t('volume')}</FormLabel>
                             <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue placeholder={t('volumeNamePlaceholder')} />
-                                </SelectTrigger>
+                                <Select
+                                    value={field.value ?? ''}
+                                    onValueChange={field.onChange}
+                                    disabled={isLoading}
+                                >
+                                    <SelectTrigger
+                                        className={
+                                            'w-full overflow-hidden data-[placeholder]:!pl-3'
+                                        }
+                                    >
+                                        {isLoading ? (
+                                            <span className="text-muted-foreground flex items-center gap-2">
+                                                <Loader2 className="h-3 w-3 animate-spin" />
+                                                {t('volumesLoading')}
+                                            </span>
+                                        ) : isStale ? (
+                                            <span className="flex items-center gap-1.5 pl-3">
+                                                <AlertTriangle className="h-3 w-3 shrink-0" />
+                                                {field.value ?? t('volumeUnavailable')}
+                                            </span>
+                                        ) : (
+                                            <SelectValue placeholder={t('volumeNamePlaceholder')} />
+                                        )}
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>{t('volumesSelectLabel')}</SelectLabel>
+                                            {volumes.length === 0 ? (
+                                                <div className="text-muted-foreground px-2 py-1.5">
+                                                    {t('noVolumesFound')}
+                                                </div>
+                                            ) : (
+                                                volumes.map((v) => (
+                                                    <SelectItem key={v.name} value={v.name}>
+                                                        <p className={'truncate'}>{v.name}</p>
+                                                    </SelectItem>
+                                                ))
+                                            )}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
                             </FormControl>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>{t('volumeName')}</SelectLabel>
-                                    {volumes.map((v) => (
-                                        <SelectItem key={v.name} value={v.name}>
-                                            {v.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
+                            {isStale && (
+                                <p className="flex items-start gap-1 text-xs text-amber-500">
+                                    <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
+                                    {t('volumeStaleWarning')}
+                                </p>
+                            )}
+                            <FormMessage className="text-xs" />
+                        </FormItem>
+                    );
+                }}
             />
 
             <FormField

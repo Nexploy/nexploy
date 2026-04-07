@@ -6,20 +6,18 @@ import {
     Containers,
     ContainersEvent,
 } from '@workspace/typescript-interface/docker/docker.containers';
+import { useContainersStore } from '@/stores/docker/useContainersStore';
 
-export function useEnvironmentContainers(environmentId: string | null): {
+export function useEnvironmentContainers(environmentId?: string): {
     containers: Containers[];
     isLoading: boolean;
 } {
+    const globalContainers = useContainersStore((s) => s.containers);
     const [containers, setContainers] = useState<Containers[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        if (!environmentId) {
-            setContainers([]);
-            setIsLoading(false);
-            return;
-        }
+        if (!environmentId) return;
 
         setIsLoading(true);
 
@@ -85,6 +83,10 @@ export function useEnvironmentContainers(environmentId: string | null): {
             setIsLoading(false);
         };
     }, [environmentId]);
+
+    if (!environmentId) {
+        return { containers: globalContainers, isLoading: false };
+    }
 
     return { containers, isLoading };
 }

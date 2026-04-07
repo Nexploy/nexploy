@@ -8,14 +8,7 @@ import { useEventsStore } from '@/stores/docker/useEventsStore';
 import { useState } from 'react';
 import { Badge } from '@workspace/ui/components/badge';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -33,7 +26,6 @@ import { useTranslations } from 'next-intl';
 export default function EventsPage() {
     const t = useTranslations('docker');
     const tCommon = useTranslations('common');
-
 
     const {
         filteredEvents,
@@ -253,7 +245,7 @@ export default function EventsPage() {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectLabel>{t('size')}</SelectLabel>
+                                            <SelectLabel>{tCommon('size')}</SelectLabel>
                                             {PAGE_SIZE_OPTIONS.map((size) => (
                                                 <SelectItem key={size} value={`${size}`}>
                                                     {size}
@@ -268,7 +260,7 @@ export default function EventsPage() {
                             {!isShowingAll && (
                                 <div className={'flex items-center gap-2'}>
                                     <span className="text-muted-foreground text-sm">
-                                        {t('pageOf', {
+                                        {tCommon('pageOf', {
                                             current: currentPage + 1,
                                             total: totalPages,
                                         })}
