@@ -8,7 +8,7 @@ import {
     DialogTitle,
 } from '@workspace/ui/components/dialog';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 
 export function ConfirmationDialog() {
     const { isOpen, title, description, closeDialog, content, closeOnBackground, props } =

@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, Network, Plus } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Form } from '@workspace/ui/components/form';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { onNetworkCreateAction } from '@/actions/docker/network/networkCreate.action';
 import { toast } from 'sonner';
 import { networkCreateSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';

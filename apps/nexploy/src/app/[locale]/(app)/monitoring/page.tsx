@@ -2,7 +2,7 @@
 
 import { Activity, Clock, Cpu, Download, HardDrive, MemoryStick } from 'lucide-react';
 import dayjs from 'dayjs';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useMonitoringStore } from '@/stores/monitoring/useMonitoringStore';
 import { SSEProvider } from '@/providers/SSEProviders';
 import {

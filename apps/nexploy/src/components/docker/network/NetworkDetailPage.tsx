@@ -1,7 +1,7 @@
 'use client';
 
 import { EthernetPort, Trash } from 'lucide-react';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useNetworkStore } from '@/stores/docker/useNetworkStore';
 import { CardNetworkDetails } from '@/components/docker/network/cards/CardNetworkDetails';
 import { CardNetworkContainers } from '@/components/docker/network/cards/CardNetworkContainers';

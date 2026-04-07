@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import useSWR from 'swr';
 import { BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { getLogLevelColor, getLogLevelColorGradiant, parseAnsiColors } from '@/utils/color';
 import { cn } from '@workspace/ui/lib/utils';
 import { fetcherApi } from '@/lib/api/fetcherApi';

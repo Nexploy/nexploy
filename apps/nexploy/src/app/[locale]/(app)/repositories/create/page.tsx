@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, Folder, Plus } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Form } from '@workspace/ui/components/form';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { repositoryCreateFormSchema } from '@workspace/schemas-zod/repository/repositoryCreate.schema';
 import { onRepositoryCreateAction } from '@/actions/repository/repositoryCreate.action';
 import { GitSourceStep } from '@/components/repositories/steps/GitSourceStep';

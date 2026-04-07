@@ -2,7 +2,7 @@
 
 import { LayoutList } from 'lucide-react';
 import { TableDockerImages } from '@/components/docker/image/table/TableDockerImages';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { CardInfoImages } from '@/components/docker/image/CardInfoImages';
 import { useTranslations } from 'next-intl';
 

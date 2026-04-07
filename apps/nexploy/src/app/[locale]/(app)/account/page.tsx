@@ -1,5 +1,5 @@
 import { User } from 'lucide-react';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { AccountDetailsSection } from '@/components/account/AccountDetailsSection';
 import { ScrollToHash } from '@/components/account/ScrollToHash';
 import type { Metadata } from 'next';

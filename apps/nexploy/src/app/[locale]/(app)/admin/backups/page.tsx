@@ -1,5 +1,5 @@
 import { Database, Download, HardDrive } from 'lucide-react';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { getTranslations } from 'next-intl/server';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { Volume } from '@workspace/typescript-interface/docker/docker.volume';

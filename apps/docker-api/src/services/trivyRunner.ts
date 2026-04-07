@@ -1,4 +1,6 @@
 import type { Writable } from 'stream';
+import os from 'os';
+import path from 'path';
 import { getCurrentDockerClient } from '@/lib/dockerContext';
 
 const TRIVY_IMAGE_BASE = 'aquasec/trivy';
@@ -49,7 +51,10 @@ async function getOrCreateDaemonContainer(trivyVersion: string) {
             Entrypoint: ['sleep', 'infinity'],
             Cmd: [],
             HostConfig: {
-                Binds: ['/var/run/docker.sock:/var/run/docker.sock'],
+                Binds: [
+                    '/var/run/docker.sock:/var/run/docker.sock',
+                    `${path.join(os.homedir(), '.docker', 'config.json')}:/root/.docker/config.json:ro`,
+                ],
                 AutoRemove: false,
                 RestartPolicy: { Name: 'unless-stopped' },
             },

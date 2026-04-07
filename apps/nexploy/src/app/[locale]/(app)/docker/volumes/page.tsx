@@ -1,7 +1,7 @@
 'use client';
 
 import { HardDrive } from 'lucide-react';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { CardInfoVolumes } from '@/components/docker/volume/CardInfoVolumes';
 import { TableDockerVolumes } from '@/components/docker/volume/table/TableDockerVolumes';
 import { useTranslations } from 'next-intl';

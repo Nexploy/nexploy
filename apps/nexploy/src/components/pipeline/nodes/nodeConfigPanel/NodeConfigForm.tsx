@@ -14,7 +14,7 @@ import {
     DialogTitle,
 } from '@workspace/ui/components/dialog';
 import { Form } from '@workspace/ui/components/form';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { saveNodeConfigAction } from '@/actions/repository/pipeline/saveNodeConfig.action';

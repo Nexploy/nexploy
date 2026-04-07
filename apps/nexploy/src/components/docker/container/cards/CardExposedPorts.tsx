@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
 import { ExternalLink, Network, Pencil, Plus } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Button } from '@workspace/ui/components/button';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { PortForm } from '@/components/docker/container/forms/PortForm';

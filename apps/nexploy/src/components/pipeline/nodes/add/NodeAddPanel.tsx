@@ -17,7 +17,7 @@ import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { CONFIG_SCHEMAS } from '@/components/pipeline/nodes/nodeConfigPanel/nodeConfigRegistry';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 
 export function NodeAddPanel() {
     const t = useTranslations('repository.pipeline');

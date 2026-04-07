@@ -26,7 +26,7 @@ import {
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { statusMap } from '@/utils/statusMap';
 import { Separator } from '@workspace/ui/components/separator';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { formatBytes } from '@/utils/formatBytes';
 import { ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { Skeleton } from '@workspace/ui/components/skeleton';

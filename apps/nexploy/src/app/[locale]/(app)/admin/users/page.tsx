@@ -1,5 +1,5 @@
 import { Users } from 'lucide-react';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { UsersSection } from '@/components/admin/users/UsersSection';
 import { AddUserButton } from '@/components/admin/users/AddUserButton';
 import { getUserSession } from '@/services/auth/auth.service';

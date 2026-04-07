@@ -1,12 +1,13 @@
 import { CommandGroup, CommandItem, CommandList } from '@workspace/ui/components/command';
 import { Command as CommandPrimitive } from 'cmdk';
+import * as PopoverPrimitive from '@radix-ui/react-popover';
 import * as React from 'react';
 import { type KeyboardEvent, useCallback, useMemo, useRef, useState } from 'react';
 
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { Input } from '@workspace/ui/components/input';
 import { cn } from '@workspace/ui/lib/utils';
-import { ScrollArea } from '@workspace/ui/components/scroll-area';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 
 export type InputAutoCompleteOption = Record<'value' | 'label', string> & Record<string, string>;
 
@@ -83,31 +84,36 @@ export const InputAutoComplete = ({
         alwaysShowOptions || (isOpen && (isLoading || filteredOptions.length > 0));
 
     return (
-        <CommandPrimitive onKeyDown={handleKeyDown}>
-            <Input
-                {...props}
-                ref={inputRef}
-                type="text"
-                value={value}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                onFocus={() => setOpen(true)}
-                placeholder={placeholder}
-                readOnly={isLoading}
-                className={cn('text-base', props.className)}
-            />
-
-            {shouldShowList && (
-                <div className="relative">
-                    <div
-                        data-state={isOpen ? 'open' : 'closed'}
+        <PopoverPrimitive.Root open={shouldShowList} onOpenChange={setOpen}>
+            <CommandPrimitive onKeyDown={handleKeyDown}>
+                <PopoverPrimitive.Anchor asChild>
+                    <Input
+                        {...props}
+                        ref={inputRef}
+                        type="text"
+                        value={value}
+                        onChange={handleInputChange}
+                        onBlur={handleBlur}
+                        onFocus={() => setOpen(true)}
+                        placeholder={placeholder}
+                        readOnly={isLoading}
+                        className={cn('text-base', props.className)}
+                    />
+                </PopoverPrimitive.Anchor>
+                <PopoverPrimitive.Portal>
+                    <PopoverPrimitive.Content
+                        onOpenAutoFocus={(e) => e.preventDefault()}
+                        onInteractOutside={(e) => e.preventDefault()}
+                        onWheel={(e) => e.stopPropagation()}
+                        align="start"
+                        sideOffset={8}
+                        style={{ width: 'var(--radix-popper-anchor-width)' }}
                         className={cn(
-                            'bg-popover text-popover-foreground absolute top-0 z-50 mt-2 w-full rounded-md border shadow-md outline-none',
+                            'bg-popover text-popover-foreground rounded-md border shadow-md outline-none',
                             'data-[state=open]:animate-in data-[state=closed]:animate-out',
                             'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
                             'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
-                            'data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2',
-                            isOpen ? 'block' : 'hidden',
+                            'z-50',
                         )}
                     >
                         <CommandList>
@@ -121,7 +127,10 @@ export const InputAutoComplete = ({
                                 </CommandPrimitive.Loading>
                             ) : (
                                 <CommandGroup heading={heading}>
-                                    <ScrollArea className="flex max-h-60 flex-col overflow-y-auto">
+                                    <ScrollAreaWithShadow
+                                        colorShadow={'from-popover via-popover/50'}
+                                        className="flex max-h-60 flex-col overflow-y-auto"
+                                    >
                                         {filteredOptions.map((option) => (
                                             <CommandItem
                                                 key={option.value}
@@ -136,13 +145,13 @@ export const InputAutoComplete = ({
                                                 {option.label}
                                             </CommandItem>
                                         ))}
-                                    </ScrollArea>
+                                    </ScrollAreaWithShadow>
                                 </CommandGroup>
                             )}
                         </CommandList>
-                    </div>
-                </div>
-            )}
-        </CommandPrimitive>
+                    </PopoverPrimitive.Content>
+                </PopoverPrimitive.Portal>
+            </CommandPrimitive>
+        </PopoverPrimitive.Root>
     );
 };

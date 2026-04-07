@@ -5,7 +5,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { useEffect } from 'react';
 import { useLocale } from 'next-intl';
 import { Panel } from '@xyflow/react';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { BuildsPanelItem } from '@/components/pipeline/buildsPanel/BuildsPanelItem';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';

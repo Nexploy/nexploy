@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Folder, Link2 } from 'lucide-react';
 import { SiGithub, SiGitlab } from '@icons-pack/react-simple-icons';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import {
     Empty,
     EmptyDescription,

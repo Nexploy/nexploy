@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Trash } from 'lucide-react';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useImageStore } from '@/stores/docker/useImageStore';
 import { CardImageDetails } from '@/components/docker/image/cards/CardImageDetails';
 import { CardImageLayers } from '@/components/docker/image/cards/CardImageLayers';

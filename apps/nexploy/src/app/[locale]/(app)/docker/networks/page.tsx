@@ -1,7 +1,7 @@
 'use client';
 
 import { EthernetPort } from 'lucide-react';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { CardInfoNetworks } from '@/components/docker/network/CardInfoNetworks';
 import { TableDockerNetworks } from '@/components/docker/network/table/TableDockerNetworks';
 import { useTranslations } from 'next-intl';

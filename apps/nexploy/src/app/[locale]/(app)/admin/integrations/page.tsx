@@ -1,4 +1,4 @@
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { Plug } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { GitProvidersSection } from '@/components/admin/integrations/GitProvidersSection';

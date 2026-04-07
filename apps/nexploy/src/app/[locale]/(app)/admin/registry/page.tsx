@@ -1,5 +1,5 @@
 import { Warehouse } from 'lucide-react';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { RegistryList } from '@/components/admin/registry/RegistryList';
 import { AddRegistryButton } from '@/components/admin/registry/AddRegistryButton';
 import { MirrorImageSection } from '@/components/admin/registry/MirrorImageSection';

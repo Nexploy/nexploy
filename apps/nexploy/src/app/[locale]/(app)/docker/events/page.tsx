@@ -3,7 +3,7 @@
 import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import { Bug, ChevronLeft, ChevronRight } from 'lucide-react';
 import dayjs from 'dayjs';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useEventsStore } from '@/stores/docker/useEventsStore';
 import { useState } from 'react';
 import { Badge } from '@workspace/ui/components/badge';

@@ -11,7 +11,7 @@ import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/k
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
 import { ArrowDown, ArrowUp, Download, FileText } from 'lucide-react';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useLocalStorage } from 'usehooks-ts';
 import { Switch } from '@workspace/ui/components/switch';
 import { Label } from '@workspace/ui/components/label';

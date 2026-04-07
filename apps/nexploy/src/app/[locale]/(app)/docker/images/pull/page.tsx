@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, Download, Info, LayoutList } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Form } from '@workspace/ui/components/form';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { onImagePullAction } from '@/actions/docker/image/imagePullAction.action';
 import { imagePullSchema } from '@workspace/schemas-zod/docker/image/imagePullAction.schema';
 import { Alert, AlertTitle } from '@workspace/ui/components/alert';

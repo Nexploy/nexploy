@@ -1,7 +1,7 @@
 'use client';
 
 import { HardDrive, Trash } from 'lucide-react';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useVolumeStore } from '@/stores/docker/useVolumeStore';
 import { CardVolumeDetails } from '@/components/docker/volume/cards/CardVolumeDetails';
 import { CardVolumeContainers } from '@/components/docker/volume/cards/CardVolumeContainers';

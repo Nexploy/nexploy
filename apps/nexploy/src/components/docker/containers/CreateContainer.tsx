@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { ArrowLeft, Container, Plus } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Form } from '@workspace/ui/components/form';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { onContainerCreateAction } from '@/actions/docker/container/containerCreate.action';
 import { onImagePullAction } from '@/actions/docker/image/imagePullAction.action';

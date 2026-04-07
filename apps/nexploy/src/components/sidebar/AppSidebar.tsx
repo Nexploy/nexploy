@@ -10,7 +10,7 @@ import { NexployLogo } from '@/components/sidebar/NexployLogo';
 import { SidebarNav } from '@/components/sidebar/SidebarNav';
 import { Environment } from '@/components/sidebar/environment/Environment';
 import { UpdateBanner } from '@/components/sidebar/UpdateBanner';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset';

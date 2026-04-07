@@ -2,7 +2,7 @@
 
 import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import { ChevronLeft, ChevronRight, Send } from 'lucide-react';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useRequestsStore } from '@/stores/traefik/useRequestsStore';
 import { useState } from 'react';
 import { Badge } from '@workspace/ui/components/badge';

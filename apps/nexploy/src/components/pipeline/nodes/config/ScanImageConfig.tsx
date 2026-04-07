@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { Switch } from '@workspace/ui/components/switch';
 import {
     Select,
@@ -20,31 +14,48 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Input } from '@workspace/ui/components/input';
-import { useImageStore } from '@/stores/docker/useImageStore';
-import * as React from 'react';
+import { InputAutoComplete } from '@workspace/ui/components/search-command';
+
+import { usePipelineContext } from '@/contexts/PipelineContext';
+import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { findAncestor } from '@/inngest/pipeline/utils/graphQueries';
+import { useEnvironmentImages } from '@/hooks/sse/useEnvironmentImages';
 import { useEffect, useMemo } from 'react';
-import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
 
 export function ScanImageConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
-    const images = useImageStore((state) => state.images);
+
+    const { nodes, edges } = usePipelineContext();
+    const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
+
+    const environmentId = useMemo(() => {
+        if (!panelNodeId) return null;
+        const ancestor = findAncestor(
+            panelNodeId,
+            nodes,
+            edges,
+            (data) => data.nodeType === 'set-environment' && !data.disabled,
+        );
+        return ancestor?.data.config?.environmentId ?? null;
+    }, []);
+
+    const { images, isLoading } = useEnvironmentImages(environmentId);
 
     const selectedImage = form.watch('image');
 
-    const imageNames = useMemo(() => {
-        const map = new Map<string, number>();
+    const imageOptions = useMemo(() => {
+        const names = new Set<string>();
         for (const img of images) {
             for (const repoTag of img.repoTags ?? []) {
                 if (repoTag === '<none>:<none>') continue;
                 const name = repoTag.split(':')[0];
-                if (!name) continue;
-                map.set(name, (map.get(name) ?? 0) + img.containersUsed);
+                if (name) names.add(name);
             }
         }
-        return Array.from(map.entries())
-            .map(([name, containersUsed]) => ({ name, containersUsed }))
-            .sort((a, b) => a.name.localeCompare(b.name));
+        return Array.from(names)
+            .sort()
+            .map((name) => ({ value: name, label: name }));
     }, [images]);
 
     const availableTags = useMemo(() => {
@@ -61,13 +72,11 @@ export function ScanImageConfig() {
         return Array.from(tags).sort();
     }, [images, selectedImage]);
 
-    const selectedImageInfo = useMemo(
-        () => imageNames.find((img) => img.name === selectedImage) ?? null,
-        [imageNames, selectedImage],
-    );
-
     useEffect(() => {
-        if (availableTags.length === 0) return;
+        if (availableTags.length === 0) {
+            form.setValue('tag', 'latest', { shouldDirty: true });
+            return;
+        }
         const currentTag = form.getValues('tag');
         if (!availableTags.includes(currentTag)) {
             form.setValue('tag', availableTags[0], { shouldDirty: true });
@@ -76,53 +85,22 @@ export function ScanImageConfig() {
 
     return (
         <div className="space-y-4">
-            <div className={'flex flex-1 gap-2'}>
+            <div className="flex gap-2">
                 <FormField
                     control={form.control}
                     name="image"
                     render={({ field }) => (
-                        <FormItem className={'min-w-0 flex-1'}>
+                        <FormItem className="min-w-0 flex-1">
                             <FormLabel>{t('scanImage')}</FormLabel>
                             <FormControl>
-                                <Select value={field.value} onValueChange={field.onChange}>
-                                    <SelectTrigger className="w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3">
-                                        <SelectValue
-                                            className={'truncate'}
-                                            placeholder={t('scanImagePlaceholder')}
-                                        />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectLabel>{t('scanImage')}</SelectLabel>
-                                            {imageNames.length === 0 ? (
-                                                <SelectItem value="__empty__" disabled>
-                                                    {t('noImagesAvailable')}
-                                                </SelectItem>
-                                            ) : (
-                                                imageNames.map(({ name, containersUsed }) => (
-                                                    <SelectItem
-                                                        key={name}
-                                                        value={name}
-                                                        className="pl-0"
-                                                    >
-                                                        <Status
-                                                            className="m-0 flex-1 rounded-none border-0 p-0 pl-2.5 text-sm"
-                                                            status={
-                                                                containersUsed > 0
-                                                                    ? 'online'
-                                                                    : 'offline'
-                                                            }
-                                                            variant="outline"
-                                                        >
-                                                            <StatusIndicator className="pl-2" />
-                                                            <span className="truncate">{name}</span>
-                                                        </Status>
-                                                    </SelectItem>
-                                                ))
-                                            )}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
+                                <InputAutoComplete
+                                    value={field.value ?? ''}
+                                    onChange={field.onChange}
+                                    options={imageOptions}
+                                    isLoading={isLoading}
+                                    placeholder={t('scanImagePlaceholder')}
+                                    heading={t('availableImages')}
+                                />
                             </FormControl>
                             <FormMessage className="text-xs" />
                         </FormItem>
@@ -132,7 +110,7 @@ export function ScanImageConfig() {
                     control={form.control}
                     name="trivyVersion"
                     render={({ field }) => (
-                        <FormItem className="w-28 shrink-0">
+                        <FormItem className="w-28 shrink-0 self-start">
                             <FormLabel>{t('trivyVersion')}</FormLabel>
                             <FormControl>
                                 <Input {...field} placeholder="canary" />
@@ -141,6 +119,7 @@ export function ScanImageConfig() {
                     )}
                 />
             </div>
+
             <FormField
                 control={form.control}
                 name="tag"
@@ -172,6 +151,7 @@ export function ScanImageConfig() {
                     </FormItem>
                 )}
             />
+
             <FormField
                 control={form.control}
                 name="severity"
@@ -198,17 +178,18 @@ export function ScanImageConfig() {
                     </FormItem>
                 )}
             />
+
             <FormField
                 control={form.control}
                 name="exitOnVulnerabilities"
                 render={({ field }) => (
                     <FormItem className="flex items-center justify-between">
-                        <FormLabel className={'cursor-pointer'}>
+                        <FormLabel className="cursor-pointer">
                             {t('exitOnVulnerabilities')}
                         </FormLabel>
                         <FormControl>
                             <Switch
-                                className={'cursor-pointer'}
+                                className="cursor-pointer"
                                 checked={field.value}
                                 onCheckedChange={field.onChange}
                             />

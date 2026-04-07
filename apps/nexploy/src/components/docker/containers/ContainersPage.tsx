@@ -11,7 +11,7 @@ import {
     EmptyTitle,
 } from '@workspace/ui/components/empty';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import { ScrollAreaWithShadow } from '@/components/ScrollAreaWithShadow';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { ContainersStack } from '@/components/docker/containers/ContainersStack';
 import { ContainersStandalone } from '@/components/docker/containers/ContainersStandalone';
 import { useContainersStore } from '@/stores/docker/useContainersStore';
