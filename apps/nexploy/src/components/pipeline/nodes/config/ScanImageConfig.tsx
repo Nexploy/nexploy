@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Switch } from '@workspace/ui/components/switch';
 import {
     Select,
@@ -94,6 +100,7 @@ export function ScanImageConfig() {
                             <FormLabel>{t('scanImage')}</FormLabel>
                             <FormControl>
                                 <InputAutoComplete
+                                    className={'truncate'}
                                     value={field.value ?? ''}
                                     onChange={field.onChange}
                                     options={imageOptions}

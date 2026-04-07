@@ -40,7 +40,7 @@ export function NodeConfigDialog() {
     if (!isViewingBuild || !activeBuildId) {
         return (
             <Dialog open={isOpen} onOpenChange={handleResetPanelNode}>
-                <DialogContent aria-describedby={undefined} className="overflow-hidden">
+                <DialogContent aria-describedby={undefined} className="overflow-hidden" onOpenAutoFocus={(e) => e.preventDefault()}>
                     {node && <NodeConfigForm node={node} />}
                 </DialogContent>
             </Dialog>
@@ -52,6 +52,7 @@ export function NodeConfigDialog() {
             <DialogContent
                 aria-describedby={undefined}
                 className="flex !h-[80%] !max-w-[80%] flex-col gap-0 !p-0"
+                onOpenAutoFocus={(e) => e.preventDefault()}
             >
                 {node && nodeType && (
                     <>
