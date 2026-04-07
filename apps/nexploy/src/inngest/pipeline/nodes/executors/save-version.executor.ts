@@ -4,13 +4,13 @@ import {
     NodeExecutionContext,
     NodeExecutionResult,
 } from '@/types/pipeline.type';
-import { prisma } from '../../../../../prisma/prisma';
+import { getNextVersionNumber, upsertVersion } from '@/services/inngest/version.inngest.service';
 
 export class SaveVersionExecutor implements INodeExecutor {
     readonly type = 'save-version';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { config, logger, nodeId, inputNodes, allOutputs } = ctx;
+        const { buildConfig, logger, nodeId, inputNodes, allOutputs } = ctx;
 
         await logger.info(nodeId, 'Saving version...');
 
@@ -26,43 +26,24 @@ export class SaveVersionExecutor implements INodeExecutor {
         }
 
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId') ?? null;
-
-        const lastVersion = await prisma.version.findFirst({
-            where: {
-                repositoryId: config.repositoryId,
-                environmentId,
-            },
-            orderBy: { versionNumber: 'desc' },
-            select: { versionNumber: true },
-        });
-
-        const versionNumber = (lastVersion?.versionNumber ?? 0) + 1;
-
         const branch = getFromAllOutputs<string>(allOutputs, 'branch') ?? null;
         const commitHash = getFromAllOutputs<string>(allOutputs, 'commitHash') ?? null;
         const commitMessage = getFromAllOutputs<string>(allOutputs, 'commitMessage') ?? null;
 
-        await prisma.version.upsert({
-            where: {
-                repositoryId_imageTag: {
-                    repositoryId: config.repositoryId,
-                    imageTag: config.imageTag,
-                },
-            },
-            update: {},
-            create: {
-                repositoryId: config.repositoryId,
-                imageTag: config.imageTag,
-                versionNumber,
-                branch,
-                commitHash,
-                commitMessage,
-                environmentId,
-                composeConfig,
-            },
+        const versionNumber = await getNextVersionNumber(buildConfig.repositoryId, environmentId);
+
+        await upsertVersion({
+            repositoryId: buildConfig.repositoryId,
+            imageTag: buildConfig.imageTag,
+            versionNumber,
+            branch,
+            commitHash,
+            commitMessage,
+            environmentId,
+            composeConfig,
         });
 
-        await logger.info(nodeId, `Version v${versionNumber} saved (tag: ${config.imageTag})`);
+        await logger.info(nodeId, `Version v${versionNumber} saved (tag: ${buildConfig.imageTag})`);
 
         return {
             output: { versionNumber },

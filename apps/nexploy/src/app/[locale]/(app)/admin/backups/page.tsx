@@ -66,6 +66,8 @@ export default async function BackupsPage() {
                                                 {volume.driver}
                                                 {volume.usageData?.Size != null &&
                                                     ` · ${formatBytes(volume.usageData.Size)}`}
+                                                {(allSchedules[index]?.length ?? 0) > 0 &&
+                                                    ` · ${t('schedulesCount', { count: allSchedules[index]!.length })}`}
                                             </span>
                                         </div>
                                     </div>

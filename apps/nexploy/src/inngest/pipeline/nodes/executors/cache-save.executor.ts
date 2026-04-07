@@ -1,17 +1,25 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import {
+    getFromAllOutputs,
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { cacheSaveConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class CacheSaveExecutor implements INodeExecutor {
     readonly type = 'cache-save';
     readonly configSchema = cacheSaveConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof cacheSaveConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const volumeName = nodeConfig.volumeName as string;
-        const sourcePath = nodeConfig.sourcePath as string;
-        const cacheKey = nodeConfig.cacheKey as string | undefined;
+        const volumeName = nodeConfig.volumeName;
+        const sourcePath = nodeConfig.sourcePath;
+        const cacheKey = nodeConfig.cacheKey;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
@@ -21,7 +29,10 @@ export class CacheSaveExecutor implements INodeExecutor {
             return { output: { saved: false }, skipped: true };
         }
 
-        await logger.info(nodeId, `Saving cache ${sourcePath} → volume "${volumeName}"${cacheKey ? ` (key: ${cacheKey})` : ''}`);
+        await logger.info(
+            nodeId,
+            `Saving cache ${sourcePath} → volume "${volumeName}"${cacheKey ? ` (key: ${cacheKey})` : ''}`,
+        );
 
         try {
             const result = await kyDocker
@@ -51,7 +62,10 @@ export class CacheSaveExecutor implements INodeExecutor {
             };
         } catch (error) {
             // Cache save failure is non-fatal — log and continue
-            await logger.warn(nodeId, `Cache save failed (continuing): ${error instanceof Error ? error.message : 'Unknown error'}`);
+            await logger.warn(
+                nodeId,
+                `Cache save failed (continuing): ${error instanceof Error ? error.message : 'Unknown error'}`,
+            );
             return { output: { saved: false, error: true }, skipped: false };
         }
     }

@@ -1,17 +1,25 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import {
+    getFromAllOutputs,
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { runTestsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class RunTestsExecutor implements INodeExecutor {
     readonly type = 'run-tests';
     readonly configSchema = runTestsConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof runTestsConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const command = nodeConfig.command as string;
-        const image = nodeConfig.image as string;
-        const workdir = (nodeConfig.workdir as string | undefined) ?? '/workspace';
+        const command = nodeConfig.command;
+        const image = nodeConfig.image;
+        const workdir = nodeConfig.workdir ?? '/workspace';
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
@@ -46,7 +54,9 @@ export class RunTestsExecutor implements INodeExecutor {
             await logger.info(nodeId, 'Tests passed successfully');
             return { output: { exitCode: result.exitCode, testsPassed: true } };
         } catch (error) {
-            throw new Error(`Test run failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            throw new Error(
+                `Test run failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            );
         }
     }
 }

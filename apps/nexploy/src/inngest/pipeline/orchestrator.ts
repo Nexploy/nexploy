@@ -1,9 +1,5 @@
 import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
-import {
-    PipelineEdge,
-    PipelineGraph,
-    PipelineNode,
-} from '@workspace/typescript-interface/pipeline/node';
+import { PipelineEdge, PipelineGraph, PipelineNode, } from '@workspace/typescript-interface/pipeline/node';
 import {
     InngestStepRunner,
     LogLevel,
@@ -203,7 +199,7 @@ export class PipelineOrchestrator {
 
                         const ctx: NodeExecutionContext = {
                             buildId,
-                            config,
+                            buildConfig: config,
                             nodeId: node.id,
                             nodeConfig: node.data.config ?? {},
                             inputNodes,

@@ -7,3 +7,7 @@ export function hmacSha256(key: Buffer | string, data: string): Buffer {
 export function sha256Hex(data: string | Buffer): string {
     return crypto.createHash('sha256').update(data).digest('hex');
 }
+
+export function hmacSha256Hex(key: Buffer | string, data: string): string {
+    return crypto.createHmac('sha256', key).update(data).digest('hex');
+}

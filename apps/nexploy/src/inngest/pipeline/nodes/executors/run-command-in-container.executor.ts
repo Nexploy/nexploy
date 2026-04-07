@@ -1,18 +1,26 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import {
+    getFromAllOutputs,
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { runCommandInContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class RunCommandInContainerExecutor implements INodeExecutor {
     readonly type = 'run-command-in-container';
     readonly configSchema = runCommandInContainerConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof runCommandInContainerConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const containerName = nodeConfig.containerName as string;
-        const command = nodeConfig.command as string;
+        const containerName = nodeConfig.containerName;
+        const command = nodeConfig.command;
 
-        const workdir = nodeConfig.workdir as string | undefined;
+        const workdir = nodeConfig.workdir;
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
         await logger.info(nodeId, `Executing command in container "${containerName}": ${command}`);
@@ -40,7 +48,9 @@ export class RunCommandInContainerExecutor implements INodeExecutor {
             await logger.info(nodeId, `Command completed successfully (exit code 0)`);
             return { output: { exitCode: result.exitCode } };
         } catch (error) {
-            throw new Error(`Failed to exec in container: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            throw new Error(
+                `Failed to exec in container: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            );
         }
     }
 }

@@ -28,6 +28,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { createBackupScheduleSchema } from '@workspace/schemas-zod/aws/backupSchedule.schema';
+import { to24h } from '@/utils/time';
 import { createBackupScheduleAction } from '@/actions/aws/createSchedule.action';
 import { deleteBackupScheduleAction } from '@/actions/aws/deleteSchedule.action';
 import { AwsAccountInfo } from '@workspace/typescript-interface/aws/aws';
@@ -53,10 +54,6 @@ const DAY_OF_WEEK_KEYS = [
 
 const DAYS_OF_MONTH = Array.from({ length: 31 }, (_, i) => i + 1);
 
-function to24h(hour12: number, period: 'AM' | 'PM'): number {
-    if (period === 'AM') return hour12 === 12 ? 0 : hour12;
-    return hour12 === 12 ? 12 : hour12 + 12;
-}
 
 interface ScheduleTabProps {
     volumeName: string;

@@ -1,7 +1,7 @@
 import { INodeExecutor } from '@/types/pipeline.type';
 import { cloneRepositoryExecutor } from './executors/clone-repository.executor';
 import { webhookCloneExecutor } from './executors/webhook-clone.executor';
-import { writeEnvFileExecutor } from './executors/write-env-file.executor';
+import { injectEnvVarsExecutor } from './executors/inject-env-vars.executor';
 import { buildDockerImageExecutor } from './executors/build-docker-image.executor';
 import { deployContainerExecutor } from './executors/deploy-container.executor';
 import { deployComposeExecutor } from './executors/deploy-compose.executor';
@@ -61,7 +61,7 @@ const executors: INodeExecutor[] = [
     deployContainerExecutor,
     deployComposeExecutor,
     // Utility
-    writeEnvFileExecutor,
+    injectEnvVarsExecutor,
     setEnvVarsExecutor,
     cleanWorkdirExecutor,
     // Notification

@@ -1,18 +1,26 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import {
+    getFromAllOutputs,
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { updateServiceConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class UpdateServiceExecutor implements INodeExecutor {
     readonly type = 'update-service';
     readonly configSchema = updateServiceConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof updateServiceConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const serviceName = nodeConfig.serviceName as string;
-        const image = nodeConfig.image as string;
-        const tag = nodeConfig.tag as string;
-        const forceUpdate = nodeConfig.forceUpdate as boolean;
+        const serviceName = nodeConfig.serviceName;
+        const image = nodeConfig.image;
+        const tag = nodeConfig.tag;
+        const forceUpdate = nodeConfig.forceUpdate;
 
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
         const fullImage = `${image}:${tag}`;
@@ -38,7 +46,9 @@ export class UpdateServiceExecutor implements INodeExecutor {
                 output: { serviceName, image, tag, fullImage },
             };
         } catch (error) {
-            throw new Error(`Failed to update service: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            throw new Error(
+                `Failed to update service: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            );
         }
     }
 }

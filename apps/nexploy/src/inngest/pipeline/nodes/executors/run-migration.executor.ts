@@ -1,23 +1,34 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import {
+    getFromAllOutputs,
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { runMigrationConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class RunMigrationExecutor implements INodeExecutor {
     readonly type = 'run-migration';
     readonly configSchema = runMigrationConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof runMigrationConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const image = nodeConfig.image as string;
-        const command = nodeConfig.command as string;
-        const databaseUrl = nodeConfig.databaseUrl as string;
-        const workdir = nodeConfig.workdir as string | undefined;
+        const image = nodeConfig.image;
+        const command = nodeConfig.command;
+        const databaseUrl = nodeConfig.databaseUrl;
+        const workdir = nodeConfig.workdir;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
-        await logger.info(nodeId, `Running database migrations in ephemeral container (image: ${image})`);
+        await logger.info(
+            nodeId,
+            `Running database migrations in ephemeral container (image: ${image})`,
+        );
         await logger.info(nodeId, `Command: ${command}`);
 
         try {
@@ -49,7 +60,9 @@ export class RunMigrationExecutor implements INodeExecutor {
             await logger.info(nodeId, 'Database migrations completed successfully');
             return { output: { exitCode: result.exitCode, migrated: true } };
         } catch (error) {
-            throw new Error(`Migration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            throw new Error(
+                `Migration failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            );
         }
     }
 }

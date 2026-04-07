@@ -1,17 +1,25 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import {
+    getFromAllOutputs,
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { deployStackConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class DeployStackExecutor implements INodeExecutor {
     readonly type = 'deploy-stack';
     readonly configSchema = deployStackConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof deployStackConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const stackName = nodeConfig.stackName as string;
-        const composeFilePath = nodeConfig.composeFilePath as string;
-        const prune = nodeConfig.prune as boolean;
+        const stackName = nodeConfig.stackName;
+        const composeFilePath = nodeConfig.composeFilePath;
+        const prune = nodeConfig.prune;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
@@ -47,7 +55,9 @@ export class DeployStackExecutor implements INodeExecutor {
                 },
             };
         } catch (error) {
-            throw new Error(`Failed to deploy stack: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            throw new Error(
+                `Failed to deploy stack: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            );
         }
     }
 }

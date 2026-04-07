@@ -6,19 +6,22 @@ import {
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { scanImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class ScanImageExecutor implements INodeExecutor {
     readonly type = 'scan-image';
     readonly configSchema = scanImageConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof scanImageConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const image = nodeConfig.image as string;
-        const tag = nodeConfig.tag as string;
-        const severity = nodeConfig.severity as string;
-        const trivyVersion = (nodeConfig.trivyVersion as string | undefined) ?? 'canary';
-        const exitOnVulnerabilities = nodeConfig.exitOnVulnerabilities as boolean;
+        const image = nodeConfig.image;
+        const tag = nodeConfig.tag;
+        const severity = nodeConfig.severity;
+        const trivyVersion = nodeConfig.trivyVersion;
+        const exitOnVulnerabilities = nodeConfig.exitOnVulnerabilities;
 
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
         const fullImage = `${image}:${tag}`;

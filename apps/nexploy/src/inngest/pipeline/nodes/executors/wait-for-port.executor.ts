@@ -1,33 +1,15 @@
-import * as net from 'node:net';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { waitForPortConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { checkPort } from '@/inngest/pipeline/services/network.service';
+import { z } from 'zod';
 
-function checkPort(host: string, port: number, timeoutMs: number): Promise<boolean> {
-    return new Promise((resolve) => {
-        const socket = new net.Socket();
-        let resolved = false;
-
-        const done = (result: boolean) => {
-            if (!resolved) {
-                resolved = true;
-                socket.destroy();
-                resolve(result);
-            }
-        };
-
-        socket.setTimeout(timeoutMs);
-        socket.once('connect', () => done(true));
-        socket.once('error', () => done(false));
-        socket.once('timeout', () => done(false));
-        socket.connect(port, host);
-    });
-}
-
-export class WaitForPortExecutor implements INodeExecutor {
+export class WaitForPortExecutor implements INodeExecutor<z.infer<typeof waitForPortConfigSchema>> {
     readonly type = 'wait-for-port';
     readonly configSchema = waitForPortConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof waitForPortConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeConfig, logger, nodeId, abortSignal } = ctx;
 
         const host = nodeConfig.host as string;
@@ -48,7 +30,10 @@ export class WaitForPortExecutor implements INodeExecutor {
                 return { output: { host, port, open: true } };
             }
 
-            await logger.debug(nodeId, `Port ${host}:${port} not yet open, retrying in ${interval}s`);
+            await logger.debug(
+                nodeId,
+                `Port ${host}:${port} not yet open, retrying in ${interval}s`,
+            );
             await new Promise<void>((resolve) => setTimeout(resolve, interval * 1000));
         }
 

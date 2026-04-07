@@ -59,6 +59,21 @@ class GitService {
         });
     }
 
+    matchesBranchFilter(branch: string, filter: string): boolean {
+        const patterns = filter
+            .split(',')
+            .map((p) => p.trim())
+            .filter(Boolean);
+        if (patterns.length === 0) return true;
+
+        return patterns.some((pattern) => {
+            if (pattern.endsWith('*')) {
+                return branch.startsWith(pattern.slice(0, -1));
+            }
+            return branch === pattern;
+        });
+    }
+
     async cloneRepository(
         buildConfig: BuildConfig,
         onProgress?: ProgressCallback,
@@ -137,7 +152,6 @@ class GitService {
                     errorMessage.includes('could not read Username');
 
                 if (isAuthError && token.accessToken) {
-                    // Force-refresh the token and retry with new credentials
                     const forcedExpiredToken = {
                         ...token,
                         accessTokenExpiresAt: dayjs(0).toDate(),
@@ -272,6 +286,54 @@ class GitService {
         } catch {
             throw new Error(`Dockerfile not found at: ${dockerfilePath || 'Dockerfile'}`);
         }
+    }
+
+    async createTag(
+        workDir: string,
+        tagName: string,
+        message?: string,
+    ): Promise<{ alreadyExists: boolean }> {
+        const args = message ? ['tag', '-a', tagName, '-m', message] : ['tag', tagName];
+        try {
+            await this.exec('git', args, { cwd: workDir });
+            return { alreadyExists: false };
+        } catch (error) {
+            const msg = error instanceof Error ? error.message : String(error);
+            if (msg.includes('already exists')) return { alreadyExists: true };
+            throw new Error(`git tag failed: ${msg}`);
+        }
+    }
+
+    async pushTag(workDir: string, remote: string, tagName: string): Promise<void> {
+        try {
+            await this.exec('git', ['push', remote, tagName], { cwd: workDir });
+        } catch (error) {
+            const msg = error instanceof Error ? error.message : String(error);
+            throw new Error(`git push tag failed: ${msg}`);
+        }
+    }
+
+    async cloneExternal(
+        repoUrl: string,
+        branch: string,
+        destDir: string,
+        token?: string,
+    ): Promise<void> {
+        let cloneUrl = repoUrl;
+        if (token) {
+            try {
+                const u = new URL(repoUrl);
+                u.username = 'oauth2';
+                u.password = token;
+                cloneUrl = u.toString();
+            } catch {
+                // not a valid URL — use as-is
+            }
+        }
+
+        await this.exec('git', ['clone', '--branch', branch, '--depth', '1', cloneUrl, destDir], {
+            env: { ...process.env, GIT_TERMINAL_PROMPT: '0' },
+        });
     }
 
     async cleanup(workDir: string): Promise<void> {

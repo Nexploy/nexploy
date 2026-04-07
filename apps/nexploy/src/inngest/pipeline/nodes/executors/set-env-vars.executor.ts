@@ -1,37 +1,45 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import {
+    getFromAllOutputs,
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
 import { setEnvVarsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class SetEnvVarsExecutor implements INodeExecutor {
     readonly type = 'set-env-vars';
     readonly configSchema = setEnvVarsConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { logger, nodeId, nodeConfig } = ctx;
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof setEnvVarsConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
+        const { logger, nodeId, nodeConfig, allOutputs } = ctx;
 
-        type VarEntry = { id: string; key: string; value: string };
         const raw = nodeConfig.vars;
 
-        let vars: Record<string, string>;
+        let fromNode;
         if (Array.isArray(raw)) {
-            vars = Object.fromEntries(
-                (raw as VarEntry[]).filter((e) => e.key).map((e) => [e.key, e.value]),
-            );
+            fromNode = Object.fromEntries(raw.filter((e) => e.key).map((e) => [e.key, e.value]));
         } else {
-            vars = (raw as Record<string, string> | undefined) ?? {};
+            fromNode = raw ?? {};
         }
 
-        const count = Object.keys(vars).length;
+        const existing =
+            getFromAllOutputs<Record<string, string>>(allOutputs, 'envVariables') ?? {};
+
+        const envVariables = { ...fromNode, ...existing };
+
+        const count = Object.keys(envVariables).length;
 
         if (count === 0) {
             await logger.info(nodeId, 'No variables defined, skipping');
-            return { output: { vars: {} }, skipped: true };
+            return { output: { envVariables: {} }, skipped: true };
         }
 
         await logger.info(nodeId, `Injecting ${count} environment variable(s) into the pipeline`);
 
-        return {
-            output: { vars },
-        };
+        return { output: { envVariables } };
     }
 }
 

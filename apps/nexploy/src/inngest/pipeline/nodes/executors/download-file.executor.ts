@@ -7,17 +7,20 @@ import {
     NodeExecutionResult,
 } from '@/types/pipeline.type';
 import { downloadFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class DownloadFileExecutor implements INodeExecutor {
     readonly type = 'download-file';
     readonly configSchema = downloadFileConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof downloadFileConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const url = nodeConfig.url as string;
-        const destinationPath = nodeConfig.destinationPath as string;
-        const filename = nodeConfig.filename as string | undefined;
+        const url = nodeConfig.url;
+        const destinationPath = nodeConfig.destinationPath;
+        const filename = nodeConfig.filename;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const base = workDir ?? process.cwd();

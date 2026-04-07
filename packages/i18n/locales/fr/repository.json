@@ -407,9 +407,9 @@
                 "name": "Déployer le conteneur",
                 "description": "Déployer un conteneur Docker depuis l'image construite"
             },
-            "write-env-file": {
+            "inject-env-vars": {
                 "name": "Variables d'environnement",
-                "description": "Ce nœud écrit toutes les variables d'environnement du dépôt dans un fichier .env dans le répertoire de travail."
+                "description": "Injecte les variables d'environnement du dépôt dans le pipeline pour les nœuds suivants."
             },
             "send-notification": {
                 "name": "Envoyer une notification",
@@ -559,7 +559,7 @@
             },
             "template-file": {
                 "name": "Fichier template",
-                "description": "Remplace les placeholders {{VAR}} dans un fichier par les valeurs de la pipeline"
+                "description": "Remplace les marqueurs dans un fichier par les variables d'environnement du dépôt"
             },
             "update-commit-status": {
                 "name": "Mettre à jour le statut du commit",
@@ -607,6 +607,10 @@
             "webhookUrl": "URL du webhook",
             "message": "Message personnalisé",
             "messagePlaceholder": "Laisser vide pour le message par défaut",
+            "triggerOn": "Déclencher sur",
+            "triggerOnSuccess": "Succès",
+            "triggerOnFailure": "Échec",
+            "triggerOnAlways": "Toujours",
             "deployContainerInfo": "Le conteneur sera déployé avec l'image construite et les paramètres du dépôt.",
             "composePath": "Chemin du fichier Compose",
             "composePathPlaceholder": "docker-compose.yml",

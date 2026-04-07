@@ -6,6 +6,7 @@ import { AwsAccountInfo } from '@workspace/typescript-interface/aws/aws';
 import { BackupSchedule } from 'generated/client';
 import { UploadNowTab } from '@/components/admin/backups/UploadNowTab';
 import { ScheduleTab } from '@/components/admin/backups/ScheduleTab';
+import { Badge } from '@workspace/ui/components/badge';
 
 interface S3BackupContentProps {
     volumeName: string;
@@ -25,9 +26,9 @@ export function S3BackupForm({ volumeName, awsAccounts, initialSchedules }: S3Ba
                 <TabsTrigger value="schedule" className="flex-1">
                     {t('scheduleBackup')}
                     {initialSchedules.length > 0 && (
-                        <span className="bg-primary text-primary-foreground ml-1.5 rounded-full px-1.5 py-0.5 text-xs leading-none">
+                        <Badge className={'rounded-full px-1.5 py-0'}>
                             {initialSchedules.length}
-                        </span>
+                        </Badge>
                     )}
                 </TabsTrigger>
             </TabsList>

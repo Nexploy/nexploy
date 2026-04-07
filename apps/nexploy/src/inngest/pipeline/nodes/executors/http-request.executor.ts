@@ -1,32 +1,28 @@
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { httpRequestConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-
-interface HeaderEntry {
-    id: string;
-    key: string;
-    value: string;
-}
+import { z } from 'zod';
 
 export class HttpRequestExecutor implements INodeExecutor {
     readonly type = 'http-request';
     readonly configSchema = httpRequestConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof httpRequestConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeConfig, logger, nodeId, abortSignal } = ctx;
 
-        const url = nodeConfig.url as string;
-        const method = nodeConfig.method as string;
-        const headersArr = nodeConfig.headers as HeaderEntry[];
-        const body = nodeConfig.body as string | undefined;
-        const expectedStatus = nodeConfig.expectedStatus as number;
-        const continueOnError = nodeConfig.continueOnError as boolean;
+        const {
+            url,
+            method,
+            headers: headersArr,
+            body,
+            expectedStatus,
+            continueOnError,
+        } = nodeConfig;
 
         const headers: Record<string, string> = {};
-        for (const h of headersArr) {
-            if (h.key) headers[h.key] = h.value;
-        }
-        if (body && !headers['Content-Type']) {
-            headers['Content-Type'] = 'application/json';
+        for (const header of headersArr) {
+            if (header.key) headers[header.key] = header.value;
         }
 
         await logger.info(nodeId, `${method} ${url}`);
@@ -58,7 +54,10 @@ export class HttpRequestExecutor implements INodeExecutor {
             if ((error as Error).name === 'AbortError') throw new Error('Aborted');
             const msg = error instanceof Error ? error.message : 'Unknown error';
             if (continueOnError) {
-                await logger.warn(nodeId, `Request failed: ${msg} (continuing due to continueOnError)`);
+                await logger.warn(
+                    nodeId,
+                    `Request failed: ${msg} (continuing due to continueOnError)`,
+                );
                 return { output: { failed: true, error: msg }, skipped: false };
             }
             throw new Error(`HTTP request failed: ${msg}`);

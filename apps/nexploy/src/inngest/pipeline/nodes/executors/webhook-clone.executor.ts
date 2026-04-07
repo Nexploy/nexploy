@@ -2,31 +2,20 @@ import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/type
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { updateBuildGitInfo } from '@/services/inngest/build.inngest.service';
 import { webhookCloneConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
-function matchesBranchFilter(branch: string, filter: string): boolean {
-    const patterns = filter
-        .split(',')
-        .map((p) => p.trim())
-        .filter(Boolean);
-    if (patterns.length === 0) return true;
-
-    return patterns.some((pattern) => {
-        if (pattern.endsWith('*')) {
-            return branch.startsWith(pattern.slice(0, -1));
-        }
-        return branch === pattern;
-    });
-}
 
 export class WebhookCloneExecutor implements INodeExecutor {
     readonly type = 'webhook-clone';
     readonly configSchema = webhookCloneConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { buildId, config, nodeConfig, logger, nodeId, reporter } = ctx;
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof webhookCloneConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
+        const { buildId, buildConfig, nodeConfig, logger, nodeId, reporter } = ctx;
 
-        const branch = config.gitBranch;
-        const commitHash = config.gitCommitHash;
+        const branch = buildConfig.gitBranch;
+        const commitHash = buildConfig.gitCommitHash;
 
         if (!branch) {
             throw new Error(
@@ -34,8 +23,8 @@ export class WebhookCloneExecutor implements INodeExecutor {
             );
         }
 
-        const branchFilter = (nodeConfig.branchFilter as string) ?? '';
-        if (branchFilter && !matchesBranchFilter(branch, branchFilter)) {
+        const branchFilter = nodeConfig.branchFilter;
+        if (branchFilter && !gitService.matchesBranchFilter(branch, branchFilter)) {
             await logger.info(
                 nodeId,
                 `Branch "${branch}" does not match filter "${branchFilter}" — skipping`,
@@ -48,7 +37,7 @@ export class WebhookCloneExecutor implements INodeExecutor {
         const commitSuffix = commitHash ? ` (commit: ${commitHash.substring(0, 7)})` : '';
         await logger.info(
             nodeId,
-            `Cloning repository ${config.gitUrl} from webhook payload (branch: ${branch}${commitSuffix})`,
+            `Cloning repository ${buildConfig.gitUrl} from webhook payload (branch: ${branch}${commitSuffix})`,
         );
 
         const onProgress = async (progress: number, message: string) => {
@@ -57,7 +46,7 @@ export class WebhookCloneExecutor implements INodeExecutor {
 
         try {
             const effectiveConfig = {
-                ...config,
+                ...buildConfig,
                 gitBranch: branch,
                 gitCommitHash: commitHash,
             };

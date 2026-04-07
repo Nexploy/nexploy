@@ -6,16 +6,19 @@ import {
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { createVolumeConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class CreateVolumeExecutor implements INodeExecutor {
     readonly type = 'create-volume';
     readonly configSchema = createVolumeConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof createVolumeConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const name = nodeConfig.name as string;
-        const driver = nodeConfig.driver as string | undefined;
+        const name = nodeConfig.name;
+        const driver = nodeConfig.driver;
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
         await logger.info(nodeId, `Creating Docker volume: ${name}`);
@@ -40,7 +43,9 @@ export class CreateVolumeExecutor implements INodeExecutor {
                 await logger.info(nodeId, `Volume already exists: ${name}`);
                 return { output: { volumeName: name }, skipped: true };
             }
-            throw new Error(`Failed to create volume: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            throw new Error(
+                `Failed to create volume: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            );
         }
     }
 }

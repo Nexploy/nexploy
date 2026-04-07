@@ -7,13 +7,16 @@ import {
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
 import { buildDockerImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class BuildDockerImageExecutor implements INodeExecutor {
     readonly type = 'build-docker-image';
     readonly configSchema = buildDockerImageConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { config, allOutputs, logger, nodeId, abortSignal } = ctx;
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof buildDockerImageConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
+        const { buildConfig, allOutputs, logger, nodeId, abortSignal, nodeConfig } = ctx;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         if (!workDir) {
@@ -22,13 +25,13 @@ export class BuildDockerImageExecutor implements INodeExecutor {
             );
         }
 
-        const dockerfileName = ctx.nodeConfig.dockerfilePath as string;
-        const dockerfileFilePath = ctx.nodeConfig.dockerfileFilePath as string | undefined;
+        const dockerfileName = nodeConfig.dockerfilePath;
+        const dockerfileFilePath = nodeConfig.dockerfileFilePath;
         const dockerfilePath = dockerfileFilePath
             ? `${dockerfileFilePath.replace(/\/$/, '')}/${dockerfileName}`
             : dockerfileName;
 
-        const imageName = `${config.imageName}-${nodeId}`;
+        const imageName = `${buildConfig.imageName}-${nodeId}`;
 
         await logger.info(nodeId, `Building Docker image: ${imageName}`);
 
@@ -41,9 +44,9 @@ export class BuildDockerImageExecutor implements INodeExecutor {
         const commitMessage = getFromAllOutputs<string>(allOutputs, 'commitMessage');
 
         const labels: Record<string, string> = {
-            [NEXPLOY_LABELS.repositoryId]: config.repositoryId,
-            [NEXPLOY_LABELS.buildId]: config.imageTag,
-            [NEXPLOY_LABELS.imageTag]: config.imageTag,
+            [NEXPLOY_LABELS.repositoryId]: buildConfig.repositoryId,
+            [NEXPLOY_LABELS.buildId]: buildConfig.buildId,
+            [NEXPLOY_LABELS.imageTag]: buildConfig.buildId,
             ...(branch && { [NEXPLOY_LABELS.branch]: branch }),
             ...(commitHash && { [NEXPLOY_LABELS.commitHash]: commitHash }),
             ...(commitMessage && { [NEXPLOY_LABELS.commitMessage]: commitMessage }),

@@ -23,11 +23,7 @@ export function BuildDockerImageConfig() {
                     <FormItem>
                         <FormLabel>{t('dockerfilePath')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="Dockerfile"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} placeholder="Dockerfile" />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -44,7 +40,6 @@ export function BuildDockerImageConfig() {
                                 {...field}
                                 value={field.value ?? ''}
                                 placeholder={t('dockerfileFilePathPlaceholder')}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>
                         <FormMessage className="text-xs" />

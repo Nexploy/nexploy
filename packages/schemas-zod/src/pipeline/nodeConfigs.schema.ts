@@ -58,7 +58,10 @@ export const setEnvironmentConfigSchema = z.object({
 });
 
 export const sendNotificationConfigSchema = z.object({
-    webhookUrl: z.url('Webhook URL must be a valid URL').min(1, 'Webhook URL is required').default(''),
+    webhookUrl: z
+        .url('Webhook URL must be a valid URL')
+        .min(1, 'Webhook URL is required')
+        .default(''),
     triggerOn: z.array(z.enum(['success', 'failure', 'always'])).default(['always']),
     message: z.string().optional(),
 });
@@ -137,7 +140,7 @@ export const runTestsConfigSchema = z.object({
 
 export const httpRequestConfigSchema = z.object({
     url: z.string().min(1, 'URL is required').default(''),
-    method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH']).default('POST'),
+    method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD']).default('POST'),
     headers: z.array(z.object({ id: z.string(), key: z.string(), value: z.string() })).default([]),
     body: z.string().optional(),
     expectedStatus: z.number().default(200),
@@ -153,6 +156,7 @@ export const updateCommitStatusConfigSchema = z.object({
     state: z.enum(['pending', 'success', 'failure', 'error']).default('pending'),
     description: z.string().optional(),
     targetUrl: z.string().optional(),
+    baseUrl: z.string().default('https://gitlab.com'),
 });
 
 // ─── Image Management ────────────────────────────────────────────────────────
@@ -182,9 +186,6 @@ export const pruneImagesConfigSchema = z.object({
 export const templateFileConfigSchema = z.object({
     inputPath: z.string().min(1, 'Input path is required').default(''),
     outputPath: z.string().min(1, 'Output path is required').default(''),
-    variables: z
-        .array(z.object({ id: z.string(), key: z.string(), value: z.string() }))
-        .default([]),
 });
 
 export const uploadArtifactConfigSchema = z.object({
@@ -192,6 +193,7 @@ export const uploadArtifactConfigSchema = z.object({
     bucket: z.string().min(1, 'Bucket is required').default(''),
     accessKey: z.string().min(1, 'Access key is required').default(''),
     secretKey: z.string().min(1, 'Secret key is required').default(''),
+    region: z.string().default('us-east-1'),
     sourcePath: z.string().min(1, 'Source path is required').default(''),
     destinationPath: z.string().min(1, 'Destination path is required').default(''),
     useSSL: z.boolean().default(true),

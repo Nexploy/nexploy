@@ -54,7 +54,7 @@ export async function startBuildRepositoryInngest(
         gitCommitHash: commitHash,
         envVariables,
         imageName,
-        imageTag: build.id,
+        buildId: build.id,
         triggerSource,
     };
 

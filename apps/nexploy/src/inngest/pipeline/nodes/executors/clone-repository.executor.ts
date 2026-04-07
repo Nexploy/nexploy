@@ -2,19 +2,22 @@ import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/type
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { updateBuildGitInfo } from '@/services/inngest/build.inngest.service';
 import { cloneRepositoryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class CloneRepositoryExecutor implements INodeExecutor {
     readonly type = 'clone-repository';
     readonly configSchema = cloneRepositoryConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { buildId, config, nodeConfig, logger, nodeId, reporter } = ctx;
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof cloneRepositoryConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
+        const { buildId, buildConfig, nodeConfig, logger, nodeId, reporter } = ctx;
 
-        const effectiveBranch = nodeConfig.branch as string;
-        const effectiveCommitHash = nodeConfig.commitHash as string;
+        const effectiveBranch = nodeConfig.branch;
+        const effectiveCommitHash = nodeConfig.commitHash;
 
         const effectiveConfig = {
-            ...config,
+            ...buildConfig,
             gitBranch: effectiveBranch,
             gitCommitHash: effectiveCommitHash,
         };
@@ -24,7 +27,7 @@ export class CloneRepositoryExecutor implements INodeExecutor {
             : '';
         await logger.info(
             nodeId,
-            `Cloning repository ${config.gitUrl} (branch: ${effectiveBranch}${commitSuffix})`,
+            `Cloning repository ${buildConfig.gitUrl} (branch: ${effectiveBranch}${commitSuffix})`,
         );
 
         const onProgress = async (progress: number, message: string) => {

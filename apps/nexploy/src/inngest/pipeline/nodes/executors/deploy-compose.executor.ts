@@ -7,13 +7,16 @@ import {
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
 import { composeFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class DeployComposeExecutor implements INodeExecutor {
     readonly type = 'deploy-compose';
     readonly configSchema = composeFileConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { config, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof composeFileConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
+        const { buildConfig, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
 
@@ -23,14 +26,14 @@ export class DeployComposeExecutor implements INodeExecutor {
             );
         }
 
-        const composeFileName = nodeConfig.composeFileName as string | undefined;
-        const composeFilePath = nodeConfig.composeFilePath as string | undefined;
+        const composeFileName = nodeConfig.composeFileName;
+        const composeFilePath = nodeConfig.composeFilePath;
         const composePath = composeFilePath
             ? `${composeFilePath.replace(/\/$/, '')}/${composeFileName}`
             : composeFileName;
-        const projectName = `nexploy-${config.repositoryId}`;
+        const projectName = `nexploy-${buildConfig.repositoryId}`;
 
-        const envVars: Record<string, string> = { ...config.envVariables };
+        const envVars: Record<string, string> = { ...buildConfig.envVariables };
         for (const output of allOutputs.values()) {
             if (output.vars && typeof output.vars === 'object') {
                 Object.assign(envVars, output.vars as Record<string, string>);
@@ -42,9 +45,8 @@ export class DeployComposeExecutor implements INodeExecutor {
         const commitMessage = getFromAllOutputs<string>(allOutputs, 'commitMessage');
 
         const labels: Record<string, string> = {
-            [NEXPLOY_LABELS.repositoryId]: config.repositoryId,
-            [NEXPLOY_LABELS.buildId]: config.imageTag,
-            [NEXPLOY_LABELS.imageTag]: config.imageTag,
+            [NEXPLOY_LABELS.repositoryId]: buildConfig.repositoryId,
+            [NEXPLOY_LABELS.buildId]: buildConfig.buildId,
             ...(branch && { [NEXPLOY_LABELS.branch]: branch }),
             ...(commitHash && { [NEXPLOY_LABELS.commitHash]: commitHash }),
             ...(commitMessage && { [NEXPLOY_LABELS.commitMessage]: commitMessage }),
@@ -65,8 +67,8 @@ export class DeployComposeExecutor implements INodeExecutor {
                 abortSignal,
                 onLog,
                 environmentId,
-                config.imageTag,
-                config.repositoryId,
+                buildConfig.buildId,
+                buildConfig.repositoryId,
                 labels,
             );
 

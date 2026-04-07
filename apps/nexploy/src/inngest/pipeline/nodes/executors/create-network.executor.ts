@@ -6,16 +6,19 @@ import {
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { createNetworkConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class CreateNetworkExecutor implements INodeExecutor {
     readonly type = 'create-network';
     readonly configSchema = createNetworkConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof createNetworkConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const name = nodeConfig.name as string;
-        const driver = nodeConfig.driver as string;
+        const name = nodeConfig.name;
+        const driver = nodeConfig.driver;
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
         await logger.info(nodeId, `Creating Docker network: ${name} (driver: ${driver})`);

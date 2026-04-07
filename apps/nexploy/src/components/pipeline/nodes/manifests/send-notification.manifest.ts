@@ -13,7 +13,6 @@ export const sendNotificationManifest: NodeManifest = {
         category: 'integration',
         metadata: {
             name: 'send-notification.name',
-            description: 'send-notification.description',
             icon: Bell,
             color: `${CATEGORY_BG_MUTED['integration']} ${CATEGORY_TEXT['integration']}`,
         },

@@ -1,20 +1,28 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import {
+    getFromAllOutputs,
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
 import { fetchSecretsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class FetchSecretsExecutor implements INodeExecutor {
     readonly type = 'fetch-secrets';
     readonly configSchema = fetchSecretsConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof fetchSecretsConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const provider = nodeConfig.provider as string;
-        const endpoint = nodeConfig.endpoint as string | undefined;
-        const token = nodeConfig.token as string;
-        const secretPath = nodeConfig.secretPath as string;
-        const outputAs = nodeConfig.outputAs as string;
+        const provider = nodeConfig.provider;
+        const endpoint = nodeConfig.endpoint;
+        const token = nodeConfig.token;
+        const secretPath = nodeConfig.secretPath;
+        const outputAs = nodeConfig.outputAs;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
 
@@ -32,10 +40,11 @@ export class FetchSecretsExecutor implements INodeExecutor {
             if (!response.ok) {
                 throw new Error(`Vault returned ${response.status}: ${response.statusText}`);
             }
-            const data = await response.json() as { data?: { data?: Record<string, string>; [k: string]: unknown } };
+            const data = (await response.json()) as {
+                data?: { data?: Record<string, string>; [k: string]: unknown };
+            };
             // Support both KV v1 and v2
             secrets = (data?.data?.data ?? data?.data ?? {}) as Record<string, string>;
-
         } else if (provider === 'doppler') {
             const dopplerUrl = `https://api.doppler.com/v3/configs/config/secrets/download?format=json`;
             const response = await fetch(dopplerUrl, {
@@ -48,8 +57,7 @@ export class FetchSecretsExecutor implements INodeExecutor {
             if (!response.ok) {
                 throw new Error(`Doppler returned ${response.status}: ${response.statusText}`);
             }
-            secrets = await response.json() as Record<string, string>;
-
+            secrets = (await response.json()) as Record<string, string>;
         } else if (provider === 'env-file') {
             // secretPath is a path to a .env file, token is unused (set to placeholder)
             const filePath = path.isAbsolute(secretPath)
@@ -62,7 +70,10 @@ export class FetchSecretsExecutor implements INodeExecutor {
                 const eqIdx = trimmed.indexOf('=');
                 if (eqIdx > 0) {
                     const key = trimmed.slice(0, eqIdx).trim();
-                    const value = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, '');
+                    const value = trimmed
+                        .slice(eqIdx + 1)
+                        .trim()
+                        .replace(/^["']|["']$/g, '');
                     secrets[key] = value;
                 }
             }

@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 
 export function GitTagConfig() {
@@ -24,11 +18,7 @@ export function GitTagConfig() {
                     <FormItem>
                         <FormLabel>{t('gitTagName')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="v1.0.0"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 font-mono text-xs"
-                            />
+                            <Input {...field} placeholder="v1.0.0" />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -45,7 +35,6 @@ export function GitTagConfig() {
                                 {...field}
                                 value={field.value ?? ''}
                                 placeholder={t('gitTagMessagePlaceholder')}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -59,11 +48,7 @@ export function GitTagConfig() {
                     <FormItem>
                         <FormLabel>{t('gitRemote')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="origin"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} placeholder="origin" />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

@@ -6,12 +6,15 @@ import {
 } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { validateDockerfileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class ValidateDockerfileExecutor implements INodeExecutor {
     readonly type = 'validate-dockerfile';
     readonly configSchema = validateDockerfileConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof validateDockerfileConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { allOutputs, logger, nodeId, nodeConfig } = ctx;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
@@ -22,7 +25,7 @@ export class ValidateDockerfileExecutor implements INodeExecutor {
             );
         }
 
-        const dockerfilePath = nodeConfig.dockerfilePath as string;
+        const dockerfilePath = nodeConfig.dockerfilePath;
 
         await logger.info(nodeId, `Validating Dockerfile: ${dockerfilePath}`);
 

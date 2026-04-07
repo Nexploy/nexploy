@@ -1,21 +1,31 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import {
+    getFromAllOutputs,
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
-import { getFromAllOutputs } from '@/types/pipeline.type';
 import { waitForHealthConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class WaitForHealthExecutor implements INodeExecutor {
     readonly type = 'wait-for-health';
     readonly configSchema = waitForHealthConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof waitForHealthConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const containerName = nodeConfig.containerName as string;
-        const timeout = nodeConfig.timeout as number;
-        const interval = nodeConfig.interval as number;
+        const containerName = nodeConfig.containerName;
+        const timeout = nodeConfig.timeout;
+        const interval = nodeConfig.interval;
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
-        await logger.info(nodeId, `Waiting for container "${containerName}" to be healthy (timeout: ${timeout}s)`);
+        await logger.info(
+            nodeId,
+            `Waiting for container "${containerName}" to be healthy (timeout: ${timeout}s)`,
+        );
 
         const deadline = Date.now() + timeout * 1000;
 
@@ -36,10 +46,16 @@ export class WaitForHealthExecutor implements INodeExecutor {
                     return { output: { containerName, healthy: true } };
                 }
 
-                await logger.debug(nodeId, `Health status: ${healthStatus ?? 'unknown'}, retrying in ${interval}s`);
+                await logger.debug(
+                    nodeId,
+                    `Health status: ${healthStatus ?? 'unknown'}, retrying in ${interval}s`,
+                );
             } catch (err) {
                 if (abortSignal.aborted) throw new Error('Aborted');
-                await logger.debug(nodeId, `Inspect failed: ${err instanceof Error ? err.message : 'unknown error'}`);
+                await logger.debug(
+                    nodeId,
+                    `Inspect failed: ${err instanceof Error ? err.message : 'unknown error'}`,
+                );
             }
 
             await new Promise<void>((resolve) => setTimeout(resolve, interval * 1000));

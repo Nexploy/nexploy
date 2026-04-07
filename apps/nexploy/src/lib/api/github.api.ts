@@ -144,3 +144,26 @@ export async function githubExchangeManifestCode(code: string): Promise<GitHubMa
         } as KyGithubOptions)
         .json<GitHubManifestResponse>();
 }
+
+export async function githubUpdateCommitStatus(
+    token: string,
+    owner: string,
+    repo: string,
+    sha: string,
+    state: 'pending' | 'success' | 'failure' | 'error',
+    options?: { description?: string; targetUrl?: string; context?: string },
+): Promise<void> {
+    await kyGithubApi.post(`repos/${owner}/${repo}/statuses/${sha}`, {
+        token,
+        headers: {
+            Accept: 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+        },
+        json: {
+            state,
+            ...(options?.description && { description: options.description }),
+            ...(options?.targetUrl && { target_url: options.targetUrl }),
+            context: options?.context ?? 'nexploy/pipeline',
+        },
+    } as KyGithubOptions);
+}

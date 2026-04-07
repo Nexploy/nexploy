@@ -15,11 +15,11 @@ export interface InputNodeInfo {
     type: string;
 }
 
-export interface NodeExecutionContext {
+export interface NodeExecutionContext<TConfig = Record<string, unknown>> {
     buildId: string;
-    config: BuildConfig;
+    buildConfig: BuildConfig;
     nodeId: string;
-    nodeConfig: Record<string, unknown>;
+    nodeConfig: TConfig;
     inputNodes: InputNodeInfo[];
     inputOutputs: NodeOutputData[];
     allOutputs: NodeOutputStore;
@@ -35,10 +35,10 @@ export interface NodeExecutionResult {
     skippedBranchTargets?: string[];
 }
 
-export interface INodeExecutor {
+export interface INodeExecutor<TConfig = Record<string, unknown>> {
     readonly type: string;
-    readonly configSchema?: z.ZodTypeAny;
-    execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult>;
+    readonly configSchema?: z.ZodType<TConfig>;
+    execute(ctx: NodeExecutionContext<TConfig>): Promise<NodeExecutionResult>;
 }
 
 export interface PipelineLogger {

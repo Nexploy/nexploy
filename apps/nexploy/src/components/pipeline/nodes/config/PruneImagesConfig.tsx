@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
 
@@ -37,12 +31,7 @@ export function PruneImagesConfig() {
                     <FormItem>
                         <FormLabel>{t('pruneOlderThan')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                value={field.value ?? ''}
-                                placeholder="24h"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} value={field.value ?? ''} placeholder="24h" />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -59,7 +48,6 @@ export function PruneImagesConfig() {
                                 {...field}
                                 value={field.value ?? ''}
                                 placeholder="label=project=myapp"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>
                         <FormMessage className="text-xs" />

@@ -2,25 +2,32 @@ import * as childProcess from 'node:child_process';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import {
+    getFromAllOutputs,
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
 import { runScriptConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class RunScriptExecutor implements INodeExecutor {
     readonly type = 'run-script';
     readonly configSchema = runScriptConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof runScriptConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const script = nodeConfig.script as string;
-        const shell = nodeConfig.shell as string;
-        const continueOnError = nodeConfig.continueOnError as boolean;
+        const script = nodeConfig.script;
+        const shell = nodeConfig.shell;
+        const continueOnError = nodeConfig.continueOnError;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
 
         await logger.info(nodeId, `Running script with ${shell}${workDir ? ` in ${workDir}` : ''}`);
 
-        // Write script to a temp file
         const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'nexploy-script-'));
         const scriptFile = path.join(tmpDir, `script.${shell === 'bash' ? 'sh' : 'sh'}`);
         await fs.writeFile(scriptFile, script, { mode: 0o755 });

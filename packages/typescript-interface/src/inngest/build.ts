@@ -16,6 +16,6 @@ export interface BuildConfig {
     gitCommitHash?: string;
     envVariables: Record<string, string>;
     imageName: string;
-    imageTag: string;
+    buildId: string;
     triggerSource: 'manual' | 'webhook';
 }

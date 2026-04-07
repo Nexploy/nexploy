@@ -7,15 +7,19 @@ import {
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { getDefaultRegistry } from '@/services/registry.service';
 import { pushToRegistryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class PushToRegistryExecutor implements INodeExecutor {
     readonly type = 'push-to-registry';
     readonly configSchema = pushToRegistryConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { config, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof pushToRegistryConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
+        const { buildConfig, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
 
-        const imageName = getFromAllOutputs<string>(allOutputs, 'imageName') ?? config.imageName;
+        const imageName =
+            getFromAllOutputs<string>(allOutputs, 'imageName') ?? buildConfig.imageName;
 
         if (!imageName) {
             throw new Error(
@@ -31,9 +35,7 @@ export class PushToRegistryExecutor implements INodeExecutor {
         }
 
         const customTag =
-            (nodeConfig.tag as string | undefined) ??
-            getFromAllOutputs<string>(allOutputs, 'commitHash') ??
-            'latest';
+            nodeConfig.tag ?? getFromAllOutputs<string>(allOutputs, 'commitHash') ?? 'latest';
         const baseImageName = imageName.split(':')[0];
         const targetName = `${registry.url}/${baseImageName}:${customTag}`;
 
@@ -52,7 +54,7 @@ export class PushToRegistryExecutor implements INodeExecutor {
                     username: registry.username || '',
                     password: registry.password || '',
                 },
-                config.imageTag,
+                buildConfig.imageTag,
                 abortSignal,
                 onLog,
                 environmentId,

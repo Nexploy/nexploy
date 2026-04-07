@@ -1,20 +1,31 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import {
+    getFromAllOutputs,
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { scaleServiceConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class ScaleServiceExecutor implements INodeExecutor {
     readonly type = 'scale-service';
     readonly configSchema = scaleServiceConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof scaleServiceConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const serviceName = nodeConfig.serviceName as string;
-        const replicas = nodeConfig.replicas as number;
+        const serviceName = nodeConfig.serviceName;
+        const replicas = nodeConfig.replicas;
 
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
-        await logger.info(nodeId, `Scaling Swarm service "${serviceName}" to ${replicas} replica(s)`);
+        await logger.info(
+            nodeId,
+            `Scaling Swarm service "${serviceName}" to ${replicas} replica(s)`,
+        );
 
         try {
             await kyDocker
@@ -30,7 +41,9 @@ export class ScaleServiceExecutor implements INodeExecutor {
 
             return { output: { serviceName, replicas } };
         } catch (error) {
-            throw new Error(`Failed to scale service: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            throw new Error(
+                `Failed to scale service: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            );
         }
     }
 }

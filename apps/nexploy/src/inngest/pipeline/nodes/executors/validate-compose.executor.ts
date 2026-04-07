@@ -6,12 +6,15 @@ import {
 } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { composeFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class ValidateComposeExecutor implements INodeExecutor {
     readonly type = 'validate-compose';
     readonly configSchema = composeFileConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof composeFileConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { allOutputs, logger, nodeId, nodeConfig } = ctx;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
@@ -22,8 +25,8 @@ export class ValidateComposeExecutor implements INodeExecutor {
             );
         }
 
-        const composeFileName = nodeConfig.composeFileName as string;
-        const composeFilePath = (nodeConfig.composeFilePath as string | undefined) ?? '';
+        const composeFileName = nodeConfig.composeFileName;
+        const composeFilePath = nodeConfig.composeFilePath;
         const composePath = composeFilePath
             ? `${composeFilePath.replace(/\/$/, '')}/${composeFileName}`
             : composeFileName;

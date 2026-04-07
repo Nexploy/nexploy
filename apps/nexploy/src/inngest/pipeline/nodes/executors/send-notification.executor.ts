@@ -1,20 +1,21 @@
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { sendNotificationConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
 export class SendNotificationExecutor implements INodeExecutor {
     readonly type = 'send-notification';
     readonly configSchema = sendNotificationConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { config, logger, nodeId, nodeConfig, abortSignal } = ctx;
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof sendNotificationConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
+        const { logger, nodeId, nodeConfig, abortSignal } = ctx;
 
-        const webhookUrl = nodeConfig.webhookUrl as string;
-        const customMessage = nodeConfig.message as string | undefined;
+        const webhookUrl = nodeConfig.webhookUrl;
+        const customMessage = nodeConfig.message;
 
         const payload = {
-            buildId: config.imageTag,
-            repositoryId: config.repositoryId,
-            message: customMessage ?? `Build ${config.imageTag} notification`,
+            message: customMessage,
             timestamp: new Date().toISOString(),
         };
 

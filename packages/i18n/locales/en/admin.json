@@ -146,6 +146,7 @@
     "scheduleCreatedSuccess": "Schedule created successfully",
     "scheduleCreateFailed": "Failed to create schedule",
     "scheduleDeletedSuccess": "Schedule deleted",
+    "schedulesCount": "{count, plural, one {# schedule} other {# schedules}}",
     "preferences": "Preferences",
     "managePreferencesDescription": "Configure system settings and build options",
     "buildConfiguration": "Build Configuration",

@@ -408,9 +408,9 @@
                 "name": "Deploy Container",
                 "description": "Deploy a Docker container from the built image"
             },
-            "write-env-file": {
+            "inject-env-vars": {
                 "name": "Environment Variables",
-                "description": "This node writes all repository environment variables to a .env file in the working directory."
+                "description": "Injects repository environment variables into the pipeline for use by subsequent nodes."
             },
             "send-notification": {
                 "name": "Send Notification",
@@ -532,7 +532,7 @@
             },
             "template-file": {
                 "name": "Template File",
-                "description": "Replace {{VAR}} placeholders in a file with pipeline values"
+                "description": "Replace placeholders in a file using repository environment variables"
             },
             "upload-artifact": {
                 "name": "Upload Artifact",
@@ -608,6 +608,10 @@
             "webhookUrl": "Webhook URL",
             "message": "Custom message",
             "messagePlaceholder": "Leave empty for default message",
+            "triggerOn": "Trigger on",
+            "triggerOnSuccess": "Success",
+            "triggerOnFailure": "Failure",
+            "triggerOnAlways": "Always",
             "deployContainerInfo": "Container will be deployed using the built image with repository settings.",
             "composePath": "Compose File Path",
             "composePathPlaceholder": "docker-compose.yml",

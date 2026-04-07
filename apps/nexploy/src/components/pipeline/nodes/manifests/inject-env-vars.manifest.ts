@@ -3,15 +3,15 @@ import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipeline
 import { Position } from '@xyflow/react';
 import { FileKey } from 'lucide-react';
 
-export const writeEnvFileManifest: NodeManifest = {
-    type: 'write-env-file',
+export const injectEnvVarsManifest: NodeManifest = {
+    type: 'inject-env-vars',
     definition: {
-        id: 'write-env-file',
+        id: 'inject-env-vars',
         type: 'base-node',
         category: 'config',
         metadata: {
-            name: 'write-env-file.name',
-            description: 'write-env-file.description',
+            name: 'inject-env-vars.name',
+            description: 'inject-env-vars.description',
             icon: FileKey,
             color: `${CATEGORY_BG_MUTED['config']} ${CATEGORY_TEXT['config']}`,
         },

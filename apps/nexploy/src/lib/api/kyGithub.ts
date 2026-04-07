@@ -3,6 +3,7 @@ import { getTokenGitStorage } from '@/lib/storage/token-git-storage';
 
 export interface KyGithubOptions extends Options {
     withAuth?: boolean;
+    token?: string;
 }
 
 export const kyGithubApi = ky.create({
@@ -10,9 +11,10 @@ export const kyGithubApi = ky.create({
     hooks: {
         beforeRequest: [
             (request, options) => {
-                if ((options as KyGithubOptions).withAuth === false) return;
-                const token = getTokenGitStorage();
-                request.headers.set('Authorization', `Bearer ${token.accessToken}`);
+                const opts = options as KyGithubOptions;
+                if (opts.withAuth === false) return;
+                const accessToken = opts.token ?? getTokenGitStorage().accessToken;
+                request.headers.set('Authorization', `Bearer ${accessToken}`);
             },
         ],
     },

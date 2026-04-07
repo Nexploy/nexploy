@@ -10,20 +10,21 @@ import { tokenAwsStorage } from '@/lib/storage/token-aws-storage';
 import { getAwsCredentials } from '@/services/aws.service';
 import { backupVolumeS3ConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { HTTPError } from 'ky';
+import { z } from 'zod';
 
 export class BackupVolumeS3Executor implements INodeExecutor {
     readonly type = 'backup-volume-s3';
     readonly configSchema = backupVolumeS3ConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof backupVolumeS3ConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
         const { nodeId, nodeConfig, allOutputs, logger, abortSignal } = ctx;
 
         const volumeName =
-            (nodeConfig.volumeName as string | undefined)?.trim() ||
-            getFromAllOutputs<string>(allOutputs, 'volumeName') ||
-            '';
-        const accountId = nodeConfig.accountId as string;
-        const bucket = nodeConfig.bucket as string;
+            nodeConfig.volumeName.trim() || getFromAllOutputs<string>(allOutputs, 'volumeName');
+        const accountId = nodeConfig.accountId;
+        const bucket = nodeConfig.bucket;
 
         if (!volumeName) throw new Error('No volume name provided');
 

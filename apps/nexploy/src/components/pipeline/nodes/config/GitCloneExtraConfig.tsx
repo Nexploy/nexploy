@@ -24,11 +24,7 @@ export function GitCloneExtraConfig() {
                     <FormItem>
                         <FormLabel>{t('gitCloneUrl')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="https://github.com/org/repo.git"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} placeholder="https://github.com/org/repo.git" />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -41,11 +37,7 @@ export function GitCloneExtraConfig() {
                     <FormItem>
                         <FormLabel>{t('cloneBranch')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="main"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} placeholder="main" />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -58,11 +50,7 @@ export function GitCloneExtraConfig() {
                     <FormItem>
                         <FormLabel>{t('gitCloneTargetDir')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="extra-repo"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} placeholder="extra-repo" />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -80,7 +68,6 @@ export function GitCloneExtraConfig() {
                                 type="password"
                                 value={field.value ?? ''}
                                 placeholder={t('gitCloneTokenPlaceholder')}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>
                         <FormMessage className="text-xs" />

@@ -27,7 +27,7 @@ export const PIPELINE_TEMPLATES: PipelineTemplate[] = [
         icon: 'dockerfile',
         nodes: [
             { type: 'clone-repository', offsetX: 0, offsetY: 0 },
-            { type: 'write-env-file', offsetX: 240, offsetY: 0 },
+            { type: 'inject-env-vars', offsetX: 240, offsetY: 0 },
             { type: 'build-docker-image', offsetX: 480, offsetY: 0 },
             { type: 'deploy-container', offsetX: 720, offsetY: 0 },
         ],
@@ -42,7 +42,7 @@ export const PIPELINE_TEMPLATES: PipelineTemplate[] = [
         icon: 'compose',
         nodes: [
             { type: 'clone-repository', offsetX: 0, offsetY: 0 },
-            { type: 'write-env-file', offsetX: 220, offsetY: 0 },
+            { type: 'inject-env-vars', offsetX: 220, offsetY: 0 },
             { type: 'validate-compose', offsetX: 420, offsetY: 0 },
             { type: 'deploy-compose', offsetX: 620, offsetY: 0 },
             { type: 'clean-workdir', offsetX: 1020, offsetY: 0 },

@@ -1,30 +1,29 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, getFromAllOutputs } from '@/types/pipeline.type';
+import { getFromAllOutputs, INodeExecutor, NodeExecutionContext, NodeExecutionResult, } from '@/types/pipeline.type';
 import { templateFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
 
-interface VarEntry {
-    id: string;
-    key: string;
-    value: string;
-}
-
-export class TemplateFileExecutor implements INodeExecutor {
+export class TemplateFileExecutor
+    implements INodeExecutor<z.infer<typeof templateFileConfigSchema>>
+{
     readonly type = 'template-file';
     readonly configSchema = templateFileConfigSchema;
 
-    async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId } = ctx;
+    async execute(
+        ctx: NodeExecutionContext<z.infer<typeof templateFileConfigSchema>>,
+    ): Promise<NodeExecutionResult> {
+        const { nodeConfig, allOutputs, buildConfig, logger, nodeId } = ctx;
 
-        const inputPath = nodeConfig.inputPath as string;
-        const outputPath = nodeConfig.outputPath as string;
-        const variables = nodeConfig.variables as VarEntry[];
+        const { inputPath, outputPath } = nodeConfig;
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const base = workDir ?? process.cwd();
 
         const resolvedInput = path.isAbsolute(inputPath) ? inputPath : path.join(base, inputPath);
-        const resolvedOutput = path.isAbsolute(outputPath) ? outputPath : path.join(base, outputPath);
+        const resolvedOutput = path.isAbsolute(outputPath)
+            ? outputPath
+            : path.join(base, outputPath);
 
         await logger.info(nodeId, `Templating file: ${inputPath} → ${outputPath}`);
 
@@ -32,13 +31,13 @@ export class TemplateFileExecutor implements INodeExecutor {
         try {
             content = await fs.readFile(resolvedInput, 'utf-8');
         } catch (err) {
-            throw new Error(`Failed to read input file "${inputPath}": ${err instanceof Error ? err.message : 'unknown error'}`);
+            throw new Error(
+                `Failed to read input file "${inputPath}": ${err instanceof Error ? err.message : 'unknown error'}`,
+            );
         }
 
-        // Build variable map: custom vars + pipeline outputs
-        const varMap: Record<string, string> = {};
+        const varMap: Record<string, string> = { ...buildConfig.envVariables };
 
-        // Add pipeline outputs as template vars
         for (const [, outputData] of allOutputs.entries()) {
             for (const [k, v] of Object.entries(outputData)) {
                 if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') {
@@ -47,12 +46,9 @@ export class TemplateFileExecutor implements INodeExecutor {
             }
         }
 
-        // Custom vars override pipeline outputs
-        for (const v of variables) {
-            if (v.key) varMap[v.key] = v.value;
-        }
+        const pipelineEnv = getFromAllOutputs<Record<string, string>>(allOutputs, 'envVariables');
+        if (pipelineEnv) Object.assign(varMap, pipelineEnv);
 
-        // Replace {{VAR}} patterns
         let replaced = 0;
         const result = content.replace(/\{\{([A-Za-z0-9_]+)\}\}/g, (match, varName: string) => {
             const value = varMap[varName] ?? varMap[varName.toUpperCase()];
@@ -60,13 +56,16 @@ export class TemplateFileExecutor implements INodeExecutor {
                 replaced++;
                 return value;
             }
-            return match; // leave unreplaced
+            return match;
         });
 
         await fs.mkdir(path.dirname(resolvedOutput), { recursive: true });
         await fs.writeFile(resolvedOutput, result, 'utf-8');
 
-        await logger.info(nodeId, `Template file written to ${outputPath} (${replaced} substitutions)`);
+        await logger.info(
+            nodeId,
+            `Template file written to ${outputPath} (${replaced} substitutions)`,
+        );
         return { output: { inputPath, outputPath, substitutions: replaced } };
     }
 }
