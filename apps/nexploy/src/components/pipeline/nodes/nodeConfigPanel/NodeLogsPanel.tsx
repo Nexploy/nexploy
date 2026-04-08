@@ -85,6 +85,10 @@ export function NodeLogsPanel({ buildId, nodeId, nodeStatus }: NodeLogsPanelProp
                     <div className="text-muted-foreground flex flex-1 items-center justify-center py-4">
                         {t('loading')}
                     </div>
+                ) : logs.length === 0 && isLive ? (
+                    <div className="text-muted-foreground flex flex-1 items-center justify-center py-4">
+                        {t('waitingForLogs')}
+                    </div>
                 ) : logs.length === 0 ? (
                     <div className="text-muted-foreground flex flex-1 items-center justify-center py-4">
                         {t('noLogs')}

@@ -143,7 +143,8 @@
             "auto": "Auto",
             "manual": "Manual",
             "noLogs": "No logs available",
-            "loading": "Loading logs..."
+            "loading": "Loading logs...",
+            "waitingForLogs": "Waiting for logs..."
         }
     },
     "swarmConfig": {
