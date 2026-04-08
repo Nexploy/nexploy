@@ -1,3 +1,3 @@
-export function SidebarAI() {
+export function PanelAI() {
     return <div>SidebarAI</div>;
 }
