@@ -1,7 +1,7 @@
 import { inngest } from '@/inngest/client';
 import { getNextRunAt, markScheduleRan } from '@/services/backupSchedule.service';
 import { getAwsCredentials } from '@/services/aws.service';
-import { kyDocker } from '@/lib/api/kyDocker';
+import { kyDocker, KyDockerOptions } from '@/lib/api/kyDocker';
 import { kyS3 } from '@/lib/api/kyS3';
 import { tokenAwsStorage } from '@/lib/storage/token-aws-storage';
 
@@ -16,6 +16,7 @@ export const backupSchedulerAwsFunction = inngest.createFunction(
         const {
             id,
             volumeName,
+            environmentId,
             bucket,
             awsAccountId,
             frequency,
@@ -31,7 +32,10 @@ export const backupSchedulerAwsFunction = inngest.createFunction(
             const creds = await getAwsCredentials(awsAccountId);
 
             const buffer = await kyDocker
-                .get(`backups/download/${encodeURIComponent(volumeName)}`, { timeout: false })
+                .get(`backups/download/${encodeURIComponent(volumeName)}`, {
+                    timeout: false,
+                    environmentId,
+                } as KyDockerOptions)
                 .arrayBuffer();
 
             const objectKey = `${volumeName}-${Date.now()}.tar.gz`;
@@ -59,6 +63,7 @@ export const backupSchedulerAwsFunction = inngest.createFunction(
             data: {
                 id,
                 volumeName,
+                environmentId,
                 bucket,
                 awsAccountId,
                 frequency,

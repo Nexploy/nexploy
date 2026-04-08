@@ -4,7 +4,7 @@ import {
     NodeExecutionContext,
     NodeExecutionResult,
 } from '@/types/pipeline.type';
-import { kyDocker } from '@/lib/api/kyDocker';
+import { kyDocker, KyDockerOptions } from '@/lib/api/kyDocker';
 import { kyS3 } from '@/lib/api/kyS3';
 import { tokenAwsStorage } from '@/lib/storage/token-aws-storage';
 import { getAwsCredentials } from '@/services/aws.service';
@@ -25,6 +25,7 @@ export class BackupVolumeS3Executor implements INodeExecutor {
             nodeConfig.volumeName.trim() || getFromAllOutputs<string>(allOutputs, 'volumeName');
         const accountId = nodeConfig.accountId;
         const bucket = nodeConfig.bucket;
+        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
         if (!volumeName) throw new Error('No volume name provided');
 
@@ -35,7 +36,10 @@ export class BackupVolumeS3Executor implements INodeExecutor {
         if (abortSignal.aborted) throw new Error('Build cancelled');
 
         const buffer = await kyDocker
-            .get(`backups/download/${encodeURIComponent(volumeName)}`, { timeout: false })
+            .get(`backups/download/${encodeURIComponent(volumeName)}`, {
+                timeout: false,
+                environmentId,
+            } as KyDockerOptions)
             .arrayBuffer();
 
         const objectKey = `${volumeName}-${Date.now()}.tar.gz`;

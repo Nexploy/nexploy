@@ -9,6 +9,7 @@ import { getAllAwsAccounts } from '@/services/aws.service';
 import { getBackupSchedulesForVolume } from '@/services/backupSchedule.service';
 import { VolumeS3Button } from '@/components/admin/backups/VolumeS3Button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import { Badge } from '@workspace/ui/components/badge';
 
 export default async function BackupsPage() {
     const [t, volumes, awsAccounts] = await Promise.all([
@@ -62,12 +63,19 @@ export default async function BackupsPage() {
                                             <span className="text-sm font-medium">
                                                 {volume.name}
                                             </span>
-                                            <span className="text-muted-foreground text-xs">
-                                                {volume.driver}
-                                                {volume.usageData?.Size != null &&
-                                                    ` · ${formatBytes(volume.usageData.Size)}`}
-                                                {(allSchedules[index]?.length ?? 0) > 0 &&
-                                                    ` · ${t('schedulesCount', { count: allSchedules[index]!.length })}`}
+                                            <span className="text-muted-foreground flex items-center gap-2 text-xs">
+                                                <div>
+                                                    {volume.driver}
+                                                    {volume.usageData?.Size != null &&
+                                                        ` · ${formatBytes(volume.usageData.Size)}`}
+                                                </div>
+                                                {(allSchedules[index]?.length ?? 0) > 0 && (
+                                                    <Badge className={'h-5'}>
+                                                        {t('schedulesCount', {
+                                                            count: allSchedules[index]!.length,
+                                                        })}
+                                                    </Badge>
+                                                )}
                                             </span>
                                         </div>
                                     </div>

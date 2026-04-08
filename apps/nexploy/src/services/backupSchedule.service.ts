@@ -1,5 +1,6 @@
 import { BackupSchedule, Frequency } from 'generated/client';
 import { prisma } from '../../prisma/prisma';
+import { cookies } from 'next/headers';
 
 export function getNextRunAt(
     frequency: Frequency,
@@ -48,8 +49,11 @@ export function getNextRunAt(
 
 export async function getBackupSchedulesForVolume(volumeName: string): Promise<BackupSchedule[]> {
     try {
+        const cookieStore = await cookies();
+        const environmentId = cookieStore.get('X-Docker-Environment')?.value;
+
         return prisma.backupSchedule.findMany({
-            where: { volumeName },
+            where: { volumeName, ...(environmentId ? { environmentId } : {}) },
             orderBy: { createdAt: 'asc' },
         });
     } catch {
@@ -67,9 +71,13 @@ export async function createBackupSchedule(
     scheduledDay?: number,
 ): Promise<BackupSchedule> {
     try {
+        const cookieStore = await cookies();
+        const environmentId = cookieStore.get('X-Docker-Environment')?.value;
+
         return prisma.backupSchedule.create({
             data: {
                 volumeName,
+                environmentId,
                 bucket,
                 awsAccountId,
                 frequency,

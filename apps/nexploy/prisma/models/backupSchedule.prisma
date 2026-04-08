@@ -1,17 +1,18 @@
 model BackupSchedule {
-  id           String        @id @default(cuid())
-  volumeName   String
-  bucket       String
-  awsAccountId String
-  awsAccount   AwsCredential @relation(fields: [awsAccountId], references: [id], onDelete: Cascade)
+  id              String        @id @default(cuid())
+  volumeName      String
+  environmentId   String?
+  bucket          String
+  awsAccountId    String
+  awsAccount      AwsCredential @relation(fields: [awsAccountId], references: [id], onDelete: Cascade)
   frequency       Frequency
-  scheduledHour   Int       @default(0)
-  scheduledMinute Int       @default(0)
+  scheduledHour   Int           @default(0)
+  scheduledMinute Int           @default(0)
   scheduledDay    Int?
   lastRunAt       DateTime?
-  nextRunAt    DateTime
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  nextRunAt       DateTime
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   @@map("backup_schedule")
 }

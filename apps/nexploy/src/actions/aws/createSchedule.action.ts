@@ -9,7 +9,16 @@ export const createBackupScheduleAction = authActionServer
     .use(requirePermission('backup', 'create'))
     .inputSchema(createBackupScheduleSchema)
     .action(async ({ parsedInput }) => {
-        const { volumeName, bucket, awsAccountId, frequency, scheduledHour, scheduledMinute, scheduledDay } = parsedInput;
+        const {
+            volumeName,
+            bucket,
+            awsAccountId,
+            frequency,
+            scheduledHour,
+            scheduledMinute,
+            scheduledDay,
+        } = parsedInput;
+
         const schedule = await createBackupSchedule(
             volumeName,
             bucket,
@@ -25,6 +34,7 @@ export const createBackupScheduleAction = authActionServer
             data: {
                 id: schedule.id,
                 volumeName: schedule.volumeName,
+                environmentId: schedule.environmentId ?? undefined,
                 bucket: schedule.bucket,
                 awsAccountId: schedule.awsAccountId,
                 frequency: schedule.frequency,

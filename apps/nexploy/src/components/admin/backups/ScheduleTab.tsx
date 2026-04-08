@@ -10,14 +10,7 @@ import dayjs from 'dayjs';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -54,9 +47,9 @@ const DAY_OF_WEEK_KEYS = [
 
 const DAYS_OF_MONTH = Array.from({ length: 31 }, (_, i) => i + 1);
 
-
 interface ScheduleTabProps {
     volumeName: string;
+    environmentId?: string;
     awsAccounts: AwsAccountInfo[];
     initialSchedules: BackupSchedule[];
 }

@@ -41,7 +41,6 @@ export function VolumeS3Button({ volumeName, awsAccounts, initialSchedules }: Vo
                 <div>
                     <Button
                         variant="outline"
-                        size="sm"
                         onClick={handleClick}
                         icon={CloudBackup}
                         disabled={awsAccounts.length === 0}
