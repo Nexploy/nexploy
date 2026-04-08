@@ -61,6 +61,30 @@ export async function getBackupSchedulesForVolume(volumeName: string): Promise<B
     }
 }
 
+export async function getBackupSchedulesForVolumes(
+    volumeNames: string[],
+): Promise<{ volumeName: string; schedules: BackupSchedule[] }[]> {
+    try {
+        const cookieStore = await cookies();
+        const environmentId = cookieStore.get('X-Docker-Environment')?.value;
+
+        const schedules = await prisma.backupSchedule.findMany({
+            where: {
+                volumeName: { in: volumeNames },
+                ...(environmentId ? { environmentId } : {}),
+            },
+            orderBy: { createdAt: 'asc' },
+        });
+
+        return volumeNames.map((volumeName) => ({
+            volumeName,
+            schedules: schedules.filter((s) => s.volumeName === volumeName),
+        }));
+    } catch {
+        throw new Error('Failed to get backup schedules for volumes');
+    }
+}
+
 export async function createBackupSchedule(
     volumeName: string,
     bucket: string,

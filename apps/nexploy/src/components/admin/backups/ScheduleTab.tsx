@@ -5,12 +5,17 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
-import { Trash2 } from 'lucide-react';
-import dayjs from 'dayjs';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -23,17 +28,9 @@ import {
 import { createBackupScheduleSchema } from '@workspace/schemas-zod/aws/backupSchedule.schema';
 import { to24h } from '@/utils/time';
 import { createBackupScheduleAction } from '@/actions/aws/createSchedule.action';
-import { deleteBackupScheduleAction } from '@/actions/aws/deleteSchedule.action';
 import { AwsAccountInfo } from '@workspace/typescript-interface/aws/aws';
-import { BackupSchedule } from 'generated/client';
 import { DialogFooter } from '@workspace/ui/components/dialog';
-
-const frequencyKeys = {
-    HOURLY: 'frequencyHourly',
-    DAILY: 'frequencyDaily',
-    WEEKLY: 'frequencyWeekly',
-    MONTHLY: 'frequencyMonthly',
-} as const;
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 
 const DAY_OF_WEEK_KEYS = [
     'sunday',
@@ -51,37 +48,13 @@ interface ScheduleTabProps {
     volumeName: string;
     environmentId?: string;
     awsAccounts: AwsAccountInfo[];
-    initialSchedules: BackupSchedule[];
 }
 
-function formatScheduleDetail(
-    s: BackupSchedule,
-    t: ReturnType<typeof useTranslations<'admin'>>,
-    is12h: boolean,
-): string {
-    const m = String(s.scheduledMinute).padStart(2, '0');
-    const time = is12h
-        ? `${s.scheduledHour % 12 || 12}:${m} ${s.scheduledHour < 12 ? 'AM' : 'PM'}`
-        : `${String(s.scheduledHour).padStart(2, '0')}:${m}`;
-
-    switch (s.frequency) {
-        case 'HOURLY':
-            return `:${m}`;
-        case 'DAILY':
-            return `${t('at')} ${time}`;
-        case 'WEEKLY': {
-            const dayKey = DAY_OF_WEEK_KEYS[(s.scheduledDay ?? 1) % 7] ?? 'monday';
-            return `${t(dayKey)} ${t('at')} ${time}`;
-        }
-        case 'MONTHLY':
-            return `${t('at')} ${time} (${t('scheduledDayOfMonth').toLowerCase()} ${s.scheduledDay ?? 1})`;
-    }
-}
-
-export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: ScheduleTabProps) {
+export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
     const t = useTranslations('admin');
-    const [schedules, setSchedules] = useState<BackupSchedule[]>(initialSchedules);
     const [is12h, setIs12h] = useState(false);
+
+    const { closeDialog } = useConfirmationDialogStore();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         createBackupScheduleAction,
@@ -99,8 +72,7 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
                 },
             },
             actionProps: {
-                onSuccess: ({ data }) => {
-                    if (data) setSchedules((prev) => [...prev, data]);
+                onSuccess: () => {
                     toast.success(t('scheduleCreatedSuccess'));
                     form.reset({
                         volumeName,
@@ -111,6 +83,7 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
                         scheduledMinute: 0,
                         scheduledDay: undefined,
                     });
+                    closeDialog();
                 },
                 onError: ({ error }) => {
                     toast.error(error.serverError ?? t('scheduleCreateFailed'));
@@ -121,16 +94,6 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
 
     const frequency = form.watch('frequency');
     const isSubmitting = action.status === 'executing';
-
-    const handleDelete = async (id: string) => {
-        const result = await deleteBackupScheduleAction({ id });
-        if (result?.serverError) {
-            toast.error(result.serverError);
-            return;
-        }
-        toast.success(t('scheduleDeletedSuccess'));
-        setSchedules((prev) => prev.filter((s) => s.id !== id));
-    };
 
     return (
         <div className="space-y-4 pt-2">
@@ -424,40 +387,6 @@ export function ScheduleTab({ volumeName, awsAccounts, initialSchedules }: Sched
                     </DialogFooter>
                 </form>
             </Form>
-
-            {schedules.length > 0 && (
-                <div className="space-y-2">
-                    <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-                        {t('activeSchedules')}
-                    </p>
-                    {schedules.map((s) => (
-                        <div
-                            key={s.id}
-                            className="bg-muted/50 flex items-center justify-between rounded-md border px-3 py-2"
-                        >
-                            <div className="flex flex-col gap-0.5">
-                                <span className="text-sm font-medium">{s.bucket}</span>
-                                <span className="text-muted-foreground text-xs">
-                                    {t(frequencyKeys[s.frequency])} —{' '}
-                                    {formatScheduleDetail(s, t, is12h)}
-                                </span>
-                                <span className="text-muted-foreground text-xs">
-                                    {t('lastRun')}:{' '}
-                                    {s.lastRunAt
-                                        ? dayjs(s.lastRunAt).format('DD/MM/YYYY HH:mm')
-                                        : t('never')}
-                                </span>
-                                <span className="text-muted-foreground text-xs">
-                                    {t('nextRun')}: {dayjs(s.nextRunAt).format('DD/MM/YYYY HH:mm')}
-                                </span>
-                            </div>
-                            <Button variant="ghost" size="icon" onClick={() => handleDelete(s.id)}>
-                                <Trash2 className="text-destructive size-4" />
-                            </Button>
-                        </div>
-                    ))}
-                </div>
-            )}
         </div>
     );
 }

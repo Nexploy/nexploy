@@ -4,6 +4,7 @@ import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { createBackupScheduleSchema } from '@workspace/schemas-zod/aws/backupSchedule.schema';
 import { createBackupSchedule } from '@/services/backupSchedule.service';
 import { inngest } from '@/inngest/client';
+import { revalidatePath } from 'next/cache';
 
 export const createBackupScheduleAction = authActionServer
     .use(requirePermission('backup', 'create'))
@@ -45,5 +46,5 @@ export const createBackupScheduleAction = authActionServer
             },
         });
 
-        return schedule;
+        revalidatePath('/admin/backups');
     });

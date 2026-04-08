@@ -6,10 +6,10 @@ import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
 import { Button } from '@workspace/ui/components/button';
 import { formatBytes } from '@/utils/formatBytes';
 import { getAllAwsAccounts } from '@/services/aws.service';
-import { getBackupSchedulesForVolume } from '@/services/backupSchedule.service';
+import { getBackupSchedulesForVolumes } from '@/services/backupSchedule.service';
 import { VolumeS3Button } from '@/components/admin/backups/VolumeS3Button';
+import { SchedulesAccordion } from '@/components/admin/backups/SchedulesAccordion';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
-import { Badge } from '@workspace/ui/components/badge';
 
 export default async function BackupsPage() {
     const [t, volumes, awsAccounts] = await Promise.all([
@@ -18,9 +18,7 @@ export default async function BackupsPage() {
         getAllAwsAccounts(),
     ]);
 
-    const allSchedules = await Promise.all(
-        volumes.map((volume) => getBackupSchedulesForVolume(volume.name)),
-    );
+    const volumeSchedules = await getBackupSchedulesForVolumes(volumes.map((v) => v.name));
 
     if (volumes.length === 0) {
         return (
@@ -29,6 +27,7 @@ export default async function BackupsPage() {
             </div>
         );
     }
+
     return (
         <div className="flex h-full flex-1 flex-col pt-5">
             <div className="flex flex-col gap-4">
@@ -46,7 +45,8 @@ export default async function BackupsPage() {
                     </div>
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
-                    <div className="px-5 pb-5">
+                    <div className="flex flex-col gap-4 px-5 pb-5">
+                        <SchedulesAccordion volumeSchedules={volumeSchedules} />
                         <div className="bg-card overflow-hidden rounded-md border shadow-sm">
                             {volumes.map((volume, index) => (
                                 <div
@@ -63,19 +63,10 @@ export default async function BackupsPage() {
                                             <span className="text-sm font-medium">
                                                 {volume.name}
                                             </span>
-                                            <span className="text-muted-foreground flex items-center gap-2 text-xs">
-                                                <div>
-                                                    {volume.driver}
-                                                    {volume.usageData?.Size != null &&
-                                                        ` · ${formatBytes(volume.usageData.Size)}`}
-                                                </div>
-                                                {(allSchedules[index]?.length ?? 0) > 0 && (
-                                                    <Badge className={'h-5'}>
-                                                        {t('schedulesCount', {
-                                                            count: allSchedules[index]!.length,
-                                                        })}
-                                                    </Badge>
-                                                )}
+                                            <span className="text-muted-foreground text-xs">
+                                                {volume.driver}
+                                                {volume.usageData?.Size != null &&
+                                                    ` · ${formatBytes(volume.usageData.Size)}`}
                                             </span>
                                         </div>
                                     </div>
@@ -83,7 +74,6 @@ export default async function BackupsPage() {
                                         <VolumeS3Button
                                             volumeName={volume.name}
                                             awsAccounts={awsAccounts}
-                                            initialSchedules={allSchedules[index] ?? []}
                                         />
                                         <Tooltip>
                                             <TooltipTrigger>

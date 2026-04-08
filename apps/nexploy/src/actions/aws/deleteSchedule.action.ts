@@ -4,6 +4,7 @@ import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { deleteBackupScheduleSchema } from '@workspace/schemas-zod/aws/backupSchedule.schema';
 import { deleteBackupSchedule } from '@/services/backupSchedule.service';
 import { inngest } from '@/inngest/client';
+import { revalidatePath } from 'next/cache';
 
 export const deleteBackupScheduleAction = authActionServer
     .use(requirePermission('backup', 'delete'))
@@ -16,5 +17,5 @@ export const deleteBackupScheduleAction = authActionServer
             data: { id: parsedInput.id },
         });
 
-        return { success: true };
+        revalidatePath('/admin/backups');
     });
