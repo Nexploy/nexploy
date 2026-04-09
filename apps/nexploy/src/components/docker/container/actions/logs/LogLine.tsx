@@ -21,14 +21,12 @@ export const LogLine = memo(
             <div className="py-0.5 break-all whitespace-pre-wrap transition-colors duration-75 hover:bg-neutral-900">
                 {showTimestamp && (
                     <>
-                        <span className="text-neutral-500">
-                            [{formatTimestamp(log.timestamp)}]
-                        </span>{' '}
+                        <span className="text-neutral-500">[{formatTimestamp(log.timestamp)}]</span>
                     </>
                 )}
                 <span className={log.stream === 'stderr' ? 'text-destructive' : 'text-green-400'}>
                     [{log.stream}]
-                </span>{' '}
+                </span>
                 <span className="text-white">{log.message}</span>
             </div>
         );

@@ -129,12 +129,12 @@ export function DriverOptionsField<T extends FieldValues>({
                         </FormControl>
                         <FormMessage />
                         <FormDescription>
-                            {t('optionsDescription')}{' '}
-                            <code className="bg-muted rounded px-1 py-0.5 text-xs">type=nfs</code>,{' '}
+                            {t('optionsDescription')}
+                            <code className="bg-muted rounded px-1 py-0.5 text-xs">type=nfs</code>,
                             <code className="bg-muted rounded px-1 py-0.5 text-xs">
                                 o=addr=192.168.1.1
                             </code>
-                            ,{' '}
+                            ,
                             <code className="bg-muted rounded px-1 py-0.5 text-xs">
                                 device=/path/to/dir
                             </code>

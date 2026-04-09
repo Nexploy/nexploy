@@ -124,7 +124,7 @@ export function JoinSwarmDialog({ trigger, onJoinSuccess }: JoinSwarmDialogProps
 
                     <div className="grid gap-2">
                         <Label htmlFor="advertiseAddr">
-                            {t('advertiseAddress')}{' '}
+                            {t('advertiseAddress')}
                             <span className="text-muted-foreground text-sm">{t('optional')}</span>
                         </Label>
                         <Input

@@ -161,7 +161,7 @@ export function TableDockerNetworks() {
                         disabled={!numberOfSelectedRows}
                     >
                         <Trash />
-                        {tCommon('remove')}{' '}
+                        {tCommon('remove')}
                         {!!numberOfSelectedRows && (
                             <Badge variant={'secondary'} className={'rounded-full'}>
                                 {numberOfSelectedRows}

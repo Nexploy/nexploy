@@ -22,6 +22,7 @@ import { toast } from 'sonner';
 export function CreateRegistryForm() {
     const { onSuccess } = useConfirmationDialogStore();
     const t = useTranslations('admin.registry');
+    const tCommon = useTranslations('common');
 
     const { form, handleSubmitWithAction } = useHookFormAction(
         createRegistryAction,
@@ -93,7 +94,12 @@ export function CreateRegistryForm() {
                     name="username"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('usernameLabel')}</FormLabel>
+                            <FormLabel>
+                                {t('usernameLabel')}
+                                <span className="text-muted-foreground text-xs">
+                                    {tCommon('optional')}
+                                </span>
+                            </FormLabel>
                             <FormControl>
                                 <Input
                                     placeholder={t('usernamePlaceholder')}
@@ -111,7 +117,12 @@ export function CreateRegistryForm() {
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('passwordLabel')}</FormLabel>
+                            <FormLabel>
+                                {t('passwordLabel')}
+                                <span className="text-muted-foreground text-xs">
+                                    {tCommon('optional')}
+                                </span>
+                            </FormLabel>
                             <FormControl>
                                 <Input
                                     type="password"
@@ -120,6 +131,9 @@ export function CreateRegistryForm() {
                                     {...field}
                                 />
                             </FormControl>
+                            <p className="text-muted-foreground text-xs">
+                                {t('passwordCreateHint')}
+                            </p>
                             <FormMessage />
                         </FormItem>
                     )}

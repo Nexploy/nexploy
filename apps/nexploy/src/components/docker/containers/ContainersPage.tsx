@@ -3,13 +3,7 @@
 import { Container as IconContainer, Container, Layers, LayoutGrid, Plus } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { Badge } from '@workspace/ui/components/badge';
-import {
-    Empty,
-    EmptyDescription,
-    EmptyHeader,
-    EmptyMedia,
-    EmptyTitle,
-} from '@workspace/ui/components/empty';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, } from '@workspace/ui/components/empty';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { ContainersStack } from '@/components/docker/containers/ContainersStack';
@@ -71,8 +65,14 @@ export default function ContainersPage() {
                             <Skeleton className={'my-1 h-3 w-40'} />
                         ) : (
                             <p className="text-muted-foreground text-sm">
-                                {standaloneContainersLenght} {t('container').toLowerCase()}
-                                {stacksSize > 0 && ` · ${stacksSize} ${t('stack.title')}`}
+                                {numberOfStackAndStandaloneContainer === 0 ? (
+                                    t('noContainers')
+                                ) : (
+                                    <>
+                                        {standaloneContainersLenght} {t('container')}
+                                        {stacksSize > 0 && ` · ${stacksSize} ${t('stack.title')}`}
+                                    </>
+                                )}
                             </p>
                         )}
                     </div>

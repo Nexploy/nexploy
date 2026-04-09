@@ -1,7 +1,6 @@
 import type { Writable } from 'stream';
-import os from 'os';
-import path from 'path';
 import { getCurrentDockerClient } from '@/lib/dockerContext';
+import type { ScanImageResult } from '@workspace/typescript-interface/docker/docker.image';
 
 const TRIVY_IMAGE_BASE = 'aquasec/trivy';
 
@@ -32,10 +31,10 @@ async function ensureTrivyImage(trivyVersion: string): Promise<string> {
     return image;
 }
 
-async function getOrCreateDaemonContainer(trivyVersion: string) {
+async function getOrCreateDaemonContainer(trivyVersion: string, buildId: string) {
     const docker = getCurrentDockerClient();
-    const name = `nexploy-trivy-${trivyVersion}`;
     const image = await ensureTrivyImage(trivyVersion);
+    const name = `trivy-scan-${buildId}`;
 
     try {
         const container = docker.getContainer(name);
@@ -51,12 +50,9 @@ async function getOrCreateDaemonContainer(trivyVersion: string) {
             Entrypoint: ['sleep', 'infinity'],
             Cmd: [],
             HostConfig: {
-                Binds: [
-                    '/var/run/docker.sock:/var/run/docker.sock',
-                    `${path.join(os.homedir(), '.docker', 'config.json')}:/root/.docker/config.json:ro`,
-                ],
+                Binds: ['/var/run/docker.sock:/var/run/docker.sock'],
                 AutoRemove: false,
-                RestartPolicy: { Name: 'unless-stopped' },
+                RestartPolicy: { Name: 'no' },
             },
         });
         await container.start();
@@ -67,9 +63,10 @@ async function getOrCreateDaemonContainer(trivyVersion: string) {
 export async function runTrivyContainer(
     cmd: string[],
     trivyVersion = 'canary',
+    buildId: string,
 ): Promise<{ stdout: string; stderr: string; exitCode: number }> {
     const docker = getCurrentDockerClient();
-    const container = await getOrCreateDaemonContainer(trivyVersion);
+    const container = await getOrCreateDaemonContainer(trivyVersion, buildId);
 
     const exec = await container.exec({
         Cmd: ['trivy', ...cmd],
@@ -106,18 +103,12 @@ export async function runTrivyContainer(
     return { stdout, stderr, exitCode: exitCode ?? 0 };
 }
 
-export interface ScanImageResult {
-    vulnerabilities: number;
-    critical: number;
-    high: number;
-    output: string;
-}
-
 export async function scanImage(
     image: string,
     tag: string,
     severity: Severity,
     trivyVersion = 'canary',
+    buildId: string,
 ): Promise<ScanImageResult> {
     const fullImage = `${image}:${tag}`;
     const severities = getSeveritiesAbove(severity);
@@ -134,6 +125,7 @@ export async function scanImage(
             fullImage,
         ],
         trivyVersion,
+        buildId,
     );
 
     if (exitCode !== 0 && !stdout.trim()) {
@@ -177,6 +169,13 @@ export async function scanImage(
             if (allVulns.length > 10) lines.push(`  ... and ${allVulns.length - 10} more`);
         }
     }
+
+    try {
+        const docker = getCurrentDockerClient();
+        const container = docker.getContainer(`trivy-scan-${buildId}`);
+        await container.stop();
+        await container.remove();
+    } catch {}
 
     return { vulnerabilities, critical, high, output: lines.join('\n') };
 }

@@ -14,7 +14,14 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@workspace/ui/components/table';
 import React, { useMemo, useRef, useState } from 'react';
 import { getColumnsTableImages } from '@/components/docker/image/table/ColumnsDockerImages';
 import { useTranslations } from 'next-intl';
@@ -250,7 +257,7 @@ export function TableDockerImages() {
                         disabled={!numberOfSelectedRows}
                     >
                         <Trash />
-                        {tCommon('remove')}{' '}
+                        {tCommon('remove')}
                         {!!numberOfSelectedRows && (
                             <Badge variant={'secondary'} className={'rounded-full'}>
                                 {numberOfSelectedRows}

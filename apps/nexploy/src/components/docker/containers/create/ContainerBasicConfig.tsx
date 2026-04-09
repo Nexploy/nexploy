@@ -93,7 +93,7 @@ export function ContainerBasicConfig({ listImages }: ContainerBasicConfigProps) 
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    {t('hostname')}{' '}
+                                    {t('hostname')}
                                     <span className="text-muted-foreground text-xs">
                                         {tCommon('optional')}
                                     </span>
@@ -112,7 +112,7 @@ export function ContainerBasicConfig({ listImages }: ContainerBasicConfigProps) 
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    {t('network')}{' '}
+                                    {t('network')}
                                     <span className="text-muted-foreground text-xs">
                                         {tCommon('optional')}
                                     </span>

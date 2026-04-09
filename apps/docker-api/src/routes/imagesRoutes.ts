@@ -21,14 +21,15 @@ const app = new Hono();
 app.post(
     '/scan',
     handleAsync(async (c) => {
-        const { image, tag, severity, trivyVersion } = await c.req.json<{
+        const { image, tag, severity, trivyVersion, buildId } = await c.req.json<{
             image: string;
             tag: string;
             severity: Severity;
             trivyVersion?: string;
+            buildId?: string;
         }>();
 
-        return await scanImage(image, tag, severity, trivyVersion);
+        return await scanImage(image, tag, severity, trivyVersion, buildId);
     }),
 );
 

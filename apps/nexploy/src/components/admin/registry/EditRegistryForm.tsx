@@ -26,6 +26,7 @@ interface EditRegistryFormProps {
 export function EditRegistryForm({ registry }: EditRegistryFormProps) {
     const { onSuccess } = useConfirmationDialogStore();
     const t = useTranslations('admin.registry');
+    const tCommon = useTranslations('common');
 
     const { form, handleSubmitWithAction } = useHookFormAction(
         updateRegistryAction,
@@ -95,7 +96,12 @@ export function EditRegistryForm({ registry }: EditRegistryFormProps) {
                     name="username"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('usernameLabel')}</FormLabel>
+                            <FormLabel>
+                                {t('usernameLabel')}
+                                <span className="text-muted-foreground text-xs">
+                                    {tCommon('optional')}
+                                </span>
+                            </FormLabel>
                             <FormControl>
                                 <Input
                                     placeholder={t('usernamePlaceholder')}
@@ -113,7 +119,12 @@ export function EditRegistryForm({ registry }: EditRegistryFormProps) {
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('passwordLabel')}</FormLabel>
+                            <FormLabel>
+                                {t('passwordLabel')}
+                                <span className="text-muted-foreground text-xs">
+                                    {tCommon('optional')}
+                                </span>
+                            </FormLabel>
                             <FormControl>
                                 <Input
                                     type="password"

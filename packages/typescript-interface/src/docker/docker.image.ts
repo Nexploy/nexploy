@@ -108,3 +108,10 @@ export type ImageRow = Image & {
     groupName?: string;
     subRows?: ImageRow[];
 };
+
+export interface ScanImageResult {
+    vulnerabilities: number;
+    critical: number;
+    high: number;
+    output: string;
+}

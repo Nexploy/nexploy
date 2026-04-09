@@ -3,7 +3,13 @@
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { Plus, Trash2 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@workspace/ui/components/card';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
@@ -29,7 +35,7 @@ export function ContainerVolumes() {
                         variant="outline"
                         onClick={() => append({ hostPath: '', containerPath: '', readOnly: false })}
                     >
-                        <Plus className="mr-2 h-4 w-4" />
+                        <Plus />
                         {t('addVolume')}
                     </Button>
                 </div>
@@ -62,7 +68,10 @@ export function ContainerVolumes() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input placeholder={t('containerPath')} {...field} />
+                                                <Input
+                                                    placeholder={t('containerPath')}
+                                                    {...field}
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -79,7 +88,9 @@ export function ContainerVolumes() {
                                                         checked={field.value}
                                                         onCheckedChange={field.onChange}
                                                     />
-                                                    <Label className="text-xs">{t('readOnly')}</Label>
+                                                    <Label className="text-xs">
+                                                        {t('readOnly')}
+                                                    </Label>
                                                 </div>
                                             </FormControl>
                                         </FormItem>

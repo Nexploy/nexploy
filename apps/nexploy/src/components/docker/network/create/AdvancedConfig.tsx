@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@workspace/ui/components/card';
 import {
     FormControl,
     FormDescription,
@@ -97,7 +103,7 @@ export function AdvancedConfig() {
                             </FormControl>
                             <FormMessage />
                             <FormDescription>
-                                {t('optionsDescription')}{' '}
+                                {t('optionsDescription')}
                                 <code className="bg-muted rounded px-1 py-0.5 text-xs">
                                     com.docker.network.bridge.name=br0
                                 </code>
@@ -141,7 +147,7 @@ export function AdvancedConfig() {
                             </FormControl>
                             <FormMessage />
                             <FormDescription>
-                                {t('labelsDescription')}{' '}
+                                {t('labelsDescription')}
                                 <code className="bg-muted rounded px-1 py-0.5 text-xs">
                                     env=production
                                 </code>

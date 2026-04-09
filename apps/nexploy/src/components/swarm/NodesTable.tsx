@@ -75,9 +75,7 @@ export function NodesTable() {
                 <div className="bg-muted/50 rounded-lg border p-8 text-center">
                     <Server className="text-muted-foreground mx-auto mb-4 size-12" />
                     <h3 className="text-lg font-semibold">{t('noNodesFound')}</h3>
-                    <p className="text-muted-foreground text-sm">
-                        {t('noNodesDescription')}
-                    </p>
+                    <p className="text-muted-foreground text-sm">{t('noNodesDescription')}</p>
                 </div>
             </div>
         );
@@ -135,7 +133,7 @@ export function NodesTable() {
                                     {node.engineVersion || '-'}
                                 </TableCell>
                                 <TableCell className="text-muted-foreground text-sm">
-                                    {formatCPUs(node.resources.nanoCPUs)} CPUs /{' '}
+                                    {formatCPUs(node.resources.nanoCPUs)} CPUs /
                                     {formatBytes(node.resources.memoryBytes)}
                                 </TableCell>
                                 <TableCell>

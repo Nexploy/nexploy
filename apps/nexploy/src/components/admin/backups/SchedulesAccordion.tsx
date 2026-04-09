@@ -86,11 +86,11 @@ export async function SchedulesAccordion({ volumeSchedules }: SchedulesAccordion
                                                 {schedule.bucket}
                                             </span>
                                             <span className="text-muted-foreground text-xs">
-                                                {t(frequencyKeys[schedule.frequency])} —{' '}
+                                                {t(frequencyKeys[schedule.frequency])} —
                                                 {formatScheduleDetail(schedule, t)}
                                             </span>
                                             <span className="text-muted-foreground text-xs">
-                                                {t('lastRun')}:{' '}
+                                                {t('lastRun')}:
                                                 {schedule.lastRunAt
                                                     ? dayjs(schedule.lastRunAt).format(
                                                           'DD/MM/YYYY HH:mm',
@@ -98,7 +98,7 @@ export async function SchedulesAccordion({ volumeSchedules }: SchedulesAccordion
                                                     : t('never')}
                                             </span>
                                             <span className="text-muted-foreground text-xs">
-                                                {t('nextRun')}:{' '}
+                                                {t('nextRun')}:
                                                 {dayjs(schedule.nextRunAt).format(
                                                     'DD/MM/YYYY HH:mm',
                                                 )}

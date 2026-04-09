@@ -66,7 +66,7 @@ export function CardDriverGraph() {
                                         1024 /
                                         1024 /
                                         1024
-                                    ).toFixed(2)}{' '}
+                                    ).toFixed(2)}
                                     GB
                                 </code>
                             </div>

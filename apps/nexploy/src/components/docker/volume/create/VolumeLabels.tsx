@@ -84,12 +84,18 @@ export function VolumeLabels() {
                             </FormControl>
                             <FormMessage />
                             <FormDescription>
-                                {t('labelsDescription')}{' '}
-                                <code className="bg-muted rounded px-1 py-0.5 text-xs">env=production</code>
-                                ,{' '}
-                                <code className="bg-muted rounded px-1 py-0.5 text-xs">app=backend</code>
-                                ,{' '}
-                                <code className="bg-muted rounded px-1 py-0.5 text-xs">team=devops</code>
+                                {t('labelsDescription')}
+                                <code className="bg-muted rounded px-1 py-0.5 text-xs">
+                                    env=production
+                                </code>
+                                ,
+                                <code className="bg-muted rounded px-1 py-0.5 text-xs">
+                                    app=backend
+                                </code>
+                                ,
+                                <code className="bg-muted rounded px-1 py-0.5 text-xs">
+                                    team=devops
+                                </code>
                             </FormDescription>
                         </FormItem>
                     )}

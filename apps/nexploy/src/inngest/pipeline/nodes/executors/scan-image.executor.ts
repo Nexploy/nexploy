@@ -15,7 +15,7 @@ export class ScanImageExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof scanImageConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, buildId } = ctx;
 
         const image = nodeConfig.image;
         const tag = nodeConfig.tag;
@@ -39,6 +39,7 @@ export class ScanImageExecutor implements INodeExecutor {
                         tag,
                         severity,
                         trivyVersion,
+                        buildId,
                     },
                     signal: abortSignal,
                     environmentId,

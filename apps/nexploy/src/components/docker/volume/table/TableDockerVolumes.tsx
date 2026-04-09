@@ -156,7 +156,7 @@ export function TableDockerVolumes() {
                                     disabled={!!isUseDisabled}
                                 >
                                     <Trash />
-                                    {tCommon('remove')}{' '}
+                                    {tCommon('remove')}
                                     {!!numberOfSelectedRows && (
                                         <Badge variant={'secondary'} className={'rounded-full'}>
                                             {numberOfSelectedRows}

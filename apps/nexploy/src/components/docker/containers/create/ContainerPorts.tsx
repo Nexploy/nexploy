@@ -3,7 +3,13 @@
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { Plus, Trash2 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@workspace/ui/components/card';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
@@ -36,7 +42,7 @@ export function ContainerPorts() {
                         variant="outline"
                         onClick={() => append({ hostPort: '', containerPort: '', protocol: 'tcp' })}
                     >
-                        <Plus className="mr-2 h-4 w-4" />
+                        <Plus />
                         {t('addPort')}
                     </Button>
                 </div>
@@ -69,7 +75,10 @@ export function ContainerPorts() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input placeholder={t('containerPort')} {...field} />
+                                                <Input
+                                                    placeholder={t('containerPort')}
+                                                    {...field}
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -90,7 +99,9 @@ export function ContainerPorts() {
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         <SelectGroup>
-                                                            <SelectLabel>{t('protocol')}</SelectLabel>
+                                                            <SelectLabel>
+                                                                {t('protocol')}
+                                                            </SelectLabel>
                                                             <SelectItem value="tcp">TCP</SelectItem>
                                                             <SelectItem value="udp">UDP</SelectItem>
                                                         </SelectGroup>
