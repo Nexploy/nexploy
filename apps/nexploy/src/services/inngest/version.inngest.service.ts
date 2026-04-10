@@ -1,8 +1,19 @@
 import { prisma } from '../../../prisma/prisma';
 
+export interface CreateVersionInput {
+    repositoryId: string;
+    imageTag: string;
+    versionNumber: number;
+    branch?: string;
+    commitHash?: string;
+    commitMessage?: string;
+    environmentId?: string;
+    composeConfig?: string;
+}
+
 export async function getNextVersionNumber(
     repositoryId: string,
-    environmentId: string | null,
+    environmentId?: string,
 ): Promise<number> {
     const lastVersion = await prisma.version.findFirst({
         where: { repositoryId, environmentId },
@@ -12,26 +23,19 @@ export async function getNextVersionNumber(
     return (lastVersion?.versionNumber ?? 0) + 1;
 }
 
-export interface CreateVersionInput {
-    repositoryId: string;
-    imageTag: string;
-    versionNumber: number;
-    branch: string | null;
-    commitHash: string | null;
-    commitMessage: string | null;
-    environmentId: string | null;
-    composeConfig: string | null;
-}
-
 export async function upsertVersion(input: CreateVersionInput): Promise<void> {
-    await prisma.version.upsert({
-        where: {
-            repositoryId_imageTag: {
-                repositoryId: input.repositoryId,
-                imageTag: input.imageTag,
+    try {
+        await prisma.version.upsert({
+            where: {
+                repositoryId_imageTag: {
+                    repositoryId: input.repositoryId,
+                    imageTag: input.imageTag,
+                },
             },
-        },
-        update: {},
-        create: input,
-    });
+            update: {},
+            create: input,
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to upsert version');
+    }
 }

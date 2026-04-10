@@ -50,7 +50,7 @@ export const setEnvVarsConfigSchema = z.object({
 });
 
 export const pushToRegistryConfigSchema = z.object({
-    tag: z.string().optional(),
+    registryId: z.string().min(1, 'Registry is required').default(''),
 });
 
 export const setEnvironmentConfigSchema = z.object({
@@ -68,7 +68,7 @@ export const sendNotificationConfigSchema = z.object({
 
 export const containerActionConfigSchema = z.object({
     containerId: z.string().min(1, 'Container ID is required').default(''),
-    containerName: z.string().optional(),
+    containerName: z.string(),
 });
 
 export const pullImageConfigSchema = z.object({

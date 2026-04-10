@@ -49,7 +49,6 @@ class DockerService {
         imageName: string,
         targetName: string,
         auth: { serveraddress: string; username: string; password: string },
-        buildId: string,
         signal: AbortSignal,
         onLog: (message: string) => Promise<void>,
         environmentId?: string,

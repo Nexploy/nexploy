@@ -125,10 +125,10 @@ export function CreateRegistryForm() {
                             </FormLabel>
                             <FormControl>
                                 <Input
+                                    {...field}
                                     type="password"
                                     placeholder={t('passwordPlaceholder')}
                                     disabled={isSubmitting}
-                                    {...field}
                                 />
                             </FormControl>
                             <p className="text-muted-foreground text-xs">

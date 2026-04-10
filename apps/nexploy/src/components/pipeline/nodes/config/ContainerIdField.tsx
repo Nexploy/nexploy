@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -63,13 +69,11 @@ export function ContainerIdField() {
                                 value={field.value ?? ''}
                                 onValueChange={(value) => {
                                     field.onChange(value);
-                                    const container = containers.find((c) => c.id === value);
-                                    if (container) {
-                                        form.setValue(
-                                            'containerName',
-                                            stripLeadingSlash(container.name),
-                                        );
-                                    }
+                                    const container = containers.find((c) => c.id === value)!;
+                                    form.setValue(
+                                        'containerName',
+                                        stripLeadingSlash(container.name),
+                                    );
                                 }}
                                 disabled={isLoading}
                             >
@@ -98,9 +102,9 @@ export function ContainerIdField() {
                                     <SelectGroup>
                                         <SelectLabel>{t('containersSelectLabel')}</SelectLabel>
                                         {containers.length === 0 ? (
-                                            <div className="text-muted-foreground px-2 py-1.5 text-sm">
+                                            <span className="text-muted-foreground px-2 py-1.5 text-sm">
                                                 {t('noContainersFound')}
-                                            </div>
+                                            </span>
                                         ) : (
                                             containers.map((container) => {
                                                 const name = stripLeadingSlash(container.name);

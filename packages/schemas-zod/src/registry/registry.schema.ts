@@ -19,9 +19,5 @@ export const deleteRegistrySchema = z.object({
     id: z.string(),
 });
 
-export const setDefaultRegistrySchema = z.object({
-    id: z.string(),
-});
-
 export type CreateRegistryInput = z.infer<typeof createRegistrySchema>;
 export type UpdateRegistryInput = z.infer<typeof updateRegistrySchema>;

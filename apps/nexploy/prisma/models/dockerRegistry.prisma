@@ -4,7 +4,6 @@ model DockerRegistry {
   url       String
   username  String?
   password  String?
-  isDefault Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

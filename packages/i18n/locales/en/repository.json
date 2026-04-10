@@ -422,8 +422,8 @@
                 "description": "Deploy a Docker Compose stack"
             },
             "push-to-registry": {
-                "name": "Push to Registry",
-                "description": "Push the built image to a Docker registry"
+                "name": "Push to a Registry",
+                "description": "Push all images built upstream to a Docker registry"
             },
             "validate-dockerfile": {
                 "name": "Validate Dockerfile",
@@ -621,8 +621,9 @@
             "composeFilePathPlaceholder": "Leave empty for repository root",
             "projectName": "Project Name",
             "projectNamePlaceholder": "Leave empty to use repository name",
-            "tag": "Image Tag",
-            "tagPlaceholder": "Leave empty to use commit hash",
+            "registry": "Registry",
+            "registryPlaceholder": "Select a registry",
+            "noRegistry": "No registry configured.",
             "vars": "Environment Variables",
             "varKey": "Key",
             "varValue": "Value",

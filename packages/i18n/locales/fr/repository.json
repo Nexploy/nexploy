@@ -421,8 +421,8 @@
                 "description": "Déployer une stack Docker Compose"
             },
             "push-to-registry": {
-                "name": "Pousser vers le registre",
-                "description": "Pousser l'image construite vers un registre Docker"
+                "name": "Pousser vers un registre",
+                "description": "Pousser toutes les images construites en amont vers un registre Docker"
             },
             "validate-dockerfile": {
                 "name": "Valider le Dockerfile",
@@ -620,8 +620,9 @@
             "composeFilePathPlaceholder": "Laisser vide pour la racine du dépôt",
             "projectName": "Nom du projet",
             "projectNamePlaceholder": "Laisser vide pour utiliser le nom du dépôt",
-            "tag": "Tag de l'image",
-            "tagPlaceholder": "Laisser vide pour utiliser le hash du commit",
+            "registry": "Registre",
+            "registryPlaceholder": "Sélectionner un registre",
+            "noRegistry": "Aucun registre configuré.",
             "vars": "Variables d'environnement",
             "varKey": "Clé",
             "varValue": "Valeur",

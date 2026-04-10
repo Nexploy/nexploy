@@ -59,7 +59,7 @@ export default function ContainersPage() {
                     </div>
                     <div>
                         <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                            Docker {tNav('containers')}
+                            {tNav('dockerContainers')}
                         </h1>
                         {isLoading ? (
                             <Skeleton className={'my-1 h-3 w-40'} />

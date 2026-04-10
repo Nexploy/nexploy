@@ -26,7 +26,7 @@ import { useVolumeStore } from '@/stores/docker/useVolumeStore';
 import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
-import { ChevronLeft, ChevronRight, Plus, Trash } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Trash } from 'lucide-react';
 import { formatBytes } from '@/utils/formatBytes';
 import { Badge } from '@workspace/ui/components/badge';
 import { Skeleton } from '@workspace/ui/components/skeleton';
@@ -42,7 +42,6 @@ import {
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { onVolumeAction } from '@/actions/docker/volume/volumeAction.action';
-import Link from 'next/link';
 
 const globalFilterFn: FilterFn<Volume> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -65,7 +64,6 @@ export function TableDockerVolumes() {
     const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
 
     const t = useTranslations('docker.tables');
-    const tDocker = useTranslations('docker');
     const tCommon = useTranslations('common');
 
     const volumes = useVolumeStore((state) => state.volumes);
@@ -174,12 +172,6 @@ export function TableDockerVolumes() {
                             ) : null;
                         })()}
                     </Tooltip>
-                    <Button asChild>
-                        <Link href={'/docker/volumes/create'}>
-                            <Plus />
-                            {tDocker('createVolume')}
-                        </Link>
-                    </Button>
                 </div>
             </div>
             <div className="bg-card overflow-hidden rounded-md border shadow-sm">

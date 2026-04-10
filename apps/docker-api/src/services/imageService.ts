@@ -1,8 +1,13 @@
 import { docker } from '@/utils/dockerClient';
 
-export async function pullImage(imageName: string): Promise<{ imageName: string; imageId: string }> {
+export async function pullImage(
+    imageName: string,
+    auth?: { username: string; password: string; serveraddress?: string },
+): Promise<{ imageName: string; imageId: string }> {
     await new Promise((resolve, reject) => {
-        docker.pull(imageName, (err: any, stream: NodeJS.ReadableStream) => {
+        const options: Record<string, unknown> = {};
+        if (auth) options.authconfig = auth;
+        (docker.pull as any)(imageName, options, (err: any, stream: NodeJS.ReadableStream) => {
             if (err) return reject(err);
             docker.modem.followProgress(stream, (error: any, output: any) => {
                 if (error) return reject(error);

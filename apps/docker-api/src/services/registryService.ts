@@ -1,14 +1,10 @@
 import { logger } from '@/utils/logger';
-import { kyRegistry } from '@/lib/kyRegistry';
+import { spawnSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
 
-export function writeDockerConfig(
-    serveraddress: string,
-    username: string,
-    password: string,
-): void {
+export function writeDockerConfig(serveraddress: string, username: string, password: string): void {
     const dockerConfigDir = path.join(os.homedir(), '.docker');
     const configPath = path.join(dockerConfigDir, 'config.json');
 
@@ -43,21 +39,20 @@ export function removeDockerConfig(serveraddress: string): void {
     } catch {}
 }
 
-export async function validateRegistry(
+export function validateRegistry(
     serveraddress: string,
     username: string,
     password: string,
-): Promise<boolean> {
-    const authHeader = `Basic ${Buffer.from(`${username}:${password}`).toString('base64')}`;
+): boolean {
+    const result = spawnSync(
+        'docker',
+        ['login', serveraddress, '--username', username, '--password-stdin'],
+        { input: password, stdio: ['pipe', 'pipe', 'pipe'] },
+    );
 
-    for (const scheme of ['http', 'https']) {
-        const res = await kyRegistry.get(`${scheme}://${serveraddress}/v2/`, {
-            headers: { Authorization: authHeader },
-            throwHttpErrors: false,
-        });
+    if (result.status === 0) return true;
 
-        if (res.status === 200) return true;
-    }
-
+    const stderr = result.stderr?.toString() ?? '';
+    logger.warn({ serveraddress, stderr }, 'docker login failed');
     return false;
 }

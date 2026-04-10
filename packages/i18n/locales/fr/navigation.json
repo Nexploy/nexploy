@@ -4,6 +4,7 @@
     "monitoring": "Monitoring",
     "docker": "Docker",
     "containers": "Conteneurs",
+    "dockerContainers": "Conteneurs Docker",
     "images": "Images",
     "volumes": "Volumes",
     "networks": "Réseaux",

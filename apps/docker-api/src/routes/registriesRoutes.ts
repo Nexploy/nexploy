@@ -14,9 +14,9 @@ app.post(
             password: string;
         }>();
 
-        const valid = await validateRegistry(serveraddress, username, password);
+        const valid = validateRegistry(serveraddress, username, password);
         if (!valid) {
-            throw new Error(`Cannot reach registry ${serveraddress}`);
+            throw new Error(`Authentication failed for registry ${serveraddress}`);
         }
 
         writeDockerConfig(serveraddress, username, password);

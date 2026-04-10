@@ -23,10 +23,15 @@ export const imageDeleteSchema = z.object({
     force: z.boolean().optional(),
 });
 
-const imageAuthSchema = z.object({
+export const imageAuthSchema = z.object({
     username: z.string(),
     password: z.string(),
     serveraddress: z.string().optional(),
+});
+
+export const imagePullWithAuthSchema = z.object({
+    imageName: z.string().min(1),
+    auth: imageAuthSchema.optional(),
 });
 
 export const imageMirrorSchema = z.object({

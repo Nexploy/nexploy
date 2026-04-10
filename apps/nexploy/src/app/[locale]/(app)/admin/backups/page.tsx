@@ -56,8 +56,8 @@ export default async function BackupsPage() {
                                     }`}
                                 >
                                     <div className="flex items-center gap-3">
-                                        <div className="bg-muted flex size-8 items-center justify-center rounded-md">
-                                            <HardDrive className="size-4" />
+                                        <div className="bg-primary/10 flex size-8 items-center justify-center rounded-md">
+                                            <HardDrive className="text-primary size-4" />
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-sm font-medium">

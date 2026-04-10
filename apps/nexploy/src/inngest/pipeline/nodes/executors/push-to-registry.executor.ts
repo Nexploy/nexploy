@@ -1,11 +1,6 @@
-import {
-    getFromAllOutputs,
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
-import { getDefaultRegistry } from '@/services/registry.service';
+import { getRegistryWithPassword } from '@/services/registry.service';
 import { pushToRegistryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 
@@ -16,65 +11,74 @@ export class PushToRegistryExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof pushToRegistryConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { buildConfig, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
+        const { allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
 
-        const imageName =
-            getFromAllOutputs<string>(allOutputs, 'imageName') ?? buildConfig.imageName;
-
-        if (!imageName) {
-            throw new Error(
-                'No imageName found — connect this node after a Build Docker Image node',
-            );
-        }
-
-        const registry = await getDefaultRegistry();
+        const registry = await getRegistryWithPassword(nodeConfig.registryId);
         if (!registry) {
             throw new Error(
-                'No default registry configured. Please configure a Docker registry in Admin > Registry.',
+                'No registry configured. Please select a registry in the node configuration or add one in Admin > Registry.',
             );
         }
 
-        const customTag =
-            nodeConfig.tag ?? getFromAllOutputs<string>(allOutputs, 'commitHash') ?? 'latest';
-        const baseImageName = imageName.split(':')[0];
-        const targetName = `${registry.url}/${baseImageName}:${customTag}`;
+        const auth = {
+            serveraddress: registry.url,
+            username: registry.username || '',
+            password: registry.password || '',
+        };
 
-        await logger.info(nodeId, `Pushing image to registry: ${targetName}`);
+        const commitHash = [...allOutputs.values()]
+            .map((o) => o['commitHash'])
+            .find((v) => typeof v === 'string') as string | undefined;
 
-        const onLog = async (message: string) => logger.info(nodeId, message);
+        const customTag = commitHash ?? 'latest';
+        const environmentId = [...allOutputs.values()]
+            .map((o) => o['environmentId'])
+            .find((v) => typeof v === 'string') as string | undefined;
 
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const imageNames = [...allOutputs.values()]
+            .map((o) => o['imageName'])
+            .filter((v): v is string => typeof v === 'string');
 
-        try {
+        if (imageNames.length === 0) {
+            await logger.warn(
+                nodeId,
+                'No built images found — connect this node after one or more Build Docker Image nodes',
+            );
+            return { output: {}, skipped: true };
+        }
+
+        await logger.info(nodeId, `Pushing ${imageNames.length} image(s) to ${registry.url}`);
+
+        const pushedNames: string[] = [];
+
+        for (const imageName of imageNames) {
+            const baseImageName = imageName.split(':')[0];
+            const targetName = `${registry.url}/${baseImageName}:${customTag}`;
+
+            await logger.info(nodeId, `Pushing ${imageName} → ${targetName}`);
+
+            const onLog = async (message: string) => logger.info(nodeId, message);
+
             const result = await dockerService.pushToRegistry(
                 imageName,
                 targetName,
-                {
-                    serveraddress: registry.url,
-                    username: registry.username || '',
-                    password: registry.password || '',
-                },
-                buildConfig.imageTag,
+                auth,
                 abortSignal,
                 onLog,
                 environmentId,
             );
 
-            await logger.info(nodeId, `Image pushed successfully: ${result.targetName}`);
-
-            return {
-                output: {
-                    targetName: result.targetName,
-                    registryUrl: registry.url,
-                    tag: customTag,
-                },
-            };
-        } catch (error) {
-            if (error instanceof Error && error.name === 'AbortError') throw error;
-            throw new Error(
-                `Push to registry failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            );
+            await logger.info(nodeId, `Pushed successfully: ${result.targetName}`);
+            pushedNames.push(result.targetName);
         }
+
+        return {
+            output: {
+                pushedImages: pushedNames,
+                registryUrl: registry.url,
+                tag: customTag,
+            },
+        };
     }
 }
 

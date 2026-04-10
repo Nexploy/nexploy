@@ -29,10 +29,9 @@ import { useImageStore } from '@/stores/docker/useImageStore';
 import { Image, ImageRow } from '@workspace/typescript-interface/docker/docker.image';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
-import { ChevronLeft, ChevronRight, Play, Plus, Trash } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Trash } from 'lucide-react';
 import { formatBytes } from '@/utils/formatBytes';
 import { Badge } from '@workspace/ui/components/badge';
-import Link from 'next/link';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { onImageAction } from '@/actions/docker/image/imageAction.action';
 import {
@@ -136,7 +135,6 @@ export function TableDockerImages() {
 
     const router = useRouter();
     const t = useTranslations('docker.tables');
-    const tDocker = useTranslations('docker');
     const tCommon = useTranslations('common');
 
     const images = useImageStore((state) => state.images);
@@ -280,12 +278,6 @@ export function TableDockerImages() {
                             ) : null;
                         })()}
                     </Tooltip>
-                    <Button asChild>
-                        <Link href={'/docker/images/pull'}>
-                            <Plus />
-                            {tDocker('pullImage')}
-                        </Link>
-                    </Button>
                 </div>
             </div>
             <div className="bg-card overflow-hidden rounded-md border shadow-sm">

@@ -8,9 +8,9 @@ import {
     imageDeleteSchema,
     imageIdParamSchema,
     imageMirrorSchema,
+    imagePullWithAuthSchema,
     imageNameParamSchema,
 } from '@workspace/schemas-zod/docker/image/imageAction.schema';
-import { imagePullSchema } from '@workspace/schemas-zod/docker/image/imagePullAction.schema';
 import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
 import { scanImage, type Severity } from '@/services/trivyRunner';
 import { pullImage, mirrorImage } from '@/services/imageService';
@@ -76,9 +76,9 @@ app.get(
 
 app.post(
     '/pull',
-    zValidator('json', imagePullSchema),
+    zValidator('json', imagePullWithAuthSchema),
     handleAsync(async (c) => {
-        const { imageName } = getValidatedJson(c, imagePullSchema);
+        const { imageName, auth } = getValidatedJson(c, imagePullWithAuthSchema);
 
         const imageExists = imagesStateManager.checkIfExistByName(imageName);
         if (imageExists) {
@@ -86,7 +86,7 @@ app.post(
             throw new Error(t('errors.imageAlreadyExists', { imageName }));
         }
 
-        return await pullImage(imageName);
+        return await pullImage(imageName, auth);
     }),
 );
 

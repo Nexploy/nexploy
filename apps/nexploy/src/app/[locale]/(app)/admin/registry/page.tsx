@@ -16,29 +16,27 @@ export default async function RegistryPage() {
     const [t, registries] = await Promise.all([getTranslations('admin.registry'), getRegistries()]);
 
     return (
-        <div className="flex h-full flex-1 flex-col pt-5">
-            <div className="flex flex-col gap-4">
-                <div className="flex justify-between gap-2 px-5">
-                    <div className="flex gap-3">
-                        <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                            <Warehouse className="text-primary size-7" />
-                        </div>
-                        <div className="flex flex-col">
-                            <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                                {t('title')}
-                            </h1>
-                            <p className="text-muted-foreground text-sm">{t('description')}</p>
-                        </div>
+        <div className="flex h-full flex-1 flex-col gap-5 pt-5">
+            <div className="flex justify-between gap-2 px-5">
+                <div className="flex gap-3">
+                    <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+                        <Warehouse className="text-primary size-7" />
                     </div>
-                    <AddRegistryButton />
+                    <div className="flex flex-col">
+                        <h1 className="text-3xl leading-none font-semibold tracking-tight">
+                            {t('title')}
+                        </h1>
+                        <p className="text-muted-foreground text-sm">{t('description')}</p>
+                    </div>
                 </div>
-                <ScrollAreaWithShadow className="h-full overflow-hidden">
-                    <div className="flex flex-col gap-5 px-5 pb-5">
-                        <MirrorImageSection registries={registries} />
-                        <RegistryList />
-                    </div>
-                </ScrollAreaWithShadow>
+                <AddRegistryButton />
             </div>
+            <ScrollAreaWithShadow className="h-full overflow-hidden">
+                <div className="flex flex-col gap-4 px-5 pb-5">
+                    <MirrorImageSection registries={registries} />
+                    <RegistryList />
+                </div>
+            </ScrollAreaWithShadow>
         </div>
     );
 }

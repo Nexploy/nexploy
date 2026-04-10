@@ -10,7 +10,6 @@ export interface RegistryInfo {
     name: string;
     url: string;
     username: string | null;
-    isDefault: boolean;
     createdAt: Date;
 }
 
@@ -23,7 +22,6 @@ export async function getRegistryById(id: string) {
             url: true,
             username: true,
             password: true,
-            isDefault: true,
             createdAt: true,
         },
     });
@@ -37,7 +35,6 @@ export async function getRegistries(): Promise<RegistryInfo[]> {
                 name: true,
                 url: true,
                 username: true,
-                isDefault: true,
                 createdAt: true,
             },
             orderBy: { createdAt: 'asc' },
@@ -49,22 +46,18 @@ export async function getRegistries(): Promise<RegistryInfo[]> {
 
 export async function createRegistry(data: CreateRegistryInput): Promise<RegistryInfo> {
     try {
-        const isFirst = (await prisma.dockerRegistry.count()) === 0;
-
         return prisma.dockerRegistry.create({
             data: {
                 name: data.name,
                 url: data.url,
                 username: data.username || null,
                 password: data.password ? encrypt(data.password) : null,
-                isDefault: isFirst,
             },
             select: {
                 id: true,
                 name: true,
                 url: true,
                 username: true,
-                isDefault: true,
                 createdAt: true,
             },
         });
@@ -93,7 +86,6 @@ export async function updateRegistry(data: UpdateRegistryInput): Promise<Registr
                 name: true,
                 url: true,
                 username: true,
-                isDefault: true,
                 createdAt: true,
             },
         });
@@ -104,41 +96,15 @@ export async function updateRegistry(data: UpdateRegistryInput): Promise<Registr
 
 export async function deleteRegistry(id: string): Promise<void> {
     try {
-        const registry = await prisma.dockerRegistry.findUnique({
-            where: { id },
-            select: { isDefault: true },
-        });
-
         await prisma.dockerRegistry.delete({ where: { id } });
-
-        if (registry?.isDefault) {
-            const next = await prisma.dockerRegistry.findFirst({ orderBy: { createdAt: 'asc' } });
-            if (next) {
-                await prisma.dockerRegistry.update({
-                    where: { id: next.id },
-                    data: { isDefault: true },
-                });
-            }
-        }
     } catch (error: unknown) {
         throw new Error('Failed to delete registry');
     }
 }
 
-export async function setDefaultRegistry(id: string): Promise<void> {
-    try {
-        await prisma.$transaction([
-            prisma.dockerRegistry.updateMany({ data: { isDefault: false } }),
-            prisma.dockerRegistry.update({ where: { id }, data: { isDefault: true } }),
-        ]);
-    } catch (error: unknown) {
-        throw new Error('Failed to set default registry');
-    }
-}
-
-export async function getDefaultRegistry() {
-    const registry = await prisma.dockerRegistry.findFirst({
-        where: { isDefault: true },
+export async function getRegistryWithPassword(id: string) {
+    const registry = await prisma.dockerRegistry.findUnique({
+        where: { id },
         select: { id: true, name: true, url: true, username: true, password: true },
     });
 

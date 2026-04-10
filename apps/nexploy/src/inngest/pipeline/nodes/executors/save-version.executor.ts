@@ -14,7 +14,7 @@ export class SaveVersionExecutor implements INodeExecutor {
 
         await logger.info(nodeId, 'Saving version...');
 
-        let composeConfig: string | null = null;
+        let composeConfig = undefined;
         for (const inputNode of inputNodes) {
             if (inputNode.type === 'deploy-compose') {
                 const deployOutput = allOutputs.get(inputNode.id);
@@ -25,16 +25,16 @@ export class SaveVersionExecutor implements INodeExecutor {
             }
         }
 
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId') ?? null;
-        const branch = getFromAllOutputs<string>(allOutputs, 'branch') ?? null;
-        const commitHash = getFromAllOutputs<string>(allOutputs, 'commitHash') ?? null;
-        const commitMessage = getFromAllOutputs<string>(allOutputs, 'commitMessage') ?? null;
+        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const branch = getFromAllOutputs<string>(allOutputs, 'branch');
+        const commitHash = getFromAllOutputs<string>(allOutputs, 'commitHash');
+        const commitMessage = getFromAllOutputs<string>(allOutputs, 'commitMessage');
 
         const versionNumber = await getNextVersionNumber(buildConfig.repositoryId, environmentId);
 
         await upsertVersion({
             repositoryId: buildConfig.repositoryId,
-            imageTag: buildConfig.imageTag,
+            imageTag: buildConfig.buildId,
             versionNumber,
             branch,
             commitHash,
@@ -43,7 +43,7 @@ export class SaveVersionExecutor implements INodeExecutor {
             composeConfig,
         });
 
-        await logger.info(nodeId, `Version v${versionNumber} saved (tag: ${buildConfig.imageTag})`);
+        await logger.info(nodeId, `Version v${versionNumber} saved`);
 
         return {
             output: { versionNumber },

@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { mirrorImageSchema } from '@workspace/schemas-zod/registry/mirrorImage.schema';
 import { mirrorImageAction } from '@/actions/registry/mirrorImage.action';
 import { Button } from '@workspace/ui/components/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { Input } from '@workspace/ui/components/input';
 import {
     Form,
@@ -72,17 +73,17 @@ export function MirrorImageSection({ registries }: MirrorImageSectionProps) {
     }
 
     return (
-        <div className="flex flex-col gap-4 rounded-lg border p-5">
-            <div className="flex gap-3">
+        <Card>
+            <CardHeader className="flex flex-row items-center gap-3 space-y-0">
                 <div className="bg-primary/10 flex size-10 shrink-0 items-center justify-center rounded-lg">
                     <GitFork className="text-primary size-5" />
                 </div>
-                <div className="flex flex-col">
-                    <h2 className="text-lg font-semibold leading-none">{t('mirrorTitle')}</h2>
-                    <p className="text-muted-foreground text-sm">{t('mirrorDescription')}</p>
+                <div>
+                    <CardTitle>{t('mirrorTitle')}</CardTitle>
+                    <CardDescription>{t('mirrorDescription')}</CardDescription>
                 </div>
-            </div>
-
+            </CardHeader>
+            <CardContent>
             <Form {...form}>
                 <form onSubmit={handleSubmitWithAction} className="space-y-4">
                     <FormField
@@ -195,6 +196,7 @@ export function MirrorImageSection({ registries }: MirrorImageSectionProps) {
                     </Button>
                 </form>
             </Form>
-        </div>
+            </CardContent>
+        </Card>
     );
 }

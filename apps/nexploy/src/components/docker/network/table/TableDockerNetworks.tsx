@@ -26,7 +26,7 @@ import { useNetworkStore } from '@/stores/docker/useNetworkStore';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
-import { ChevronLeft, ChevronRight, Plus, Trash } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Trash } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { onNetworkAction } from '@/actions/docker/network/networkAction.action';
@@ -41,7 +41,6 @@ import {
 } from '@workspace/ui/components/select';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { Switch } from '@workspace/ui/components/switch';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 const globalFilterFn: FilterFn<Network> = (row, _, value) => {
@@ -167,12 +166,6 @@ export function TableDockerNetworks() {
                                 {numberOfSelectedRows}
                             </Badge>
                         )}
-                    </Button>
-                    <Button asChild>
-                        <Link href={'/docker/networks/create'}>
-                            <Plus />
-                            {tDocker('createNetwork')}
-                        </Link>
                     </Button>
                 </div>
             </div>

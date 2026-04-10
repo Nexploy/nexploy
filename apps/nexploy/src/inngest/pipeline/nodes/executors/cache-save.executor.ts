@@ -61,7 +61,6 @@ export class CacheSaveExecutor implements INodeExecutor {
                 },
             };
         } catch (error) {
-            // Cache save failure is non-fatal — log and continue
             await logger.warn(
                 nodeId,
                 `Cache save failed (continuing): ${error instanceof Error ? error.message : 'Unknown error'}`,

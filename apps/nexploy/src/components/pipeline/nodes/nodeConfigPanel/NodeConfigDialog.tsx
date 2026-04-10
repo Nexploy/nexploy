@@ -40,7 +40,11 @@ export function NodeConfigDialog() {
     if (!isViewingBuild || !activeBuildId) {
         return (
             <Dialog open={isOpen} onOpenChange={handleResetPanelNode}>
-                <DialogContent aria-describedby={undefined} className="overflow-hidden" onOpenAutoFocus={(e) => e.preventDefault()}>
+                <DialogContent
+                    aria-describedby={undefined}
+                    className="overflow-hidden"
+                    onOpenAutoFocus={(e) => e.preventDefault()}
+                >
                     {node && <NodeConfigForm node={node} />}
                 </DialogContent>
             </Dialog>
@@ -79,7 +83,7 @@ export function NodeConfigDialog() {
 
                         <DialogFooter className="bg-muted/40 border-t px-4 py-4">
                             <Button variant="outline" size="sm" onClick={handleResetPanelNode}>
-                                {tCommon('cancel')}
+                                {tCommon('close')}
                             </Button>
                         </DialogFooter>
                     </>
