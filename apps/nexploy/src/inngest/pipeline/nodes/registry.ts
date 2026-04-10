@@ -6,6 +6,7 @@ import { buildDockerImageExecutor } from './executors/build-docker-image.executo
 import { deployContainerExecutor } from './executors/deploy-container.executor';
 import { deployComposeExecutor } from './executors/deploy-compose.executor';
 import { pushToRegistryExecutor } from './executors/push-to-registry.executor';
+import { pullFromRegistryExecutor } from './executors/pull-from-registry.executor';
 import { validateDockerfileExecutor } from './executors/validate-dockerfile.executor';
 import { validateComposeExecutor } from './executors/validate-compose.executor';
 import { setEnvVarsExecutor } from './executors/set-env-vars.executor';
@@ -17,7 +18,6 @@ import { startContainerExecutor } from './executors/start-container.executor';
 import { stopContainerExecutor } from './executors/stop-container.executor';
 import { restartContainerExecutor } from './executors/restart-container.executor';
 import { removeContainerExecutor } from './executors/remove-container.executor';
-import { pullImageExecutor } from './executors/pull-image.executor';
 import { createNetworkExecutor } from './executors/create-network.executor';
 import { createVolumeExecutor } from './executors/create-volume.executor';
 import { waitForHealthExecutor } from './executors/wait-for-health.executor';
@@ -57,6 +57,7 @@ const executors: INodeExecutor[] = [
     validateComposeExecutor,
     buildDockerImageExecutor,
     pushToRegistryExecutor,
+    pullFromRegistryExecutor,
     // Deploy
     deployContainerExecutor,
     deployComposeExecutor,
@@ -75,7 +76,6 @@ const executors: INodeExecutor[] = [
     stopContainerExecutor,
     restartContainerExecutor,
     removeContainerExecutor,
-    pullImageExecutor,
     createNetworkExecutor,
     createVolumeExecutor,
     // Flow Control

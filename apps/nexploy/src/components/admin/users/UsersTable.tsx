@@ -248,7 +248,7 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
                             }
                         }}
                     >
-                        <SelectTrigger size="sm" className="w-24">
+                        <SelectTrigger size="sm" className="min-w-24">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>

@@ -5,6 +5,7 @@ import { validateDockerfileManifest } from './validate-dockerfile.manifest';
 import { validateComposeManifest } from './validate-compose.manifest';
 import { buildDockerImageManifest } from './build-docker-image.manifest';
 import { pushToRegistryManifest } from './push-to-registry.manifest';
+import { pullFromRegistryManifest } from './pull-from-registry.manifest';
 import { setEnvironmentManifest } from './set-environment.manifest';
 import { deployContainerManifest } from './deploy-container.manifest';
 import { deployComposeManifest } from './deploy-compose.manifest';
@@ -13,7 +14,6 @@ import { setEnvVarsManifest } from './set-env-vars.manifest';
 import { cleanWorkdirManifest } from './clean-workdir.manifest';
 import { sendNotificationManifest } from './send-notification.manifest';
 import { saveVersionManifest } from './save-version.manifest';
-import { pullImageManifest } from './pull-image.manifest';
 import { startContainerManifest } from './start-container.manifest';
 import { stopContainerManifest } from './stop-container.manifest';
 import { restartContainerManifest } from './restart-container.manifest';
@@ -28,10 +28,8 @@ import { conditionManifest } from './condition.manifest';
 import { runScriptManifest } from './run-script.manifest';
 import { runCommandInContainerManifest } from './run-command-in-container.manifest';
 import { runTestsManifest } from './run-tests.manifest';
-// HTTP / Webhooks
 import { httpRequestManifest } from './http-request.manifest';
 import { updateCommitStatusManifest } from './update-commit-status.manifest';
-// Image Management
 import { tagImageManifest } from './tag-image.manifest';
 import { scanImageManifest } from './scan-image.manifest';
 import { pruneImagesManifest } from './prune-images.manifest';
@@ -44,7 +42,6 @@ import { deployStackManifest } from './deploy-stack.manifest';
 import { updateServiceManifest } from './update-service.manifest';
 import { scaleServiceManifest } from './scale-service.manifest';
 import { checkContainerLogsManifest } from './check-container-logs.manifest';
-// Cache
 import { cacheRestoreManifest } from './cache-restore.manifest';
 import { cacheSaveManifest } from './cache-save.manifest';
 import { gitTagManifest } from './git-tag.manifest';
@@ -60,6 +57,7 @@ export const allBuiltinManifests: NodeManifest[] = [
     validateComposeManifest,
     buildDockerImageManifest,
     pushToRegistryManifest,
+    pullFromRegistryManifest,
     // Deploy
     setEnvironmentManifest,
     deployContainerManifest,
@@ -73,7 +71,6 @@ export const allBuiltinManifests: NodeManifest[] = [
     // Versioning
     saveVersionManifest,
     // Docker Actions
-    pullImageManifest,
     startContainerManifest,
     stopContainerManifest,
     restartContainerManifest,

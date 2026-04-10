@@ -14,10 +14,15 @@ export async function RegistryList() {
     }
 
     return (
-        <div className="flex flex-col gap-3">
-            {registries.map((registry) => (
-                <RegistryCard key={registry.id} registry={registry} />
-            ))}
+        <div className="flex flex-col gap-1">
+            <span className={'text-muted-foreground px-1 text-sm font-medium'}>
+                Liste registres
+            </span>
+            <div className={'flex flex-col gap-3'}>
+                {registries.map((registry) => (
+                    <RegistryCard key={registry.id} registry={registry} />
+                ))}
+            </div>
         </div>
     );
 }

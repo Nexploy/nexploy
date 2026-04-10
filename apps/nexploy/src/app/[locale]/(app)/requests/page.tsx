@@ -160,7 +160,7 @@ export default function RequestsPage() {
                                     value={methodFilter}
                                     onValueChange={handleMethodFilterChange}
                                 >
-                                    <SelectTrigger className="w-32">
+                                    <SelectTrigger className="min-w-32">
                                         <SelectValue placeholder={t('method')} />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -179,7 +179,7 @@ export default function RequestsPage() {
                                     value={statusFilter}
                                     onValueChange={handleStatusFilterChange}
                                 >
-                                    <SelectTrigger className="w-32">
+                                    <SelectTrigger className="min-w-32">
                                         <SelectValue placeholder={t('status')} />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -308,7 +308,7 @@ export default function RequestsPage() {
                                             setCurrentPage(0);
                                         }}
                                     >
-                                        <SelectTrigger size="sm" className="w-24">
+                                        <SelectTrigger size="sm" className="min-w-24">
                                             <SelectValue placeholder={t('perPage')} />
                                         </SelectTrigger>
                                         <SelectContent>

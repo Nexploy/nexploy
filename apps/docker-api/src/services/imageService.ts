@@ -44,6 +44,16 @@ export async function mirrorImage(
         });
     });
 
+    const lastColon = targetName.lastIndexOf(':');
+    const targetRepo = lastColon !== -1 ? targetName.slice(0, lastColon) : targetName;
+    const targetTag = lastColon !== -1 ? targetName.slice(lastColon + 1) : 'latest';
+    await new Promise((resolve, reject) => {
+        docker.getImage(sourceImage).tag({ repo: targetRepo, tag: targetTag }, (err: any) => {
+            if (err) return reject(err);
+            resolve(null);
+        });
+    });
+
     await new Promise((resolve, reject) => {
         const taggedImage = docker.getImage(targetName);
         (taggedImage.push as any)({ authconfig: targetAuth }, (err: any, stream: any) => {

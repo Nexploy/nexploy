@@ -1,9 +1,6 @@
 import { prisma } from '../../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
-import type {
-    CreateRegistryInput,
-    UpdateRegistryInput,
-} from '@workspace/schemas-zod/registry/registry.schema';
+import type { CreateRegistryInput, UpdateRegistryInput, } from '@workspace/schemas-zod/registry/registry.schema';
 
 export interface RegistryInfo {
     id: string;
@@ -103,15 +100,19 @@ export async function deleteRegistry(id: string): Promise<void> {
 }
 
 export async function getRegistryWithPassword(id: string) {
-    const registry = await prisma.dockerRegistry.findUnique({
-        where: { id },
-        select: { id: true, name: true, url: true, username: true, password: true },
-    });
+    try {
+        const registry = await prisma.dockerRegistry.findUnique({
+            where: { id },
+            select: { id: true, name: true, url: true, username: true, password: true },
+        });
 
-    if (!registry) return null;
+        if (!registry) return null;
 
-    return {
-        ...registry,
-        password: registry.password ? decrypt(registry.password) : null,
-    };
+        return {
+            ...registry,
+            password: registry.password ? decrypt(registry.password) : null,
+        };
+    } catch (error: unknown) {
+        throw new Error('Failed to retrieve registry with password');
+    }
 }

@@ -53,6 +53,11 @@ export const pushToRegistryConfigSchema = z.object({
     registryId: z.string().min(1, 'Registry is required').default(''),
 });
 
+export const pullFromRegistryConfigSchema = z.object({
+    registryId: z.string().default('docker-hub'),
+    imageName: z.string().min(1, 'Image name is required').default(''),
+});
+
 export const setEnvironmentConfigSchema = z.object({
     environmentId: z.string().min(1, 'Environment is required').default(''),
 });
@@ -69,10 +74,6 @@ export const sendNotificationConfigSchema = z.object({
 export const containerActionConfigSchema = z.object({
     containerId: z.string().min(1, 'Container ID is required').default(''),
     containerName: z.string(),
-});
-
-export const pullImageConfigSchema = z.object({
-    imageName: z.string().min(1, 'Image name is required').default(''),
 });
 
 export const createNetworkConfigSchema = z.object({

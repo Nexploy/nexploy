@@ -425,6 +425,10 @@
                 "name": "Push to a Registry",
                 "description": "Push all images built upstream to a Docker registry"
             },
+            "pull-from-registry": {
+                "name": "Pull an image",
+                "description": "Pull a Docker image from Docker Hub or a private registry"
+            },
             "validate-dockerfile": {
                 "name": "Validate Dockerfile",
                 "description": "Check that the Dockerfile exists and is readable"
@@ -464,10 +468,6 @@
             "remove-container": {
                 "name": "Remove Container",
                 "description": "Remove a Docker container"
-            },
-            "pull-image": {
-                "name": "Pull Image",
-                "description": "Pull a Docker image from a registry"
             },
             "create-network": {
                 "name": "Create Network",
@@ -624,6 +624,7 @@
             "registry": "Registry",
             "registryPlaceholder": "Select a registry",
             "noRegistry": "No registry configured.",
+            "dockerHubLabel": "Docker Hub (public)",
             "vars": "Environment Variables",
             "varKey": "Key",
             "varValue": "Value",
@@ -650,7 +651,8 @@
             "imageStaleWarning": "This image is no longer available.",
             "imageNoEnvironmentHint": "Connect this node to a <bold>Set Environment</bold> node to pick an image from a list.",
             "pullImageName": "Image Name",
-            "pullImageNamePlaceholder": "e.g. nginx:latest",
+            "pullImageNamePlaceholderHub": "e.g. nginx:latest, ubuntu:22.04",
+            "pullImageNamePlaceholderPrivate": "e.g. myapp:1.0.0",
             "networkName": "Network Name",
             "networkNamePlaceholder": "e.g. my-network",
             "networkDriver": "Driver",

@@ -424,6 +424,10 @@
                 "name": "Pousser vers un registre",
                 "description": "Pousser toutes les images construites en amont vers un registre Docker"
             },
+            "pull-from-registry": {
+                "name": "Télécharger une image",
+                "description": "Télécharger une image Docker depuis Docker Hub ou un registre privé"
+            },
             "validate-dockerfile": {
                 "name": "Valider le Dockerfile",
                 "description": "Vérifier que le Dockerfile existe et est lisible"
@@ -463,10 +467,6 @@
             "remove-container": {
                 "name": "Supprimer le conteneur",
                 "description": "Supprimer un conteneur Docker"
-            },
-            "pull-image": {
-                "name": "Télécharger l'image",
-                "description": "Télécharger une image Docker depuis un registre"
             },
             "create-network": {
                 "name": "Créer le réseau",
@@ -623,6 +623,7 @@
             "registry": "Registre",
             "registryPlaceholder": "Sélectionner un registre",
             "noRegistry": "Aucun registre configuré.",
+            "dockerHubLabel": "Docker Hub (public)",
             "vars": "Variables d'environnement",
             "varKey": "Clé",
             "varValue": "Valeur",
@@ -649,7 +650,8 @@
             "imageStaleWarning": "Cette image n'est plus disponible.",
             "imageNoEnvironmentHint": "Connectez ce nœud à un nœud <bold>Définir l'environnement</bold> pour choisir une image dans la liste.",
             "pullImageName": "Nom de l'image",
-            "pullImageNamePlaceholder": "ex. nginx:latest",
+            "pullImageNamePlaceholderHub": "ex. nginx:latest, ubuntu:22.04",
+            "pullImageNamePlaceholderPrivate": "ex. monapp:1.0.0",
             "networkName": "Nom du réseau",
             "networkNamePlaceholder": "ex. mon-réseau",
             "networkDriver": "Driver",

@@ -250,7 +250,7 @@ export function TableDockerVolumes() {
                             }
                         }}
                     >
-                        <SelectTrigger size={'sm'} className="w-24">
+                        <SelectTrigger size={'sm'} className="min-w-24">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>

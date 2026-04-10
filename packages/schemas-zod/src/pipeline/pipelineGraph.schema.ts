@@ -7,6 +7,7 @@ export const nodeTypeSchema = z.enum([
     'deploy-container',
     'deploy-compose',
     'push-to-registry',
+    'pull-from-registry',
     'validate-dockerfile',
     'validate-compose',
     'inject-env-vars',
@@ -19,7 +20,6 @@ export const nodeTypeSchema = z.enum([
     'stop-container',
     'restart-container',
     'remove-container',
-    'pull-image',
     'create-network',
     'create-volume',
     // Flow Control

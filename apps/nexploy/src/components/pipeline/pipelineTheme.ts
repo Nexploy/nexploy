@@ -145,7 +145,6 @@ const NODE_CATEGORY: Record<string, string> = {
     'stop-container': 'deploy',
     'restart-container': 'deploy',
     'remove-container': 'deploy',
-    'pull-image': 'build',
     'create-network': 'utility',
     'create-volume': 'utility',
     // Flow Control
@@ -215,7 +214,6 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'stop-container': Square,
     'restart-container': RotateCcw,
     'remove-container': CircleX,
-    'pull-image': Download,
     'create-network': Network,
     'create-volume': HardDrive,
     // Flow Control

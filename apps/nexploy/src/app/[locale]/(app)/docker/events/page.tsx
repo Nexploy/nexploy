@@ -8,7 +8,14 @@ import { useEventsStore } from '@/stores/docker/useEventsStore';
 import { useState } from 'react';
 import { Badge } from '@workspace/ui/components/badge';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@workspace/ui/components/table';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -142,7 +149,7 @@ export default function EventsPage() {
                             onChange={(e) => handleSearchChange(e.target.value)}
                         />
                         <Select value={typeFilter} onValueChange={handleTypeFilterChange}>
-                            <SelectTrigger className="w-40">
+                            <SelectTrigger className="min-w-40">
                                 <SelectValue placeholder={t('type')} />
                             </SelectTrigger>
                             <SelectContent>
@@ -240,7 +247,7 @@ export default function EventsPage() {
                                         setCurrentPage(0);
                                     }}
                                 >
-                                    <SelectTrigger size={'sm'} className="w-24">
+                                    <SelectTrigger size={'sm'} className="min-w-24">
                                         <SelectValue placeholder={t('eventsPerPage')} />
                                     </SelectTrigger>
                                     <SelectContent>

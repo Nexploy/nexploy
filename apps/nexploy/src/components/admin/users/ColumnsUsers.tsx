@@ -182,26 +182,26 @@ export const getColumnsUsers = (
                             }
                             disabled={isUpdatingRole}
                         >
-                            <SelectTrigger className="w-36">
+                            <SelectTrigger>
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="admin">
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-2 truncate">
                                         <Shield className="size-3" />
-                                        {t('adminRole')}
+                                        <span className={'truncate'}>{t('adminRole')}</span>
                                     </div>
                                 </SelectItem>
                                 <SelectItem value="readWrite">
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-2 truncate">
                                         <ShieldOff className="size-3" />
-                                        {t('readWriteRole')}
+                                        <span className={'truncate'}>{t('readWriteRole')}</span>
                                     </div>
                                 </SelectItem>
                                 <SelectItem value="read">
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-2 truncate">
                                         <ShieldOff className="size-3" />
-                                        {t('readRole')}
+                                        <span className={'truncate'}>{t('readRole')}</span>
                                     </div>
                                 </SelectItem>
                             </SelectContent>

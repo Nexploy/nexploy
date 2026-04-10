@@ -62,7 +62,7 @@ export function ContainerIdField() {
                     !containers.find((container) => container.id === field.value);
 
                 return (
-                    <FormItem className={'flex-1'}>
+                    <FormItem>
                         <FormLabel>{t('container')}</FormLabel>
                         <FormControl>
                             <Select
@@ -79,11 +79,11 @@ export function ContainerIdField() {
                             >
                                 <SelectTrigger
                                     className={
-                                        'w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3'
+                                        'min-w-40 overflow-hidden !pl-0 data-[placeholder]:!pl-3'
                                     }
                                 >
                                     {isLoading ? (
-                                        <span className="text-muted-foreground flex items-center gap-2">
+                                        <span className="text-muted-foreground flex items-center gap-2 pl-2">
                                             <Loader2 className="h-3 w-3 animate-spin" />
                                             {t('containersLoading')}
                                         </span>
