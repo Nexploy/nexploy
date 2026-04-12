@@ -468,6 +468,10 @@
                 "name": "Supprimer le conteneur",
                 "description": "Supprimer un conteneur Docker"
             },
+            "create-container": {
+                "name": "Créer un conteneur",
+                "description": "Créer et démarrer un conteneur Docker à partir d'une image"
+            },
             "create-network": {
                 "name": "Créer le réseau",
                 "description": "Créer un réseau Docker"
@@ -623,6 +627,9 @@
             "registry": "Registre",
             "registryPlaceholder": "Sélectionner un registre",
             "noRegistry": "Aucun registre configuré.",
+            "registriesLoading": "Chargement des registres...",
+            "registryUnavailable": "Registre non disponible",
+            "registryStaleWarning": "Ce registre n'est plus disponible.",
             "dockerHubLabel": "Docker Hub (public)",
             "vars": "Variables d'environnement",
             "varKey": "Clé",
@@ -650,8 +657,15 @@
             "imageStaleWarning": "Cette image n'est plus disponible.",
             "imageNoEnvironmentHint": "Connectez ce nœud à un nœud <bold>Définir l'environnement</bold> pour choisir une image dans la liste.",
             "pullImageName": "Nom de l'image",
-            "pullImageNamePlaceholderHub": "ex. nginx:latest, ubuntu:22.04",
+            "pullImageNamePlaceholderHub": "ex. image:version",
             "pullImageNamePlaceholderPrivate": "ex. monapp:1.0.0",
+            "createContainerName": "Nom du conteneur",
+            "createContainerNamePlaceholder": "ex. mon-app (laisser vide pour auto-générer)",
+            "createContainerImage": "Image",
+            "createContainerImagePlaceholder": "ex. nginx:latest",
+            "createContainerRestartPolicy": "Politique de redémarrage",
+            "createContainerNetwork": "Réseau",
+            "createContainerNetworkPlaceholder": "ex. mon-réseau (laisser vide pour le réseau par défaut)",
             "networkName": "Nom du réseau",
             "networkNamePlaceholder": "ex. mon-réseau",
             "networkDriver": "Driver",

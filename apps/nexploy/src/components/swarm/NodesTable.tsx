@@ -18,6 +18,13 @@ import type {
     SwarmNodeState,
 } from '@workspace/typescript-interface/docker/swarm';
 import { useTranslations } from 'next-intl';
+import {
+    Empty,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from '@workspace/ui/components/empty';
 
 function formatBytes(bytes: number): string {
     if (bytes === 0) return '0 B';
@@ -72,11 +79,15 @@ export function NodesTable() {
     if (nodes.length === 0) {
         return (
             <div className="px-5">
-                <div className="bg-muted/50 rounded-lg border p-8 text-center">
-                    <Server className="text-muted-foreground mx-auto mb-4 size-12" />
-                    <h3 className="text-lg font-semibold">{t('noNodesFound')}</h3>
-                    <p className="text-muted-foreground text-sm">{t('noNodesDescription')}</p>
-                </div>
+                <Empty>
+                    <EmptyHeader>
+                        <EmptyMedia variant="icon" className="bg-primary/10">
+                            <Server className="text-primary" />
+                        </EmptyMedia>
+                        <EmptyTitle>{t('noNodesFound')}</EmptyTitle>
+                        <EmptyDescription>{t('noNodesDescription')}</EmptyDescription>
+                    </EmptyHeader>
+                </Empty>
             </div>
         );
     }

@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
@@ -9,7 +8,6 @@ import { RefreshCw } from 'lucide-react';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { connectCloudflareAction } from '@/actions/cloudflare/connect.action';
-import { detectPublicIpAction } from '@/actions/network/detectPublicIp.action';
 import { cloudflareConnectSchema } from '@workspace/schemas-zod/cloudflare/cloudflare.schema';
 import {
     Form,
@@ -20,12 +18,14 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { toast } from 'sonner';
+import { usePublicIp } from '@/hooks/usePublicIp';
 import { useTranslations } from 'next-intl';
 
 export function CloudflareConnectForm() {
-    const [isDetectingIp, setIsDetectingIp] = useState(false);
     const { closeDialog } = useConfirmationDialogStore();
     const t = useTranslations('integrations.cloudflare');
+
+    const { ip, isLoading: isDetectingIp, mutate: refetchIp } = usePublicIp();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         connectCloudflareAction,
@@ -34,7 +34,7 @@ export function CloudflareConnectForm() {
             formProps: {
                 defaultValues: {
                     apiToken: '',
-                    serverIp: '',
+                    serverIp: ip ?? '',
                 },
             },
             actionProps: {
@@ -47,19 +47,12 @@ export function CloudflareConnectForm() {
     );
 
     const handleDetectIp = async () => {
-        setIsDetectingIp(true);
-        try {
-            const result = await detectPublicIpAction();
-            if (result?.data?.ip) {
-                form.setValue('serverIp', result.data.ip);
-                toast.success(t('ipDetected', { ip: result.data.ip }));
-            } else if (result?.serverError) {
-                toast.error(result.serverError);
-            }
-        } catch {
+        const result = await refetchIp();
+        if (result?.ip) {
+            form.setValue('serverIp', result.ip);
+            toast.success(t('ipDetected', { ip: result.ip }));
+        } else {
             toast.error(t('ipDetectionFailed'));
-        } finally {
-            setIsDetectingIp(false);
         }
     };
 

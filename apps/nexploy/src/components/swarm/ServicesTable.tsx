@@ -13,6 +13,14 @@ import { useSwarmStore } from '@/stores/docker/useSwarmStore';
 import { ServiceActions } from './ServiceActions';
 import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
 import { useTranslations } from 'next-intl';
+import { Layers } from 'lucide-react';
+import {
+    Empty,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from '@workspace/ui/components/empty';
 
 function getReplicaBadgeVariant(
     running: number,
@@ -44,12 +52,15 @@ export function ServicesTable() {
     if (services.length === 0) {
         return (
             <div className="px-5">
-                <div className="border-border rounded-lg border">
-                    <div className="flex flex-col items-center justify-center py-12 text-center">
-                        <p className="text-muted-foreground font-medium">{t('noServicesFound')}</p>
-                        <p className="text-muted-foreground mt-1 text-sm">{t('noServicesDescription')}</p>
-                    </div>
-                </div>
+                <Empty>
+                    <EmptyHeader>
+                        <EmptyMedia variant="icon" className="bg-primary/10">
+                            <Layers className="text-primary" />
+                        </EmptyMedia>
+                        <EmptyTitle>{t('noServicesFound')}</EmptyTitle>
+                        <EmptyDescription>{t('noServicesDescription')}</EmptyDescription>
+                    </EmptyHeader>
+                </Empty>
             </div>
         );
     }

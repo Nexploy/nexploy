@@ -16,6 +16,7 @@ export const nodeTypeSchema = z.enum([
     'send-notification',
     'save-version',
     'set-environment',
+    'create-container',
     'start-container',
     'stop-container',
     'restart-container',

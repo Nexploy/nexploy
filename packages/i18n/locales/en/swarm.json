@@ -30,6 +30,7 @@
     "detectingIp": "Detecting public IP...",
     "initializeSwarmConfirmDescription": "The swarm will be initialized with advertise address {ip}. Other nodes will use this address to join the cluster.",
     "failedToDetectIp": "Failed to detect public IP. Please check your connectivity.",
+    "advertiseAddressAutoDetect": "Leave blank to let Docker auto-detect. Required if this node is behind a NAT/cloud IP.",
     "joinTokenRequired": "Join token is required",
     "managerAddressRequired": "At least one manager address is required",
     "notInSwarmMode": "Not in Swarm Mode",

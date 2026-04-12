@@ -87,8 +87,8 @@ export function CreateServiceDialog({ trigger }: CreateServiceDialogProps) {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 {trigger || (
-                    <Button size="sm">
-                        <Plus className="mr-2 size-4" />
+                    <Button>
+                        <Plus />
                         {t('createService')}
                     </Button>
                 )}

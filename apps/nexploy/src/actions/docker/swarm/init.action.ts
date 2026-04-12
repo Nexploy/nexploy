@@ -9,13 +9,14 @@ import { initActionSchema } from '@workspace/schemas-zod/docker/swarm/init.schem
 export const onInitSwarmAction = authActionServer
     .use(requirePermission('docker', 'manage'))
     .inputSchema(initActionSchema)
-    .action(async ({ parsedInput: { advertiseAddr, listenAddr } }) => {
+    .action(async ({ parsedInput: { advertiseAddr, listenAddr, forceNewCluster } }) => {
         try {
             return await kyDocker
                 .post(`swarm/init`, {
                     json: {
-                        advertiseAddr,
+                        ...(advertiseAddr ? { advertiseAddr } : {}),
                         listenAddr,
+                        forceNewCluster,
                     },
                 })
                 .json();

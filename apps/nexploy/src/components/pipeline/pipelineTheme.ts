@@ -45,6 +45,7 @@ import {
     Variable,
     Webhook,
     Workflow,
+    PackagePlus,
     Wrench,
 } from 'lucide-react';
 
@@ -145,6 +146,7 @@ const NODE_CATEGORY: Record<string, string> = {
     'stop-container': 'deploy',
     'restart-container': 'deploy',
     'remove-container': 'deploy',
+    'create-container': 'deploy',
     'create-network': 'utility',
     'create-volume': 'utility',
     // Flow Control
@@ -214,6 +216,7 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'stop-container': Square,
     'restart-container': RotateCcw,
     'remove-container': CircleX,
+    'create-container': PackagePlus,
     'create-network': Network,
     'create-volume': HardDrive,
     // Flow Control

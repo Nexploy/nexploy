@@ -469,6 +469,10 @@
                 "name": "Remove Container",
                 "description": "Remove a Docker container"
             },
+            "create-container": {
+                "name": "Create Container",
+                "description": "Create and start a Docker container from an image"
+            },
             "create-network": {
                 "name": "Create Network",
                 "description": "Create a Docker network"
@@ -624,6 +628,9 @@
             "registry": "Registry",
             "registryPlaceholder": "Select a registry",
             "noRegistry": "No registry configured.",
+            "registriesLoading": "Loading registries...",
+            "registryUnavailable": "Registry unavailable",
+            "registryStaleWarning": "This registry is no longer available.",
             "dockerHubLabel": "Docker Hub (public)",
             "vars": "Environment Variables",
             "varKey": "Key",
@@ -651,8 +658,15 @@
             "imageStaleWarning": "This image is no longer available.",
             "imageNoEnvironmentHint": "Connect this node to a <bold>Set Environment</bold> node to pick an image from a list.",
             "pullImageName": "Image Name",
-            "pullImageNamePlaceholderHub": "e.g. nginx:latest, ubuntu:22.04",
+            "pullImageNamePlaceholderHub": "e.g. image:version",
             "pullImageNamePlaceholderPrivate": "e.g. myapp:1.0.0",
+            "createContainerName": "Container Name",
+            "createContainerNamePlaceholder": "e.g. my-app (leave empty to auto-generate)",
+            "createContainerImage": "Image",
+            "createContainerImagePlaceholder": "e.g. nginx:latest",
+            "createContainerRestartPolicy": "Restart Policy",
+            "createContainerNetwork": "Network",
+            "createContainerNetworkPlaceholder": "e.g. my-network (leave empty for default)",
             "networkName": "Network Name",
             "networkNamePlaceholder": "e.g. my-network",
             "networkDriver": "Driver",

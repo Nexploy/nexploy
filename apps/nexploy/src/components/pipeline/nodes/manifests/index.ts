@@ -18,6 +18,7 @@ import { startContainerManifest } from './start-container.manifest';
 import { stopContainerManifest } from './stop-container.manifest';
 import { restartContainerManifest } from './restart-container.manifest';
 import { removeContainerManifest } from './remove-container.manifest';
+import { createContainerManifest } from './create-container.manifest';
 import { createNetworkManifest } from './create-network.manifest';
 import { createVolumeManifest } from './create-volume.manifest';
 import { waitForHealthManifest } from './wait-for-health.manifest';
@@ -71,6 +72,7 @@ export const allBuiltinManifests: NodeManifest[] = [
     // Versioning
     saveVersionManifest,
     // Docker Actions
+    createContainerManifest,
     startContainerManifest,
     stopContainerManifest,
     restartContainerManifest,

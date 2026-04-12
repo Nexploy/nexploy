@@ -4,13 +4,7 @@ import { useMemo } from 'react';
 import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -49,7 +43,11 @@ export function BackupVolumeS3Config() {
     }, []);
 
     const { volumes, isLoading } = useEnvironmentVolumes(environmentId);
-    const { data: awsAccounts = [] } = useSWR<AwsAccountInfo[]>('/api/aws/accounts', fetcherApi);
+    const { data: awsAccounts, isLoading: isLoadingAccounts } = useSWR<AwsAccountInfo[]>(
+        '/api/aws/accounts',
+        fetcherApi,
+    );
+    const awsAccountList = awsAccounts ?? [];
 
     return (
         <div className="space-y-4">
@@ -124,29 +122,69 @@ export function BackupVolumeS3Config() {
             <FormField
                 control={form.control}
                 name="accountId"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{tAdmin('awsAccount')}</FormLabel>
-                        <Select value={field.value ?? ''} onValueChange={field.onChange}>
-                            <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue placeholder={tAdmin('selectAwsAccount')} />
-                                </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>{tAdmin('awsAccount')}</SelectLabel>
-                                    {awsAccounts.map((a) => (
-                                        <SelectItem key={a.id} value={a.id}>
-                                            {a.displayName} — {a.region}
-                                        </SelectItem>
-                                    ))}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
+                render={({ field }) => {
+                    const isStaleAccount =
+                        !isLoadingAccounts &&
+                        !!field.value &&
+                        awsAccountList.length >= 0 &&
+                        !awsAccountList.find((a) => a.id === field.value);
+
+                    return (
+                        <FormItem>
+                            <FormLabel>{tAdmin('awsAccount')}</FormLabel>
+                            <Select
+                                value={field.value ?? ''}
+                                onValueChange={field.onChange}
+                                disabled={isLoadingAccounts}
+                            >
+                                <FormControl>
+                                    <SelectTrigger
+                                        className={
+                                            'min-w-40 overflow-hidden data-[placeholder]:!pl-3'
+                                        }
+                                    >
+                                        {isLoadingAccounts ? (
+                                            <span className="text-muted-foreground flex items-center gap-2">
+                                                <Loader2 className="h-3 w-3 animate-spin" />
+                                                {tAdmin('awsAccountsLoading')}
+                                            </span>
+                                        ) : isStaleAccount ? (
+                                            <span className="flex items-center gap-1.5">
+                                                <AlertTriangle className="h-3 w-3 shrink-0" />
+                                                {tAdmin('awsAccountUnavailable')}
+                                            </span>
+                                        ) : (
+                                            <SelectValue placeholder={tAdmin('selectAwsAccount')} />
+                                        )}
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>{tAdmin('awsAccount')}</SelectLabel>
+                                        {awsAccountList.length === 0 ? (
+                                            <span className="text-muted-foreground px-2 py-1.5 text-sm">
+                                                {tAdmin('noAwsAccounts')}
+                                            </span>
+                                        ) : (
+                                            awsAccountList.map((a) => (
+                                                <SelectItem key={a.id} value={a.id}>
+                                                    {a.displayName} — {a.region}
+                                                </SelectItem>
+                                            ))
+                                        )}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            {isStaleAccount && (
+                                <p className="flex items-start gap-1 text-xs text-amber-500">
+                                    <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
+                                    {tAdmin('awsAccountStaleWarning')}
+                                </p>
+                            )}
+                            <FormMessage className="text-xs" />
+                        </FormItem>
+                    );
+                }}
             />
 
             <FormField

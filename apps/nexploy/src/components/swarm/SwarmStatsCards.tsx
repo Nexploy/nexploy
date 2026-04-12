@@ -17,46 +17,45 @@ export function SwarmStatsCards() {
     const workerNodes = nodes.filter((n) => n.role === 'worker');
     const activeNodes = nodes.filter((n) => n.state === 'ready');
 
+    const stats = [
+        {
+            title: t('totalNodes'),
+            icon: Server,
+            value: nodes.length,
+            description: `${activeNodes.length} ${t('active')}`,
+        },
+        {
+            title: t('managers'),
+            icon: Crown,
+            value: managerNodes.length,
+            description: `${managerNodes.filter((n) => n.managerStatus?.leader).length} ${t('leader')}`,
+        },
+        {
+            title: t('workers'),
+            icon: Users,
+            value: workerNodes.length,
+            description: `${workerNodes.filter((n) => n.state === 'ready').length} ${t('ready')}`,
+        },
+    ];
+
     return (
         <div className="grid gap-4 px-5 md:grid-cols-3">
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{t('totalNodes')}</CardTitle>
-                    <Server className="text-muted-foreground size-4" />
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">{nodes.length}</div>
-                    <p className="text-muted-foreground text-xs">
-                        {activeNodes.length} {t('active')}
-                    </p>
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{t('managers')}</CardTitle>
-                    <Crown className="text-muted-foreground size-4" />
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">{managerNodes.length}</div>
-                    <p className="text-muted-foreground text-xs">
-                        {managerNodes.filter((n) => n.managerStatus?.leader).length} {t('leader')}
-                    </p>
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{t('workers')}</CardTitle>
-                    <Users className="text-muted-foreground size-4" />
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">{workerNodes.length}</div>
-                    <p className="text-muted-foreground text-xs">
-                        {workerNodes.filter((n) => n.state === 'ready').length} {t('ready')}
-                    </p>
-                </CardContent>
-            </Card>
+            {stats.map((stat) => (
+                <Card key={stat.title} className="flex flex-col justify-between gap-0 py-6">
+                    <CardHeader className="flex flex-row justify-between space-y-0">
+                        <CardTitle className="flex h-14 text-sm font-medium">
+                            {stat.title}
+                        </CardTitle>
+                        <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
+                            <stat.icon className="text-primary size-4" />
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-semibold">{stat.value}</div>
+                        <p className="text-muted-foreground text-xs">{stat.description}</p>
+                    </CardContent>
+                </Card>
+            ))}
         </div>
     );
 }

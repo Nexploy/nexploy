@@ -23,7 +23,7 @@ app.post(
 
         const result = await docker.swarmInit({
             AdvertiseAddr: advertiseAddr,
-            ListenAddr: listenAddr || '0.0.0.0:2377',
+            ListenAddr: listenAddr,
             ForceNewCluster: forceNewCluster,
         });
 

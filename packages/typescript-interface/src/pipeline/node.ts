@@ -31,6 +31,7 @@ export type NodeId =
     | 'stop-container'
     | 'restart-container'
     | 'remove-container'
+    | 'create-container'
     | 'create-network'
     | 'create-volume'
     // Flow Control

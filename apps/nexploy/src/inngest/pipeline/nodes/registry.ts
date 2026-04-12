@@ -18,6 +18,7 @@ import { startContainerExecutor } from './executors/start-container.executor';
 import { stopContainerExecutor } from './executors/stop-container.executor';
 import { restartContainerExecutor } from './executors/restart-container.executor';
 import { removeContainerExecutor } from './executors/remove-container.executor';
+import { createContainerExecutor } from './executors/create-container.executor';
 import { createNetworkExecutor } from './executors/create-network.executor';
 import { createVolumeExecutor } from './executors/create-volume.executor';
 import { waitForHealthExecutor } from './executors/wait-for-health.executor';
@@ -72,6 +73,7 @@ const executors: INodeExecutor[] = [
     // Versioning
     saveVersionExecutor,
     // Docker Actions
+    createContainerExecutor,
     startContainerExecutor,
     stopContainerExecutor,
     restartContainerExecutor,

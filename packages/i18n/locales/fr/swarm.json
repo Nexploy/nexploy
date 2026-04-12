@@ -29,6 +29,7 @@
     "detectingIp": "Détection de l'IP publique...",
     "initializeSwarmConfirmDescription": "Le swarm sera initialisé avec l'adresse d'annonce {ip}. Les autres nœuds utiliseront cette adresse pour rejoindre le cluster.",
     "failedToDetectIp": "Impossible de détecter l'IP publique. Vérifiez votre connectivité.",
+    "advertiseAddressAutoDetect": "Laissez vide pour que Docker détecte automatiquement. Requis si ce nœud est derrière un NAT ou une IP cloud.",
     "joinTokenRequired": "Le jeton de connexion est requis",
     "managerAddressRequired": "Au moins une adresse de manager est requise",
     "notInSwarmMode": "Mode Swarm non actif",

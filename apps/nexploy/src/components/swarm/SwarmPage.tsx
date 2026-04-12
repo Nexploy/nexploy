@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { LogOut, Network, RefreshCw } from 'lucide-react';
+import { LogOut, Network, RefreshCw, Server, Layers } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
+import { Badge } from '@workspace/ui/components/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
 import { SwarmNotActive } from './SwarmNotActive';
 import { SwarmOverview } from './SwarmOverview';
@@ -18,7 +20,7 @@ import { cn } from '@workspace/ui/lib/utils';
 import { useTranslations } from 'next-intl';
 
 export function SwarmPage() {
-    const { isSwarmActive, swarmInfo } = useSwarmStore();
+    const { isSwarmActive, swarmInfo, nodes, services } = useSwarmStore();
     const [isRefreshing, setIsRefreshing] = useState(false);
     const t = useTranslations('swarm');
     const tNotifications = useTranslations('notifications');
@@ -36,7 +38,7 @@ export function SwarmPage() {
     return (
         <SSEProvider connections={['swarm']}>
             <div className="flex h-full flex-1 flex-col gap-5 pt-5">
-                <div className="flex justify-between px-5">
+                <div className="flex justify-between gap-2 px-5">
                     <div className="flex gap-3">
                         <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
                             <Network className="text-primary size-7" />
@@ -64,37 +66,53 @@ export function SwarmPage() {
                         </div>
                     </div>
                     {isSwarmActive && (
-                        <LeaveSwarmDialog
-                            isManager={swarmInfo?.isManager}
-                            trigger={
-                                <Button variant="outline">
-                                    <LogOut />
-                                    {t('leaveSwarm')}
-                                </Button>
-                            }
-                        />
+                        <div className="flex items-center gap-2">
+                            <CreateServiceDialog />
+                            <LeaveSwarmDialog
+                                isManager={swarmInfo?.isManager}
+                                trigger={
+                                    <Button variant="outline">
+                                        <LogOut />
+                                        {t('leaveSwarm')}
+                                    </Button>
+                                }
+                            />
+                        </div>
                     )}
                 </div>
 
                 {isSwarmActive ? (
-                    <Tabs defaultValue="overview" className="flex flex-1 flex-col">
+                    <Tabs defaultValue="overview" className="flex flex-1 flex-col overflow-hidden">
                         <TabsList className="mx-5 w-fit">
                             <TabsTrigger value="overview">{t('overview')}</TabsTrigger>
-                            <TabsTrigger value="nodes">{t('nodes')}</TabsTrigger>
-                            <TabsTrigger value="services">{t('services')}</TabsTrigger>
+                            <TabsTrigger value="nodes" className="flex items-center gap-2">
+                                <Server className="size-4" />
+                                {t('nodes')}
+                                <Badge variant="secondary" className="rounded-full">
+                                    {nodes.length}
+                                </Badge>
+                            </TabsTrigger>
+                            <TabsTrigger value="services" className="flex items-center gap-2">
+                                <Layers className="size-4" />
+                                {t('services')}
+                                <Badge variant="secondary" className="rounded-full">
+                                    {services.length}
+                                </Badge>
+                            </TabsTrigger>
                         </TabsList>
-                        <TabsContent value="overview" className="mt-6 flex-1 overflow-auto pb-6">
-                            <SwarmOverview />
-                        </TabsContent>
-                        <TabsContent value="nodes" className="mt-6 flex-1 overflow-auto pb-6">
-                            <NodesTable />
-                        </TabsContent>
-                        <TabsContent value="services" className="mt-6 flex-1 overflow-auto pb-6">
-                            <div className="mb-4 flex justify-end px-5">
-                                <CreateServiceDialog />
+                        <ScrollAreaWithShadow className="h-full overflow-hidden">
+                            <div className="pb-5">
+                                <TabsContent value="overview" className="mt-6">
+                                    <SwarmOverview />
+                                </TabsContent>
+                                <TabsContent value="nodes" className="mt-6">
+                                    <NodesTable />
+                                </TabsContent>
+                                <TabsContent value="services" className="mt-6">
+                                    <ServicesTable />
+                                </TabsContent>
                             </div>
-                            <ServicesTable />
-                        </TabsContent>
+                        </ScrollAreaWithShadow>
                     </Tabs>
                 ) : (
                     <SwarmNotActive />

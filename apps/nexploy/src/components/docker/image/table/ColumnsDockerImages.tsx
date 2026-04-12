@@ -80,7 +80,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             const isGroup = row.original.isGroup;
             const nameTags = row.original.name;
             const containersUsed = row.original.containersUsed;
-            const nameJoin = nameTags?.join(', ') || '<none>';
+            const nameJoin = nameTags?.join(' → ') || '<none>';
             const depth = row.depth;
 
             if (isGroup) {
@@ -193,7 +193,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             const tag = row.original.tag;
             return (
                 <Badge variant="secondary" className="font-mono">
-                    <span className={'max-w-30 truncate'}>{tag.length ? tag : '<none>'}</span>
+                    {tag.length ? tag.join(' → ') : '<none>'}
                 </Badge>
             );
         },

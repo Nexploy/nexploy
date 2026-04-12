@@ -51,6 +51,7 @@ export const setEnvVarsConfigSchema = z.object({
 
 export const pushToRegistryConfigSchema = z.object({
     registryId: z.string().min(1, 'Registry is required').default(''),
+    registryName: z.string().default(''),
 });
 
 export const pullFromRegistryConfigSchema = z.object({
@@ -72,8 +73,17 @@ export const sendNotificationConfigSchema = z.object({
 });
 
 export const containerActionConfigSchema = z.object({
-    containerId: z.string().min(1, 'Container ID is required').default(''),
+    containerId: z.string().min(1, 'Container is required').default(''),
     containerName: z.string(),
+});
+
+export const createContainerConfigSchema = z.object({
+    containerName: z.string().optional(),
+    imageName: z.string(),
+    restartPolicy: z
+        .enum(['no', 'always', 'on-failure', 'unless-stopped'])
+        .default('unless-stopped'),
+    networkName: z.string().optional(),
 });
 
 export const createNetworkConfigSchema = z.object({

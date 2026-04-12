@@ -1,105 +1,144 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@workspace/ui/components/dialog';
 import { Button } from '@workspace/ui/components/button';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
+import { Input } from '@workspace/ui/components/input';
 import { Play } from 'lucide-react';
 import { toast } from 'sonner';
 import { onInitSwarmAction } from '@/actions/docker/swarm/init.action';
 import { onSwarmRefreshAction } from '@/actions/docker/swarm/refresh.action';
-import { detectPublicIpAction } from '@/actions/network/detectPublicIp.action';
-import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import { initActionSchema } from '@workspace/schemas-zod/docker/swarm/init.schema';
+import { usePublicIp } from '@/hooks/usePublicIp';
 import { useTranslations } from 'next-intl';
 
 interface InitSwarmDialogProps {
-    trigger?: ReactNode;
+    trigger?: React.ReactNode;
     onInitSuccess?: () => void;
-}
-
-function InitSwarmConfirmContent({
-    advertiseAddr,
-    onInitSuccess,
-}: {
-    advertiseAddr: string;
-    onInitSuccess?: () => void;
-}) {
-    const [isLoading, setIsLoading] = useState(false);
-    const { closeDialog } = useConfirmationDialogStore();
-    const t = useTranslations('swarm');
-    const tCommon = useTranslations('common');
-
-    const handleConfirm = async () => {
-        setIsLoading(true);
-        try {
-            await onInitSwarmAction({
-                advertiseAddr,
-                listenAddr: '0.0.0.0:2377',
-            });
-            toast.success(t('swarmInitializedSuccess'));
-            closeDialog();
-            await onSwarmRefreshAction();
-            onInitSuccess?.();
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    return (
-        <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" onClick={closeDialog} disabled={isLoading}>
-                {tCommon('cancel')}
-            </Button>
-            <Button onClick={handleConfirm} disabled={isLoading}>
-                {isLoading ? t('initializing') : t('initializeSwarm')}
-            </Button>
-        </div>
-    );
 }
 
 export function InitSwarmDialog({ trigger, onInitSuccess }: InitSwarmDialogProps) {
-    const [isDetecting, setIsDetecting] = useState(false);
-    const { openDialog } = useConfirmationDialogStore();
+    const [open, setOpen] = useState(false);
     const t = useTranslations('swarm');
+    const tCommon = useTranslations('common');
 
-    const handleClick = async () => {
-        setIsDetecting(true);
-        let ip: string;
+    const { ip, isLoading: isDetecting } = usePublicIp();
 
-        try {
-            const result = await detectPublicIpAction();
-            if (!result?.data?.ip) {
-                toast.error(t('failedToDetectIp'));
-                return;
-            }
-            ip = result.data.ip;
-        } catch {
-            toast.error(t('failedToDetectIp'));
-            return;
-        } finally {
-            setIsDetecting(false);
+    const { form, handleSubmitWithAction } = useHookFormAction(
+        onInitSwarmAction,
+        zodResolver(initActionSchema),
+        {
+            formProps: {
+                defaultValues: {
+                    advertiseAddr: '',
+                    listenAddr: '0.0.0.0:2377',
+                    forceNewCluster: false,
+                },
+            },
+            actionProps: {
+                onSuccess: async () => {
+                    toast.success(t('swarmInitializedSuccess'));
+                    setOpen(false);
+                    await onSwarmRefreshAction();
+                    onInitSuccess?.();
+                },
+            },
+        },
+    );
+
+    useEffect(() => {
+        if (ip) {
+            form.setValue('advertiseAddr', `${ip}:2377`);
         }
+    }, [ip, form]);
 
-        const advertiseAddr = `${ip}:2377`;
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                {trigger || (
+                    <Button>
+                        <Play />
+                        {t('initializeSwarm')}
+                    </Button>
+                )}
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{t('initializeSwarmTitle')}</DialogTitle>
+                    <DialogDescription>{t('initializeSwarmDescription')}</DialogDescription>
+                </DialogHeader>
 
-        openDialog({
-            title: t('initializeSwarmTitle'),
-            description: t('initializeSwarmConfirmDescription', { ip: advertiseAddr }),
-            content: (
-                <InitSwarmConfirmContent
-                    advertiseAddr={advertiseAddr}
-                    onInitSuccess={onInitSuccess}
-                />
-            ),
-        });
-    };
+                <Form {...form}>
+                    <form onSubmit={handleSubmitWithAction} className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="advertiseAddr"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>
+                                        {t('advertiseAddress')}{' '}
+                                        <span className="text-muted-foreground text-xs">
+                                            {t('optional')}
+                                        </span>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            placeholder={
+                                                isDetecting
+                                                    ? t('detectingIp')
+                                                    : t('advertiseAddressPlaceholder')
+                                            }
+                                            className="font-mono"
+                                            disabled={isDetecting || form.formState.isSubmitting}
+                                        />
+                                    </FormControl>
+                                    <p className="text-muted-foreground text-xs">
+                                        {t('advertiseAddressAutoDetect')}
+                                    </p>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-    return trigger ? (
-        <div onClick={handleClick} className="cursor-pointer">
-            {trigger}
-        </div>
-    ) : (
-        <Button onClick={handleClick} disabled={isDetecting}>
-            <Play className="mr-2 size-4" />
-            {isDetecting ? t('detectingIp') : t('initializeSwarm')}
-        </Button>
+                        <DialogFooter>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setOpen(false)}
+                                disabled={form.formState.isSubmitting}
+                            >
+                                {tCommon('cancel')}
+                            </Button>
+                            <Button
+                                type="submit"
+                                isLoading={form.formState.isSubmitting}
+                                disabled={isDetecting || form.formState.isSubmitting}
+                            >
+                                {t('initializeSwarm')}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
+            </DialogContent>
+        </Dialog>
     );
 }
