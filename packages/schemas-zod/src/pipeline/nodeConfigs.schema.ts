@@ -77,6 +77,23 @@ export const containerActionConfigSchema = z.object({
     containerName: z.string(),
 });
 
+const createContainerPortSchema = z.object({
+    hostPort: z.string(),
+    containerPort: z.string(),
+    protocol: z.enum(['tcp', 'udp']).default('tcp'),
+});
+
+const createContainerEnvVarSchema = z.object({
+    key: z.string(),
+    value: z.string(),
+});
+
+const createContainerVolumeSchema = z.object({
+    hostPath: z.string(),
+    containerPath: z.string(),
+    readOnly: z.boolean().default(false),
+});
+
 export const createContainerConfigSchema = z.object({
     containerName: z.string().optional(),
     imageName: z.string(),
@@ -84,6 +101,10 @@ export const createContainerConfigSchema = z.object({
         .enum(['no', 'always', 'on-failure', 'unless-stopped'])
         .default('unless-stopped'),
     networkName: z.string().optional(),
+    advanced: z.boolean().default(false),
+    ports: z.array(createContainerPortSchema).default([]),
+    envVars: z.array(createContainerEnvVarSchema).default([]),
+    volumes: z.array(createContainerVolumeSchema).default([]),
 });
 
 export const createNetworkConfigSchema = z.object({

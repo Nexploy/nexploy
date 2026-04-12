@@ -21,7 +21,10 @@ export class CreateContainerExecutor implements INodeExecutor {
         const containerName = nodeConfig.containerName?.trim();
         const imageName = nodeConfig.imageName?.trim();
 
-        await logger.info(nodeId, `Creating container from image: (name: ${containerName})`);
+        await logger.info(
+            nodeId,
+            `Creating container from image: ${imageName}${containerName ? ` (name: ${containerName})` : ''}`,
+        );
 
         try {
             const result = await kyDocker
@@ -30,12 +33,12 @@ export class CreateContainerExecutor implements INodeExecutor {
                         name: containerName,
                         image: imageName,
                         restart: nodeConfig.restartPolicy,
-                        network: nodeConfig.networkName?.trim(),
+                        network: nodeConfig.networkName?.trim() || undefined,
                         autoRemove: false,
                         privileged: false,
-                        ports: [],
-                        envVars: [],
-                        volumes: [],
+                        ports: nodeConfig.ports,
+                        envVars: nodeConfig.envVars,
+                        volumes: nodeConfig.volumes,
                     },
                     signal: abortSignal,
                     environmentId,

@@ -453,19 +453,19 @@
                 "description": "Définit l'environnement de déploiement pour tous les nœuds en aval dans ce pipeline"
             },
             "start-container": {
-                "name": "Démarrer le conteneur",
+                "name": "Démarrer un conteneur",
                 "description": "Démarrer un conteneur Docker existant"
             },
             "stop-container": {
-                "name": "Arrêter le conteneur",
+                "name": "Arrêter un conteneur",
                 "description": "Arrêter un conteneur Docker en cours d'exécution"
             },
             "restart-container": {
-                "name": "Redémarrer le conteneur",
+                "name": "Redémarrer un conteneur",
                 "description": "Redémarrer un conteneur Docker"
             },
             "remove-container": {
-                "name": "Supprimer le conteneur",
+                "name": "Supprimer un conteneur",
                 "description": "Supprimer un conteneur Docker"
             },
             "create-container": {
@@ -663,6 +663,8 @@
             "createContainerNamePlaceholder": "ex. mon-app (laisser vide pour auto-générer)",
             "createContainerImage": "Image",
             "createContainerImagePlaceholder": "ex. nginx:latest",
+            "createContainerSimple": "Simple",
+            "createContainerAdvanced": "Avancé",
             "createContainerRestartPolicy": "Politique de redémarrage",
             "createContainerNetwork": "Réseau",
             "createContainerNetworkPlaceholder": "ex. mon-réseau (laisser vide pour le réseau par défaut)",

@@ -664,6 +664,8 @@
             "createContainerNamePlaceholder": "e.g. my-app (leave empty to auto-generate)",
             "createContainerImage": "Image",
             "createContainerImagePlaceholder": "e.g. nginx:latest",
+            "createContainerSimple": "Simple",
+            "createContainerAdvanced": "Advanced",
             "createContainerRestartPolicy": "Restart Policy",
             "createContainerNetwork": "Network",
             "createContainerNetworkPlaceholder": "e.g. my-network (leave empty for default)",
