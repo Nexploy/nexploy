@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { nodeFieldRefSchema, refAwareString } from './nodeFieldRef.schema';
+import { nodeFieldRefSchema, refAwareString } from './nodeFieldRef.schema.ts';
 
 export const cloneRepositoryConfigSchema = z.object({
     branch: refAwareString().default('main'),

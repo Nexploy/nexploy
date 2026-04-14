@@ -111,6 +111,18 @@ export async function updateBuildGitInfo(
     }
 }
 
+export async function getBuildStatus(buildId: string): Promise<BuildStatus | null> {
+    try {
+        const build = await prisma.build.findUnique({
+            where: { id: buildId },
+            select: { status: true },
+        });
+        return build?.status ?? null;
+    } catch {
+        throw new Error('Failed to get build status');
+    }
+}
+
 export async function updateStatusBuild(buildId: string, status: BuildStatus) {
     try {
         return await prisma.build.update({ where: { id: buildId }, data: { status } });

@@ -7,7 +7,12 @@ import { type Node } from '@xyflow/react';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { Button } from '@workspace/ui/components/button';
 import { Loader2 } from 'lucide-react';
-import { DialogDescription, DialogFooter, DialogHeader, DialogTitle, } from '@workspace/ui/components/dialog';
+import {
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@workspace/ui/components/dialog';
 import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
@@ -17,6 +22,21 @@ import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { CONFIG_PANELS, CONFIG_SCHEMAS, HAS_CONFIG_SCHEMA } from './nodeConfigRegistry';
 import { cn } from '@workspace/ui/lib/utils';
+
+function computeDefaultValues(
+    schema: any,
+    nodeConfig: Record<string, unknown>,
+): Record<string, unknown> {
+    const schemaDefaults: Record<string, unknown> = {};
+    const shape: Record<string, any> | undefined = schema?.shape;
+    if (shape) {
+        for (const [key, fieldSchema] of Object.entries(shape)) {
+            const result = (fieldSchema as any).safeParse(undefined);
+            schemaDefaults[key] = result.success ? result.data : undefined;
+        }
+    }
+    return { ...schemaDefaults, ...nodeConfig };
+}
 
 interface NodeConfigFormProps {
     node: Node;
@@ -45,11 +65,14 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
         zodResolver(schema),
         {
             formProps: {
-                defaultValues: { ...(schema.partial().safeParse({}).data ?? {}), ...nodeConfig },
+                defaultValues: computeDefaultValues(schema, nodeConfig as Record<string, unknown>),
             },
             actionProps: {
                 onSuccess: ({ data: config }) => {
-                    if (config) handleConfigChange(node.id, config);
+                    if (config) {
+                        handleConfigChange(node.id, config);
+                        form.reset(config);
+                    }
                     handleResetPanelNode();
                 },
                 onError: ({ error }) => {

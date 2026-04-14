@@ -53,14 +53,16 @@ export function AvailableInputsPanel({ nodeId }: AvailableInputsPanelProps) {
 
     return (
         <div className="flex w-[35%] flex-col gap-2 py-3">
-            <span className="text-foreground shrink-0 px-4 text-sm font-semibold">
-                {t('availableInputs')}
-            </span>
-            <p className="text-muted-foreground shrink-0 px-4 text-[11px]">
-                {t('dragHint')}
-            </p>
+            <div className={'flex flex-col'}>
+                <span className="text-foreground shrink-0 px-4 text-sm font-semibold">
+                    {t('availableInputs')}
+                </span>
+                <p className="text-muted-foreground shrink-0 px-4 text-[11px]">{t('dragHint')}</p>
+            </div>
             {ancestors.length === 0 && (
-                <p className="text-muted-foreground px-4 text-xs">{t('noInputsAvailable')}</p>
+                <p className="text-muted-foreground border-y border-dashed p-1 text-center text-xs">
+                    {t('noInputsAvailable')}
+                </p>
             )}
             <ScrollAreaWithShadow bottomShadow className={'h-full overflow-hidden'}>
                 <div className="flex flex-col gap-4 px-4">

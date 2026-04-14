@@ -1,5 +1,5 @@
 import { type BuildConfig } from '@workspace/typescript-interface/inngest/build';
-import { type PipelineGraph, type PipelineNode } from '@workspace/typescript-interface/pipeline/node';
+import { type PipelineGraph, type PipelineNode, } from '@workspace/typescript-interface/pipeline/node';
 import {
     type InngestStepRunner,
     type NodeExecutionContext,
@@ -11,14 +11,10 @@ import {
     type PipelineResult,
     type PipelineStatus,
 } from '@/types/pipeline.type';
-import { getNodeExecutor } from '../nodes/registry';
-import { analyzeGraph } from '../utils/graphQueries';
-import { prisma } from '../../../../prisma/prisma';
-import {
-    formatErrorDetails,
-    getInputNodeIds,
-    resolveConfigRefs,
-} from './utils';
+import { formatErrorDetails, getParentNodeIds, resolveNodeConfig } from './utils';
+import { analyzeGraph } from '@/inngest/pipeline/utils/graphQueries';
+import { getNodeExecutor } from '@/inngest/pipeline/nodes/registry';
+import { getBuildStatus } from '@/services/inngest/build.inngest.service';
 
 export { createPipelineLogger } from './utils';
 
@@ -30,15 +26,8 @@ export class PipelineOrchestrator {
     ): NodeJS.Timeout {
         return setInterval(async () => {
             if (abortController.signal.aborted) return;
-            try {
-                const build = await prisma.build.findUnique({
-                    where: { id: buildId },
-                    select: { status: true },
-                });
-                if (build?.status === 'CANCELLED') abortController.abort();
-            } catch {
-                /* ignore */
-            }
+            const status = await getBuildStatus(buildId);
+            if (status === 'CANCELLED') abortController.abort();
         }, intervalMs);
     }
 
@@ -93,7 +82,7 @@ export class PipelineOrchestrator {
                     throw new Error(`Unknown node type: "${node.data.type}"`);
                 }
 
-                const inputNodeIds = getInputNodeIds(node.id, graph.edges);
+                const inputNodeIds = getParentNodeIds(node.id, graph.edges);
                 const inputOutputs: NodeOutputData[] = inputNodeIds
                     .map((id) => allOutputs.get(id))
                     .filter((o): o is NodeOutputData => o !== undefined);
@@ -150,7 +139,7 @@ export class PipelineOrchestrator {
                     continue;
                 }
 
-                const { resolved: resolvedConfig, warnings: refWarnings } = resolveConfigRefs(
+                const { resolved: resolvedConfig, warnings: refWarnings } = resolveNodeConfig(
                     node.data.config ?? {},
                     allOutputs,
                     nodeTypeMap,
