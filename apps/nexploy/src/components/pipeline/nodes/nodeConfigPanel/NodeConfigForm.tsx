@@ -88,7 +88,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
 
     if (!ConfigComponent) {
         return (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-1 flex-col gap-4">
                 {!isViewingBuild && (
                     <DialogHeader>
                         <DialogTitle>{t(nodeName)}</DialogTitle>
@@ -117,14 +117,12 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
         <Form {...form}>
             <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
-                    <div className={'p-4'}>
-                        <fieldset
-                            disabled={isViewingBuild}
-                            className={cn(isViewingBuild && 'pointer-events-none')}
-                        >
-                            <ConfigComponent />
-                        </fieldset>
-                    </div>
+                    <fieldset
+                        disabled={isViewingBuild}
+                        className={cn('p-4', isViewingBuild && 'pointer-events-none')}
+                    >
+                        <ConfigComponent />
+                    </fieldset>
                 </ScrollAreaWithShadow>
 
                 {!isViewingBuild && hasSchema && (

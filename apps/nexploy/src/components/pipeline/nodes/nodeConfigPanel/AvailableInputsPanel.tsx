@@ -51,7 +51,7 @@ export function AvailableInputsPanel({ nodeId }: AvailableInputsPanelProps) {
     const ancestors = useAncestorInputFields(nodeId);
 
     return (
-        <div className="flex w-[35%] flex-col gap-2 py-3">
+        <div className="flex w-60 flex-col gap-2 py-3">
             <div className={'flex flex-col'}>
                 <span className="text-foreground shrink-0 px-4 text-sm font-semibold">
                     {t('availableInputs')}

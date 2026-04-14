@@ -11,14 +11,16 @@ import { useValidAncestorNodeIds } from '@/contexts/RefValidationContext';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 interface RefAwareProps {
-    value?: string;
-    onChange?: (value: string) => void;
+    value: string;
+    onChange: (value: string) => void;
+    emptyValue?: string;
     className?: string;
 }
 
 export function RefAware({
     value,
     onChange,
+    emptyValue = '',
     className,
     children,
 }: PropsWithChildren<RefAwareProps>) {
@@ -35,7 +37,7 @@ export function RefAware({
         if (!data) return;
         try {
             const parsed = JSON.parse(data) as NodeFieldRef;
-            onChange?.(stringifyRef(parsed));
+            onChange(stringifyRef(parsed));
         } catch {}
     };
 
@@ -69,7 +71,7 @@ export function RefAware({
                 <Button
                     size="icon"
                     variant="ghost"
-                    onClick={() => onChange?.('')}
+                    onClick={() => onChange(emptyValue)}
                     className={cn(
                         'size-5 shrink-0 transition-colors',
                         isStale

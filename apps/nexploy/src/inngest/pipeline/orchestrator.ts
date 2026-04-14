@@ -5,6 +5,7 @@ import {
 } from '@workspace/typescript-interface/pipeline/node';
 import {
     type InngestStepRunner,
+    type InputNodeInfo,
     type NodeExecutionContext,
     type NodeExecutionResult,
     type NodeOutputData,
@@ -89,10 +90,13 @@ export class PipelineOrchestrator {
                 const inputOutputs: NodeOutputData[] = inputNodeIds
                     .map((id) => allOutputs.get(id))
                     .filter((o): o is NodeOutputData => o !== undefined);
-                const inputNodes = inputNodeIds.map((id) => {
-                    const inputNode = graph.nodes.find((n) => n.id === id);
-                    return { id, type: inputNode?.data.type };
-                });
+                const inputNodes: InputNodeInfo[] = inputNodeIds
+                    .map((id) => {
+                        const inputNode = graph.nodes.find((n) => n.id === id);
+                        if (!inputNode?.data.type) return null;
+                        return { id, type: inputNode.data.type as string };
+                    })
+                    .filter((n): n is InputNodeInfo => n !== null);
 
                 if (!reachableNodeIds.has(node.id)) {
                     await this.runSkippedNode(
