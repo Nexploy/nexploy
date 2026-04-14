@@ -45,10 +45,7 @@ export function DomainFields<T extends FieldValues>({
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>{t('environment')}</FormLabel>
-                        <Select
-                            value={(field.value as string) ?? ''}
-                            onValueChange={field.onChange}
-                        >
+                        <Select {...field} onValueChange={field.onChange}>
                             <FormControl>
                                 <SelectTrigger>
                                     <SelectValue placeholder={t('selectEnvironment')} />
@@ -94,9 +91,7 @@ export function DomainFields<T extends FieldValues>({
                                 />
                             </FormControl>
                             {cloudflareZoneId ? (
-                                <FormDescription>
-                                    {t('managedByCloudflare')}
-                                </FormDescription>
+                                <FormDescription>{t('managedByCloudflare')}</FormDescription>
                             ) : (
                                 <FormMessage />
                             )}
@@ -139,9 +134,7 @@ export function DomainFields<T extends FieldValues>({
                                     className="font-mono"
                                 />
                             </FormControl>
-                            <FormDescription>
-                                {t('internalPathDescription')}
-                            </FormDescription>
+                            <FormDescription>{t('internalPathDescription')}</FormDescription>
                         </FormItem>
                     )}
                 />
@@ -167,9 +160,7 @@ export function DomainFields<T extends FieldValues>({
                                     ref={field.ref}
                                 />
                             </FormControl>
-                            <FormDescription>
-                                {t('containerPortDescription')}
-                            </FormDescription>
+                            <FormDescription>{t('containerPortDescription')}</FormDescription>
                         </FormItem>
                     )}
                 />
@@ -189,9 +180,7 @@ export function DomainFields<T extends FieldValues>({
                             </FormControl>
                             <div>
                                 <FormLabel className="cursor-pointer">{t('stripPath')}</FormLabel>
-                                <FormDescription>
-                                    {t('stripPathDescription')}
-                                </FormDescription>
+                                <FormDescription>{t('stripPathDescription')}</FormDescription>
                             </div>
                         </FormItem>
                     )}
@@ -210,9 +199,7 @@ export function DomainFields<T extends FieldValues>({
                             </FormControl>
                             <div>
                                 <FormLabel className="cursor-pointer">{t('https')}</FormLabel>
-                                <FormDescription>
-                                    {t('httpsDescription')}
-                                </FormDescription>
+                                <FormDescription>{t('httpsDescription')}</FormDescription>
                             </div>
                         </FormItem>
                     )}

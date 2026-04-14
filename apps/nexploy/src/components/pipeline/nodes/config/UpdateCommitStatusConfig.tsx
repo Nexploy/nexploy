@@ -154,7 +154,6 @@ export function UpdateCommitStatusConfig() {
                         <FormControl>
                             <Input
                                 {...field}
-                                value={field.value ?? ''}
                                 placeholder={t('commitStatusDescriptionPlaceholder')}
                                 className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />

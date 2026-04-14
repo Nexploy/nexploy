@@ -20,7 +20,6 @@ export async function RepositoryVersionsTab({ repositoryId }: RepositoryVersions
         environmentIds.map(async (environmentId) => {
             const key = environmentId ?? '';
 
-            // Try single container first (Dockerfile deployments)
             const containers = await getContainerByName(repositoryId, environmentId);
             const singleImageTag = containers[0]?.image?.split(':').at(-1);
             if (singleImageTag) {
@@ -28,7 +27,6 @@ export async function RepositoryVersionsTab({ repositoryId }: RepositoryVersions
                 return;
             }
 
-            // Fall back to compose stack (labels-based detection)
             const composeImageTag = await getDeployedComposeImageTag(repositoryId, environmentId);
             if (composeImageTag) {
                 deployedTagByEnvironment[key] = composeImageTag;

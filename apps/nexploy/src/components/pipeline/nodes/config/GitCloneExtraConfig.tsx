@@ -66,7 +66,6 @@ export function GitCloneExtraConfig() {
                             <Input
                                 {...field}
                                 type="password"
-                                value={field.value ?? ''}
                                 placeholder={t('gitCloneTokenPlaceholder')}
                             />
                         </FormControl>

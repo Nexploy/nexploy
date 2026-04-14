@@ -2,9 +2,15 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
-import { RefAwareInput } from '@/components/pipeline/nodes/nodeConfigPanel/RefAwareInput';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { Switch } from '@workspace/ui/components/switch';
 import { Button } from '@workspace/ui/components/button';
@@ -34,12 +40,9 @@ export function HttpRequestConfig() {
                     <FormItem>
                         <FormLabel>{t('url')}</FormLabel>
                         <FormControl>
-                            <RefAwareInput
-                                {...field}
-                                value={field.value ?? ''}
-                                placeholder="https://example.com/webhook"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input {...field} placeholder="https://example.com/webhook" />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -97,12 +100,9 @@ export function HttpRequestConfig() {
                             render={({ field }) => (
                                 <FormItem className="flex-1">
                                     <FormControl>
-                                        <RefAwareInput
-                                            {...field}
-                                            value={field.value ?? ''}
-                                            placeholder={t('varValue')}
-                                            className="h-7 font-mono text-xs"
-                                        />
+                                        <RefAware value={field.value} onChange={field.onChange}>
+                                            <Input {...field} placeholder={t('varValue')} />
+                                        </RefAware>
                                     </FormControl>
                                 </FormItem>
                             )}
@@ -136,7 +136,6 @@ export function HttpRequestConfig() {
                         <FormControl>
                             <Textarea
                                 {...field}
-                                value={field.value ?? ''}
                                 placeholder='{"key": "value"}'
                                 className="border-border bg-background text-foreground focus:border-primary font-mono text-xs"
                                 rows={4}

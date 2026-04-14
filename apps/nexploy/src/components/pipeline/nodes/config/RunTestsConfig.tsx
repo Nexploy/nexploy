@@ -60,7 +60,6 @@ export function RunTestsConfig() {
                         <FormControl>
                             <Input
                                 {...field}
-                                value={field.value ?? ''}
                                 placeholder="/workspace"
                                 className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />

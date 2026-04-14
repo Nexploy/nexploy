@@ -66,7 +66,7 @@ export function ContainerIdField() {
                         <FormLabel>{t('container')}</FormLabel>
                         <FormControl>
                             <Select
-                                value={field.value ?? ''}
+                                {...field}
                                 onValueChange={(value) => {
                                     field.onChange(value);
                                     const container = containers.find((c) => c.id === value)!;

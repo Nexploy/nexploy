@@ -3,7 +3,6 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    ResolvedConfig,
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { checkContainerLogsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -14,7 +13,7 @@ export class CheckContainerLogsExecutor implements INodeExecutor {
     readonly configSchema = checkContainerLogsConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof checkContainerLogsConfigSchema>>>,
+        ctx: NodeExecutionContext<z.infer<typeof checkContainerLogsConfigSchema>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
@@ -51,7 +50,7 @@ export class CheckContainerLogsExecutor implements INodeExecutor {
                     } as KyDockerOptions)
                     .json<{ logs: string }>();
 
-                const lines = (result.logs ?? '').split('\n');
+                const lines = result.logs.split('\n');
                 for (const line of lines) {
                     if (regex.test(line)) {
                         found = true;

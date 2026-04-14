@@ -43,7 +43,6 @@ export function CreateVolumeConfig() {
                         <FormControl>
                             <Input
                                 {...field}
-                                value={field.value ?? ''}
                                 placeholder={t('volumeDriverPlaceholder')}
                                 className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />

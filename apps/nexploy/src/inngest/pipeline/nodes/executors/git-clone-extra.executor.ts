@@ -4,7 +4,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    ResolvedConfig,
+    
 } from '@/types/pipeline.type';
 import { gitCloneExtraConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { gitService } from '@/inngest/pipeline/services/git.service';
@@ -15,7 +15,7 @@ export class GitCloneExtraExecutor implements INodeExecutor {
     readonly configSchema = gitCloneExtraConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof gitCloneExtraConfigSchema>>>,
+        ctx: NodeExecutionContext<z.infer<typeof gitCloneExtraConfigSchema>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId } = ctx;
 

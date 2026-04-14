@@ -3,7 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    ResolvedConfig,
+    
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { scanImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -14,7 +14,7 @@ export class ScanImageExecutor implements INodeExecutor {
     readonly configSchema = scanImageConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof scanImageConfigSchema>>>,
+        ctx: NodeExecutionContext<z.infer<typeof scanImageConfigSchema>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal, buildId } = ctx;
 

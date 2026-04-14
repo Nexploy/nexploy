@@ -36,11 +36,7 @@ export function BuildDockerImageConfig() {
                     <FormItem>
                         <FormLabel>{t('dockerfileFilePath')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                value={field.value ?? ''}
-                                placeholder={t('dockerfileFilePathPlaceholder')}
-                            />
+                            <Input {...field} placeholder={t('dockerfileFilePathPlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

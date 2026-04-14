@@ -1,4 +1,4 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, ResolvedConfig } from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { updateBuildGitInfo } from '@/services/inngest/build.inngest.service';
 import { webhookCloneConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -10,7 +10,7 @@ export class WebhookCloneExecutor implements INodeExecutor {
     readonly configSchema = webhookCloneConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof webhookCloneConfigSchema>>>,
+        ctx: NodeExecutionContext<z.infer<typeof webhookCloneConfigSchema>>,
     ): Promise<NodeExecutionResult> {
         const { buildId, buildConfig, nodeConfig, logger, nodeId, reporter } = ctx;
 

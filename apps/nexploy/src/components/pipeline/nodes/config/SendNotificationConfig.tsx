@@ -81,11 +81,7 @@ export function SendNotificationConfig() {
                     <FormItem>
                         <FormLabel>{t('message')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                value={field.value ?? ''}
-                                placeholder={t('messagePlaceholder')}
-                            />
+                            <Input {...field} placeholder={t('messagePlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

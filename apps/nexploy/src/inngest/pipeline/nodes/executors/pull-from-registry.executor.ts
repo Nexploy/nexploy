@@ -3,7 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    ResolvedConfig,
+    
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { getRegistryWithPassword } from '@/services/registry.service';
@@ -17,7 +17,7 @@ export class PullFromRegistryExecutor implements INodeExecutor {
     readonly configSchema = pullFromRegistryConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof pullFromRegistryConfigSchema>>>,
+        ctx: NodeExecutionContext<z.infer<typeof pullFromRegistryConfigSchema>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 

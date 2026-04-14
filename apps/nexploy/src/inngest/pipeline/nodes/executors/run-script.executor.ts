@@ -7,7 +7,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    ResolvedConfig,
+    
 } from '@/types/pipeline.type';
 import { runScriptConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -17,7 +17,7 @@ export class RunScriptExecutor implements INodeExecutor {
     readonly configSchema = runScriptConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof runScriptConfigSchema>>>,
+        ctx: NodeExecutionContext<z.infer<typeof runScriptConfigSchema>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 

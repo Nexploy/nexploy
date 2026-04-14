@@ -26,7 +26,10 @@ export async function generateTraefikConfigForRepository(
     const projectName = `nexploy-${repositoryId}`;
 
     // Cache containers and environment lookups to avoid duplicate fetches
-    const containersCache = new Map<string | undefined, Awaited<ReturnType<typeof getContainerByProjectName>>>();
+    const containersCache = new Map<
+        string | undefined,
+        Awaited<ReturnType<typeof getContainerByProjectName>>
+    >();
     const envCache = new Map<string, { isRemote: boolean; remoteHost?: string; id: string }>();
 
     const getContainers = async (envId?: string) => {
@@ -41,7 +44,7 @@ export async function generateTraefikConfigForRepository(
         if (!envCache.has(envId)) {
             const env = await getEnvironmentById(envId);
             envCache.set(envId, {
-                isRemote: env?.connectionType === 'TCP' || env?.connectionType === 'TCP_TLS' ? true : false,
+                isRemote: env?.connectionType === 'TCP' || env?.connectionType === 'TCP_TLS',
                 remoteHost: env?.host ?? undefined,
                 id: env?.id ?? '',
             });

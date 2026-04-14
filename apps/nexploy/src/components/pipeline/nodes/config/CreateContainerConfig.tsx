@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -23,7 +29,7 @@ import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { findAncestor } from '@/inngest/pipeline/utils/graphQueries';
 import { useEnvironmentImages } from '@/hooks/sse/useEnvironmentImages';
 import { useMemo } from 'react';
-import { RefAwareInput } from '@/components/pipeline/nodes/nodeConfigPanel/RefAwareInput';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
 export function CreateContainerConfig() {
     const t = useTranslations('repository.pipeline.config');
@@ -100,11 +106,12 @@ export function CreateContainerConfig() {
                     <FormItem>
                         <FormLabel>{t('createContainerName')}</FormLabel>
                         <FormControl>
-                            <RefAwareInput
-                                {...field}
-                                value={field.value ?? ''}
-                                placeholder={t('createContainerNamePlaceholder')}
-                            />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input
+                                    {...field}
+                                    placeholder={t('createContainerNamePlaceholder')}
+                                />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -118,15 +125,16 @@ export function CreateContainerConfig() {
                     <FormItem>
                         <FormLabel>{t('createContainerImage')}</FormLabel>
                         <FormControl>
-                            <InputAutoComplete
-                                className="truncate"
-                                value={field.value ?? ''}
-                                onChange={field.onChange}
-                                options={imageOptions}
-                                isLoading={isLoading}
-                                placeholder={t('createContainerImagePlaceholder')}
-                                heading={t('availableImages')}
-                            />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <InputAutoComplete
+                                    {...field}
+                                    className="truncate"
+                                    options={imageOptions}
+                                    isLoading={isLoading}
+                                    placeholder={t('createContainerImagePlaceholder')}
+                                    heading={t('availableImages')}
+                                />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -173,7 +181,6 @@ export function CreateContainerConfig() {
                         <FormControl>
                             <Input
                                 {...field}
-                                value={field.value ?? ''}
                                 placeholder={t('createContainerNetworkPlaceholder')}
                             />
                         </FormControl>

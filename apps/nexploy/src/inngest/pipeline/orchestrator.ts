@@ -1,5 +1,8 @@
 import { type BuildConfig } from '@workspace/typescript-interface/inngest/build';
-import { type PipelineGraph, type PipelineNode, } from '@workspace/typescript-interface/pipeline/node';
+import {
+    type PipelineGraph,
+    type PipelineNode,
+} from '@workspace/typescript-interface/pipeline/node';
 import {
     type InngestStepRunner,
     type NodeExecutionContext,
@@ -88,7 +91,7 @@ export class PipelineOrchestrator {
                     .filter((o): o is NodeOutputData => o !== undefined);
                 const inputNodes = inputNodeIds.map((id) => {
                     const inputNode = graph.nodes.find((n) => n.id === id);
-                    return { id, type: inputNode?.data.type ?? '' };
+                    return { id, type: inputNode?.data.type };
                 });
 
                 if (!reachableNodeIds.has(node.id)) {

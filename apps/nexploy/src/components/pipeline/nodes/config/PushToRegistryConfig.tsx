@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -42,12 +48,12 @@ export function PushToRegistryConfig() {
                         <FormLabel>{t('registry')}</FormLabel>
                         <FormControl>
                             <Select
+                                {...field}
                                 onValueChange={(value) => {
                                     field.onChange(value);
                                     const registry = registryList.find((r) => r.id === value)!;
                                     form.setValue('registryName', registry.name);
                                 }}
-                                value={field.value ?? ''}
                                 disabled={isLoading}
                             >
                                 <SelectTrigger

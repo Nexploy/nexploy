@@ -62,7 +62,6 @@ export function FetchSecretsConfig() {
                             <FormControl>
                                 <Input
                                     {...field}
-                                    value={field.value ?? ''}
                                     placeholder="https://vault.example.com"
                                     className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                                 />
@@ -99,7 +98,11 @@ export function FetchSecretsConfig() {
                         <FormControl>
                             <Input
                                 {...field}
-                                placeholder={provider === 'env-file' ? '.env.production' : 'secret/myapp/prod'}
+                                placeholder={
+                                    provider === 'env-file'
+                                        ? '.env.production'
+                                        : 'secret/myapp/prod'
+                                }
                                 className="border-border bg-background text-foreground focus:border-primary h-8 font-mono text-xs"
                             />
                         </FormControl>
@@ -122,8 +125,12 @@ export function FetchSecretsConfig() {
                             <SelectContent>
                                 <SelectGroup>
                                     <SelectLabel>{t('secretsOutputAs')}</SelectLabel>
-                                    <SelectItem value="env-vars">{t('secretsOutputEnvVars')}</SelectItem>
-                                    <SelectItem value="json-file">{t('secretsOutputJsonFile')}</SelectItem>
+                                    <SelectItem value="env-vars">
+                                        {t('secretsOutputEnvVars')}
+                                    </SelectItem>
+                                    <SelectItem value="json-file">
+                                        {t('secretsOutputJsonFile')}
+                                    </SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>

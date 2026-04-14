@@ -1,39 +1,41 @@
 'use client';
 
-import { type ComponentProps, useRef } from 'react';
-import { useTranslations } from 'next-intl';
-import { AlertTriangle, Variable, X } from 'lucide-react';
-import { Input } from '@workspace/ui/components/input';
+import { PropsWithChildren } from 'react';
 import { type NodeFieldRef } from '@workspace/typescript-interface/pipeline/nodeFieldRef';
-import { isNodeFieldRef } from '@/lib/nodeFieldRef';
-import { cn } from '@workspace/ui/lib/utils';
+import { parseRefString, stringifyRef } from '@/lib/nodeFieldRef';
+import { AlertTriangle, Variable, X } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import { cn } from '@workspace/ui/lib/utils';
+import { useTranslations } from 'next-intl';
 import { useValidAncestorNodeIds } from '@/contexts/RefValidationContext';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
-type RefAwareInputProps = Omit<ComponentProps<'input'>, 'value' | 'onChange'> & {
-    value?: string | NodeFieldRef;
-    onChange?: (value: string | NodeFieldRef) => void;
-};
+interface RefAwareProps {
+    value?: string;
+    onChange?: (value: string) => void;
+    className?: string;
+}
 
-export function RefAwareInput({ className, value, onChange, ...rest }: RefAwareInputProps) {
+export function RefAware({
+    value,
+    onChange,
+    className,
+    children,
+}: PropsWithChildren<RefAwareProps>) {
     const t = useTranslations('repository.pipeline');
-    const isDraggingOver = useRef(false);
     const validAncestorIds = useValidAncestorNodeIds();
 
-    const isRef = isNodeFieldRef(value);
-    const ref = isRef ? (value as NodeFieldRef) : null;
-    const isStale =
-        isRef && ref !== null && validAncestorIds.size > 0 && !validAncestorIds.has(ref.nodeId);
+    const ref = parseRefString(value);
+    const isRef = ref !== null;
+    const isStale = isRef && validAncestorIds.size > 0 && !validAncestorIds.has(ref.nodeId);
 
     const handleDrop = (e: React.DragEvent<HTMLElement>) => {
         e.preventDefault();
-        isDraggingOver.current = false;
         const data = e.dataTransfer.getData('application/nexploy-node-ref');
         if (!data) return;
         try {
-            const parsedRef = JSON.parse(data) as NodeFieldRef;
-            onChange?.(parsedRef);
+            const parsed = JSON.parse(data) as NodeFieldRef;
+            onChange?.(stringifyRef(parsed));
         } catch {}
     };
 
@@ -48,7 +50,7 @@ export function RefAwareInput({ className, value, onChange, ...rest }: RefAwareI
         const badge = (
             <div
                 className={cn(
-                    'flex h-8 items-center gap-1.5 rounded-md border px-2 text-xs',
+                    'flex h-9 items-center gap-1.5 rounded-md border px-2 text-xs',
                     'border-dashed',
                     isStale
                         ? 'border-destructive/60 bg-destructive/10 text-destructive'
@@ -96,13 +98,8 @@ export function RefAwareInput({ className, value, onChange, ...rest }: RefAwareI
     }
 
     return (
-        <Input
-            {...rest}
-            value={(value as string) ?? ''}
-            onChange={(e) => onChange?.(e.target.value)}
-            className={cn('transition-colors', className)}
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-        />
+        <div onDrop={handleDrop} onDragOver={handleDragOver}>
+            {children}
+        </div>
     );
 }

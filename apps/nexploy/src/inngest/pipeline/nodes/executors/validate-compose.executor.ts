@@ -3,7 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    ResolvedConfig,
+    
 } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { composeFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -14,7 +14,7 @@ export class ValidateComposeExecutor implements INodeExecutor {
     readonly configSchema = composeFileConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof composeFileConfigSchema>>>,
+        ctx: NodeExecutionContext<z.infer<typeof composeFileConfigSchema>>,
     ): Promise<NodeExecutionResult> {
         const { allOutputs, logger, nodeId, nodeConfig } = ctx;
 

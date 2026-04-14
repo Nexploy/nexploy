@@ -16,7 +16,6 @@ interface InputChipProps {
 
 function InputChip({ nodeId, nodeType, field }: InputChipProps) {
     const ref: NodeFieldRef = {
-        __nexploy_ref: true,
         nodeId,
         inputKey: field.key,
         nodeType,

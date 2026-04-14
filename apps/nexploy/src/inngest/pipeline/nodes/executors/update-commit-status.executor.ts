@@ -1,4 +1,4 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, ResolvedConfig } from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { updateCommitStatusConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { githubUpdateCommitStatus } from '@/lib/api/github.api';
 import { gitlabUpdateCommitStatus } from '@/lib/api/gitlab.api';
@@ -11,7 +11,7 @@ export class UpdateCommitStatusExecutor
     readonly configSchema = updateCommitStatusConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof updateCommitStatusConfigSchema>>>,
+        ctx: NodeExecutionContext<z.infer<typeof updateCommitStatusConfigSchema>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, logger, nodeId } = ctx;
 

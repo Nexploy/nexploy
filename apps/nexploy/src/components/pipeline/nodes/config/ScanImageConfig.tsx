@@ -100,9 +100,8 @@ export function ScanImageConfig() {
                             <FormLabel>{t('scanImage')}</FormLabel>
                             <FormControl>
                                 <InputAutoComplete
+                                    {...field}
                                     className={'truncate'}
-                                    value={field.value ?? ''}
-                                    onChange={field.onChange}
                                     options={imageOptions}
                                     isLoading={isLoading}
                                     placeholder={t('scanImagePlaceholder')}

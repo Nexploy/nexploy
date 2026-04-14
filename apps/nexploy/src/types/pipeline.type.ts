@@ -2,9 +2,6 @@ import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
 import { PipelineEdge } from '@workspace/typescript-interface/pipeline/node';
 import { z } from 'zod';
 
-type StripRef<T> = T extends { __nexploy_ref: true } ? never : T;
-export type ResolvedConfig<T> = { [K in keyof T]: StripRef<T[K]> };
-
 export type LogLevel = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
 
 export type PipelineStatus = 'QUEUED' | 'BUILDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';

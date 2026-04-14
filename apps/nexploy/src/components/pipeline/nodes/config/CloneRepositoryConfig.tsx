@@ -68,7 +68,7 @@ export function CloneRepositoryConfig() {
                     <FormItem>
                         <FormLabel>{t('cloneBranch')}</FormLabel>
                         <Select
-                            value={field.value ?? ''}
+                            {...field}
                             onValueChange={field.onChange}
                             disabled={isLoadingRepo || isLoadingBranches || !repo}
                         >
@@ -115,11 +115,7 @@ export function CloneRepositoryConfig() {
                             </span>
                         </FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                value={field.value ?? ''}
-                                placeholder={t('cloneCommitHashPlaceholder')}
-                            />
+                            <Input {...field} placeholder={t('cloneCommitHashPlaceholder')} />
                         </FormControl>
                         <FormDescription>{t('cloneCommitHashDescription')}</FormDescription>
                         <FormMessage />

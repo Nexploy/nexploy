@@ -4,7 +4,13 @@ import { useMemo } from 'react';
 import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -14,6 +20,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
+import { Input } from '@workspace/ui/components/input';
 import { type AwsAccountInfo } from '@workspace/typescript-interface/aws/aws';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
@@ -21,7 +28,8 @@ import { findAncestor } from '@/inngest/pipeline/utils/graphQueries';
 import { useEnvironmentVolumes } from '@/hooks/sse/useEnvironmentVolumes';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { fetcherApi } from '@/lib/api/fetcherApi';
-import { Input } from '@workspace/ui/components/input';
+import { isRefString } from '@/lib/nodeFieldRef';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
 export function BackupVolumeS3Config() {
     const t = useTranslations('repository.pipeline.config');
@@ -58,55 +66,56 @@ export function BackupVolumeS3Config() {
                     const isStale =
                         !isLoading &&
                         !!field.value &&
-                        volumes.length >= 0 &&
+                        !isRefString(field.value) &&
                         !volumes.find((v) => v.name === field.value);
 
                     return (
                         <FormItem>
                             <FormLabel>{t('volume')}</FormLabel>
                             <FormControl>
-                                <Select
-                                    value={field.value ?? ''}
-                                    onValueChange={field.onChange}
-                                    disabled={isLoading}
-                                >
-                                    <SelectTrigger
-                                        className={
-                                            'w-full overflow-hidden data-[placeholder]:!pl-3'
-                                        }
+                                <RefAware value={field.value} onChange={field.onChange}>
+                                    <Select
+                                        {...field}
+                                        onValueChange={field.onChange}
+                                        disabled={isLoading}
                                     >
-                                        {isLoading ? (
-                                            <span className="text-muted-foreground flex items-center gap-2">
-                                                <Loader2 className="h-3 w-3 animate-spin" />
-                                                {t('volumesLoading')}
-                                            </span>
-                                        ) : isStale ? (
-                                            <span className="flex items-center gap-1.5 pl-3">
-                                                <AlertTriangle className="h-3 w-3 shrink-0" />
-                                                {field.value ?? t('volumeUnavailable')}
-                                            </span>
-                                        ) : (
-                                            <SelectValue placeholder={t('volumeNamePlaceholder')} />
-                                        )}
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectLabel>{t('volumesSelectLabel')}</SelectLabel>
-                                            {volumes.length === 0 ? (
-                                                <div className="text-muted-foreground px-2 py-1.5">
-                                                    {t('noVolumesFound')}
-                                                </div>
+                                        <SelectTrigger className="w-full overflow-hidden data-[placeholder]:!pl-3">
+                                            {isStale ? (
+                                                <span className="flex items-center gap-1.5 pl-3">
+                                                    <AlertTriangle className="h-3 w-3 shrink-0" />
+                                                    {field.value ?? t('volumeUnavailable')}
+                                                </span>
                                             ) : (
-                                                volumes.map((v) => (
-                                                    <SelectItem key={v.name} value={v.name}>
-                                                        <p className={'truncate'}>{v.name}</p>
-                                                    </SelectItem>
-                                                ))
+                                                <SelectValue
+                                                    placeholder={t('volumeNamePlaceholder')}
+                                                />
                                             )}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectLabel>{t('volumesSelectLabel')}</SelectLabel>
+                                                {volumes.length === 0 ? (
+                                                    <div className="text-muted-foreground px-2 py-1.5 text-xs">
+                                                        {t('noVolumesFound')}
+                                                    </div>
+                                                ) : (
+                                                    volumes.map((v) => (
+                                                        <SelectItem key={v.name} value={v.name}>
+                                                            {v.name}
+                                                        </SelectItem>
+                                                    ))
+                                                )}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </RefAware>
                             </FormControl>
+                            {isLoading && (
+                                <p className="text-muted-foreground flex items-center gap-1 text-xs">
+                                    <Loader2 className="h-3 w-3 animate-spin" />
+                                    {t('volumesLoading')}
+                                </p>
+                            )}
                             {isStale && (
                                 <p className="flex items-start gap-1 text-xs text-amber-500">
                                     <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
@@ -126,23 +135,18 @@ export function BackupVolumeS3Config() {
                     const isStaleAccount =
                         !isLoadingAccounts &&
                         !!field.value &&
-                        awsAccountList.length >= 0 &&
                         !awsAccountList.find((a) => a.id === field.value);
 
                     return (
                         <FormItem>
                             <FormLabel>{tAdmin('awsAccount')}</FormLabel>
                             <Select
-                                value={field.value ?? ''}
+                                value={field.value}
                                 onValueChange={field.onChange}
                                 disabled={isLoadingAccounts}
                             >
                                 <FormControl>
-                                    <SelectTrigger
-                                        className={
-                                            'min-w-40 overflow-hidden data-[placeholder]:!pl-3'
-                                        }
-                                    >
+                                    <SelectTrigger className="min-w-40 overflow-hidden data-[placeholder]:!pl-3">
                                         {isLoadingAccounts ? (
                                             <span className="text-muted-foreground flex items-center gap-2">
                                                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -194,7 +198,9 @@ export function BackupVolumeS3Config() {
                     <FormItem>
                         <FormLabel>{t('s3BucketName')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder={tAdmin('s3BucketNamePlaceholder')} />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input {...field} placeholder={tAdmin('s3BucketNamePlaceholder')} />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

@@ -116,7 +116,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
     return (
         <Form {...form}>
             <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
-                <ScrollAreaWithShadow bottomShadow className="h-full">
+                <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className={'p-4'}>
                         <fieldset
                             disabled={isViewingBuild}

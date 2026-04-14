@@ -26,7 +26,7 @@ export function SetEnvironmentConfig() {
             render={({ field }) => (
                 <FormItem>
                     <FormLabel>{t('environment')}</FormLabel>
-                    <Select value={field.value ?? ''} onValueChange={field.onChange}>
+                    <Select {...field} onValueChange={field.onChange}>
                         <FormControl>
                             <SelectTrigger>
                                 <SelectValue placeholder={t('selectEnvironment')} />

@@ -5,7 +5,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    ResolvedConfig,
+    
 } from '@/types/pipeline.type';
 import { uploadArtifactConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { kyS3 } from '@/lib/api/kyS3';
@@ -19,7 +19,7 @@ export class UploadArtifactExecutor
     readonly configSchema = uploadArtifactConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof uploadArtifactConfigSchema>>>,
+        ctx: NodeExecutionContext<z.infer<typeof uploadArtifactConfigSchema>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId } = ctx;
 
