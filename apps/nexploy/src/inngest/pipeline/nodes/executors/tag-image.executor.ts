@@ -3,6 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
+    ResolvedConfig,
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { tagImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -13,7 +14,7 @@ export class TagImageExecutor implements INodeExecutor {
     readonly configSchema = tagImageConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof tagImageConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof tagImageConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 

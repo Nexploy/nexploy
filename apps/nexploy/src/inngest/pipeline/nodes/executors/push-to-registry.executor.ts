@@ -1,4 +1,4 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, ResolvedConfig } from '@/types/pipeline.type';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { getRegistryWithPassword } from '@/services/registry.service';
 import { pushToRegistryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -9,7 +9,7 @@ export class PushToRegistryExecutor implements INodeExecutor {
     readonly configSchema = pushToRegistryConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof pushToRegistryConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof pushToRegistryConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
 

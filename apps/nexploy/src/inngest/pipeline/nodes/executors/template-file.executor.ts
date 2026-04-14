@@ -1,17 +1,17 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import { getFromAllOutputs, INodeExecutor, NodeExecutionContext, NodeExecutionResult, } from '@/types/pipeline.type';
+import { getFromAllOutputs, INodeExecutor, NodeExecutionContext, NodeExecutionResult, ResolvedConfig } from '@/types/pipeline.type';
 import { templateFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 
 export class TemplateFileExecutor
-    implements INodeExecutor<z.infer<typeof templateFileConfigSchema>>
+    implements INodeExecutor
 {
     readonly type = 'template-file';
     readonly configSchema = templateFileConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof templateFileConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof templateFileConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, buildConfig, logger, nodeId } = ctx;
 

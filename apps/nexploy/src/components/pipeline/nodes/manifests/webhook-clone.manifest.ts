@@ -27,6 +27,12 @@ export const webhookCloneManifest: NodeManifest = {
     },
     configSchema: webhookCloneConfigSchema,
     configPanel: WebhookCloneConfig,
+    inputFields: [
+        { key: 'workDir', labelKey: 'pipeline.inputs.workDir', type: 'string' },
+        { key: 'branch', labelKey: 'pipeline.inputs.branch', type: 'string' },
+        { key: 'commitHash', labelKey: 'pipeline.inputs.commitHash', type: 'string' },
+        { key: 'commitMessage', labelKey: 'pipeline.inputs.commitMessage', type: 'string' },
+    ],
     lifecycle: {
         onAdd: async (repositoryId) => {
             const result = await setupWebhookAction({ repositoryId });

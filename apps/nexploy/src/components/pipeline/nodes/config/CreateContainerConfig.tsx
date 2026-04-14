@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -29,6 +23,7 @@ import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { findAncestor } from '@/inngest/pipeline/utils/graphQueries';
 import { useEnvironmentImages } from '@/hooks/sse/useEnvironmentImages';
 import { useMemo } from 'react';
+import { RefAwareInput } from '@/components/pipeline/nodes/nodeConfigPanel/RefAwareInput';
 
 export function CreateContainerConfig() {
     const t = useTranslations('repository.pipeline.config');
@@ -98,7 +93,6 @@ export function CreateContainerConfig() {
                 />
             </div>
 
-            {/* Container name */}
             <FormField
                 control={form.control}
                 name="containerName"
@@ -106,7 +100,7 @@ export function CreateContainerConfig() {
                     <FormItem>
                         <FormLabel>{t('createContainerName')}</FormLabel>
                         <FormControl>
-                            <Input
+                            <RefAwareInput
                                 {...field}
                                 value={field.value ?? ''}
                                 placeholder={t('createContainerNamePlaceholder')}
@@ -117,7 +111,6 @@ export function CreateContainerConfig() {
                 )}
             />
 
-            {/* Image */}
             <FormField
                 control={form.control}
                 name="imageName"
@@ -140,7 +133,6 @@ export function CreateContainerConfig() {
                 )}
             />
 
-            {/* Restart policy */}
             <FormField
                 control={form.control}
                 name="restartPolicy"
@@ -172,7 +164,6 @@ export function CreateContainerConfig() {
                 )}
             />
 
-            {/* Network */}
             <FormField
                 control={form.control}
                 name="networkName"

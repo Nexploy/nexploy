@@ -1,4 +1,4 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, ResolvedConfig } from '@/types/pipeline.type';
 import { sendNotificationConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 
@@ -7,7 +7,7 @@ export class SendNotificationExecutor implements INodeExecutor {
     readonly configSchema = sendNotificationConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof sendNotificationConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof sendNotificationConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { logger, nodeId, nodeConfig, abortSignal } = ctx;
 

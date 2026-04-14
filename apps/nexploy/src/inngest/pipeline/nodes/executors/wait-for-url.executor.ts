@@ -1,4 +1,4 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, ResolvedConfig } from '@/types/pipeline.type';
 import { waitForUrlConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 
@@ -7,7 +7,7 @@ export class WaitForUrlExecutor implements INodeExecutor {
     readonly configSchema = waitForUrlConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof waitForUrlConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof waitForUrlConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, logger, nodeId, abortSignal } = ctx;
 

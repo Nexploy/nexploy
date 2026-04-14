@@ -4,7 +4,7 @@ import { inngest } from '@/inngest/client';
 import { updateNodeStatus, updateStatusBuild } from '@/services/inngest/build.inngest.service';
 import { createLogInngest } from '@/services/inngest/log.inngest.service';
 import { LogLevel, PipelineReporter, PipelineStatus } from '@/types/pipeline.type';
-import { createPipelineLogger, pipelineOrchestrator } from '@/inngest/pipeline/orchestrator';
+import { createPipelineLogger, pipelineOrchestrator } from '@/inngest/pipeline/orchestrator/orchestrator';
 import { prisma } from '../../../prisma/prisma';
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { createBuildChannel } from '@/inngest/channels/build.channel';

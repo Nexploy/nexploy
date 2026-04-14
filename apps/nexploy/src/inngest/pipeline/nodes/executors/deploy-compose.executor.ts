@@ -3,6 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
+    ResolvedConfig,
 } from '@/types/pipeline.type';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
@@ -14,7 +15,7 @@ export class DeployComposeExecutor implements INodeExecutor {
     readonly configSchema = composeFileConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof composeFileConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof composeFileConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { buildConfig, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
 

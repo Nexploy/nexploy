@@ -25,4 +25,7 @@ export const runScriptManifest: NodeManifest = {
     },
     configSchema: runScriptConfigSchema,
     configPanel: RunScriptConfig,
+    inputFields: [
+        { key: 'exitCode', labelKey: 'pipeline.inputs.exitCode', type: 'number' },
+    ],
 };

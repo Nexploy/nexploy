@@ -3,17 +3,18 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
+    ResolvedConfig,
 } from '@/types/pipeline.type';
 import { gitTagConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { z } from 'zod';
 
-export class GitTagExecutor implements INodeExecutor<z.infer<typeof gitTagConfigSchema>> {
+export class GitTagExecutor implements INodeExecutor {
     readonly type = 'git-tag';
     readonly configSchema = gitTagConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof gitTagConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof gitTagConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId } = ctx;
 

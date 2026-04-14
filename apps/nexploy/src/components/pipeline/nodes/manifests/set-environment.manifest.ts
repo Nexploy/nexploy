@@ -25,4 +25,7 @@ export const setEnvironmentManifest: NodeManifest = {
     },
     configSchema: setEnvironmentConfigSchema,
     configPanel: SetEnvironmentConfig,
+    inputFields: [
+        { key: 'environmentId', labelKey: 'pipeline.inputs.environmentId', type: 'string' },
+    ],
 };

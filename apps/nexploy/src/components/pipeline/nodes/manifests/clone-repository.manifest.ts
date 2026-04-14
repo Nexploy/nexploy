@@ -25,4 +25,10 @@ export const cloneRepositoryManifest: NodeManifest = {
     },
     configSchema: cloneRepositoryConfigSchema,
     configPanel: CloneRepositoryConfig,
+    inputFields: [
+        { key: 'workDir', labelKey: 'pipeline.inputs.workDir', type: 'string' },
+        { key: 'branch', labelKey: 'pipeline.inputs.branch', type: 'string' },
+        { key: 'commitHash', labelKey: 'pipeline.inputs.commitHash', type: 'string' },
+        { key: 'commitMessage', labelKey: 'pipeline.inputs.commitMessage', type: 'string' },
+    ],
 };

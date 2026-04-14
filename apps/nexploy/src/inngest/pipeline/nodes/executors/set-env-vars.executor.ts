@@ -3,6 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
+    ResolvedConfig,
 } from '@/types/pipeline.type';
 import { setEnvVarsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -12,7 +13,7 @@ export class SetEnvVarsExecutor implements INodeExecutor {
     readonly configSchema = setEnvVarsConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof setEnvVarsConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof setEnvVarsConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { logger, nodeId, nodeConfig, allOutputs } = ctx;
 

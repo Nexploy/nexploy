@@ -5,6 +5,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
+    ResolvedConfig,
 } from '@/types/pipeline.type';
 import { uploadArtifactConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { kyS3 } from '@/lib/api/kyS3';
@@ -12,13 +13,13 @@ import { tokenAwsStorage } from '@/lib/storage/token-aws-storage';
 import { z } from 'zod';
 
 export class UploadArtifactExecutor
-    implements INodeExecutor<z.infer<typeof uploadArtifactConfigSchema>>
+    implements INodeExecutor
 {
     readonly type = 'upload-artifact';
     readonly configSchema = uploadArtifactConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof uploadArtifactConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof uploadArtifactConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId } = ctx;
 

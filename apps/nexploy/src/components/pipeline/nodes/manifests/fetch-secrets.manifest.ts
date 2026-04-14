@@ -25,4 +25,8 @@ export const fetchSecretsManifest: NodeManifest = {
     },
     configSchema: fetchSecretsConfigSchema,
     configPanel: FetchSecretsConfig,
+    inputFields: [
+        { key: 'secretCount', labelKey: 'pipeline.inputs.secretCount', type: 'number' },
+        { key: 'provider', labelKey: 'pipeline.inputs.provider', type: 'string' },
+    ],
 };

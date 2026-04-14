@@ -25,4 +25,8 @@ export const httpRequestManifest: NodeManifest = {
     },
     configSchema: httpRequestConfigSchema,
     configPanel: HttpRequestConfig,
+    inputFields: [
+        { key: 'status', labelKey: 'pipeline.inputs.httpStatus', type: 'number' },
+        { key: 'body', labelKey: 'pipeline.inputs.httpBody', type: 'string' },
+    ],
 };

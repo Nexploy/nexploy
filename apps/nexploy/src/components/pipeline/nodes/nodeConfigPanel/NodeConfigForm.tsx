@@ -7,12 +7,7 @@ import { type Node } from '@xyflow/react';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { Button } from '@workspace/ui/components/button';
 import { Loader2 } from 'lucide-react';
-import {
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@workspace/ui/components/dialog';
+import { DialogDescription, DialogFooter, DialogHeader, DialogTitle, } from '@workspace/ui/components/dialog';
 import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
@@ -70,7 +65,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
 
     if (!ConfigComponent) {
         return (
-            <div className="flex max-h-[90vh] flex-col gap-4">
+            <div className="flex flex-col gap-4">
                 {!isViewingBuild && (
                     <DialogHeader>
                         <DialogTitle>{t(nodeName)}</DialogTitle>
@@ -97,20 +92,9 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
 
     return (
         <Form {...form}>
-            <form onSubmit={handleSubmit} className="flex max-h-[90vh] flex-col gap-4">
-                {!isViewingBuild && (
-                    <DialogHeader>
-                        <DialogTitle>{t(nodeName)}</DialogTitle>
-                        {nodeDesc && (
-                            <DialogDescription className={'text-xs'}>
-                                {t(nodeDesc)}
-                            </DialogDescription>
-                        )}
-                    </DialogHeader>
-                )}
-
+            <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
                 <ScrollAreaWithShadow bottomShadow className="h-full">
-                    <div className={cn('px-6 pb-6', isViewingBuild && 'px-4 pb-4')}>
+                    <div className={'p-4'}>
                         <fieldset
                             disabled={isViewingBuild}
                             className={cn(isViewingBuild && 'pointer-events-none')}
@@ -120,28 +104,26 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
                     </div>
                 </ScrollAreaWithShadow>
 
-                <DialogFooter className={cn('px-6 pb-6', isViewingBuild && 'px-4 pb-4')}>
-                    {!isViewingBuild && hasSchema && (
-                        <>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={handleResetPanelNode}
-                            >
-                                {tCommon('cancel')}
-                            </Button>
-                            <Button
-                                type="submit"
-                                size="sm"
-                                disabled={!form.formState.isDirty || action.isPending}
-                            >
-                                {action.isPending && <Loader2 className="animate-spin" />}
-                                {tConfig('save')}
-                            </Button>
-                        </>
-                    )}
-                </DialogFooter>
+                {!isViewingBuild && hasSchema && (
+                    <DialogFooter className={cn('bg-muted/40 items-center border-t p-4')}>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={handleResetPanelNode}
+                        >
+                            {tCommon('cancel')}
+                        </Button>
+                        <Button
+                            type="submit"
+                            size="sm"
+                            disabled={!form.formState.isDirty || action.isPending}
+                        >
+                            {action.isPending && <Loader2 className="animate-spin" />}
+                            {tConfig('save')}
+                        </Button>
+                    </DialogFooter>
+                )}
             </form>
         </Form>
     );

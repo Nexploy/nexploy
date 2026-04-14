@@ -25,4 +25,8 @@ export const gitTagManifest: NodeManifest = {
     },
     configSchema: gitTagConfigSchema,
     configPanel: GitTagConfig,
+    inputFields: [
+        { key: 'tagName', labelKey: 'pipeline.inputs.tagName', type: 'string' },
+        { key: 'remote', labelKey: 'pipeline.inputs.remote', type: 'string' },
+    ],
 };

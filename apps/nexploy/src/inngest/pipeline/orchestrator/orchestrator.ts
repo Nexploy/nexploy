@@ -1,47 +1,26 @@
-import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
-import { PipelineEdge, PipelineGraph, PipelineNode, } from '@workspace/typescript-interface/pipeline/node';
+import { type BuildConfig } from '@workspace/typescript-interface/inngest/build';
+import { type PipelineGraph, type PipelineNode } from '@workspace/typescript-interface/pipeline/node';
 import {
-    InngestStepRunner,
-    LogLevel,
-    NodeExecutionContext,
-    NodeExecutionResult,
-    NodeOutputData,
-    NodeOutputStore,
-    PipelineLogger,
-    PipelineReporter,
-    PipelineResult,
-    PipelineStatus,
+    type InngestStepRunner,
+    type NodeExecutionContext,
+    type NodeExecutionResult,
+    type NodeOutputData,
+    type NodeOutputStore,
+    type PipelineLogger,
+    type PipelineReporter,
+    type PipelineResult,
+    type PipelineStatus,
 } from '@/types/pipeline.type';
-import { getNodeExecutor } from './nodes/registry';
-import { analyzeGraph } from './utils/graphQueries';
-import { gitService } from './services/git.service';
-import { prisma } from '../../../prisma/prisma';
+import { getNodeExecutor } from '../nodes/registry';
+import { analyzeGraph } from '../utils/graphQueries';
+import { prisma } from '../../../../prisma/prisma';
+import {
+    formatErrorDetails,
+    getInputNodeIds,
+    resolveConfigRefs,
+} from './utils';
 
-function formatErrorDetails(error: unknown): string {
-    if (error instanceof Error) {
-        const details = [`Error: ${error.message}`, `Name: ${error.name}`];
-        if (process.env.NODE_ENV !== 'production') {
-            if (error.stack) details.push(`Stack trace:\n${error.stack}`);
-            const extra = Object.entries(error)
-                .filter(([k]) => !['message', 'name', 'stack'].includes(k))
-                .map(([k, v]) => `${k}: ${JSON.stringify(v)}`);
-            if (extra.length) details.push(`Additional info:\n${extra.join('\n')}`);
-        }
-        return details.join('\n');
-    }
-    return `Unknown error: ${JSON.stringify(error, null, 2)}`;
-}
-
-function getInputNodeIds(nodeId: string, edges: PipelineEdge[]): string[] {
-    return edges.filter((e) => e.target === nodeId).map((e) => e.source);
-}
-
-function findWorkDir(allOutputs: NodeOutputStore): string | undefined {
-    for (const output of allOutputs.values()) {
-        if (typeof output.workDir === 'string') return output.workDir;
-    }
-    return undefined;
-}
+export { createPipelineLogger } from './utils';
 
 export class PipelineOrchestrator {
     private startCancellationWatcher(
@@ -90,6 +69,7 @@ export class PipelineOrchestrator {
     ): Promise<PipelineResult> {
         const abortController = new AbortController();
         const allOutputs: NodeOutputStore = new Map();
+        const nodeTypeMap = new Map(graph.nodes.map((n) => [n.id, n.data.type]));
 
         let sorted: PipelineNode[];
         let reachableNodeIds: Set<string>;
@@ -170,8 +150,28 @@ export class PipelineOrchestrator {
                     continue;
                 }
 
+                const { resolved: resolvedConfig, warnings: refWarnings } = resolveConfigRefs(
+                    node.data.config ?? {},
+                    allOutputs,
+                    nodeTypeMap,
+                );
+
+                if (refWarnings.length > 0) {
+                    await inngestStep.run(`node-${node.id}`, async () => {
+                        await reporter.markFailed(node.id);
+                        for (const msg of refWarnings) {
+                            await logger.error(node.id, msg);
+                        }
+                    });
+                    await setStatusBuild('FAILED');
+                    return {
+                        success: false,
+                        error: refWarnings.join('\n'),
+                    };
+                }
+
                 if (executor.configSchema) {
-                    const validation = executor.configSchema.safeParse(node.data.config ?? {});
+                    const validation = executor.configSchema.safeParse(resolvedConfig);
                     if (!validation.success) {
                         await inngestStep.run(`node-${node.id}`, async () => {
                             await reporter.markNotConfigured(node.id);
@@ -201,7 +201,7 @@ export class PipelineOrchestrator {
                             buildId,
                             buildConfig: config,
                             nodeId: node.id,
-                            nodeConfig: node.data.config ?? {},
+                            nodeConfig: resolvedConfig,
                             inputNodes,
                             inputOutputs,
                             allOutputs,
@@ -253,7 +253,6 @@ export class PipelineOrchestrator {
             return { success: true };
         } catch (error) {
             const errorDetails = formatErrorDetails(error);
-            const workDir = findWorkDir(allOutputs);
 
             if (error instanceof Error && error.name === 'AbortError') {
                 for (const node of sorted) {
@@ -262,13 +261,6 @@ export class PipelineOrchestrator {
                     }
                 }
                 await setStatusBuild('CANCELLED');
-                if (workDir) {
-                    try {
-                        await gitService.cleanup(workDir);
-                    } catch (e) {
-                        console.error('Cleanup failed after cancellation:', e);
-                    }
-                }
                 return { success: false, error: 'Build cancelled' };
             }
 
@@ -281,31 +273,11 @@ export class PipelineOrchestrator {
                 /* ignore */
             }
 
-            if (workDir) {
-                try {
-                    await gitService.cleanup(workDir);
-                } catch (e) {
-                    await logger.error('cleanup-error', `Cleanup failed: ${formatErrorDetails(e)}`);
-                }
-            }
-
             throw error;
         } finally {
             clearInterval(cancellationWatcher);
         }
     }
-}
-
-export function createPipelineLogger(
-    publishLog: (step: string, message: string, level: LogLevel) => Promise<void>,
-): PipelineLogger {
-    return {
-        log: publishLog,
-        debug: (step, message) => publishLog(step, message, 'DEBUG'),
-        info: (step, message) => publishLog(step, message, 'INFO'),
-        warn: (step, message) => publishLog(step, message, 'WARN'),
-        error: (step, message) => publishLog(step, message, 'ERROR'),
-    };
 }
 
 export const pipelineOrchestrator = new PipelineOrchestrator();

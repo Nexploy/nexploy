@@ -1,14 +1,14 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, ResolvedConfig } from '@/types/pipeline.type';
 import { waitForPortConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { checkPort } from '@/inngest/pipeline/services/network.service';
 import { z } from 'zod';
 
-export class WaitForPortExecutor implements INodeExecutor<z.infer<typeof waitForPortConfigSchema>> {
+export class WaitForPortExecutor implements INodeExecutor {
     readonly type = 'wait-for-port';
     readonly configSchema = waitForPortConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof waitForPortConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof waitForPortConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, logger, nodeId, abortSignal } = ctx;
 

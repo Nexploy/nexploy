@@ -25,4 +25,8 @@ export const pushToRegistryManifest: NodeManifest = {
     },
     configSchema: pushToRegistryConfigSchema,
     configPanel: PushToRegistryConfig,
+    inputFields: [
+        { key: 'tag', labelKey: 'pipeline.inputs.imageTag', type: 'string' },
+        { key: 'registryUrl', labelKey: 'pipeline.inputs.registryUrl', type: 'string' },
+    ],
 };

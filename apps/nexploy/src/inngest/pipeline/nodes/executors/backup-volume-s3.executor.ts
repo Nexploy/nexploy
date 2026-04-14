@@ -3,6 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
+    ResolvedConfig,
 } from '@/types/pipeline.type';
 import { kyDocker, KyDockerOptions } from '@/lib/api/kyDocker';
 import { kyS3 } from '@/lib/api/kyS3';
@@ -17,7 +18,7 @@ export class BackupVolumeS3Executor implements INodeExecutor {
     readonly configSchema = backupVolumeS3ConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof backupVolumeS3ConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof backupVolumeS3ConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeId, nodeConfig, allOutputs, logger, abortSignal } = ctx;
 

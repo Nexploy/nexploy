@@ -3,6 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
+    ResolvedConfig,
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { scaleServiceConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -13,7 +14,7 @@ export class ScaleServiceExecutor implements INodeExecutor {
     readonly configSchema = scaleServiceConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof scaleServiceConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof scaleServiceConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 

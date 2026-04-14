@@ -5,6 +5,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
+    ResolvedConfig,
 } from '@/types/pipeline.type';
 import { fetchSecretsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -14,7 +15,7 @@ export class FetchSecretsExecutor implements INodeExecutor {
     readonly configSchema = fetchSecretsConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof fetchSecretsConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof fetchSecretsConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 

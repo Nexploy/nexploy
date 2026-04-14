@@ -1,4 +1,4 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, ResolvedConfig } from '@/types/pipeline.type';
 import { httpRequestConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 
@@ -7,7 +7,7 @@ export class HttpRequestExecutor implements INodeExecutor {
     readonly configSchema = httpRequestConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof httpRequestConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof httpRequestConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, logger, nodeId, abortSignal } = ctx;
 
@@ -22,7 +22,7 @@ export class HttpRequestExecutor implements INodeExecutor {
 
         const headers: Record<string, string> = {};
         for (const header of headersArr) {
-            if (header.key) headers[header.key] = header.value;
+            if (header.key) headers[header.key as string] = header.value as string;
         }
 
         await logger.info(nodeId, `${method} ${url}`);

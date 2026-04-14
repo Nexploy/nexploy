@@ -3,6 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
+    ResolvedConfig,
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { checkContainerLogsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -13,7 +14,7 @@ export class CheckContainerLogsExecutor implements INodeExecutor {
     readonly configSchema = checkContainerLogsConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof checkContainerLogsConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof checkContainerLogsConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 

@@ -3,6 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
+    ResolvedConfig,
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { createVolumeConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -13,7 +14,7 @@ export class CreateVolumeExecutor implements INodeExecutor {
     readonly configSchema = createVolumeConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof createVolumeConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof createVolumeConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 

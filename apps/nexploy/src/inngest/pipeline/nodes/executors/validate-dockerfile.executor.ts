@@ -3,6 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
+    ResolvedConfig,
 } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { validateDockerfileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -13,7 +14,7 @@ export class ValidateDockerfileExecutor implements INodeExecutor {
     readonly configSchema = validateDockerfileConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof validateDockerfileConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof validateDockerfileConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { allOutputs, logger, nodeId, nodeConfig } = ctx;
 

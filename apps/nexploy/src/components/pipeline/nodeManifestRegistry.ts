@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { type NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
-import { type NodeManifest } from './types/nodeManifest';
+import { type NodeManifest, type NodeInputField } from './types/nodeManifest';
 import { allBuiltinManifests } from './nodes/manifests';
 
 const builtinRegistry = new Map<string, NodeManifest>(
@@ -39,4 +39,8 @@ export function getConfigPanel(type: string) {
 
 export function getNodeLifecycle(type: string) {
     return getManifest(type)?.lifecycle;
+}
+
+export function getNodeInputFields(type: string): NodeInputField[] | undefined {
+    return getManifest(type)?.inputFields;
 }

@@ -1,15 +1,10 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useFormContext, useFieldArray } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { useFieldArray, useFormContext } from 'react-hook-form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
+import { RefAwareInput } from '@/components/pipeline/nodes/nodeConfigPanel/RefAwareInput';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { Switch } from '@workspace/ui/components/switch';
 import { Button } from '@workspace/ui/components/button';
@@ -39,8 +34,9 @@ export function HttpRequestConfig() {
                     <FormItem>
                         <FormLabel>{t('url')}</FormLabel>
                         <FormControl>
-                            <Input
+                            <RefAwareInput
                                 {...field}
+                                value={field.value ?? ''}
                                 placeholder="https://example.com/webhook"
                                 className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
@@ -65,7 +61,9 @@ export function HttpRequestConfig() {
                                 <SelectGroup>
                                     <SelectLabel>{t('httpMethod')}</SelectLabel>
                                     {['GET', 'POST', 'PUT', 'DELETE', 'PATCH'].map((m) => (
-                                        <SelectItem key={m} value={m}>{m}</SelectItem>
+                                        <SelectItem key={m} value={m}>
+                                            {m}
+                                        </SelectItem>
                                     ))}
                                 </SelectGroup>
                             </SelectContent>
@@ -84,7 +82,11 @@ export function HttpRequestConfig() {
                             render={({ field: f }) => (
                                 <FormItem className="flex-1">
                                     <FormControl>
-                                        <Input {...f} placeholder={t('varKey')} className="h-7 font-mono text-xs" />
+                                        <Input
+                                            {...f}
+                                            placeholder={t('varKey')}
+                                            className="h-7 font-mono text-xs"
+                                        />
                                     </FormControl>
                                 </FormItem>
                             )}
@@ -92,15 +94,25 @@ export function HttpRequestConfig() {
                         <FormField
                             control={form.control}
                             name={`headers.${index}.value`}
-                            render={({ field: f }) => (
+                            render={({ field }) => (
                                 <FormItem className="flex-1">
                                     <FormControl>
-                                        <Input {...f} placeholder={t('varValue')} className="h-7 font-mono text-xs" />
+                                        <RefAwareInput
+                                            {...field}
+                                            value={field.value ?? ''}
+                                            placeholder={t('varValue')}
+                                            className="h-7 font-mono text-xs"
+                                        />
                                     </FormControl>
                                 </FormItem>
                             )}
                         />
-                        <Button type="button" variant="destructiveGhost" size="icon" onClick={() => remove(index)}>
+                        <Button
+                            type="button"
+                            variant="destructiveGhost"
+                            size="icon"
+                            onClick={() => remove(index)}
+                        >
                             <Trash2 />
                         </Button>
                     </div>

@@ -3,6 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
+    ResolvedConfig,
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { runDockerAction } from '@/inngest/pipeline/utils/dockerAction';
@@ -14,7 +15,7 @@ export class RemoveContainerExecutor implements INodeExecutor {
     readonly configSchema = containerActionConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof containerActionConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof containerActionConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 

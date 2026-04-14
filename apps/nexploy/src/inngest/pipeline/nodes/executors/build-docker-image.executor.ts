@@ -3,6 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
+    ResolvedConfig,
 } from '@/types/pipeline.type';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
@@ -14,7 +15,7 @@ export class BuildDockerImageExecutor implements INodeExecutor {
     readonly configSchema = buildDockerImageConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof buildDockerImageConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof buildDockerImageConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { buildConfig, allOutputs, logger, nodeId, abortSignal, nodeConfig } = ctx;
 

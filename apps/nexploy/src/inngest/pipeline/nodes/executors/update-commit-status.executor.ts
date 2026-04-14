@@ -1,17 +1,17 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult, ResolvedConfig } from '@/types/pipeline.type';
 import { updateCommitStatusConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { githubUpdateCommitStatus } from '@/lib/api/github.api';
 import { gitlabUpdateCommitStatus } from '@/lib/api/gitlab.api';
 import { z } from 'zod';
 
 export class UpdateCommitStatusExecutor
-    implements INodeExecutor<z.infer<typeof updateCommitStatusConfigSchema>>
+    implements INodeExecutor
 {
     readonly type = 'update-commit-status';
     readonly configSchema = updateCommitStatusConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof updateCommitStatusConfigSchema>>,
+        ctx: NodeExecutionContext<ResolvedConfig<z.infer<typeof updateCommitStatusConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, logger, nodeId } = ctx;
 
