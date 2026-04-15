@@ -2,7 +2,7 @@
 
 import { PropsWithChildren } from 'react';
 import { type NodeFieldRef } from '@workspace/typescript-interface/pipeline/nodeFieldRef';
-import { parseRefString, stringifyRef } from '@/lib/nodeFieldRef';
+import { isNodeFieldRef } from '@/lib/nodeFieldRef';
 import { AlertTriangle, Variable, X } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { cn } from '@workspace/ui/lib/utils';
@@ -11,8 +11,8 @@ import { useValidAncestorNodeIds } from '@/contexts/RefValidationContext';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 interface RefAwareProps {
-    value: string;
-    onChange: (value: string) => void;
+    value: string | NodeFieldRef;
+    onChange: (value: string | NodeFieldRef) => void;
     emptyValue?: string;
     className?: string;
 }
@@ -27,7 +27,7 @@ export function RefAware({
     const t = useTranslations('repository.pipeline');
     const validAncestorIds = useValidAncestorNodeIds();
 
-    const ref = parseRefString(value);
+    const ref = isNodeFieldRef(value) ? value : null;
     const isRef = ref !== null;
     const isStale = isRef && validAncestorIds.size > 0 && !validAncestorIds.has(ref.nodeId);
 
@@ -37,7 +37,7 @@ export function RefAware({
         if (!data) return;
         try {
             const parsed = JSON.parse(data) as NodeFieldRef;
-            onChange(stringifyRef(parsed));
+            onChange({ nodeId: parsed.nodeId, inputKey: parsed.inputKey });
         } catch {}
     };
 

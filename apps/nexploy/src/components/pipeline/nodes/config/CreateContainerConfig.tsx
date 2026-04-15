@@ -210,6 +210,7 @@ export function CreateContainerConfig() {
                                                 <RefAware value={field.value} onChange={field.onChange}>
                                                     <Input
                                                         {...field}
+                                                        value={typeof field.value === 'string' ? field.value : ''}
                                                         placeholder={tDocker('hostPort')}
                                                     />
                                                 </RefAware>
@@ -227,6 +228,7 @@ export function CreateContainerConfig() {
                                                 <RefAware value={field.value} onChange={field.onChange}>
                                                     <Input
                                                         {...field}
+                                                        value={typeof field.value === 'string' ? field.value : ''}
                                                         placeholder={tDocker('containerPort')}
                                                     />
                                                 </RefAware>
@@ -306,6 +308,7 @@ export function CreateContainerConfig() {
                                                 <RefAware value={field.value} onChange={field.onChange}>
                                                     <Input
                                                         {...field}
+                                                        value={typeof field.value === 'string' ? field.value : ''}
                                                         placeholder={tDocker('keyPlaceholder')}
                                                         className="font-mono"
                                                     />
@@ -324,6 +327,7 @@ export function CreateContainerConfig() {
                                                 <RefAware value={field.value} onChange={field.onChange}>
                                                     <Input
                                                         {...field}
+                                                        value={typeof field.value === 'string' ? field.value : ''}
                                                         placeholder={tDocker('valuePlaceholder')}
                                                         className="font-mono"
                                                     />
@@ -383,6 +387,7 @@ export function CreateContainerConfig() {
                                                 <RefAware value={field.value} onChange={field.onChange}>
                                                     <Input
                                                         {...field}
+                                                        value={typeof field.value === 'string' ? field.value : ''}
                                                         placeholder={tDocker('hostPath')}
                                                     />
                                                 </RefAware>
@@ -400,6 +405,7 @@ export function CreateContainerConfig() {
                                                 <RefAware value={field.value} onChange={field.onChange}>
                                                     <Input
                                                         {...field}
+                                                        value={typeof field.value === 'string' ? field.value : ''}
                                                         placeholder={tDocker('containerPath')}
                                                     />
                                                 </RefAware>

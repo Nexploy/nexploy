@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { refable } from './nodeFieldRef.schema.ts';
 
 export const cloneRepositoryConfigSchema = z.object({
     branch: z.string().default('main'),
@@ -75,29 +76,29 @@ export const containerActionConfigSchema = z.object({
 });
 
 const createContainerPortSchema = z.object({
-    hostPort: z.string(),
-    containerPort: z.string(),
+    hostPort: refable(z.string()),
+    containerPort: refable(z.string()),
     protocol: z.enum(['tcp', 'udp']).default('tcp'),
 });
 
 const createContainerEnvVarSchema = z.object({
-    key: z.string(),
-    value: z.string(),
+    key: refable(z.string()),
+    value: refable(z.string()),
 });
 
 const createContainerVolumeSchema = z.object({
-    hostPath: z.string(),
-    containerPath: z.string(),
+    hostPath: refable(z.string()),
+    containerPath: refable(z.string()),
     readOnly: z.boolean().default(false),
 });
 
 export const createContainerConfigSchema = z.object({
-    containerName: z.string().optional(),
-    imageName: z.string(),
+    containerName: refable(z.string()).optional(),
+    imageName: refable(z.string()),
     restartPolicy: z
         .enum(['no', 'always', 'on-failure', 'unless-stopped'])
         .default('unless-stopped'),
-    networkName: z.string().optional(),
+    networkName: refable(z.string()).optional(),
     advanced: z.boolean().default(false),
     ports: z.array(createContainerPortSchema).default([]),
     envVars: z.array(createContainerEnvVarSchema).default([]),
@@ -168,9 +169,11 @@ export const runTestsConfigSchema = z.object({
 // ─── HTTP / Webhooks ─────────────────────────────────────────────────────────
 
 export const httpRequestConfigSchema = z.object({
-    url: z.string().min(1, 'URL is required').default(''),
+    url: refable(z.string().min(1, 'URL is required')).default(''),
     method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD']).default('POST'),
-    headers: z.array(z.object({ id: z.string(), key: z.string(), value: z.string() })).default([]),
+    headers: z
+        .array(z.object({ id: z.string(), key: z.string(), value: refable(z.string()) }))
+        .default([]),
     body: z.string().optional(),
     expectedStatus: z.number().default(200),
     continueOnError: z.boolean().default(false),
@@ -244,9 +247,9 @@ export const runMigrationConfigSchema = z.object({
 });
 
 export const backupVolumeS3ConfigSchema = z.object({
-    volumeName: z.string().min(1, 'Volume name is required').default(''),
+    volumeName: refable(z.string().min(1, 'Volume name is required')).default(''),
     accountId: z.string().min(1, 'AWS account ID is required').default(''),
-    bucket: z.string().min(1, 'Bucket name is required').default(''),
+    bucket: refable(z.string().min(1, 'Bucket name is required')).default(''),
 });
 
 // ─── Docker Swarm ─────────────────────────────────────────────────────────────

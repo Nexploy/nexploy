@@ -4,7 +4,13 @@ import { useMemo } from 'react';
 import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -22,7 +28,7 @@ import { findAncestor } from '@/inngest/pipeline/utils/graphQueries';
 import { useEnvironmentVolumes } from '@/hooks/sse/useEnvironmentVolumes';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { fetcherApi } from '@/lib/api/fetcherApi';
-import { isRefString } from '@/lib/nodeFieldRef';
+import { isNodeFieldRef } from '@/lib/nodeFieldRef';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
 export function BackupVolumeS3Config() {
@@ -60,7 +66,7 @@ export function BackupVolumeS3Config() {
                     const isStale =
                         !isLoading &&
                         !!field.value &&
-                        !isRefString(field.value) &&
+                        !isNodeFieldRef(field.value) &&
                         !volumes.find((v) => v.name === field.value);
 
                     return (

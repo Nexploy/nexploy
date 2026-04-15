@@ -36,8 +36,8 @@ export function NodeOutputsPanel({ node }: NodeOutputsPanelProps) {
     const outputFields = getNodeInputFields(nodeData.nodeType);
 
     return (
-        <div className="flex w-56 flex-col gap-4 overflow-hidden p-3">
-            <div>
+        <div className="flex w-56 flex-col gap-2 overflow-hidden">
+            <div className={'p-3 pb-0'}>
                 <div className="flex items-center gap-2">
                     <div className="flex size-6 items-center justify-center rounded-md bg-emerald-400/10">
                         <ArrowRightFromLine className="size-3.5 text-emerald-400" />
@@ -61,8 +61,8 @@ export function NodeOutputsPanel({ node }: NodeOutputsPanelProps) {
                     </p>
                 </div>
             ) : (
-                <ScrollAreaWithShadow bottomShadow className="min-h-0 flex-1 overflow-hidden">
-                    <div className="flex flex-col gap-1.5">
+                <ScrollAreaWithShadow bottomShadow className="h-full overflow-hidden">
+                    <div className="flex flex-col gap-1.5 p-3 pt-0">
                         {outputFields.map((field) => (
                             <OutputChip key={field.key} label={field.key} />
                         ))}

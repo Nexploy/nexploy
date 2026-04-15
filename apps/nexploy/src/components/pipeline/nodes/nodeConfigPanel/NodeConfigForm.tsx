@@ -7,12 +7,7 @@ import { type Node } from '@xyflow/react';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { Button } from '@workspace/ui/components/button';
 import { Loader2 } from 'lucide-react';
-import {
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@workspace/ui/components/dialog';
+import { DialogDescription, DialogFooter, DialogHeader, DialogTitle, } from '@workspace/ui/components/dialog';
 import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
@@ -115,12 +110,12 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
 
     return (
         <Form {...form}>
-            <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 flex-col overflow-hidden">
-                <ScrollAreaWithShadow className="min-h-0 min-w-0 flex-1">
+            <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 flex-col">
+                <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <fieldset
                         disabled={isViewingBuild}
                         className={cn(
-                            'grid grid-cols-1 overflow-hidden p-4',
+                            'grid grid-cols-1 p-4',
                             isViewingBuild && 'pointer-events-none',
                         )}
                     >

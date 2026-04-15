@@ -6,4 +6,6 @@ export const nodeFieldRefSchema = z.object({
     nodeType: z.string().optional(),
 });
 
-export type NodeFieldRefSchema = typeof nodeFieldRefSchema;
+export function refable<T extends z.ZodTypeAny>(schema: T) {
+    return z.union([nodeFieldRefSchema, schema]);
+}

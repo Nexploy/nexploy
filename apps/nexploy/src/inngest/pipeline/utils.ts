@@ -1,7 +1,7 @@
 import { type NodeFieldRef } from '@workspace/typescript-interface/pipeline/nodeFieldRef';
 import { type PipelineEdge } from '@workspace/typescript-interface/pipeline/node';
 import { type LogLevel, type NodeOutputStore } from '@/types/pipeline.type';
-import { isNodeFieldRef, isRefString, parseRefString } from '@/lib/nodeFieldRef';
+import { isNodeFieldRef } from '@/lib/nodeFieldRef';
 
 export function formatErrorDetails(error: unknown): string {
     if (!(error instanceof Error)) {
@@ -37,10 +37,6 @@ function resolveFieldValue(
     nodeTypeMap: Map<string, string>,
     warnings: Set<string>,
 ): unknown {
-    if (typeof value === 'string' && isRefString(value)) {
-        return resolveRef(parseRefString(value)!, allOutputs, nodeTypeMap, warnings);
-    }
-
     if (isNodeFieldRef(value)) {
         return resolveRef(value as NodeFieldRef, allOutputs, nodeTypeMap, warnings);
     }
