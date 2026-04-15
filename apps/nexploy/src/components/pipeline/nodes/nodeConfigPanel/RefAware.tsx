@@ -54,9 +54,7 @@ export function RefAware({
                 className={cn(
                     'flex h-9 items-center gap-1.5 rounded-md border px-2 text-xs',
                     'border-dashed',
-                    isStale
-                        ? 'border-destructive/60 bg-destructive/10 text-destructive'
-                        : 'border-border bg-muted/30',
+                    isStale && 'border-destructive/60 bg-destructive/10 text-destructive',
                     className,
                 )}
                 onDrop={handleDrop}
@@ -65,7 +63,7 @@ export function RefAware({
                 {isStale ? (
                     <AlertTriangle className="text-destructive size-3 shrink-0" />
                 ) : (
-                    <Variable className="text-primary size-3 shrink-0" />
+                    <Variable className="size-3 shrink-0 text-amber-400" />
                 )}
                 <span className="flex-1 truncate font-mono">{ref.inputKey}</span>
                 <Button
@@ -100,7 +98,7 @@ export function RefAware({
     }
 
     return (
-        <div onDrop={handleDrop} onDragOver={handleDragOver}>
+        <div className={className} onDrop={handleDrop} onDragOver={handleDragOver}>
             {children}
         </div>
     );

@@ -25,4 +25,9 @@ export const createContainerManifest: NodeManifest = {
     },
     configSchema: createContainerConfigSchema,
     configPanel: CreateContainerConfig,
+    inputFields: [
+        { key: 'containerId', labelKey: 'pipeline.inputs.containerId', type: 'string' },
+        { key: 'containerName', labelKey: 'pipeline.inputs.containerName', type: 'string' },
+        { key: 'imageName', labelKey: 'pipeline.inputs.imageName', type: 'string' },
+    ],
 };

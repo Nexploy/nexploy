@@ -31,13 +31,13 @@ function InputChip({ nodeId, nodeType, field }: InputChipProps) {
             draggable
             onDragStart={handleDragStart}
             className={cn(
-                'flex cursor-grab items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs',
-                'bg-background hover:bg-muted active:cursor-grabbing',
-                'transition-colors select-none',
+                'group relative flex cursor-grab items-center gap-2 rounded-lg border px-2.5 py-2 text-xs',
+                'bg-background hover:border-amber-400/30 hover:bg-amber-400/10 active:cursor-grabbing',
+                'transition-all duration-150 select-none',
             )}
         >
-            <Variable className="text-primary size-3 shrink-0" />
-            <span className="font-mono">{field.key}</span>
+            <Variable className="size-3 shrink-0 text-amber-400/60 group-hover:text-amber-400" />
+            <span className="min-w-0 flex-1 truncate font-mono text-xs">{field.key}</span>
         </div>
     );
 }
@@ -51,39 +51,58 @@ export function AvailableInputsPanel({ nodeId }: AvailableInputsPanelProps) {
     const ancestors = useAncestorInputFields(nodeId);
 
     return (
-        <div className="flex w-60 flex-col gap-2 py-3">
-            <div className={'flex flex-col'}>
-                <span className="text-foreground shrink-0 px-4 text-sm font-semibold">
-                    {t('availableInputs')}
-                </span>
-                <p className="text-muted-foreground shrink-0 px-4 text-[11px]">{t('dragHint')}</p>
-            </div>
-            {ancestors.length === 0 && (
-                <p className="text-muted-foreground border-y border-dashed p-1 text-center text-xs">
-                    {t('noInputsAvailable')}
-                </p>
-            )}
-            <ScrollAreaWithShadow bottomShadow className={'h-full overflow-hidden'}>
-                <div className="flex flex-col gap-4 px-4">
-                    {ancestors.map(({ nodeId: ancestorId, nodeType, inputFields }, index) => (
-                        <div key={ancestorId} className="space-y-1.5">
-                            <p className="text-muted-foreground flex items-center gap-2 truncate text-[10px] font-medium tracking-wider uppercase">
-                                {index + 1}) {t(`nodes.${nodeType}.name`)}
-                            </p>
-                            <div className="space-y-1">
-                                {inputFields.map((field) => (
-                                    <InputChip
-                                        key={field.key}
-                                        nodeId={ancestorId}
-                                        nodeType={nodeType}
-                                        field={field}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    ))}
+        <div className="flex w-56 flex-col gap-4 overflow-hidden p-3">
+            <div>
+                <div className="flex items-center gap-2">
+                    <div className="flex size-6 items-center justify-center rounded-md bg-amber-400/10">
+                        <Variable className="size-3.5 text-amber-400" />
+                    </div>
+                    <span className="text-foreground text-sm font-semibold">
+                        {t('availableInputs')}
+                    </span>
                 </div>
-            </ScrollAreaWithShadow>
+                <p className="text-muted-foreground mt-1.5 text-[11px] leading-relaxed">
+                    {t('dragHint')}
+                </p>
+            </div>
+
+            {!ancestors.length ? (
+                <div className="flex flex-1 flex-col items-center justify-center gap-2 pb-24 text-center">
+                    <div className="flex size-6 items-center justify-center rounded-md bg-amber-400/10">
+                        <Variable className="size-3.5 text-amber-400" />
+                    </div>
+                    <p className="text-muted-foreground text-xs leading-relaxed">
+                        {t('noInputsAvailable')}
+                    </p>
+                </div>
+            ) : (
+                <ScrollAreaWithShadow bottomShadow className="min-h-0 flex-1 overflow-hidden">
+                    <div className="flex flex-col gap-3">
+                        {ancestors.map(({ nodeId: ancestorId, nodeType, inputFields }, index) => (
+                            <div key={ancestorId} className="space-y-1.5">
+                                <div className="flex items-center gap-1.5">
+                                    <span className="bg-muted text-muted-foreground flex size-4 shrink-0 items-center justify-center rounded text-[9px] font-bold">
+                                        {index + 1}
+                                    </span>
+                                    <p className="text-muted-foreground truncate text-[10px] font-medium tracking-wide uppercase">
+                                        {t(`nodes.${nodeType}.name`)}
+                                    </p>
+                                </div>
+                                <div className="flex flex-col gap-1.5">
+                                    {inputFields.map((field) => (
+                                        <InputChip
+                                            key={field.key}
+                                            nodeId={ancestorId}
+                                            nodeType={nodeType}
+                                            field={field}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </ScrollAreaWithShadow>
+            )}
         </div>
     );
 }

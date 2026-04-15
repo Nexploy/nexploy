@@ -164,10 +164,15 @@ export function CreateContainerConfig() {
                     <FormItem>
                         <FormLabel>{t('createContainerNetwork')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder={t('createContainerNetworkPlaceholder')}
-                            />
+                            <RefAware
+                                value={field.value}
+                                onChange={field.onChange}
+                            >
+                                <Input
+                                    {...field}
+                                    placeholder={t('createContainerNetworkPlaceholder')}
+                                />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -202,10 +207,12 @@ export function CreateContainerConfig() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={tDocker('hostPort')}
-                                                />
+                                                <RefAware value={field.value} onChange={field.onChange}>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder={tDocker('hostPort')}
+                                                    />
+                                                </RefAware>
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -217,10 +224,12 @@ export function CreateContainerConfig() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={tDocker('containerPort')}
-                                                />
+                                                <RefAware value={field.value} onChange={field.onChange}>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder={tDocker('containerPort')}
+                                                    />
+                                                </RefAware>
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -294,11 +303,13 @@ export function CreateContainerConfig() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={tDocker('keyPlaceholder')}
-                                                    className="font-mono"
-                                                />
+                                                <RefAware value={field.value} onChange={field.onChange}>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder={tDocker('keyPlaceholder')}
+                                                        className="font-mono"
+                                                    />
+                                                </RefAware>
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -310,11 +321,13 @@ export function CreateContainerConfig() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={tDocker('valuePlaceholder')}
-                                                    className="font-mono"
-                                                />
+                                                <RefAware value={field.value} onChange={field.onChange}>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder={tDocker('valuePlaceholder')}
+                                                        className="font-mono"
+                                                    />
+                                                </RefAware>
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -367,10 +380,12 @@ export function CreateContainerConfig() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={tDocker('hostPath')}
-                                                />
+                                                <RefAware value={field.value} onChange={field.onChange}>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder={tDocker('hostPath')}
+                                                    />
+                                                </RefAware>
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -382,10 +397,12 @@ export function CreateContainerConfig() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={tDocker('containerPath')}
-                                                />
+                                                <RefAware value={field.value} onChange={field.onChange}>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder={tDocker('containerPath')}
+                                                    />
+                                                </RefAware>
                                             </FormControl>
                                         </FormItem>
                                     )}

@@ -4,13 +4,7 @@ import { useMemo } from 'react';
 import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -70,52 +64,57 @@ export function BackupVolumeS3Config() {
                         !volumes.find((v) => v.name === field.value);
 
                     return (
-                        <FormItem>
+                        <FormItem className={'flex flex-col'}>
                             <FormLabel>{t('volume')}</FormLabel>
                             <FormControl>
                                 <RefAware value={field.value} onChange={field.onChange}>
-                                    <Select
-                                        {...field}
-                                        onValueChange={field.onChange}
-                                        disabled={isLoading}
-                                    >
-                                        <SelectTrigger className="w-full overflow-hidden data-[placeholder]:!pl-3">
-                                            {isStale ? (
-                                                <span className="flex items-center gap-1.5 pl-3">
-                                                    <AlertTriangle className="h-3 w-3 shrink-0" />
-                                                    {field.value ?? t('volumeUnavailable')}
-                                                </span>
-                                            ) : (
-                                                <SelectValue
-                                                    placeholder={t('volumeNamePlaceholder')}
-                                                />
-                                            )}
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectLabel>{t('volumesSelectLabel')}</SelectLabel>
-                                                {volumes.length === 0 ? (
-                                                    <div className="text-muted-foreground px-2 py-1.5 text-xs">
-                                                        {t('noVolumesFound')}
-                                                    </div>
+                                    {isLoading ? (
+                                        <p className="text-muted-foreground bg-input/30 border-input flex h-9 items-center gap-1 rounded-md border px-3 py-2 text-sm">
+                                            <Loader2 className="h-3 w-3 animate-spin" />
+                                            {t('volumesLoading')}
+                                        </p>
+                                    ) : (
+                                        <Select
+                                            {...field}
+                                            onValueChange={field.onChange}
+                                            disabled={isLoading}
+                                        >
+                                            <SelectTrigger className="max-w-full min-w-40 data-[placeholder]:!pl-3">
+                                                {isStale ? (
+                                                    <span className="flex min-w-0 items-center gap-1.5 pl-3">
+                                                        <AlertTriangle className="h-3 w-3 shrink-0" />
+                                                        <span className="truncate">
+                                                            {field.value ?? t('volumeUnavailable')}
+                                                        </span>
+                                                    </span>
                                                 ) : (
-                                                    volumes.map((v) => (
-                                                        <SelectItem key={v.name} value={v.name}>
-                                                            {v.name}
-                                                        </SelectItem>
-                                                    ))
+                                                    <SelectValue
+                                                        placeholder={t('volumeNamePlaceholder')}
+                                                    />
                                                 )}
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectLabel>
+                                                        {t('volumesSelectLabel')}
+                                                    </SelectLabel>
+                                                    {volumes.length === 0 ? (
+                                                        <div className="text-muted-foreground px-2 py-1.5 text-xs">
+                                                            {t('noVolumesFound')}
+                                                        </div>
+                                                    ) : (
+                                                        volumes.map((v) => (
+                                                            <SelectItem key={v.name} value={v.name}>
+                                                                {v.name}
+                                                            </SelectItem>
+                                                        ))
+                                                    )}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    )}
                                 </RefAware>
                             </FormControl>
-                            {isLoading && (
-                                <p className="text-muted-foreground flex items-center gap-1 text-xs">
-                                    <Loader2 className="h-3 w-3 animate-spin" />
-                                    {t('volumesLoading')}
-                                </p>
-                            )}
                             {isStale && (
                                 <p className="flex items-start gap-1 text-xs text-amber-500">
                                     <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />

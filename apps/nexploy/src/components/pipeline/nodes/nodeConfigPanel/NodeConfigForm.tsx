@@ -115,18 +115,21 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
 
     return (
         <Form {...form}>
-            <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
-                <ScrollAreaWithShadow className="h-full overflow-hidden">
+            <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 flex-col overflow-hidden">
+                <ScrollAreaWithShadow className="min-h-0 min-w-0 flex-1">
                     <fieldset
                         disabled={isViewingBuild}
-                        className={cn('p-4', isViewingBuild && 'pointer-events-none')}
+                        className={cn(
+                            'grid grid-cols-1 overflow-hidden p-4',
+                            isViewingBuild && 'pointer-events-none',
+                        )}
                     >
                         <ConfigComponent />
                     </fieldset>
                 </ScrollAreaWithShadow>
 
                 {!isViewingBuild && hasSchema && (
-                    <DialogFooter className={cn('bg-muted/40 items-center border-t p-4')}>
+                    <DialogFooter className={cn('bg-muted/40 border-t p-4')}>
                         <Button
                             type="button"
                             variant="outline"

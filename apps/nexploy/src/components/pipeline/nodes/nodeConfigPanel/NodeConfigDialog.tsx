@@ -18,6 +18,7 @@ import { type NodeData, type NodeId } from '@workspace/typescript-interface/pipe
 import { NodeConfigForm } from './NodeConfigForm';
 import { NodeLogsPanel } from './NodeLogsPanel';
 import { AvailableInputsPanel } from '@/components/pipeline/nodes/nodeConfigPanel/AvailableInputsPanel';
+import { NodeOutputsPanel } from '@/components/pipeline/nodes/nodeConfigPanel/NodeOutputsPanel';
 import { RefValidationProvider } from '@/contexts/RefValidationContext';
 import { cn } from '@workspace/ui/lib/utils';
 
@@ -50,7 +51,7 @@ export function NodeConfigDialog() {
             <DialogContent
                 aria-describedby={undefined}
                 className={cn(
-                    'flex !h-[80%] !max-w-[60%] flex-col gap-0 !p-0',
+                    'flex !h-[80%] !max-w-[70%] flex-col gap-0 !p-0',
                     isViewing && '!max-w-[80%]',
                 )}
                 onOpenAutoFocus={(e) => e.preventDefault()}
@@ -106,10 +107,12 @@ export function NodeConfigDialog() {
                                     </DialogFooter>
                                 </>
                             ) : (
-                                <div className="flex flex-1 overflow-hidden">
+                                <div className="flex min-h-0 flex-1 overflow-hidden">
                                     <AvailableInputsPanel nodeId={node.id} />
                                     <Separator orientation="vertical" />
                                     <NodeConfigForm node={node} />
+                                    <Separator orientation="vertical" />
+                                    <NodeOutputsPanel node={node} />
                                 </div>
                             )}
                         </RefValidationProvider>

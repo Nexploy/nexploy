@@ -826,6 +826,9 @@
       "environmentId": "Environment ID",
       "registryUrl": "Registry URL"
     },
-    "noInputsAvailable": "No inputs available from previous nodes"
+    "noInputsAvailable": "No inputs available from previous nodes",
+    "nodeOutputs": "Node outputs",
+    "nodeOutputsHint": "Values this node will produce for downstream nodes",
+    "noOutputs": "This node produces no outputs"
   }
 }

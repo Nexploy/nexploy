@@ -825,6 +825,9 @@
       "environmentId": "ID de l'environnement",
       "registryUrl": "URL du registre"
     },
-    "noInputsAvailable": "Aucune entrée disponible des noeuds précédents"
+    "noInputsAvailable": "Aucune entrée disponible des noeuds précédents",
+    "nodeOutputs": "Sorties du nœud",
+    "nodeOutputsHint": "Valeurs que ce nœud produira pour les nœuds en aval",
+    "noOutputs": "Ce nœud ne produit aucune sortie"
   }
 }
