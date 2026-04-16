@@ -11,8 +11,8 @@ export const webhookCloneConfigSchema = z.object({
 });
 
 export const buildDockerImageConfigSchema = z.object({
-    dockerfilePath: z.string().min(1, 'Dockerfile path is required').default('Dockerfile'),
-    dockerfileFilePath: z.string().optional(),
+    dockerfilePath: refable(z.string().min(1, 'Dockerfile path is required')).default('Dockerfile'),
+    dockerfileFilePath: refable(z.string()).optional(),
 });
 
 export const validateDockerfileConfigSchema = z.object({
@@ -72,7 +72,6 @@ export const sendNotificationConfigSchema = z.object({
 
 export const containerActionConfigSchema = z.object({
     containerId: z.string().min(1, 'Container is required').default(''),
-    containerName: z.string().optional(),
 });
 
 const createContainerPortSchema = z.object({

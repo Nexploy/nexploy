@@ -646,6 +646,7 @@
       "environment": "Environment",
       "selectEnvironment": "Select an environment",
       "container": "Container",
+      "containerId": "Container Id",
       "containerNamePlaceholder": "Select a container",
       "containerNoEnvironmentHint": "Connect this node to a <bold>Set Environment</bold> node to pick a container from a list.",
       "containersSelectLabel": "Containers list",

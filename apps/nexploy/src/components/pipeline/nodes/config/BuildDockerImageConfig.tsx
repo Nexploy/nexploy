@@ -2,14 +2,9 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware.tsx';
 
 export function BuildDockerImageConfig() {
     const t = useTranslations('repository.pipeline.config');
@@ -23,7 +18,9 @@ export function BuildDockerImageConfig() {
                     <FormItem>
                         <FormLabel>{t('dockerfilePath')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="Dockerfile" />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input {...field} placeholder="Dockerfile" />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -36,7 +33,12 @@ export function BuildDockerImageConfig() {
                     <FormItem>
                         <FormLabel>{t('dockerfileFilePath')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder={t('dockerfileFilePathPlaceholder')} />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input
+                                    {...field}
+                                    placeholder={t('dockerfileFilePathPlaceholder')}
+                                />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

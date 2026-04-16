@@ -1,5 +1,6 @@
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { httpRequestConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { z } from 'zod';
 
 export class HttpRequestExecutor implements INodeExecutor {
@@ -7,7 +8,7 @@ export class HttpRequestExecutor implements INodeExecutor {
     readonly configSchema = httpRequestConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof httpRequestConfigSchema>>,
+        ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof httpRequestConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, logger, nodeId, abortSignal } = ctx;
 

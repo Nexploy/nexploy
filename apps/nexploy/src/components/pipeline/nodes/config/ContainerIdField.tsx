@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -22,11 +16,9 @@ import { usePipelineContext } from '@/contexts/PipelineContext';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
 import { findAncestor } from '@/inngest/pipeline/utils/graphQueries';
-import * as React from 'react';
 import { useMemo } from 'react';
 import { useEnvironmentContainers } from '@/hooks/sse/useEnvironmentContainers';
 import { AlertTriangle, Loader2 } from 'lucide-react';
-import { stripLeadingSlash } from '@/utils/url';
 
 export function ContainerIdField() {
     const t = useTranslations('repository.pipeline.config');
@@ -48,8 +40,6 @@ export function ContainerIdField() {
 
     const { containers, isLoading } = useEnvironmentContainers(environmentId);
 
-    const savedContainerName = form.watch('containerName');
-
     return (
         <FormField
             control={form.control}
@@ -63,20 +53,9 @@ export function ContainerIdField() {
 
                 return (
                     <FormItem>
-                        <FormLabel>{t('container')}</FormLabel>
+                        <FormLabel>{t('containerId')}</FormLabel>
                         <FormControl>
-                            <Select
-                                {...field}
-                                onValueChange={(value) => {
-                                    field.onChange(value);
-                                    const container = containers.find((c) => c.id === value)!;
-                                    form.setValue(
-                                        'containerName',
-                                        stripLeadingSlash(container.name),
-                                    );
-                                }}
-                                disabled={isLoading}
-                            >
+                            <Select {...field} onValueChange={field.onChange} disabled={isLoading}>
                                 <SelectTrigger
                                     className={
                                         'min-w-40 overflow-hidden !pl-0 data-[placeholder]:!pl-3'
@@ -90,9 +69,7 @@ export function ContainerIdField() {
                                     ) : isStale ? (
                                         <span className="flex items-center gap-1.5 pl-3">
                                             <AlertTriangle className="h-3 w-3 shrink-0" />
-                                            {savedContainerName
-                                                ? savedContainerName
-                                                : t('containerUnavailable')}
+                                            {t('containerUnavailable')}
                                         </span>
                                     ) : (
                                         <SelectValue placeholder={t('containerNamePlaceholder')} />
@@ -106,29 +83,28 @@ export function ContainerIdField() {
                                                 {t('noContainersFound')}
                                             </span>
                                         ) : (
-                                            containers.map((container) => {
-                                                const name = stripLeadingSlash(container.name);
-                                                return (
-                                                    <SelectItem
-                                                        key={container.id}
-                                                        value={container.id}
-                                                        className="pl-0"
+                                            containers.map((container) => (
+                                                <SelectItem
+                                                    key={container.id}
+                                                    value={container.id}
+                                                    className="pl-0"
+                                                >
+                                                    <Status
+                                                        className="m-0 flex-1 rounded-none border-0 p-0 pl-2.5 text-sm"
+                                                        status={
+                                                            container.state === 'running'
+                                                                ? 'online'
+                                                                : 'offline'
+                                                        }
+                                                        variant="outline"
                                                     >
-                                                        <Status
-                                                            className="m-0 flex-1 rounded-none border-0 p-0 pl-2.5 text-sm"
-                                                            status={
-                                                                container.state === 'running'
-                                                                    ? 'online'
-                                                                    : 'offline'
-                                                            }
-                                                            variant="outline"
-                                                        >
-                                                            <StatusIndicator className="pl-2" />
-                                                            <span className="truncate">{name}</span>
-                                                        </Status>
-                                                    </SelectItem>
-                                                );
-                                            })
+                                                        <StatusIndicator className="pl-2" />
+                                                        <span className="truncate">
+                                                            {container.name}
+                                                        </span>
+                                                    </Status>
+                                                </SelectItem>
+                                            ))
                                         )}
                                     </SelectGroup>
                                 </SelectContent>

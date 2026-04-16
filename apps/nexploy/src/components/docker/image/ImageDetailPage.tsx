@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Trash } from 'lucide-react';
+import { Box, Play, Trash } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useImageStore } from '@/stores/docker/useImageStore';
 import { CardImageDetails } from '@/components/docker/image/cards/CardImageDetails';
@@ -9,7 +9,7 @@ import { Button } from '@workspace/ui/components/button';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { onImageAction } from '@/actions/docker/image/imageAction.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { CardImageConfig } from '@/components/docker/image/cards/CardImageConfig';
@@ -28,6 +28,10 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
     const router = useRouter();
 
     const imageName = image?.repoTags?.[0] || image?.name?.[0] || imageId.substring(0, 12);
+
+    const handleUse = () => {
+        router.push(`/docker/containers/create?image=${image?.repoTags[0]}`);
+    };
 
     const handleRemove = () => {
         openAlertDialog({
@@ -66,6 +70,18 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
                     <p className="text-muted-foreground text-sm">{t('description')}</p>
                 </div>
                 <div className="mt-5 flex shrink-0 items-start gap-1">
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                size="icon"
+                                onClick={handleUse}
+                                disabled={!image?.repoTags?.length}
+                            >
+                                <Play className="size-4" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>{t('useImage')}</TooltipContent>
+                    </Tooltip>
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button variant="destructive" size="icon" onClick={handleRemove}>

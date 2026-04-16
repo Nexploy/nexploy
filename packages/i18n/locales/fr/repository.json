@@ -645,6 +645,7 @@
       "environment": "Environnement",
       "selectEnvironment": "Sélectionner un environnement",
       "container": "Conteneur",
+      "containerId": "Id du conteneur",
       "containerNamePlaceholder": "Sélectionner un conteneur",
       "containerNoEnvironmentHint": "Reliez ce nœud à un nœud <bold>Définir un environnement</bold> pour sélectionner un conteneur dans une liste.",
       "containersSelectLabel": "Liste des conteneurs",

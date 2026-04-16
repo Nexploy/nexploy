@@ -8,6 +8,7 @@ import {
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
 import { buildDockerImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { z } from 'zod';
 
 export class BuildDockerImageExecutor implements INodeExecutor {
@@ -15,7 +16,7 @@ export class BuildDockerImageExecutor implements INodeExecutor {
     readonly configSchema = buildDockerImageConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof buildDockerImageConfigSchema>>,
+        ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof buildDockerImageConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { buildConfig, allOutputs, logger, nodeId, abortSignal, nodeConfig } = ctx;
 

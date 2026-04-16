@@ -165,6 +165,7 @@
     "globalScope": "global",
     "imageDetail": {
         "description": "Détails et informations de l'image Docker",
+        "useImage": "Utiliser cette image pour créer un conteneur",
         "deleteImage": "Supprimer cette image",
         "exportImage": "Exporter cette image"
     },
