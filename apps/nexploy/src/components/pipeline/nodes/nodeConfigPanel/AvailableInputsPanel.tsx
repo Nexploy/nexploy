@@ -97,22 +97,6 @@ export function AvailableInputsPanel({ nodeId }: AvailableInputsPanelProps) {
                                             field={field}
                                         />
                                     ))}
-                                    {inputFields.map((field) => (
-                                        <InputChip
-                                            key={field.key}
-                                            nodeId={ancestorId}
-                                            nodeType={nodeType}
-                                            field={field}
-                                        />
-                                    ))}
-                                    {inputFields.map((field) => (
-                                        <InputChip
-                                            key={field.key}
-                                            nodeId={ancestorId}
-                                            nodeType={nodeType}
-                                            field={field}
-                                        />
-                                    ))}
                                 </div>
                             </div>
                         ))}
