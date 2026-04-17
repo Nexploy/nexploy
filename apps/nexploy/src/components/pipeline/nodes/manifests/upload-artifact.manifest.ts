@@ -25,4 +25,9 @@ export const uploadArtifactManifest: NodeManifest = {
     },
     configSchema: uploadArtifactConfigSchema,
     configPanel: UploadArtifactConfig,
+    inputFields: [
+        { key: 'uploaded', labelKey: 'pipeline.inputs.uploaded', descriptionKey: 'pipeline.inputs.desc_uploaded', type: 'input' },
+        { key: 'bucket', labelKey: 'pipeline.inputs.bucket', descriptionKey: 'pipeline.inputs.desc_bucket', type: 'input' },
+        { key: 'destinationPath', labelKey: 'pipeline.inputs.destinationPath', descriptionKey: 'pipeline.inputs.desc_destinationPath', type: 'input' },
+    ],
 };

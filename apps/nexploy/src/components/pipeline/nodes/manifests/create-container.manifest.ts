@@ -26,8 +26,8 @@ export const createContainerManifest: NodeManifest = {
     configSchema: createContainerConfigSchema,
     configPanel: CreateContainerConfig,
     inputFields: [
-        { key: 'containerId', labelKey: 'pipeline.inputs.containerId', type: 'input' },
-        { key: 'containerName', labelKey: 'pipeline.inputs.containerName', type: 'input' },
-        { key: 'imageName', labelKey: 'pipeline.inputs.imageName', type: 'input' },
+        { key: 'containerId', labelKey: 'pipeline.inputs.containerId', descriptionKey: 'pipeline.inputs.desc_containerId', type: 'input' },
+        { key: 'containerName', labelKey: 'pipeline.inputs.containerName', descriptionKey: 'pipeline.inputs.desc_containerName', type: 'input' },
+        { key: 'imageName', labelKey: 'pipeline.inputs.imageName', descriptionKey: 'pipeline.inputs.desc_imageName', type: 'input' },
     ],
 };

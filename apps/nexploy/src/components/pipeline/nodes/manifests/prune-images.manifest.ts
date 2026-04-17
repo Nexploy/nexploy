@@ -25,4 +25,8 @@ export const pruneImagesManifest: NodeManifest = {
     },
     configSchema: pruneImagesConfigSchema,
     configPanel: PruneImagesConfig,
+    inputFields: [
+        { key: 'removedImages', labelKey: 'pipeline.inputs.removedImages', descriptionKey: 'pipeline.inputs.desc_removedImages', type: 'input' },
+        { key: 'reclaimedSpace', labelKey: 'pipeline.inputs.reclaimedSpace', descriptionKey: 'pipeline.inputs.desc_reclaimedSpace', type: 'input' },
+    ],
 };

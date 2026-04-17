@@ -12,8 +12,6 @@ import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { onContainerCreateAction } from '@/actions/docker/container/containerCreate.action';
-import { onImagePullAction } from '@/actions/docker/image/imagePullAction.action';
-import { useImageStore } from '@/stores/docker/useImageStore';
 import { InputAutoCompleteOption } from '@workspace/ui/components/search-command';
 import { useTranslations } from 'next-intl';
 import { ContainerTemplates } from '@/components/docker/containers/create/ContainerTemplates';
@@ -32,10 +30,8 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
     const searchParams = useSearchParams();
     const imageFromUrl = searchParams.get('image') || '';
 
-    const [createStep, setCreateStep] = useState<'idle' | 'pulling' | 'creating'>('idle');
+    const [isCreating, setIsCreating] = useState(false);
 
-    const getImagesByTag = useImageStore((state) => state.getImagesByTag);
-    const { executeAsync: executePullImage } = useAction(onImagePullAction);
     const { executeAsync: executeCreate } = useAction(onContainerCreateAction);
 
     const form = useForm({
@@ -56,40 +52,20 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
 
     const handleCreate = form.handleSubmit(async (data) => {
         const toastId = 'container-create';
-        const imageExistsLocally = getImagesByTag(data.image).length > 0;
 
-        if (!imageExistsLocally) {
-            setCreateStep('pulling');
-            toast.loading(t('pullingImage'), { id: toastId });
-
-            const pullResult = await executePullImage({ imageName: data.image });
-            if (!pullResult?.data) {
-                setCreateStep('idle');
-                toast.dismiss(toastId);
-                return;
-            }
-        }
-
-        setCreateStep('creating');
+        setIsCreating(true);
         toast.loading(t('creatingContainer'), { id: toastId });
 
         const createResult = await executeCreate(data);
         toast.dismiss(toastId);
-        setCreateStep('idle');
+        setIsCreating(false);
 
         if (createResult?.data?.id) {
             router.push(`/docker/containers/${createResult.data.id}`);
         }
     });
 
-    const isSubmitting = createStep !== 'idle';
-
-    const submitLabel =
-        createStep === 'pulling'
-            ? t('pullingImage')
-            : createStep === 'creating'
-              ? t('creatingContainer')
-              : t('createButton');
+    const submitLabel = isCreating ? t('creatingContainer') : t('createButton');
 
     return (
         <div className="flex h-full flex-1 flex-col gap-5 pt-5">
@@ -111,15 +87,15 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                         variant="outline"
                         icon={ArrowLeft}
                         onClick={router.back}
-                        disabled={isSubmitting}
+                        disabled={isCreating}
                     >
                         {t('back')}
                     </Button>
                     <Button
                         type="button"
                         icon={Plus}
-                        isLoading={isSubmitting}
-                        disabled={isSubmitting}
+                        isLoading={isCreating}
+                        disabled={isCreating}
                         onClick={handleCreate}
                     >
                         {submitLabel}

@@ -48,6 +48,7 @@ import { cacheSaveExecutor } from './executors/cache-save.executor';
 import { gitTagExecutor } from './executors/git-tag.executor';
 import { gitCloneExtraExecutor } from './executors/git-clone-extra.executor';
 import { fetchSecretsExecutor } from './executors/fetch-secrets.executor';
+import { sonarqubeScanExecutor } from './executors/sonarqube-scan.executor';
 
 const executors: INodeExecutor[] = [
     // Source
@@ -118,6 +119,8 @@ const executors: INodeExecutor[] = [
     gitCloneExtraExecutor,
     // Secrets
     fetchSecretsExecutor,
+    // Code Quality
+    sonarqubeScanExecutor,
 ];
 
 const executorRegistry = new Map(executors.map((e) => [e.type, e]));

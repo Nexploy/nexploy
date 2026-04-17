@@ -48,6 +48,7 @@ import { cacheSaveManifest } from './cache-save.manifest';
 import { gitTagManifest } from './git-tag.manifest';
 import { gitCloneExtraManifest } from './git-clone-extra.manifest';
 import { fetchSecretsManifest } from './fetch-secrets.manifest';
+import { sonarqubeScanManifest } from './sonarqube-scan.manifest';
 
 export const allBuiltinManifests: NodeManifest[] = [
     // Source
@@ -117,4 +118,6 @@ export const allBuiltinManifests: NodeManifest[] = [
     gitCloneExtraManifest,
     // Secrets
     fetchSecretsManifest,
+    // Code Quality
+    sonarqubeScanManifest,
 ];

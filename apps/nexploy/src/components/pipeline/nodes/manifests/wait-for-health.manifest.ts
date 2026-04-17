@@ -25,4 +25,8 @@ export const waitForHealthManifest: NodeManifest = {
     },
     configSchema: waitForHealthConfigSchema,
     configPanel: WaitForHealthConfig,
+    inputFields: [
+        { key: 'containerName', labelKey: 'pipeline.inputs.containerName', descriptionKey: 'pipeline.inputs.desc_containerName', type: 'input' },
+        { key: 'healthy', labelKey: 'pipeline.inputs.healthy', descriptionKey: 'pipeline.inputs.desc_healthy', type: 'input' },
+    ],
 };

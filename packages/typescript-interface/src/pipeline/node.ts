@@ -71,7 +71,9 @@ export type NodeId =
     | 'git-tag'
     | 'git-clone-extra'
     // Secrets
-    | 'fetch-secrets';
+    | 'fetch-secrets'
+    // Code Quality
+    | 'sonarqube-scan';
 
 export type NodeType = 'base-node' | 'large-node' | 'attach-node';
 

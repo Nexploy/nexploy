@@ -25,4 +25,7 @@ export const removeContainerManifest: NodeManifest = {
     },
     configSchema: containerActionConfigSchema,
     configPanel: RemoveContainerConfig,
+    inputFields: [
+        { key: 'containerId', labelKey: 'pipeline.inputs.containerId', descriptionKey: 'pipeline.inputs.desc_containerId', type: 'input' },
+    ],
 };

@@ -26,7 +26,7 @@ export const buildDockerImageManifest: NodeManifest = {
     configSchema: buildDockerImageConfigSchema,
     configPanel: BuildDockerImageConfig,
     inputFields: [
-        { key: 'imageName', labelKey: 'pipeline.inputs.imageName', type: 'input' },
-        { key: 'imageId', labelKey: 'pipeline.inputs.imageId', type: 'input' },
+        { key: 'imageName', labelKey: 'pipeline.inputs.imageName', descriptionKey: 'pipeline.inputs.desc_imageName', type: 'input' },
+        { key: 'imageId', labelKey: 'pipeline.inputs.imageId', descriptionKey: 'pipeline.inputs.desc_imageId', type: 'input' },
     ],
 };

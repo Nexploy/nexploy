@@ -30,7 +30,6 @@ import environmentsRoutes from '@/routes/environments.routes';
 import backupsRoutes from '@/routes/backupsRoutes';
 import registriesRoutes from '@/routes/registriesRoutes';
 import { dockerEnvironmentMiddleware } from '@/middleware/dockerEnvironment.middleware';
-import { localeMiddleware } from '@/middleware/locale.middleware';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 import { ContainersStateManager } from '@/managers/containersStateManager';
@@ -45,7 +44,6 @@ const app = new Hono();
 
 const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });
 
-app.use('*', localeMiddleware);
 app.use('*', dockerEnvironmentMiddleware);
 
 app.use(

@@ -26,6 +26,6 @@ export const runScriptManifest: NodeManifest = {
     configSchema: runScriptConfigSchema,
     configPanel: RunScriptConfig,
     inputFields: [
-        { key: 'exitCode', labelKey: 'pipeline.inputs.exitCode', type: 'input' },
+        { key: 'exitCode', labelKey: 'pipeline.inputs.exitCode', descriptionKey: 'pipeline.inputs.desc_exitCode', type: 'input' },
     ],
 };

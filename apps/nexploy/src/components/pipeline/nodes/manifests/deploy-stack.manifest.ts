@@ -25,4 +25,10 @@ export const deployStackManifest: NodeManifest = {
     },
     configSchema: deployStackConfigSchema,
     configPanel: DeployStackConfig,
+    inputFields: [
+        { key: 'stackName', labelKey: 'pipeline.inputs.stackName', descriptionKey: 'pipeline.inputs.desc_stackName', type: 'input' },
+        { key: 'services', labelKey: 'pipeline.inputs.services', descriptionKey: 'pipeline.inputs.desc_services', type: 'input' },
+        { key: 'created', labelKey: 'pipeline.inputs.created', descriptionKey: 'pipeline.inputs.desc_created', type: 'input' },
+        { key: 'updated', labelKey: 'pipeline.inputs.updated', descriptionKey: 'pipeline.inputs.desc_updated', type: 'input' },
+    ],
 };

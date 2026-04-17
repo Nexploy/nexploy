@@ -10,7 +10,6 @@ import {
 import { handleAsync } from '@/helpers/handleAsync';
 import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
 import { createDockerClient } from '@/utils/dockerClient';
-import { getTranslations } from '@/middleware/locale.middleware';
 import { HttpError } from '@workspace/shared/http-error';
 
 const app = new Hono();
@@ -27,19 +26,17 @@ app.post(
         try {
             await tempClient.ping();
         } catch (err: any) {
-            const t = getTranslations(c, 'docker');
             throw new HttpError(
-                t('errors.dockerHostUnreachable', { host: config.host ?? config.socketPath ?? 'unknown', error: err.message }),
+                `Cannot connect to Docker host ${config.host ?? config.socketPath ?? 'unknown'}: ${err.message}`,
                 400,
             );
         }
 
         logger.info('Environment validation successful');
 
-        const t = getTranslations(c, 'docker');
         return {
             valid: true,
-            message: t('errors.dockerConnectionSuccess'),
+            message: 'Docker connection successful.',
         };
     }),
 );
@@ -58,10 +55,9 @@ app.post(
 
             logger.info({ environmentId: config.id }, 'Environment registered successfully');
 
-            const t = getTranslations(c, 'docker');
             return {
                 success: true,
-                message: t('errors.environmentRegistered'),
+                message: 'Environment registered successfully.',
                 environmentId: config.id,
             };
         } catch (err: any) {
@@ -91,10 +87,9 @@ app.delete(
 
         logger.info({ environmentId }, 'Environment unregistered successfully');
 
-        const t = getTranslations(c, 'docker');
         return {
             success: true,
-            message: t('errors.environmentUnregistered'),
+            message: 'Environment unregistered successfully.',
         };
     }),
 );
@@ -110,17 +105,15 @@ app.patch(
         logger.info({ environmentId, name: config.name }, 'Updating environment configuration');
 
         if (environmentId !== config.id) {
-            const t = getTranslations(c, 'docker');
-            throw new HttpError(t('errors.environmentIdMismatch'), 400);
+            throw new HttpError('Environment ID mismatch.', 400);
         }
 
         const tempClient = createDockerClient(config);
         try {
             await tempClient.ping();
         } catch (err: any) {
-            const t = getTranslations(c, 'docker');
             throw new HttpError(
-                t('errors.dockerHostUnreachable', { host: config.host ?? config.socketPath ?? 'unknown', error: err.message }),
+                `Cannot connect to Docker host ${config.host ?? config.socketPath ?? 'unknown'}: ${err.message}`,
                 400,
             );
         }
@@ -131,10 +124,9 @@ app.patch(
 
         logger.info({ environmentId }, 'Environment updated successfully');
 
-        const t = getTranslations(c, 'docker');
         return {
             success: true,
-            message: t('errors.environmentUpdated'),
+            message: 'Environment updated successfully.',
             environmentId,
         };
     }),

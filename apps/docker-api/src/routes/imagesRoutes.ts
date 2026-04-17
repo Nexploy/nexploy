@@ -1,7 +1,6 @@
 import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { imagesStateManager } from '@/managers/imagesStateManager';
-import { getTranslations } from '@/middleware/locale.middleware';
 import { HttpError } from '@workspace/shared/http-error';
 import { zValidator } from '@hono/zod-validator';
 import {
@@ -82,8 +81,7 @@ app.post(
 
         const imageExists = imagesStateManager.checkIfExistByName(imageName);
         if (imageExists) {
-            const t = getTranslations(c, 'docker');
-            throw new Error(t('errors.imageAlreadyExists', { imageName }));
+            throw new Error(`Image ${imageName} already exists locally.`);
         }
 
         return await pullImage(imageName, auth);
@@ -129,8 +127,7 @@ app.post(
         const { imageIds, force } = getValidatedJson(c, imageDeleteSchema);
 
         if (imageIds.length === 0) {
-            const t = getTranslations(c, 'docker');
-            throw new HttpError(t('errors.noImageIdsProvided'), 400);
+            throw new HttpError('No image IDs provided.', 400);
         }
 
         await Promise.all(imageIds.map((id: string) => docker.getImage(id).remove({ force })));

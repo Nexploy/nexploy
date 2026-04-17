@@ -61,6 +61,8 @@ export const nodeTypeSchema = z.enum([
     'git-clone-extra',
     // Secrets
     'fetch-secrets',
+    // Code Quality
+    'sonarqube-scan',
 ]);
 
 export const pipelineNodeDataSchema = z.object({

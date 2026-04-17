@@ -40,12 +40,12 @@ export class BackupVolumeS3Executor implements INodeExecutor {
             } as KyDockerOptions)
             .arrayBuffer();
 
-        const objectKey = `${volumeName}-${Date.now()}.tar.gz`;
-        const url = `https://${bucket}.s3.${creds.region}.amazonaws.com/${objectKey}`;
+        const fileName = `${volumeName}-${Date.now()}.tar.gz`;
+        const url = `https://${bucket}.s3.${creds.region}.amazonaws.com/${fileName}`;
 
         await logger.info(
             nodeId,
-            `Uploading ${objectKey} to s3://${bucket} (${buffer.byteLength} bytes)`,
+            `Uploading ${fileName} to s3://${bucket} (${buffer.byteLength} bytes)`,
         );
         if (abortSignal.aborted) throw new Error('Build cancelled');
 
@@ -75,10 +75,10 @@ export class BackupVolumeS3Executor implements INodeExecutor {
             throw err;
         }
 
-        await logger.info(nodeId, `Volume backup uploaded successfully: ${objectKey}`);
+        await logger.info(nodeId, `Volume backup uploaded successfully: ${fileName}`);
 
         return {
-            output: { objectKey, bucket, volumeName },
+            output: { fileName, bucket, volumeName },
         };
     }
 }

@@ -1,7 +1,6 @@
 import type { Context } from 'hono';
 import { logger } from '@/utils/logger';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
-import { getTranslations } from '@/middleware/locale.middleware';
 
 function resolveError(err: any): { message: string; status: ContentfulStatusCode } {
     const statusCode = err.statusCode === 304 ? 409 : err.statusCode;
@@ -15,10 +14,8 @@ export const handleAsync = <C extends Context = Context>(
     const successStatus = opts?.status ?? 200;
 
     return async (c: C) => {
-        const t = getTranslations(c as any, 'docker');
-
         const timeoutPromise = new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error(t('errors.requestTimeout'))), 3_600_000),
+            setTimeout(() => reject(new Error('Request timeout.')), 3_600_000),
         );
 
         try {

@@ -3,7 +3,6 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { runMigrationConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -34,7 +33,7 @@ export class RunMigrationExecutor implements INodeExecutor {
 
         try {
             const result = await kyDocker
-                .post('containers/run-ephemeral', {
+                .post('container/run-ephemeral', {
                     json: {
                         image,
                         command,

@@ -2,7 +2,6 @@ import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { swarmStateManager } from '@/managers/swarmStateManager';
-import { getTranslations } from '@/middleware/locale.middleware';
 import { HttpError } from '@workspace/shared/http-error';
 import { zValidator } from '@hono/zod-validator';
 import { nodeIdParamSchema } from '@workspace/schemas-zod/docker/swarm/nodeAction.schema';
@@ -20,8 +19,7 @@ app.post(
         const nodeInfo = await node.inspect();
 
         if (nodeInfo.Spec.Role === 'manager') {
-            const t = getTranslations(c, 'docker');
-            throw new HttpError(t('errors.nodeAlreadyManager'), 400);
+            throw new HttpError('Node is already a manager.', 400);
         }
 
         node.update({
@@ -47,8 +45,7 @@ app.post(
         const nodeInfo = await node.inspect();
 
         if (nodeInfo.Spec.Role === 'worker') {
-            const t = getTranslations(c, 'docker');
-            throw new HttpError(t('errors.nodeAlreadyWorker'), 400);
+            throw new HttpError('Node is already a worker.', 400);
         }
 
         node.update({

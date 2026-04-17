@@ -7,22 +7,35 @@ import { getNodeInputFields } from '@/components/pipeline/nodeManifestRegistry';
 import { type Node } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 interface OutputChipProps {
-    label: string;
+    labelKey: string;
+    descriptionKey: string;
 }
 
-function OutputChip({ label }: OutputChipProps) {
-    return (
+function OutputChip({ labelKey, descriptionKey }: OutputChipProps) {
+    const tPipeline = useTranslations('repository');
+
+    const chip = (
         <div
             className={cn(
-                'flex items-center gap-2 rounded-lg border px-2.5 py-2 text-xs',
+                'flex cursor-default items-center gap-2 rounded-lg border px-2.5 py-2 text-xs',
                 'bg-background',
             )}
         >
             <ArrowRightFromLine className="size-3 shrink-0 text-emerald-400/60" />
-            <span className="min-w-0 flex-1 truncate font-mono text-xs">{label}</span>
+            <span className="min-w-0 flex-1 truncate font-mono text-xs">{tPipeline(labelKey)}</span>
         </div>
+    );
+
+    return (
+        <Tooltip>
+            <TooltipTrigger asChild>{chip}</TooltipTrigger>
+            <TooltipContent side="left" className="max-w-52 text-xs">
+                {tPipeline(descriptionKey)}
+            </TooltipContent>
+        </Tooltip>
     );
 }
 
@@ -46,25 +59,25 @@ export function NodeOutputsPanel({ node }: NodeOutputsPanelProps) {
                         {t('nodeOutputs')}
                     </span>
                 </div>
-                <p className="text-muted-foreground mt-1.5 text-[11px] leading-relaxed">
-                    {t('nodeOutputsHint')}
-                </p>
+                <p className="text-muted-foreground mt-1.5 text-[11px]">{t('nodeOutputsHint')}</p>
             </div>
 
             {!outputFields?.length ? (
-                <div className="flex flex-1 flex-col items-center justify-center gap-2 pb-24 text-center">
+                <div className="flex flex-1 flex-col items-center justify-center gap-2 px-4 pb-24 text-center">
                     <div className="flex size-6 items-center justify-center rounded-md bg-emerald-400/10">
                         <ArrowRightFromLine className="size-3.5 text-emerald-400" />
                     </div>
-                    <p className="text-muted-foreground text-xs leading-relaxed">
-                        {t('noOutputs')}
-                    </p>
+                    <p className="text-muted-foreground text-xs">{t('noOutputs')}</p>
                 </div>
             ) : (
                 <ScrollAreaWithShadow bottomShadow className="h-full overflow-hidden">
                     <div className="flex flex-col gap-1.5 p-3 pt-0">
                         {outputFields.map((field) => (
-                            <OutputChip key={field.key} label={field.key} />
+                            <OutputChip
+                                key={field.key}
+                                labelKey={field.labelKey}
+                                descriptionKey={field.descriptionKey}
+                            />
                         ))}
                     </div>
                 </ScrollAreaWithShadow>

@@ -25,4 +25,9 @@ export const gitCloneExtraManifest: NodeManifest = {
     },
     configSchema: gitCloneExtraConfigSchema,
     configPanel: GitCloneExtraConfig,
+    inputFields: [
+        { key: 'repoUrl', labelKey: 'pipeline.inputs.repoUrl', descriptionKey: 'pipeline.inputs.desc_repoUrl', type: 'input' },
+        { key: 'branch', labelKey: 'pipeline.inputs.branch', descriptionKey: 'pipeline.inputs.desc_branch', type: 'input' },
+        { key: 'targetDir', labelKey: 'pipeline.inputs.targetDir', descriptionKey: 'pipeline.inputs.desc_targetDir', type: 'input' },
+    ],
 };

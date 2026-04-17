@@ -28,4 +28,7 @@ export const conditionManifest: NodeManifest = {
     },
     configSchema: conditionConfigSchema,
     configPanel: ConditionConfig,
+    inputFields: [
+        { key: 'passed', labelKey: 'pipeline.inputs.passed', descriptionKey: 'pipeline.inputs.desc_passed', type: 'input' },
+    ],
 };

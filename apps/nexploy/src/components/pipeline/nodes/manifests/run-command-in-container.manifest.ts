@@ -25,4 +25,7 @@ export const runCommandInContainerManifest: NodeManifest = {
     },
     configSchema: runCommandInContainerConfigSchema,
     configPanel: RunCommandInContainerConfig,
+    inputFields: [
+        { key: 'exitCode', labelKey: 'pipeline.inputs.exitCode', descriptionKey: 'pipeline.inputs.desc_exitCode', type: 'input' },
+    ],
 };

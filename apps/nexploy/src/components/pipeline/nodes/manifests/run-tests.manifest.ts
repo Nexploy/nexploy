@@ -25,4 +25,8 @@ export const runTestsManifest: NodeManifest = {
     },
     configSchema: runTestsConfigSchema,
     configPanel: RunTestsConfig,
+    inputFields: [
+        { key: 'exitCode', labelKey: 'pipeline.inputs.exitCode', descriptionKey: 'pipeline.inputs.desc_exitCode', type: 'input' },
+        { key: 'testsPassed', labelKey: 'pipeline.inputs.testsPassed', descriptionKey: 'pipeline.inputs.desc_testsPassed', type: 'input' },
+    ],
 };

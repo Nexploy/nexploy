@@ -2,11 +2,12 @@
 
 import { useTranslations } from 'next-intl';
 import { Variable } from 'lucide-react';
-import { type NodeFieldRef } from '@workspace/typescript-interface/pipeline/nodeFieldRef';
 import { useAncestorInputFields } from '@/hooks/useAncestorInputFields';
 import { type NodeInputField } from '@/components/pipeline/types/nodeManifest';
 import { cn } from '@workspace/ui/lib/utils';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import { NodeFieldRef } from '@workspace/typescript-interface/pipeline/nodeFieldRef.ts';
 
 interface InputChipProps {
     nodeId: string;
@@ -15,9 +16,12 @@ interface InputChipProps {
 }
 
 function InputChip({ nodeId, nodeType, field }: InputChipProps) {
+    const tRepository = useTranslations('repository');
+
     const ref: NodeFieldRef = {
         nodeId,
         inputKey: field.key,
+        labelKey: field.labelKey,
         nodeType,
     };
 
@@ -26,7 +30,7 @@ function InputChip({ nodeId, nodeType, field }: InputChipProps) {
         e.dataTransfer.effectAllowed = 'copy';
     };
 
-    return (
+    const chip = (
         <div
             draggable
             onDragStart={handleDragStart}
@@ -37,8 +41,19 @@ function InputChip({ nodeId, nodeType, field }: InputChipProps) {
             )}
         >
             <Variable className="size-3 shrink-0 text-amber-400/60 group-hover:text-amber-400" />
-            <span className="min-w-0 flex-1 truncate font-mono text-xs">{field.key}</span>
+            <span className="min-w-0 flex-1 truncate font-mono text-xs">
+                {tRepository(field.labelKey)}
+            </span>
         </div>
+    );
+
+    return (
+        <Tooltip>
+            <TooltipTrigger asChild>{chip}</TooltipTrigger>
+            <TooltipContent side="left" className="max-w-52 text-xs">
+                {tRepository(field.descriptionKey)}
+            </TooltipContent>
+        </Tooltip>
     );
 }
 
@@ -52,7 +67,7 @@ export function AvailableInputsPanel({ nodeId }: AvailableInputsPanelProps) {
 
     return (
         <div className="flex w-56 flex-col gap-2 overflow-hidden">
-            <div className={'p-3 pb-0'}>
+            <div className={'flex flex-col gap-1.5 p-3 pb-0'}>
                 <div className="flex items-center gap-2">
                     <div className="flex size-6 items-center justify-center rounded-md bg-amber-400/10">
                         <Variable className="size-3.5 text-amber-400" />
@@ -61,19 +76,15 @@ export function AvailableInputsPanel({ nodeId }: AvailableInputsPanelProps) {
                         {t('availableInputs')}
                     </span>
                 </div>
-                <p className="text-muted-foreground mt-1.5 text-[11px] leading-relaxed">
-                    {t('dragHint')}
-                </p>
+                <p className="text-muted-foreground text-[11px]">{t('dragHint')}</p>
             </div>
 
             {!ancestors.length ? (
-                <div className="flex flex-1 flex-col items-center justify-center gap-2 pb-24 text-center">
+                <div className="flex flex-1 flex-col items-center justify-center gap-2 px-4 pb-24 text-center">
                     <div className="flex size-6 items-center justify-center rounded-md bg-amber-400/10">
                         <Variable className="size-3.5 text-amber-400" />
                     </div>
-                    <p className="text-muted-foreground text-xs leading-relaxed">
-                        {t('noInputsAvailable')}
-                    </p>
+                    <p className="text-muted-foreground text-xs">{t('noInputsAvailable')}</p>
                 </div>
             ) : (
                 <ScrollAreaWithShadow bottomShadow className="h-full overflow-hidden">

@@ -2,7 +2,6 @@ import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { volumesStateManager } from '@/managers/volumesStateManager';
-import { getTranslations } from '@/middleware/locale.middleware';
 import { zValidator } from '@hono/zod-validator';
 import {
     volumeCreateSchema,
@@ -50,8 +49,7 @@ app.post(
 
         const volumeExists = volumesStateManager.getState(name);
         if (volumeExists) {
-            const t = getTranslations(c, 'docker');
-            throw new Error(t('errors.volumeAlreadyExists', { name }));
+            throw new Error(`Volume ${name} already exists.`);
         }
 
         const volume = await docker.createVolume({

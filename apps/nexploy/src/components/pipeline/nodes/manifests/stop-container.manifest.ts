@@ -25,4 +25,7 @@ export const stopContainerManifest: NodeManifest = {
     },
     configSchema: containerActionConfigSchema,
     configPanel: StopContainerConfig,
+    inputFields: [
+        { key: 'containerId', labelKey: 'pipeline.inputs.containerId', descriptionKey: 'pipeline.inputs.desc_containerId', type: 'input' },
+    ],
 };

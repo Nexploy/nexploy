@@ -46,6 +46,7 @@ import {
     Webhook,
     Workflow,
     PackagePlus,
+    ScanSearch,
     Wrench,
 } from 'lucide-react';
 
@@ -187,6 +188,8 @@ const NODE_CATEGORY: Record<string, string> = {
     'git-clone-extra': 'source',
     // Secrets & Config
     'fetch-secrets': 'config',
+    // Code Quality
+    'sonarqube-scan': 'build',
 };
 
 export const NODE_BG_MUTED: Record<string, string> = Object.fromEntries(
@@ -257,6 +260,8 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'git-clone-extra': GitFork,
     // Secrets
     'fetch-secrets': KeyRound,
+    // Code Quality
+    'sonarqube-scan': ScanSearch,
 };
 
 export const TEMPLATE_ICONS: Record<string, LucideIcon> = {

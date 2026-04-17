@@ -21,4 +21,7 @@ export const cleanWorkdirManifest: NodeManifest = {
             attachments: [],
         },
     },
+    inputFields: [
+        { key: 'cleaned', labelKey: 'pipeline.inputs.cleaned', descriptionKey: 'pipeline.inputs.desc_cleaned', type: 'input' },
+    ],
 };

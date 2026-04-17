@@ -33,6 +33,7 @@ export function ContainerActionButtons() {
         <Tooltip key={index}>
             <TooltipTrigger asChild>
                 <Button
+                    className={'sm:w-9 xl:w-fit'}
                     onClick={() => handleActionClick(action)}
                     disabled={action.disabledStates.includes(container!.state)}
                     variant={action.variant}

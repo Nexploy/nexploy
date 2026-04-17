@@ -310,6 +310,22 @@ export const gitCloneExtraConfigSchema = z.object({
     token: z.string().optional(),
 });
 
+// ─── Code Quality ─────────────────────────────────────────────────────────────
+
+export const sonarqubeScanConfigSchema = z.object({
+    mode: z.enum(['local', 'custom']).default('local'),
+    projectKey: z.string().default(''),
+    token: z.string().default(''),
+    sources: z.string().default('.'),
+    exclusions: z.string().optional(),
+    qualityGate: z.boolean().default(true),
+    timeoutSeconds: z.number().default(300),
+    serverUrl: z.string().default('https://sonarcloud.io'),
+    organization: z.string().optional(),
+    sonarqubeVersion: z.string().default('community'),
+    sonarqubePort: z.number().default(9000),
+});
+
 // ─── Secrets ─────────────────────────────────────────────────────────────────
 
 export const fetchSecretsConfigSchema = z.object({

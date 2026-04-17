@@ -15,7 +15,7 @@ export interface BuildConfig {
     gitBranch?: string;
     gitCommitHash?: string;
     envVariables: Record<string, string>;
-    imageName: string;
+    repositorySlug: string;
     buildId: string;
     triggerSource: 'manual' | 'webhook';
 }

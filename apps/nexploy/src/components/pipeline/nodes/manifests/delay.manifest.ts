@@ -25,4 +25,7 @@ export const delayManifest: NodeManifest = {
     },
     configSchema: delayConfigSchema,
     configPanel: DelayConfig,
+    inputFields: [
+        { key: 'delayed', labelKey: 'pipeline.inputs.delayed', descriptionKey: 'pipeline.inputs.desc_delayed', type: 'input' },
+    ],
 };

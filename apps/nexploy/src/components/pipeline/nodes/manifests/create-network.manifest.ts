@@ -25,4 +25,8 @@ export const createNetworkManifest: NodeManifest = {
     },
     configSchema: createNetworkConfigSchema,
     configPanel: CreateNetworkConfig,
+    inputFields: [
+        { key: 'networkId', labelKey: 'pipeline.inputs.networkId', descriptionKey: 'pipeline.inputs.desc_networkId', type: 'input' },
+        { key: 'networkName', labelKey: 'pipeline.inputs.networkName', descriptionKey: 'pipeline.inputs.desc_networkName', type: 'input' },
+    ],
 };

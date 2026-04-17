@@ -25,4 +25,9 @@ export const templateFileManifest: NodeManifest = {
     },
     configSchema: templateFileConfigSchema,
     configPanel: TemplateFileConfig,
+    inputFields: [
+        { key: 'inputPath', labelKey: 'pipeline.inputs.inputPath', descriptionKey: 'pipeline.inputs.desc_inputPath', type: 'input' },
+        { key: 'outputPath', labelKey: 'pipeline.inputs.outputPath', descriptionKey: 'pipeline.inputs.desc_outputPath', type: 'input' },
+        { key: 'substitutions', labelKey: 'pipeline.inputs.substitutions', descriptionKey: 'pipeline.inputs.desc_substitutions', type: 'input' },
+    ],
 };

@@ -50,13 +50,13 @@ export function VolumeDetailPage({ volumeName }: VolumeDetailPageProps) {
                     {!volume ? (
                         <Skeleton className="h-6 w-40" />
                     ) : (
-                        <h1 className="text-3xl leading-none font-semibold tracking-tight">
+                        <h1 className="text-3xl leading-none font-semibold tracking-tight break-all">
                             {volumeName}
                         </h1>
                     )}
                     <p className="text-muted-foreground text-sm">{t('description')}</p>
                 </div>
-                <div className="flex shrink-0 items-center gap-1">
+                <div className="flex shrink-0 gap-1">
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button

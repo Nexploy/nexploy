@@ -25,4 +25,9 @@ export const updateCommitStatusManifest: NodeManifest = {
     },
     configSchema: updateCommitStatusConfigSchema,
     configPanel: UpdateCommitStatusConfig,
+    inputFields: [
+        { key: 'provider', labelKey: 'pipeline.inputs.provider', descriptionKey: 'pipeline.inputs.desc_provider', type: 'input' },
+        { key: 'state', labelKey: 'pipeline.inputs.state', descriptionKey: 'pipeline.inputs.desc_state', type: 'input' },
+        { key: 'sha', labelKey: 'pipeline.inputs.sha', descriptionKey: 'pipeline.inputs.desc_sha', type: 'input' },
+    ],
 };

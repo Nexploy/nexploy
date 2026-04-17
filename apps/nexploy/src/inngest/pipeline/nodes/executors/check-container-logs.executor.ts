@@ -40,7 +40,7 @@ export class CheckContainerLogsExecutor implements INodeExecutor {
 
             try {
                 const result = await kyDocker
-                    .get(`containers/${encodeURIComponent(containerName)}/logs`, {
+                    .get(`container/${encodeURIComponent(containerName)}/logs`, {
                         searchParams: {
                             tail: '100',
                             ...(since && { since }),

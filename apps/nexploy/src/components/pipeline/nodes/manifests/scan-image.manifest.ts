@@ -25,4 +25,11 @@ export const scanImageManifest: NodeManifest = {
     },
     configSchema: scanImageConfigSchema,
     configPanel: ScanImageConfig,
+    inputFields: [
+        { key: 'image', labelKey: 'pipeline.inputs.image', descriptionKey: 'pipeline.inputs.desc_image', type: 'input' },
+        { key: 'tag', labelKey: 'pipeline.inputs.tag', descriptionKey: 'pipeline.inputs.desc_tag', type: 'input' },
+        { key: 'vulnerabilities', labelKey: 'pipeline.inputs.vulnerabilities', descriptionKey: 'pipeline.inputs.desc_vulnerabilities', type: 'input' },
+        { key: 'critical', labelKey: 'pipeline.inputs.critical', descriptionKey: 'pipeline.inputs.desc_critical', type: 'input' },
+        { key: 'high', labelKey: 'pipeline.inputs.high', descriptionKey: 'pipeline.inputs.desc_high', type: 'input' },
+    ],
 };

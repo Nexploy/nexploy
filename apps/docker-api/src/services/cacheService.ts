@@ -1,24 +1,8 @@
 import { docker } from '@/utils/dockerClient';
 import { logger } from '@/utils/logger';
+import { ensureImage } from '@/utils/ensureImage';
 
 const CACHE_IMAGE = 'alpine';
-
-async function ensureImage(): Promise<void> {
-    try {
-        await docker.getImage(CACHE_IMAGE).inspect();
-    } catch {
-        logger.info({ image: CACHE_IMAGE }, 'Pulling alpine image for cache operations...');
-        await new Promise<void>((resolve, reject) => {
-            docker.pull(CACHE_IMAGE, (err: Error | null, stream: NodeJS.ReadableStream) => {
-                if (err) return reject(err);
-                docker.modem.followProgress(stream, (err: Error | null) => {
-                    if (err) return reject(err);
-                    resolve();
-                });
-            });
-        });
-    }
-}
 
 function parseDockerLogs(buffer: Buffer): string {
     let output = '';
@@ -61,7 +45,7 @@ export async function restoreCache(
     workDir: string,
     cacheKey?: string,
 ): Promise<{ restored: boolean; files?: number }> {
-    await ensureImage();
+    await ensureImage(docker, CACHE_IMAGE);
 
     const key = cacheKey || 'default';
     const srcPath = `/cache/${key}/${cachePath}`;
@@ -103,7 +87,7 @@ export async function saveCache(
     workDir: string,
     cacheKey?: string,
 ): Promise<{ saved: boolean; files?: number; sizeBytes?: number }> {
-    await ensureImage();
+    await ensureImage(docker, CACHE_IMAGE);
 
     const key = cacheKey || 'default';
     const srcPath = `/workdir/${sourcePath}`;

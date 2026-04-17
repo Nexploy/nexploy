@@ -25,4 +25,8 @@ export const runMigrationManifest: NodeManifest = {
     },
     configSchema: runMigrationConfigSchema,
     configPanel: RunMigrationConfig,
+    inputFields: [
+        { key: 'exitCode', labelKey: 'pipeline.inputs.exitCode', descriptionKey: 'pipeline.inputs.desc_exitCode', type: 'input' },
+        { key: 'migrated', labelKey: 'pipeline.inputs.migrated', descriptionKey: 'pipeline.inputs.desc_migrated', type: 'input' },
+    ],
 };

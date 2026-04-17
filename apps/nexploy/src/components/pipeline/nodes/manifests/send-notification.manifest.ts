@@ -24,4 +24,7 @@ export const sendNotificationManifest: NodeManifest = {
     },
     configSchema: sendNotificationConfigSchema,
     configPanel: SendNotificationConfig,
+    inputFields: [
+        { key: 'sent', labelKey: 'pipeline.inputs.sent', descriptionKey: 'pipeline.inputs.desc_sent', type: 'input' },
+    ],
 };

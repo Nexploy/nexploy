@@ -2,7 +2,6 @@ import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { networksStateManager } from '@/managers/networksStateManager';
-import { getTranslations } from '@/middleware/locale.middleware';
 import { zValidator } from '@hono/zod-validator';
 import {
     networkCreateSchema,
@@ -37,8 +36,7 @@ app.post(
 
         const networkExists = networksStateManager.getByName(name);
         if (networkExists) {
-            const t = getTranslations(c, 'docker');
-            throw new Error(t('errors.networkAlreadyExists', { name }));
+            throw new Error(`Network ${name} already exists.`);
         }
 
         const network = await docker.createNetwork({ Name: name, Driver: driver, ...options });

@@ -3,7 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
+
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { runCommandInContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -28,7 +28,7 @@ export class RunCommandInContainerExecutor implements INodeExecutor {
 
         try {
             const result = await kyDocker
-                .post(`containers/${encodeURIComponent(containerName)}/exec`, {
+                .post(`container/${encodeURIComponent(containerName)}/exec`, {
                     json: {
                         command,
                         ...(workdir && { workdir }),

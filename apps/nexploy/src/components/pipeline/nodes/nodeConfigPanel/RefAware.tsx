@@ -24,7 +24,8 @@ export function RefAware({
     className,
     children,
 }: PropsWithChildren<RefAwareProps>) {
-    const t = useTranslations('repository.pipeline');
+    const tPipeline = useTranslations('repository.pipeline');
+    const tRepository = useTranslations('repository');
     const validAncestorIds = useValidAncestorNodeIds();
 
     const ref = isNodeFieldRef(value) ? value : null;
@@ -37,7 +38,11 @@ export function RefAware({
         if (!data) return;
         try {
             const parsed = JSON.parse(data) as NodeFieldRef;
-            onChange({ nodeId: parsed.nodeId, inputKey: parsed.inputKey });
+            onChange({
+                nodeId: parsed.nodeId,
+                inputKey: parsed.inputKey,
+                labelKey: parsed.labelKey,
+            });
         } catch {}
     };
 
@@ -65,7 +70,7 @@ export function RefAware({
                 ) : (
                     <Variable className="size-3 shrink-0 text-amber-400" />
                 )}
-                <span className="flex-1 truncate font-mono">{ref.inputKey}</span>
+                <span className="flex-1 truncate font-mono">{tRepository(ref.labelKey)}</span>
                 <Button
                     size="icon"
                     variant="ghost"
@@ -76,7 +81,7 @@ export function RefAware({
                             ? 'text-destructive hover:text-destructive'
                             : 'text-muted-foreground hover:text-foreground',
                     )}
-                    aria-label={t('clearRef')}
+                    aria-label={tPipeline('clearRef')}
                 >
                     <X className="size-3" />
                 </Button>
@@ -88,7 +93,7 @@ export function RefAware({
                 <Tooltip>
                     <TooltipTrigger asChild>{badge}</TooltipTrigger>
                     <TooltipContent side="top" className="text-xs">
-                        {t('staleRef')}
+                        {tPipeline('staleRef')}
                     </TooltipContent>
                 </Tooltip>
             );

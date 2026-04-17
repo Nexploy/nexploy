@@ -2,7 +2,6 @@ import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
 import { handleAsync } from '@/helpers/handleAsync';
 import { swarmStateManager } from '@/managers/swarmStateManager';
-import { getTranslations } from '@/middleware/locale.middleware';
 import { HttpError } from '@workspace/shared/http-error';
 import { zValidator } from '@hono/zod-validator';
 import { initActionSchema } from '@workspace/schemas-zod/docker/swarm/init.schema';
@@ -43,8 +42,7 @@ app.post(
         );
 
         if (!remoteAddrs || remoteAddrs.length === 0) {
-            const t = getTranslations(c, 'docker');
-            throw new HttpError(t('errors.remoteAddrsRequired'), 400);
+            throw new HttpError('Remote addresses are required.', 400);
         }
 
         await docker.swarmJoin({

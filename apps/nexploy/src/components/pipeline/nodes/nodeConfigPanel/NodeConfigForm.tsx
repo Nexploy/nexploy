@@ -110,7 +110,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
 
     return (
         <Form {...form}>
-            <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 flex-col">
+            <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 flex-col overflow-hidden">
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <fieldset
                         disabled={isViewingBuild}

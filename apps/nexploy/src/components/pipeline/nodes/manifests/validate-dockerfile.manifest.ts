@@ -25,4 +25,8 @@ export const validateDockerfileManifest: NodeManifest = {
     },
     configSchema: validateDockerfileConfigSchema,
     configPanel: ValidateDockerfileConfig,
+    inputFields: [
+        { key: 'workDir', labelKey: 'pipeline.inputs.workDir', descriptionKey: 'pipeline.inputs.desc_workDir', type: 'input' },
+        { key: 'dockerfilePath', labelKey: 'pipeline.inputs.dockerfilePath', descriptionKey: 'pipeline.inputs.desc_dockerfilePath', type: 'input' },
+    ],
 };

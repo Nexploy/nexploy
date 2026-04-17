@@ -1,25 +1,9 @@
 import { docker } from '@/utils/dockerClient';
 import { logger } from '@/utils/logger';
-
-async function ensureDockerImage(imageName: string): Promise<void> {
-    try {
-        await docker.getImage(imageName).inspect();
-    } catch {
-        logger.info({ imageName }, `Pulling ${imageName} image...`);
-        await new Promise<void>((resolve, reject) => {
-            docker.pull(imageName, (err: Error | null, stream: NodeJS.ReadableStream) => {
-                if (err) return reject(err);
-                docker.modem.followProgress(stream, (err: Error | null) => {
-                    if (err) return reject(err);
-                    resolve();
-                });
-            });
-        });
-    }
-}
+import { ensureImage } from '@/utils/ensureImage';
 
 export async function createVolumeBackup(volumeName: string): Promise<Buffer> {
-    await ensureDockerImage('alpine');
+    await ensureImage(docker, 'alpine');
 
     logger.info({ volumeName }, 'Creating volume backup');
 

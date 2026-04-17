@@ -28,10 +28,10 @@ export const webhookCloneManifest: NodeManifest = {
     configSchema: webhookCloneConfigSchema,
     configPanel: WebhookCloneConfig,
     inputFields: [
-        { key: 'workDir', labelKey: 'pipeline.inputs.workDir', type: 'input' },
-        { key: 'branch', labelKey: 'pipeline.inputs.branch', type: 'input' },
-        { key: 'commitHash', labelKey: 'pipeline.inputs.commitHash', type: 'input' },
-        { key: 'commitMessage', labelKey: 'pipeline.inputs.commitMessage', type: 'input' },
+        { key: 'workDir', labelKey: 'pipeline.inputs.workDir', descriptionKey: 'pipeline.inputs.desc_workDir', type: 'input' },
+        { key: 'branch', labelKey: 'pipeline.inputs.branch', descriptionKey: 'pipeline.inputs.desc_branch', type: 'input' },
+        { key: 'commitHash', labelKey: 'pipeline.inputs.commitHash', descriptionKey: 'pipeline.inputs.desc_commitHash', type: 'input' },
+        { key: 'commitMessage', labelKey: 'pipeline.inputs.commitMessage', descriptionKey: 'pipeline.inputs.desc_commitMessage', type: 'input' },
     ],
     lifecycle: {
         onAdd: async (repositoryId) => {

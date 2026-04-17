@@ -25,4 +25,8 @@ export const scaleServiceManifest: NodeManifest = {
     },
     configSchema: scaleServiceConfigSchema,
     configPanel: ScaleServiceConfig,
+    inputFields: [
+        { key: 'serviceName', labelKey: 'pipeline.inputs.serviceName', descriptionKey: 'pipeline.inputs.desc_serviceName', type: 'input' },
+        { key: 'replicas', labelKey: 'pipeline.inputs.replicas', descriptionKey: 'pipeline.inputs.desc_replicas', type: 'input' },
+    ],
 };

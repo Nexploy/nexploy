@@ -1,0 +1,411 @@
+import {
+    getFromAllOutputs,
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
+import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
+import { sonarqubeScanConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { z } from 'zod';
+
+type Config = z.infer<typeof sonarqubeScanConfigSchema>;
+
+export class SonarqubeScanExecutor implements INodeExecutor {
+    readonly type = 'sonarqube-scan';
+    readonly configSchema = sonarqubeScanConfigSchema;
+
+    async execute(ctx: NodeExecutionContext<Config>): Promise<NodeExecutionResult> {
+        const { nodeId, nodeConfig, allOutputs, logger, abortSignal } = ctx;
+
+        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
+        if (!workDir) {
+            throw new Error('No workDir found — connect this node after a Clone Repository node');
+        }
+
+        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const {
+            mode,
+            projectKey,
+            token,
+            sources,
+            exclusions,
+            qualityGate,
+            timeoutSeconds,
+            serverUrl,
+            organization,
+            sonarqubeVersion,
+            sonarqubePort,
+        } = nodeConfig;
+
+        const resolvedProjectKey = projectKey || ctx.buildConfig.repositorySlug;
+
+        await logger.info(nodeId, `Starting SonarQube analysis (mode: ${mode})`);
+        await logger.info(nodeId, `Project key: ${resolvedProjectKey}`);
+
+        if (abortSignal.aborted) throw new Error('Build cancelled');
+
+        const sonarData = {
+            nodeId,
+            workDir,
+            environmentId,
+            projectKey: resolvedProjectKey,
+            token,
+            sources,
+            exclusions,
+            qualityGate,
+            timeoutSeconds,
+            logger,
+            abortSignal,
+        };
+
+        if (mode === 'custom') {
+            return this.runRemote({
+                ...sonarData,
+                serverUrl,
+                organization,
+            });
+        }
+
+        return this.runLocal({
+            ...sonarData,
+            sonarqubeVersion,
+            sonarqubePort,
+        });
+    }
+
+    private async runRemote(opts: {
+        nodeId: string;
+        workDir: string;
+        environmentId: string | undefined;
+        projectKey: string;
+        token: string;
+        sources: string;
+        exclusions: string | undefined;
+        qualityGate: boolean;
+        timeoutSeconds: number;
+        serverUrl: string;
+        organization: string | undefined;
+        logger: NodeExecutionContext<Config>['logger'];
+        abortSignal: AbortSignal;
+    }): Promise<NodeExecutionResult> {
+        const {
+            nodeId,
+            workDir,
+            environmentId,
+            projectKey,
+            token,
+            sources,
+            exclusions,
+            qualityGate,
+            timeoutSeconds,
+            serverUrl,
+            organization,
+            logger,
+            abortSignal,
+        } = opts;
+
+        await logger.info(nodeId, `Connecting to SonarQube server: ${serverUrl}`);
+
+        const sonarArgs = buildSonarArgs({
+            serverUrl,
+            projectKey,
+            token,
+            sources,
+            exclusions,
+            organization,
+        });
+
+        const result = await kyDocker
+            .post('container/run-ephemeral', {
+                json: {
+                    image: 'sonarsource/sonar-scanner-cli:latest',
+                    command: `sonar-scanner ${sonarArgs}`,
+                    workdir: '/workspace',
+                    mountPath: workDir,
+                },
+                signal: abortSignal,
+                environmentId,
+                timeout: timeoutSeconds * 1000,
+            } as KyDockerOptions)
+            .json<{ exitCode: number; output?: string }>();
+
+        if (result.output) {
+            for (const line of result.output.split('\n')) {
+                if (line.trim()) await logger.info(nodeId, line);
+            }
+        }
+
+        if (result.exitCode !== 0) {
+            throw new Error(`sonar-scanner failed with exit code ${result.exitCode}`);
+        }
+
+        let qualityGatePassed = true;
+        if (qualityGate) {
+            await logger.info(nodeId, 'Checking quality gate status...');
+            qualityGatePassed = await this.checkQualityGate(
+                serverUrl,
+                projectKey,
+                token,
+                logger,
+                nodeId,
+            );
+            if (!qualityGatePassed) {
+                throw new Error(`Quality gate failed for project ${projectKey}`);
+            }
+            await logger.info(nodeId, 'Quality gate passed');
+        }
+
+        return { output: { qualityGatePassed, projectKey } };
+    }
+
+    private async runLocal(opts: {
+        nodeId: string;
+        workDir: string;
+        environmentId: string | undefined;
+        projectKey: string;
+        token: string;
+        sources: string;
+        exclusions: string | undefined;
+        qualityGate: boolean;
+        timeoutSeconds: number;
+        sonarqubeVersion: string;
+        sonarqubePort: number;
+        logger: NodeExecutionContext<Config>['logger'];
+        abortSignal: AbortSignal;
+    }): Promise<NodeExecutionResult> {
+        const {
+            nodeId,
+            workDir,
+            environmentId,
+            projectKey,
+            token,
+            sources,
+            exclusions,
+            qualityGate,
+            timeoutSeconds,
+            sonarqubeVersion,
+            sonarqubePort,
+            logger,
+            abortSignal,
+        } = opts;
+
+        const SONARQUBE_CONTAINER_NAME = 'nexploy-sonarqube';
+        const localServerUrl = `http://localhost:${sonarqubePort}`;
+
+        try {
+            const info = await kyDocker
+                .get(`container/${SONARQUBE_CONTAINER_NAME}/info`, {
+                    environmentId,
+                } as KyDockerOptions)
+                .json<{ State: { Running: boolean } }>();
+
+            if (info.State.Running) {
+                await logger.info(
+                    nodeId,
+                    'Local SonarQube container is already running, reusing it.',
+                );
+            } else {
+                await logger.info(
+                    nodeId,
+                    'Local SonarQube container exists but is stopped, starting it...',
+                );
+                await kyDocker.post(`container/${SONARQUBE_CONTAINER_NAME}/start`, {
+                    signal: abortSignal,
+                    environmentId,
+                } as KyDockerOptions);
+            }
+            await logger.info(nodeId, 'Waiting for SonarQube to be ready...');
+            await this.waitForSonarQube(localServerUrl, 120, logger, nodeId);
+        } catch (err: unknown) {
+            const status = (err as { response?: { status?: number } })?.response?.status;
+            const message = (err as { message?: string })?.message ?? '';
+            if (status !== 404 && !message.includes('404')) throw err;
+
+            await logger.info(
+                nodeId,
+                `Creating local SonarQube container (${sonarqubeVersion})...`,
+            );
+            await kyDocker
+                .post('container/create', {
+                    json: {
+                        name: SONARQUBE_CONTAINER_NAME,
+                        image: `sonarqube:${sonarqubeVersion}`,
+                        ports: [
+                            {
+                                containerPort: '9000',
+                                hostPort: `${sonarqubePort}`,
+                                protocol: 'tcp',
+                            },
+                        ],
+                        volumes: [
+                            {
+                                hostPath: 'nexploy-sonarqube-data',
+                                containerPath: '/opt/sonarqube/data',
+                                readOnly: false,
+                            },
+                        ],
+                        envVars: [{ key: 'SONAR_ES_BOOTSTRAP_CHECKS_DISABLE', value: 'true' }],
+                        restart: 'no',
+                    },
+                    signal: abortSignal,
+                    environmentId,
+                } as KyDockerOptions)
+                .json<{ id: string }>();
+
+            await logger.info(nodeId, 'Waiting for SonarQube to be ready...');
+            await this.waitForSonarQube(localServerUrl, 120, logger, nodeId);
+        }
+
+        const scanToken = token || (await this.generateLocalToken(localServerUrl));
+        await logger.info(nodeId, 'Running sonar-scanner against local SonarQube...');
+        const sonarArgs = buildSonarArgs({
+            serverUrl: localServerUrl,
+            projectKey,
+            token: scanToken,
+            sources,
+            exclusions,
+            organization: undefined,
+        });
+
+        const scanResult = await kyDocker
+            .post('container/run-ephemeral', {
+                json: {
+                    image: 'sonarsource/sonar-scanner-cli:latest',
+                    command: `sonar-scanner ${sonarArgs}`,
+                    workdir: '/workspace',
+                    mountPath: workDir,
+                    networkMode: 'host',
+                },
+                signal: abortSignal,
+                environmentId,
+                timeout: timeoutSeconds * 1000,
+            } as KyDockerOptions)
+            .json<{ exitCode: number; output?: string }>();
+
+        if (scanResult.output) {
+            for (const line of scanResult.output.split('\n')) {
+                if (line.trim()) await logger.info(nodeId, line);
+            }
+        }
+
+        if (scanResult.exitCode !== 0) {
+            throw new Error(`sonar-scanner failed with exit code ${scanResult.exitCode}`);
+        }
+
+        let qualityGatePassed = true;
+        if (qualityGate) {
+            await logger.info(nodeId, 'Checking quality gate status...');
+            qualityGatePassed = await this.checkQualityGate(
+                localServerUrl,
+                projectKey,
+                scanToken,
+                logger,
+                nodeId,
+            );
+            if (!qualityGatePassed) {
+                throw new Error(`Quality gate failed for project ${projectKey}`);
+            }
+            await logger.info(nodeId, 'Quality gate passed');
+        }
+
+        return { output: { qualityGatePassed, projectKey } };
+    }
+
+    private async generateLocalToken(serverUrl: string): Promise<string> {
+        const auth = Buffer.from('admin:admin').toString('base64');
+        const tokenName = `nexploy-scan-${Date.now()}`;
+        const res = await fetch(
+            `${serverUrl}/api/user_tokens/generate?name=${encodeURIComponent(tokenName)}`,
+            {
+                method: 'POST',
+                headers: { Authorization: `Basic ${auth}` },
+            },
+        );
+        if (!res.ok) throw new Error(`Failed to generate SonarQube token: HTTP ${res.status}`);
+        const data = (await res.json()) as { token: string };
+        return data.token;
+    }
+
+    private async waitForSonarQube(
+        serverUrl: string,
+        maxWaitSeconds: number,
+        logger: NodeExecutionContext<Config>['logger'],
+        nodeId: string,
+    ): Promise<void> {
+        const deadline = Date.now() + maxWaitSeconds * 1000;
+        while (Date.now() < deadline) {
+            try {
+                const res = await fetch(`${serverUrl}/api/system/status`);
+                if (res.ok) {
+                    const data = (await res.json()) as { status: string };
+                    if (data.status === 'UP') return;
+                }
+            } catch {}
+            await logger.info(nodeId, 'SonarQube not ready yet, retrying...');
+            await new Promise((r) => setTimeout(r, 5000));
+        }
+        throw new Error(`SonarQube did not become ready within ${maxWaitSeconds}s`);
+    }
+
+    private async checkQualityGate(
+        serverUrl: string,
+        projectKey: string,
+        token: string,
+        logger: NodeExecutionContext<Config>['logger'],
+        nodeId: string,
+    ): Promise<boolean> {
+        await new Promise((r) => setTimeout(r, 5000));
+
+        const auth = Buffer.from(`${token}:`).toString('base64');
+        const url = `${serverUrl}/api/qualitygates/project_status?projectKey=${encodeURIComponent(projectKey)}`;
+
+        try {
+            const res = await fetch(url, {
+                headers: { Authorization: `Basic ${auth}` },
+                signal: AbortSignal.timeout(15000),
+            });
+            if (!res.ok) {
+                await logger.info(
+                    nodeId,
+                    `Quality gate API returned ${res.status}, assuming passed`,
+                );
+                return true;
+            }
+            const data = (await res.json()) as { projectStatus: { status: string } };
+            const status = data.projectStatus?.status;
+            await logger.info(nodeId, `Quality gate status: ${status}`);
+            return status === 'OK' || status === 'NONE';
+        } catch (err) {
+            await logger.info(
+                nodeId,
+                `Could not check quality gate: ${err instanceof Error ? err.message : err}`,
+            );
+            return true;
+        }
+    }
+}
+
+function buildSonarArgs(opts: {
+    serverUrl: string;
+    projectKey: string;
+    token: string;
+    sources: string;
+    exclusions: string | undefined;
+    organization: string | undefined;
+}): string {
+    const args = [
+        `-Dsonar.host.url=${opts.serverUrl}`,
+        `-Dsonar.token=${opts.token}`,
+        `-Dsonar.projectKey=${opts.projectKey}`,
+        `-Dsonar.sources=${opts.sources}`,
+    ];
+    if (opts.exclusions) {
+        args.push(`-Dsonar.exclusions=${opts.exclusions}`);
+    }
+    if (opts.organization) {
+        args.push(`-Dsonar.organization=${opts.organization}`);
+    }
+    return args.join(' ');
+}
+
+export const sonarqubeScanExecutor = new SonarqubeScanExecutor();

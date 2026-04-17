@@ -25,4 +25,10 @@ export const downloadFileManifest: NodeManifest = {
     },
     configSchema: downloadFileConfigSchema,
     configPanel: DownloadFileConfig,
+    inputFields: [
+        { key: 'url', labelKey: 'pipeline.inputs.url', descriptionKey: 'pipeline.inputs.desc_url', type: 'input' },
+        { key: 'outputFile', labelKey: 'pipeline.inputs.outputFile', descriptionKey: 'pipeline.inputs.desc_outputFile', type: 'input' },
+        { key: 'filename', labelKey: 'pipeline.inputs.filename', descriptionKey: 'pipeline.inputs.desc_filename', type: 'input' },
+        { key: 'sizeBytes', labelKey: 'pipeline.inputs.sizeBytes', descriptionKey: 'pipeline.inputs.desc_sizeBytes', type: 'input' },
+    ],
 };

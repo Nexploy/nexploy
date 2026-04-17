@@ -25,4 +25,10 @@ export const updateServiceManifest: NodeManifest = {
     },
     configSchema: updateServiceConfigSchema,
     configPanel: UpdateServiceConfig,
+    inputFields: [
+        { key: 'serviceName', labelKey: 'pipeline.inputs.serviceName', descriptionKey: 'pipeline.inputs.desc_serviceName', type: 'input' },
+        { key: 'image', labelKey: 'pipeline.inputs.image', descriptionKey: 'pipeline.inputs.desc_image', type: 'input' },
+        { key: 'tag', labelKey: 'pipeline.inputs.tag', descriptionKey: 'pipeline.inputs.desc_tag', type: 'input' },
+        { key: 'fullImage', labelKey: 'pipeline.inputs.fullImage', descriptionKey: 'pipeline.inputs.desc_fullImage', type: 'input' },
+    ],
 };

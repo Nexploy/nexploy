@@ -25,4 +25,7 @@ export const createVolumeManifest: NodeManifest = {
     },
     configSchema: createVolumeConfigSchema,
     configPanel: CreateVolumeConfig,
+    inputFields: [
+        { key: 'volumeName', labelKey: 'pipeline.inputs.volumeName', descriptionKey: 'pipeline.inputs.desc_volumeName', type: 'input' },
+    ],
 };

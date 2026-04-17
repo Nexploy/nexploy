@@ -1,9 +1,12 @@
 import { docker } from '@/utils/dockerClient';
+import { parseDockerLogs } from '@/utils/parseDockerLogs';
+import { getCurrentDockerClient } from '@/lib/dockerContext';
+import { ensureImage } from '@/utils/ensureImage';
+import { PassThrough } from 'stream';
 import { handleAsync } from '@/helpers/handleAsync';
 import { Hono } from 'hono';
 import { ContainerCreateOptions } from 'dockerode';
 import { logger } from '@/utils/logger';
-import { getTranslations } from '@/middleware/locale.middleware';
 import { PortType } from '@workspace/typescript-interface/docker/docker.port';
 import { HttpError } from '@workspace/shared/http-error';
 import { zValidator } from '@hono/zod-validator';
@@ -19,22 +22,161 @@ const NAMED_VOLUME_REGEX = /\/var\/lib\/docker\/volumes\/([^/]+)\/_data/;
 const app = new Hono();
 
 app.post(
+    '/run-ephemeral',
+    handleAsync(async (c) => {
+        const { image, command, workdir, mountPath, networkMode } = await c.req.json<{
+            image: string;
+            command: string;
+            workdir?: string;
+            mountPath?: string;
+            networkMode?: string;
+        }>();
+
+        const dockerClient = getCurrentDockerClient();
+        await ensureImage(dockerClient, image);
+
+        const binds: string[] = [];
+        if (mountPath) {
+            const containerWorkdir = workdir ?? '/workspace';
+            binds.push(`${mountPath}:${containerWorkdir}`);
+        }
+
+        const container = await dockerClient.createContainer({
+            Image: image,
+            Cmd: ['sh', '-c', command],
+            WorkingDir: workdir ?? '/workspace',
+            AttachStdout: true,
+            AttachStderr: true,
+            HostConfig: {
+                AutoRemove: false,
+                Binds: binds.length > 0 ? binds : undefined,
+                NetworkMode: networkMode,
+            },
+        });
+
+        let exitCode = 0;
+        let output = '';
+
+        try {
+            await container.start();
+            const waitResult = await container.wait();
+            exitCode = waitResult.StatusCode;
+
+            const logBuffer = (await container.logs({
+                stdout: true,
+                stderr: true,
+                follow: false,
+            })) as Buffer;
+
+            output = parseDockerLogs(logBuffer);
+        } finally {
+            container.remove({ force: true }).catch(() => {});
+        }
+
+        return { exitCode, output };
+    }),
+);
+
+app.get(
+    '/:name/logs',
+    handleAsync(async (c) => {
+        const name = c.req.param('name');
+        const tail = c.req.query('tail') ?? '100';
+        const since = c.req.query('since');
+
+        const dockerClient = getCurrentDockerClient();
+        const container = dockerClient.getContainer(decodeURIComponent(name!));
+
+        const logsOptions: Record<string, unknown> = {
+            stdout: true,
+            stderr: true,
+            follow: false,
+            tail: parseInt(tail, 10),
+        };
+        if (since) logsOptions['since'] = since;
+
+        const logBuffer = await container.logs(logsOptions);
+
+        const logs = parseDockerLogs(logBuffer);
+        return { logs };
+    }),
+);
+
+app.post(
+    '/:name/exec',
+    handleAsync(async (c) => {
+        const name = c.req.param('name');
+        const { command, workdir } = await c.req.json<{
+            command: string;
+            workdir?: string;
+        }>();
+
+        const dockerClient = getCurrentDockerClient();
+        const container = dockerClient.getContainer(decodeURIComponent(name!));
+
+        const execOptions: Record<string, unknown> = {
+            Cmd: ['sh', '-c', command],
+            AttachStdout: true,
+            AttachStderr: true,
+        };
+        if (workdir) execOptions['WorkingDir'] = workdir;
+
+        const exec = await container.exec(execOptions as any);
+        const stream = await exec.start({ hijack: true, stdin: false });
+
+        const stdoutChunks: Buffer[] = [];
+        const stderrChunks: Buffer[] = [];
+        const stdoutPassthrough = new PassThrough();
+        const stderrPassthrough = new PassThrough();
+        stdoutPassthrough.on('data', (chunk: Buffer) => stdoutChunks.push(chunk));
+        stderrPassthrough.on('data', (chunk: Buffer) => stderrChunks.push(chunk));
+
+        await new Promise<void>((resolve, reject) => {
+            dockerClient.modem.demuxStream(stream, stdoutPassthrough, stderrPassthrough);
+            stream.on('end', resolve);
+            stream.on('error', reject);
+        });
+
+        const output = [
+            Buffer.concat(stdoutChunks).toString('utf8'),
+            Buffer.concat(stderrChunks).toString('utf8'),
+        ]
+            .join('')
+            .trim();
+
+        const { ExitCode: exitCode } = await exec.inspect();
+        return { exitCode: exitCode ?? 0, output };
+    }),
+);
+
+app.post(
     '/create',
     zValidator('json', containerCreateFormSchema),
     handleAsync(async (c) => {
-        const body = getValidatedJson(c, containerCreateFormSchema);
+        const {
+            envVars,
+            volumes,
+            network,
+            hostname,
+            name,
+            ports,
+            restart,
+            image,
+            privileged,
+            autoRemove,
+        } = getValidatedJson(c, containerCreateFormSchema);
 
         const createOptions: ContainerCreateOptions = {
-            name: body.name,
-            Image: body.image,
-            Hostname: body.hostname,
+            name,
+            Image: image,
+            Hostname: hostname,
             HostConfig: {
                 RestartPolicy: {
-                    Name: body.restart,
-                    MaximumRetryCount: body.restart === 'on-failure' ? 3 : 0,
+                    Name: restart,
+                    MaximumRetryCount: restart === 'on-failure' ? 3 : 0,
                 },
-                AutoRemove: body.autoRemove,
-                Privileged: body.privileged,
+                AutoRemove: autoRemove,
+                Privileged: privileged,
             },
         };
 
@@ -42,16 +184,16 @@ app.post(
             createOptions.HostConfig = {};
         }
 
-        if (body.network) {
-            createOptions.HostConfig.NetworkMode = body.network;
+        if (network) {
+            createOptions.HostConfig.NetworkMode = network;
         }
-        if (body.ports.length > 0) {
+        if (ports.length > 0) {
             createOptions.ExposedPorts = {};
             createOptions.HostConfig.PortBindings = {};
             const exposedPorts = createOptions.ExposedPorts;
             const portBindings = createOptions.HostConfig.PortBindings;
 
-            body.ports.forEach((port) => {
+            ports.forEach((port) => {
                 const containerPortKey = `${port.containerPort}/${port.protocol}`;
                 exposedPorts[containerPortKey] = {};
                 portBindings[containerPortKey] = [
@@ -61,15 +203,16 @@ app.post(
                 ];
             });
         }
-        if (body.envVars.length > 0) {
-            createOptions.Env = body.envVars.map((env) => `${env.key}=${env.value}`);
+        if (envVars.length > 0) {
+            createOptions.Env = envVars.map((env) => `${env.key}=${env.value}`);
         }
-        if (body.volumes.length > 0) {
-            createOptions.HostConfig.Binds = body.volumes.map((vol) => {
+        if (volumes.length > 0) {
+            createOptions.HostConfig.Binds = volumes.map((vol) => {
                 const mode = vol.readOnly ? 'ro' : 'rw';
                 return `${vol.hostPath}:${vol.containerPath}:${mode}`;
             });
         }
+        await ensureImage(docker, image);
         const container = await docker.createContainer(createOptions);
 
         try {
@@ -324,8 +467,7 @@ app.get(
             return await container.inspect();
         } catch (error: any) {
             if (error.statusCode === 404) {
-                const t = getTranslations(c, 'docker');
-                throw new HttpError(t('errors.containerNotFound', { id }), 404);
+                throw new HttpError(`Container '${id}' not found`, 404);
             }
 
             throw error;
@@ -374,8 +516,7 @@ app.get(
         const container = containersStateManager.getContainer(id);
 
         if (!container) {
-            const t = getTranslations(c, 'docker');
-            throw new HttpError(t('errors.containerNotFound', { id }), 404);
+            throw new HttpError(`Container '${id}' not found`, 404);
         }
 
         return {

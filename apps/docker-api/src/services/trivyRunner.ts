@@ -1,6 +1,7 @@
 import type { Writable } from 'stream';
 import { getCurrentDockerClient } from '@/lib/dockerContext';
 import type { ScanImageResult } from '@workspace/typescript-interface/docker/docker.image';
+import { ensureImage } from '@/utils/ensureImage';
 
 const TRIVY_IMAGE_BASE = 'aquasec/trivy';
 
@@ -15,19 +16,7 @@ export function getSeveritiesAbove(severity: Severity): string {
 async function ensureTrivyImage(trivyVersion: string): Promise<string> {
     const docker = getCurrentDockerClient();
     const image = `${TRIVY_IMAGE_BASE}:${trivyVersion}`;
-    try {
-        await docker.getImage(image).inspect();
-    } catch {
-        await new Promise<void>((resolve, reject) => {
-            docker.pull(image, (err: any, stream: any) => {
-                if (err) return reject(err);
-                docker.modem.followProgress(stream, (error: any) => {
-                    if (error) return reject(error);
-                    resolve();
-                });
-            });
-        });
-    }
+    await ensureImage(docker, image);
     return image;
 }
 

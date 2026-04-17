@@ -25,4 +25,9 @@ export const waitForPortManifest: NodeManifest = {
     },
     configSchema: waitForPortConfigSchema,
     configPanel: WaitForPortConfig,
+    inputFields: [
+        { key: 'host', labelKey: 'pipeline.inputs.host', descriptionKey: 'pipeline.inputs.desc_host', type: 'input' },
+        { key: 'port', labelKey: 'pipeline.inputs.port', descriptionKey: 'pipeline.inputs.desc_port', type: 'input' },
+        { key: 'open', labelKey: 'pipeline.inputs.open', descriptionKey: 'pipeline.inputs.desc_open', type: 'input' },
+    ],
 };

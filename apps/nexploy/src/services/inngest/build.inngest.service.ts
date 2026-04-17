@@ -37,7 +37,7 @@ export async function startBuildRepositoryInngest(
         pipelineSnapshot: { nodes: pipelineConfig.nodes, edges: pipelineConfig.edges },
     });
 
-    const imageName = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+    const repositorySlug = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
     const envVariables: Record<string, string> = {};
     for (const env of repository.envVariables) {
@@ -53,7 +53,7 @@ export async function startBuildRepositoryInngest(
         gitBranch: branch,
         gitCommitHash: commitHash,
         envVariables,
-        imageName,
+        repositorySlug,
         buildId: build.id,
         triggerSource,
     };
