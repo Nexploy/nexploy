@@ -1,23 +1,31 @@
 import { Container } from '@workspace/typescript-interface/docker/docker.container';
 import { ContainerInfo, ContainerInspectInfo } from 'dockerode';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
+import { unstable_cache } from 'next/cache';
+
+const CONTAINER_CACHE_TTL = 5;
 
 export async function getContainerByName(
     repositoryId: string,
     environmentId?: string,
 ): Promise<Container[]> {
-    try {
-        const name = `nexploy-${repositoryId}`;
-
-        return await kyDocker
-            .get(`containers`, {
-                searchParams: { name },
-                environmentId,
-            } as KyDockerOptions)
-            .json<Container[]>();
-    } catch {
-        return [];
-    }
+    return unstable_cache(
+        async () => {
+            try {
+                const name = `nexploy-${repositoryId}`;
+                return await kyDocker
+                    .get(`containers`, {
+                        searchParams: { name },
+                        environmentId,
+                    } as KyDockerOptions)
+                    .json<Container[]>();
+            } catch {
+                return [] as Container[];
+            }
+        },
+        [`container-by-name-${repositoryId}-${environmentId ?? 'default'}`],
+        { revalidate: CONTAINER_CACHE_TTL },
+    )();
 }
 
 export async function getContainerByProjectName(
@@ -37,19 +45,25 @@ export async function getDeployedComposeImageTag(
     repositoryId: string,
     environmentId?: string,
 ): Promise<string | undefined> {
-    try {
-        const projectName = `nexploy-${repositoryId}`;
-        const containers = await kyDocker
-            .get(`composes/${projectName}/list`, { environmentId } as KyDockerOptions)
-            .json<ContainerInfo[]>();
-        for (const container of containers) {
-            const tag = container.Labels?.['nexploy.imageTag'];
-            if (tag) return tag;
-        }
-        return undefined;
-    } catch {
-        return undefined;
-    }
+    return unstable_cache(
+        async () => {
+            try {
+                const projectName = `nexploy-${repositoryId}`;
+                const containers = await kyDocker
+                    .get(`composes/${projectName}/list`, { environmentId } as KyDockerOptions)
+                    .json<ContainerInfo[]>();
+                for (const container of containers) {
+                    const tag = container.Labels?.['nexploy.imageTag'];
+                    if (tag) return tag;
+                }
+                return undefined;
+            } catch {
+                return undefined;
+            }
+        },
+        [`deployed-compose-tag-${repositoryId}-${environmentId ?? 'default'}`],
+        { revalidate: CONTAINER_CACHE_TTL },
+    )();
 }
 
 export async function getContainerPortMappings(

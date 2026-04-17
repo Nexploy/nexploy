@@ -56,16 +56,9 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
                     {!image ? (
                         <Skeleton className="h-6 w-40" />
                     ) : (
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <h1 className="line-clamp-1 text-3xl font-semibold tracking-tight break-all">
-                                    {imageName}
-                                </h1>
-                            </TooltipTrigger>
-                            <TooltipContent className={'max-w-md break-all'}>
-                                {imageName}
-                            </TooltipContent>
-                        </Tooltip>
+                        <h1 className="text-3xl font-semibold tracking-tight break-all">
+                            {imageName}
+                        </h1>
                     )}
                     <p className="text-muted-foreground text-sm">{t('description')}</p>
                 </div>

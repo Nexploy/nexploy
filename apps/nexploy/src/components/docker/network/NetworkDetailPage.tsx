@@ -59,16 +59,9 @@ export function NetworkDetailPage({ networkId }: NetworkDetailPageProps) {
                     {!network ? (
                         <Skeleton className="h-6 w-40" />
                     ) : (
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <h1 className="line-clamp-1 text-3xl font-semibold tracking-tight break-all">
-                                    {networkName}
-                                </h1>
-                            </TooltipTrigger>
-                            <TooltipContent className={'max-w-md break-all'}>
-                                {networkName}
-                            </TooltipContent>
-                        </Tooltip>
+                        <h1 className="text-3xl font-semibold tracking-tight break-all">
+                            {networkName}
+                        </h1>
                     )}
                     <p className="text-muted-foreground text-sm">{t('description')}</p>
                 </div>
