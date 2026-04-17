@@ -6,7 +6,7 @@ import { type NodeLifecycleCallbacks } from '@workspace/typescript-interface/pip
 export interface NodeInputField {
     key: string;
     labelKey: string;
-    type: 'string' | 'number' | 'boolean' | 'any';
+    type: 'input';
 }
 
 export interface NodeManifest {

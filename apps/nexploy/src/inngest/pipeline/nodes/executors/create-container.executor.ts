@@ -1,4 +1,9 @@
-import { getFromAllOutputs, INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import {
+    getFromAllOutputs,
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { createContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
@@ -14,8 +19,8 @@ export class CreateContainerExecutor implements INodeExecutor {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
-        const containerName = nodeConfig.containerName?.trim();
-        const imageName = nodeConfig.imageName.trim();
+        const containerName = nodeConfig.containerName;
+        const imageName = nodeConfig.imageName;
 
         await logger.info(
             nodeId,
@@ -29,7 +34,7 @@ export class CreateContainerExecutor implements INodeExecutor {
                         name: containerName,
                         image: imageName,
                         restart: nodeConfig.restartPolicy,
-                        network: nodeConfig.networkName?.trim() || undefined,
+                        network: nodeConfig.networkName || undefined,
                         autoRemove: false,
                         privileged: false,
                         ports: nodeConfig.ports,

@@ -1,10 +1,4 @@
-import {
-    getFromAllOutputs,
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-    
-} from '@/types/pipeline.type';
+import { getFromAllOutputs, INodeExecutor, NodeExecutionContext, NodeExecutionResult, } from '@/types/pipeline.type';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
 import { buildDockerImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -23,7 +17,7 @@ export class BuildDockerImageExecutor implements INodeExecutor {
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         if (!workDir) {
             throw new Error(
-                'No workDir found in input nodes — connect this node after a Clone Repository node',
+                'No workDir found in input nodes — connect this node after a Source node',
             );
         }
 

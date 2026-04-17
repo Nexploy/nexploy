@@ -71,7 +71,7 @@ export function BackupVolumeS3Config() {
 
                     return (
                         <FormItem className={'flex flex-col'}>
-                            <FormLabel>{t('volume')}</FormLabel>
+                            <FormLabel>{t('volumeName')}</FormLabel>
                             <FormControl>
                                 <RefAware value={field.value} onChange={field.onChange}>
                                     {isLoading ? (
@@ -146,47 +146,43 @@ export function BackupVolumeS3Config() {
                         <FormItem>
                             <FormLabel>{tAdmin('awsAccount')}</FormLabel>
                             <FormControl>
-                                <RefAware value={field.value} onChange={field.onChange}>
-                                    <Select
-                                        value={field.value}
-                                        onValueChange={field.onChange}
-                                        disabled={isLoadingAccounts}
-                                    >
-                                        <SelectTrigger className="min-w-40 overflow-hidden data-[placeholder]:!pl-3">
-                                            {isLoadingAccounts ? (
-                                                <span className="text-muted-foreground flex items-center gap-2">
-                                                    <Loader2 className="h-3 w-3 animate-spin" />
-                                                    {tAdmin('awsAccountsLoading')}
-                                                </span>
-                                            ) : isStaleAccount ? (
-                                                <span className="flex items-center gap-1.5">
-                                                    <AlertTriangle className="h-3 w-3 shrink-0" />
-                                                    {tAdmin('awsAccountUnavailable')}
+                                <Select
+                                    value={field.value}
+                                    onValueChange={field.onChange}
+                                    disabled={isLoadingAccounts}
+                                >
+                                    <SelectTrigger className="min-w-40 overflow-hidden data-[placeholder]:!pl-3">
+                                        {isLoadingAccounts ? (
+                                            <span className="text-muted-foreground flex items-center gap-2">
+                                                <Loader2 className="h-3 w-3 animate-spin" />
+                                                {tAdmin('awsAccountsLoading')}
+                                            </span>
+                                        ) : isStaleAccount ? (
+                                            <span className="flex items-center gap-1.5">
+                                                <AlertTriangle className="h-3 w-3 shrink-0" />
+                                                {tAdmin('awsAccountUnavailable')}
+                                            </span>
+                                        ) : (
+                                            <SelectValue placeholder={tAdmin('selectAwsAccount')} />
+                                        )}
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>{tAdmin('awsAccount')}</SelectLabel>
+                                            {awsAccountList.length === 0 ? (
+                                                <span className="text-muted-foreground px-2 py-1.5 text-sm">
+                                                    {tAdmin('noAwsAccounts')}
                                                 </span>
                                             ) : (
-                                                <SelectValue
-                                                    placeholder={tAdmin('selectAwsAccount')}
-                                                />
+                                                awsAccountList.map((a) => (
+                                                    <SelectItem key={a.id} value={a.id}>
+                                                        {a.displayName} — {a.region}
+                                                    </SelectItem>
+                                                ))
                                             )}
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectLabel>{tAdmin('awsAccount')}</SelectLabel>
-                                                {awsAccountList.length === 0 ? (
-                                                    <span className="text-muted-foreground px-2 py-1.5 text-sm">
-                                                        {tAdmin('noAwsAccounts')}
-                                                    </span>
-                                                ) : (
-                                                    awsAccountList.map((a) => (
-                                                        <SelectItem key={a.id} value={a.id}>
-                                                            {a.displayName} — {a.region}
-                                                        </SelectItem>
-                                                    ))
-                                                )}
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                </RefAware>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
                             </FormControl>
                             {isStaleAccount && (
                                 <p className="flex items-start gap-1 text-xs text-amber-500">

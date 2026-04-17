@@ -22,13 +22,10 @@ export class BackupVolumeS3Executor implements INodeExecutor {
     ): Promise<NodeExecutionResult> {
         const { nodeId, nodeConfig, allOutputs, logger, abortSignal } = ctx;
 
-        const volumeName =
-            nodeConfig.volumeName.trim() || getFromAllOutputs<string>(allOutputs, 'volumeName');
+        const volumeName = nodeConfig.volumeName;
         const accountId = nodeConfig.accountId;
         const bucket = nodeConfig.bucket;
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
-
-        if (!volumeName) throw new Error('No volume name provided');
 
         await logger.info(nodeId, `Fetching AWS credentials for account ${accountId}`);
         const creds = await getAwsCredentials(accountId);

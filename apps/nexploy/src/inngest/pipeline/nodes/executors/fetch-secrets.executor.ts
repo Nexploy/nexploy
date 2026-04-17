@@ -5,7 +5,6 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { fetchSecretsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -71,11 +70,10 @@ export class FetchSecretsExecutor implements INodeExecutor {
                 const eqIdx = trimmed.indexOf('=');
                 if (eqIdx > 0) {
                     const key = trimmed.slice(0, eqIdx).trim();
-                    const value = trimmed
+                    secrets[key] = trimmed
                         .slice(eqIdx + 1)
                         .trim()
                         .replace(/^["']|["']$/g, '');
-                    secrets[key] = value;
                 }
             }
         } else {

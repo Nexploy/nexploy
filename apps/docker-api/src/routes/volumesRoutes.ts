@@ -8,8 +8,11 @@ import {
     volumeCreateSchema,
     volumeDeleteSchema,
     volumeNameParamSchema,
+    cacheRestoreSchema,
+    cacheSaveSchema,
 } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
+import { restoreCache, saveCache } from '@/services/cacheService';
 
 const app = new Hono();
 
@@ -85,6 +88,24 @@ app.post(
     '/prune',
     handleAsync(async () => {
         return await docker.pruneVolumes();
+    }),
+);
+
+app.post(
+    '/cache/restore',
+    zValidator('json', cacheRestoreSchema),
+    handleAsync(async (c) => {
+        const { volumeName, cachePath, workDir, cacheKey } = getValidatedJson(c, cacheRestoreSchema);
+        return await restoreCache(volumeName, cachePath, workDir, cacheKey);
+    }),
+);
+
+app.post(
+    '/cache/save',
+    zValidator('json', cacheSaveSchema),
+    handleAsync(async (c) => {
+        const { volumeName, sourcePath, workDir, cacheKey } = getValidatedJson(c, cacheSaveSchema);
+        return await saveCache(volumeName, sourcePath, workDir, cacheKey);
     }),
 );
 

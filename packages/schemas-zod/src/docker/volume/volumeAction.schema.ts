@@ -20,5 +20,19 @@ export const volumeNameParamSchema = z.object({
     name: z.string().min(1),
 });
 
+export const cacheRestoreSchema = z.object({
+    volumeName: z.string().min(1),
+    cachePath: z.string().min(1),
+    workDir: z.string().min(1),
+    cacheKey: z.string().optional(),
+});
+
+export const cacheSaveSchema = z.object({
+    volumeName: z.string().min(1),
+    sourcePath: z.string().min(1),
+    workDir: z.string().min(1),
+    cacheKey: z.string().optional(),
+});
+
 export type VolumeActions = z.infer<typeof volumeActionsSchema>;
 export type VolumeCreate = z.infer<typeof volumeCreateSchema>;

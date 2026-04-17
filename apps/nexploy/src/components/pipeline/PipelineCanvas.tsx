@@ -23,6 +23,7 @@ import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
 import { GradientEdge } from '@/components/pipeline/edges/GradientEdge';
 import { useDragAndDropFlow } from '@/hooks/useDragAndDropFlow';
+import { useNodeDragInsert } from '@/hooks/useNodeDragInsert';
 import { useAutoLayout } from '@/hooks/useAutoLayout';
 import { useMinimap } from '@/hooks/useMinimap';
 import { usePipelineContext } from '@/contexts/PipelineContext';
@@ -195,6 +196,7 @@ export function PipelineCanvas() {
     );
 
     const { onDragOver, onDragLeave, onDrop } = useDragAndDropFlow(rfInstance);
+    const { onNodeDragStart, onNodeDrag, onNodeDragStop } = useNodeDragInsert();
     const { minimapVisible, onMoveStart, onMoveEnd } = useMinimap();
 
     return (
@@ -224,7 +226,9 @@ export function PipelineCanvas() {
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
                 onNodeDoubleClick={(_, node) => openDialogSettingNode(node.id)}
-                onNodeDragStop={isViewingBuild ? undefined : triggerAutoSave}
+                onNodeDragStart={isViewingBuild ? undefined : onNodeDragStart}
+                onNodeDrag={isViewingBuild ? undefined : onNodeDrag}
+                onNodeDragStop={isViewingBuild ? undefined : onNodeDragStop}
                 onPaneClick={handleResetPanelNode}
                 onNodeContextMenu={isViewingBuild ? undefined : onNodeContextMenu}
                 onSelectionContextMenu={isViewingBuild ? undefined : onSelectionContextMenu}

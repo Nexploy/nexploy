@@ -3,7 +3,6 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { cacheRestoreConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -68,7 +67,6 @@ export class CacheRestoreExecutor implements INodeExecutor {
                 },
             };
         } catch (error) {
-            // Cache restore failure is non-fatal — log and continue
             await logger.warn(
                 nodeId,
                 `Cache restore failed (continuing): ${error instanceof Error ? error.message : 'Unknown error'}`,

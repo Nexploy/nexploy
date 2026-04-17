@@ -34,6 +34,8 @@ export function GradientEdge(props: EdgeProps) {
     const { deleteElements, getEdges } = useReactFlow();
     const { zoom } = useViewport();
     const hoveredEdgeId = usePipelineEditorStore((s) => s.hoveredEdgeId);
+    const dragOverEdgeId = usePipelineEditorStore((s) => s.dragOverEdgeId);
+    const isDropTarget = dragOverEdgeId === id;
 
     const sourceNode = nodes.find((n) => n.id === source);
     const targetNode = nodes.find((n) => n.id === target);
@@ -83,20 +85,65 @@ export function GradientEdge(props: EdgeProps) {
                     <stop offset="0%" stopColor={sourceColor} stopOpacity={0.9} />
                     <stop offset="100%" stopColor={targetColor} stopOpacity={0.9} />
                 </linearGradient>
+                {isDropTarget && (
+                    <filter id={`edge-glow-${id}`} x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feMerge>
+                            <feMergeNode in="blur" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                )}
             </defs>
+            {isDropTarget && (
+                <path
+                    d={edgePath}
+                    fill="none"
+                    stroke="white"
+                    strokeWidth={10}
+                    strokeOpacity={0.15}
+                    strokeLinecap="round"
+                    style={{ pointerEvents: 'none' }}
+                />
+            )}
             <BaseEdge
                 id={id}
                 path={edgePath}
                 style={{
                     ...style,
-                    stroke: `url(#${gradientId})`,
-                    strokeWidth: 2,
+                    stroke: isDropTarget ? '#ffffff' : `url(#${gradientId})`,
+                    strokeWidth: isDropTarget ? 2.5 : 2,
                     opacity: isDimmed ? 0.4 : 1,
-                    transition: 'opacity 0.2s',
+                    transition: 'stroke 0.15s, stroke-width 0.15s, opacity 0.2s',
+                    filter: isDropTarget ? `url(#edge-glow-${id})` : undefined,
+                    strokeDasharray: isDropTarget ? '6 3' : undefined,
                     ...(isAttachmentEdge && { animationDirection: 'reverse' }),
                 }}
             />
-            <EdgeToolbar edgeId={id} x={centerX} y={centerY} isVisible={hoveredEdgeId === id}>
+            {isDropTarget && (
+                <g
+                    transform={`translate(${centerX}, ${centerY})`}
+                    style={{ pointerEvents: 'none' }}
+                >
+                    <circle r={11} fill="rgba(255,255,255,0.15)" stroke="white" strokeWidth={1.5} />
+                    <text
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        fill="white"
+                        fontSize={14}
+                        fontWeight="bold"
+                        style={{ userSelect: 'none' }}
+                    >
+                        +
+                    </text>
+                </g>
+            )}
+            <EdgeToolbar
+                edgeId={id}
+                x={centerX}
+                y={centerY}
+                isVisible={hoveredEdgeId === id && !isDropTarget}
+            >
                 <Button
                     className="nodrag nopan !bg-card size-8 opacity-100 duration-0"
                     size={'icon'}
