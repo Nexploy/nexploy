@@ -5,43 +5,29 @@ import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { CONFIG_SCHEMAS } from '@/components/pipeline/nodes/nodeConfigPanel/nodeConfigRegistry';
 import { usePipelineActions } from '@/contexts/PipelineContext';
 import { getTemplate } from '@/components/pipeline/nodes/template/pipelineTemplates';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
-import { getEdgeIdAtPosition } from '@/components/pipeline/utils/edgeUtils';
 
 export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
     const [isDragOver, setIsDragOver] = useState(false);
     const { setNodes, setEdges, triggerAutoSave, handleNodeAdded } = usePipelineActions();
-    const setDragOverEdgeId = usePipelineEditorStore((s) => s.setDragOverEdgeId);
 
-    const onDragOver = useCallback(
-        (event: React.DragEvent) => {
-            event.preventDefault();
-            event.dataTransfer.dropEffect = 'move';
-            setIsDragOver(true);
-
-            const edgeId = getEdgeIdAtPosition(event.clientX, event.clientY);
-            setDragOverEdgeId(edgeId);
-        },
-        [setDragOverEdgeId],
-    );
+    const onDragOver = useCallback((event: React.DragEvent) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+        setIsDragOver(true);
+    }, []);
 
     const onDragLeave = useCallback(() => {
         setIsDragOver(false);
-        setDragOverEdgeId(null);
-    }, [setDragOverEdgeId]);
+    }, []);
 
     const onDrop = useCallback(
         (event: React.DragEvent) => {
             event.preventDefault();
             setIsDragOver(false);
-            setDragOverEdgeId(null);
             if (!rfInstance) return;
 
             const cursor = rfInstance.screenToFlowPosition({ x: event.clientX, y: event.clientY });
             const dropPosition = { x: cursor.x - 45, y: cursor.y - 45 };
-
-            // Check if dropping on an edge
-            const targetEdgeId = getEdgeIdAtPosition(event.clientX, event.clientY);
 
             const templateId = event.dataTransfer.getData('application/node-template');
             if (templateId) {
@@ -106,51 +92,11 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
                 },
             };
 
-            if (targetEdgeId) {
-                // Insert node into edge: remove old edge, create two new edges
-                const firstInput = def.handles.inputs[0];
-                const firstOutput = def.handles.outputs[0];
-
-                setEdges((edges) => {
-                    const targetEdge = edges.find((e) => e.id === targetEdgeId);
-                    if (!targetEdge || !firstInput || !firstOutput) {
-                        return edges.concat({
-                            id: `e-${newNodeId}-${Date.now()}`,
-                            source: newNodeId,
-                            target: newNodeId,
-                            type: 'gradient-edge',
-                        });
-                    }
-
-                    const withoutOld = edges.filter((e) => e.id !== targetEdgeId);
-                    const edgeToNew: Edge = {
-                        id: `e-${targetEdge.source}-${newNodeId}`,
-                        source: targetEdge.source,
-                        sourceHandle: targetEdge.sourceHandle,
-                        target: newNodeId,
-                        targetHandle: firstInput.id,
-                        type: 'gradient-edge',
-                    };
-                    const edgeFromNew: Edge = {
-                        id: `e-${newNodeId}-${targetEdge.target}`,
-                        source: newNodeId,
-                        sourceHandle: firstOutput.id,
-                        target: targetEdge.target,
-                        targetHandle: targetEdge.targetHandle,
-                        type: 'gradient-edge',
-                    };
-                    return [...withoutOld, edgeToNew, edgeFromNew];
-                });
-
-                setNodes((nodes) => nodes.concat(newNode));
-            } else {
-                setNodes((nodes) => nodes.concat(newNode));
-            }
-
+            setNodes((nodes) => nodes.concat(newNode));
             triggerAutoSave();
             handleNodeAdded(nodeType, newNodeId);
         },
-        [rfInstance, setNodes, setEdges, triggerAutoSave, handleNodeAdded, setDragOverEdgeId],
+        [rfInstance, setNodes, setEdges, triggerAutoSave, handleNodeAdded],
     );
 
     return { isDragOver, onDragOver, onDragLeave, onDrop };
