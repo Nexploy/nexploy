@@ -52,10 +52,8 @@ export function AccountMenuClient({ session }: AccountMenuClientProps) {
                                 height={28}
                                 alt="Account Image"
                             />
-                            <span className={'truncate group-data-[state=collapsed]:opacity-0'}>
-                                {session?.user.name}
-                            </span>
-                            <ChevronUp className="ml-auto group-data-[state=collapsed]:opacity-0" />
+                            <span className={'flex-1 truncate'}>{session?.user.name}</span>
+                            <ChevronUp />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent

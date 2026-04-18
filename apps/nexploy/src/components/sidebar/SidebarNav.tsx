@@ -92,7 +92,7 @@ export function SidebarNav() {
     return (
         <>
             {filteredGroups.map((group) => (
-                <SidebarGroup key={group.titleKey}>
+                <SidebarGroup className={'pt-0'} key={group.titleKey}>
                     <SidebarGroupLabel>{t(group.titleKey)}</SidebarGroupLabel>
                     <SidebarMenu>
                         {group.children.map((item) => {

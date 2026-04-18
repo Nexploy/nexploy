@@ -1,9 +1,4 @@
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
-} from '@workspace/ui/components/sidebar';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, } from '@workspace/ui/components/sidebar';
 import Link from 'next/link';
 import { AccountMenu } from '@/components/sidebar/AccountMenu';
 import { NexployLogo } from '@/components/sidebar/NexployLogo';
@@ -25,14 +20,14 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
         >
             <SidebarHeader
                 className={
-                    'flex flex-row justify-between gap-4 overflow-hidden group-data-[state=collapsed]:flex-col'
+                    'flex flex-row justify-between gap-4 overflow-hidden p-0 group-data-[state=collapsed]:flex-col'
                 }
             >
-                <Link href="/" className="flex gap-2">
+                <Link href="/" className="flex gap-2 p-2">
                     <NexployLogo className="size-7 shrink-0" />
-                    <div className="text-sx flex flex-col text-sm leading-none transition-[opacity] duration-200 ease-linear group-data-[state=collapsed]:opacity-0">
+                    <div className="text-sx flex flex-col text-sm leading-4 transition-[opacity] duration-200 ease-linear group-data-[state=collapsed]:opacity-0">
                         <span className="truncate font-bold">Nexploy</span>
-                        <span className="text-muted-foreground truncate text-xs">
+                        <span className="text-muted-foreground truncate text-xs leading-3">
                             v{process.env.appVersion}
                         </span>
                     </div>
