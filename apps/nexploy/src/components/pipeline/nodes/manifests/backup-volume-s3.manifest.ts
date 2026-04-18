@@ -26,8 +26,22 @@ export const backupVolumeS3Manifest: NodeManifest = {
     configSchema: backupVolumeS3ConfigSchema,
     configPanel: BackupVolumeS3Config,
     inputFields: [
-        { key: 'fileName', labelKey: 'pipeline.inputs.fileName', descriptionKey: 'pipeline.inputs.desc_fileName', type: 'input' },
-        { key: 'bucket', labelKey: 'pipeline.inputs.bucket', descriptionKey: 'pipeline.inputs.desc_bucket', type: 'input' },
-        { key: 'volumeName', labelKey: 'pipeline.inputs.volumeName', descriptionKey: 'pipeline.inputs.desc_volumeName', type: 'input' },
+        {
+            key: 'fileName',
+            labelKey: 'pipeline.inputs.fileName',
+            descriptionKey: 'pipeline.inputs.desc_fileName',
+            type: 'input',
+        },
+        {
+            key: 'bucket',
+            labelKey: 'pipeline.inputs.bucket',
+            descriptionKey: 'pipeline.inputs.desc_bucket',
+            type: 'input',
+        },
+        {
+            key: 'volumeName',
+            labelKey: 'pipeline.inputs.backupVolumeName',
+            type: 'input',
+        },
     ],
 };

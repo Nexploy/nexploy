@@ -11,7 +11,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 
 interface OutputChipProps {
     labelKey: string;
-    descriptionKey: string;
+    descriptionKey?: string;
 }
 
 function OutputChip({ labelKey, descriptionKey }: OutputChipProps) {
@@ -25,9 +25,11 @@ function OutputChip({ labelKey, descriptionKey }: OutputChipProps) {
             )}
         >
             <ArrowRightFromLine className="size-3 shrink-0 text-emerald-400/60" />
-            <span className="min-w-0 flex-1 truncate font-mono text-xs">{tPipeline(labelKey)}</span>
+            <span className="font-mono text-xs">{tPipeline(labelKey)}</span>
         </div>
     );
+
+    if (!descriptionKey) return chip;
 
     return (
         <Tooltip>

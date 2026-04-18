@@ -41,11 +41,11 @@ function InputChip({ nodeId, nodeType, field }: InputChipProps) {
             )}
         >
             <Variable className="size-3 shrink-0 text-amber-400/60 group-hover:text-amber-400" />
-            <span className="min-w-0 flex-1 truncate font-mono text-xs">
-                {tRepository(field.labelKey)}
-            </span>
+            <span className="font-mono text-xs">{tRepository(field.labelKey)}</span>
         </div>
     );
+
+    if (!field.descriptionKey) return chip;
 
     return (
         <Tooltip>
