@@ -118,10 +118,7 @@ export function PipelineProvider({
         activeBuildId ? `/api/repositories/${repositoryId}/builds/${activeBuildId}` : null,
         fetcherApi,
         {
-            onSuccess: (buildData) => {
-                setNodeStatuses(buildData?.nodeStatuses);
-                fitView({ padding: 0.3 });
-            },
+            onSuccess: (buildData) => setNodeStatuses(buildData?.nodeStatuses),
         },
     );
 
@@ -300,10 +297,6 @@ export function PipelineProvider({
         }
         savePipeline({ repositoryId, graph: flowToGraph(nodes, edges) });
     }, [saveVersion, nodes, edges]);
-
-    useEffect(() => {
-        fitView({ padding: 0.3 });
-    }, [activeBuildId]);
 
     useEffect(() => {
         return () => {
