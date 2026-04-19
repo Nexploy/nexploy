@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, EthernetPort, Trash } from 'lucide-react';
+import { ArrowLeft, EthernetPort, Trash2 } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useNetworkStore } from '@/stores/docker/useNetworkStore';
 import { CardNetworkDetails } from '@/components/docker/network/cards/CardNetworkDetails';
@@ -62,9 +62,7 @@ export function NetworkDetailPage({ networkId }: NetworkDetailPageProps) {
                     <ArrowLeft className="size-4" />
                     {tCommon('back')}
                 </Button>
-                <Button variant="destructive" size="icon" onClick={handleRemove}>
-                    <Trash className="size-4" />
-                </Button>
+                <Button icon={Trash2} variant="destructive" size="icon" onClick={handleRemove} />
             </div>
             <ScrollAreaWithShadow className="h-full overflow-hidden">
                 <div className="flex flex-col gap-5 px-5 pb-5">

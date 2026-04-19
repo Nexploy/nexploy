@@ -20,18 +20,24 @@ export const volumeNameParamSchema = z.object({
     name: z.string().min(1),
 });
 
+export const volumeDeleteQuerySchema = z.object({
+    force: z.string().optional().transform((v) => v === 'true'),
+});
+
+const cacheKeySchema = z.string().regex(/^[\w\-]+$/).optional();
+
 export const cacheRestoreSchema = z.object({
     volumeName: z.string().min(1),
     cachePath: z.string().min(1),
     workDir: z.string().min(1),
-    cacheKey: z.string().optional(),
+    cacheKey: cacheKeySchema,
 });
 
 export const cacheSaveSchema = z.object({
     volumeName: z.string().min(1),
     sourcePath: z.string().min(1),
     workDir: z.string().min(1),
-    cacheKey: z.string().optional(),
+    cacheKey: cacheKeySchema,
 });
 
 export type VolumeActions = z.infer<typeof volumeActionsSchema>;

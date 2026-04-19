@@ -7,7 +7,7 @@ import {
     NodeExecutionResult,
 } from '@/types/pipeline.type';
 import { fetchSecretsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { safeResolvePath } from '@/inngest/pipeline/utils/pathSafety';
+import { safeResolvePath } from '@workspace/shared/pathSafety';
 import { z } from 'zod';
 
 export class FetchSecretsExecutor implements INodeExecutor {

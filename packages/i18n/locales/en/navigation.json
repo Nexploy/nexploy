@@ -35,7 +35,7 @@
     "editDockerEnvironment": "Edit Docker environment",
     "editDockerEnvironmentDescription": "Update configuration for {name}",
     "deleteEnvironment": "Delete environment",
-    "deleteEnvironmentConfirm": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+    "deleteEnvironmentConfirm": "Are you sure you want to delete {name}? This action cannot be undone.",
     "noEnvironment": "No environment",
     "edit": "Edit",
     "delete": "Delete",

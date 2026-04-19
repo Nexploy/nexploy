@@ -1,16 +1,15 @@
 import { docker } from '@/utils/dockerClient';
-import { handleAsync } from '@/helpers/handleAsync';
+import { route } from '@/helpers/route';
 import { Hono } from 'hono';
 import { volumesStateManager } from '@/managers/volumesStateManager';
-import { zValidator } from '@hono/zod-validator';
 import {
     cacheRestoreSchema,
     cacheSaveSchema,
     volumeCreateSchema,
     volumeDeleteSchema,
+    volumeDeleteQuerySchema,
     volumeNameParamSchema,
 } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
-import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
 import { restoreCache, saveCache } from '@/services/cacheService';
 import { deleteVolumes } from '@/services/volumeService';
 
@@ -18,35 +17,30 @@ const app = new Hono();
 
 app.get(
     '/',
-    handleAsync(async () => {
+    route(async () => {
         return volumesStateManager.getAllVolumes();
     }),
 );
 
 app.post(
     '/hardRefresh',
-    handleAsync(async () => {
+    route(async () => {
         return await volumesStateManager.hardRefresh();
     }),
 );
 
 app.get(
     '/:name/inspect',
-    zValidator('param', volumeNameParamSchema),
-    handleAsync(async (c) => {
-        const { name: volumeName } = getValidatedParam(c, volumeNameParamSchema);
-
-        const volume = docker.getVolume(volumeName);
-
-        return await volume.inspect();
+    route({ param: volumeNameParamSchema }, async (c) => {
+        const { name: volumeName } = c.req.valid('param');
+        return await docker.getVolume(volumeName).inspect();
     }),
 );
 
 app.post(
     '/create',
-    zValidator('json', volumeCreateSchema),
-    handleAsync(async (c) => {
-        const { name, driver, driverOpts, labels } = getValidatedJson(c, volumeCreateSchema);
+    route({ json: volumeCreateSchema }, async (c) => {
+        const { name, driver, driverOpts, labels } = c.req.valid('json');
 
         const volumeExists = volumesStateManager.getState(name);
         if (volumeExists) {
@@ -66,38 +60,32 @@ app.post(
 
 app.post(
     '/delete',
-    zValidator('json', volumeDeleteSchema),
-    handleAsync(async (c) => {
-        const { volumeNames } = getValidatedJson(c, volumeDeleteSchema);
-        const force = c.req.query('force') === 'true';
-        return await deleteVolumes(volumeNames, force);
+    route({ json: volumeDeleteSchema, query: volumeDeleteQuerySchema }, async (c) => {
+        const { volumeNames } = c.req.valid('json');
+        const { force } = c.req.valid('query');
+        return await deleteVolumes(volumeNames, force ?? false);
     }),
 );
 
 app.post(
     '/prune',
-    handleAsync(async () => {
+    route(async () => {
         return await docker.pruneVolumes();
     }),
 );
 
 app.post(
     '/cache/restore',
-    zValidator('json', cacheRestoreSchema),
-    handleAsync(async (c) => {
-        const { volumeName, cachePath, workDir, cacheKey } = getValidatedJson(
-            c,
-            cacheRestoreSchema,
-        );
+    route({ json: cacheRestoreSchema }, async (c) => {
+        const { volumeName, cachePath, workDir, cacheKey } = c.req.valid('json');
         return await restoreCache(volumeName, cachePath, workDir, cacheKey);
     }),
 );
 
 app.post(
     '/cache/save',
-    zValidator('json', cacheSaveSchema),
-    handleAsync(async (c) => {
-        const { volumeName, sourcePath, workDir, cacheKey } = getValidatedJson(c, cacheSaveSchema);
+    route({ json: cacheSaveSchema }, async (c) => {
+        const { volumeName, sourcePath, workDir, cacheKey } = c.req.valid('json');
         return await saveCache(volumeName, sourcePath, workDir, cacheKey);
     }),
 );

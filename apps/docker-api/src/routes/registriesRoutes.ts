@@ -1,18 +1,18 @@
 import { Hono } from 'hono';
-import { handleAsync } from '@/helpers/handleAsync';
+import { route } from '@/helpers/route';
 import { logger } from '@/utils/logger';
 import { writeDockerConfig, removeDockerConfig, validateRegistry } from '@/services/registryService';
+import {
+    registryLoginSchema,
+    registryLogoutSchema,
+} from '@workspace/schemas-zod/docker/registry/registryAction.schema';
 
 const app = new Hono();
 
 app.post(
     '/login',
-    handleAsync(async (c) => {
-        const { serveraddress, username, password } = await c.req.json<{
-            serveraddress: string;
-            username: string;
-            password: string;
-        }>();
+    route({ json: registryLoginSchema }, async (c) => {
+        const { serveraddress, username, password } = c.req.valid('json');
 
         const valid = validateRegistry(serveraddress, username, password);
         if (!valid) {
@@ -28,8 +28,8 @@ app.post(
 
 app.post(
     '/logout',
-    handleAsync(async (c) => {
-        const { serveraddress } = await c.req.json<{ serveraddress: string }>();
+    route({ json: registryLogoutSchema }, async (c) => {
+        const { serveraddress } = c.req.valid('json');
         removeDockerConfig(serveraddress);
         return { success: true };
     }),

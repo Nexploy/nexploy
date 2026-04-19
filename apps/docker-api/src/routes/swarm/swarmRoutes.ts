@@ -1,24 +1,18 @@
 import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
-import { handleAsync } from '@/helpers/handleAsync';
+import { route } from '@/helpers/route';
 import { swarmStateManager } from '@/managers/swarmStateManager';
 import { HttpError } from '@workspace/shared/http-error';
-import { zValidator } from '@hono/zod-validator';
 import { initActionSchema } from '@workspace/schemas-zod/docker/swarm/init.schema';
 import { swarmJoinSchema } from '@workspace/schemas-zod/docker/swarm/join.schema';
 import { swarmLeaveSchema } from '@workspace/schemas-zod/docker/swarm/leave.schema';
-import { getValidatedJson } from '@/helpers/validation';
 
 const app = new Hono();
 
 app.post(
     '/init',
-    zValidator('json', initActionSchema),
-    handleAsync(async (c) => {
-        const { advertiseAddr, listenAddr, forceNewCluster } = getValidatedJson(
-            c,
-            initActionSchema,
-        );
+    route({ json: initActionSchema }, async (c) => {
+        const { advertiseAddr, listenAddr, forceNewCluster } = c.req.valid('json');
 
         const result = await docker.swarmInit({
             AdvertiseAddr: advertiseAddr,
@@ -34,12 +28,8 @@ app.post(
 
 app.post(
     '/join',
-    zValidator('json', swarmJoinSchema),
-    handleAsync(async (c) => {
-        const { advertiseAddr, listenAddr, remoteAddrs, joinToken } = getValidatedJson(
-            c,
-            swarmJoinSchema,
-        );
+    route({ json: swarmJoinSchema }, async (c) => {
+        const { advertiseAddr, listenAddr, remoteAddrs, joinToken } = c.req.valid('json');
 
         if (!remoteAddrs || remoteAddrs.length === 0) {
             throw new HttpError('Remote addresses are required.', 400);
@@ -60,9 +50,8 @@ app.post(
 
 app.post(
     '/leave',
-    zValidator('json', swarmLeaveSchema),
-    handleAsync(async (c) => {
-        const { force } = getValidatedJson(c, swarmLeaveSchema);
+    route({ json: swarmLeaveSchema }, async (c) => {
+        const { force } = c.req.valid('json');
 
         await docker.swarmLeave({ force });
         await swarmStateManager.hardRefresh();
@@ -73,7 +62,7 @@ app.post(
 
 app.post(
     '/hardRefresh',
-    handleAsync(async () => {
+    route(async () => {
         await swarmStateManager.hardRefresh();
         return { success: true };
     }),

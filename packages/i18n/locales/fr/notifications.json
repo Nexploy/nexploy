@@ -23,7 +23,7 @@
     "retrying": "Nouvelle tentative...",
     "actionCancelled": "Action annulée",
     "confirmAction": "Veuillez confirmer cette action",
-    "environmentChanged": "Environnement changé vers \"{name}\"",
+    "environmentChanged": "Environnement changé vers {name}",
     "buildStarted": "Build démarré",
     "buildCompleted": "Build terminé avec succès",
     "buildFailed": "Build échoué",

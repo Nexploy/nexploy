@@ -1,23 +1,21 @@
 import { Hono } from 'hono';
+import type Dockerode from 'dockerode';
 import { docker } from '@/utils/dockerClient';
-import { handleAsync } from '@/helpers/handleAsync';
+import { route } from '@/helpers/route';
 import { swarmStateManager } from '@/managers/swarmStateManager';
-import { zValidator } from '@hono/zod-validator';
 import {
     serviceIdParamSchema,
     scaleServiceSchema,
     createServiceSchema,
 } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
-import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
 
 const app = new Hono();
 
 app.post(
     '/',
-    zValidator('json', createServiceSchema),
-    handleAsync(async (c) => {
+    route({ json: createServiceSchema }, async (c) => {
         const { name, image, replicas, ports, env, networks, constraints, labels, command } =
-            getValidatedJson(c, createServiceSchema);
+            c.req.valid('json');
 
         const serviceSpec: Record<string, unknown> = {
             Name: name,
@@ -57,21 +55,19 @@ app.post(
             };
         }
 
-        const result = await docker.createService(serviceSpec as Parameters<typeof docker.createService>[0]);
+        const result = await docker.createService(serviceSpec as Dockerode.CreateServiceOptions);
 
         await swarmStateManager.hardRefresh();
 
-        return { success: true, id: result.id };
+        return { success: true, id: result.ID };
     }),
 );
 
 app.post(
     '/:id/scale',
-    zValidator('param', serviceIdParamSchema),
-    zValidator('json', scaleServiceSchema),
-    handleAsync(async (c) => {
-        const { id } = getValidatedParam(c, serviceIdParamSchema);
-        const { replicas } = getValidatedJson(c, scaleServiceSchema);
+    route({ param: serviceIdParamSchema, json: scaleServiceSchema }, async (c) => {
+        const { id } = c.req.valid('param');
+        const { replicas } = c.req.valid('json');
 
         const service = docker.getService(id);
         const serviceInfo = await service.inspect();
@@ -95,9 +91,8 @@ app.post(
 
 app.delete(
     '/:id',
-    zValidator('param', serviceIdParamSchema),
-    handleAsync(async (c) => {
-        const { id } = getValidatedParam(c, serviceIdParamSchema);
+    route({ param: serviceIdParamSchema }, async (c) => {
+        const { id } = c.req.valid('param');
 
         const service = docker.getService(id);
         await service.remove();

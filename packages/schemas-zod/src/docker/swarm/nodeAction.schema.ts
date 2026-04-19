@@ -10,4 +10,8 @@ export const swarmNodeActionSchema = z.object({
     force: z.boolean().optional(),
 });
 
+export const nodeDeleteBodySchema = z.object({
+    force: z.boolean().optional(),
+});
+
 export type SwarmNodeActionInput = z.infer<typeof swarmNodeActionSchema>;

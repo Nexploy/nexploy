@@ -3,17 +3,21 @@ import { parseDockerLogs } from '@/utils/parseDockerLogs';
 import { getCurrentDockerClient } from '@/lib/dockerContext';
 import { ensureImage } from '@/utils/ensureImage';
 import { PassThrough } from 'stream';
-import { handleAsync } from '@/helpers/handleAsync';
+import { route } from '@/helpers/route';
 import { Hono } from 'hono';
 import { ContainerCreateOptions } from 'dockerode';
 import { logger } from '@/utils/logger';
 import { PortType } from '@workspace/typescript-interface/docker/docker.port';
 import { HttpError } from '@workspace/shared/http-error';
-import { zValidator } from '@hono/zod-validator';
-import { containerParamSchema } from '@workspace/schemas-zod/docker/container/containerAction.schema';
+import {
+    containerParamSchema,
+    containerNameParamSchema,
+    containerLogsQuerySchema,
+    containerRunEphemeralSchema,
+    containerExecBodySchema,
+} from '@workspace/schemas-zod/docker/container/containerAction.schema';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
-import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
 import { containersStateManager } from '@/managers/containersStateManager';
 import { dockerStatusManager } from '@/managers/dockerStatusManager';
 
@@ -23,14 +27,8 @@ const app = new Hono();
 
 app.post(
     '/run-ephemeral',
-    handleAsync(async (c) => {
-        const { image, command, workdir, mountPath, networkMode } = await c.req.json<{
-            image: string;
-            command: string;
-            workdir?: string;
-            mountPath?: string;
-            networkMode?: string;
-        }>();
+    route({ json: containerRunEphemeralSchema }, async (c) => {
+        const { image, command, workdir, mountPath, networkMode } = c.req.valid('json');
 
         const dockerClient = getCurrentDockerClient();
         await ensureImage(dockerClient, image);
@@ -79,13 +77,12 @@ app.post(
 
 app.get(
     '/:name/logs',
-    handleAsync(async (c) => {
-        const name = c.req.param('name');
-        const tail = c.req.query('tail') ?? '100';
-        const since = c.req.query('since');
+    route({ param: containerNameParamSchema, query: containerLogsQuerySchema }, async (c) => {
+        const { name } = c.req.valid('param');
+        const { tail = '100', since } = c.req.valid('query');
 
         const dockerClient = getCurrentDockerClient();
-        const container = dockerClient.getContainer(decodeURIComponent(name!));
+        const container = dockerClient.getContainer(decodeURIComponent(name));
 
         const logsOptions: Record<string, unknown> = {
             stdout: true,
@@ -104,15 +101,12 @@ app.get(
 
 app.post(
     '/:name/exec',
-    handleAsync(async (c) => {
-        const name = c.req.param('name');
-        const { command, workdir } = await c.req.json<{
-            command: string;
-            workdir?: string;
-        }>();
+    route({ param: containerNameParamSchema, json: containerExecBodySchema }, async (c) => {
+        const { name } = c.req.valid('param');
+        const { command, workdir } = c.req.valid('json');
 
         const dockerClient = getCurrentDockerClient();
-        const container = dockerClient.getContainer(decodeURIComponent(name!));
+        const container = dockerClient.getContainer(decodeURIComponent(name));
 
         const execOptions: Record<string, unknown> = {
             Cmd: ['sh', '-c', command],
@@ -151,8 +145,7 @@ app.post(
 
 app.post(
     '/create',
-    zValidator('json', containerCreateFormSchema),
-    handleAsync(async (c) => {
+    route({ json: containerCreateFormSchema }, async (c) => {
         const {
             envVars,
             volumes,
@@ -164,7 +157,7 @@ app.post(
             image,
             privileged,
             autoRemove,
-        } = getValidatedJson(c, containerCreateFormSchema);
+        } = c.req.valid('json');
 
         const createOptions: ContainerCreateOptions = {
             name,
@@ -221,20 +214,14 @@ app.post(
             logger.warn(`Container ${container.id} created but failed to start: ${error.message}`);
         }
 
-        return {
-            id: container.id,
-        };
+        return { id: container.id };
     }),
 );
 
 app.post(
     '/recreate',
-    zValidator('json', ContainerRecreateFormSchema),
-    handleAsync(async (c) => {
-        const { ports, envVars, volumes, networks, containerId } = getValidatedJson(
-            c,
-            ContainerRecreateFormSchema,
-        );
+    route({ json: ContainerRecreateFormSchema }, async (c) => {
+        const { ports, envVars, volumes, networks, containerId } = c.req.valid('json');
 
         const container = docker.getContainer(containerId);
         const containerInfo = await container.inspect();
@@ -403,64 +390,48 @@ app.post(
 
 app.post(
     '/:id/start',
-    zValidator('param', containerParamSchema),
-    handleAsync(async (c) => {
-        const { id } = getValidatedParam(c, containerParamSchema);
-        const container = docker.getContainer(id);
-
-        return await container.start();
+    route({ param: containerParamSchema }, async (c) => {
+        const { id } = c.req.valid('param');
+        return await docker.getContainer(id).start();
     }),
 );
 
 app.post(
     '/:id/stop',
-    zValidator('param', containerParamSchema),
-    handleAsync(async (c) => {
-        const { id } = getValidatedParam(c, containerParamSchema);
-        const container = docker.getContainer(id);
-
-        return await container.stop();
+    route({ param: containerParamSchema }, async (c) => {
+        const { id } = c.req.valid('param');
+        return await docker.getContainer(id).stop();
     }),
 );
 
 app.post(
     '/:id/pause',
-    zValidator('param', containerParamSchema),
-    handleAsync(async (c) => {
-        const { id } = getValidatedParam(c, containerParamSchema);
-        const container = docker.getContainer(id);
-
-        await container.pause();
+    route({ param: containerParamSchema }, async (c) => {
+        const { id } = c.req.valid('param');
+        await docker.getContainer(id).pause();
     }),
 );
 
 app.post(
     '/:id/unpause',
-    zValidator('param', containerParamSchema),
-    handleAsync(async (c) => {
-        const { id } = getValidatedParam(c, containerParamSchema);
-        const container = docker.getContainer(id);
-
-        await container.unpause();
+    route({ param: containerParamSchema }, async (c) => {
+        const { id } = c.req.valid('param');
+        await docker.getContainer(id).unpause();
     }),
 );
 
 app.post(
     '/:id/restart',
-    zValidator('param', containerParamSchema),
-    handleAsync(async (c) => {
-        const { id } = getValidatedParam(c, containerParamSchema);
-        const container = docker.getContainer(id);
-
-        await container.restart();
+    route({ param: containerParamSchema }, async (c) => {
+        const { id } = c.req.valid('param');
+        await docker.getContainer(id).restart();
     }),
 );
 
 app.get(
     '/:id/info',
-    zValidator('param', containerParamSchema),
-    handleAsync(async (c) => {
-        const { id } = getValidatedParam(c, containerParamSchema);
+    route({ param: containerParamSchema }, async (c) => {
+        const { id } = c.req.valid('param');
         const container = docker.getContainer(id);
 
         try {
@@ -477,13 +448,11 @@ app.get(
 
 app.delete(
     '/:id/remove',
-    zValidator('param', containerParamSchema),
-    handleAsync(async (c) => {
-        const { id } = getValidatedParam(c, containerParamSchema);
+    route({ param: containerParamSchema }, async (c) => {
+        const { id } = c.req.valid('param');
         const container = docker.getContainer(id);
 
         const containerInfo = await container.inspect();
-
         if (containerInfo.State.Running) await container.stop();
 
         return await container.remove();
@@ -492,7 +461,7 @@ app.delete(
 
 app.get(
     '/status',
-    handleAsync(async () => {
+    route(async () => {
         const stats = containersStateManager.getStats();
         return {
             ...stats,
@@ -503,16 +472,15 @@ app.get(
 
 app.get(
     '/current',
-    handleAsync(async () => {
+    route(async () => {
         return containersStateManager.getAllStates();
     }),
 );
 
 app.get(
     '/:id',
-    zValidator('param', containerParamSchema),
-    handleAsync(async (c) => {
-        const { id } = getValidatedParam(c, containerParamSchema);
+    route({ param: containerParamSchema }, async (c) => {
+        const { id } = c.req.valid('param');
         const container = containersStateManager.getContainer(id);
 
         if (!container) {

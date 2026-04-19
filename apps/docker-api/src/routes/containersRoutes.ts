@@ -1,14 +1,19 @@
-import { handleAsync } from '@/helpers/handleAsync';
+import { route } from '@/helpers/route';
 import { Hono } from 'hono';
 import { containersStateManager } from '@/managers/containersStateManager';
 import { filterNexployContainers } from '@workspace/shared/nexployFilter';
+import { z } from 'zod';
+
+const containersQuerySchema = z.object({
+    name: z.string().optional(),
+});
 
 const app = new Hono();
 
 app.get(
     '/',
-    handleAsync(async (c) => {
-        const name = c.req.query('name');
+    route({ query: containersQuerySchema }, async (c) => {
+        const { name } = c.req.valid('query');
         const allContainers = containersStateManager.getAllStates();
         const containers = filterNexployContainers(allContainers);
 
@@ -22,7 +27,7 @@ app.get(
 
 app.post(
     '/hardRefresh',
-    handleAsync(async () => {
+    route(async () => {
         return await containersStateManager.hardRefresh();
     }),
 );

@@ -881,14 +881,14 @@
         "dockerReconnecting": "Le daemon Docker tente de se reconnecter...",
         "forceDelete": "Forcer la suppression",
         "forceDeleteDescription": "Forcer la suppression en déconnectant les conteneurs.",
-        "networkSkipBuiltin": "{count, plural, one {Le réseau \"{name}\" est un réseau système et ne peut pas être supprimé.} other {# réseaux sont des réseaux système et ne peuvent pas être supprimés.}}",
-        "networkSkipCompose": "{count, plural, one {Le réseau \"{name}\" appartient à une stack Docker Compose et ne peut pas être supprimé.} other {# réseaux appartiennent à une stack Docker Compose et ne peuvent pas être supprimés.}}",
-        "networkSkipContainers": "{count, plural, one {Le réseau \"{name}\" a des conteneurs connectés et ne peut pas être supprimé.} other {# réseaux ont des conteneurs connectés et ne peuvent pas être supprimés.}}",
-        "networkSkipNotFound": "{count, plural, one {Le réseau \"{name}\" est introuvable.} other {# réseaux sont introuvables.}}",
+        "networkSkipBuiltin": "{count, plural, one {Le réseau {name} est un réseau système et ne peut pas être supprimé.} other {# réseaux sont des réseaux système et ne peuvent pas être supprimés.}}",
+        "networkSkipCompose": "{count, plural, one {Le réseau {name} appartient à une stack Docker Compose et ne peut pas être supprimé.} other {# réseaux appartiennent à une stack Docker Compose et ne peuvent pas être supprimés.}}",
+        "networkSkipContainers": "{count, plural, one {Le réseau {name} a des conteneurs connectés et ne peut pas être supprimé.} other {# réseaux ont des conteneurs connectés et ne peuvent pas être supprimés.}}",
+        "networkSkipNotFound": "{count, plural, one {Le réseau {name} est introuvable.} other {# réseaux sont introuvables.}}",
         "someNetworksSkipped": "{count, plural, one {# réseau a été ignoré} other {# réseaux ont été ignorés}}.",
-        "volumeSkipInUse": "{count, plural, one {Le volume \"{name}\" est utilisé par des conteneurs. Arrêtez-les avant de supprimer.} other {# volumes sont utilisés par des conteneurs. Arrêtez-les avant de supprimer.}}",
-        "volumeSkipNotFound": "{count, plural, one {Le volume \"{name}\" est introuvable.} other {# volumes sont introuvables.}}",
-        "imageSkipInUse": "{count, plural, one {L'image \"{name}\" est utilisée par des conteneurs. Activez « Forcer la suppression » pour la supprimer quand même.} other {# images sont utilisées par des conteneurs. Activez « Forcer la suppression » pour les supprimer quand même.}}",
-        "imageSkipNotFound": "{count, plural, one {L'image \"{name}\" est introuvable.} other {# images sont introuvables.}}"
+        "volumeSkipInUse": "{count, plural, one {Le volume {name} est utilisé par des conteneurs. Arrêtez-les avant de supprimer.} other {# volumes sont utilisés par des conteneurs. Arrêtez-les avant de supprimer.}}",
+        "volumeSkipNotFound": "{count, plural, one {Le volume {name} est introuvable.} other {# volumes sont introuvables.}}",
+        "imageSkipInUse": "{count, plural, one {L'image {name} est utilisée par des conteneurs. Activez « Forcer la suppression » pour la supprimer quand même.} other {# images sont utilisées par des conteneurs. Activez « Forcer la suppression » pour les supprimer quand même.}}",
+        "imageSkipNotFound": "{count, plural, one {L'image {name} est introuvable.} other {# images sont introuvables.}}"
     }
 }

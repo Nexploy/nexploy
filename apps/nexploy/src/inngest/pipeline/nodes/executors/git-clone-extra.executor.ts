@@ -7,7 +7,7 @@ import {
 } from '@/types/pipeline.type';
 import { gitCloneExtraConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { gitService } from '@/inngest/pipeline/services/git.service';
-import { safeResolvePath } from '@/inngest/pipeline/utils/pathSafety';
+import { safeResolvePath } from '@workspace/shared/pathSafety';
 import { z } from 'zod';
 
 export class GitCloneExtraExecutor implements INodeExecutor {

@@ -3,7 +3,12 @@ import { CalendarClock } from 'lucide-react';
 import dayjs from 'dayjs';
 import { BackupSchedule } from 'generated/client';
 import { Badge } from '@workspace/ui/components/badge';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from '@workspace/ui/components/accordion';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@workspace/ui/components/accordion';
 import { DeleteScheduleButton } from './DeleteScheduleButton';
 
 const frequencyKeys = {
@@ -63,11 +68,14 @@ export async function SchedulesAccordion({ volumeSchedules }: SchedulesAccordion
             <Accordion type="multiple" className="divide-y">
                 {volumesWithSchedules.map(({ volumeName, schedules }) => (
                     <AccordionItem key={volumeName} value={volumeName}>
-                        <AccordionTrigger className="cursor-pointer px-4 py-3 hover:no-underline">
-                            <div className="flex items-center gap-2">
+                        <AccordionTrigger className="group flex cursor-pointer items-center px-4 py-3 hover:no-underline">
+                            <div className="flex flex-1 items-center gap-2">
                                 <span className="text-sm font-medium">{volumeName}</span>
                                 <Badge className="h-5">{schedules.length}</Badge>
                             </div>
+                            <Badge variant={'outline'} className="text-xs">
+                                {t('clickForDetails')}
+                            </Badge>
                         </AccordionTrigger>
                         <AccordionContent className="px-4 pb-3">
                             <div className="space-y-2">

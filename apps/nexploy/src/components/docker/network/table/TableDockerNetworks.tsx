@@ -26,7 +26,7 @@ import { useNetworkStore } from '@/stores/docker/useNetworkStore';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
-import { ChevronLeft, ChevronRight, Trash } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { onNetworkAction } from '@/actions/docker/network/networkAction.action';
@@ -158,8 +158,8 @@ export function TableDockerNetworks() {
                         variant={'destructive'}
                         onClick={handleDeleteAction}
                         disabled={!numberOfSelectedRows}
+                        icon={Trash2}
                     >
-                        <Trash />
                         {tCommon('remove')}
                         {!!numberOfSelectedRows && (
                             <Badge variant={'secondary'} className={'rounded-full'}>

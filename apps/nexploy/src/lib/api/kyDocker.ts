@@ -5,6 +5,8 @@ export interface KyDockerOptions extends Options {
     environmentId?: string;
 }
 
+const DOCKER_API_KEY = process.env.DOCKER_API_KEY;
+
 export const kyDocker = ky.create({
     prefixUrl: `${process.env.DOCKER_API_URL}/api`,
     timeout: 10000,
@@ -37,6 +39,10 @@ export const kyDocker = ky.create({
 
                 if (environmentId) {
                     request.headers.set('X-Docker-Environment', environmentId);
+                }
+
+                if (DOCKER_API_KEY) {
+                    request.headers.set('Authorization', `Bearer ${DOCKER_API_KEY}`);
                 }
 
                 try {

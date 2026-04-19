@@ -35,7 +35,7 @@
     "editDockerEnvironment": "Modifier l'environnement Docker",
     "editDockerEnvironmentDescription": "Mettre à jour la configuration de {name}",
     "deleteEnvironment": "Supprimer l'environnement",
-    "deleteEnvironmentConfirm": "Êtes-vous sûr de vouloir supprimer \"{name}\" ? Cette action est irréversible.",
+    "deleteEnvironmentConfirm": "Êtes-vous sûr de vouloir supprimer {name} ? Cette action est irréversible.",
     "noEnvironment": "Aucun environnement",
     "edit": "Modifier",
     "delete": "Supprimer",

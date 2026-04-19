@@ -26,7 +26,7 @@ import { useVolumeStore } from '@/stores/docker/useVolumeStore';
 import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
-import { ChevronLeft, ChevronRight, Trash } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import { formatBytes } from '@/utils/formatBytes';
 import { Badge } from '@workspace/ui/components/badge';
 import { Skeleton } from '@workspace/ui/components/skeleton';
@@ -130,8 +130,8 @@ export function TableDockerVolumes() {
                         variant={'destructive'}
                         onClick={handleDeleteAction}
                         disabled={!numberOfSelectedRows}
+                        icon={Trash2}
                     >
-                        <Trash />
                         {tCommon('remove')}
                         {!!numberOfSelectedRows && (
                             <Badge variant={'secondary'} className={'rounded-full'}>

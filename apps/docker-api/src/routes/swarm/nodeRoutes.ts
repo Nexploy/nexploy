@@ -1,19 +1,19 @@
 import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
-import { handleAsync } from '@/helpers/handleAsync';
+import { route } from '@/helpers/route';
 import { swarmStateManager } from '@/managers/swarmStateManager';
 import { HttpError } from '@workspace/shared/http-error';
-import { zValidator } from '@hono/zod-validator';
-import { nodeIdParamSchema } from '@workspace/schemas-zod/docker/swarm/nodeAction.schema';
-import { getValidatedParam } from '@/helpers/validation';
+import {
+    nodeIdParamSchema,
+    nodeDeleteBodySchema,
+} from '@workspace/schemas-zod/docker/swarm/nodeAction.schema';
 
 const app = new Hono();
 
 app.post(
     '/:id/promote',
-    zValidator('param', nodeIdParamSchema),
-    handleAsync(async (c) => {
-        const { id: nodeId } = getValidatedParam(c, nodeIdParamSchema);
+    route({ param: nodeIdParamSchema }, async (c) => {
+        const { id: nodeId } = c.req.valid('param');
 
         const node = docker.getNode(nodeId);
         const nodeInfo = await node.inspect();
@@ -37,9 +37,8 @@ app.post(
 
 app.post(
     '/:id/demote',
-    zValidator('param', nodeIdParamSchema),
-    handleAsync(async (c) => {
-        const { id: nodeId } = getValidatedParam(c, nodeIdParamSchema);
+    route({ param: nodeIdParamSchema }, async (c) => {
+        const { id: nodeId } = c.req.valid('param');
 
         const node = docker.getNode(nodeId);
         const nodeInfo = await node.inspect();
@@ -63,9 +62,8 @@ app.post(
 
 app.post(
     '/:id/drain',
-    zValidator('param', nodeIdParamSchema),
-    handleAsync(async (c) => {
-        const { id: nodeId } = getValidatedParam(c, nodeIdParamSchema);
+    route({ param: nodeIdParamSchema }, async (c) => {
+        const { id: nodeId } = c.req.valid('param');
 
         const node = docker.getNode(nodeId);
         const nodeInfo = await node.inspect();
@@ -85,9 +83,8 @@ app.post(
 
 app.post(
     '/:id/activate',
-    zValidator('param', nodeIdParamSchema),
-    handleAsync(async (c) => {
-        const { id: nodeId } = getValidatedParam(c, nodeIdParamSchema);
+    route({ param: nodeIdParamSchema }, async (c) => {
+        const { id: nodeId } = c.req.valid('param');
 
         const node = docker.getNode(nodeId);
         const nodeInfo = await node.inspect();
@@ -107,9 +104,8 @@ app.post(
 
 app.post(
     '/:id/pause',
-    zValidator('param', nodeIdParamSchema),
-    handleAsync(async (c) => {
-        const { id: nodeId } = getValidatedParam(c, nodeIdParamSchema);
+    route({ param: nodeIdParamSchema }, async (c) => {
+        const { id: nodeId } = c.req.valid('param');
 
         const node = docker.getNode(nodeId);
         const nodeInfo = await node.inspect();
@@ -129,17 +125,9 @@ app.post(
 
 app.delete(
     '/:id',
-    zValidator('param', nodeIdParamSchema),
-    handleAsync(async (c) => {
-        const { id: nodeId } = getValidatedParam(c, nodeIdParamSchema);
-
-        let force = false;
-        try {
-            const body = await c.req.json();
-            force = !!body?.force;
-        } catch {
-            force = false;
-        }
+    route({ param: nodeIdParamSchema, json: nodeDeleteBodySchema }, async (c) => {
+        const { id: nodeId } = c.req.valid('param');
+        const { force = false } = c.req.valid('json');
 
         const node = docker.getNode(nodeId);
         await node.remove({ force });

@@ -1,9 +1,6 @@
 'use client';
 
-import {
-    initializeEnvironmentStore,
-    useEnvironmentStore,
-} from '@/stores/environment/useEnvironmentStore';
+import { initializeEnvironmentStore, useEnvironmentStore, } from '@/stores/environment/useEnvironmentStore';
 import { useEffect } from 'react';
 import {
     DropdownMenu,
@@ -14,12 +11,7 @@ import {
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 import { Button } from '@workspace/ui/components/button';
-import {
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    useSidebar,
-} from '@workspace/ui/components/sidebar';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar, } from '@workspace/ui/components/sidebar';
 import { Check, ChevronsUpDown, MoreHorizontal, Pencil, Plus, Trash } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { CreateEnvironmentForm } from '@/components/sidebar/environment/CreateEnvironmentForm';
@@ -110,7 +102,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
     };
 
     return (
-        <SidebarMenu className="w-fit self-center">
+        <SidebarMenu className="w-fit">
             <SidebarMenuItem>
                 <DropdownMenu>
                     <Tooltip>

@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, HardDrive, Trash } from 'lucide-react';
+import { ArrowLeft, HardDrive, Trash2 } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useVolumeStore } from '@/stores/docker/useVolumeStore';
 import { CardVolumeDetails } from '@/components/docker/volume/cards/CardVolumeDetails';
@@ -59,13 +59,10 @@ export function VolumeDetailPage({ volumeName }: VolumeDetailPageProps) {
                     )}
                     <p className="text-muted-foreground text-sm">{t('description')}</p>
                 </div>
-                <Button variant="outline" onClick={() => router.back()}>
-                    <ArrowLeft className="size-4" />
+                <Button icon={ArrowLeft} variant="outline" onClick={() => router.back()}>
                     {tCommon('back')}
                 </Button>
-                <Button variant="destructive" size="icon" onClick={handleRemove}>
-                    <Trash className="size-4" />
-                </Button>
+                <Button icon={Trash2} variant="destructive" size="icon" onClick={handleRemove} />
             </div>
             <ScrollAreaWithShadow className="h-full overflow-hidden">
                 <div className="flex flex-col gap-5 px-5 pb-5">

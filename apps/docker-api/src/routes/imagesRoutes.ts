@@ -1,16 +1,16 @@
-import { handleAsync } from '@/helpers/handleAsync';
+import { route } from '@/helpers/route';
 import { Hono } from 'hono';
 import { imagesStateManager } from '@/managers/imagesStateManager';
 import { HttpError } from '@workspace/shared/http-error';
-import { zValidator } from '@hono/zod-validator';
 import {
     imageDeleteSchema,
     imageIdParamSchema,
     imageMirrorSchema,
     imagePullWithAuthSchema,
+    imageScanSchema,
+    imageTagBodySchema,
 } from '@workspace/schemas-zod/docker/image/imageAction.schema';
-import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
-import { scanImage, type Severity } from '@/services/trivyRunner';
+import { scanImage } from '@/services/trivyRunner';
 import { deleteImages, mirrorImage, pullImage } from '@/services/imageService';
 import { docker } from '@/utils/dockerClient';
 
@@ -18,47 +18,38 @@ const app = new Hono();
 
 app.post(
     '/scan',
-    handleAsync(async (c) => {
-        const { image, tag, severity, trivyVersion, buildId } = await c.req.json<{
-            image: string;
-            tag: string;
-            severity: Severity;
-            trivyVersion?: string;
-            buildId: string;
-        }>();
-
+    route({ json: imageScanSchema }, async (c) => {
+        const { image, tag, severity, trivyVersion, buildId } = c.req.valid('json');
         return await scanImage(image, tag, severity, trivyVersion, buildId);
     }),
 );
 
 app.post(
     '/hardRefresh',
-    handleAsync(async () => {
+    route(async () => {
         return await imagesStateManager.hardRefresh();
     }),
 );
 
 app.get(
     '/',
-    handleAsync(async () => {
+    route(async () => {
         return imagesStateManager.getAllImages();
     }),
 );
 
 app.get(
     '/:id',
-    zValidator('param', imageIdParamSchema),
-    handleAsync(async (c) => {
-        const { id } = getValidatedParam(c, imageIdParamSchema);
+    route({ param: imageIdParamSchema }, async (c) => {
+        const { id } = c.req.valid('param');
         return imagesStateManager.getById(id);
     }),
 );
 
 app.post(
     '/pull',
-    zValidator('json', imagePullWithAuthSchema),
-    handleAsync(async (c) => {
-        const { imageName, auth } = getValidatedJson(c, imagePullWithAuthSchema);
+    route({ json: imagePullWithAuthSchema }, async (c) => {
+        const { imageName, auth } = c.req.valid('json');
 
         const imageExists = imagesStateManager.getByName(imageName);
         if (imageExists) {
@@ -71,47 +62,39 @@ app.post(
 
 app.get(
     '/:id/history',
-    zValidator('param', imageIdParamSchema),
-    handleAsync(async (c) => {
-        const { id } = getValidatedParam(c, imageIdParamSchema);
+    route({ param: imageIdParamSchema }, async (c) => {
+        const { id } = c.req.valid('param');
         return await docker.getImage(id).history();
     }),
 );
 
 app.post(
     '/:id/tag',
-    zValidator('param', imageIdParamSchema),
-    handleAsync(async (c) => {
-        const { id } = getValidatedParam(c, imageIdParamSchema);
-        const { repo, tag } = await c.req.json<{ repo: string; tag: string }>();
+    route({ param: imageIdParamSchema, json: imageTagBodySchema }, async (c) => {
+        const { id } = c.req.valid('param');
+        const { repo, tag } = c.req.valid('json');
         return await docker.getImage(id).tag({ repo, tag });
     }),
 );
 
 app.post(
     '/mirror',
-    zValidator('json', imageMirrorSchema),
-    handleAsync(async (c) => {
-        const { sourceImage, sourceAuth, targetName, targetAuth } = getValidatedJson(
-            c,
-            imageMirrorSchema,
-        );
-
+    route({ json: imageMirrorSchema }, async (c) => {
+        const { sourceImage, sourceAuth, targetName, targetAuth } = c.req.valid('json');
         return await mirrorImage(sourceImage, sourceAuth, targetName, targetAuth);
     }),
 );
 
 app.post(
     '/delete',
-    zValidator('json', imageDeleteSchema),
-    handleAsync(async (c) => {
-        const { imageIds, force } = getValidatedJson(c, imageDeleteSchema);
+    route({ json: imageDeleteSchema }, async (c) => {
+        const { imageIds, force } = c.req.valid('json');
 
         if (imageIds.length === 0) {
             throw new HttpError('No image IDs provided.', 400);
         }
 
-        return await deleteImages(imageIds, force);
+        return await deleteImages(imageIds, force ?? false);
     }),
 );
 

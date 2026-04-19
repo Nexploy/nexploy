@@ -22,9 +22,5 @@ export function DeleteScheduleButton({ scheduleId }: DeleteScheduleButtonProps) 
         toast.success(t('scheduleDeletedSuccess'));
     };
 
-    return (
-        <Button variant="ghost" size="icon" onClick={handleDelete}>
-            <Trash2 className="text-destructive size-4" />
-        </Button>
-    );
+    return <Button icon={Trash2} variant="destructiveGhost" size="icon" onClick={handleDelete} />;
 }

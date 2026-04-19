@@ -15,6 +15,7 @@ import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { type CommitInfo } from '@/types/pipeline.type';
 import { isBuildLive } from '@/utils/buildStatus';
+import { BuildDropdownActions } from '@/components/repositories/BuildDropdownActions';
 
 type BuildWithEnvironment = Build & {
     environment: { id: string; name: string } | null;
@@ -102,7 +103,7 @@ export function RepositoryBuild({ repositoryId, build, index }: BuildLogsProps) 
                     </span>
                 </div>
             </div>
-            {isBuildLive(build.status) && (
+            {isBuildLive(build.status) ? (
                 <Button
                     variant="ghost"
                     size="icon"
@@ -115,6 +116,8 @@ export function RepositoryBuild({ repositoryId, build, index }: BuildLogsProps) 
                 >
                     <Square className="size-4" />
                 </Button>
+            ) : (
+                <BuildDropdownActions buildId={build.id} status={build.status} />
             )}
         </Link>
     );

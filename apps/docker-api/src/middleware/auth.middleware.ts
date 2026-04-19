@@ -13,10 +13,14 @@ export async function authMiddleware(c: Context, next: Next) {
 
     if (scheme !== 'Bearer' || !token) {
         logger.warn('Invalid Authorization header format');
-        return c.json({ error: 'Invalid Authorization header format. Expected: Bearer <token>.' }, 401);
+        return c.json(
+            { error: 'Invalid Authorization header format. Expected: Bearer <token>.' },
+            401,
+        );
     }
 
-    if (!constantTimeCompare(token, process.env.NEXPLOY_API_KEY as string)) {
+    const expected = process.env.NEXPLOY_API_KEY ?? '';
+    if (!constantTimeCompare(token, expected)) {
         logger.warn('Invalid API key');
         return c.json({ error: 'Invalid API key.' }, 401);
     }
@@ -24,15 +28,12 @@ export async function authMiddleware(c: Context, next: Next) {
     await next();
 }
 
+// Runs the full loop regardless of length to prevent timing-based length oracle attacks.
 function constantTimeCompare(a: string, b: string): boolean {
-    if (a.length !== b.length) {
-        return false;
+    const maxLen = Math.max(a.length, b.length);
+    let result = a.length ^ b.length;
+    for (let i = 0; i < maxLen; i++) {
+        result |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0);
     }
-
-    let result = 0;
-    for (let i = 0; i < a.length; i++) {
-        result |= a.charCodeAt(i) ^ b.charCodeAt(i);
-    }
-
     return result === 0;
 }

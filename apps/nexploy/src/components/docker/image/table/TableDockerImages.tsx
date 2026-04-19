@@ -13,14 +13,7 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
 import React, { useMemo, useRef, useState } from 'react';
 import { getColumnsTableImages } from '@/components/docker/image/table/ColumnsDockerImages';
 import { useTranslations } from 'next-intl';
@@ -29,7 +22,7 @@ import { ImageRow } from '@workspace/typescript-interface/docker/docker.image';
 import { groupImagesByRepository, matchesSearch } from './imageTableUtils';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
-import { ChevronLeft, ChevronRight, Play, Trash } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Trash2 } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { onImageAction } from '@/actions/docker/image/imageAction.action';
@@ -190,7 +183,7 @@ export function TableDockerImages() {
                         onClick={handleDeleteAction}
                         disabled={!numberOfSelectedRows}
                     >
-                        <Trash />
+                        <Trash2 />
                         {tCommon('remove')}
                         {!!numberOfSelectedRows && (
                             <Badge variant={'secondary'} className={'rounded-full'}>

@@ -30,8 +30,11 @@ const proxyOptions: Options = {
         proxyReq: (_, req) => {
             console.log('📡 Proxying HTTP:', req.method, req.url);
         },
-        proxyReqWs: (_, req) => {
+        proxyReqWs: (proxyReq, req) => {
             console.log('🔌 Proxying WebSocket:', req.url);
+            if (process.env.DOCKER_API_KEY) {
+                proxyReq.setHeader('Authorization', `Bearer ${process.env.DOCKER_API_KEY}`);
+            }
         },
     },
 };

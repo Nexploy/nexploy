@@ -647,7 +647,7 @@
         },
         "volume": {
             "removeTitle": "Remove Volume",
-            "removeDescription": "Are you sure you want to remove \"{name}\" volume?"
+            "removeDescription": "Are you sure you want to remove {name} volume?"
         }
     },
     "pullImagePage": {
@@ -821,7 +821,7 @@
     "stack": {
         "title": "stack",
         "removeTitle": "Remove Stack",
-        "removeDescription": "Are you sure you want to remove the stack \"{name}\"? All containers in this stack will be stopped and removed.",
+        "removeDescription": "Are you sure you want to remove the stack {name}? All containers in this stack will be stopped and removed.",
         "removed": "Stack removed"
     },
     "volumeDrivers": {
@@ -881,14 +881,14 @@
         "dockerReconnecting": "Docker daemon is reconnecting...",
         "forceDelete": "Force delete",
         "forceDeleteDescription": "Force deletion by disconnecting containers.",
-        "networkSkipBuiltin": "{count, plural, one {Network \"{name}\" is a system network and cannot be deleted.} other {# networks are system networks and cannot be deleted.}}",
-        "networkSkipCompose": "{count, plural, one {Network \"{name}\" belongs to a Docker Compose stack and cannot be deleted.} other {# networks belong to a Docker Compose stack and cannot be deleted.}}",
-        "networkSkipContainers": "{count, plural, one {Network \"{name}\" has connected containers and cannot be deleted.} other {# networks have connected containers and cannot be deleted.}}",
-        "networkSkipNotFound": "{count, plural, one {Network \"{name}\" was not found.} other {# networks were not found.}}",
+        "networkSkipBuiltin": "{count, plural, one {Network {name} is a system network and cannot be deleted.} other {# networks are system networks and cannot be deleted.}}",
+        "networkSkipCompose": "{count, plural, one {Network {name} belongs to a Docker Compose stack and cannot be deleted.} other {# networks belong to a Docker Compose stack and cannot be deleted.}}",
+        "networkSkipContainers": "{count, plural, one {Network {name} has connected containers and cannot be deleted.} other {# networks have connected containers and cannot be deleted.}}",
+        "networkSkipNotFound": "{count, plural, one {Network {name} was not found.} other {# networks were not found.}}",
         "someNetworksSkipped": "{count, plural, one {# network was} other {# networks were}} skipped.",
-        "volumeSkipInUse": "{count, plural, one {Volume \"{name}\" is in use by containers. Stop them before removing.} other {# volumes are in use by containers. Stop them before removing.}}",
-        "volumeSkipNotFound": "{count, plural, one {Volume \"{name}\" was not found.} other {# volumes were not found.}}",
-        "imageSkipInUse": "{count, plural, one {Image \"{name}\" is in use by containers. Enable \"Force delete\" to remove it anyway.} other {# images are in use by containers. Enable \"Force delete\" to remove them anyway.}}",
-        "imageSkipNotFound": "{count, plural, one {Image \"{name}\" was not found.} other {# images were not found.}}"
+        "volumeSkipInUse": "{count, plural, one {Volume {name} is in use by containers. Stop them before removing.} other {# volumes are in use by containers. Stop them before removing.}}",
+        "volumeSkipNotFound": "{count, plural, one {Volume {name} was not found.} other {# volumes were not found.}}",
+        "imageSkipInUse": "{count, plural, one {Image {name} is in use by containers. Enable \"Force delete\" to remove it anyway.} other {# images are in use by containers. Enable \"Force delete\" to remove them anyway.}}",
+        "imageSkipNotFound": "{count, plural, one {Image {name} was not found.} other {# images were not found.}}"
     }
 }

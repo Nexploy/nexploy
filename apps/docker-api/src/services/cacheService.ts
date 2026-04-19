@@ -2,6 +2,7 @@ import { docker } from '@/utils/dockerClient';
 import { logger } from '@/utils/logger';
 import { ensureImage } from '@/utils/ensureImage';
 import { parseDockerLogs } from '@/utils/parseDockerLogs';
+import { safeResolvePath } from '@workspace/shared/pathSafety';
 
 const CACHE_IMAGE = 'alpine';
 
@@ -37,6 +38,7 @@ export async function restoreCache(
     await ensureImage(docker, CACHE_IMAGE);
 
     const key = cacheKey || 'default';
+    safeResolvePath('/workdir', cachePath);
     const srcPath = `/cache/${key}/${cachePath}`;
     const destPath = `/workdir/${cachePath}`;
     const destParent = destPath.substring(0, destPath.lastIndexOf('/'));
@@ -80,6 +82,7 @@ export async function saveCache(
     await ensureImage(docker, CACHE_IMAGE);
 
     const key = cacheKey || 'default';
+    safeResolvePath('/workdir', sourcePath);
     const srcPath = `/workdir/${sourcePath}`;
     const destParent = `/cache/${key}`;
     const destPath = `/cache/${key}/${sourcePath}`;

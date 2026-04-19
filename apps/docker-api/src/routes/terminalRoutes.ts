@@ -3,9 +3,9 @@ import type { UpgradeWebSocket } from 'hono/ws';
 import type { WebSocket } from 'ws';
 import { logger } from '@/utils/logger';
 import { Duplex } from 'stream';
+import type Docker from 'dockerode';
 import { Exec, ExecCreateOptions } from 'dockerode';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
-import type Docker from 'dockerode';
 
 function getShellCommand(shell: string): string[] {
     switch (shell) {
@@ -34,7 +34,7 @@ export const createTerminalRoutes = (
     app.get(
         '/terminal/:containerId/:shell',
         upgradeWebSocket((c) => {
-            const containerId = c.req.param('containerId');
+            const containerId = c.req.param('containerId')!;
             const shell = c.req.param('shell') ?? 'auto';
             const environmentId = c.req.query('environment');
 
@@ -143,8 +143,6 @@ export const createTerminalRoutes = (
                             stream.write(data);
                         } else if (data instanceof ArrayBuffer) {
                             stream.write(Buffer.from(data));
-                        } else if (data instanceof Buffer) {
-                            stream.write(data);
                         } else if (data instanceof Blob) {
                             data.arrayBuffer().then((buffer) => {
                                 if (stream && !stream.destroyed) {
@@ -189,7 +187,7 @@ export const createTerminalRoutes = (
     app.get(
         '/attach/:containerId',
         upgradeWebSocket((c) => {
-            const containerId = c.req.param('containerId');
+            const containerId = c.req.param('containerId')!;
             const environmentId = c.req.query('environment');
 
             let stream: Duplex | null = null;
@@ -283,8 +281,6 @@ export const createTerminalRoutes = (
                             stream.write(data);
                         } else if (data instanceof ArrayBuffer) {
                             stream.write(Buffer.from(data));
-                        } else if (data instanceof Buffer) {
-                            stream.write(data);
                         } else if (data instanceof Blob) {
                             data.arrayBuffer().then((buffer) => {
                                 if (stream && !stream.destroyed) {

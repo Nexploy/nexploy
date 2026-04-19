@@ -2,13 +2,11 @@ import { Hono } from 'hono';
 import { logger } from '@/utils/logger';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
-import { zValidator } from '@hono/zod-validator';
 import {
     environmentIdSchema,
     environmentSchema,
 } from '@workspace/schemas-zod/docker/environment/environment.schema';
-import { handleAsync } from '@/helpers/handleAsync';
-import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
+import { route } from '@/helpers/route';
 import { createDockerClient } from '@/utils/dockerClient';
 import { HttpError } from '@workspace/shared/http-error';
 
@@ -16,9 +14,8 @@ const app = new Hono();
 
 app.post(
     '/validate',
-    zValidator('json', environmentSchema),
-    handleAsync(async (c) => {
-        const config = getValidatedJson(c, environmentSchema);
+    route({ json: environmentSchema }, async (c) => {
+        const config = c.req.valid('json');
 
         logger.info({ name: config.name }, 'Validating environment configuration');
 
@@ -43,9 +40,8 @@ app.post(
 
 app.post(
     '/register',
-    zValidator('json', environmentSchema),
-    handleAsync(async (c) => {
-        const config = getValidatedJson(c, environmentSchema);
+    route({ json: environmentSchema }, async (c) => {
+        const config = c.req.valid('json');
 
         logger.info({ environmentId: config.id, name: config.name }, 'Registering new environment');
 
@@ -76,9 +72,8 @@ app.post(
 
 app.delete(
     '/:environmentId',
-    zValidator('param', environmentIdSchema),
-    handleAsync(async (c) => {
-        const { environmentId } = getValidatedParam(c, environmentIdSchema);
+    route({ param: environmentIdSchema }, async (c) => {
+        const { environmentId } = c.req.valid('param');
 
         logger.info({ environmentId }, 'Unregistering environment');
 
@@ -96,11 +91,9 @@ app.delete(
 
 app.patch(
     '/:environmentId',
-    zValidator('param', environmentIdSchema),
-    zValidator('json', environmentSchema),
-    handleAsync(async (c) => {
-        const { environmentId } = getValidatedParam(c, environmentIdSchema);
-        const config = getValidatedJson(c, environmentSchema);
+    route({ param: environmentIdSchema, json: environmentSchema }, async (c) => {
+        const { environmentId } = c.req.valid('param');
+        const config = c.req.valid('json');
 
         logger.info({ environmentId, name: config.name }, 'Updating environment configuration');
 

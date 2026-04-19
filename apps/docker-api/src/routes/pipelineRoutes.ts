@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { containersStateManager } from '@/managers/containersStateManager';
-import { handleAsync } from '@/helpers/handleAsync';
-import { DeployOptions } from '@workspace/typescript-interface/inngest/deploy';
+import { route } from '@/helpers/route';
 import { getCurrentDockerClient, getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import {
@@ -10,6 +9,10 @@ import {
     runDockerCompose,
 } from '@/utils/dockerComposeRunner';
 import { substituteEnvVars } from '@/utils/composePreprocessor';
+import {
+    deploySchema,
+    deployComposeSchema,
+} from '@workspace/schemas-zod/docker/pipeline/pipelineAction.schema';
 import yaml from 'yaml';
 import fs from 'fs';
 import path from 'path';
@@ -21,27 +24,16 @@ const app = new Hono();
 
 app.post(
     '/deploy',
-    handleAsync(async (c) => {
-        const { repositoryId, imageName, options } = await c.req.json<{
-            repositoryId: string;
-            imageName: string;
-            options?: DeployOptions;
-        }>();
-
+    route({ json: deploySchema }, async (c) => {
+        const { repositoryId, imageName, options } = c.req.valid('json');
         return await containersStateManager.deploy(repositoryId, imageName, options);
     }),
 );
 
 app.post(
     '/deploy-compose',
-    handleAsync(async (c) => {
-        const { projectName, envVars, composeConfig, labels } = await c.req.json<{
-            repositoryId: string;
-            projectName: string;
-            envVars?: Record<string, string>;
-            composeConfig: string;
-            labels?: Record<string, string>;
-        }>();
+    route({ json: deployComposeSchema }, async (c) => {
+        const { projectName, envVars, composeConfig, labels } = c.req.valid('json');
 
         const dockerClient = getCurrentDockerClient();
         const environmentId = getCurrentEnvironmentId();

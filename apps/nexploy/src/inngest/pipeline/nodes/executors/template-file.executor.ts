@@ -1,7 +1,7 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { getFromAllOutputs, INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
-import { safeResolvePath } from '@/inngest/pipeline/utils/pathSafety';
+import { safeResolvePath } from '@workspace/shared/pathSafety';
 import { templateFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 

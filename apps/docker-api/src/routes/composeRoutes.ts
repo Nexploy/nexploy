@@ -1,8 +1,6 @@
 import { Hono } from 'hono';
-import { handleAsync } from '@/helpers/handleAsync';
-import { zValidator } from '@hono/zod-validator';
+import { route } from '@/helpers/route';
 import { composeProjectParamSchema } from '@workspace/schemas-zod/docker/composes/composesAction.schema';
-import { getValidatedParam } from '@/helpers/validation';
 import { docker } from '@/utils/dockerClient';
 import { controlComposeStack } from '@/services/composeService';
 
@@ -10,9 +8,8 @@ const app = new Hono();
 
 app.get(
     '/:project/list',
-    zValidator('param', composeProjectParamSchema),
-    handleAsync(async (c) => {
-        const { project: projectName } = getValidatedParam(c, composeProjectParamSchema);
+    route({ param: composeProjectParamSchema }, async (c) => {
+        const { project: projectName } = c.req.valid('param');
 
         return await docker.listContainers({
             filters: {
@@ -24,54 +21,48 @@ app.get(
 
 app.post(
     '/:project/start',
-    zValidator('param', composeProjectParamSchema),
-    handleAsync(async (c) => {
-        const { project } = getValidatedParam(c, composeProjectParamSchema);
+    route({ param: composeProjectParamSchema }, async (c) => {
+        const { project } = c.req.valid('param');
         return controlComposeStack(project, 'start');
     }),
 );
 
 app.post(
     '/:project/stop',
-    zValidator('param', composeProjectParamSchema),
-    handleAsync(async (c) => {
-        const { project } = getValidatedParam(c, composeProjectParamSchema);
+    route({ param: composeProjectParamSchema }, async (c) => {
+        const { project } = c.req.valid('param');
         return controlComposeStack(project, 'stop');
     }),
 );
 
 app.post(
     '/:project/pause',
-    zValidator('param', composeProjectParamSchema),
-    handleAsync(async (c) => {
-        const { project } = getValidatedParam(c, composeProjectParamSchema);
+    route({ param: composeProjectParamSchema }, async (c) => {
+        const { project } = c.req.valid('param');
         return controlComposeStack(project, 'pause');
     }),
 );
 
 app.post(
     '/:project/unpause',
-    zValidator('param', composeProjectParamSchema),
-    handleAsync(async (c) => {
-        const { project } = getValidatedParam(c, composeProjectParamSchema);
+    route({ param: composeProjectParamSchema }, async (c) => {
+        const { project } = c.req.valid('param');
         return controlComposeStack(project, 'unpause');
     }),
 );
 
 app.post(
     '/:project/restart',
-    zValidator('param', composeProjectParamSchema),
-    handleAsync(async (c) => {
-        const { project } = getValidatedParam(c, composeProjectParamSchema);
+    route({ param: composeProjectParamSchema }, async (c) => {
+        const { project } = c.req.valid('param');
         return controlComposeStack(project, 'restart');
     }),
 );
 
 app.post(
     '/:project/remove',
-    zValidator('param', composeProjectParamSchema),
-    handleAsync(async (c) => {
-        const { project } = getValidatedParam(c, composeProjectParamSchema);
+    route({ param: composeProjectParamSchema }, async (c) => {
+        const { project } = c.req.valid('param');
         return controlComposeStack(project, 'remove');
     }),
 );
