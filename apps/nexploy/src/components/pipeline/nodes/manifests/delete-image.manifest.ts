@@ -1,20 +1,20 @@
 import { Position } from '@xyflow/react';
-import { buildDockerImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { BuildDockerImageConfig } from '../config/BuildDockerImageConfig';
+import { deleteImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { DeleteImageConfig } from '../config/DeleteImageConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
-import { Container } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
-export const buildDockerImageManifest: NodeManifest = {
-    type: 'build-docker-image',
+export const deleteImageManifest: NodeManifest = {
+    type: 'delete-image',
     definition: {
-        id: 'build-docker-image',
+        id: 'delete-image',
         type: 'base-node',
         category: 'build',
         metadata: {
-            name: 'build-docker-image.name',
-            description: 'build-docker-image.description',
-            icon: Container,
+            name: 'delete-image.name',
+            description: 'delete-image.description',
+            icon: Trash2,
             color: `${CATEGORY_BG_MUTED['build']} ${CATEGORY_TEXT['build']}`,
         },
         handles: {
@@ -23,19 +23,13 @@ export const buildDockerImageManifest: NodeManifest = {
             attachments: [],
         },
     },
-    configSchema: buildDockerImageConfigSchema,
-    configPanel: BuildDockerImageConfig,
+    configSchema: deleteImageConfigSchema,
+    configPanel: DeleteImageConfig,
     inputFields: [
         {
             key: 'imageName',
             labelKey: 'pipeline.inputs.imageName',
             descriptionKey: 'pipeline.inputs.desc_imageName',
-            type: 'input',
-        },
-        {
-            key: 'imageId',
-            labelKey: 'pipeline.inputs.imageId',
-            descriptionKey: 'pipeline.inputs.desc_imageId',
             type: 'input',
         },
     ],

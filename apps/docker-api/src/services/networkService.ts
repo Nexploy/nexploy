@@ -1,4 +1,5 @@
 import { docker } from '@/utils/dockerClient';
+import { networksStateManager } from '@/managers/networksStateManager';
 
 const BUILTIN_NETWORKS = new Set(['bridge', 'host', 'none']);
 
@@ -8,41 +9,45 @@ export async function deleteNetworks(
 ): Promise<{ deleted: string[]; skipped: { id: string; name: string; reason?: string }[] }> {
     const results = await Promise.all(
         networkIds.map(async (networkId) => {
-            const network = docker.getNetwork(networkId);
-            const info = await network.inspect();
-
-            if (BUILTIN_NETWORKS.has(info.Name)) {
-                return { type: 'skipped', id: networkId, name: info.Name, reason: 'builtin' };
+            const info = networksStateManager.getState(networkId);
+            if (!info) {
+                return { type: 'skipped', id: networkId, name: networkId, reason: 'not_found' };
             }
 
+            if (BUILTIN_NETWORKS.has(info.name)) {
+                return { type: 'skipped', id: networkId, name: info.name, reason: 'builtin' };
+            }
+
+            const network = docker.getNetwork(networkId);
+
             if (!force) {
-                if (info.Labels?.['com.docker.compose.project']) {
+                if (info.labels?.['com.docker.compose.project']) {
                     return {
                         type: 'skipped',
                         id: networkId,
-                        name: info.Name,
+                        name: info.name,
                         reason: 'compose_stack',
                     };
                 }
 
-                if (Object.keys(info.Containers || {}).length > 0) {
+                if (info.containers.length > 0) {
                     return {
                         type: 'skipped',
                         id: networkId,
-                        name: info.Name,
+                        name: info.name,
                         reason: 'has_containers',
                     };
                 }
             } else {
                 await Promise.all(
-                    Object.keys(info.Containers || {}).map((containerId) =>
+                    info.containers.map((containerId) =>
                         network.disconnect({ Container: containerId, Force: true }),
                     ),
                 );
             }
 
             await network.remove();
-            return { type: 'deleted', id: networkId, name: info.Name };
+            return { type: 'deleted', id: networkId, name: info.name };
         }),
     );
 

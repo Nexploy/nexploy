@@ -1,9 +1,5 @@
 import { Fragment } from 'react';
-import {
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-} from '@workspace/ui/components/dropdown-menu';
+import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, } from '@workspace/ui/components/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Trash } from 'lucide-react';
 import { onNetworkAction } from '@/actions/docker/network/networkAction.action';
@@ -30,7 +26,6 @@ export function NetworkDropdownActions({ network }: NetworkDropdownActionsProps)
     const t = useTranslations('docker.dropdownActions');
 
     const networkName = network.name || '<none>';
-    const isBuiltin = ['bridge', 'host', 'none'].includes(network.name);
 
     const handleAction = async (action: 'delete' | 'prune') => {
         await onNetworkAction({ networkIds: [network.id], action });
@@ -48,13 +43,7 @@ export function NetworkDropdownActions({ network }: NetworkDropdownActionsProps)
                     actionLabel: t('remove'),
                     onAction: () => handleAction('delete'),
                 }),
-            disabled: isBuiltin || (network.containers?.length || 0) > 0,
             variant: 'destructive',
-            tooltipContent: isBuiltin
-                ? t('network.cannotRemoveBuiltin')
-                : (network.containers?.length || 0) > 0
-                  ? t('network.disconnectContainersFirst')
-                  : undefined,
         },
     ];
 

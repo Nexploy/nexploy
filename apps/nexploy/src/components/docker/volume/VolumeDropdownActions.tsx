@@ -6,7 +6,6 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
 } from '@workspace/ui/components/dropdown-menu';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Trash2 } from 'lucide-react';
 import { onVolumeAction } from '@/actions/docker/volume/volumeAction.action';
 import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
@@ -24,7 +23,6 @@ interface VolumeTool {
     disabled?: boolean;
     variant?: 'destructive';
     separator?: boolean;
-    tooltipContent?: string;
 }
 
 export function VolumeDropdownActions({ volume }: VolumeDropdownActionsProps) {
@@ -32,7 +30,6 @@ export function VolumeDropdownActions({ volume }: VolumeDropdownActionsProps) {
     const t = useTranslations('docker.dropdownActions');
 
     const volumeName = volume.name || '<none>';
-    const isBuiltin = volumeName.startsWith('docker_');
 
     const handleAction = async (action: 'delete' | 'prune') => {
         await onVolumeAction({ volumeNames: [volumeName], action });
@@ -50,13 +47,7 @@ export function VolumeDropdownActions({ volume }: VolumeDropdownActionsProps) {
                     actionLabel: t('remove'),
                     onAction: () => handleAction('delete'),
                 }),
-            disabled: isBuiltin || (volume.usageData?.RefCount || 0) > 0,
             variant: 'destructive',
-            tooltipContent: isBuiltin
-                ? t('volume.cannotRemoveSystem')
-                : (volume.usageData?.RefCount || 0) > 0
-                  ? t('volume.disconnectContainersFirst')
-                  : undefined,
         },
     ];
 
@@ -65,36 +56,10 @@ export function VolumeDropdownActions({ volume }: VolumeDropdownActionsProps) {
             {volumeTools.map((tool, index) => (
                 <Fragment key={index}>
                     {tool.separator && <DropdownMenuSeparator />}
-                    {tool.tooltipContent ? (
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <div>
-                                    <DropdownMenuItem
-                                        variant={tool.variant}
-                                        onClick={tool.action}
-                                        disabled={tool.disabled}
-                                    >
-                                        <tool.icon />
-                                        {tool.label}
-                                    </DropdownMenuItem>
-                                </div>
-                            </TooltipTrigger>
-                            {tool.tooltipContent && (
-                                <TooltipContent>
-                                    <p>{tool.tooltipContent}</p>
-                                </TooltipContent>
-                            )}
-                        </Tooltip>
-                    ) : (
-                        <DropdownMenuItem
-                            variant={tool.variant}
-                            onClick={tool.action}
-                            disabled={tool.disabled}
-                        >
-                            <tool.icon />
-                            {tool.label}
-                        </DropdownMenuItem>
-                    )}
+                    <DropdownMenuItem variant={tool.variant} onClick={tool.action}>
+                        <tool.icon />
+                        {tool.label}
+                    </DropdownMenuItem>
                 </Fragment>
             ))}
         </DropdownMenuContent>

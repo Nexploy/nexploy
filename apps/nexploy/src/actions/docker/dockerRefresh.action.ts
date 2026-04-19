@@ -5,10 +5,12 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 import { getTranslations } from 'next-intl/server';
+import { z } from 'zod';
 
 export const onDockerRefreshAction = authActionServer
     .use(requirePermission('docker', 'manage'))
-    .action(async () => {
+    .inputSchema(z.object({ environmentName: z.string().optional() }))
+    .action(async ({ parsedInput: { environmentName } }) => {
     try {
         const [, t] = await Promise.all([
             Promise.all([
@@ -21,7 +23,7 @@ export const onDockerRefreshAction = authActionServer
         ]);
         await setToastServer({
             type: 'success',
-            message: t('refreshSuccess'),
+            message: t('refreshSuccess', { name: environmentName ?? 'Docker' }),
         });
     } catch (err: unknown) {
         if (err instanceof HTTPError) {

@@ -25,9 +25,4 @@ export const cacheRestoreManifest: NodeManifest = {
     },
     configSchema: cacheRestoreConfigSchema,
     configPanel: CacheRestoreConfig,
-    inputFields: [
-        { key: 'restored', labelKey: 'pipeline.inputs.restored', descriptionKey: 'pipeline.inputs.desc_restored', type: 'input' },
-        { key: 'files', labelKey: 'pipeline.inputs.files', descriptionKey: 'pipeline.inputs.desc_files', type: 'input' },
-        { key: 'volumeName', labelKey: 'pipeline.inputs.volumeName', descriptionKey: 'pipeline.inputs.desc_volumeName', type: 'input' },
-    ],
 };

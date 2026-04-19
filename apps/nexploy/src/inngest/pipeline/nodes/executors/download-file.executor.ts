@@ -8,6 +8,7 @@ import {
     
 } from '@/types/pipeline.type';
 import { downloadFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { safeResolvePath } from '@/inngest/pipeline/utils/pathSafety';
 import { z } from 'zod';
 
 export class DownloadFileExecutor implements INodeExecutor {
@@ -26,9 +27,7 @@ export class DownloadFileExecutor implements INodeExecutor {
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const base = workDir ?? process.cwd();
 
-        const resolvedDest = path.isAbsolute(destinationPath)
-            ? destinationPath
-            : path.join(base, destinationPath);
+        const resolvedDest = safeResolvePath(base, destinationPath);
 
         const finalFilename =
             filename ?? (path.basename(new URL(url).pathname) || 'downloaded-file');

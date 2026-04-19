@@ -1,19 +1,20 @@
 import { Position } from '@xyflow/react';
-import { createVolumeConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { CreateVolumeConfig } from '../config/CreateVolumeConfig';
+import { deleteVolumeConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { DeleteVolumeConfig } from '../config/DeleteVolumeConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
-import { HardDrive } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
-export const createVolumeManifest: NodeManifest = {
-    type: 'create-volume',
+export const deleteVolumeManifest: NodeManifest = {
+    type: 'delete-volume',
     definition: {
-        id: 'create-volume',
+        id: 'delete-volume',
         type: 'base-node',
         category: 'utility',
         metadata: {
-            name: 'create-volume.name',
-            icon: HardDrive,
+            name: 'delete-volume.name',
+            description: 'delete-volume.description',
+            icon: Trash2,
             color: `${CATEGORY_BG_MUTED['utility']} ${CATEGORY_TEXT['utility']}`,
         },
         handles: {
@@ -22,8 +23,8 @@ export const createVolumeManifest: NodeManifest = {
             attachments: [],
         },
     },
-    configSchema: createVolumeConfigSchema,
-    configPanel: CreateVolumeConfig,
+    configSchema: deleteVolumeConfigSchema,
+    configPanel: DeleteVolumeConfig,
     inputFields: [
         {
             key: 'volumeName',

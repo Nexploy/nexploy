@@ -17,11 +17,11 @@ import { PopularImages } from '@/components/docker/image/pull/PopularImages';
 import { RegistrySelector } from '@/components/docker/image/pull/RegistrySelector';
 import type { RegistryInfo } from '@/services/registry.service';
 
-interface PullImageClientProps {
+interface PullImageProps {
     registries: RegistryInfo[];
 }
 
-export function PullImageClient({ registries }: PullImageClientProps) {
+export function PullImage({ registries }: PullImageProps) {
     const t = useTranslations('docker.pullImagePage');
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -43,7 +43,7 @@ export function PullImageClient({ registries }: PullImageClientProps) {
                     });
                 },
                 onSuccess: ({ data }) => {
-                    if (data) router.push(`/docker/images/${data.imageId}`);
+                    if (data) router.push(`/docker/images/${data.imageId.split(':')[1]}`);
                 },
             },
         },
@@ -95,9 +95,7 @@ export function PullImageClient({ registries }: PullImageClientProps) {
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
                         <div className="flex flex-col gap-4 overflow-hidden px-5 pb-5">
                             <ImageNameConfig />
-                            {registries.length > 0 && (
-                                <RegistrySelector registries={registries} />
-                            )}
+                            {registries.length > 0 && <RegistrySelector registries={registries} />}
                             <PopularImages />
                         </div>
                     </ScrollAreaWithShadow>

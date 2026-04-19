@@ -401,15 +401,15 @@ export class ImagesStateManager extends BaseStateManager {
         return this.images.get(imageId);
     }
 
-    getByName(fullName: string): Image[] {
+    getByNames(fullName: string): Image[] {
         return Array.from(this.images.values()).filter((image) =>
             image.name.some((n) => n.includes(fullName)),
         );
     }
 
-    checkIfExistByName(fullName: string): boolean {
-        return Array.from(this.images.values()).some((image) =>
-            image.name.some((n) => n.includes(fullName)),
+    getByName(imageName: string): Image | undefined {
+        return Array.from(this.images.values()).find((image) =>
+            image.repoTags.includes(imageName),
         );
     }
 

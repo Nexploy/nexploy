@@ -1,6 +1,7 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { getFromAllOutputs, INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { safeResolvePath } from '@/inngest/pipeline/utils/pathSafety';
 import { templateFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 
@@ -20,10 +21,8 @@ export class TemplateFileExecutor
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const base = workDir ?? process.cwd();
 
-        const resolvedInput = path.isAbsolute(inputPath) ? inputPath : path.join(base, inputPath);
-        const resolvedOutput = path.isAbsolute(outputPath)
-            ? outputPath
-            : path.join(base, outputPath);
+        const resolvedInput = safeResolvePath(base, inputPath);
+        const resolvedOutput = safeResolvePath(base, outputPath);
 
         await logger.info(nodeId, `Templating file: ${inputPath} → ${outputPath}`);
 

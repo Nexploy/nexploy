@@ -74,7 +74,7 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
                     onAction: () => handleAction('delete'),
                 });
             },
-            disabled: !image.id,
+            disabled: !image.id || image.containersUsed > 0,
             variant: 'destructive',
         },
     ];

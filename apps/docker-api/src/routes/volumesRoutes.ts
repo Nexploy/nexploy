@@ -4,14 +4,15 @@ import { Hono } from 'hono';
 import { volumesStateManager } from '@/managers/volumesStateManager';
 import { zValidator } from '@hono/zod-validator';
 import {
+    cacheRestoreSchema,
+    cacheSaveSchema,
     volumeCreateSchema,
     volumeDeleteSchema,
     volumeNameParamSchema,
-    cacheRestoreSchema,
-    cacheSaveSchema,
 } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
 import { restoreCache, saveCache } from '@/services/cacheService';
+import { deleteVolumes } from '@/services/volumeService';
 
 const app = new Hono();
 
@@ -68,17 +69,8 @@ app.post(
     zValidator('json', volumeDeleteSchema),
     handleAsync(async (c) => {
         const { volumeNames } = getValidatedJson(c, volumeDeleteSchema);
-
         const force = c.req.query('force') === 'true';
-
-        await Promise.all(
-            volumeNames.map(async (volumeName: string) => {
-                const volume = docker.getVolume(volumeName);
-                return await volume.remove({ force });
-            }),
-        );
-
-        return { deleted: volumeNames };
+        return await deleteVolumes(volumeNames, force);
     }),
 );
 
@@ -93,7 +85,10 @@ app.post(
     '/cache/restore',
     zValidator('json', cacheRestoreSchema),
     handleAsync(async (c) => {
-        const { volumeName, cachePath, workDir, cacheKey } = getValidatedJson(c, cacheRestoreSchema);
+        const { volumeName, cachePath, workDir, cacheKey } = getValidatedJson(
+            c,
+            cacheRestoreSchema,
+        );
         return await restoreCache(volumeName, cachePath, workDir, cacheKey);
     }),
 );

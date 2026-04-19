@@ -56,7 +56,7 @@ export function RemoveBuildButton({
     }
 
     return (
-        <Button {...props} onClick={handleRemove} variant={'destructive'}>
+        <Button {...props} size={'icon'} onClick={handleRemove} variant={'destructive'}>
             <Trash2 />
         </Button>
     );

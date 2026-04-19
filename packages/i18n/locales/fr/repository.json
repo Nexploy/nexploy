@@ -473,12 +473,10 @@
                 "description": "Créer et démarrer un conteneur Docker à partir d'une image"
             },
             "create-network": {
-                "name": "Créer le réseau",
-                "description": "Créer un réseau Docker"
+                "name": "Créer un réseau"
             },
             "create-volume": {
-                "name": "Créer le volume",
-                "description": "Créer un volume Docker"
+                "name": "Créer un volume"
             },
             "cache-restore": {
                 "name": "Restaurer le cache",
@@ -529,6 +527,18 @@
             "prune-images": {
                 "name": "Nettoyer les images",
                 "description": "Supprime les images Docker inutilisées pour libérer de l'espace disque"
+            },
+            "delete-image": {
+                "name": "Supprimer une image",
+                "description": "Supprime une image Docker spécifique par nom ou identifiant"
+            },
+            "delete-network": {
+                "name": "Supprimer un réseau",
+                "description": "Supprime un réseau Docker par nom ou identifiant"
+            },
+            "delete-volume": {
+                "name": "Supprimer un volume",
+                "description": "Supprime un volume Docker par nom"
             },
             "run-command-in-container": {
                 "name": "Exécuter une commande dans un conteneur",
@@ -679,6 +689,10 @@
             "volume": "Volume",
             "volumeName": "Nom du volume",
             "volumeNamePlaceholder": "Sélectionner un volume",
+            "volumeNameTypePlaceholder": "ex. mon-volume",
+            "imageName": "Nom de l'image",
+            "imageNamePlaceholder": "ex. monapp:latest",
+            "force": "Forcer",
             "volumesLoading": "Chargement des volumes...",
             "volumesSelectLabel": "Liste des volumes",
             "noVolumesFound": "Aucun volume trouvé",
@@ -849,10 +863,7 @@
             "bucket": "Bucket",
             "volumeName": "Nom du volume",
             "backupVolumeName": "Nom du volume sauvegardé",
-            "restored": "Restauré",
-            "files": "Fichiers",
             "sizeBytes": "Taille (octets)",
-            "saved": "Sauvegardé",
             "found": "Trouvé",
             "matchedLine": "Ligne correspondante",
             "containerName": "Nom du conteneur",
@@ -924,10 +935,7 @@
             "desc_bucket": "Nom du bucket S3",
             "desc_volumeName": "Nom du volume Docker",
             "desc_backupVolumeName": "Nom du volume Docker sauvegardé",
-            "desc_restored": "Si le cache a été restauré avec succès",
-            "desc_files": "Nombre de fichiers dans le cache",
             "desc_sizeBytes": "Taille du fichier ou du cache en octets",
-            "desc_saved": "Si le cache a été sauvegardé avec succès",
             "desc_found": "Si le motif a été trouvé dans les journaux",
             "desc_matchedLine": "Première ligne de journal correspondant au motif",
             "desc_cleaned": "Chemin qui a été nettoyé",

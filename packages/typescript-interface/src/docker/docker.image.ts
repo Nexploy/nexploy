@@ -35,6 +35,15 @@ export interface Image {
 export type ImageType = 'initial' | 'state-change' | 'updated' | 'added' | 'removed' | 'heartbeat';
 export type ImageAction = 'pull' | 'push' | 'tag' | 'untag' | 'delete' | 'import' | 'load' | 'save';
 
+export type ImageDeleteResult =
+    | { type: 'deleted'; id: string }
+    | { type: 'skipped'; id: string; name: string; reason: string };
+
+export interface ImageDeleteResponse {
+    deleted: string[];
+    skipped: { id: string; name: string; reason: string }[];
+}
+
 export interface ImageTool extends DropdownActionTool {
     disabled?: boolean;
     variant?: 'default' | 'destructive';

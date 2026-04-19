@@ -95,7 +95,7 @@ export function AvailableInputsPanel({ nodeId }: AvailableInputsPanelProps) {
                                     <span className="bg-muted text-muted-foreground flex size-4 shrink-0 items-center justify-center rounded text-[9px] font-bold">
                                         {index + 1}
                                     </span>
-                                    <p className="text-muted-foreground truncate text-[10px] font-medium tracking-wide uppercase">
+                                    <p className="text-muted-foreground text-[10px] font-medium tracking-wide uppercase">
                                         {t(`nodes.${nodeType}.name`)}
                                     </p>
                                 </div>

@@ -10,16 +10,13 @@ import { setToastServer } from '@/lib/toastServer';
 import { networkActionsSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';
 import { HTTPError } from 'ky';
 import { getTranslations } from 'next-intl/server';
-
-interface DeleteResponse {
-    deleted: string[];
-    skipped: { id: string; name: string; reason: string }[];
-}
+import { NetworkDeleteResponse } from '@workspace/typescript-interface/docker/docker.network';
 
 const skipReasonToKey: Record<string, string> = {
     builtin: 'errors.networkSkipBuiltin',
     compose_stack: 'errors.networkSkipCompose',
     has_containers: 'errors.networkSkipContainers',
+    not_found: 'errors.networkSkipNotFound',
 };
 
 export const onNetworkAction = authActionServer
@@ -30,18 +27,17 @@ export const onNetworkAction = authActionServer
         try {
             const result = await kyDocker
                 .post(`networks/${action}`, { json: { networkIds, force } })
-                .json<DeleteResponse>();
+                .json<NetworkDeleteResponse>();
 
             if (result.skipped?.length) {
                 const t = await getTranslations('docker');
-                const messages = result.skipped.map((s) => {
-                    const key = skipReasonToKey[s.reason];
-                    return key ? t(key, { name: s.name }) : s.reason;
-                });
-                await setToastServer({
-                    type: 'warning',
-                    message: messages.join('\n'),
-                });
+                for (const skipped of result.skipped) {
+                    const key = skipReasonToKey[skipped.reason];
+                    const message = key
+                        ? t(key, { count: 1, name: skipped.name })
+                        : skipped.reason;
+                    await setToastServer({ type: 'error', message });
+                }
             }
 
             return result;

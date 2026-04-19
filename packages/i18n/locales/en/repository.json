@@ -474,12 +474,10 @@
                 "description": "Create and start a Docker container from an image"
             },
             "create-network": {
-                "name": "Create Network",
-                "description": "Create a Docker network"
+                "name": "Create Network"
             },
             "create-volume": {
-                "name": "Create Volume",
-                "description": "Create a Docker volume"
+                "name": "Create Volume"
             },
             "wait-for-health": {
                 "name": "Wait for Health",
@@ -534,6 +532,18 @@
             "prune-images": {
                 "name": "Prune Images",
                 "description": "Remove unused Docker images to free disk space"
+            },
+            "delete-image": {
+                "name": "Delete Image",
+                "description": "Delete a specific Docker image by name or ID"
+            },
+            "delete-network": {
+                "name": "Delete Network",
+                "description": "Delete a Docker network by name or ID"
+            },
+            "delete-volume": {
+                "name": "Delete Volume",
+                "description": "Delete a Docker volume by name"
             },
             "template-file": {
                 "name": "Template File",
@@ -680,6 +690,10 @@
             "volume": "Volume",
             "volumeName": "Volume Name",
             "volumeNamePlaceholder": "Select a volume",
+            "volumeNameTypePlaceholder": "e.g. my-volume",
+            "imageName": "Image Name",
+            "imageNamePlaceholder": "e.g. myapp:latest",
+            "force": "Force",
             "volumesLoading": "Loading volumes...",
             "volumesSelectLabel": "Volumes list",
             "noVolumesFound": "No volumes found",
@@ -850,10 +864,7 @@
             "bucket": "Bucket",
             "volumeName": "Volume name",
             "backupVolumeName": "Backup volume name",
-            "restored": "Restored",
-            "files": "Files",
             "sizeBytes": "Size (bytes)",
-            "saved": "Saved",
             "found": "Found",
             "matchedLine": "Matched line",
             "containerName": "Container name",
@@ -925,10 +936,7 @@
             "desc_bucket": "S3 bucket name",
             "desc_volumeName": "Name of the Docker volume",
             "desc_backupVolumeName": "Name of the Docker volume to back up",
-            "desc_restored": "Whether the cache was successfully restored",
-            "desc_files": "Number of files in the cache",
             "desc_sizeBytes": "Size of the file or cache in bytes",
-            "desc_saved": "Whether the cache was successfully saved",
             "desc_found": "Whether the pattern was found in logs",
             "desc_matchedLine": "First log line matching the pattern",
             "desc_cleaned": "Path that was cleaned",

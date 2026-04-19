@@ -167,6 +167,9 @@ const NODE_CATEGORY: Record<string, string> = {
     'tag-image': 'build',
     'scan-image': 'build',
     'prune-images': 'build',
+    'delete-image': 'build',
+    'delete-network': 'utility',
+    'delete-volume': 'utility',
     // Files & Artifacts
     'template-file': 'files',
     'upload-artifact': 'files',
@@ -239,6 +242,9 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'tag-image': Tag,
     'scan-image': ShieldCheck,
     'prune-images': Trash2,
+    'delete-image': Trash2,
+    'delete-network': Trash2,
+    'delete-volume': Trash2,
     // Files & Artifacts
     'template-file': FileCode,
     'upload-artifact': Upload,

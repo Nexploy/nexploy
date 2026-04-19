@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const volumeActionsSchema = z.object({
     action: z.enum(['delete', 'prune']),
-    volumeNames: z.array(z.string()).optional(),
+    volumeNames: z.array(z.string()),
 });
 
 export const volumeCreateSchema = z.object({

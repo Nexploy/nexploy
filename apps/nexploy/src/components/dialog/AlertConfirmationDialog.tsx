@@ -30,7 +30,7 @@ export function AlertConfirmationDialog() {
     return (
         <AlertDialog open={isOpen} onOpenChange={closeAlertDialog}>
             <AlertDialogContent>
-                <AlertDialogHeader>
+                <AlertDialogHeader className={'break-all'}>
                     <AlertDialogTitle asChild={isValidElement(title)}>{title}</AlertDialogTitle>
                     <AlertDialogDescription asChild={isValidElement(description)}>
                         {description}

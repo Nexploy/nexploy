@@ -160,7 +160,7 @@ export function TableDockerImages() {
     };
 
     const isShowingAll = pageSize === 'all';
-    const isUseDisabled = numberOfSelectedRows !== 1 && !selectedImage?.repoTags.length;
+    const isUseDisabled = numberOfSelectedRows !== 1 || !selectedImage?.repoTags.length;
 
     const getUseTooltipContent = () => {
         if (numberOfSelectedRows === 0) {

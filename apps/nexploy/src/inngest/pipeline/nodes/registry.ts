@@ -49,6 +49,9 @@ import { gitTagExecutor } from './executors/git-tag.executor';
 import { gitCloneExtraExecutor } from './executors/git-clone-extra.executor';
 import { fetchSecretsExecutor } from './executors/fetch-secrets.executor';
 import { sonarqubeScanExecutor } from './executors/sonarqube-scan.executor';
+import { deleteImageExecutor } from './executors/delete-image.executor';
+import { deleteNetworkExecutor } from './executors/delete-network.executor';
+import { deleteVolumeExecutor } from './executors/delete-volume.executor';
 
 const executors: INodeExecutor[] = [
     // Source
@@ -98,6 +101,9 @@ const executors: INodeExecutor[] = [
     tagImageExecutor,
     scanImageExecutor,
     pruneImagesExecutor,
+    deleteImageExecutor,
+    deleteNetworkExecutor,
+    deleteVolumeExecutor,
     // Files & Artifacts
     templateFileExecutor,
     uploadArtifactExecutor,

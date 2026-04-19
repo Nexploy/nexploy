@@ -1,4 +1,39 @@
 import { docker } from '@/utils/dockerClient';
+import { imagesStateManager } from '@/managers/imagesStateManager';
+import { ImageDeleteResponse, ImageDeleteResult } from '@workspace/typescript-interface/docker/docker.image';
+
+export async function deleteImages(
+    imageIds: string[],
+    force: boolean,
+): Promise<ImageDeleteResponse> {
+    const results = await Promise.all(
+        imageIds.map(async (id): Promise<ImageDeleteResult> => {
+            const image = imagesStateManager.getById(id);
+            if (!image) {
+                return { type: 'skipped', id, name: id, reason: 'not_found' };
+            }
+
+            if (!force && image.containersUsed > 0) {
+                return { type: 'skipped', id, name: image.repoTags[0] ?? id, reason: 'in_use' };
+            }
+
+            await docker.getImage(id).remove({ force });
+            return { type: 'deleted', id };
+        }),
+    );
+
+    const deleted: string[] = [];
+    const skipped: { id: string; name: string; reason: string }[] = [];
+    for (const result of results) {
+        if (result.type === 'deleted') {
+            deleted.push(result.id);
+        } else if (result.type === 'skipped') {
+            skipped.push({ id: result.id, name: result.name, reason: result.reason });
+        }
+    }
+
+    return { deleted, skipped };
+}
 
 export async function pullImage(
     imageName: string,
@@ -16,8 +51,9 @@ export async function pullImage(
         });
     });
 
-    const imageInfo = await docker.getImage(imageName).inspect();
-    return { imageName, imageId: imageInfo.Id };
+    const found = imagesStateManager.getByName(imageName);
+    if (!found) throw new Error(`Image ${imageName} not found after pull`);
+    return { imageName, imageId: found.fullId };
 }
 
 export async function mirrorImage(
@@ -26,11 +62,7 @@ export async function mirrorImage(
     targetName: string,
     targetAuth: Record<string, unknown>,
 ): Promise<{ success: true; targetName: string }> {
-    let sourceExistedBefore = false;
-    try {
-        await docker.getImage(sourceImage).inspect();
-        sourceExistedBefore = true;
-    } catch {}
+    const sourceExistedBefore = !!imagesStateManager.getByName(sourceImage);
 
     await new Promise((resolve, reject) => {
         const pullOptions: Record<string, unknown> = {};

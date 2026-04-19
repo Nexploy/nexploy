@@ -1,6 +1,6 @@
 'use client';
 
-import { HardDrive, Trash } from 'lucide-react';
+import { ArrowLeft, HardDrive, Trash } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useVolumeStore } from '@/stores/docker/useVolumeStore';
 import { CardVolumeDetails } from '@/components/docker/volume/cards/CardVolumeDetails';
@@ -8,7 +8,6 @@ import { CardVolumeContainers } from '@/components/docker/volume/cards/CardVolum
 
 import { Button } from '@workspace/ui/components/button';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { onVolumeAction } from '@/actions/docker/volume/volumeAction.action';
@@ -22,6 +21,7 @@ export function VolumeDetailPage({ volumeName }: VolumeDetailPageProps) {
     const volume = useVolumeStore((state) => state.getVolume(volumeName));
     const t = useTranslations('docker.volumeDetail');
     const tActions = useTranslations('docker.dropdownActions');
+    const tCommon = useTranslations('common');
     const router = useRouter();
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
@@ -32,13 +32,16 @@ export function VolumeDetailPage({ volumeName }: VolumeDetailPageProps) {
             cancelLabel: tActions('cancel'),
             actionLabel: tActions('remove'),
             onAction: async () => {
-                await onVolumeAction({ action: 'delete', volumeNames: [volumeName] });
-                router.push('/docker/volumes');
+                const result = await onVolumeAction({
+                    action: 'delete',
+                    volumeNames: [volumeName],
+                });
+                if (result?.data?.deleted.includes(volumeName)) {
+                    router.push('/docker/volumes');
+                }
             },
         });
     };
-
-    const isInUse = volume?.usageData?.RefCount && volume.usageData.RefCount > 0;
 
     return (
         <div className="flex h-full flex-1 flex-col gap-5 pt-5">
@@ -56,23 +59,13 @@ export function VolumeDetailPage({ volumeName }: VolumeDetailPageProps) {
                     )}
                     <p className="text-muted-foreground text-sm">{t('description')}</p>
                 </div>
-                <div className="flex shrink-0 gap-1">
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                variant="destructive"
-                                size="icon"
-                                onClick={handleRemove}
-                                disabled={!!isInUse}
-                            >
-                                <Trash className="size-4" />
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            {isInUse ? t('cannotDeleteInUse') : t('deleteVolume')}
-                        </TooltipContent>
-                    </Tooltip>
-                </div>
+                <Button variant="outline" onClick={() => router.back()}>
+                    <ArrowLeft className="size-4" />
+                    {tCommon('back')}
+                </Button>
+                <Button variant="destructive" size="icon" onClick={handleRemove}>
+                    <Trash className="size-4" />
+                </Button>
             </div>
             <ScrollAreaWithShadow className="h-full overflow-hidden">
                 <div className="flex flex-col gap-5 px-5 pb-5">

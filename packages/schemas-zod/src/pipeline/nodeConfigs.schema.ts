@@ -212,6 +212,21 @@ export const pruneImagesConfigSchema = z.object({
     dangling: z.boolean().default(true),
 });
 
+export const deleteImageConfigSchema = z.object({
+    imageName: refable(z.string().min(1, 'Image name is required')).default(''),
+    force: z.boolean().default(false),
+});
+
+export const deleteNetworkConfigSchema = z.object({
+    networkName: refable(z.string().min(1, 'Network name is required')).default(''),
+    force: z.boolean().default(false),
+});
+
+export const deleteVolumeConfigSchema = z.object({
+    volumeName: refable(z.string().min(1, 'Volume name is required')).default(''),
+    force: z.boolean().default(false),
+});
+
 // ─── Files & Artifacts ───────────────────────────────────────────────────────
 
 export const templateFileConfigSchema = z.object({
@@ -283,16 +298,31 @@ export const checkContainerLogsConfigSchema = z.object({
 
 // ─── Cache ────────────────────────────────────────────────────────────────────
 
+const cacheRelativePath = (label: string) =>
+    z
+        .string()
+        .min(1, `${label} is required`)
+        .refine((v) => !v.startsWith('/'), `${label} must be a relative path`)
+        .refine((v) => !v.split('/').some((seg) => seg === '..'), `${label} must not contain '..'`)
+        .refine((v) => !/[`$\\|;&<>()\n\r]/.test(v), `${label} contains invalid characters`);
+
+const cacheKeySchema = z
+    .string()
+    .regex(
+        /^[a-zA-Z0-9_\-.]+$/,
+        'Cache key must only contain alphanumeric characters, hyphens, underscores or dots',
+    );
+
 export const cacheRestoreConfigSchema = z.object({
-    volumeName: z.string().min(1, 'Volume name is required').default(''),
-    cachePath: z.string().min(1, 'Cache path is required').default(''),
-    cacheKey: z.string().optional(),
+    volumeName: refable(z.string().min(1, 'Volume name is required')).default(''),
+    cachePath: refable(cacheRelativePath('Cache path')).default(''),
+    cacheKey: refable(cacheKeySchema).optional(),
 });
 
 export const cacheSaveConfigSchema = z.object({
-    volumeName: z.string().min(1, 'Volume name is required').default(''),
-    sourcePath: z.string().min(1, 'Source path is required').default(''),
-    cacheKey: z.string().optional(),
+    volumeName: refable(z.string().min(1, 'Volume name is required')).default(''),
+    sourcePath: refable(cacheRelativePath('Source path')).default(''),
+    cacheKey: refable(cacheKeySchema).optional(),
 });
 
 // ─── Git ─────────────────────────────────────────────────────────────────────

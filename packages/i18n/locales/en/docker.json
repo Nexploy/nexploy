@@ -167,7 +167,8 @@
         "description": "Details and information about the Docker image",
         "useImage": "Use this image to create a container",
         "deleteImage": "Delete this image",
-        "exportImage": "Export this image"
+        "exportImage": "Export this image",
+        "cannotDeleteInUse": "This image is in use by one or more containers"
     },
     "imageDetails": {
         "title": "Image details",
@@ -196,10 +197,7 @@
         "noLayers": "No layer history"
     },
     "networkDetail": {
-        "description": "Details and information about the Docker network",
-        "deleteNetwork": "Delete this network",
-        "cannotDeleteBuiltin": "Cannot delete a built-in network",
-        "cannotDeleteConnected": "Disconnect all containers before deleting"
+        "description": "Details and information about the Docker network"
     },
     "networkDetails": {
         "title": "Network details",
@@ -234,8 +232,7 @@
     },
     "volumeDetail": {
         "description": "Details and information about the Docker volume",
-        "deleteVolume": "Delete this volume",
-        "cannotDeleteInUse": "Cannot delete a volume in use by containers"
+        "deleteVolume": "Delete this volume"
     },
     "volumeDetails": {
         "title": "Volume details",
@@ -650,9 +647,7 @@
         },
         "volume": {
             "removeTitle": "Remove Volume",
-            "removeDescription": "Are you sure you want to remove \"{name}\" volume?",
-            "cannotRemoveSystem": "Cannot remove system volume",
-            "disconnectContainersFirst": "Disconnect all containers using this volume first"
+            "removeDescription": "Are you sure you want to remove \"{name}\" volume?"
         }
     },
     "pullImagePage": {
@@ -834,7 +829,7 @@
         "nfs": "NFS",
         "cifs": "CIFS"
     },
-    "refreshSuccess": "Docker refreshed successfully",
+    "refreshSuccess": "{name} refreshed successfully",
     "reconnecting": "Reconnecting to Docker service... (Attempt {attempt}/{maxAttempts}), {delay}ms",
     "errors": {
         "imageAlreadyExists": "Image {imageName} already exists locally.",
@@ -886,9 +881,14 @@
         "dockerReconnecting": "Docker daemon is reconnecting...",
         "forceDelete": "Force delete",
         "forceDeleteDescription": "Force deletion by disconnecting containers.",
-        "networkSkipBuiltin": "Network \"{name}\" is a system network and cannot be deleted.",
-        "networkSkipCompose": "Network \"{name}\" belongs to a Docker Compose stack and cannot be deleted.",
-        "networkSkipContainers": "Network \"{name}\" has connected containers and cannot be deleted.",
-        "someNetworksSkipped": "{count, plural, one {# network was} other {# networks were}} skipped."
+        "networkSkipBuiltin": "{count, plural, one {Network \"{name}\" is a system network and cannot be deleted.} other {# networks are system networks and cannot be deleted.}}",
+        "networkSkipCompose": "{count, plural, one {Network \"{name}\" belongs to a Docker Compose stack and cannot be deleted.} other {# networks belong to a Docker Compose stack and cannot be deleted.}}",
+        "networkSkipContainers": "{count, plural, one {Network \"{name}\" has connected containers and cannot be deleted.} other {# networks have connected containers and cannot be deleted.}}",
+        "networkSkipNotFound": "{count, plural, one {Network \"{name}\" was not found.} other {# networks were not found.}}",
+        "someNetworksSkipped": "{count, plural, one {# network was} other {# networks were}} skipped.",
+        "volumeSkipInUse": "{count, plural, one {Volume \"{name}\" is in use by containers. Stop them before removing.} other {# volumes are in use by containers. Stop them before removing.}}",
+        "volumeSkipNotFound": "{count, plural, one {Volume \"{name}\" was not found.} other {# volumes were not found.}}",
+        "imageSkipInUse": "{count, plural, one {Image \"{name}\" is in use by containers. Enable \"Force delete\" to remove it anyway.} other {# images are in use by containers. Enable \"Force delete\" to remove them anyway.}}",
+        "imageSkipNotFound": "{count, plural, one {Image \"{name}\" was not found.} other {# images were not found.}}"
     }
 }

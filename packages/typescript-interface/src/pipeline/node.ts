@@ -51,6 +51,9 @@ export type NodeId =
     | 'tag-image'
     | 'scan-image'
     | 'prune-images'
+    | 'delete-image'
+    | 'delete-network'
+    | 'delete-volume'
     // Files & Artifacts
     | 'template-file'
     | 'upload-artifact'

@@ -8,11 +8,10 @@ import {
     imageIdParamSchema,
     imageMirrorSchema,
     imagePullWithAuthSchema,
-    imageNameParamSchema,
 } from '@workspace/schemas-zod/docker/image/imageAction.schema';
 import { getValidatedJson, getValidatedParam } from '@/helpers/validation';
 import { scanImage, type Severity } from '@/services/trivyRunner';
-import { pullImage, mirrorImage } from '@/services/imageService';
+import { deleteImages, mirrorImage, pullImage } from '@/services/imageService';
 import { docker } from '@/utils/dockerClient';
 
 const app = new Hono();
@@ -25,7 +24,7 @@ app.post(
             tag: string;
             severity: Severity;
             trivyVersion?: string;
-            buildId?: string;
+            buildId: string;
         }>();
 
         return await scanImage(image, tag, severity, trivyVersion, buildId);
@@ -47,24 +46,6 @@ app.get(
 );
 
 app.get(
-    '/name/:name',
-    zValidator('param', imageNameParamSchema),
-    handleAsync(async (c) => {
-        const { name } = getValidatedParam(c, imageNameParamSchema);
-        return imagesStateManager.getByName(name);
-    }),
-);
-
-app.get(
-    '/id/:id',
-    zValidator('param', imageIdParamSchema),
-    handleAsync(async (c) => {
-        const { id } = getValidatedParam(c, imageIdParamSchema);
-        return imagesStateManager.getById(id);
-    }),
-);
-
-app.get(
     '/:id',
     zValidator('param', imageIdParamSchema),
     handleAsync(async (c) => {
@@ -79,7 +60,7 @@ app.post(
     handleAsync(async (c) => {
         const { imageName, auth } = getValidatedJson(c, imagePullWithAuthSchema);
 
-        const imageExists = imagesStateManager.checkIfExistByName(imageName);
+        const imageExists = imagesStateManager.getByName(imageName);
         if (imageExists) {
             throw new Error(`Image ${imageName} already exists locally.`);
         }
@@ -130,9 +111,7 @@ app.post(
             throw new HttpError('No image IDs provided.', 400);
         }
 
-        await Promise.all(imageIds.map((id: string) => docker.getImage(id).remove({ force })));
-
-        return { deleted: imageIds };
+        return await deleteImages(imageIds, force);
     }),
 );
 

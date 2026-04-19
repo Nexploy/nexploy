@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { LogOut, Network, RefreshCw, Server, Layers } from 'lucide-react';
+import { Layers, LogOut, Network, RefreshCw, Server } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
@@ -51,7 +51,7 @@ export function SwarmPage() {
                                 <Button
                                     variant="outline"
                                     size="icon"
-                                    className={'size-8'}
+                                    className={'size-7'}
                                     onClick={handleRefresh}
                                     disabled={isRefreshing}
                                 >

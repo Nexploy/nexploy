@@ -8,6 +8,7 @@ import {
     
 } from '@/types/pipeline.type';
 import { uploadArtifactConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { safeResolvePath } from '@/inngest/pipeline/utils/pathSafety';
 import { kyS3 } from '@/lib/api/kyS3';
 import { tokenAwsStorage } from '@/lib/storage/token-aws-storage';
 import { z } from 'zod';
@@ -48,9 +49,7 @@ export class UploadArtifactExecutor
 
         const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
         const base = workDir ?? process.cwd();
-        const resolvedSource = path.isAbsolute(sourcePath)
-            ? sourcePath
-            : path.join(base, sourcePath);
+        const resolvedSource = safeResolvePath(base, sourcePath);
 
         await logger.info(nodeId, `Uploading ${sourcePath} → s3://${bucket}/${destinationPath}`);
 

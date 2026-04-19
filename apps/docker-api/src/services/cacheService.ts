@@ -1,20 +1,9 @@
 import { docker } from '@/utils/dockerClient';
 import { logger } from '@/utils/logger';
 import { ensureImage } from '@/utils/ensureImage';
+import { parseDockerLogs } from '@/utils/parseDockerLogs';
 
 const CACHE_IMAGE = 'alpine';
-
-function parseDockerLogs(buffer: Buffer): string {
-    let output = '';
-    let offset = 0;
-    while (offset + 8 <= buffer.length) {
-        const size = buffer.readUInt32BE(offset + 4);
-        if (offset + 8 + size > buffer.length) break;
-        output += buffer.slice(offset + 8, offset + 8 + size).toString('utf8');
-        offset += 8 + size;
-    }
-    return output.trim();
-}
 
 async function runAlpineCmd(
     cmd: string[],
@@ -44,7 +33,7 @@ export async function restoreCache(
     cachePath: string,
     workDir: string,
     cacheKey?: string,
-): Promise<{ restored: boolean; files?: number }> {
+): Promise<{ restored: boolean; sizeBytes?: number }> {
     await ensureImage(docker, CACHE_IMAGE);
 
     const key = cacheKey || 'default';
@@ -58,7 +47,8 @@ export async function restoreCache(
         `  mkdir -p "${destParent || '/workdir'}"`,
         `  rm -rf "${destPath}"`,
         `  cp -a "$src" "${destPath}"`,
-        `  find "${destPath}" -type f | wc -l | tr -d ' \\n'`,
+        `  size=$(du -sk "${destPath}" | cut -f1)`,
+        `  echo "$((size * 1024))"`,
         `else`,
         `  echo "NOT_FOUND"`,
         `fi`,
@@ -76,9 +66,9 @@ export async function restoreCache(
         return { restored: false };
     }
 
-    const files = parseInt(stdout, 10) || 0;
-    logger.info({ volumeName, cachePath, key, files }, 'Cache restored');
-    return { restored: true, files };
+    const sizeBytes = parseInt(stdout, 10) || 0;
+    logger.info({ volumeName, cachePath, key, sizeBytes }, 'Cache restored');
+    return { restored: true, sizeBytes };
 }
 
 export async function saveCache(

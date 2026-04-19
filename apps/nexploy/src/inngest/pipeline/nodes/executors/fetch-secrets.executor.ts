@@ -7,6 +7,7 @@ import {
     NodeExecutionResult,
 } from '@/types/pipeline.type';
 import { fetchSecretsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { safeResolvePath } from '@/inngest/pipeline/utils/pathSafety';
 import { z } from 'zod';
 
 export class FetchSecretsExecutor implements INodeExecutor {
@@ -60,9 +61,7 @@ export class FetchSecretsExecutor implements INodeExecutor {
             secrets = (await response.json()) as Record<string, string>;
         } else if (provider === 'env-file') {
             // secretPath is a path to a .env file, token is unused (set to placeholder)
-            const filePath = path.isAbsolute(secretPath)
-                ? secretPath
-                : path.join(workDir ?? process.cwd(), secretPath);
+            const filePath = safeResolvePath(workDir ?? process.cwd(), secretPath);
             const content = await fs.readFile(filePath, 'utf-8');
             for (const line of content.split('\n')) {
                 const trimmed = line.trim();

@@ -52,8 +52,8 @@ export const ScrollAreaWithShadow = forwardRef<
 
         const handleScroll = () => {
             const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
-            setShowTopShadow(scrollTop > 10);
-            if (bottomShadow) setShowBottomShadow(scrollTop + clientHeight < scrollHeight - 10);
+            setShowTopShadow(scrollTop > 5);
+            if (bottomShadow) setShowBottomShadow(scrollTop + clientHeight < scrollHeight - 5);
         };
 
         handleScroll();

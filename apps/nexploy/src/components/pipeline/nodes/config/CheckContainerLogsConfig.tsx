@@ -25,11 +25,7 @@ export function CheckContainerLogsConfig() {
                     <FormItem>
                         <FormLabel>{t('containerName')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder={t('containerNamePlaceholder')}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} placeholder={t('containerNamePlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

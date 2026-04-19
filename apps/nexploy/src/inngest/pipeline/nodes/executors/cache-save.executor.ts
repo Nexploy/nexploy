@@ -27,7 +27,7 @@ export class CacheSaveExecutor implements INodeExecutor {
 
         if (!workDir) {
             await logger.warn(nodeId, 'No workDir found in pipeline outputs — skipping cache save');
-            return { output: { saved: false }, skipped: true };
+            return { output: {}, skipped: true };
         }
 
         await logger.info(
@@ -48,25 +48,18 @@ export class CacheSaveExecutor implements INodeExecutor {
                     environmentId,
                     timeout: 120000,
                 } as KyDockerOptions)
-                .json<{ saved: boolean; files?: number; sizeBytes?: number }>();
+                .json<{ sizeBytes?: number }>();
 
             const mb = ((result.sizeBytes ?? 0) / 1024 / 1024).toFixed(2);
-            await logger.info(nodeId, `Cache saved (${result.files ?? 0} files, ${mb} MB)`);
+            await logger.info(nodeId, `Cache saved (${mb} MB)`);
 
-            return {
-                output: {
-                    saved: result.saved,
-                    files: result.files ?? 0,
-                    sizeBytes: result.sizeBytes ?? 0,
-                    volumeName,
-                },
-            };
+            return { output: {} };
         } catch (error) {
             await logger.warn(
                 nodeId,
                 `Cache save failed (continuing): ${error instanceof Error ? error.message : 'Unknown error'}`,
             );
-            return { output: { saved: false, error: true }, skipped: false };
+            return { output: { error: true }, skipped: false };
         }
     }
 }

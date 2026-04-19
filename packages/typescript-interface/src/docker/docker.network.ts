@@ -19,6 +19,11 @@ export interface Network {
 
 export type NetworkAction = 'create' | 'connect' | 'disconnect' | 'destroy' | 'remove';
 
+export interface NetworkDeleteResponse {
+    deleted: string[];
+    skipped: { id: string; name: string; reason: string }[];
+}
+
 export interface NetworkStateChanges {
     containers?: {
         from: string[];

@@ -26,8 +26,23 @@ export const checkContainerLogsManifest: NodeManifest = {
     configSchema: checkContainerLogsConfigSchema,
     configPanel: CheckContainerLogsConfig,
     inputFields: [
-        { key: 'found', labelKey: 'pipeline.inputs.found', descriptionKey: 'pipeline.inputs.desc_found', type: 'input' },
-        { key: 'matchedLine', labelKey: 'pipeline.inputs.matchedLine', descriptionKey: 'pipeline.inputs.desc_matchedLine', type: 'input' },
-        { key: 'containerName', labelKey: 'pipeline.inputs.containerName', descriptionKey: 'pipeline.inputs.desc_containerName', type: 'input' },
+        {
+            key: 'found',
+            labelKey: 'pipeline.inputs.found',
+            descriptionKey: 'pipeline.inputs.desc_found',
+            type: 'input',
+        },
+        {
+            key: 'matchedLine',
+            labelKey: 'pipeline.inputs.matchedLine',
+            descriptionKey: 'pipeline.inputs.desc_matchedLine',
+            type: 'input',
+        },
+        {
+            key: 'containerName',
+            labelKey: 'pipeline.inputs.containerName',
+            descriptionKey: 'pipeline.inputs.desc_containerName',
+            type: 'input',
+        },
     ],
 };

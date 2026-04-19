@@ -25,9 +25,4 @@ export const cacheSaveManifest: NodeManifest = {
     },
     configSchema: cacheSaveConfigSchema,
     configPanel: CacheSaveConfig,
-    inputFields: [
-        { key: 'saved', labelKey: 'pipeline.inputs.saved', descriptionKey: 'pipeline.inputs.desc_saved', type: 'input' },
-        { key: 'files', labelKey: 'pipeline.inputs.files', descriptionKey: 'pipeline.inputs.desc_files', type: 'input' },
-        { key: 'sizeBytes', labelKey: 'pipeline.inputs.sizeBytes', descriptionKey: 'pipeline.inputs.desc_sizeBytes', type: 'input' },
-    ],
 };

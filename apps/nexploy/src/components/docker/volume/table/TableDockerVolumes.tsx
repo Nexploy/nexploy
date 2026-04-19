@@ -40,7 +40,6 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { onVolumeAction } from '@/actions/docker/volume/volumeAction.action';
 
 const globalFilterFn: FilterFn<Volume> = (row, _, value) => {
@@ -99,12 +98,6 @@ export function TableDockerVolumes() {
         },
     });
 
-    const selectedRows = table.getSelectedRowModel().rows;
-    const selectedRow = selectedRows[0];
-    const selectedVolume = selectedRow?.original;
-
-    const volumeUsed = selectedVolume?.usageData?.RefCount;
-
     const numberOfSelectedRows = Object.keys(rowSelection).length;
 
     const handleDeleteAction = () => {
@@ -123,18 +116,6 @@ export function TableDockerVolumes() {
 
     const isShowingAll = pageSize === 'all';
 
-    const isUseDisabled = !numberOfSelectedRows || volumeUsed;
-
-    const getUseTooltipContent = () => {
-        if (numberOfSelectedRows === 0) {
-            return t('selectVolumesToDelete');
-        }
-        if (volumeUsed) {
-            return t('disconnectContainersFirst');
-        }
-        return;
-    };
-
     return (
         <div className={'mx-5 space-y-3'}>
             <div className={'flex justify-between'}>
@@ -145,33 +126,19 @@ export function TableDockerVolumes() {
                     onChange={(e) => setGlobalFilter(e.target.value)}
                 />
                 <div className={'flex gap-3'}>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <div>
-                                <Button
-                                    variant={'destructive'}
-                                    onClick={handleDeleteAction}
-                                    disabled={!!isUseDisabled}
-                                >
-                                    <Trash />
-                                    {tCommon('remove')}
-                                    {!!numberOfSelectedRows && (
-                                        <Badge variant={'secondary'} className={'rounded-full'}>
-                                            {numberOfSelectedRows}
-                                        </Badge>
-                                    )}
-                                </Button>
-                            </div>
-                        </TooltipTrigger>
-                        {(() => {
-                            const tooltipContent = getUseTooltipContent();
-                            return tooltipContent ? (
-                                <TooltipContent>
-                                    <p>{tooltipContent}</p>
-                                </TooltipContent>
-                            ) : null;
-                        })()}
-                    </Tooltip>
+                    <Button
+                        variant={'destructive'}
+                        onClick={handleDeleteAction}
+                        disabled={!numberOfSelectedRows}
+                    >
+                        <Trash />
+                        {tCommon('remove')}
+                        {!!numberOfSelectedRows && (
+                            <Badge variant={'secondary'} className={'rounded-full'}>
+                                {numberOfSelectedRows}
+                            </Badge>
+                        )}
+                    </Button>
                 </div>
             </div>
             <div className="bg-card overflow-hidden rounded-md border shadow-sm">

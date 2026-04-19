@@ -49,6 +49,9 @@ import { gitTagManifest } from './git-tag.manifest';
 import { gitCloneExtraManifest } from './git-clone-extra.manifest';
 import { fetchSecretsManifest } from './fetch-secrets.manifest';
 import { sonarqubeScanManifest } from './sonarqube-scan.manifest';
+import { deleteImageManifest } from './delete-image.manifest';
+import { deleteNetworkManifest } from './delete-network.manifest';
+import { deleteVolumeManifest } from './delete-volume.manifest';
 
 export const allBuiltinManifests: NodeManifest[] = [
     // Source
@@ -97,6 +100,9 @@ export const allBuiltinManifests: NodeManifest[] = [
     tagImageManifest,
     scanImageManifest,
     pruneImagesManifest,
+    deleteImageManifest,
+    deleteNetworkManifest,
+    deleteVolumeManifest,
     // Files & Artifacts
     templateFileManifest,
     uploadArtifactManifest,
