@@ -48,6 +48,7 @@ export class DeployComposeExecutor implements INodeExecutor {
         const labels: Record<string, string> = {
             [NEXPLOY_LABELS.repositoryId]: buildConfig.repositoryId,
             [NEXPLOY_LABELS.buildId]: buildConfig.buildId,
+            [NEXPLOY_LABELS.imageTag]: buildConfig.buildId,
             ...(branch && { [NEXPLOY_LABELS.branch]: branch }),
             ...(commitHash && { [NEXPLOY_LABELS.commitHash]: commitHash }),
             ...(commitMessage && { [NEXPLOY_LABELS.commitMessage]: commitMessage }),

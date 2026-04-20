@@ -16,7 +16,7 @@ export const buildFunction = inngest.createFunction(
         retries: 0,
     },
     { event: 'build/start' },
-    async ({ event, step, publish }) => {
+    async ({ event, step }) => {
         const { buildId, config } = event.data as { buildId: string; config: BuildConfig };
 
         {
@@ -31,12 +31,16 @@ export const buildFunction = inngest.createFunction(
                     message,
                 };
                 await createLogInngest(log);
-                await publish(buildChannel.log({ log }));
+                try {
+                    await inngest.realtime.publish(buildChannel.log({ log }));
+                } catch {
+                    /* ignore */
+                }
             };
 
-            const publishSafe = async (payload: Parameters<typeof publish>[0]) => {
+            const publishSafe = async (payload: Parameters<typeof inngest.realtime.publish>[0]) => {
                 try {
-                    await publish(payload);
+                    await inngest.realtime.publish(payload);
                 } catch {
                     /* ignore */
                 }
