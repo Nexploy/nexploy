@@ -1,8 +1,8 @@
 import { prisma } from '../../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
 import {
+    CloudflareAccountInfo,
     CloudflareApiResponse,
-    CloudflareCredentialInfo,
     CloudflareDnsRecord,
     CloudflareZone,
 } from '@workspace/typescript-interface/cloudflare/cloudflare';
@@ -11,9 +11,10 @@ import { tokenCloudflareStorage } from '@/lib/storage/token-cloudlfare-storage';
 
 export async function saveCloudflareCredential(
     userId: string,
+    displayName: string,
     apiToken: string,
     serverIp: string,
-): Promise<CloudflareCredentialInfo> {
+): Promise<CloudflareAccountInfo> {
     try {
         return await tokenCloudflareStorage.run({ apiToken }, async () => {
             await kyCloudflare.get('zones').json<CloudflareZone[]>();
@@ -21,11 +22,13 @@ export async function saveCloudflareCredential(
             const encryptedToken = encrypt(apiToken);
 
             const cloudflareCredential = await prisma.cloudflareCredential.create({
-                data: { userId, apiToken: encryptedToken, serverIp },
+                data: { userId, displayName, apiToken: encryptedToken, serverIp },
             });
 
             return {
-                isConnected: true,
+                id: cloudflareCredential.id,
+                displayName: cloudflareCredential.displayName,
+                serverIp: cloudflareCredential.serverIp,
                 createdAt: cloudflareCredential.createdAt,
             };
         });
@@ -34,66 +37,44 @@ export async function saveCloudflareCredential(
     }
 }
 
-export async function removeCloudflareCredential(userId: string): Promise<void> {
+export async function removeCloudflareCredential(id: string): Promise<void> {
     try {
         await prisma.cloudflareCredential.delete({
-            where: { userId },
+            where: { id },
         });
     } catch (error: unknown) {
         throw new Error('Cloudflare error deleting credential');
     }
 }
 
-export async function getCloudflareCredentialInfo(
-    userId: string,
-): Promise<CloudflareCredentialInfo> {
+export async function getAllCloudflareAccounts(userId: string): Promise<CloudflareAccountInfo[]> {
     try {
-        const credential = await prisma.cloudflareCredential.findUnique({
+        return await prisma.cloudflareCredential.findMany({
             where: { userId },
-            select: { id: true, createdAt: true },
+            select: { id: true, displayName: true, serverIp: true, createdAt: true },
+            orderBy: { createdAt: 'asc' },
         });
-
-        return {
-            isConnected: !!credential,
-            createdAt: credential?.createdAt,
-        };
     } catch (error: unknown) {
-        throw new Error('Cloudflare not connected');
+        throw new Error('Cloudflare error fetching accounts');
     }
 }
 
-async function getCloudflareApiToken(userId: string): Promise<string> {
+async function getCredentialById(credentialId: string) {
     try {
         const credential = await prisma.cloudflareCredential.findUnique({
-            where: { userId },
+            where: { id: credentialId },
         });
-
-        if (!credential) throw new Error('Cloudflare not connected');
-
-        return decrypt(credential.apiToken);
+        if (!credential) throw new Error('Cloudflare credential not found');
+        return credential;
     } catch (error: unknown) {
-        throw new Error('Cloudflare error getting API token');
+        throw new Error('Cloudflare error getting credential by ID');
     }
 }
 
-async function getServerIp(userId: string): Promise<string> {
+export async function listCloudflareZones(credentialId: string): Promise<CloudflareZone[]> {
     try {
-        const credential = await prisma.cloudflareCredential.findUnique({
-            where: { userId },
-            select: { serverIp: true },
-        });
-
-        if (!credential) throw new Error('Cloudflare not connected');
-
-        return credential.serverIp;
-    } catch (error: unknown) {
-        throw new Error('Cloudflare error getting server IP');
-    }
-}
-
-export async function listCloudflareZones(userId: string): Promise<CloudflareZone[]> {
-    try {
-        const apiToken = await getCloudflareApiToken(userId);
+        const credential = await getCredentialById(credentialId);
+        const apiToken = decrypt(credential.apiToken);
 
         return await tokenCloudflareStorage.run({ apiToken }, async () => {
             return (await kyCloudflare.get('zones').json<CloudflareApiResponse<CloudflareZone[]>>())
@@ -105,15 +86,15 @@ export async function listCloudflareZones(userId: string): Promise<CloudflareZon
 }
 
 export async function createCloudflareDnsRecord(
-    userId: string,
+    credentialId: string,
     zoneId: string,
     subdomain: string,
     zoneName: string,
 ): Promise<CloudflareDnsRecord> {
     try {
-        const apiToken = await getCloudflareApiToken(userId);
-        const serverIp = await getServerIp(userId);
-
+        const credential = await getCredentialById(credentialId);
+        const apiToken = decrypt(credential.apiToken);
+        const serverIp = credential.serverIp;
         const fullHostname = subdomain && subdomain !== '@' ? `${subdomain}.${zoneName}` : zoneName;
 
         return await tokenCloudflareStorage.run({ apiToken }, async () => {
@@ -137,36 +118,35 @@ export async function createCloudflareDnsRecord(
 }
 
 export async function deleteCloudflareDnsRecord(
-    userId: string,
+    credentialId: string,
     zoneId: string,
     dnsRecordId: string,
 ): Promise<void> {
     try {
-        const apiToken = await getCloudflareApiToken(userId);
+        const credential = await getCredentialById(credentialId);
+        const apiToken = decrypt(credential.apiToken);
 
         await tokenCloudflareStorage.run({ apiToken }, async () => {
-            return (
-                await kyCloudflare
-                    .delete(`zones/${zoneId}/dns_records/${dnsRecordId}`)
-                    .json<CloudflareApiResponse<{ id: string }>>()
-            ).result;
+            await kyCloudflare
+                .delete(`zones/${zoneId}/dns_records/${dnsRecordId}`)
+                .json<CloudflareApiResponse<{ id: string }>>();
         });
     } catch (error: unknown) {
-        throw new Error('Cloudflare not connected');
+        throw new Error('Cloudflare error deleting DNS record');
     }
 }
 
 export async function updateCloudflareDnsRecord(
-    userId: string,
+    credentialId: string,
     zoneId: string,
     dnsRecordId: string,
     subdomain: string,
     zoneName: string,
 ): Promise<CloudflareDnsRecord> {
     try {
-        const apiToken = await getCloudflareApiToken(userId);
-        const serverIp = await getServerIp(userId);
-
+        const credential = await getCredentialById(credentialId);
+        const apiToken = decrypt(credential.apiToken);
+        const serverIp = credential.serverIp;
         const fullHostname = subdomain && subdomain !== '@' ? `${subdomain}.${zoneName}` : zoneName;
 
         return await tokenCloudflareStorage.run({ apiToken }, async () => {

@@ -12,7 +12,7 @@ export async function GitProvidersSection() {
     ]);
 
     return (
-        <section className="space-y-3">
+        <section className="space-y-2">
             <div className="flex items-center gap-2">
                 <GitBranch className="text-muted-foreground size-4" />
                 <h2 className="text-sm font-medium">{t('gitProviders')}</h2>

@@ -5,22 +5,31 @@ import { domainsFormSchema } from '@workspace/schemas-zod/repository/domain.sche
 import { repositoryIdSchema } from '@workspace/schemas-zod/bind/repositoryId.schema';
 import { getDomainsFromTraefikConfig } from '@/services/traefik.service';
 import { applyDomainOperations, classifyDomainOperations } from '@/services/domain.service';
+import { setToastServer } from '@/lib/toastServer.ts';
 
 export const manageDomains = authActionServer
     .use(requirePermission('repository', 'update'))
     .inputSchema(domainsFormSchema)
     .bindArgsSchemas(repositoryIdSchema)
     .action(async ({ parsedInput, ctx, bindArgsParsedInputs: [repositoryId] }) => {
-        const { domains, deletedIds } = parsedInput;
-        const userId = ctx.session.user.id;
+        try {
+            const { domains, deletedIds } = parsedInput;
 
-        const existingDomains = await getDomainsFromTraefikConfig(repositoryId);
+            const existingDomains = await getDomainsFromTraefikConfig(repositoryId);
 
-        const operations = classifyDomainOperations(domains, existingDomains, deletedIds);
+            const operations = classifyDomainOperations(domains, existingDomains, deletedIds);
 
-        return await applyDomainOperations({
-            repositoryId,
-            userId,
-            operations,
-        });
+            return await applyDomainOperations({
+                repositoryId,
+                operations,
+            });
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                await setToastServer({
+                    type: 'error',
+                    message: error.message,
+                });
+            }
+            throw error;
+        }
     });

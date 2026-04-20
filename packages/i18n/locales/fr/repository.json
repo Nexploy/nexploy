@@ -317,6 +317,8 @@
             "loading": "Chargement des zones Cloudflare...",
             "title": "Configuration Cloudflare",
             "automaticDns": "DNS automatique",
+            "account": "Compte Cloudflare",
+            "selectAccount": "Sélectionner un compte",
             "zone": "Zone Cloudflare",
             "selectZone": "Sélectionner une zone",
             "manualEntry": "Saisie manuelle",

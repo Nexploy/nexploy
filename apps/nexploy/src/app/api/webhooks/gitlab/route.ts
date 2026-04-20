@@ -2,11 +2,12 @@ import { NextResponse } from 'next/server';
 import { parseGitLabWebhook } from '@/services/webhook/gitlab.webhook.service';
 import { startBuildRepositoryInngest } from '@/services/inngest/build.inngest.service';
 import { findRepositoryByWebhook } from '@/services/webhook/webhook.service';
-import { route } from '@/lib/api/nextRoute';
+import { timingSafeEqual } from '@/lib/api/crypto-utils';
 
-export const POST = route.handler(async (request: Request, { body }) => {
+export async function POST(request: Request) {
     try {
-        const payload = body;
+        const rawBody = await request.text();
+        const payload = JSON.parse(rawBody);
 
         if (payload.object_kind !== 'push') {
             return NextResponse.json({ message: 'Event ignored', event: payload.object_kind });
@@ -24,6 +25,15 @@ export const POST = route.handler(async (request: Request, { body }) => {
             return NextResponse.json({ message: 'Repository not found' }, { status: 404 });
         }
 
+        const token = request.headers.get('x-gitlab-token');
+        if (!token || !repo.webhookSecret) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        if (!timingSafeEqual(token, repo.webhookSecret)) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         await startBuildRepositoryInngest(
             {
                 repositoryId: repo.id,
@@ -38,4 +48,4 @@ export const POST = route.handler(async (request: Request, { body }) => {
     } catch (error) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
-});
+}

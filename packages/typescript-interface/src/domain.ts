@@ -9,6 +9,5 @@ export interface DomainOperations {
 
 export interface ApplyDomainOperationsInput {
     repositoryId: string;
-    userId: string;
     operations: DomainOperations;
 }

@@ -1,7 +1,43 @@
+import { lookup } from 'dns/promises';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { httpRequestConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { z } from 'zod';
+
+const PRIVATE_IP_RE = [
+    /^127\./,
+    /^10\./,
+    /^172\.(1[6-9]|2\d|3[01])\./,
+    /^192\.168\./,
+    /^169\.254\./,
+    /^::1$/,
+    /^f[cd][0-9a-f]{2}:/i,
+];
+
+async function assertUrlSafe(rawUrl: string): Promise<void> {
+    let parsed: URL;
+    try {
+        parsed = new URL(rawUrl);
+    } catch {
+        throw new Error(`Invalid URL: ${rawUrl}`);
+    }
+
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+        throw new Error(`Protocol not allowed: ${parsed.protocol}`);
+    }
+
+    let ip: string;
+    try {
+        const result = await lookup(parsed.hostname);
+        ip = result.address;
+    } catch {
+        throw new Error(`Cannot resolve hostname: ${parsed.hostname}`);
+    }
+
+    if (PRIVATE_IP_RE.some((re) => re.test(ip))) {
+        throw new Error('Requests to private or internal addresses are not allowed');
+    }
+}
 
 export class HttpRequestExecutor implements INodeExecutor {
     readonly type = 'http-request';
@@ -29,6 +65,8 @@ export class HttpRequestExecutor implements INodeExecutor {
         await logger.info(nodeId, `${method} ${url}`);
 
         try {
+            await assertUrlSafe(url);
+
             const response = await fetch(url, {
                 method,
                 headers,

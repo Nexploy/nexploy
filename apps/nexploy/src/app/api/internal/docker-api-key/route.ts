@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import { route } from '@/lib/api/nextRoute';
+import { timingSafeEqual } from '@/lib/api/crypto-utils';
 
 const KEY_FILE = '/tmp/nexploy-api-key';
 
 export const GET = route.handler(async (request: Request) => {
     const secret = request.headers.get('x-internal-secret');
+    const expected = process.env.INTERNAL_SECRET ?? '';
 
-    if (!secret || secret !== process.env.ENCRYPTION_KEY) {
+    if (!secret || !expected || !timingSafeEqual(secret, expected)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

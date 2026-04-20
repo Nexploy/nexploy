@@ -2,13 +2,17 @@
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { removeCloudflareCredential } from '@/services/cloudflare.service';
+import { cloudflareDeleteSchema } from '@workspace/schemas-zod/cloudflare/cloudflare.schema';
 import { setToastServer } from '@/lib/toastServer';
+import { revalidatePath } from 'next/cache';
 
 export const disconnectCloudflareAction = authActionServer
     .use(requirePermission('gitProvider', 'delete'))
-    .action(async ({ ctx }) => {
+    .inputSchema(cloudflareDeleteSchema)
+    .action(async ({ parsedInput }) => {
         try {
-            return await removeCloudflareCredential(ctx.session.user.id);
+            await removeCloudflareCredential(parsedInput.id);
+            revalidatePath('/integrations');
         } catch (error: any) {
             if (error instanceof Error) {
                 await setToastServer({

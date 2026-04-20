@@ -6,14 +6,18 @@ import { saveCloudflareCredential } from '@/services/cloudflare.service';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 import { revalidatePath } from 'next/cache';
+import { getPublicIp } from '@/lib/network/getPublicIp.ts';
 
 export const connectCloudflareAction = authActionServer
     .use(requirePermission('gitProvider', 'create'))
     .inputSchema(cloudflareConnectSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {
-            const { apiToken, serverIp } = parsedInput;
-            await saveCloudflareCredential(ctx.session.user.id, apiToken, serverIp);
+            const { displayName, apiToken } = parsedInput;
+            const serverIp = await getPublicIp();
+            if (!serverIp) throw new Error('Failed to get server IP');
+
+            await saveCloudflareCredential(ctx.session.user.id, displayName, apiToken, serverIp);
             revalidatePath('/integrations');
         } catch (err: unknown) {
             if (err instanceof HTTPError) {

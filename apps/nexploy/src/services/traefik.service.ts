@@ -25,33 +25,6 @@ export async function generateTraefikConfigForRepository(
 
     const projectName = `nexploy-${repositoryId}`;
 
-    // Cache containers and environment lookups to avoid duplicate fetches
-    const containersCache = new Map<
-        string | undefined,
-        Awaited<ReturnType<typeof getContainerByProjectName>>
-    >();
-    const envCache = new Map<string, { isRemote: boolean; remoteHost?: string; id: string }>();
-
-    const getContainers = async (envId?: string) => {
-        if (!containersCache.has(envId)) {
-            containersCache.set(envId, await getContainerByProjectName(projectName, envId));
-        }
-        return containersCache.get(envId)!;
-    };
-
-    const getEnvInfo = async (envId?: string) => {
-        if (!envId) return { isRemote: false, remoteHost: undefined, id: '' };
-        if (!envCache.has(envId)) {
-            const env = await getEnvironmentById(envId);
-            envCache.set(envId, {
-                isRemote: env?.connectionType === 'TCP' || env?.connectionType === 'TCP_TLS',
-                remoteHost: env?.host ?? undefined,
-                id: env?.id ?? '',
-            });
-        }
-        return envCache.get(envId)!;
-    };
-
     const config: {
         http: {
             routers: Record<string, unknown>;
@@ -72,8 +45,10 @@ export async function generateTraefikConfigForRepository(
         const routerName = `repo-${repositoryId}-${domain.host}`;
         const serviceName = `svc-${repositoryId}-${domain.host}`;
 
-        const { isRemote, remoteHost } = await getEnvInfo(domain.environmentId);
-        const containers = await getContainers(domain.environmentId);
+        const env = domain.environmentId ? await getEnvironmentById(domain.environmentId) : null;
+        const isRemote = env?.connectionType === 'TCP' || env?.connectionType === 'TCP_TLS';
+        const remoteHost = env?.host ?? undefined;
+        const containers = await getContainerByProjectName(projectName, domain.environmentId);
 
         let rule = `Host(\`${domain.host}\`)`;
         if (domain.path && domain.path !== '/') {
@@ -170,6 +145,7 @@ export async function generateTraefikConfigForRepository(
             containerPort: domain.containerPort,
             environmentId: domain.environmentId,
             cloudflare: domain.cloudflareZoneId && {
+                credentialId: domain.cloudflareCredentialId,
                 zoneId: domain.cloudflareZoneId,
                 zoneName: domain.cloudflareZoneName,
                 dnsRecordId: domain.cloudflareDnsRecordId,
@@ -236,6 +212,7 @@ export async function getDomainsFromTraefikConfig(repositoryId: string): Promise
                 containerPort,
                 https: !!router.tls,
                 environmentId: domainMeta.environmentId ?? undefined,
+                cloudflareCredentialId: cloudflare?.credentialId,
                 cloudflareZoneId: cloudflare?.zoneId,
                 cloudflareZoneName: cloudflare?.zoneName,
                 cloudflareDnsRecordId: cloudflare?.dnsRecordId,

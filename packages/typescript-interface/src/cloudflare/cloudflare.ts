@@ -25,6 +25,13 @@ export interface CloudflareCredentialInfo {
     createdAt?: Date;
 }
 
+export interface CloudflareAccountInfo {
+    id: string;
+    displayName: string;
+    serverIp: string;
+    createdAt: Date;
+}
+
 export interface CloudflareToken {
     apiToken: string;
 }

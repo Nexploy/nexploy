@@ -4,28 +4,17 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import { RefreshCw } from 'lucide-react';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { connectCloudflareAction } from '@/actions/cloudflare/connect.action';
 import { cloudflareConnectSchema } from '@workspace/schemas-zod/cloudflare/cloudflare.schema';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { toast } from 'sonner';
-import { usePublicIp } from '@/hooks/usePublicIp';
 import { useTranslations } from 'next-intl';
 
 export function CloudflareConnectForm() {
     const { closeDialog } = useConfirmationDialogStore();
     const t = useTranslations('integrations.cloudflare');
-
-    const { ip, isLoading: isDetectingIp, mutate: refetchIp } = usePublicIp();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         connectCloudflareAction,
@@ -33,8 +22,8 @@ export function CloudflareConnectForm() {
         {
             formProps: {
                 defaultValues: {
+                    displayName: '',
                     apiToken: '',
-                    serverIp: ip ?? '',
                 },
             },
             actionProps: {
@@ -46,16 +35,6 @@ export function CloudflareConnectForm() {
         },
     );
 
-    const handleDetectIp = async () => {
-        const result = await refetchIp();
-        if (result?.ip) {
-            form.setValue('serverIp', result.ip);
-            toast.success(t('ipDetected', { ip: result.ip }));
-        } else {
-            toast.error(t('ipDetectionFailed'));
-        }
-    };
-
     const isSubmitting = action.status === 'executing';
 
     return (
@@ -65,6 +44,20 @@ export function CloudflareConnectForm() {
                     <li>{t('permissionZoneRead')}</li>
                     <li>{t('permissionDnsEdit')}</li>
                 </ul>
+
+                <FormField
+                    control={form.control}
+                    name="displayName"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('displayName')}</FormLabel>
+                            <FormControl>
+                                <Input placeholder={t('displayNamePlaceholder')} {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
                 <FormField
                     control={form.control}
@@ -84,43 +77,9 @@ export function CloudflareConnectForm() {
                     )}
                 />
 
-                <FormField
-                    control={form.control}
-                    name="serverIp"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>{t('serverIp')}</FormLabel>
-                            <div className="flex gap-2">
-                                <FormControl>
-                                    <Input type="text" placeholder={t('serverIpPlaceholder')} {...field} />
-                                </FormControl>
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={handleDetectIp}
-                                    disabled={isDetectingIp}
-                                    isLoading={isDetectingIp}
-                                    icon={RefreshCw}
-                                >
-                                    {t('detect')}
-                                </Button>
-                            </div>
-                            <p className="text-muted-foreground text-xs">
-                                {t('serverIpDescription')}
-                            </p>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
                 <DialogFooter>
-                    <Button
-                        type="submit"
-                        disabled={isSubmitting}
-                        isLoading={isSubmitting}
-                        className="w-full"
-                    >
-                        {t('connect')}
+                    <Button type="submit" disabled={isSubmitting} isLoading={isSubmitting}>
+                        {t('add')}
                     </Button>
                 </DialogFooter>
             </form>

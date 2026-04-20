@@ -6,9 +6,12 @@ import { Session } from '@/lib/auth/auth';
 export const GET = route
     .use(authRouteServer)
     .use(requirePermission('gitProvider', 'create'))
-    .handler(async (_, { ctx }: { ctx: { session: Session } }) => {
+    .handler(async (request: Request, { ctx }: { ctx: { session: Session } }) => {
         try {
-            return await listCloudflareZones(ctx.session.user.id);
+            const { searchParams } = new URL(request.url);
+            const credentialId = searchParams.get('credentialId')!;
+
+            return await listCloudflareZones(credentialId);
         } catch {
             await setToastServer({
                 type: 'error',

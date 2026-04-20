@@ -9,6 +9,7 @@ export const domainSchema = z.object({
     containerPort: z.number().int().min(1).max(65535).default(3000),
     https: z.boolean().default(false),
     environmentId: z.string().optional(),
+    cloudflareCredentialId: z.string().optional(),
     cloudflareZoneId: z.string().optional(),
     cloudflareZoneName: z.string().optional(),
     cloudflareDnsRecordId: z.string().optional(),

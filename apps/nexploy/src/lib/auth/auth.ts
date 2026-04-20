@@ -29,7 +29,7 @@ export const auth = betterAuth({
         admin(permission),
         twoFactor({
             backupCodeOptions: {
-                storeBackupCodes: 'plain',
+                storeBackupCodes: 'encrypted',
             },
         }),
         apiKey({

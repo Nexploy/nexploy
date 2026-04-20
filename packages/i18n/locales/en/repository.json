@@ -318,6 +318,8 @@
             "loading": "Loading Cloudflare zones...",
             "title": "Cloudflare Configuration",
             "automaticDns": "Automatic DNS",
+            "account": "Cloudflare Account",
+            "selectAccount": "Select an account",
             "zone": "Cloudflare Zone",
             "selectZone": "Select a zone",
             "manualEntry": "Manual entry",

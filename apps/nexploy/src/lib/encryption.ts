@@ -4,9 +4,8 @@ const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 const ALGORITHM = 'aes-256-cbc';
 const PREFIX = 'nex:';
 
-const getKey = () => {
-    return crypto.createHash('sha256').update(String(ENCRYPTION_KEY)).digest();
-};
+const SCRYPT_SALT = Buffer.from('nexploy-aes-key', 'utf8');
+const getKey = () => crypto.scryptSync(String(ENCRYPTION_KEY), SCRYPT_SALT, 32);
 
 export function encrypt(text: string): string {
     if (!text) return text;

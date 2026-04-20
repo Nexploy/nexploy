@@ -21,24 +21,25 @@ import {
 import { CloudflareDomainSelector } from '@/components/repositories/tabs/domains/CloudflareDomainSelector';
 import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 import { useTranslations } from 'next-intl';
+import type { CloudflareAccountInfo } from '@workspace/typescript-interface/cloudflare/cloudflare';
 
 interface DomainFieldsProps<T extends FieldValues> {
     form: UseFormReturn<T>;
     index: number;
-    isCloudflareConnected: boolean;
+    cloudflareAccounts: CloudflareAccountInfo[];
 }
 
 export function DomainFields<T extends FieldValues>({
     form,
     index,
-    isCloudflareConnected,
+    cloudflareAccounts,
 }: DomainFieldsProps<T>) {
     const t = useTranslations('repository.settings.domains');
     const cloudflareZoneId = form.watch(`domains.${index}.cloudflareZoneId` as Path<T>);
     const environments = useEnvironmentStore((s) => s.environments);
 
     return (
-        <div className="grid gap-4">
+        <div className="flex flex-col gap-4 border-t border-dashed p-4">
             <FormField
                 control={form.control}
                 name={`domains.${index}.environmentId` as Path<T>}
@@ -70,7 +71,7 @@ export function DomainFields<T extends FieldValues>({
             <CloudflareDomainSelector
                 form={form}
                 index={index}
-                isCloudflareConnected={isCloudflareConnected}
+                cloudflareAccounts={cloudflareAccounts}
             />
 
             <div className="grid items-start gap-4 md:grid-cols-2">

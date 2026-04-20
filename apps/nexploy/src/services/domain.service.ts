@@ -2,7 +2,6 @@ import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
 import {
     createCloudflareDnsRecord,
     deleteCloudflareDnsRecord,
-    getCloudflareCredentialInfo,
     updateCloudflareDnsRecord,
 } from '@/services/cloudflare.service';
 import {
@@ -13,36 +12,18 @@ import { ApplyDomainOperationsInput } from '@workspace/typescript-interface/doma
 
 export async function applyDomainOperations({
     repositoryId,
-    userId,
     operations,
 }: ApplyDomainOperationsInput): Promise<Domain[]> {
-    const [cloudflareInfo, existingDomains] = await Promise.all([
-        getCloudflareCredentialInfo(userId),
-        getDomainsFromTraefikConfig(repositoryId),
-    ]);
+    const existingDomains = await getDomainsFromTraefikConfig(repositoryId);
 
-    await handleDeletions(operations.delete, cloudflareInfo, userId);
+    await handleDeletions(operations.delete);
 
     const editedDomains = await Promise.all(
-        operations.edit.map((domain) =>
-            handleEdit({
-                domain,
-                existingDomains,
-                cloudflareInfo,
-                userId,
-            }),
-        ),
+        operations.edit.map((domain) => handleEdit({ domain, existingDomains })),
     );
 
     const addedDomains = await Promise.all(
-        operations.add.map((domain) =>
-            handleAdd({
-                domain,
-                repositoryId,
-                cloudflareInfo,
-                userId,
-            }),
-        ),
+        operations.add.map((domain) => handleAdd({ domain, repositoryId })),
     );
 
     const allDomains = [...operations.unchanged, ...editedDomains, ...addedDomains];
@@ -52,19 +33,18 @@ export async function applyDomainOperations({
     return allDomains;
 }
 
-async function handleDeletions(
-    domainsToDelete: Domain[],
-    cloudflareInfo: { isConnected: boolean },
-    userId: string,
-): Promise<void> {
-    if (!cloudflareInfo.isConnected) return;
-
+async function handleDeletions(domainsToDelete: Domain[]): Promise<void> {
     await Promise.all(
         domainsToDelete
-            .filter((domain) => domain.cloudflareZoneId && domain.cloudflareDnsRecordId)
+            .filter(
+                (domain) =>
+                    domain.cloudflareCredentialId &&
+                    domain.cloudflareZoneId &&
+                    domain.cloudflareDnsRecordId,
+            )
             .map((domain) =>
                 deleteCloudflareDnsRecord(
-                    userId,
+                    domain.cloudflareCredentialId!,
                     domain.cloudflareZoneId!,
                     domain.cloudflareDnsRecordId!,
                 ).catch((error) => {
@@ -77,22 +57,17 @@ async function handleDeletions(
 async function handleEdit({
     domain,
     existingDomains,
-    cloudflareInfo,
-    userId,
 }: {
     domain: Domain;
     existingDomains: Domain[];
-    cloudflareInfo: { isConnected: boolean };
-    userId: string;
 }): Promise<Domain> {
     const originalDomain = existingDomains.find((d) => d.id === domain.id);
     if (!originalDomain) {
         throw new Error(`Original domain not found for ID: ${domain.id}`);
     }
 
-    if (!cloudflareInfo.isConnected) {
-        return domain;
-    }
+    const credentialId = domain.cloudflareCredentialId ?? originalDomain.cloudflareCredentialId;
+    if (!credentialId) return domain;
 
     const wasCloudflare = !!originalDomain.cloudflareZoneId;
     const isCloudflare = !!domain.cloudflareZoneId;
@@ -107,7 +82,7 @@ async function handleEdit({
     if (wasCloudflare && !isCloudflare && originalDomain.cloudflareDnsRecordId) {
         try {
             await deleteCloudflareDnsRecord(
-                userId,
+                credentialId,
                 originalDomain.cloudflareZoneId!,
                 originalDomain.cloudflareDnsRecordId,
             );
@@ -124,7 +99,7 @@ async function handleEdit({
         try {
             const subdomain = extractSubdomain(domain.host, domain.cloudflareZoneName);
             const record = await createCloudflareDnsRecord(
-                userId,
+                credentialId,
                 domain.cloudflareZoneId,
                 subdomain,
                 domain.cloudflareZoneName,
@@ -137,7 +112,7 @@ async function handleEdit({
         if (originalDomain.cloudflareDnsRecordId) {
             try {
                 await deleteCloudflareDnsRecord(
-                    userId,
+                    credentialId,
                     originalDomain.cloudflareZoneId!,
                     originalDomain.cloudflareDnsRecordId,
                 );
@@ -145,11 +120,10 @@ async function handleEdit({
                 console.error('Failed to delete old DNS:', error);
             }
         }
-
         try {
             const subdomain = extractSubdomain(domain.host, domain.cloudflareZoneName);
             const record = await createCloudflareDnsRecord(
-                userId,
+                credentialId,
                 domain.cloudflareZoneId,
                 subdomain,
                 domain.cloudflareZoneName,
@@ -168,7 +142,7 @@ async function handleEdit({
         try {
             const subdomain = extractSubdomain(domain.host, domain.cloudflareZoneName);
             await updateCloudflareDnsRecord(
-                userId,
+                credentialId,
                 domain.cloudflareZoneId,
                 domain.cloudflareDnsRecordId,
                 subdomain,
@@ -179,10 +153,7 @@ async function handleEdit({
         }
     }
 
-    return {
-        ...domain,
-        cloudflareDnsRecordId: cloudflareDnsRecordId ?? undefined,
-    };
+    return { ...domain, cloudflareDnsRecordId: cloudflareDnsRecordId ?? undefined };
 }
 
 export function classifyDomainOperations(
@@ -216,12 +187,7 @@ export function classifyDomainOperations(
         }
     }
 
-    return {
-        add,
-        edit,
-        delete: domainsToDelete,
-        unchanged,
-    };
+    return { add, edit, delete: domainsToDelete, unchanged };
 }
 
 function hasChanges(domain: Domain, original: Domain): boolean {
@@ -239,10 +205,8 @@ function hasChanges(domain: Domain, original: Domain): boolean {
     return fieldsToCompare.some((field) => {
         const domainValue = domain[field];
         const originalValue = original[field];
-
         if (domainValue == null && originalValue == null) return false;
         if (domainValue == null || originalValue == null) return true;
-
         return domainValue !== originalValue;
     });
 }
@@ -250,21 +214,17 @@ function hasChanges(domain: Domain, original: Domain): boolean {
 async function handleAdd({
     domain,
     repositoryId,
-    cloudflareInfo,
-    userId,
 }: {
     domain: Domain;
     repositoryId: string;
-    cloudflareInfo: { isConnected: boolean };
-    userId: string;
 }): Promise<Domain> {
     let cloudflareDnsRecordId: string | undefined;
 
-    if (cloudflareInfo.isConnected && domain.cloudflareZoneId && domain.cloudflareZoneName) {
+    if (domain.cloudflareCredentialId && domain.cloudflareZoneId && domain.cloudflareZoneName) {
         try {
             const subdomain = extractSubdomain(domain.host, domain.cloudflareZoneName);
             const record = await createCloudflareDnsRecord(
-                userId,
+                domain.cloudflareCredentialId,
                 domain.cloudflareZoneId,
                 subdomain,
                 domain.cloudflareZoneName,
@@ -284,11 +244,7 @@ async function handleAdd({
 
 function extractSubdomain(host: string, zoneName: string): string {
     const cleanHost = host.replace(/^https?:\/\//, '');
-
-    if (cleanHost === zoneName) {
-        return '@';
-    }
-
+    if (cleanHost === zoneName) return '@';
     const subdomain = cleanHost.replace(`.${zoneName}`, '').replace(zoneName, '');
     return subdomain || '@';
 }

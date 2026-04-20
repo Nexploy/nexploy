@@ -15,7 +15,7 @@ model User {
   accounts             Account[]
   twofactors           TwoFactor[]
   repositories         Repository[]
-  cloudflareCredential CloudflareCredential?
+  cloudflareCredential CloudflareCredential[]
   environments         Environment[]
   gitAccounts          GitAccount[]
 

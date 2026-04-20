@@ -141,9 +141,9 @@ export const GET = route
                     },
                 });
 
-                return NextResponse.redirect(`${accountUrl}?success=connected`);
+                return NextResponse.redirect(`${accountUrl}#integrations`);
             } catch (error) {
-                return NextResponse.redirect(`${accountUrl}?error=connect_failed`);
+                return NextResponse.redirect(`${accountUrl}#integrations`);
             }
         },
     );

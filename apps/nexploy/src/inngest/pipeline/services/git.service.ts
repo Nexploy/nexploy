@@ -179,6 +179,9 @@ class GitService {
             }
 
             if (buildConfig.gitCommitHash) {
+                if (!/^[0-9a-f]{7,40}$/i.test(buildConfig.gitCommitHash)) {
+                    throw new Error(`Invalid commit hash: ${buildConfig.gitCommitHash}`);
+                }
                 await this.exec('git', ['checkout', buildConfig.gitCommitHash], {
                     cwd: workDir,
                     env: gitEnv,

@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { parseGitHubWebhook } from '@/services/webhook/github.webhook.service';
 import { startBuildRepositoryInngest } from '@/services/inngest/build.inngest.service';
 import { findRepositoryByWebhook } from '@/services/webhook/webhook.service';
-import { route } from '@/lib/api/nextRoute';
+import { timingSafeEqual } from '@/lib/api/crypto-utils';
 
-export const POST = route.handler(async (request: Request, { body }) => {
+export async function POST(request: Request) {
     try {
         const event = request.headers.get('x-github-event');
 
@@ -16,6 +17,9 @@ export const POST = route.handler(async (request: Request, { body }) => {
             return NextResponse.json({ message: 'Event ignored', event });
         }
 
+        const rawBody = await request.text();
+        const body = JSON.parse(rawBody);
+
         const parsed = parseGitHubWebhook(body);
 
         if (!parsed) {
@@ -26,6 +30,19 @@ export const POST = route.handler(async (request: Request, { body }) => {
 
         if (!repo) {
             return NextResponse.json({ message: 'Repository not found' }, { status: 404 });
+        }
+
+        const signature = request.headers.get('x-hub-signature-256');
+        if (!signature || !repo.webhookSecret) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const expected =
+            'sha256=' +
+            crypto.createHmac('sha256', repo.webhookSecret).update(rawBody).digest('hex');
+
+        if (!timingSafeEqual(signature, expected)) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         await startBuildRepositoryInngest(
@@ -42,4 +59,4 @@ export const POST = route.handler(async (request: Request, { body }) => {
     } catch (error) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
-});
+}

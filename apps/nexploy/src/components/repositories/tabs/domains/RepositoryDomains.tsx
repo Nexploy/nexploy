@@ -22,11 +22,12 @@ import { DomainFields } from '@/components/repositories/tabs/domains/DomainField
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import type { CloudflareAccountInfo } from '@workspace/typescript-interface/cloudflare/cloudflare';
 
 interface RepositoryDomainsProps {
     repositoryId: string;
     domainsConfig: Domain[];
-    isCloudflareConnected: boolean;
+    cloudflareAccounts: CloudflareAccountInfo[];
 }
 
 const DEFAULT_NEW_DOMAIN: Partial<Domain> = {
@@ -44,7 +45,7 @@ const DEFAULT_NEW_DOMAIN: Partial<Domain> = {
 export function RepositoryDomains({
     repositoryId,
     domainsConfig,
-    isCloudflareConnected,
+    cloudflareAccounts,
 }: RepositoryDomainsProps) {
     const router = useRouter();
     const t = useTranslations('repository.settings.domains');
@@ -296,15 +297,11 @@ export function RepositoryDomains({
                                                     </div>
                                                 )}
                                                 <CollapsibleContent>
-                                                    <div className="border-t border-dashed p-4">
-                                                        <DomainFields
-                                                            form={form}
-                                                            index={actualIndex}
-                                                            isCloudflareConnected={
-                                                                isCloudflareConnected
-                                                            }
-                                                        />
-                                                    </div>
+                                                    <DomainFields
+                                                        form={form}
+                                                        index={actualIndex}
+                                                        cloudflareAccounts={cloudflareAccounts}
+                                                    />
                                                 </CollapsibleContent>
                                             </div>
                                         </Collapsible>

@@ -10,7 +10,10 @@ import {
 } from '@workspace/ui/components/select';
 import { Input } from '@workspace/ui/components/input';
 import { FormDescription, FormItem, FormLabel } from '@workspace/ui/components/form';
-import { CloudflareZone } from '@workspace/typescript-interface/cloudflare/cloudflare';
+import type {
+    CloudflareAccountInfo,
+    CloudflareZone,
+} from '@workspace/typescript-interface/cloudflare/cloudflare';
 import { Cloud, Loader2 } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
 import useSWR from 'swr';
@@ -20,20 +23,19 @@ import { useTranslations } from 'next-intl';
 interface CloudflareDomainSelectorProps<T extends FieldValues> {
     form: UseFormReturn<T>;
     index: number;
-    isCloudflareConnected: boolean;
+    cloudflareAccounts: CloudflareAccountInfo[];
 }
 
 export function CloudflareDomainSelector<T extends FieldValues>({
     form,
     index,
-    isCloudflareConnected,
+    cloudflareAccounts,
 }: CloudflareDomainSelectorProps<T>) {
     const t = useTranslations('repository.settings.cloudflare');
-    const { data: zones, isLoading } = useSWR<CloudflareZone[]>(
-        isCloudflareConnected ? '/api/cloudflare/zone' : null,
-        fetcherApi,
-    );
 
+    const selectedCredentialId = form.watch(
+        `domains.${index}.cloudflareCredentialId` as Path<T>,
+    ) as string | undefined;
     const selectedZoneId = form.watch(`domains.${index}.cloudflareZoneId` as Path<T>) as
         | string
         | undefined;
@@ -42,15 +44,31 @@ export function CloudflareDomainSelector<T extends FieldValues>({
         | undefined;
     const currentHost = form.watch(`domains.${index}.host` as Path<T>) as string | undefined;
 
+    const { data: zones, isLoading: isLoadingZones } = useSWR<CloudflareZone[]>(
+        selectedCredentialId ? `/api/cloudflare/zone?credentialId=${selectedCredentialId}` : null,
+        fetcherApi,
+    );
+
     const selectedZone = zones?.find((z) => z.id === selectedZoneId);
     const displayZoneName = selectedZone?.name || selectedZoneName;
-
     const isOrphanedZone = selectedZoneId && !selectedZone && selectedZoneName;
 
     const subdomain =
         currentHost && displayZoneName
             ? currentHost.replace(`.${displayZoneName}`, '').replace(displayZoneName, '')
             : '';
+
+    const handleAccountChange = (credentialId: string) => {
+        form.setValue(`domains.${index}.cloudflareCredentialId` as Path<T>, credentialId as never, {
+            shouldDirty: true,
+        });
+        form.setValue(`domains.${index}.cloudflareZoneId` as Path<T>, undefined as never, {
+            shouldDirty: true,
+        });
+        form.setValue(`domains.${index}.cloudflareZoneName` as Path<T>, undefined as never, {
+            shouldDirty: true,
+        });
+    };
 
     const handleZoneChange = (zoneId: string) => {
         if (zoneId === 'manual') {
@@ -89,17 +107,8 @@ export function CloudflareDomainSelector<T extends FieldValues>({
         }
     };
 
-    if (!isCloudflareConnected) {
+    if (cloudflareAccounts.length === 0) {
         return null;
-    }
-
-    if (isLoading) {
-        return (
-            <div className="bg-muted/50 flex items-center gap-2 rounded-lg border border-dashed p-3">
-                <Loader2 className="text-muted-foreground size-4 animate-spin" />
-                <span className="text-muted-foreground text-sm">{t('loading')}</span>
-            </div>
-        );
     }
 
     return (
@@ -112,54 +121,83 @@ export function CloudflareDomainSelector<T extends FieldValues>({
                 </Badge>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                    <FormLabel>{t('zone')}</FormLabel>
-                    <Select onValueChange={handleZoneChange} value={selectedZoneId || 'manual'}>
-                        <SelectTrigger>
-                            <SelectValue placeholder={t('selectZone')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="manual">
-                                <span className="text-muted-foreground">{t('manualEntry')}</span>
+            <div className="space-y-2">
+                <FormLabel>{t('account')}</FormLabel>
+                <Select onValueChange={handleAccountChange} value={selectedCredentialId || ''}>
+                    <SelectTrigger>
+                        <SelectValue placeholder={t('selectAccount')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {cloudflareAccounts.map((account) => (
+                            <SelectItem key={account.id} value={account.id}>
+                                {account.displayName}
                             </SelectItem>
-                            {isOrphanedZone && (
-                                <SelectItem value={selectedZoneId}>
-                                    <span className="text-muted-foreground">
-                                        {selectedZoneName} ({t('zoneNotFound')})
-                                    </span>
-                                </SelectItem>
-                            )}
-                            {zones?.map((zone) => (
-                                <SelectItem key={zone.id} value={zone.id}>
-                                    {zone.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                    <FormDescription>
-                        {isOrphanedZone ? t('zoneUnavailable') : t('selectZoneForDns')}
-                    </FormDescription>
-                </div>
-
-                {(selectedZoneId || selectedZoneName) && (
-                    <FormItem>
-                        <FormLabel>{t('subdomain')}</FormLabel>
-                        <div className="flex items-center gap-2">
-                            <Input
-                                placeholder="app"
-                                className="font-mono"
-                                value={subdomain}
-                                onChange={(e) => handleSubdomainChange(e.target.value)}
-                            />
-                            <span className="text-muted-foreground text-sm whitespace-nowrap">
-                                .{displayZoneName}
-                            </span>
-                        </div>
-                        <FormDescription>{t('emptyForRoot')}</FormDescription>
-                    </FormItem>
-                )}
+                        ))}
+                    </SelectContent>
+                </Select>
             </div>
+
+            {selectedCredentialId &&
+                (isLoadingZones ? (
+                    <div className="flex items-center gap-2">
+                        <Loader2 className="text-muted-foreground size-4 animate-spin" />
+                        <span className="text-muted-foreground text-sm">{t('loading')}</span>
+                    </div>
+                ) : (
+                    <div className="grid gap-4 md:grid-cols-2">
+                        <div className="space-y-2">
+                            <FormLabel>{t('zone')}</FormLabel>
+                            <Select
+                                onValueChange={handleZoneChange}
+                                value={selectedZoneId || 'manual'}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder={t('selectZone')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="manual">
+                                        <span className="text-muted-foreground">
+                                            {t('manualEntry')}
+                                        </span>
+                                    </SelectItem>
+                                    {isOrphanedZone && (
+                                        <SelectItem value={selectedZoneId}>
+                                            <span className="text-muted-foreground">
+                                                {selectedZoneName} ({t('zoneNotFound')})
+                                            </span>
+                                        </SelectItem>
+                                    )}
+                                    {zones?.map((zone) => (
+                                        <SelectItem key={zone.id} value={zone.id}>
+                                            {zone.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <FormDescription>
+                                {isOrphanedZone ? t('zoneUnavailable') : t('selectZoneForDns')}
+                            </FormDescription>
+                        </div>
+
+                        {(selectedZoneId || selectedZoneName) && (
+                            <FormItem>
+                                <FormLabel>{t('subdomain')}</FormLabel>
+                                <div className="flex items-center gap-2">
+                                    <Input
+                                        placeholder="app"
+                                        className="font-mono"
+                                        value={subdomain}
+                                        onChange={(e) => handleSubdomainChange(e.target.value)}
+                                    />
+                                    <span className="text-muted-foreground text-sm whitespace-nowrap">
+                                        .{displayZoneName}
+                                    </span>
+                                </div>
+                                <FormDescription>{t('emptyForRoot')}</FormDescription>
+                            </FormItem>
+                        )}
+                    </div>
+                ))}
         </div>
     );
 }

@@ -1,6 +1,6 @@
 import { RepositoryDomains } from '@/components/repositories/tabs/domains/RepositoryDomains';
 import { getDomainsFromTraefikConfig } from '@/services/traefik.service';
-import { getCloudflareCredentialInfo } from '@/services/cloudflare.service';
+import { getAllCloudflareAccounts } from '@/services/cloudflare.service';
 import { getUserSession } from '@/services/auth/auth.service';
 
 interface RepositoryDomainsTabProps {
@@ -8,18 +8,18 @@ interface RepositoryDomainsTabProps {
 }
 
 export async function RepositoryDomainsTab({ repositoryId }: RepositoryDomainsTabProps) {
-    const domainsConfig = await getDomainsFromTraefikConfig(repositoryId);
-    const session = await getUserSession();
+    const [domainsConfig, session] = await Promise.all([
+        getDomainsFromTraefikConfig(repositoryId),
+        getUserSession(),
+    ]);
 
-    const cloudflareInfo = session
-        ? await getCloudflareCredentialInfo(session.user.id)
-        : { isConnected: false };
+    const cloudflareAccounts = session ? await getAllCloudflareAccounts(session.user.id) : [];
 
     return (
         <RepositoryDomains
             repositoryId={repositoryId}
             domainsConfig={domainsConfig}
-            isCloudflareConnected={cloudflareInfo.isConnected}
+            cloudflareAccounts={cloudflareAccounts}
         />
     );
 }

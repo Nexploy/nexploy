@@ -6,12 +6,18 @@ import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { saveGitLabProviderAction } from '@/actions/git/saveGitLabProvider.action';
 import { gitlabSetupSchema } from '@workspace/schemas-zod/git/gitlabSetup.schema';
-import { SiGitlab } from '@icons-pack/react-simple-icons';
 
 export function GitlabAppSetupForm() {
     const { closeDialog } = useConfirmationDialogStore();
@@ -147,7 +153,7 @@ export function GitlabAppSetupForm() {
                     )}
                 />
                 <div className="flex justify-end">
-                    <Button type="submit" icon={SiGitlab} className={'self-end'}>
+                    <Button type="submit" className={'self-end'}>
                         {t('guide.gitlab.createApp')}
                     </Button>
                 </div>
