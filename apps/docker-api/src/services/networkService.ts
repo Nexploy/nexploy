@@ -9,7 +9,7 @@ export async function deleteNetworks(
 ): Promise<{ deleted: string[]; skipped: { id: string; name: string; reason?: string }[] }> {
     const results = await Promise.all(
         networkIds.map(async (networkId) => {
-            const info = networksStateManager.getState(networkId);
+            const info = networksStateManager.getByName(networkId);
             if (!info) {
                 return { type: 'skipped', id: networkId, name: networkId, reason: 'not_found' };
             }

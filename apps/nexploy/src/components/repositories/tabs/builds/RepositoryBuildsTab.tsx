@@ -44,10 +44,9 @@ export async function RepositoryBuildsTab({ repositoryId }: RepositoryOverviewTa
                                 {group.name}
                             </h3>
                             <div className="divide-y rounded-md border">
-                                {group.builds.map((build, index) => (
+                                {group.builds.map((build) => (
                                     <RepositoryBuild
                                         key={build.id}
-                                        index={group.builds.length - index}
                                         repositoryId={repositoryId}
                                         build={build}
                                     />

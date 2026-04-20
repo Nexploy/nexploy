@@ -207,9 +207,7 @@ export class NetworksStateManager extends BaseStateManager {
             containers: connectedContainers,
             options: network.Options || {},
             labels: network.Labels || {},
-            created: network.Created
-                ? dayjs(network.Created).unix()
-                : dayjs().unix(),
+            created: network.Created ? dayjs(network.Created).unix() : dayjs().unix(),
             enableIPv6: network.EnableIPv6 || false,
             timestamp: Date.now(),
         };
@@ -246,10 +244,6 @@ export class NetworksStateManager extends BaseStateManager {
 
     getAllNetworks(): Network[] {
         return Array.from(this.networks.values());
-    }
-
-    getState(networkId: string): Network | undefined {
-        return this.networks.get(networkId);
     }
 
     getByName(name: string): Network | undefined {

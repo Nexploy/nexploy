@@ -32,12 +32,10 @@ export function BuildsPanel() {
                 className="h-[100px] transition-[height] duration-200 hover:h-[250px]"
             >
                 <div className={'m-2 flex flex-col gap-1'}>
-                    {builds.map((build, index) => (
+                    {builds.map((build) => (
                         <BuildsPanelItem
                             key={build.id}
                             build={build}
-                            index={index}
-                            total={builds.length}
                             isSelected={build.id === activeBuildId}
                             locale={locale}
                             onSelect={setActiveBuildId}

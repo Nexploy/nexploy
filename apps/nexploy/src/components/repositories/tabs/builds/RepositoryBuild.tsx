@@ -23,11 +23,10 @@ type BuildWithEnvironment = Build & {
 
 interface BuildLogsProps {
     repositoryId: string;
-    index: number;
     build: BuildWithEnvironment;
 }
 
-export function RepositoryBuild({ repositoryId, build, index }: BuildLogsProps) {
+export function RepositoryBuild({ repositoryId, build }: BuildLogsProps) {
     const isLive = isBuildLive(build.status);
     const [liveCommitInfo, setLiveCommitInfo] = useState<CommitInfo | null>(null);
     const processedCountRef = useRef(0);
@@ -71,7 +70,7 @@ export function RepositoryBuild({ repositoryId, build, index }: BuildLogsProps) 
                         <Skeleton className="h-4 w-48" />
                     ) : (
                         <span className="line-clamp-1 text-sm font-medium">
-                            #{index} {commitMessage ?? `#${build.id}`}
+                            #{build.number} {commitMessage ?? `#${build.id}`}
                         </span>
                     )}
                 </div>

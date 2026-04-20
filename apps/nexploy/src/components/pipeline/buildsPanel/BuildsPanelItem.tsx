@@ -25,8 +25,6 @@ export const STATUS_PIPELINE: Record<BuildStatus, StatusProps['status']> = {
 
 export interface BuildsPanelItemProps {
     build: Build;
-    index: number;
-    total: number;
     isSelected: boolean;
     locale: string;
     onSelect: (id: string | null) => void;
@@ -34,8 +32,6 @@ export interface BuildsPanelItemProps {
 
 export function BuildsPanelItem({
     build,
-    index,
-    total,
     isSelected,
     locale,
     onSelect,
@@ -106,7 +102,7 @@ export function BuildsPanelItem({
                     buildId={build.id}
                     initialStatus={build.status}
                 />
-                <span className="text-xs font-medium">#{total - index}</span>
+                <span className="text-xs font-medium">#{build.number}</span>
                 <span className="text-xs font-medium">{branch}</span>
                 <Separator orientation={'vertical'} className="!h-3" />
                 {isLive && !commitHash ? (

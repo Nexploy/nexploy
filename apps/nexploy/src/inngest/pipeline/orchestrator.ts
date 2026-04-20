@@ -1,3 +1,4 @@
+import { NonRetriableError } from 'inngest';
 import { type BuildConfig } from '@workspace/typescript-interface/inngest/build';
 import {
     type PipelineGraph,
@@ -223,7 +224,7 @@ export class PipelineOrchestrator {
                                 execError instanceof Error ? execError.message : String(execError);
                             await logger.error(node.id, message);
                             await reporter.markFailed(node.id);
-                            throw execError;
+                            throw new NonRetriableError(message, { cause: execError });
                         }
                     });
 
@@ -248,8 +249,6 @@ export class PipelineOrchestrator {
 
             return { success: true };
         } catch (error) {
-            const errorDetails = formatErrorDetails(error);
-
             if (error instanceof Error && error.name === 'AbortError') {
                 for (const node of sorted) {
                     if (!allOutputs.has(node.id)) {
@@ -262,7 +261,11 @@ export class PipelineOrchestrator {
 
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
             await logger.error('error', `Build failed: ${errorMessage}`);
-            await logger.error('error-details', errorDetails);
+
+            if (process.env.NODE_ENV !== 'production') {
+                const errorDetails = formatErrorDetails(error);
+                await logger.error('error-details', errorDetails);
+            }
             try {
                 await setStatusBuild('FAILED');
             } catch {

@@ -54,6 +54,7 @@ model EnvVariable {
 
 model Build {
   id     String      @id @default(cuid())
+  number Int         @default(1)
   status BuildStatus @default(QUEUED)
 
   branch           String?

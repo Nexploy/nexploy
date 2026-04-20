@@ -10,19 +10,17 @@ export function formatErrorDetails(error: unknown): string {
 
     const lines = [`Error: ${error.message}`, `Name: ${error.name}`];
 
-    if (process.env.NODE_ENV !== 'production') {
-        if (error.stack) {
-            lines.push(`Stack trace:\n${error.stack}`);
-        }
+    if (error.stack) {
+        lines.push(`Stack trace:\n${error.stack}`);
+    }
 
-        const extraProps = Object.entries(error).filter(
-            ([key]) => !['message', 'name', 'stack'].includes(key),
+    const extraProps = Object.entries(error).filter(
+        ([key]) => !['message', 'name', 'stack'].includes(key),
+    );
+    if (extraProps.length > 0) {
+        lines.push(
+            `Additional info:\n${extraProps.map(([k, v]) => `${k}: ${JSON.stringify(v)}`).join('\n')}`,
         );
-        if (extraProps.length > 0) {
-            lines.push(
-                `Additional info:\n${extraProps.map(([k, v]) => `${k}: ${JSON.stringify(v)}`).join('\n')}`,
-            );
-        }
     }
 
     return lines.join('\n');

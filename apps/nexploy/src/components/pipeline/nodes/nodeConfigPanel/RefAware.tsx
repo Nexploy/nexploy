@@ -53,6 +53,8 @@ export function RefAware({
         }
     };
 
+    console.log(ref);
+
     if (isRef && ref) {
         const badge = (
             <div

@@ -82,13 +82,21 @@ export async function createBuild({
     pipelineSnapshot?: object;
 }) {
     try {
-        return await prisma.build.create({
-            data: {
-                repositoryId,
-                commitMessage,
-                commitHash,
-                pipelineSnapshot,
-            },
+        return await prisma.$transaction(async (tx) => {
+            const last = await tx.build.findFirst({
+                where: { repositoryId },
+                orderBy: { number: 'desc' },
+                select: { number: true },
+            });
+            return tx.build.create({
+                data: {
+                    repositoryId,
+                    number: (last?.number ?? 0) + 1,
+                    commitMessage,
+                    commitHash,
+                    pipelineSnapshot,
+                },
+            });
         });
     } catch {
         throw new Error('Failed to create build');

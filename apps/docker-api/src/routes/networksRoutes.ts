@@ -33,11 +33,11 @@ app.post(
 
         const networkExists = networksStateManager.getByName(name);
         if (networkExists) {
-            throw new Error(`Network ${name} already exists.`);
+            return { id: networkExists.id, name, alreadyExisted: true };
         }
 
         const network = await docker.createNetwork({ Name: name, Driver: driver, ...options });
-        return { id: network.id, name };
+        return { id: network.id, name, alreadyExisted: false };
     }),
 );
 
