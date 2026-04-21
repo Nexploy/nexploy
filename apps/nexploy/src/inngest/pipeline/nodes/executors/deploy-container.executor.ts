@@ -6,6 +6,7 @@ import {
     NodeExecutionResult,
 } from '@/types/pipeline.type';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
+import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
 import { deployContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 
@@ -31,6 +32,11 @@ export class DeployContainerExecutor implements INodeExecutor {
 
             const containerName = `nexploy-${buildConfig.repositoryId}-${nodeId}`;
 
+            const labels: Record<string, string> = {
+                [NEXPLOY_LABELS.repositoryId]: buildConfig.repositoryId,
+                [NEXPLOY_LABELS.buildId]: buildConfig.buildId,
+            };
+
             const result = await dockerService.deployContainer(
                 buildConfig.repositoryId,
                 imageName,
@@ -38,6 +44,7 @@ export class DeployContainerExecutor implements INodeExecutor {
                 abortSignal,
                 containerName,
                 environmentId,
+                labels,
             );
 
             await logger.info(nodeId, `Container deployed: ${result.containerId.slice(0, 12)}`);

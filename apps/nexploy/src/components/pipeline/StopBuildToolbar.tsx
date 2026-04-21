@@ -12,12 +12,12 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 
 const STOPPABLE_STATUSES: BuildStatus[] = ['QUEUED', 'BUILDING'];
 
-interface StopBuildProps {
+interface StopBuildToolbarProps {
     buildId: string;
     initialStatus: BuildStatus;
 }
 
-export function StopBuild({ buildId, initialStatus }: StopBuildProps) {
+export function StopBuildToolbar({ buildId, initialStatus }: StopBuildToolbarProps) {
     const t = useTranslations('repository.pipeline');
 
     const isLive = isBuildLive(initialStatus);
@@ -43,7 +43,7 @@ export function StopBuild({ buildId, initialStatus }: StopBuildProps) {
                 <Button
                     variant="outline"
                     size="icon"
-                    className="size-6 hover:border-destructive hover:text-destructive"
+                    className="hover:border-destructive hover:text-destructive size-6"
                     onClick={() => onCancelBuild({ buildId })}
                 >
                     <Square className="size-3" />

@@ -27,6 +27,7 @@ class DockerService {
         signal: AbortSignal,
         containerName: string,
         environmentId?: string,
+        labels?: Record<string, string>,
     ): Promise<{ containerId: string }> {
         try {
             return await kyDocker
@@ -34,7 +35,7 @@ class DockerService {
                     json: {
                         repositoryId,
                         imageName,
-                        options: { envVars, containerName },
+                        options: { envVars, containerName, labels },
                     },
                     signal,
                     environmentId,

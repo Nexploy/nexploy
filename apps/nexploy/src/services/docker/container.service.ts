@@ -42,7 +42,7 @@ export async function getDeployedComposeImageTag(
             .get(`composes/${projectName}/list`, { environmentId } as KyDockerOptions)
             .json<ContainerInfo[]>();
         for (const container of containers) {
-            const tag = container.Labels?.['nexploy.imageTag'];
+            const tag = container.Labels?.['nexploy.buildId'];
             if (tag) return tag;
         }
         return undefined;

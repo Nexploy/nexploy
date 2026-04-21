@@ -4,12 +4,15 @@ import { useInngestSubscription } from '@inngest/realtime/hooks';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { Button } from '@workspace/ui/components/button';
 import { ArrowLeft, GitBranch, GitCommit } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Separator } from '@workspace/ui/components/separator';
+import { Skeleton } from '@workspace/ui/components/skeleton';
 import { BuildLogsViewer } from '@/components/repositories/tabs/builds/logs/BuildLogsViewer';
 import { useRouter } from 'next/navigation';
 import { getRepositorieBuildLogs } from '@/services/repository.service';
 import { useBuildActions } from '@/hooks/useBuildActions';
+import { useCallback } from 'react';
+import { type CommitInfo } from '@/types/pipeline.type';
+import { isBuildLive } from '@/utils/buildStatus';
 
 interface BuildLogsProps {
     build: NonNullable<Awaited<ReturnType<typeof getRepositorieBuildLogs>>>;
@@ -17,60 +20,77 @@ interface BuildLogsProps {
 
 export function BuildLogs({ build }: BuildLogsProps) {
     const router = useRouter();
+    const refreshToken = useCallback(async () => {
+        const result = await onGetTokenBuildIdAction({
+            buildId: build.id,
+            topics: ['log', 'commit-info'],
+        });
+        return result?.data ?? null;
+    }, [build.id]);
 
-    const { latestData, data } = useInngestSubscription({
-        refreshToken: async () => {
-            const result = await onGetTokenBuildIdAction({
-                buildId: build.id,
-                topics: ['log'],
-            });
-            return result?.data ?? null;
-        },
-    });
+    const { latestData, data } = useInngestSubscription({ refreshToken });
 
-    const status = latestData?.data.status ?? build.status;
-    const actions = useBuildActions({
+    const liveCommitInfo = data.findLast((e) => e.topic === 'commit-info')?.data as
+        | CommitInfo
+        | undefined;
+
+    const branch = liveCommitInfo?.branch ?? build.branch;
+    const commitHash = liveCommitInfo?.commitHash ?? build.commitHash;
+    const commitMessage = liveCommitInfo?.commitMessage ?? build.commitMessage;
+
+    const { actions, status } = useBuildActions({
         buildId: build.id,
-        status,
+        initialStatus: build.status,
         onRemoveSuccess: () => router.back(),
     });
+    const isLive = isBuildLive(status);
 
     return (
         <div className="flex h-full w-full flex-col">
             <div className="border-b p-3">
-                <div className="flex items-center gap-4">
+                <div className="flex gap-4">
                     <Button variant="ghost" size="icon" className="shrink-0" onClick={router.back}>
                         <ArrowLeft className="size-4" />
                     </Button>
                     <div className="flex flex-1 flex-col">
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <span className="line-clamp-1 text-xl font-semibold">
-                                    {build.commitMessage}
-                                </span>
-                            </TooltipTrigger>
-                            <TooltipContent className={'max-w-md break-all'}>
-                                {build.commitMessage}
-                            </TooltipContent>
-                        </Tooltip>
-
+                        {isLive && !commitMessage ? (
+                            <Skeleton className="h-6 w-64" />
+                        ) : (
+                            <span className="text-xl font-semibold">
+                                {commitMessage ?? `#${build.id}`}
+                            </span>
+                        )}
                         <div className="text-muted-foreground flex items-center gap-2 text-xs">
-                            <code className="flex shrink-0 items-center gap-1">
-                                <GitBranch className="size-3" />
-                                {build.branch}
-                            </code>
-                            {build.commitHash && (
+                            {isLive && !branch ? (
+                                <Skeleton className="h-3 w-20" />
+                            ) : (
+                                <code className="flex shrink-0 items-center gap-1">
+                                    <GitBranch className="size-3" />
+                                    {branch}
+                                </code>
+                            )}
+                            {isLive && !commitHash ? (
                                 <>
                                     <Separator orientation={'vertical'} className={'!h-3 w-1'} />
-                                    <code className="flex shrink-0 items-center gap-1">
-                                        <GitCommit className="size-3" />
-                                        {build.commitHash.slice(0, 7)}
-                                    </code>
+                                    <Skeleton className="h-3 w-16" />
                                 </>
+                            ) : (
+                                commitHash && (
+                                    <>
+                                        <Separator
+                                            orientation={'vertical'}
+                                            className={'!h-3 w-1'}
+                                        />
+                                        <code className="flex shrink-0 items-center gap-1">
+                                            <GitCommit className="size-3" />
+                                            {commitHash.slice(0, 7)}
+                                        </code>
+                                    </>
+                                )
                             )}
                         </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex gap-2">
                         {actions.map((action) =>
                             action.type === 'component' ? (
                                 <div key={action.id}>{action.component}</div>

@@ -21,7 +21,7 @@ export async function RepositoryVersionsTab({ repositoryId }: RepositoryVersions
             const key = environmentId ?? '';
 
             const containers = await getContainerByName(repositoryId, environmentId);
-            const singleImageTag = containers[0]?.image?.split(':').at(-1);
+            const singleImageTag = containers[0]?.labels?.['nexploy.buildId'];
             if (singleImageTag) {
                 deployedTagByEnvironment[key] = singleImageTag;
                 return;

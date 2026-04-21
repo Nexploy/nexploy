@@ -1,9 +1,14 @@
-import { ReactNode } from 'react';
+'use client';
+
+import { ReactNode, useCallback } from 'react';
 import { LucideIcon, Square } from 'lucide-react';
 import { onCancelBuild } from '@/actions/repository/builds/cancelBuild.action';
 import { RemoveBuildButton } from '@/components/repositories/RemoveBuildButton';
 import { useTranslations } from 'next-intl';
 import { BuildStatus } from 'generated/client';
+import { useInngestSubscription } from '@inngest/realtime/hooks';
+import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
+import { isBuildLive } from '@/utils/buildStatus';
 
 interface BaseBuildAction {
     id: string;
@@ -28,18 +33,37 @@ export type BuildAction = BuildActionButton | BuildActionComponent;
 
 interface UseBuildActionsProps {
     buildId: string;
-    status: BuildStatus;
+    initialStatus: BuildStatus;
     mode?: 'button' | 'dropdown';
     onRemoveSuccess?: () => void;
 }
 
 export function useBuildActions({
     buildId,
-    status,
+    initialStatus,
     mode = 'button',
     onRemoveSuccess,
-}: UseBuildActionsProps): BuildAction[] {
+}: UseBuildActionsProps): { actions: BuildAction[]; status: BuildStatus } {
     const t = useTranslations('repository.builds');
+
+    const refreshToken = useCallback(async () => {
+        const result = await onGetTokenBuildIdAction({
+            buildId,
+            topics: ['build-status'],
+        });
+        return result?.data ?? null;
+    }, [buildId]);
+
+    const { data } = useInngestSubscription({
+        enabled: isBuildLive(initialStatus),
+        refreshToken,
+    });
+
+    const liveStatus = data.findLast((e) => e.topic === 'build-status')?.data as
+        | { buildStatus: BuildStatus }
+        | undefined;
+
+    const status = liveStatus?.buildStatus ?? initialStatus;
     const isBuilding = status === 'QUEUED' || status === 'BUILDING';
     const canRemove = status === 'COMPLETED' || status === 'FAILED' || status === 'CANCELLED';
 
@@ -66,5 +90,5 @@ export function useBuildActions({
         });
     }
 
-    return actions;
+    return { actions, status };
 }

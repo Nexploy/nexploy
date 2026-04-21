@@ -1,16 +1,6 @@
 'use client';
 
-import {
-    Check,
-    Copy,
-    Loader2,
-    Power,
-    Redo2,
-    Settings,
-    SquareDashed,
-    Trash2,
-    Undo2,
-} from 'lucide-react';
+import { Check, Copy, Loader2, Power, Redo2, Settings, SquareDashed, Trash2, Undo2, } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { Button } from '@workspace/ui/components/button';
@@ -20,7 +10,7 @@ import { Kbd } from '@workspace/ui/components/kbd';
 import { useStore } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
 import { StatusLive } from '@/components/shared/StatusLive';
-import { StopBuild } from '@/components/pipeline/StopBuild';
+import { StopBuildToolbar } from '@/components/pipeline/StopBuildToolbar.tsx';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 
 const mod = /Mac|iPhone|iPad/i.test(navigator.userAgent) ? '⌘' : 'Ctrl';
@@ -220,7 +210,7 @@ export function PipelineToolbar() {
                                 buildId={activeBuildId}
                                 initialStatus={activeBuild.status}
                             />
-                            <StopBuild
+                            <StopBuildToolbar
                                 buildId={activeBuildId!}
                                 initialStatus={activeBuild.status}
                             />

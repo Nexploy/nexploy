@@ -20,7 +20,11 @@ app.get(
         if (!name) return containers;
 
         return containers.filter(
-            (container) => container.name === name || container.name === `/${name}`,
+            (container) =>
+                container.name === name ||
+                container.name === `/${name}` ||
+                container.name.startsWith(`${name}-`) ||
+                container.name.startsWith(`/${name}-`),
         );
     }),
 );

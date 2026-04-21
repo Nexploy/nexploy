@@ -6,7 +6,7 @@ import { Separator } from '@workspace/ui/components/separator';
 import { StatusProps } from '@workspace/ui/components/kibo-ui/status';
 import { useInngestSubscription } from '@inngest/realtime/hooks';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { type CommitInfo, type NodeRunStatus } from '@/types/pipeline.type';
 import { Build, BuildStatus } from 'generated/client';
@@ -30,17 +30,11 @@ export interface BuildsPanelItemProps {
     onSelect: (id: string | null) => void;
 }
 
-export function BuildsPanelItem({
-    build,
-    isSelected,
-    locale,
-    onSelect,
-}: BuildsPanelItemProps) {
+export function BuildsPanelItem({ build, isSelected, locale, onSelect }: BuildsPanelItemProps) {
     const isLive = isBuildLive(build.status);
     const setNodeStatuses = usePipelineEditorStore((s) => s.setNodeStatuses);
     const processedCountRef = useRef(0);
     const prevIsSelectedRef = useRef(isSelected);
-    const [liveCommitInfo, setLiveCommitInfo] = useState<CommitInfo | null>(null);
 
     const refreshToken = useCallback(async () => {
         const result = await onGetTokenBuildIdAction({
@@ -75,14 +69,15 @@ export function BuildsPanelItem({
             if (event.topic === 'node-status' && event.data?.nodeId) {
                 updates[event.data.nodeId as string] = event.data.nodeStatus as NodeRunStatus;
             }
-            if (event.topic === 'commit-info' && event.data) {
-                setLiveCommitInfo(event.data as CommitInfo);
-            }
         }
         if (Object.keys(updates).length > 0) {
             setNodeStatuses((prev) => ({ ...prev, ...updates }));
         }
     }, [liveEvents, isSelected]);
+
+    const liveCommitInfo = liveEvents.findLast((e) => e.topic === 'commit-info')?.data as
+        | CommitInfo
+        | undefined;
 
     const branch = liveCommitInfo?.branch ?? build.branch;
     const commitHash = liveCommitInfo?.commitHash ?? build.commitHash;

@@ -509,6 +509,7 @@ export class ContainersStateManager extends BaseStateManager {
             Image: imageName,
             Env: envArray,
             ...(Object.keys(imageExposedPorts).length > 0 && { ExposedPorts: imageExposedPorts }),
+            ...(options.labels && { Labels: options.labels }),
             HostConfig: {
                 RestartPolicy: { Name: 'unless-stopped' },
                 ...(traefikNetworkExist && { NetworkMode: TRAEFIK_NETWORK_NAME }),

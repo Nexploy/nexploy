@@ -19,7 +19,7 @@ interface BuildDropdownActionsProps {
 }
 
 export function BuildDropdownActions({ buildId, status }: BuildDropdownActionsProps) {
-    const actions = useBuildActions({ buildId, status, mode: 'dropdown' });
+    const { actions } = useBuildActions({ buildId, initialStatus: status, mode: 'dropdown' });
 
     if (actions.length === 0) return null;
 
