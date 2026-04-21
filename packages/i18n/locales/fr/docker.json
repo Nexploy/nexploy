@@ -108,7 +108,7 @@
     "noVolumes": "Aucun volume",
     "noNetworks": "Aucun réseau",
     "noEvents": "Aucun événement",
-    "noContainersDescription": "Vous n'avez encore créé aucun conteneur.",
+    "noContainersDescription": "Aucun conteneur disponible",
     "startContainer": "Démarrer le conteneur",
     "stopContainer": "Arrêter le conteneur",
     "restartContainer": "Redémarrer le conteneur",

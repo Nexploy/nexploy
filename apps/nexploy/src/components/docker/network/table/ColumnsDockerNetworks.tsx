@@ -13,6 +13,7 @@ import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/drop
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import Link from 'next/link';
+import { isBuiltinNetwork } from '@workspace/shared/nexployFilter';
 
 type TranslationFunction = (key: string) => string;
 
@@ -51,15 +52,14 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
             </Button>
         ),
         sortingFn: (rowA, rowB) => {
-            const builtinNames = ['bridge', 'host', 'none'];
-            const aBuiltin = builtinNames.includes(rowA.original.name) ? 0 : 1;
-            const bBuiltin = builtinNames.includes(rowB.original.name) ? 0 : 1;
+            const aBuiltin = isBuiltinNetwork(rowA.original.name) ? 0 : 1;
+            const bBuiltin = isBuiltinNetwork(rowB.original.name) ? 0 : 1;
             if (aBuiltin !== bBuiltin) return aBuiltin - bBuiltin;
             return rowA.original.name.localeCompare(rowB.original.name);
         },
         cell: ({ row }) => {
             const name = row.original.name;
-            const isBuiltin = ['bridge', 'host', 'none'].includes(name);
+            const isBuiltin = isBuiltinNetwork(name);
 
             return (
                 <Link

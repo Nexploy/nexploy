@@ -1,23 +1,5 @@
-import { Container } from '@workspace/typescript-interface/docker/docker.container';
 import { ContainerInfo, ContainerInspectInfo } from 'dockerode';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
-
-export async function getContainerByName(
-    repositoryId: string,
-    environmentId?: string,
-): Promise<Container[]> {
-    try {
-        const name = `nexploy-${repositoryId}`;
-        return await kyDocker
-            .get(`containers`, {
-                searchParams: { name },
-                environmentId,
-            } as KyDockerOptions)
-            .json<Container[]>();
-    } catch {
-        return [] as Container[];
-    }
-}
 
 export async function getContainerByProjectName(
     projectName: string,
@@ -29,25 +11,6 @@ export async function getContainerByProjectName(
             .json<ContainerInfo[]>();
     } catch {
         return [];
-    }
-}
-
-export async function getDeployedComposeImageTag(
-    repositoryId: string,
-    environmentId?: string,
-): Promise<string | undefined> {
-    try {
-        const projectName = `nexploy-${repositoryId}`;
-        const containers = await kyDocker
-            .get(`composes/${projectName}/list`, { environmentId } as KyDockerOptions)
-            .json<ContainerInfo[]>();
-        for (const container of containers) {
-            const tag = container.Labels?.['nexploy.buildId'];
-            if (tag) return tag;
-        }
-        return undefined;
-    } catch {
-        return undefined;
     }
 }
 

@@ -53,11 +53,11 @@ echo "     ca.pem, server-cert.pem, server-key.pem"
 echo ""
 echo "  -> Add to /etc/docker/daemon.json on the server:"
 echo '     {'
-echo '       "hosts": ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2376"]'
+echo '       "hosts": ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2376"],'
 echo '       "tls": true,'
 echo '       "tlscacert": "/etc/docker/ca.pem",'
 echo '       "tlscert": "/etc/docker/server-cert.pem",'
-echo '       "tlskey": "/etc/docker/server-key.pem",'
+echo '       "tlskey": "/etc/docker/server-key.pem"'
 echo '     }'
 `;
 

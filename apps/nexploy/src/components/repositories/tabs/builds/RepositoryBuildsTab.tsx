@@ -1,5 +1,5 @@
 import { RepositoryBuild } from '@/components/repositories/tabs/builds/RepositoryBuild';
-import { getAllBuildsInngest } from '@/services/inngest/build.inngest.service';
+import { getAllBuilds } from '@/services/inngest/build.inngest.service';
 import { getTranslations } from 'next-intl/server';
 
 interface RepositoryOverviewTabProps {
@@ -8,7 +8,7 @@ interface RepositoryOverviewTabProps {
 
 export async function RepositoryBuildsTab({ repositoryId }: RepositoryOverviewTabProps) {
     const [builds, t] = await Promise.all([
-        getAllBuildsInngest(repositoryId),
+        getAllBuilds(repositoryId),
         getTranslations('repository.builds'),
     ]);
 

@@ -1,65 +1,40 @@
 'use client';
 
-import { useState } from 'react';
-import { Button } from '@workspace/ui/components/button';
-import { Check, Clock, GitBranch, GitCommit, Loader2, Rocket } from 'lucide-react';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
+import { Clock, GitBranch, GitCommit } from 'lucide-react';
 import dayjs from 'dayjs';
 import { Separator } from '@workspace/ui/components/separator';
-import {
-    onDeployComposeVersion,
-    onDeployDockerfileVersion,
-} from '@/actions/repository/versions/deployVersion.action';
 import { Badge } from '@workspace/ui/components/badge';
 import { Version } from '@workspace/typescript-interface/docker/docker.version';
 import { useTranslations } from 'next-intl';
+import { useContainersStore } from '@/stores/docker/useContainersStore';
+import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
+import { VersionDeployButton } from '@/components/repositories/tabs/versions/VersionDeployButton.tsx';
+import { VersionDropdownActions } from '@/components/repositories/tabs/versions/VersionDropdownActions';
 
 interface RepositoryVersionsProps {
     repositoryId: string;
-    deployedTagByEnvironment: Record<string, string>;
     versions: Version[];
 }
 
-export function RepositoryVersions({
-    repositoryId,
-    versions,
-    deployedTagByEnvironment,
-}: RepositoryVersionsProps) {
+export function RepositoryVersions({ repositoryId, versions }: RepositoryVersionsProps) {
     const t = useTranslations('repository.versions');
     const tBuilds = useTranslations('repository.builds');
-    const router = useRouter();
 
-    const [deployingImageTags, setDeployingImageTags] = useState<Set<string>>(new Set());
+    const containers = useContainersStore((s) => s.containers);
 
-    const handleDeploy = async (imageTag: string, environmentId?: string, isCompose?: boolean) => {
-        setDeployingImageTags((prev) => new Set([...prev, imageTag]));
-        try {
-            const deployAction = isCompose ? onDeployComposeVersion : onDeployDockerfileVersion;
-            const result = await deployAction({
-                imageTag,
-                repositoryId,
-                environmentId,
-            });
-            if (result?.serverError) {
-                toast.error(result.serverError);
-            } else {
-                toast.success(t('deploySuccess'));
-                router.refresh();
+    const deployedBuildIds = useMemo(() => {
+        const ids = new Set<string>();
+        for (const c of containers) {
+            if (c.labels?.[NEXPLOY_LABELS.repositoryId] === repositoryId) {
+                const buildId = c.labels?.[NEXPLOY_LABELS.buildId];
+                if (buildId) ids.add(buildId);
             }
-        } finally {
-            setDeployingImageTags((prev) => {
-                const next = new Set(prev);
-                next.delete(imageTag);
-                return next;
-            });
         }
-    };
+        return ids;
+    }, [containers, repositoryId]);
 
-    const isCurrentVersion = (version: Version) => {
-        const envKey = version.environmentId ?? '';
-        return deployedTagByEnvironment[envKey] === version.imageTag;
-    };
+    const isCurrentVersion = (version: Version) => deployedBuildIds.has(version.imageTag);
 
     const groups = versions.reduce<Map<string | undefined, { name: string; versions: Version[] }>>(
         (acc, version) => {
@@ -81,7 +56,7 @@ export function RepositoryVersions({
         return (
             <div
                 key={`${version.repositoryId}-${version.imageTag}`}
-                className={`flex items-center justify-between gap-4 p-3`}
+                className="flex items-center justify-between gap-4 p-3"
             >
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
@@ -120,28 +95,13 @@ export function RepositoryVersions({
                         )}
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <Button
-                        size="sm"
-                        variant={isCurrent ? 'secondary' : 'outline'}
-                        onClick={() =>
-                            handleDeploy(
-                                version.imageTag,
-                                version.environmentId,
-                                version.hasComposeConfig,
-                            )
-                        }
-                        disabled={deployingImageTags.has(version.imageTag) || isCurrent}
-                    >
-                        {deployingImageTags.has(version.imageTag) ? (
-                            <Loader2 className="size-4 animate-spin" />
-                        ) : isCurrent ? (
-                            <Check className="size-4" />
-                        ) : (
-                            <Rocket className="size-4" />
-                        )}
-                        {isCurrent ? t('deployed') : t('deploy')}
-                    </Button>
+                <div className="flex items-center gap-1">
+                    <VersionDeployButton
+                        version={version}
+                        repositoryId={repositoryId}
+                        isCurrent={isCurrent}
+                    />
+                    <VersionDropdownActions version={version} repositoryId={repositoryId} />
                 </div>
             </div>
         );

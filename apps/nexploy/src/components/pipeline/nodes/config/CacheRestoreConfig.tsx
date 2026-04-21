@@ -1,34 +1,19 @@
 'use client';
 
-import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware.tsx';
-import { usePipelineContext } from '@/contexts/PipelineContext';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
-import { findAncestor } from '@/inngest/pipeline/utils/graphQueries';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId';
 import { useEnvironmentVolumes } from '@/hooks/sse/useEnvironmentVolumes';
 
 export function CacheRestoreConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const { nodes, edges } = usePipelineContext();
-    const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
-
-    const environmentId = useMemo(() => {
-        if (!panelNodeId) return null;
-        const ancestor = findAncestor(
-            panelNodeId,
-            nodes,
-            edges,
-            (data) => data.nodeType === 'set-environment' && !data.disabled,
-        );
-        return ancestor?.data.config?.environmentId;
-    }, []);
+    const environmentId = usePipelineEnvironmentId();
 
     const { volumes, isLoading } = useEnvironmentVolumes(environmentId);
     const volumeOptions = volumes.map((v) => ({ value: v.name, label: v.name }));

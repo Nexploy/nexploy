@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Clock, GitBranch, GitCommit } from 'lucide-react';
+import { Clock, GitBranch, GitCommit, Square } from 'lucide-react';
 import dayjs from 'dayjs';
 import { Build } from 'generated/client';
 import { Separator } from '@workspace/ui/components/separator';
@@ -9,13 +9,13 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import { StatusLive } from '@/components/shared/StatusLive';
 import { onCancelBuild } from '@/actions/repository/builds/cancelBuild.action';
 import { Button } from '@workspace/ui/components/button';
-import { Square } from 'lucide-react';
 import { useInngestSubscription } from '@inngest/realtime/hooks';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { type CommitInfo } from '@/types/pipeline.type';
 import { isBuildLive } from '@/utils/buildStatus';
 import { BuildDropdownActions } from '@/components/repositories/BuildDropdownActions';
+import { useTranslations } from 'next-intl';
 
 type BuildWithEnvironment = Build & {
     environment: { id: string; name: string } | null;
@@ -27,6 +27,7 @@ interface BuildLogsProps {
 }
 
 export function RepositoryBuild({ repositoryId, build }: BuildLogsProps) {
+    const t = useTranslations('repository.builds');
     const isLive = isBuildLive(build.status);
     const [liveCommitInfo, setLiveCommitInfo] = useState<CommitInfo | null>(null);
     const processedCountRef = useRef(0);

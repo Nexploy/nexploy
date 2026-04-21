@@ -31,9 +31,11 @@ app.post(
     route({ json: networkCreateSchema }, async (c) => {
         const { name, driver = 'bridge', ...options } = c.req.valid('json');
 
-        const networkExists = networksStateManager.getByName(name);
-        if (networkExists) {
-            return { id: networkExists.id, name, alreadyExisted: true };
+        try {
+            const info = (await docker.getNetwork(name).inspect()) as { Id: string };
+            return { id: info.Id, name, alreadyExisted: true };
+        } catch (err: any) {
+            if (err.statusCode !== 404) throw err;
         }
 
         const network = await docker.createNetwork({ Name: name, Driver: driver, ...options });

@@ -1,6 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
 import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
@@ -22,9 +21,7 @@ import {
 } from '@workspace/ui/components/select';
 import { Input } from '@workspace/ui/components/input';
 import { type AwsAccountInfo } from '@workspace/typescript-interface/aws/aws';
-import { usePipelineContext } from '@/contexts/PipelineContext';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
-import { findAncestor } from '@/inngest/pipeline/utils/graphQueries';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId';
 import { useEnvironmentVolumes } from '@/hooks/sse/useEnvironmentVolumes';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { fetcherApi } from '@/lib/api/fetcherApi';
@@ -36,19 +33,7 @@ export function BackupVolumeS3Config() {
     const tAdmin = useTranslations('admin');
     const form = useFormContext();
 
-    const { nodes, edges } = usePipelineContext();
-    const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
-
-    const environmentId = useMemo(() => {
-        if (!panelNodeId) return null;
-        const ancestor = findAncestor(
-            panelNodeId,
-            nodes,
-            edges,
-            (data) => data.nodeType === 'set-environment' && !data.disabled,
-        );
-        return ancestor?.data.config?.environmentId;
-    }, []);
+    const environmentId = usePipelineEnvironmentId();
 
     const { volumes, isLoading } = useEnvironmentVolumes(environmentId);
     const { data: awsAccounts, isLoading: isLoadingAccounts } = useSWR<AwsAccountInfo[]>(

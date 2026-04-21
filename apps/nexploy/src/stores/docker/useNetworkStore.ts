@@ -5,6 +5,7 @@ import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker
 import { NetworkState } from '@workspace/typescript-interface/stores/docker/networksStore';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { toastT } from '@/lib/i18n/toastTranslations';
+import { isBuiltinNetwork } from '@workspace/shared/nexployFilter';
 
 export const useNetworkStore = create<NetworkState>((set, get) => ({
     networks: [],
@@ -58,15 +59,13 @@ export const useNetworkStore = create<NetworkState>((set, get) => ({
         const builtin: Network[] = [];
         const custom: Network[] = [];
 
-        const builtinNames = ['bridge', 'host', 'none'];
-
         get().networks.forEach((network) => {
             if (!byDriver.has(network.driver)) {
                 byDriver.set(network.driver, []);
             }
             byDriver.get(network.driver)!.push(network);
 
-            if (builtinNames.includes(network.name)) {
+            if (isBuiltinNetwork(network.name)) {
                 builtin.push(network);
             } else {
                 custom.push(network);

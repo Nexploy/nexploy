@@ -24,9 +24,7 @@ import { Button } from '@workspace/ui/components/button';
 import { Label } from '@workspace/ui/components/label';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { Plus, Trash2 } from 'lucide-react';
-import { usePipelineContext } from '@/contexts/PipelineContext';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
-import { findAncestor } from '@/inngest/pipeline/utils/graphQueries';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId';
 import { useEnvironmentImages } from '@/hooks/sse/useEnvironmentImages';
 import { useMemo } from 'react';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
@@ -36,19 +34,7 @@ export function CreateContainerConfig() {
     const tDocker = useTranslations('docker.createContainer');
     const form = useFormContext();
 
-    const { nodes, edges } = usePipelineContext();
-    const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
-
-    const environmentId = useMemo(() => {
-        if (!panelNodeId) return null;
-        const ancestor = findAncestor(
-            panelNodeId,
-            nodes,
-            edges,
-            (data) => data.nodeType === 'set-environment' && !data.disabled,
-        );
-        return ancestor?.data.config?.environmentId ?? null;
-    }, []);
+    const environmentId = usePipelineEnvironmentId();
 
     const { images, isLoading } = useEnvironmentImages(environmentId);
 

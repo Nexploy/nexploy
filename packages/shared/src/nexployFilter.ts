@@ -1,6 +1,12 @@
 import { Containers } from '@workspace/typescript-interface/docker/docker.containers';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
 
+export const BUILTIN_NETWORKS = ['bridge', 'host', 'none'] as const;
+
+export function isBuiltinNetwork(name: string): boolean {
+    return (BUILTIN_NETWORKS as readonly string[]).includes(name);
+}
+
 export const NEXPLOY_INFRASTRUCTURE_CONTAINERS = [
     'nexploy_traefik',
     'nexploy_postgres',

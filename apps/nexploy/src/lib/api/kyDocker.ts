@@ -9,7 +9,7 @@ const DOCKER_API_KEY = process.env.DOCKER_API_KEY;
 
 export const kyDocker = ky.create({
     prefixUrl: `${process.env.DOCKER_API_URL}/api`,
-    timeout: 10000,
+    timeout: false,
     hooks: {
         beforeError: [
             async (error) => {

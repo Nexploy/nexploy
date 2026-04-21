@@ -8,6 +8,7 @@ import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { deleteImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { z } from 'zod';
+import { ImageDeleteResponse } from '@workspace/typescript-interface/docker/docker.image.ts';
 
 export class DeleteImageExecutor implements INodeExecutor {
     readonly type = 'delete-image';
@@ -18,30 +19,40 @@ export class DeleteImageExecutor implements INodeExecutor {
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const imageName = nodeConfig.imageName.trim();
+        const imageId = nodeConfig.imageId.trim();
         const force = nodeConfig.force;
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
-        await logger.info(nodeId, `Deleting Docker image: ${imageName}`);
+        await logger.info(nodeId, `Deleting Docker image: ${imageId}`);
+
+        const skipReasonToMessage: Record<string, string> = {
+            in_use: `Image skipped (in use): ${imageId}`,
+            not_found: `Image not found, skipping: ${imageId}`,
+        };
 
         try {
-            await kyDocker
+            const result = await kyDocker
                 .post('images/delete', {
-                    json: { imageIds: [imageName], force },
+                    json: { imageIds: [imageId], force },
                     signal: abortSignal,
                     environmentId,
                 } as KyDockerOptions)
-                .json<{ deleted: string[] }>();
+                .json<ImageDeleteResponse>();
 
-            await logger.info(nodeId, `Image deleted: ${imageName}`);
-
-            return { output: { deletedImage: imageName } };
-        } catch (error) {
-            const msg = error instanceof Error ? error.message.toLowerCase() : '';
-            if (msg.includes('no such image') || msg.includes('not found')) {
-                await logger.info(nodeId, `Image not found, skipping: ${imageName}`);
-                return { output: { deletedImage: imageName }, skipped: true };
+            if (result.skipped?.length) {
+                for (const skipped of result.skipped) {
+                    const message =
+                        skipReasonToMessage[skipped.reason] ??
+                        `Image skipped (${skipped.reason}): ${skipped.name}`;
+                    await logger.warn(nodeId, message);
+                }
+                return { output: { deletedImageId: imageId }, skipped: true };
             }
+
+            await logger.info(nodeId, `Image deleted: ${imageId}`);
+
+            return { output: { deletedImageId: imageId } };
+        } catch (error) {
             throw new Error(
                 `Failed to delete image: ${error instanceof Error ? error.message : 'Unknown error'}`,
             );

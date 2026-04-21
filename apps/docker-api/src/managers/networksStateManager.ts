@@ -246,6 +246,10 @@ export class NetworksStateManager extends BaseStateManager {
         return Array.from(this.networks.values());
     }
 
+    getById(id: string): Network | undefined {
+        return this.networks.get(id);
+    }
+
     getByName(name: string): Network | undefined {
         for (const network of this.networks.values()) {
             if (network.name === name) {

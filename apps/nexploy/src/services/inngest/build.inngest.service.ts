@@ -32,8 +32,15 @@ export async function startBuildRepositoryInngest(
         );
     }
 
+    const pipelineNodes = pipelineConfig.nodes as Array<{
+        data?: { type?: string; config?: Record<string, unknown> };
+    }>;
+    const setEnvNode = pipelineNodes.find((n) => n.data?.type === 'set-environment');
+    const environmentId = setEnvNode?.data?.config?.environmentId as string | undefined;
+
     const build = await createBuild({
         repositoryId: repository.id,
+        environmentId: environmentId || undefined,
         pipelineSnapshot: { nodes: pipelineConfig.nodes, edges: pipelineConfig.edges },
     });
 
@@ -72,11 +79,13 @@ export async function removeBuild(buildId: string) {
 
 export async function createBuild({
     repositoryId,
+    environmentId,
     commitMessage,
     commitHash,
     pipelineSnapshot,
 }: {
     repositoryId: string;
+    environmentId?: string;
     commitMessage?: string;
     commitHash?: string;
     pipelineSnapshot?: object;
@@ -84,13 +93,14 @@ export async function createBuild({
     try {
         return await prisma.$transaction(async (tx) => {
             const last = await tx.build.findFirst({
-                where: { repositoryId },
+                where: environmentId ? { environmentId } : { repositoryId },
                 orderBy: { number: 'desc' },
                 select: { number: true },
             });
             return tx.build.create({
                 data: {
                     repositoryId,
+                    ...(environmentId ? { environmentId } : {}),
                     number: (last?.number ?? 0) + 1,
                     commitMessage,
                     commitHash,
@@ -251,7 +261,7 @@ export async function cancelBuildInngest(buildId: string) {
     await inngest.send({ name: 'build/cancel', data: { buildId } });
 }
 
-export async function getAllBuildsInngest(repositoryId: string) {
+export async function getAllBuilds(repositoryId: string) {
     try {
         return await prisma.build.findMany({
             where: { repositoryId },

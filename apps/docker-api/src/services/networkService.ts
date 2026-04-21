@@ -1,7 +1,6 @@
 import { docker } from '@/utils/dockerClient';
 import { networksStateManager } from '@/managers/networksStateManager';
-
-const BUILTIN_NETWORKS = new Set(['bridge', 'host', 'none']);
+import { isBuiltinNetwork } from '@workspace/shared/nexployFilter';
 
 export async function deleteNetworks(
     networkIds: string[],
@@ -9,12 +8,12 @@ export async function deleteNetworks(
 ): Promise<{ deleted: string[]; skipped: { id: string; name: string; reason?: string }[] }> {
     const results = await Promise.all(
         networkIds.map(async (networkId) => {
-            const info = networksStateManager.getByName(networkId);
+            const info = networksStateManager.getById(networkId);
             if (!info) {
                 return { type: 'skipped', id: networkId, name: networkId, reason: 'not_found' };
             }
 
-            if (BUILTIN_NETWORKS.has(info.name)) {
+            if (isBuiltinNetwork(info.name)) {
                 return { type: 'skipped', id: networkId, name: info.name, reason: 'builtin' };
             }
 

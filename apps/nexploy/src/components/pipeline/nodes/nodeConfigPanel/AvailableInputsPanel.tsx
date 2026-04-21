@@ -89,8 +89,8 @@ export function AvailableInputsPanel({ nodeId }: AvailableInputsPanelProps) {
             ) : (
                 <ScrollAreaWithShadow bottomShadow className="h-full overflow-hidden">
                     <div className="flex flex-col gap-3 p-3 pt-0">
-                        {ancestors.map(({ nodeId: ancestorId, nodeType, inputFields }, index) => (
-                            <div key={ancestorId} className="space-y-1.5">
+                        {ancestors.map(({ nodeId, nodeType, inputFields }, index) => (
+                            <div key={nodeId + index} className="space-y-1.5">
                                 <div className="flex items-center gap-1.5">
                                     <span className="bg-muted text-muted-foreground flex size-4 shrink-0 items-center justify-center rounded text-[9px] font-bold">
                                         {index + 1}
@@ -103,7 +103,7 @@ export function AvailableInputsPanel({ nodeId }: AvailableInputsPanelProps) {
                                     {inputFields.map((field) => (
                                         <InputChip
                                             key={field.key}
-                                            nodeId={ancestorId}
+                                            nodeId={nodeId}
                                             nodeType={nodeType}
                                             field={field}
                                         />

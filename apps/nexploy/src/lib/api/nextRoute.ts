@@ -2,7 +2,7 @@ import { createZodRoute, MiddlewareFunction } from 'next-zod-route';
 import { NextResponse } from 'next/server';
 import { getUserSession } from '@/services/auth/auth.service';
 import { setToastServer } from '@/lib/toastServer';
-import { auth, Session } from '@/lib/auth/auth';
+import { Session } from '@/lib/auth/auth';
 import { type PermissionActions, type PermissionResource, roles } from '@/lib/auth/permissions';
 import { Role } from '@workspace/schemas-zod/auth/permissions';
 
@@ -38,14 +38,9 @@ export const internalApiAuth: MiddlewareFunction<
     Record<string, unknown>
 > = async ({ next, request, ctx }) => {
     const apiKey = request.headers.get('x-api-key');
+    const expectedKey = process.env.NEXPLOY_API_KEY;
 
-    if (!apiKey) {
-        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
-    }
-
-    const result = await auth.api.verifyApiKey({ body: { key: apiKey } });
-
-    if (!result.valid) {
+    if (!apiKey || !expectedKey || apiKey !== expectedKey) {
         return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
     }
 

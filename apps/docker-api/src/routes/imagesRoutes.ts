@@ -51,9 +51,12 @@ app.post(
     route({ json: imagePullWithAuthSchema }, async (c) => {
         const { imageName, auth } = c.req.valid('json');
 
-        const imageExists = imagesStateManager.getByName(imageName);
-        if (imageExists) {
-            throw new Error(`Image ${imageName} already exists locally.`);
+        try {
+            await docker.getImage(imageName).inspect();
+            throw new HttpError(`Image ${imageName} already exists locally.`, 409);
+        } catch (err: any) {
+            if (err instanceof HttpError) throw err;
+            if (err.statusCode !== 404) throw err;
         }
 
         return await pullImage(imageName, auth);
@@ -89,12 +92,7 @@ app.post(
     '/delete',
     route({ json: imageDeleteSchema }, async (c) => {
         const { imageIds, force } = c.req.valid('json');
-
-        if (imageIds.length === 0) {
-            throw new HttpError('No image IDs provided.', 400);
-        }
-
-        return await deleteImages(imageIds, force ?? false);
+        return await deleteImages(imageIds, force);
     }),
 );
 

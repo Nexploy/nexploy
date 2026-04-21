@@ -4,3 +4,5 @@ export const syncVersionDeleteSchema = z.object({
     repositoryId: z.string().min(1),
     imageTag: z.string().min(1),
 });
+
+export const deleteVersionSchema = syncVersionDeleteSchema;

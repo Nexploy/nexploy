@@ -22,9 +22,7 @@ import {
 import { Input } from '@workspace/ui/components/input';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 
-import { usePipelineContext } from '@/contexts/PipelineContext';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
-import { findAncestor } from '@/inngest/pipeline/utils/graphQueries';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId';
 import { useEnvironmentImages } from '@/hooks/sse/useEnvironmentImages';
 import { useEffect, useMemo } from 'react';
 
@@ -32,19 +30,7 @@ export function ScanImageConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const { nodes, edges } = usePipelineContext();
-    const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
-
-    const environmentId = useMemo(() => {
-        if (!panelNodeId) return null;
-        const ancestor = findAncestor(
-            panelNodeId,
-            nodes,
-            edges,
-            (data) => data.nodeType === 'set-environment' && !data.disabled,
-        );
-        return ancestor?.data.config?.environmentId ?? null;
-    }, []);
+    const environmentId = usePipelineEnvironmentId();
 
     const { images, isLoading } = useEnvironmentImages(environmentId);
 

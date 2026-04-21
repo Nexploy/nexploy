@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -12,11 +18,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import { usePipelineContext } from '@/contexts/PipelineContext';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
-import { findAncestor } from '@/inngest/pipeline/utils/graphQueries';
-import { useMemo } from 'react';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId';
 import { useEnvironmentContainers } from '@/hooks/sse/useEnvironmentContainers';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 
@@ -24,19 +27,7 @@ export function ContainerIdField() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const { nodes, edges } = usePipelineContext();
-    const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
-
-    const environmentId = useMemo(() => {
-        if (!panelNodeId) return null;
-        const ancestor = findAncestor(
-            panelNodeId,
-            nodes,
-            edges,
-            (data) => data.nodeType === 'set-environment' && !data.disabled,
-        );
-        return ancestor?.data.config?.environmentId;
-    }, []);
+    const environmentId = usePipelineEnvironmentId();
 
     const { containers, isLoading } = useEnvironmentContainers(environmentId);
 
@@ -58,7 +49,7 @@ export function ContainerIdField() {
                             <Select {...field} onValueChange={field.onChange} disabled={isLoading}>
                                 <SelectTrigger
                                     className={
-                                        'min-w-40 overflow-hidden !pl-0 data-[placeholder]:!pl-3'
+                                        'w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3'
                                     }
                                 >
                                     {isLoading ? (

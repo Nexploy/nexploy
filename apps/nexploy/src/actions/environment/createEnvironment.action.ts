@@ -18,5 +18,6 @@ export const createEnvironmentAction = authActionServer
                     message: error.message,
                 });
             }
+            throw error;
         }
     });

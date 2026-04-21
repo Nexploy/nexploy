@@ -14,13 +14,13 @@ const imageActions: [ImageAction, ...ImageAction[]] = [
 
 export const imageActionsSchema = z.object({
     action: z.enum(imageActions),
-    force: z.boolean().optional(),
+    force: z.boolean().default(false),
     imageIds: z.array(z.string()),
 });
 
 export const imageDeleteSchema = z.object({
-    imageIds: z.array(z.string()).min(1),
-    force: z.boolean().optional(),
+    imageIds: z.array(z.string()),
+    force: z.boolean().default(false),
 });
 
 export const imageAuthSchema = z.object({

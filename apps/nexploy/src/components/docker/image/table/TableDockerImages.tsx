@@ -13,7 +13,14 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@workspace/ui/components/table';
 import React, { useMemo, useRef, useState } from 'react';
 import { getColumnsTableImages } from '@/components/docker/image/table/ColumnsDockerImages';
 import { useTranslations } from 'next-intl';
@@ -46,10 +53,7 @@ const globalFilterFn: FilterFn<ImageRow> = (row, _, value) => {
 
     if (isGroup && groupName) {
         if (groupName.toLowerCase().includes(search)) return true;
-        if (subRows?.some((img) => matchesSearch(img, search))) {
-            return true;
-        }
-        return false;
+        return !!subRows?.some((img) => matchesSearch(img, search));
     }
 
     return matchesSearch(row.original, search);
@@ -178,6 +182,19 @@ export function TableDockerImages() {
                     onChange={(e) => setGlobalFilter(e.target.value)}
                 />
                 <div className={'flex gap-3'}>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div>
+                                <Button onClick={handleUseAction} disabled={isUseDisabled}>
+                                    <Play />
+                                    {t('use')}
+                                </Button>
+                            </div>
+                        </TooltipTrigger>
+                        {getUseTooltipContent() && (
+                            <TooltipContent>{getUseTooltipContent()}</TooltipContent>
+                        )}
+                    </Tooltip>
                     <Button
                         variant={'destructive'}
                         onClick={handleDeleteAction}
@@ -191,22 +208,6 @@ export function TableDockerImages() {
                             </Badge>
                         )}
                     </Button>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <div>
-                                <Button onClick={handleUseAction} disabled={isUseDisabled}>
-                                    <Play />
-                                    {t('use')}
-                                </Button>
-                            </div>
-                        </TooltipTrigger>
-                        {(() => {
-                            const tooltipContent = getUseTooltipContent();
-                            return tooltipContent ? (
-                                <TooltipContent>{tooltipContent}</TooltipContent>
-                            ) : null;
-                        })()}
-                    </Tooltip>
                 </div>
             </div>
             <div className="bg-card overflow-hidden rounded-md border shadow-sm">

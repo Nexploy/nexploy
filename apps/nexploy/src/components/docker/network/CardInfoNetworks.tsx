@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
+import { isBuiltinNetwork } from '@workspace/shared/nexployFilter';
 
 export function CardInfoNetworks() {
     const t = useTranslations('docker');
@@ -17,9 +18,7 @@ export function CardInfoNetworks() {
 
     const networkInfos = useMemo(() => {
         const totalNetworks = networks.length;
-        const customNetworks = networks.filter(
-            (net) => !['bridge', 'host', 'none'].includes(net.name),
-        ).length;
+        const customNetworks = networks.filter((net) => !isBuiltinNetwork(net.name)).length;
         const connectedContainers = networks.reduce(
             (acc, net) => acc + (net.containers?.length || 0),
             0,

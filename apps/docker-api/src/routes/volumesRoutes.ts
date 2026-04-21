@@ -1,5 +1,5 @@
 import { docker } from '@/utils/dockerClient';
-import { route } from '@/helpers/route';
+import { route, HttpError } from '@/helpers/route';
 import { Hono } from 'hono';
 import { volumesStateManager } from '@/managers/volumesStateManager';
 import {
@@ -42,9 +42,12 @@ app.post(
     route({ json: volumeCreateSchema }, async (c) => {
         const { name, driver, driverOpts, labels } = c.req.valid('json');
 
-        const volumeExists = volumesStateManager.getState(name);
-        if (volumeExists) {
-            throw new Error(`Volume ${name} already exists.`);
+        try {
+            await docker.getVolume(name).inspect();
+            throw new HttpError(`Volume ${name} already exists.`, 409);
+        } catch (err: any) {
+            if (err instanceof HttpError) throw err;
+            if (err.statusCode !== 404) throw err;
         }
 
         const volume = await docker.createVolume({

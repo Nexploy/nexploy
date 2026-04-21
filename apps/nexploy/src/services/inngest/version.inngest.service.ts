@@ -39,3 +39,17 @@ export async function upsertVersion(input: CreateVersionInput): Promise<void> {
         throw new Error('Failed to upsert version');
     }
 }
+
+export async function deleteVersionsByImageTag(
+    repositoryId: string,
+    imageTag: string,
+): Promise<number> {
+    try {
+        const result = await prisma.version.deleteMany({
+            where: { repositoryId, imageTag },
+        });
+        return result.count;
+    } catch (error: unknown) {
+        throw new Error('Failed to delete versions by image tag');
+    }
+}

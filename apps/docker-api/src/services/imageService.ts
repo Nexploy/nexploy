@@ -1,6 +1,6 @@
 import { docker } from '@/utils/dockerClient';
 import { imagesStateManager } from '@/managers/imagesStateManager';
-import { ImageDeleteResponse, ImageDeleteResult } from '@workspace/typescript-interface/docker/docker.image';
+import { ImageDeleteResponse, ImageDeleteResult, } from '@workspace/typescript-interface/docker/docker.image';
 
 export async function deleteImages(
     imageIds: string[],
@@ -51,9 +51,8 @@ export async function pullImage(
         });
     });
 
-    const found = imagesStateManager.getByName(imageName);
-    if (!found) throw new Error(`Image ${imageName} not found after pull`);
-    return { imageName, imageId: found.fullId };
+    const inspect = await docker.getImage(imageName).inspect();
+    return { imageName, imageId: inspect.Id };
 }
 
 export async function mirrorImage(

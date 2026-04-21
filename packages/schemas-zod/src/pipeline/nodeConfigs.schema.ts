@@ -213,7 +213,7 @@ export const pruneImagesConfigSchema = z.object({
 });
 
 export const deleteImageConfigSchema = z.object({
-    imageName: refable(z.string().min(1, 'Image name is required')).default(''),
+    imageId: refable(z.string().min(1, 'Image ID is required')).default(''),
     force: z.boolean().default(false),
 });
 

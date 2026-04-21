@@ -108,7 +108,7 @@
     "noVolumes": "No volumes",
     "noNetworks": "No networks",
     "noEvents": "No events",
-    "noContainersDescription": "You haven't created any containers yet.",
+    "noContainersDescription": "No containers available",
     "startContainer": "Start Container",
     "stopContainer": "Stop Container",
     "restartContainer": "Restart Container",

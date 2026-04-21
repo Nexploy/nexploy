@@ -191,10 +191,20 @@ app.post('/stream/compose', async (c) => {
 
             if (labels && Object.keys(labels).length > 0) {
                 for (const service of Object.values(composeContent.services || {})) {
-                    (service as any).labels = {
-                        ...((service as any).labels || {}),
-                        ...labels,
-                    };
+                    const existingLabels =
+                        service.labels && !Array.isArray(service.labels)
+                            ? (service.labels as Record<string, string>)
+                            : {};
+                    service.labels = { ...existingLabels, ...labels };
+
+                    if (typeof service.build === 'string') {
+                        service.build = { context: service.build, labels: { ...labels } };
+                    } else if (service.build) {
+                        const existingBuildLabels = !Array.isArray(service.build.labels)
+                            ? (service.build.labels ?? {})
+                            : {};
+                        service.build.labels = { ...existingBuildLabels, ...labels };
+                    }
                 }
                 composeModified = true;
             }
