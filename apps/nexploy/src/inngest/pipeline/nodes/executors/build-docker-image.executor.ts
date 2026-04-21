@@ -27,7 +27,7 @@ export class BuildDockerImageExecutor implements INodeExecutor {
             ? `${dockerfileFilePath.replace(/\/$/, '')}/${dockerfileName}`
             : dockerfileName;
 
-        const imageName = `${buildConfig.repositorySlug}-${nodeId}`;
+        const imageName = `${buildConfig.repositorySlug}-${nodeId}:${buildConfig.buildId}`;
 
         await logger.info(nodeId, `Building Docker image: ${imageName}`);
 
