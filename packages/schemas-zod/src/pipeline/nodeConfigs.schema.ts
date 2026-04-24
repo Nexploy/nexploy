@@ -70,8 +70,20 @@ export const sendNotificationConfigSchema = z.object({
     message: z.string().optional(),
 });
 
-export const containerActionConfigSchema = z.object({
-    containerId: z.string().min(1, 'Container is required').default(''),
+export const stopContainerConfigSchema = z.object({
+    containerId: refable(z.string().min(1, 'Container is required')).default(''),
+});
+
+export const startContainerConfigSchema = z.object({
+    containerId: refable(z.string().min(1, 'Container is required')).default(''),
+});
+
+export const restartContainerConfigSchema = z.object({
+    containerId: refable(z.string().min(1, 'Container is required')).default(''),
+});
+
+export const removeContainerConfigSchema = z.object({
+    containerId: refable(z.string().min(1, 'Container is required')).default(''),
 });
 
 const createContainerPortSchema = z.object({
@@ -154,7 +166,7 @@ export const runScriptConfigSchema = z.object({
 });
 
 export const runCommandInContainerConfigSchema = z.object({
-    containerName: z.string().min(1, 'Container name is required').default(''),
+    containerId: z.string().min(1, 'Container is required').default(''),
     command: z.string().min(1, 'Command is required').default(''),
     workdir: z.string().optional(),
 });
@@ -289,9 +301,9 @@ export const scaleServiceConfigSchema = z.object({
 // ─── Monitoring ───────────────────────────────────────────────────────────────
 
 export const checkContainerLogsConfigSchema = z.object({
-    containerName: z.string().min(1, 'Container name is required').default(''),
-    pattern: z.string().min(1, 'Pattern is required').default(''),
-    since: z.string().optional(),
+    containerId: refable(z.string().min(1, 'Container is required')).default(''),
+    pattern: refable(z.string().min(1, 'Pattern is required')).default(''),
+    since: refable(z.string()).default(''),
     timeout: z.number().default(30),
     failIfFound: z.boolean().default(false),
 });

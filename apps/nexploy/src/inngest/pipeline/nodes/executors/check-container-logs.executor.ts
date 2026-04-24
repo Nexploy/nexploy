@@ -7,17 +7,31 @@ import {
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { checkContainerLogsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
+import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
+
+const DURATION_UNITS: Record<'s' | 'm' | 'h' | 'd', number> = { s: 1, m: 60, h: 3600, d: 86400 };
+
+function parseSinceDuration(since: string): number {
+    const relative = since.match(/^(\d+)(s|m|h|d)$/);
+    if (relative) {
+        const [, rawAmount, unit] = relative as [string, string, 's' | 'm' | 'h' | 'd'];
+        return Math.floor(Date.now() / 1000) - parseInt(rawAmount, 10) * DURATION_UNITS[unit];
+    }
+    const ts = Date.parse(since);
+    if (!isNaN(ts)) return Math.floor(ts / 1000);
+    return Math.floor(Date.now() / 1000);
+}
 
 export class CheckContainerLogsExecutor implements INodeExecutor {
     readonly type = 'check-container-logs';
     readonly configSchema = checkContainerLogsConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof checkContainerLogsConfigSchema>>,
+        ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof checkContainerLogsConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const containerName = nodeConfig.containerName;
+        const containerId = nodeConfig.containerId;
         const pattern = nodeConfig.pattern;
         const since = nodeConfig.since;
         const timeout = nodeConfig.timeout;
@@ -25,10 +39,11 @@ export class CheckContainerLogsExecutor implements INodeExecutor {
 
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
         const regex = new RegExp(pattern);
+        const sinceTimestamp = since ? parseSinceDuration(since) : undefined;
 
         await logger.info(
             nodeId,
-            `Checking logs of container "${containerName}" for pattern: ${pattern}`,
+            `Checking logs of container "${containerId}" for pattern: ${pattern}`,
         );
 
         const deadline = Date.now() + timeout * 1000;
@@ -40,10 +55,10 @@ export class CheckContainerLogsExecutor implements INodeExecutor {
 
             try {
                 const result = await kyDocker
-                    .get(`container/${encodeURIComponent(containerName)}/logs`, {
+                    .get(`container/${containerId}/logs`, {
                         searchParams: {
                             tail: '100',
-                            ...(since && { since }),
+                            ...(sinceTimestamp !== undefined && { since: String(sinceTimestamp) }),
                         },
                         signal: abortSignal,
                         environmentId,
@@ -78,15 +93,15 @@ export class CheckContainerLogsExecutor implements INodeExecutor {
                     `Pattern "${pattern}" was found in container logs (failIfFound = true)`,
                 );
             }
-            return { output: { found: true, matchedLine, containerName } };
+            return { output: { found: true, matchedLine, containerId } };
         } else {
             await logger.info(nodeId, `Pattern not found in container logs within ${timeout}s`);
             if (!failIfFound) {
                 throw new Error(
-                    `Pattern "${pattern}" was not found in container "${containerName}" logs within ${timeout}s`,
+                    `Pattern "${pattern}" was not found in container "${containerId}" logs within ${timeout}s`,
                 );
             }
-            return { output: { found: false, containerName } };
+            return { output: { found: false, containerId } };
         }
     }
 }

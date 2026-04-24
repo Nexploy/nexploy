@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { containersStateManager } from '@/managers/containersStateManager';
 import { route } from '@/helpers/route';
-import { getCurrentDockerClient, getCurrentEnvironmentId } from '@/lib/dockerContext';
+import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import {
     buildDockerHostEnv,
@@ -10,8 +10,8 @@ import {
 } from '@/utils/dockerComposeRunner';
 import { substituteEnvVars } from '@/utils/composePreprocessor';
 import {
-    deploySchema,
     deployComposeSchema,
+    deploySchema,
 } from '@workspace/schemas-zod/docker/pipeline/pipelineAction.schema';
 import yaml from 'yaml';
 import fs from 'fs';
@@ -19,6 +19,7 @@ import path from 'path';
 import os from 'os';
 import { logger } from '@/utils/logger';
 import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
+import { docker } from '@/utils/dockerClient';
 
 const app = new Hono();
 
@@ -35,7 +36,6 @@ app.post(
     route({ json: deployComposeSchema }, async (c) => {
         const { projectName, envVars, composeConfig, labels } = c.req.valid('json');
 
-        const dockerClient = getCurrentDockerClient();
         const environmentId = getCurrentEnvironmentId();
 
         const envConfig = environmentId
@@ -87,7 +87,7 @@ app.post(
                 logger.debug({ projectName }, 'No existing compose stack to remove');
             }
 
-            const existingContainers = await dockerClient.listContainers({
+            const existingContainers = await docker.listContainers({
                 all: true,
                 filters: {
                     label: [`com.docker.compose.project=${projectName}`],
@@ -96,7 +96,7 @@ app.post(
             await Promise.all(
                 existingContainers.map(async (containerInfo) => {
                     try {
-                        const container = dockerClient.getContainer(containerInfo.Id);
+                        const container = docker.getContainer(containerInfo.Id);
                         if (containerInfo.State === 'running') {
                             await container.stop();
                         }
@@ -110,7 +110,7 @@ app.post(
                     (Object.values(composeContent.services) as any[]).map(async (service) => {
                         if (service.container_name) {
                             try {
-                                const container = dockerClient.getContainer(service.container_name);
+                                const container = docker.getContainer(service.container_name);
                                 const info = await container.inspect();
                                 if (info.State.Running) {
                                     await container.stop();
@@ -127,7 +127,7 @@ app.post(
                     Object.keys(composeContent.networks).map(async (networkName) => {
                         const fullNetworkName = `${projectName}_${networkName}`;
                         try {
-                            const network = dockerClient.getNetwork(fullNetworkName);
+                            const network = docker.getNetwork(fullNetworkName);
                             const networkInfo = await network.inspect();
                             const connectedContainers = networkInfo.Containers || {};
                             await Promise.all(
@@ -163,7 +163,7 @@ app.post(
                 dockerEnv,
             );
 
-            const traefikNetwork = dockerClient.getNetwork(TRAEFIK_NETWORK_NAME);
+            const traefikNetwork = docker.getNetwork(TRAEFIK_NETWORK_NAME);
             await Promise.all(
                 containerIds.map(async (containerId: string) => {
                     try {

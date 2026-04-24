@@ -1,5 +1,5 @@
 import { Position } from '@xyflow/react';
-import { containerActionConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { removeContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { RemoveContainerConfig } from '../config/RemoveContainerConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
@@ -23,7 +23,7 @@ export const removeContainerManifest: NodeManifest = {
             attachments: [],
         },
     },
-    configSchema: containerActionConfigSchema,
+    configSchema: removeContainerConfigSchema,
     configPanel: RemoveContainerConfig,
     inputFields: [
         { key: 'containerId', labelKey: 'pipeline.inputs.containerId', descriptionKey: 'pipeline.inputs.desc_containerId', type: 'input' },

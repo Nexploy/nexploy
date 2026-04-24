@@ -18,17 +18,17 @@ export class RunCommandInContainerExecutor implements INodeExecutor {
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const containerName = nodeConfig.containerName;
+        const containerId = nodeConfig.containerId;
         const command = nodeConfig.command;
 
         const workdir = nodeConfig.workdir;
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
-        await logger.info(nodeId, `Executing command in container "${containerName}": ${command}`);
+        await logger.info(nodeId, `Executing command in container "${containerId}": ${command}`);
 
         try {
             const result = await kyDocker
-                .post(`container/${encodeURIComponent(containerName)}/exec`, {
+                .post(`container/${containerId}/exec`, {
                     json: {
                         command,
                         ...(workdir && { workdir }),

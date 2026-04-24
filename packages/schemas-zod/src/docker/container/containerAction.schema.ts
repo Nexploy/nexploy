@@ -4,7 +4,7 @@ export const containerActionsSchema = z.object({
     containerId: z.string(),
 });
 
-export const containerParamSchema = z.object({
+export const containerIdParamSchema = z.object({
     id: z.string().min(1),
 });
 
@@ -29,5 +29,3 @@ export const containerExecBodySchema = z.object({
     command: z.string().min(1),
     workdir: z.string().optional(),
 });
-
-export type ContainerParamType = z.infer<typeof containerParamSchema>;

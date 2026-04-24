@@ -1,13 +1,12 @@
 'use client';
 
-import { type FormEvent } from 'react';
 import { useTranslations } from 'next-intl';
-import { type NodeData, type NodeId } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { type Node } from '@xyflow/react';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { Button } from '@workspace/ui/components/button';
 import { Loader2 } from 'lucide-react';
-import { DialogDescription, DialogFooter, DialogHeader, DialogTitle, } from '@workspace/ui/components/dialog';
+import { DialogFooter } from '@workspace/ui/components/dialog';
 import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
@@ -15,13 +14,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { saveNodeConfigAction } from '@/actions/repository/pipeline/saveNodeConfig.action';
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { CONFIG_PANELS, CONFIG_SCHEMAS, HAS_CONFIG_SCHEMA } from './nodeConfigRegistry';
+import {
+    getConfigPanel,
+    getConfigSchema,
+    hasConfigSchema,
+} from '@/components/pipeline/nodeManifestRegistry';
 import { cn } from '@workspace/ui/lib/utils';
 
-function computeDefaultValues(
-    schema: any,
-    nodeConfig: Record<string, unknown>,
-): Record<string, unknown> {
+function computeDefaultValues(schema: any, nodeConfig: Record<string, unknown>) {
     const schemaDefaults: Record<string, unknown> = {};
     const shape: Record<string, any> | undefined = schema?.shape;
     if (shape) {
@@ -38,26 +38,21 @@ interface NodeConfigFormProps {
 }
 
 export function NodeConfigForm({ node }: NodeConfigFormProps) {
-    const t = useTranslations('repository.pipeline.nodes');
     const tConfig = useTranslations('repository.pipeline.config');
     const tCommon = useTranslations('common');
-
-    const data = node.data as unknown as NodeData;
-    const nodeName = data.definition?.metadata.name;
-    const nodeDesc = data.definition?.metadata.description;
 
     const params = useParams<{ repositoryId: string }>();
     const { handleConfigChange, handleResetPanelNode, isViewingBuild } = usePipelineContext();
 
     const nodeType = node.data.nodeType as NodeId;
     const nodeConfig = node.data.config ?? {};
-    const schema = CONFIG_SCHEMAS[nodeType];
-    const ConfigComponent = CONFIG_PANELS[nodeType];
-    const hasSchema = HAS_CONFIG_SCHEMA[nodeType];
+    const schema = getConfigSchema(nodeType);
+    const ConfigComponent = getConfigPanel(nodeType);
+    const hasSchema = hasConfigSchema(nodeType);
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         saveNodeConfigAction.bind(null, params.repositoryId, node.id),
-        zodResolver(schema),
+        zodResolver(schema as any),
         {
             formProps: {
                 defaultValues: computeDefaultValues(schema, nodeConfig as Record<string, unknown>),
@@ -77,40 +72,12 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
         },
     );
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-        handleSubmitWithAction(e);
-    };
-
-    if (!ConfigComponent) {
-        return (
-            <div className="flex flex-1 flex-col gap-4">
-                {!isViewingBuild && (
-                    <DialogHeader>
-                        <DialogTitle>{t(nodeName)}</DialogTitle>
-                        {nodeDesc && (
-                            <DialogDescription className={'text-xs'}>
-                                {t(nodeDesc)}
-                            </DialogDescription>
-                        )}
-                    </DialogHeader>
-                )}
-                <DialogFooter className="px-6 pb-6">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={handleResetPanelNode}
-                    >
-                        {tCommon('close')}
-                    </Button>
-                </DialogFooter>
-            </div>
-        );
-    }
-
     return (
         <Form {...form}>
-            <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 flex-col overflow-hidden">
+            <form
+                onSubmit={handleSubmitWithAction}
+                className="flex min-w-0 flex-1 flex-col overflow-hidden"
+            >
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <fieldset
                         disabled={isViewingBuild}
@@ -119,7 +86,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
                             isViewingBuild && 'pointer-events-none',
                         )}
                     >
-                        <ConfigComponent />
+                        {ConfigComponent && <ConfigComponent />}
                     </fieldset>
                 </ScrollAreaWithShadow>
 

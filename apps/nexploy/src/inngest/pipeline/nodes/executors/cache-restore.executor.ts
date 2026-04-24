@@ -6,6 +6,7 @@ import {
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { cacheRestoreConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { z } from 'zod';
 
 export class CacheRestoreExecutor implements INodeExecutor {
@@ -13,7 +14,7 @@ export class CacheRestoreExecutor implements INodeExecutor {
     readonly configSchema = cacheRestoreConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof cacheRestoreConfigSchema>>,
+        ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof cacheRestoreConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 

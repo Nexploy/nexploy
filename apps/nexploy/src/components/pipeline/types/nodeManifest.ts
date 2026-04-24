@@ -7,14 +7,14 @@ export interface NodeInputField {
     key: string;
     labelKey: string;
     descriptionKey?: string;
-    type: 'input';
+    type: 'input' | 'number';
 }
 
 export interface NodeManifest {
     type: string;
     definition: NodeDefinition;
     configSchema?: ZodTypeAny;
-    configPanel?: ComponentType;
+    configPanel: ComponentType;
     lifecycle?: NodeLifecycleCallbacks;
     inputFields?: NodeInputField[];
 }

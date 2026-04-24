@@ -1,4 +1,4 @@
-import { containerActionConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { startContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { StartContainerConfig } from '../config/StartContainerConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
@@ -23,7 +23,7 @@ export const startContainerManifest: NodeManifest = {
             attachments: [],
         },
     },
-    configSchema: containerActionConfigSchema,
+    configSchema: startContainerConfigSchema,
     configPanel: StartContainerConfig,
     inputFields: [
         { key: 'containerId', labelKey: 'pipeline.inputs.containerId', descriptionKey: 'pipeline.inputs.desc_containerId', type: 'input' },

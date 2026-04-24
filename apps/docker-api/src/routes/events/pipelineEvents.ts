@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { getImagesStateManager } from '@/managers/imagesStateManager';
 import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
-import { getCurrentDockerClient, getCurrentEnvironmentId } from '@/lib/dockerContext';
+import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { buildDockerHostEnv, runDockerCompose } from '@/utils/dockerComposeRunner';
 import path from 'path';
@@ -17,6 +17,7 @@ import {
 import type { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
 import type { VolumeTransformationResult } from '@workspace/typescript-interface/docker/docker.compose.volume';
 import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
+import { docker } from '@/utils/dockerClient';
 
 const app = new Hono();
 
@@ -58,7 +59,6 @@ app.post('/stream/compose', async (c) => {
         labels?: Record<string, string>;
     }>();
 
-    const dockerClient = getCurrentDockerClient();
     const environmentId = getCurrentEnvironmentId();
 
     return streamSSE(c, async (stream) => {
@@ -166,7 +166,7 @@ app.post('/stream/compose', async (c) => {
                     );
                     for (const volumeName of volumeTransformResult.volumesToCreate) {
                         try {
-                            await dockerClient.createVolume({ Name: volumeName });
+                            await docker.createVolume({ Name: volumeName });
                             sendLog(`  Created volume: ${volumeName}`);
                         } catch (err: unknown) {
                             const errorMessage = err instanceof Error ? err.message : String(err);
@@ -277,7 +277,7 @@ app.post('/stream/compose', async (c) => {
                 sendLog('All services built successfully');
 
                 try {
-                    const pruneResult = await dockerClient.pruneImages({
+                    const pruneResult = await docker.pruneImages({
                         filters: { dangling: { true: true } },
                     });
                     const reclaimed = pruneResult.SpaceReclaimed || 0;
@@ -325,7 +325,7 @@ app.post('/stream/compose', async (c) => {
                         const imageName = service.image;
                         if (imageName) {
                             try {
-                                const imageInfo = await dockerClient.getImage(imageName).inspect();
+                                const imageInfo = await docker.getImage(imageName).inspect();
                                 const exposedPorts = Object.keys(
                                     imageInfo.Config?.ExposedPorts || {},
                                 );
@@ -387,7 +387,7 @@ app.post('/stream/compose', async (c) => {
             }
             sendLog('Services started successfully');
 
-            const runningContainers = await dockerClient.listContainers({
+            const runningContainers = await docker.listContainers({
                 all: true,
                 filters: { label: [`com.docker.compose.project=${projectName}`] },
             });
@@ -396,7 +396,7 @@ app.post('/stream/compose', async (c) => {
             sendLog(`Connecting ${containerIds.length} containers to Traefik network...`);
             for (const containerId of containerIds) {
                 try {
-                    const network = dockerClient.getNetwork(TRAEFIK_NETWORK_NAME);
+                    const network = docker.getNetwork(TRAEFIK_NETWORK_NAME);
                     await network.connect({
                         Container: containerId,
                     });
@@ -535,8 +535,7 @@ app.post('/stream/build', async (c) => {
             );
 
             try {
-                const dockerClient = getCurrentDockerClient();
-                const pruneResult = await dockerClient.pruneImages({
+                const pruneResult = await docker.pruneImages({
                     filters: { dangling: { true: true } },
                 });
                 const reclaimed = pruneResult.SpaceReclaimed || 0;

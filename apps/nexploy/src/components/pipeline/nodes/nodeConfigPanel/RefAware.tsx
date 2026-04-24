@@ -1,6 +1,6 @@
 'use client';
 
-import { PropsWithChildren } from 'react';
+import { type PropsWithChildren } from 'react';
 import { type NodeFieldRef } from '@workspace/typescript-interface/pipeline/nodeFieldRef';
 import { isNodeFieldRef } from '@/lib/nodeFieldRef';
 import { AlertTriangle, Variable, X } from 'lucide-react';
@@ -52,8 +52,6 @@ export function RefAware({
             e.dataTransfer.dropEffect = 'copy';
         }
     };
-
-    console.log(ref);
 
     if (isRef && ref) {
         const badge = (

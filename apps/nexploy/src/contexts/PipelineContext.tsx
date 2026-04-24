@@ -1,30 +1,14 @@
 'use client';
 
-import {
-    createContext,
-    type ReactNode,
-    useCallback,
-    useContext,
-    useEffect,
-    useMemo,
-    useRef,
-} from 'react';
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useRef, } from 'react';
 import useSWR from 'swr';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { fetcherApi } from '@/lib/api/fetcherApi';
-import {
-    addEdge,
-    type Connection,
-    type Edge,
-    type Node,
-    useEdgesState,
-    useNodesState,
-    useReactFlow,
-} from '@xyflow/react';
+import { addEdge, type Connection, type Edge, type Node, useEdgesState, useNodesState, } from '@xyflow/react';
 import { type NodeId, type PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { flowToGraph, graphToFlow } from '@/components/pipeline/utils/graphConvert';
 import { usePipelineHistory } from '@/hooks/usePipelineHistory';
-import { NODE_LIFECYCLE } from '@/components/pipeline/nodes/nodeConfigPanel/nodeConfigRegistry';
+import { getNodeLifecycle } from '@/components/pipeline/nodeManifestRegistry';
 import { toast } from 'sonner';
 import { useAction } from 'next-safe-action/hooks';
 import { savePipelineAction } from '@/actions/repository/pipeline/savePipeline.action';
@@ -86,7 +70,6 @@ export function PipelineProvider({
 
     const [nodes, setNodes, onNodesChangeBase] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChangeBase] = useEdgesState(initialEdges);
-    const { fitView } = useReactFlow();
 
     const setPanelNodeId = usePipelineEditorStore((s) => s.setPanelNodeId);
     const setSelectedNodeIds = usePipelineEditorStore((s) => s.setSelectedNodeIds);
@@ -155,7 +138,7 @@ export function PipelineProvider({
 
     const handleNodeAdded = useCallback(
         (nodeType: NodeId, nodeId: string) => {
-            const lifecycle = NODE_LIFECYCLE[nodeType];
+            const lifecycle = getNodeLifecycle(nodeType);
             if (!lifecycle?.onAdd) return;
             lifecycle.onAdd(repositoryId).then((result) => {
                 if (!result.success) {
@@ -219,7 +202,7 @@ export function PipelineProvider({
                 const nodeType = removed.data.nodeType as NodeId;
                 if (seen.has(nodeType)) continue;
                 seen.add(nodeType);
-                const lifecycle = NODE_LIFECYCLE[nodeType];
+                const lifecycle = getNodeLifecycle(nodeType);
                 if (lifecycle?.onRemove) {
                     const remainingCount = remaining.filter(
                         (n) => n.data.nodeType === nodeType,

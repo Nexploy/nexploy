@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { Edge, Node, ReactFlowInstance } from '@xyflow/react';
 import { NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
-import { CONFIG_SCHEMAS } from '@/components/pipeline/nodes/nodeConfigPanel/nodeConfigRegistry';
+import { getConfigSchema } from '@/components/pipeline/nodeManifestRegistry';
 import { usePipelineActions } from '@/contexts/PipelineContext';
 import { getTemplate } from '@/components/pipeline/nodes/template/pipelineTemplates';
 
@@ -49,7 +49,7 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
                             nodeType: tn.type,
                             definition: def,
                             config: {
-                                ...(CONFIG_SCHEMAS[tn.type]?.partial().safeParse({}).data ?? {}),
+                                ...(getConfigSchema(tn.type)?.partial().safeParse({}).data ?? {}),
                                 ...(tn.config ?? {}),
                             },
                             isStartNode: def?.isStartNode ?? false,
@@ -87,7 +87,7 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
                     label: nodeType,
                     nodeType,
                     definition: def,
-                    config: CONFIG_SCHEMAS[nodeType]?.partial().safeParse({}).data ?? {},
+                    config: getConfigSchema(nodeType)?.partial().safeParse({}).data ?? {},
                     isStartNode: def.isStartNode ?? false,
                 },
             };

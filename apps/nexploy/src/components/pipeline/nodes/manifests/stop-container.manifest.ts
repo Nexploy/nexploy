@@ -1,4 +1,4 @@
-import { containerActionConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { stopContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { StopContainerConfig } from '../config/StopContainerConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
@@ -23,9 +23,14 @@ export const stopContainerManifest: NodeManifest = {
             attachments: [],
         },
     },
-    configSchema: containerActionConfigSchema,
+    configSchema: stopContainerConfigSchema,
     configPanel: StopContainerConfig,
     inputFields: [
-        { key: 'containerId', labelKey: 'pipeline.inputs.containerId', descriptionKey: 'pipeline.inputs.desc_containerId', type: 'input' },
+        {
+            key: 'containerId',
+            labelKey: 'pipeline.inputs.containerId',
+            descriptionKey: 'pipeline.inputs.desc_containerId',
+            type: 'input',
+        },
     ],
 };

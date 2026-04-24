@@ -2,6 +2,7 @@ import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 import { Position } from '@xyflow/react';
 import { FileKey } from 'lucide-react';
+import { InjectEnvVarsConfig } from '../config/InjectEnvVarsConfig';
 
 export const injectEnvVarsManifest: NodeManifest = {
     type: 'inject-env-vars',
@@ -21,4 +22,5 @@ export const injectEnvVarsManifest: NodeManifest = {
             attachments: [],
         },
     },
+    configPanel: InjectEnvVarsConfig,
 };

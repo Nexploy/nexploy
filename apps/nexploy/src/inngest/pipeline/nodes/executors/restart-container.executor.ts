@@ -3,19 +3,19 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
-import { runDockerAction } from '@/inngest/pipeline/utils/dockerAction';
-import { containerActionConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { restartContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
+import { HTTPError } from 'ky';
 import { z } from 'zod';
 
 export class RestartContainerExecutor implements INodeExecutor {
     readonly type = 'restart-container';
-    readonly configSchema = containerActionConfigSchema;
+    readonly configSchema = restartContainerConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof containerActionConfigSchema>>,
+        ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof restartContainerConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
@@ -25,13 +25,15 @@ export class RestartContainerExecutor implements INodeExecutor {
 
         await logger.info(nodeId, `Restarting container: ${containerId}`);
 
-        const warning = await runDockerAction(
-            () => kyDocker.post(`container/${containerId}/restart`, opts),
-            logger,
-            nodeId,
-            { containerId },
-        );
-        if (warning) return warning;
+        try {
+            await kyDocker.post(`container/${containerId}/restart`, opts);
+        } catch (error) {
+            if (error instanceof HTTPError && error.response.status === 409) {
+                await logger.warn(nodeId, error.message);
+                return { output: { containerId } };
+            }
+            throw error;
+        }
 
         await logger.info(nodeId, `Container restarted: ${containerId}`);
         return { output: { containerId } };

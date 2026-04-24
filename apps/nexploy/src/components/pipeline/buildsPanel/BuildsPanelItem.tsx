@@ -97,7 +97,7 @@ export function BuildsPanelItem({ build, isSelected, locale, onSelect }: BuildsP
                     buildId={build.id}
                     initialStatus={build.status}
                 />
-                <span className="text-muted-foreground font-mono text-xs">#{build.number}</span>
+                <span className="text-xs font-medium">#{build.number}</span>
                 <span className="text-xs font-medium">{branch}</span>
                 <Separator orientation={'vertical'} className="!h-3" />
                 {isLive && !commitHash ? (

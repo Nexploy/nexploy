@@ -1,6 +1,5 @@
 import { docker } from '@/utils/dockerClient';
 import { parseDockerLogs } from '@/utils/parseDockerLogs';
-import { getCurrentDockerClient } from '@/lib/dockerContext';
 import { ensureImage } from '@/utils/ensureImage';
 import { PassThrough } from 'stream';
 import { route } from '@/helpers/route';
@@ -10,11 +9,10 @@ import { logger } from '@/utils/logger';
 import { PortType } from '@workspace/typescript-interface/docker/docker.port';
 import { HttpError } from '@workspace/shared/http-error';
 import {
-    containerParamSchema,
-    containerNameParamSchema,
+    containerExecBodySchema,
+    containerIdParamSchema,
     containerLogsQuerySchema,
     containerRunEphemeralSchema,
-    containerExecBodySchema,
 } from '@workspace/schemas-zod/docker/container/containerAction.schema';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
@@ -30,8 +28,7 @@ app.post(
     route({ json: containerRunEphemeralSchema }, async (c) => {
         const { image, command, workdir, mountPath, networkMode } = c.req.valid('json');
 
-        const dockerClient = getCurrentDockerClient();
-        await ensureImage(dockerClient, image);
+        await ensureImage(docker, image);
 
         const binds: string[] = [];
         if (mountPath) {
@@ -39,7 +36,7 @@ app.post(
             binds.push(`${mountPath}:${containerWorkdir}`);
         }
 
-        const container = await dockerClient.createContainer({
+        const container = await docker.createContainer({
             Image: image,
             Cmd: ['sh', '-c', command],
             WorkingDir: workdir ?? '/workspace',
@@ -76,13 +73,12 @@ app.post(
 );
 
 app.get(
-    '/:name/logs',
-    route({ param: containerNameParamSchema, query: containerLogsQuerySchema }, async (c) => {
-        const { name } = c.req.valid('param');
+    '/:id/logs',
+    route({ param: containerIdParamSchema, query: containerLogsQuerySchema }, async (c) => {
+        const { id } = c.req.valid('param');
         const { tail = '100', since } = c.req.valid('query');
 
-        const dockerClient = getCurrentDockerClient();
-        const container = dockerClient.getContainer(decodeURIComponent(name));
+        const container = docker.getContainer(id);
 
         const logsOptions: Record<string, unknown> = {
             stdout: true,
@@ -90,7 +86,7 @@ app.get(
             follow: false,
             tail: parseInt(tail, 10),
         };
-        if (since) logsOptions['since'] = since;
+        if (since) logsOptions['since'] = Number(since);
 
         const logBuffer = await container.logs(logsOptions);
 
@@ -100,13 +96,12 @@ app.get(
 );
 
 app.post(
-    '/:name/exec',
-    route({ param: containerNameParamSchema, json: containerExecBodySchema }, async (c) => {
-        const { name } = c.req.valid('param');
+    '/:id/exec',
+    route({ param: containerIdParamSchema, json: containerExecBodySchema }, async (c) => {
+        const { id } = c.req.valid('param');
         const { command, workdir } = c.req.valid('json');
 
-        const dockerClient = getCurrentDockerClient();
-        const container = dockerClient.getContainer(decodeURIComponent(name));
+        const container = docker.getContainer(id);
 
         const execOptions: Record<string, unknown> = {
             Cmd: ['sh', '-c', command],
@@ -126,7 +121,7 @@ app.post(
         stderrPassthrough.on('data', (chunk: Buffer) => stderrChunks.push(chunk));
 
         await new Promise<void>((resolve, reject) => {
-            dockerClient.modem.demuxStream(stream, stdoutPassthrough, stderrPassthrough);
+            docker.modem.demuxStream(stream, stdoutPassthrough, stderrPassthrough);
             stream.on('end', resolve);
             stream.on('error', reject);
         });
@@ -390,7 +385,7 @@ app.post(
 
 app.post(
     '/:id/start',
-    route({ param: containerParamSchema }, async (c) => {
+    route({ param: containerIdParamSchema }, async (c) => {
         const { id } = c.req.valid('param');
         return await docker.getContainer(id).start();
     }),
@@ -398,7 +393,7 @@ app.post(
 
 app.post(
     '/:id/stop',
-    route({ param: containerParamSchema }, async (c) => {
+    route({ param: containerIdParamSchema }, async (c) => {
         const { id } = c.req.valid('param');
         return await docker.getContainer(id).stop();
     }),
@@ -406,7 +401,7 @@ app.post(
 
 app.post(
     '/:id/pause',
-    route({ param: containerParamSchema }, async (c) => {
+    route({ param: containerIdParamSchema }, async (c) => {
         const { id } = c.req.valid('param');
         await docker.getContainer(id).pause();
     }),
@@ -414,7 +409,7 @@ app.post(
 
 app.post(
     '/:id/unpause',
-    route({ param: containerParamSchema }, async (c) => {
+    route({ param: containerIdParamSchema }, async (c) => {
         const { id } = c.req.valid('param');
         await docker.getContainer(id).unpause();
     }),
@@ -422,7 +417,7 @@ app.post(
 
 app.post(
     '/:id/restart',
-    route({ param: containerParamSchema }, async (c) => {
+    route({ param: containerIdParamSchema }, async (c) => {
         const { id } = c.req.valid('param');
         await docker.getContainer(id).restart();
     }),
@@ -430,7 +425,7 @@ app.post(
 
 app.get(
     '/:id/info',
-    route({ param: containerParamSchema }, async (c) => {
+    route({ param: containerIdParamSchema }, async (c) => {
         const { id } = c.req.valid('param');
         const container = docker.getContainer(id);
 
@@ -448,7 +443,7 @@ app.get(
 
 app.delete(
     '/:id/remove',
-    route({ param: containerParamSchema }, async (c) => {
+    route({ param: containerIdParamSchema }, async (c) => {
         const { id } = c.req.valid('param');
         const container = docker.getContainer(id);
 
@@ -479,7 +474,7 @@ app.get(
 
 app.get(
     '/:id',
-    route({ param: containerParamSchema }, async (c) => {
+    route({ param: containerIdParamSchema }, async (c) => {
         const { id } = c.req.valid('param');
         const container = containersStateManager.getContainer(id);
 
