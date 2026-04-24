@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -109,12 +115,6 @@ export function DeleteNetworkConfig() {
                                     </SelectContent>
                                 </Select>
                             </FormControl>
-                            {isStale && (
-                                <p className="flex items-start gap-1 text-xs text-amber-500">
-                                    <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
-                                    {t('networkStaleWarning')}
-                                </p>
-                            )}
                             <FormMessage className="text-xs" />
                         </FormItem>
                     );

@@ -67,9 +67,7 @@ export function PushToRegistryConfig() {
                                     ) : isStale ? (
                                         <span className="flex items-center gap-1.5">
                                             <AlertTriangle className="h-3 w-3 shrink-0" />
-                                            {savedRegistryName
-                                                ? savedRegistryName
-                                                : t('registryUnavailable')}
+                                            {t('registryUnavailable')}
                                         </span>
                                     ) : (
                                         <SelectValue placeholder={t('registryPlaceholder')} />
@@ -93,12 +91,6 @@ export function PushToRegistryConfig() {
                                 </SelectContent>
                             </Select>
                         </FormControl>
-                        {isStale && (
-                            <p className="flex items-start gap-1 text-xs text-amber-500">
-                                <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
-                                {t('registryStaleWarning')}
-                            </p>
-                        )}
                         <FormMessage className="text-xs" />
                     </FormItem>
                 );

@@ -26,7 +26,7 @@ export function NodeLogsPanel({ buildId, nodeId, nodeStatus }: NodeLogsPanelProp
     const t = useTranslations('repository.builds.logs');
     const params = useParams<{ repositoryId: string }>();
 
-    const isLive = nodeStatus === 'running';
+    const isLive = nodeStatus === 'running' || nodeStatus === undefined;
 
     const { data: initialLogs = [], isLoading } = useSWR<BuildLogEntry[]>(
         `/api/repositories/${params.repositoryId}/builds/${buildId}/nodes/${nodeId}/logs`,

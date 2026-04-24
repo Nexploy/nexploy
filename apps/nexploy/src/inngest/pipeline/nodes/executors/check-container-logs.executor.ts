@@ -1,9 +1,4 @@
-import {
-    getFromAllOutputs,
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { getFromAllOutputs, INodeExecutor, NodeExecutionContext, NodeExecutionResult, } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { checkContainerLogsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -43,7 +38,7 @@ export class CheckContainerLogsExecutor implements INodeExecutor {
 
         await logger.info(
             nodeId,
-            `Checking logs of container "${containerId}" for pattern: ${pattern}`,
+            `Checking logs of container "${containerId}" for pattern: ${pattern} with since : ${since} (timeout: ${timeout}s)`,
         );
 
         const deadline = Date.now() + timeout * 1000;

@@ -72,10 +72,10 @@ export function BackupVolumeS3Config() {
                                         >
                                             <SelectTrigger className="max-w-full min-w-40 data-[placeholder]:!pl-3">
                                                 {isStale ? (
-                                                    <span className="flex min-w-0 items-center gap-1.5 pl-3">
+                                                    <span className="flex min-w-0 items-center gap-1.5">
                                                         <AlertTriangle className="h-3 w-3 shrink-0" />
                                                         <span className="truncate">
-                                                            {field.value ?? t('volumeUnavailable')}
+                                                            {t('volumeUnavailable')}
                                                         </span>
                                                     </span>
                                                 ) : (
@@ -106,12 +106,6 @@ export function BackupVolumeS3Config() {
                                     )}
                                 </RefAware>
                             </FormControl>
-                            {isStale && (
-                                <p className="flex items-start gap-1 text-xs text-amber-500">
-                                    <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
-                                    {t('volumeStaleWarning')}
-                                </p>
-                            )}
                             <FormMessage className="text-xs" />
                         </FormItem>
                     );
@@ -169,12 +163,6 @@ export function BackupVolumeS3Config() {
                                     </SelectContent>
                                 </Select>
                             </FormControl>
-                            {isStaleAccount && (
-                                <p className="flex items-start gap-1 text-xs text-amber-500">
-                                    <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
-                                    {tAdmin('awsAccountStaleWarning')}
-                                </p>
-                            )}
                             <FormMessage className="text-xs" />
                         </FormItem>
                     );

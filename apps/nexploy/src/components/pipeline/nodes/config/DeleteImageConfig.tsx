@@ -101,12 +101,6 @@ export function DeleteImageConfig() {
                                     </SelectContent>
                                 </Select>
                             </FormControl>
-                            {isStale && (
-                                <p className="flex items-start gap-1 text-xs text-amber-500">
-                                    <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
-                                    {t('imageStaleWarning')}
-                                </p>
-                            )}
                             <FormMessage className="text-xs" />
                         </FormItem>
                     );
