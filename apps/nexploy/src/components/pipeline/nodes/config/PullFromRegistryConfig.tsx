@@ -30,7 +30,7 @@ export function PullFromRegistryConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const { data: registries = [] } = useSWR<RegistryInfo[]>('/api/registries', fetcherApi);
+    const { data: registries = [] } = useSWR<RegistryInfo[]>({ url: '/api/registries' }, fetcherApi);
     const registryId = form.watch('registryId');
     const isDockerHub = !registryId || registryId === DOCKER_HUB;
 

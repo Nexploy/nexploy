@@ -26,7 +26,7 @@ export function WebhookCloneConfig() {
     const params = useParams<{ repositoryId: string }>();
 
     const { data: webhookStatus } = useSWR<WebhookStatus>(
-        `/api/repositories/${params.repositoryId}/webhook`,
+        { url: `/api/repositories/${params.repositoryId}/webhook` },
         fetcherApi,
     );
 

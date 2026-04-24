@@ -7,13 +7,15 @@ import { Prisma } from 'generated/client';
 import { RepositoryPayload } from '@/types/repository.type';
 
 export async function createRepository(
-    { repo, ...restRepositoryCreate }: RepositoryCreateForm,
+    { repo, name, gitProvider, gitAccountId }: RepositoryCreateForm,
     ctx: { session: Session },
 ) {
     try {
         const repository = await prisma.repository.create({
             data: {
-                ...restRepositoryCreate,
+                name,
+                gitProvider,
+                gitAccountId,
                 gitId: repo.id,
                 repositoryUrl: repo.url,
                 userId: ctx.session.user.id,

@@ -29,7 +29,7 @@ export function NodeLogsPanel({ buildId, nodeId, nodeStatus }: NodeLogsPanelProp
     const isLive = nodeStatus === 'running' || nodeStatus === undefined;
 
     const { data: initialLogs = [], isLoading } = useSWR<BuildLogEntry[]>(
-        `/api/repositories/${params.repositoryId}/builds/${buildId}/nodes/${nodeId}/logs`,
+        { url: `/api/repositories/${params.repositoryId}/builds/${buildId}/nodes/${nodeId}/logs` },
         fetcherApi,
     );
 

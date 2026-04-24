@@ -27,7 +27,7 @@ export function PushToRegistryConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const { data: registries, isLoading } = useSWR<RegistryInfo[]>('/api/registries', fetcherApi);
+    const { data: registries, isLoading } = useSWR<RegistryInfo[]>({ url: '/api/registries' }, fetcherApi);
     const registryList = registries ?? [];
 
     const savedRegistryName = form.watch('registryName');

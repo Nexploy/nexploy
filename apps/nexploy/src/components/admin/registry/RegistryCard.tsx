@@ -3,12 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from '@workspace/ui/components/accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from '@workspace/ui/components/accordion';
 import { LayoutList, Loader2, Pencil, RefreshCw, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
@@ -39,9 +34,13 @@ export function RegistryCard({ registry }: RegistryCardProps) {
         isValidating,
         error,
         mutate,
-    } = useSWR<RegistryImage[]>(`/api/registry/${registry.id}/images`, fetcherApi, {
-        errorRetryCount: 0,
-    });
+    } = useSWR<RegistryImage[]>(
+        { url: `/api/registry/${registry.id}/images`, disableToast: true },
+        fetcherApi,
+        {
+            errorRetryCount: 0,
+        },
+    );
 
     const handleDelete = () => {
         openAlertDialog({

@@ -54,7 +54,7 @@ export function GitSourceStep() {
     const t = useTranslations('repository.steps.gitSource');
     const tSource = useTranslations('repository.settings.source');
 
-    const { data: accounts } = useSWR<GitAccountSummary[]>('/api/git/accounts', fetcherApi);
+    const { data: accounts } = useSWR<GitAccountSummary[]>({ url: '/api/git/accounts' }, fetcherApi);
 
     const selectedAccountId = watch('gitAccountId');
 
@@ -62,7 +62,9 @@ export function GitSourceStep() {
 
     const { data: repos, isLoading: isLoadingRepos } = useSWR<GitRepository[]>(
         selectedAccount
-            ? `/api/git/repositories?provider=${selectedAccount.provider}&gitAccountId=${selectedAccount.id}`
+            ? {
+                  url: `/api/git/repositories?provider=${selectedAccount.provider}&gitAccountId=${selectedAccount.id}`,
+              }
             : null,
         fetcherApi,
     );

@@ -45,7 +45,9 @@ export function CloudflareDomainSelector<T extends FieldValues>({
     const currentHost = form.watch(`domains.${index}.host` as Path<T>) as string | undefined;
 
     const { data: zones, isLoading: isLoadingZones } = useSWR<CloudflareZone[]>(
-        selectedCredentialId ? `/api/cloudflare/zone?credentialId=${selectedCredentialId}` : null,
+        selectedCredentialId
+            ? { url: `/api/cloudflare/zone?credentialId=${selectedCredentialId}` }
+            : null,
         fetcherApi,
     );
 

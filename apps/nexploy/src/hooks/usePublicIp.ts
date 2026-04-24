@@ -7,7 +7,7 @@ interface PublicIpResponse {
 
 export function usePublicIp() {
     const { data, isLoading, error, mutate } = useSWR<PublicIpResponse>(
-        '/api/network/public-ip',
+        { url: '/api/network/public-ip' },
         fetcherApi,
         { revalidateOnFocus: false },
     );

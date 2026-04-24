@@ -37,7 +37,7 @@ export function BackupVolumeS3Config() {
 
     const { volumes, isLoading } = useEnvironmentVolumes(environmentId);
     const { data: awsAccounts, isLoading: isLoadingAccounts } = useSWR<AwsAccountInfo[]>(
-        '/api/aws/accounts',
+        { url: '/api/aws/accounts' },
         fetcherApi,
     );
     const awsAccountList = awsAccounts ?? [];

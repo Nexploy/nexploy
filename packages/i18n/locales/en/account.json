@@ -33,7 +33,7 @@
     },
     "notifications": {
         "title": "Notification Preferences",
-        "description": "Control how and when you receive notifications"
+        "description": "Control when you receive notifications"
     },
     "regional": {
         "title": "Regional Settings",

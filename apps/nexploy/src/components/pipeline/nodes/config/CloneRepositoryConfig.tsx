@@ -42,15 +42,19 @@ export function CloneRepositoryConfig() {
     const params = useParams<{ repositoryId: string }>();
 
     const { data: repo, isLoading: isLoadingRepo } = useSWR<RepositoryGitMeta>(
-        `/api/repositories/${params.repositoryId}`,
+        { url: `/api/repositories/${params.repositoryId}` },
         fetcherApi,
     );
     const { data: branches, isLoading: isLoadingBranches } = useSWR<GitBranch[]>(
         repo?.gitAccountId
-            ? `/api/git/branches?provider=${repo.gitProvider}&gitAccountId=${repo.gitAccountId}&repoId=${repo.gitId}&owner=${repo.name.split('/')[0]}&repoName=${repo.name.split('/')[1]}`
+            ? {
+                  url: `/api/git/branches?provider=${repo.gitProvider}&gitAccountId=${repo.gitAccountId}&repoId=${repo.gitId}&owner=${repo.name.split('/')[0]}&repoName=${repo.name.split('/')[1]}`,
+              }
             : null,
         fetcherApi,
     );
+
+    console.log(repo);
 
     const currentBranch = form.getValues('branch');
     useEffect(() => {

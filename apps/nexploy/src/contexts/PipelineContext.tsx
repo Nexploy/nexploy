@@ -98,7 +98,7 @@ export function PipelineProvider({
     });
 
     useSWR<{ nodeStatuses: Record<string, NodeRunStatus> }>(
-        activeBuildId ? `/api/repositories/${repositoryId}/builds/${activeBuildId}` : null,
+        activeBuildId ? { url: `/api/repositories/${repositoryId}/builds/${activeBuildId}` } : null,
         fetcherApi,
         {
             onSuccess: (buildData) => setNodeStatuses(buildData?.nodeStatuses),

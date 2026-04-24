@@ -6,7 +6,7 @@ import { auth } from '@/lib/auth/auth';
 
 const handleI18nRouting = createMiddleware(routing);
 
-const PUBLIC_ROUTES = ['/signin', '/2fa', '/2fa/backup-codes', '/setup'];
+const PUBLIC_ROUTES = ['/signin', '/2fa', '/2fa/backup-codes'];
 
 const ADMIN_ROUTES = ['/admin'];
 
@@ -25,13 +25,24 @@ async function getRedirectUrl(request: NextRequest): Promise<string | null> {
         auth.api.getSession({ headers: request.headers }),
     ]);
 
-    const isNoAuthRoute = PUBLIC_ROUTES.some((route) => path.startsWith(route));
-    const isAdminRoute = ADMIN_ROUTES.some((route) => path.startsWith(route));
+    const setupRoute = path.startsWith('/setup');
+    const publicRoute = PUBLIC_ROUTES.some((route) => path.startsWith(route));
+    const adminRoute = ADMIN_ROUTES.some((route) => path.startsWith(route));
 
-    if (!hasAdmin) return path.startsWith('/setup') ? null : '/setup';
-    if (!session) return isNoAuthRoute ? null : '/signin';
-    if (isNoAuthRoute) return '/';
-    if (isAdminRoute && session.user.role !== 'admin') return '/';
+    // No admin yet: only /setup is accessible
+    if (!hasAdmin) return setupRoute ? null : '/setup';
+
+    // /setup is no longer accessible once admin is created
+    if (setupRoute) return '/';
+
+    // No session: only public routes are accessible
+    if (!session) return publicRoute ? null : '/signin';
+
+    // Authenticated: public routes redirect to the app
+    if (publicRoute) return '/';
+
+    // Admin routes are restricted to admins
+    if (adminRoute && session.user.role !== 'admin') return '/';
 
     return null;
 }
