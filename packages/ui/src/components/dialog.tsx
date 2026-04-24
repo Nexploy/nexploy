@@ -38,14 +38,16 @@ function DialogOverlay({
     );
 }
 
+export interface ExtraParams {
+    showCloseButton?: boolean;
+}
+
 function DialogContent({
     className,
     children,
     showCloseButton = true,
     ...props
-}: React.ComponentProps<typeof DialogPrimitive.Content> & {
-    showCloseButton?: boolean;
-}) {
+}: React.ComponentProps<typeof DialogPrimitive.Content> & ExtraParams) {
     return (
         <DialogPortal data-slot="dialog-portal">
             <DialogOverlay />

@@ -15,6 +15,7 @@ import { getHostname } from '@/utils/url';
 import Link from 'next/link';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
 import { Separator } from '@workspace/ui/components/separator';
+import { ReassociateGitAccountDialog } from '@/components/repositories/reassociateGitAccount/ReassociateGitAccountDialog';
 
 interface RepositoryIdPageProps {
     params: Promise<{
@@ -41,6 +42,10 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
 
     return (
         <BreadcrumbProvider segments={{ repositoryId: repository.name }}>
+            <ReassociateGitAccountDialog
+                repositoryId={repository.id}
+                open={!repository.gitAccountId}
+            />
             <div className="flex h-full w-full flex-1 flex-col">
                 <div className="flex flex-1 flex-col gap-4 overflow-hidden">
                     <div className="flex items-start justify-between gap-2 px-5">

@@ -206,6 +206,14 @@
         "startPeriod": "Période de démarrage",
         "startPeriodDescription": "Temps d'initialisation avant checks"
     },
+    "reassociateGitAccount": {
+        "title": "Compte Git déconnecté",
+        "description": "Le compte Git associé à ce dépôt a été supprimé. Sans compte connecté, les builds ne peuvent pas cloner votre dépôt et les webhooks ne peuvent pas être authentifiés. Veuillez sélectionner un compte Git à ré-associer à ce dépôt.",
+        "save": "Enregistrer",
+        "saving": "Enregistrement...",
+        "success": "Compte Git ré-associé avec succès",
+        "error": "Échec de la ré-association du compte Git"
+    },
     "steps": {
         "gitSource": {
             "title": "Source Git",

@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import { ReactElement } from 'react';
 import { DialogContentProps } from '@radix-ui/react-dialog';
+import { ExtraParams } from '@workspace/ui/components/dialog.tsx';
 
 export interface ConfirmationDialogState {
     isOpen: boolean;
     title?: ReactElement | string;
-    props?: DialogContentProps;
+    props?: DialogContentProps & ExtraParams;
     closeOnBackground?: boolean;
     description?: string | ReactElement;
     content?: any;

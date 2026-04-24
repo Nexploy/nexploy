@@ -206,6 +206,14 @@
         "startPeriod": "Start period",
         "startPeriodDescription": "Initialization time before checks"
     },
+    "reassociateGitAccount": {
+        "title": "Git account disconnected",
+        "description": "The Git account linked to this repository has been removed. Without a connected account, builds cannot clone your repository and webhooks cannot be authenticated. Please select a Git account to re-associate with this repository.",
+        "save": "Save",
+        "saving": "Saving...",
+        "success": "Git account successfully re-associated",
+        "error": "Failed to re-associate Git account"
+    },
     "steps": {
         "gitSource": {
             "title": "Git Source",
