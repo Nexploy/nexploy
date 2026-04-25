@@ -18,6 +18,7 @@ interface TwoFactoVerifCodeFormProps {
 
 export function TwoFactorVerifCodeForm({ onSuccess }: TwoFactoVerifCodeFormProps) {
     const tValidation = useTranslations('validation');
+    const t = useTranslations('auth.twoFactor');
     const router = useRouter();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
@@ -73,7 +74,7 @@ export function TwoFactorVerifCodeForm({ onSuccess }: TwoFactoVerifCodeFormProps
                     disabled={action.isPending || !form.formState.isDirty}
                     className="w-full"
                 >
-                    Verify Authentication Code
+                    {t('submit')}
                 </Button>
             </form>
         </Form>

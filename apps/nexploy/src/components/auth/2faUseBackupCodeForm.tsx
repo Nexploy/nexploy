@@ -22,6 +22,7 @@ interface TwoFactoVerifCodeFormProps {
 
 export function TwoFactorUseBackupCodeForm({ onSuccess }: TwoFactoVerifCodeFormProps) {
     const tValidation = useTranslations('validation');
+    const t = useTranslations('auth.twoFactor');
     const router = useRouter();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
@@ -84,7 +85,7 @@ export function TwoFactorUseBackupCodeForm({ onSuccess }: TwoFactoVerifCodeFormP
                     disabled={action.isPending || !form.formState.isDirty}
                     className="w-full"
                 >
-                    Use backup code
+                    {t('backupCodeSubmit')}
                 </Button>
             </form>
         </Form>

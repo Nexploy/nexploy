@@ -5,7 +5,6 @@ import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { type Node } from '@xyflow/react';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { Button } from '@workspace/ui/components/button';
-import { Loader2 } from 'lucide-react';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
@@ -103,9 +102,9 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
                         <Button
                             type="submit"
                             size="sm"
+                            isLoading={action.isPending}
                             disabled={!form.formState.isDirty || action.isPending}
                         >
-                            {action.isPending && <Loader2 className="animate-spin" />}
                             {tConfig('save')}
                         </Button>
                     </DialogFooter>
