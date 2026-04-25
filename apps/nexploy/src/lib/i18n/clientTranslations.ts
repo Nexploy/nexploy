@@ -9,17 +9,14 @@ const translations: Record<Locale, typeof enDocker> = {
 };
 
 export function getLocale(): Locale {
-    if (typeof window === 'undefined') return 'en';
-
     const match = document.cookie.match(/(?:^|;\s*)NEXT_LOCALE=(\w+)/);
     if (match && match[1] === 'fr') return 'fr';
     return 'en';
 }
 
-export function toastT(key: string, params?: Record<string, string | number>): string {
+export function clientT(key: string, params?: Record<string, string | number>): string {
     const locale = getLocale();
     const keys = key.split('.');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let value: any = translations[locale];
 
     for (const k of keys) {

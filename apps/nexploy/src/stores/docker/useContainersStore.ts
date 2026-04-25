@@ -6,7 +6,7 @@ import {
 import { toast } from 'sonner';
 import { ContainerState } from '@workspace/typescript-interface/stores/docker/containersStore';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
-import { toastT } from '@/lib/i18n/toastTranslations';
+import { clientT } from '@/lib/i18n/clientTranslations';
 
 export const useContainersStore = create<ContainerState>((set, get) => ({
     containers: [],
@@ -116,10 +116,7 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
                     if (!data.container.image?.startsWith('sha256:')) {
                         get().addContainer(data.container);
                         toast.success(
-                            toastT('toasts.containerAdded', { name: data.container.name }),
-                            {
-                                className: 'container-toast',
-                            },
+                            clientT('toasts.containerAdded', { name: data.container.name }),
                         );
                     }
                     set({ lastUpdate: data.timestamp });
@@ -139,15 +136,10 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
 
                     if (!data.container?.image?.startsWith('sha256:')) {
                         if (action === 'die') {
-                            toast.error(toastT('toasts.containerDied', { name }), {
-                                className: 'container-toast',
-                            });
+                            toast.error(clientT('toasts.containerDied', { name }));
                         } else {
                             toast.success(
-                                toastT('toasts.containerAction', { name, action: action || '' }),
-                                {
-                                    className: 'container-toast',
-                                },
+                                clientT('toasts.containerAction', { name, action: action || '' }),
                             );
                         }
                     }
@@ -164,10 +156,9 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
                     get().removeContainer(data.containerId);
                     if (!data.oldState?.image?.startsWith('sha256:')) {
                         toast.success(
-                            toastT('toasts.containerRemoved', { name: data.oldState?.name || '' }),
-                            {
-                                className: 'container-toast',
-                            },
+                            clientT('toasts.containerRemoved', {
+                                name: data.oldState?.name || '',
+                            }),
                         );
                     }
                     set({ lastUpdate: data.timestamp });

@@ -1,4 +1,4 @@
 export interface NotificationState {
-    containerToast: boolean;
-    setContainerToast: (enabled: boolean) => void;
+    showContainerToast: boolean;
+    setShowContainerToast: (enabled: boolean) => void;
 }

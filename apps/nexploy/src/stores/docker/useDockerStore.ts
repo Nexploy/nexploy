@@ -4,7 +4,7 @@ import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker
 import { isToastT } from '@/utils/isToastT';
 import { DockerState } from '@workspace/typescript-interface/stores/docker/dockerStore';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
-import { toastT } from '@/lib/i18n/toastTranslations';
+import { clientT } from '@/lib/i18n/clientTranslations';
 
 export const useDockerStore = create<DockerState>((set, get) => ({
     status: 'connecting',
@@ -58,7 +58,7 @@ export const useDockerStore = create<DockerState>((set, get) => ({
                         if (loadingToast && message?.level === 'loading') return;
                         if (loadingToast) toast.dismiss();
 
-                        toast[message?.level](toastT(message.key));
+                        toast[message?.level](clientT(message.key));
                     }
                     set({ status, lastUpdate: timestamp });
                 }),
@@ -69,7 +69,7 @@ export const useDockerStore = create<DockerState>((set, get) => ({
                     const reconnectInfo = JSON.parse(e.data);
 
                     toast.warning(
-                        toastT('reconnecting', {
+                        clientT('reconnecting', {
                             attempt: reconnectInfo.attempt,
                             maxAttempts: reconnectInfo.maxAttempts,
                             delay: reconnectInfo.delay,
@@ -123,7 +123,7 @@ export const useDockerStore = create<DockerState>((set, get) => ({
                 lastUpdate: Date.now(),
             });
 
-            toast.error(toastT('toasts.dockerConnectionFailed'));
+            toast.error(clientT('toasts.dockerConnectionFailed'));
         }
     },
 

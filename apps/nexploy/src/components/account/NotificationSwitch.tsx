@@ -10,7 +10,7 @@ interface NotificationSwitchProps {
 }
 
 export function NotificationSwitch({ label, description }: NotificationSwitchProps) {
-    const { containerToast, setContainerToast } = useNotificationStore();
+    const { showContainerToast, setShowContainerToast } = useNotificationStore();
 
     return (
         <Label className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
@@ -20,8 +20,8 @@ export function NotificationSwitch({ label, description }: NotificationSwitchPro
             </div>
             <Switch
                 id="notifications"
-                checked={containerToast}
-                onCheckedChange={setContainerToast}
+                checked={showContainerToast}
+                onCheckedChange={setShowContainerToast}
             />
         </Label>
     );

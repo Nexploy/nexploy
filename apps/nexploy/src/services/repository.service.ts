@@ -228,3 +228,14 @@ export async function updateEnvVariables(
         throw new Error('Failed to update env variables');
     }
 }
+
+export async function relinkGitAccount(repositoryId: string, gitAccountId: string) {
+    try {
+        await prisma.repository.update({
+            where: { id: repositoryId },
+            data: { gitAccountId },
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to relink Git account');
+    }
+}

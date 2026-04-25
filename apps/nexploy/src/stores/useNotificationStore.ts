@@ -5,8 +5,8 @@ import { NotificationState } from '@workspace/typescript-interface/stores/notifi
 export const useNotificationStore = create<NotificationState>()(
     persist(
         (set) => ({
-            containerToast: true,
-            setContainerToast: (enabled) => set({ containerToast: enabled }),
+            showContainerToast: true,
+            setShowContainerToast: (enabled) => set({ showContainerToast: enabled }),
         }),
         {
             name: 'notification-storage',

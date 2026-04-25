@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { ImageState } from '@workspace/typescript-interface/stores/docker/imagesStore';
-import { toastT } from '@/lib/i18n/toastTranslations';
+import { clientT } from '@/lib/i18n/clientTranslations';
 
 export const useImageStore = create<ImageState>((set, get) => ({
     images: [],
@@ -132,7 +132,7 @@ export const useImageStore = create<ImageState>((set, get) => ({
                     const imageName = data.image.repoTags?.find((t) => t !== '<none>:<none>');
                     if (imageName) {
                         toast.dismiss('downloadingImage');
-                        toast.success(toastT('toasts.imageAdded', { name: imageName }));
+                        toast.success(clientT('toasts.imageAdded', { name: imageName }));
                     }
                     set({ lastUpdate: data.timestamp });
                 }),
@@ -157,7 +157,7 @@ export const useImageStore = create<ImageState>((set, get) => ({
                     get().removeImage(data.imageId);
                     const imageName = data.oldState?.repoTags?.find((t) => t !== '<none>:<none>');
                     if (imageName) {
-                        toast.success(toastT('toasts.imageRemoved', { name: imageName }));
+                        toast.success(clientT('toasts.imageRemoved', { name: imageName }));
                     }
                     set({ lastUpdate: data.timestamp });
                 }),

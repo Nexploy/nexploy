@@ -24,41 +24,22 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Button } from '@workspace/ui/components/button';
-import { Badge } from '@workspace/ui/components/badge';
-import { BookMarked, Building2, GitBranch as GitBranchIcon } from 'lucide-react';
-import { providerIcons } from '@/components/git/providerIcons';
+import { BookMarked, GitBranch as GitBranchIcon } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
+import { useState } from 'react';
 import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import Link from 'next/link';
-import { GitRepository } from '@workspace/typescript-interface/git/git';
-import { getHostname } from '@/utils/url';
-
-interface GitAccountSummary {
-    id: string;
-    provider: string;
-    providerAccountId: string;
-    providerUsername: string | null;
-    gitProviderId: string;
-    gitProvider: {
-        displayName: string;
-        ownerName: string | null;
-        ownerType: string | null;
-        baseUrl: string | null;
-    };
-}
+import { GitAccountSummary, GitRepository } from '@workspace/typescript-interface/git/git';
+import { GitAccountFormField } from '@/components/git/GitAccountFormField';
 
 export function GitSourceStep() {
-    const { control, watch, setValue } = useFormContext();
+    const { control, setValue } = useFormContext();
     const t = useTranslations('repository.steps.gitSource');
     const tSource = useTranslations('repository.settings.source');
 
-    const { data: accounts } = useSWR<GitAccountSummary[]>({ url: '/api/git/accounts' }, fetcherApi);
-
-    const selectedAccountId = watch('gitAccountId');
-
-    const selectedAccount = accounts?.find((a) => a.id === selectedAccountId);
+    const [selectedAccount, setSelectedAccount] = useState<GitAccountSummary | undefined>();
 
     const { data: repos, isLoading: isLoadingRepos } = useSWR<GitRepository[]>(
         selectedAccount
@@ -68,8 +49,6 @@ export function GitSourceStep() {
             : null,
         fetcherApi,
     );
-
-    const hasAccounts = accounts && accounts.length > 0;
 
     return (
         <Card>
@@ -85,130 +64,69 @@ export function GitSourceStep() {
                 </div>
             </CardHeader>
             <CardContent className="space-y-4">
-                {!hasAccounts ? (
-                    <div className="text-muted-foreground flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-8 text-center">
-                        <div className="text-sm">{t('noAccounts')}</div>
-                        <Button asChild>
-                            <Link href="/account#integrations">{t('connectAccount')}</Link>
-                        </Button>
-                    </div>
-                ) : (
-                    <>
-                        <FormField
-                            control={control}
-                            name="gitAccountId"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('account')}</FormLabel>
-                                    <Select
-                                        onValueChange={(value) => {
-                                            field.onChange(value);
-                                            const account = accounts?.find((a) => a.id === value);
-                                            if (account) {
-                                                setValue('gitProvider', account.provider);
-                                            }
-                                            setValue('repo', undefined);
-                                        }}
-                                        value={field.value || ''}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder={t('selectAccount')} />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                            <SelectLabel>{t('account')}</SelectLabel>
-                                            {accounts?.map((account) => {
-                                                const isOrg =
-                                                    account.gitProvider.ownerType ===
-                                                    'Organization';
-                                                const hostname = getHostname(
-                                                    account.gitProvider.baseUrl,
-                                                );
-                                                return (
-                                                    <SelectItem key={account.id} value={account.id}>
-                                                        <span className="flex items-center gap-2">
-                                                            {providerIcons[account.provider]}
-                                                            <span>
-                                                                {account.providerUsername ??
-                                                                    account.providerAccountId}
-                                                            </span>
-                                                            {hostname && (
-                                                                <span className="text-muted-foreground text-xs">
-                                                                    {hostname}
-                                                                </span>
-                                                            )}
-                                                            {isOrg && (
-                                                                <Badge
-                                                                    variant="secondary"
-                                                                    className="gap-1 py-0 text-xs"
-                                                                >
-                                                                    <Building2 className="size-3" />
-                                                                    {account.gitProvider.ownerName}
-                                                                </Badge>
-                                                            )}
-                                                        </span>
-                                                    </SelectItem>
-                                                );
-                                            })}
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                <GitAccountFormField
+                    onValueChange={(_, account) => {
+                        setValue('gitProvider', account.provider);
+                        setValue('repo', undefined);
+                        setSelectedAccount(account);
+                    }}
+                    noAccountsContent={
+                        <div className="text-muted-foreground flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-8 text-center">
+                            <div className="text-sm">{t('noAccounts')}</div>
+                            <Button asChild>
+                                <Link href="/account#integrations">{t('connectAccount')}</Link>
+                            </Button>
+                        </div>
+                    }
+                />
 
-                        {selectedAccount && (
-                            <FormField
-                                control={control}
-                                name="repo"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{tSource('repository')}</FormLabel>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                const repo = repos?.find((r) => r.id === value);
-                                                if (repo) {
-                                                    field.onChange(repo);
-                                                    setValue('name', repo.fullName);
+                {selectedAccount && (
+                    <FormField
+                        control={control}
+                        name="repo"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{tSource('repository')}</FormLabel>
+                                <Select
+                                    onValueChange={(value) => {
+                                        const repo = repos?.find((r) => r.id === value);
+                                        if (repo) {
+                                            field.onChange(repo);
+                                            setValue('name', repo.fullName);
+                                        }
+                                    }}
+                                    value={field.value?.id || ''}
+                                    disabled={isLoadingRepos}
+                                >
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue
+                                                placeholder={
+                                                    isLoadingRepos
+                                                        ? tSource('loading')
+                                                        : tSource('selectRepository')
                                                 }
-                                            }}
-                                            value={field.value?.id || ''}
-                                            disabled={isLoadingRepos}
-                                        >
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue
-                                                        placeholder={
-                                                            isLoadingRepos
-                                                                ? tSource('loading')
-                                                                : tSource('selectRepository')
-                                                        }
-                                                    />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    <SelectLabel>{tSource('repository')}</SelectLabel>
-                                                    {repos?.map((repo) => (
-                                                        <SelectItem key={repo.id} value={repo.id}>
-                                                            <span className="flex items-center gap-2">
-                                                                <BookMarked />
-                                                                {repo.fullName || repo.name}
-                                                            </span>
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                            />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>{tSource('repository')}</SelectLabel>
+                                            {repos?.map((repo) => (
+                                                <SelectItem key={repo.id} value={repo.id}>
+                                                    <span className="flex items-center gap-2">
+                                                        <BookMarked />
+                                                        {repo.fullName || repo.name}
+                                                    </span>
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
                         )}
-                    </>
+                    />
                 )}
             </CardContent>
         </Card>

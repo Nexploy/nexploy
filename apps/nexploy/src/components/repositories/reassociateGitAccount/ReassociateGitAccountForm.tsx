@@ -1,124 +1,105 @@
 'use client';
 
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
-import { Button } from '@workspace/ui/components/button';
-import { Badge } from '@workspace/ui/components/badge';
-import { Building2 } from 'lucide-react';
-import { providerIcons } from '@/components/git/providerIcons';
-import { getHostname } from '@/utils/url';
-import useSWR from 'swr';
-import { useState } from 'react';
+import { Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { fetcherApi } from '@/lib/api/fetcherApi';
-import { useAction } from 'next-safe-action/hooks';
-import { relinkGitAccountAction } from '@/actions/repository/relinkGitAccount.action';
-import { toast } from 'sonner';
 import Link from 'next/link';
-
-interface GitAccountSummary {
-    id: string;
-    provider: string;
-    providerAccountId: string;
-    providerUsername: string | null;
-    gitProviderId: string;
-    gitProvider: {
-        displayName: string;
-        ownerName: string | null;
-        ownerType: string | null;
-        baseUrl: string | null;
-    };
-}
+import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form } from '@workspace/ui/components/form';
+import { Button } from '@workspace/ui/components/button';
+import { relinkGitAccountAction } from '@/actions/repository/relinkGitAccount.action';
+import { relinkGitAccountSchema } from '@workspace/schemas-zod/repository/relinkGitAccount.schema';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import { DeleteRepositoryForm } from '@/components/repositories/DeleteRepositoryForm';
+import { GitAccountFormField } from '@/components/git/GitAccountFormField';
 
 interface ReassociateGitAccountFormProps {
     repositoryId: string;
+    repositoryName: string;
+    onClose: () => void;
+    onReopen: () => void;
 }
 
-export function ReassociateGitAccountForm({ repositoryId }: ReassociateGitAccountFormProps) {
+export function ReassociateGitAccountForm({
+    repositoryId,
+    repositoryName,
+    onClose,
+    onReopen,
+}: ReassociateGitAccountFormProps) {
     const t = useTranslations('repository.reassociateGitAccount');
     const tSource = useTranslations('repository.steps.gitSource');
+    const tDanger = useTranslations('repository.settings.dangerZone');
+    const { openDialog } = useConfirmationDialogStore();
 
-    const { data: accounts } = useSWR<GitAccountSummary[]>(
-        { url: '/api/git/accounts' },
-        fetcherApi,
+    const { form, handleSubmitWithAction } = useHookFormAction(
+        relinkGitAccountAction.bind(null, repositoryId),
+        zodResolver(relinkGitAccountSchema),
+        {
+            formProps: {
+                defaultValues: { gitAccountId: '' },
+            },
+            actionProps: {
+                onSuccess: () => onClose(),
+            },
+        },
     );
-    const [selectedAccountId, setSelectedAccountId] = useState<string>('');
 
-    const { execute, isPending } = useAction(relinkGitAccountAction.bind(null, repositoryId), {
-        onSuccess: () => {
-            toast.success(t('success'));
-        },
-        onError: () => {
-            toast.error(t('error'));
-        },
-    });
-
-    const hasAccounts = accounts && accounts.length > 0;
+    const handleOpenDelete = () => {
+        onClose();
+        openDialog({
+            title: tDanger('deleteTitle'),
+            description: tDanger('deleteDescription'),
+            props: { showCloseButton: false },
+            closeOnBackground: false,
+            content: (
+                <DeleteRepositoryForm
+                    repositoryId={repositoryId}
+                    repositoryName={repositoryName}
+                    onCancel={onReopen}
+                />
+            ),
+        });
+    };
 
     return (
-        <div className="flex flex-col gap-4">
-            {!hasAccounts ? (
-                <div className="text-muted-foreground flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-6 text-center text-sm">
-                    <span>{tSource('noAccounts')}</span>
-                    <Button asChild size="sm">
-                        <Link href="/account#integrations">{tSource('connectAccount')}</Link>
-                    </Button>
-                </div>
-            ) : (
-                <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
-                    <SelectTrigger>
-                        <SelectValue placeholder={tSource('selectAccount')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectLabel>{tSource('account')}</SelectLabel>
-                            {accounts.map((account) => {
-                                const isOrg = account.gitProvider.ownerType === 'Organization';
-                                const hostname = getHostname(account.gitProvider.baseUrl);
-                                return (
-                                    <SelectItem key={account.id} value={account.id}>
-                                        <span className="flex items-center gap-2">
-                                            {providerIcons[account.provider]}
-                                            <span>
-                                                {account.providerUsername ??
-                                                    account.providerAccountId}
-                                            </span>
-                                            {hostname && (
-                                                <span className="text-muted-foreground text-xs">
-                                                    {hostname}
-                                                </span>
-                                            )}
-                                            {isOrg && (
-                                                <Badge
-                                                    variant="secondary"
-                                                    className="gap-1 py-0 text-xs"
-                                                >
-                                                    <Building2 className="size-3" />
-                                                    {account.gitProvider.ownerName}
-                                                </Badge>
-                                            )}
-                                        </span>
-                                    </SelectItem>
-                                );
-                            })}
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            )}
+        <Form {...form}>
+            <form onSubmit={handleSubmitWithAction} className="flex flex-col gap-4 px-6 pb-6">
+                <GitAccountFormField
+                    noAccountsContent={
+                        <div className="text-muted-foreground flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-6 text-center text-sm">
+                            <span>{tSource('noAccounts')}</span>
+                            <Button asChild size="sm" onClick={onClose}>
+                                <Link href="/account#integrations">
+                                    {tSource('connectAccount')}
+                                </Link>
+                            </Button>
+                        </div>
+                    }
+                />
 
-            <Button
-                disabled={!selectedAccountId || isPending}
-                onClick={() => execute({ gitAccountId: selectedAccountId })}
-            >
-                {isPending ? t('saving') : t('save')}
-            </Button>
-        </div>
+                <Button
+                    type="submit"
+                    isLoading={form.formState.isSubmitting}
+                    disabled={form.formState.isSubmitting}
+                >
+                    {t('save')}
+                </Button>
+
+                <div className="flex items-center gap-3">
+                    <div className="bg-border h-px flex-1" />
+                    <span className="text-muted-foreground text-xs">{t('orDelete')}</span>
+                    <div className="bg-border h-px flex-1" />
+                </div>
+
+                <Button
+                    type="button"
+                    variant="destructive"
+                    icon={Trash2}
+                    onClick={handleOpenDelete}
+                >
+                    {tDanger('deleteButton')}
+                </Button>
+            </form>
+        </Form>
     );
 }

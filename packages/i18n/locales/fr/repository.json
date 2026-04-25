@@ -212,7 +212,8 @@
         "save": "Enregistrer",
         "saving": "Enregistrement...",
         "success": "Compte Git ré-associé avec succès",
-        "error": "Échec de la ré-association du compte Git"
+        "error": "Échec de la ré-association du compte Git",
+        "orDelete": "Ou, supprimer ce dépôt"
     },
     "steps": {
         "gitSource": {
@@ -249,11 +250,11 @@
     "settings": {
         "dangerZone": {
             "title": "Zone de danger",
-            "description": "Actions irréversibles sur ce repository",
-            "deleteButton": "Supprimer le repository",
-            "deleteTitle": "Supprimer le repository ?",
+            "description": "Actions irréversibles sur ce dépôt",
+            "deleteButton": "Supprimer le dépôt",
+            "deleteTitle": "Supprimer le dépôt ?",
             "deleteDescription": "Cette action est irréversible. Tous les builds, logs et configurations seront supprimés définitivement.",
-            "confirmLabel": "Tapez {name} pour confirmer",
+            "confirmLabel": "Tapez <highlight>{name}</highlight> pour confirmer",
             "cancel": "Annuler",
             "delete": "Supprimer",
             "deleteError": "Erreur lors de la suppression"

@@ -212,7 +212,8 @@
         "save": "Save",
         "saving": "Saving...",
         "success": "Git account successfully re-associated",
-        "error": "Failed to re-associate Git account"
+        "error": "Failed to re-associate Git account",
+        "orDelete": "Or, delete this repository"
     },
     "steps": {
         "gitSource": {
@@ -254,7 +255,7 @@
             "deleteButton": "Delete repository",
             "deleteTitle": "Delete repository?",
             "deleteDescription": "This action is irreversible. All builds, logs and configurations will be permanently deleted.",
-            "confirmLabel": "Type {name} to confirm",
+            "confirmLabel": "Type <highlight>{name}</highlight> to confirm",
             "cancel": "Cancel",
             "delete": "Delete",
             "deleteError": "Error deleting"

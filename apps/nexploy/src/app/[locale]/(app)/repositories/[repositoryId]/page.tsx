@@ -44,6 +44,7 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
         <BreadcrumbProvider segments={{ repositoryId: repository.name }}>
             <ReassociateGitAccountDialog
                 repositoryId={repository.id}
+                repositoryName={repository.name}
                 open={!repository.gitAccountId}
             />
             <div className="flex h-full w-full flex-1 flex-col">

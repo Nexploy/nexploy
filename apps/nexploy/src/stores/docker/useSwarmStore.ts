@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { toast } from 'sonner';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
-import { toastT } from '@/lib/i18n/toastTranslations';
+import { clientT } from '@/lib/i18n/clientTranslations';
 import type { SwarmState } from '@workspace/typescript-interface/stores/docker/swarmStore';
 import type {
     SwarmEvent,
@@ -149,7 +149,7 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 sseMultiplexer.subscribe('swarm', 'node-added', (e) => {
                     const data = JSON.parse(e.data) as SwarmNodeAddedEvent;
                     get().addNode(data.node);
-                    toast.success(toastT('toasts.nodeJoined', { hostname: data.node.hostname }));
+                    toast.success(clientT('toasts.nodeJoined', { hostname: data.node.hostname }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -161,7 +161,7 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
 
                     if (data.changes.role) {
                         toast.info(
-                            toastT('toasts.nodeRoleChanged', {
+                            clientT('toasts.nodeRoleChanged', {
                                 hostname: data.node.hostname,
                                 role: data.changes.role.to,
                             }),
@@ -169,7 +169,7 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                     }
                     if (data.changes.availability) {
                         toast.info(
-                            toastT('toasts.nodeAvailabilityChanged', {
+                            clientT('toasts.nodeAvailabilityChanged', {
                                 hostname: data.node.hostname,
                                 availability: data.changes.availability.to,
                             }),
@@ -177,12 +177,12 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                     }
                     if (data.changes.state) {
                         if (data.changes.state.to === 'down') {
-                            toast.error(toastT('toasts.nodeDown', { hostname: data.node.hostname }));
+                            toast.error(clientT('toasts.nodeDown', { hostname: data.node.hostname }));
                         } else if (
                             data.changes.state.to === 'ready' &&
                             data.changes.state.from === 'down'
                         ) {
-                            toast.success(toastT('toasts.nodeBackOnline', { hostname: data.node.hostname }));
+                            toast.success(clientT('toasts.nodeBackOnline', { hostname: data.node.hostname }));
                         }
                     }
 
@@ -194,7 +194,7 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 sseMultiplexer.subscribe('swarm', 'node-removed', (e) => {
                     const data = JSON.parse(e.data) as SwarmNodeRemovedEvent;
                     get().removeNode(data.nodeId);
-                    toast.info(toastT('toasts.nodeLeft', { hostname: data.previousNode.hostname }));
+                    toast.info(clientT('toasts.nodeLeft', { hostname: data.previousNode.hostname }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -203,7 +203,7 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 sseMultiplexer.subscribe('swarm', 'service-added', (e) => {
                     const data = JSON.parse(e.data) as SwarmServiceAddedEvent;
                     get().addService(data.service);
-                    toast.success(toastT('toasts.serviceCreated', { name: data.service.name }));
+                    toast.success(clientT('toasts.serviceCreated', { name: data.service.name }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -220,7 +220,7 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 sseMultiplexer.subscribe('swarm', 'service-removed', (e) => {
                     const data = JSON.parse(e.data) as SwarmServiceRemovedEvent;
                     get().removeService(data.serviceId);
-                    toast.info(toastT('toasts.serviceRemoved', { name: data.previousService.name }));
+                    toast.info(clientT('toasts.serviceRemoved', { name: data.previousService.name }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -240,7 +240,7 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
 
                     if (data.changes.state?.to === 'failed') {
                         toast.error(
-                            toastT('toasts.taskFailed', {
+                            clientT('toasts.taskFailed', {
                                 id: data.task.id.slice(0, 12),
                                 error: data.task.error || 'Unknown error',
                             }),

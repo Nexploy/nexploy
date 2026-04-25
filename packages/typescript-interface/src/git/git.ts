@@ -1,3 +1,17 @@
+export interface GitAccountSummary {
+    id: string;
+    provider: string;
+    providerAccountId: string;
+    providerUsername: string | null;
+    gitProviderId: string;
+    gitProvider: {
+        displayName: string;
+        ownerName: string | null;
+        ownerType: string | null;
+        baseUrl: string | null;
+    };
+}
+
 export interface GitRepository {
     id: string;
     name: string;
