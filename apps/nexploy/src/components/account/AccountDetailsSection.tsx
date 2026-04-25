@@ -1,10 +1,4 @@
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { Bell, Globe, Plug, Shield } from 'lucide-react';
 import { TwoFactorAuth } from '@/components/account/2fa/TwoFactorAuth';
 import { ProfileInfoForm } from '@/components/account/2fa/forms/ProfileInfoForm';
@@ -15,6 +9,7 @@ import { getUserSession } from '@/services/auth/auth.service';
 import { Label } from '@workspace/ui/components/label';
 import { getTranslations } from 'next-intl/server';
 import { AcountIntegrations } from '@/components/account/AccountIntegrations';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 
 export async function AccountDetailsSection() {
     const session = await getUserSession();
@@ -25,13 +20,11 @@ export async function AccountDetailsSection() {
             <ProfileInfoForm user={session?.user} />
 
             <Card id="security">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Shield className="size-5" />
-                        {t('securitySettings.title')}
-                    </CardTitle>
-                    <CardDescription>{t('securitySettings.description')}</CardDescription>
-                </CardHeader>
+                <CardHeaderWithIcon
+                    icon={Shield}
+                    title={t('securitySettings.title')}
+                    description={t('securitySettings.description')}
+                />
                 <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <TwoFactorAuth user={session?.user} />
@@ -41,26 +34,22 @@ export async function AccountDetailsSection() {
             </Card>
 
             <Card id="integrations">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Plug className="size-5" />
-                        {t('integrations.title')}
-                    </CardTitle>
-                    <CardDescription>{t('integrations.description')}</CardDescription>
-                </CardHeader>
+                <CardHeaderWithIcon
+                    icon={Plug}
+                    title={t('integrations.title')}
+                    description={t('integrations.description')}
+                />
                 <CardContent className="space-y-4">
                     <AcountIntegrations />
                 </CardContent>
             </Card>
 
             <Card id="notifications">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Bell className="size-5" />
-                        {t('notifications.title')}
-                    </CardTitle>
-                    <CardDescription>{t('notifications.description')}</CardDescription>
-                </CardHeader>
+                <CardHeaderWithIcon
+                    icon={Bell}
+                    title={t('notifications.title')}
+                    description={t('notifications.description')}
+                />
                 <CardContent className="space-y-4">
                     <NotificationSwitch
                         label={t('alerts.dockerAlerts')}
@@ -70,13 +59,11 @@ export async function AccountDetailsSection() {
             </Card>
 
             <Card id="regional">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Globe className="size-5" />
-                        {t('regional.title')}
-                    </CardTitle>
-                    <CardDescription>{t('regional.description')}</CardDescription>
-                </CardHeader>
+                <CardHeaderWithIcon
+                    icon={Globe}
+                    title={t('regional.title')}
+                    description={t('regional.description')}
+                />
                 <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div className="space-y-2">

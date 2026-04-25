@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
-import { prisma } from '../../../../../../prisma/prisma';
 import { repositoryIdParamSchema } from '@workspace/schemas-zod/api/params.schema';
+import { getRepositoryWebhookStatus } from '@/services/repository.service';
 
 export const GET = route
     .use(authRouteServer)
@@ -10,10 +10,7 @@ export const GET = route
     .handler(async (_, { params }) => {
         const { repositoryId } = params;
 
-        const repo = await prisma.repository.findUnique({
-            where: { id: repositoryId },
-            select: { webhookId: true },
-        });
+        const repo = await getRepositoryWebhookStatus(repositoryId);
 
         if (!repo) {
             return NextResponse.json({ error: 'Repository not found' }, { status: 404 });

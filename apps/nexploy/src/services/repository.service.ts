@@ -236,6 +236,17 @@ export async function updateEnvVariables(
     }
 }
 
+export async function getRepositoryWebhookStatus(repositoryId: string) {
+    try {
+        return prisma.repository.findUnique({
+            where: { id: repositoryId },
+            select: { webhookId: true },
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to fetch repository webhook status');
+    }
+}
+
 export async function relinkGitAccount(repositoryId: string, gitAccountId: string) {
     try {
         await teardownRepositoryWebhook(repositoryId);

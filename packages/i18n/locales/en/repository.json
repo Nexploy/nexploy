@@ -625,6 +625,9 @@
         },
         "config": {
             "webhookStatusConfigured": "Webhook configured",
+            "webhookStatusNotConfigured": "Webhook not configured",
+            "webhookStatusNotConfiguredDescription": "The webhook is not yet set up. Click the button to configure it manually.",
+            "webhookSetupButton": "Configure webhook",
             "webhookBranchFilter": "Branch Filter",
             "webhookBranchFilterPlaceholder": "e.g. main, develop, feature/*",
             "webhookBranchFilterDescription": "Only trigger builds for matching branches. Supports comma-separated values and wildcards (e.g. feature/*). Leave empty to accept all branches.",

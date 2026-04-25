@@ -57,7 +57,7 @@ export function SwitchGitAccountSection({
                             isLoading={action.isPending}
                             disabled={action.isPending || !form.formState.isDirty}
                         >
-                            {form.formState.isSubmitting ? t('saving') : t('save')}
+                            {t('save')}
                         </Button>
                     </form>
                 </Form>

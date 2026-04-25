@@ -1,13 +1,8 @@
 'use client';
 
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { User } from 'lucide-react';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { InputGroup, InputGroupInput } from '@workspace/ui/components/input-group';
@@ -60,13 +55,11 @@ export function ProfileInfoForm({ user }: ProfileInfoFormProps) {
 
     return (
         <Card id="profile">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <User className="size-5" />
-                    {t('title')}
-                </CardTitle>
-                <CardDescription>{t('description')}</CardDescription>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={User}
+                title={t('title')}
+                description={t('description')}
+            />
             <CardContent className="space-y-4">
                 <Form {...form}>
                     <form className={'flex flex-col gap-4'} onSubmit={handleSubmitWithAction}>
