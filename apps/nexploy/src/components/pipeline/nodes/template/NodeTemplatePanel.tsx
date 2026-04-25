@@ -48,6 +48,7 @@ export function NodeTemplatePanel() {
                         ...(tn.config ?? {}),
                     },
                     isStartNode: def?.isStartNode ?? false,
+                    isEndNode: def?.isEndNode ?? false,
                 },
             };
         });

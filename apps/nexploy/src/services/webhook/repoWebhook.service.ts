@@ -5,6 +5,7 @@ import { getGitProviderToken } from '@/services/git/git.service';
 import { getValidToken } from '@/services/api/gitProvider.service';
 import { githubCreateWebhook, githubDeleteWebhook } from '@/lib/api/github.api';
 import { gitlabCreateWebhook, gitlabDeleteWebhook } from '@/lib/api/gitlab.api';
+import { encrypt } from '@/lib/encryption';
 
 function getWebhookUrl(baseUrl: string, provider: string): string {
     if (provider === 'github') return `${baseUrl}/api/webhooks/github`;
@@ -79,7 +80,7 @@ export async function setupRepositoryWebhook(
 
         await prisma.repository.update({
             where: { id: repositoryId },
-            data: { webhookId },
+            data: { webhookId, webhookSecret: encrypt(secret) },
         });
 
         return { configured: true };
@@ -140,6 +141,6 @@ export async function teardownRepositoryWebhook(repositoryId: string): Promise<v
 
     await prisma.repository.update({
         where: { id: repositoryId },
-        data: { webhookId: null },
+        data: { webhookId: null, webhookSecret: null },
     });
 }

@@ -13,22 +13,14 @@ export async function findRepositoryByWebhook(repositoryUrl: string): Promise<{
         select: {
             id: true,
             userId: true,
-            gitAccount: {
-                select: {
-                    gitProvider: {
-                        select: { webhookSecret: true },
-                    },
-                },
-            },
+            webhookSecret: true,
         },
     });
     if (!repository) return null;
 
-    const encryptedSecret = repository.gitAccount?.gitProvider?.webhookSecret ?? null;
-
     return {
         id: repository.id,
         userId: repository.userId,
-        webhookSecret: encryptedSecret ? decrypt(encryptedSecret) : null,
+        webhookSecret: repository.webhookSecret ? decrypt(repository.webhookSecret) : null,
     };
 }

@@ -1,9 +1,5 @@
 import { Fragment, useRef } from 'react';
-import {
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-} from '@workspace/ui/components/dropdown-menu';
+import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, } from '@workspace/ui/components/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Play, Trash } from 'lucide-react';
 import { onImageAction } from '@/actions/docker/image/imageAction.action';
@@ -24,7 +20,7 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
     const t = useTranslations('docker.dropdownActions');
     const forceRef = useRef(false);
 
-    const imageName = image.name ? image.name : ['<none>'];
+    const imageName = image.name;
 
     const handleAction = async (action: ImageAction) => {
         await onImageAction({ imageIds: [image.id], action, force: forceRef.current });

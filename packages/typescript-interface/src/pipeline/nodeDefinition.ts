@@ -14,6 +14,7 @@ export interface NodeDefinition<TConfig = Record<string, unknown>> {
     type?: NodeType;
     category: NodeCategory;
     isStartNode?: boolean;
+    isEndNode?: boolean;
     metadata: {
         name: string;
         description?: string;

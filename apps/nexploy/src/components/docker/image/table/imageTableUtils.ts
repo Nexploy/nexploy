@@ -20,7 +20,7 @@ export function groupImagesByRepository(images: Image[]): ImageRow[] {
     const grouped = new Map<string, Image[]>();
 
     images.forEach((image) => {
-        const repoName = image.name?.[0] || '<none>';
+        const repoName = image.name?.[0] || '';
         if (!grouped.has(repoName)) {
             grouped.set(repoName, []);
         }
@@ -41,7 +41,7 @@ export function groupImagesByRepository(images: Image[]): ImageRow[] {
                 id: `group-${repoName}`,
                 fullId: `group-${repoName}`,
                 name: [repoName],
-                tag: groupImages.map((img) => img.tag?.[0] || '<none>'),
+                tag: groupImages.map((img) => img.tag?.[0] || ''),
                 repoTags: groupImages.flatMap((img) => img.repoTags),
                 repoDigests: [],
                 created: latestCreated,

@@ -29,7 +29,7 @@ export function VolumeDropdownActions({ volume }: VolumeDropdownActionsProps) {
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const t = useTranslations('docker.dropdownActions');
 
-    const volumeName = volume.name || '<none>';
+    const volumeName = volume.name;
 
     const handleAction = async (action: 'delete' | 'prune') => {
         await onVolumeAction({ volumeNames: [volumeName], action });

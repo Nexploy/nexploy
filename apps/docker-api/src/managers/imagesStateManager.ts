@@ -310,8 +310,10 @@ export class ImagesStateManager extends BaseStateManager {
     private async parseImageInfo(image: ImageInfo | ImageInspectInfo): Promise<Image> {
         const isInspect = this.isImageInspectInfo(image);
 
-        const name = image.RepoTags?.map((tag) => tag.split(':')[0]);
-        const tag = image.RepoTags?.map((tag) => tag.split(':')[1]);
+        const rawNames = image.RepoTags?.map((t) => t.split(':')[0]) ?? [];
+        const rawTags = image.RepoTags?.map((t) => t.split(':')[1]) ?? [];
+        const name = rawNames.length ? rawNames : ['<none>'];
+        const tag = rawTags.length ? rawTags : ['<none>'];
 
         const id = image.Id.split(':')[1];
 
@@ -328,9 +330,9 @@ export class ImagesStateManager extends BaseStateManager {
         return {
             id,
             fullId: image.Id,
-            name: name || [],
-            tag: tag || [],
-            repoTags: image.RepoTags || [],
+            name,
+            tag,
+            repoTags: image.RepoTags?.length ? image.RepoTags : ['<none>:<none>'],
             repoDigests: image.RepoDigests || [],
             created: isInspect
                 ? dayjs(image.Created).valueOf()

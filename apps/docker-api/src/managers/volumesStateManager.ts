@@ -184,7 +184,7 @@ export class VolumesStateManager extends BaseStateManager {
 
     private parseVolumeInfo(volume: VolumeInspectInfo): Volume {
         return {
-            name: volume.Name,
+            name: volume.Name || '<none>',
             driver: volume.Driver,
             mountpoint: volume.Mountpoint,
             createdAt: Date.now(),

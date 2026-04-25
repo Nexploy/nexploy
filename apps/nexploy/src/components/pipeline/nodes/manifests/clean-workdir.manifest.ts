@@ -10,6 +10,7 @@ export const cleanWorkdirManifest: NodeManifest = {
         id: 'clean-workdir',
         type: 'base-node',
         category: 'utility',
+        isEndNode: true,
         metadata: {
             name: 'clean-workdir.name',
             description: 'clean-workdir.description',
@@ -18,7 +19,7 @@ export const cleanWorkdirManifest: NodeManifest = {
         },
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
-            outputs: [{ id: 'output', position: Position.Right }],
+            outputs: [],
             attachments: [],
         },
     },

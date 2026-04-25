@@ -30,7 +30,7 @@ export function CardInfoImages() {
                 lastUpdatedLabel: lastUpdated?.created
                     ? dayjs(lastUpdated.created).format('DD/MM/YYYY')
                     : '',
-                lastUpdatedName: lastUpdated?.name?.[0] || '<none>',
+                lastUpdatedName: lastUpdated?.name?.[0] ?? '',
             };
         }, [images]);
 

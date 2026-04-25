@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -91,7 +85,7 @@ export function DeleteImageConfig() {
                                                         >
                                                             <StatusIndicator className="pl-2" />
                                                             <span className="truncate">
-                                                                {img.repoTags}
+                                                                {img.repoTags.join(', ')}
                                                             </span>
                                                         </Status>
                                                     </SelectItem>

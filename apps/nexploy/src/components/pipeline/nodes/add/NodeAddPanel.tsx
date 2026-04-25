@@ -72,6 +72,7 @@ export function NodeAddPanel() {
                     definition: def,
                     config: getConfigSchema(nodeType)?.partial().safeParse({}).data ?? {},
                     isStartNode: def.isStartNode ?? false,
+                    isEndNode: def.isEndNode ?? false,
                 },
             }),
         );

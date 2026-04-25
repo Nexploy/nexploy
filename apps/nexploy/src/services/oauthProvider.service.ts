@@ -193,7 +193,6 @@ export async function saveGitHubApp(data: {
                 ownerType: data.ownerType,
                 clientId: encrypt(data.clientId),
                 clientSecret: encrypt(data.clientSecret),
-                webhookSecret: encrypt(data.webhookSecret),
                 privateKey: encrypt(data.privateKey),
                 baseUrl: 'https://github.com',
             },

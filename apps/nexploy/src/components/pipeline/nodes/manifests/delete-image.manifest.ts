@@ -27,9 +27,9 @@ export const deleteImageManifest: NodeManifest = {
     configPanel: DeleteImageConfig,
     inputFields: [
         {
-            key: 'imageName',
-            labelKey: 'pipeline.inputs.imageName',
-            descriptionKey: 'pipeline.inputs.desc_imageName',
+            key: 'deletedImageId',
+            labelKey: 'pipeline.inputs.imageId',
+            descriptionKey: 'pipeline.inputs.desc_imageId',
             type: 'input',
         },
     ],

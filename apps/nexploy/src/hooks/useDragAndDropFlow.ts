@@ -53,6 +53,7 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
                                 ...(tn.config ?? {}),
                             },
                             isStartNode: def?.isStartNode ?? false,
+                            isEndNode: def?.isEndNode ?? false,
                         },
                     };
                 });
@@ -89,6 +90,7 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
                     definition: def,
                     config: getConfigSchema(nodeType)?.partial().safeParse({}).data ?? {},
                     isStartNode: def.isStartNode ?? false,
+                    isEndNode: def.isEndNode ?? false,
                 },
             };
 

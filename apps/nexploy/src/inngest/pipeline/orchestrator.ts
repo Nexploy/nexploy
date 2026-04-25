@@ -73,6 +73,10 @@ export class PipelineOrchestrator {
             throw new Error(`Invalid pipeline graph: ${err instanceof Error ? err.message : err}`);
         }
 
+        const endNodes = sorted.filter((n) => n.data.isEndNode === true);
+        const regularNodes = sorted.filter((n) => n.data.isEndNode !== true);
+        const executionOrder = [...regularNodes, ...endNodes];
+
         const cancellationWatcher = this.startCancellationWatcher(buildId, abortController);
         const branchSkippedNodeIds = new Set<string>();
 
@@ -81,7 +85,7 @@ export class PipelineOrchestrator {
                 await setStatusBuild('BUILDING');
             });
 
-            for (const node of sorted) {
+            for (const node of executionOrder) {
                 const executor = getNodeExecutor(node.data.type);
                 if (!executor) {
                     throw new Error(`Unknown node type: "${node.data.type}"`);

@@ -29,7 +29,6 @@ export function SonarqubeScanConfig() {
 
     return (
         <div className="space-y-4">
-            {/* Mode */}
             <FormField
                 control={form.control}
                 name="mode"
@@ -45,8 +44,10 @@ export function SonarqubeScanConfig() {
                             <SelectContent>
                                 <SelectGroup>
                                     <SelectLabel>{t('sonarqubeMode')}</SelectLabel>
-                                    <SelectItem value="custom">{t('sonarqubeModeCustom')}</SelectItem>
                                     <SelectItem value="local">{t('sonarqubeModeLocal')}</SelectItem>
+                                    <SelectItem value="custom">
+                                        {t('sonarqubeModeCustom')}
+                                    </SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
@@ -54,8 +55,6 @@ export function SonarqubeScanConfig() {
                     </FormItem>
                 )}
             />
-
-            {/* Remote: server URL */}
             {mode === 'custom' && (
                 <FormField
                     control={form.control}
@@ -64,19 +63,13 @@ export function SonarqubeScanConfig() {
                         <FormItem>
                             <FormLabel>{t('sonarqubeServerUrl')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    {...field}
-                                    placeholder="https://sonarcloud.io"
-                                    className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                                />
+                                <Input {...field} placeholder="https://sonarcloud.io" />
                             </FormControl>
                             <FormMessage className="text-xs" />
                         </FormItem>
                     )}
                 />
             )}
-
-            {/* Remote: organization (SonarCloud) */}
             {mode === 'custom' && (
                 <FormField
                     control={form.control}
@@ -85,11 +78,7 @@ export function SonarqubeScanConfig() {
                         <FormItem>
                             <FormLabel>{t('sonarqubeOrganization')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    {...field}
-                                    placeholder="my-org"
-                                    className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                                />
+                                <Input {...field} placeholder="my-org" />
                             </FormControl>
                             <FormDescription className="text-xs">
                                 {t('sonarqubeOrganizationDescription')}
@@ -99,8 +88,6 @@ export function SonarqubeScanConfig() {
                     )}
                 />
             )}
-
-            {/* Local: SonarQube version */}
             {mode === 'local' && (
                 <FormField
                     control={form.control}
@@ -109,11 +96,7 @@ export function SonarqubeScanConfig() {
                         <FormItem>
                             <FormLabel>{t('sonarqubeVersion')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    {...field}
-                                    placeholder="community"
-                                    className="border-border bg-background text-foreground focus:border-primary h-8 text-xs font-mono"
-                                />
+                                <Input {...field} placeholder="community" />
                             </FormControl>
                             <FormDescription className="text-xs">
                                 {t('sonarqubeVersionDescription')}
@@ -123,8 +106,6 @@ export function SonarqubeScanConfig() {
                     )}
                 />
             )}
-
-            {/* Local: port */}
             {mode === 'local' && (
                 <FormField
                     control={form.control}
@@ -139,7 +120,6 @@ export function SonarqubeScanConfig() {
                                     min={1}
                                     max={65535}
                                     onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
-                                    className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                                 />
                             </FormControl>
                             <FormMessage className="text-xs" />
@@ -147,8 +127,6 @@ export function SonarqubeScanConfig() {
                     )}
                 />
             )}
-
-            {/* Project key */}
             <FormField
                 control={form.control}
                 name="projectKey"
@@ -156,18 +134,12 @@ export function SonarqubeScanConfig() {
                     <FormItem>
                         <FormLabel>{t('sonarqubeProjectKey')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="my-project"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs font-mono"
-                            />
+                            <Input {...field} placeholder="my-project" />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
                 )}
             />
-
-            {/* Token */}
             <FormField
                 control={form.control}
                 name="token"
@@ -189,8 +161,6 @@ export function SonarqubeScanConfig() {
                     </FormItem>
                 )}
             />
-
-            {/* Sources */}
             <FormField
                 control={form.control}
                 name="sources"
@@ -198,18 +168,12 @@ export function SonarqubeScanConfig() {
                     <FormItem>
                         <FormLabel>{t('sonarqubeSources')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="."
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs font-mono"
-                            />
+                            <Input {...field} placeholder="." />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
                 )}
             />
-
-            {/* Exclusions */}
             <FormField
                 control={form.control}
                 name="exclusions"
@@ -217,11 +181,7 @@ export function SonarqubeScanConfig() {
                     <FormItem>
                         <FormLabel>{t('sonarqubeExclusions')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="**/*.test.ts,**/node_modules/**"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs font-mono"
-                            />
+                            <Input {...field} placeholder="**/*.test.ts,**/node_modules/**" />
                         </FormControl>
                         <FormDescription className="text-xs">
                             {t('sonarqubeExclusionsDescription')}
@@ -230,8 +190,6 @@ export function SonarqubeScanConfig() {
                     </FormItem>
                 )}
             />
-
-            {/* Timeout */}
             <FormField
                 control={form.control}
                 name="timeoutSeconds"
@@ -244,15 +202,12 @@ export function SonarqubeScanConfig() {
                                 type="number"
                                 min={30}
                                 onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
                 )}
             />
-
-            {/* Quality gate */}
             <FormField
                 control={form.control}
                 name="qualityGate"

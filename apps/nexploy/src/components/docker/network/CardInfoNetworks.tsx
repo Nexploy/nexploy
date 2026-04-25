@@ -30,7 +30,7 @@ export function CardInfoNetworks() {
             ? dayjs.unix(lastCreated.created).format('DD/MM/YYYY')
             : '';
 
-        const lastCreatedName = lastCreated?.name || '<none>';
+        const lastCreatedName = lastCreated?.name ?? '';
 
         return [
             {

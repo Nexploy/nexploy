@@ -25,7 +25,7 @@ export function NetworkDropdownActions({ network }: NetworkDropdownActionsProps)
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const t = useTranslations('docker.dropdownActions');
 
-    const networkName = network.name || '<none>';
+    const networkName = network.name;
 
     const handleAction = async (action: 'delete' | 'prune') => {
         await onNetworkAction({ networkIds: [network.id], action });

@@ -97,6 +97,7 @@ export interface PipelineNodeData {
     config: Record<string, unknown>;
     disabled?: boolean;
     isStartNode?: boolean;
+    isEndNode?: boolean;
 }
 
 export interface PipelineNode {

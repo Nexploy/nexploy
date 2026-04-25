@@ -197,7 +197,7 @@ export class NetworksStateManager extends BaseStateManager {
 
         return {
             id: network.Id,
-            name: network.Name,
+            name: network.Name || '<none>',
             driver: network.Driver,
             scope: network.Scope,
             internal: network.Internal || false,

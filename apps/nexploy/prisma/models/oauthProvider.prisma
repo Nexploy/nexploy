@@ -8,7 +8,6 @@ model GitProvider {
   ownerType     String?
   clientId      String?
   clientSecret  String?
-  webhookSecret String?
   privateKey    String?
   baseUrl       String?
   enabled       Boolean      @default(true)

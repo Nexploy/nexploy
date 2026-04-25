@@ -65,7 +65,7 @@ export function analyzeGraph(
 
     while (bfsQueue.length > 0) {
         const id = bfsQueue.shift()!;
-        const neighbors = [...(directed.get(id) ?? []), ...(reverse.get(id) ?? [])];
+        const neighbors = directed.get(id) ?? [];
         for (const neighborId of neighbors) {
             if (!reachableNodeIds.has(neighborId)) {
                 reachableNodeIds.add(neighborId);

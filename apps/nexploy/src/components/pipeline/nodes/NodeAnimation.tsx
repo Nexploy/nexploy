@@ -20,15 +20,20 @@ export function NodeAnimation({
 }: PropsWithChildren<NodeAnimationProps>) {
     const Icon = data.definition.metadata.icon;
     const isStartNode = data.definition.isStartNode;
+    const isEndNode = data.definition.isEndNode;
     const categoryHex = CATEGORY_HEX[data.definition.category];
 
     const rounded = square
         ? isStartNode
             ? 'rounded-l-4xl rounded-r-2xl'
-            : 'rounded-2xl'
+            : isEndNode
+              ? 'rounded-r-4xl rounded-l-2xl'
+              : 'rounded-2xl'
         : isStartNode
           ? 'rounded-l-4xl rounded-r-2xl'
-          : 'rounded-full';
+          : isEndNode
+            ? 'rounded-r-4xl rounded-l-2xl'
+            : 'rounded-full';
 
     const iconRounded = square ? 'rounded-xl' : 'rounded-full';
 
@@ -38,6 +43,7 @@ export function NodeAnimation({
                 'flex size-11 items-center justify-center',
                 iconRounded,
                 isStartNode && 'rounded-l-2xl',
+                isEndNode && 'rounded-r-2xl',
                 data.definition.metadata.color,
             )}
         >
