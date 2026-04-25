@@ -249,6 +249,12 @@
         }
     },
     "settings": {
+        "gitAccount": {
+            "title": "Git Account",
+            "description": "Change the Git account linked to this repository",
+            "save": "Save",
+            "saving": "Saving..."
+        },
         "dangerZone": {
             "title": "Danger Zone",
             "description": "Irreversible actions on this repository",

@@ -248,6 +248,12 @@
         }
     },
     "settings": {
+        "gitAccount": {
+            "title": "Compte Git",
+            "description": "Changer le compte Git associé à ce dépôt",
+            "save": "Enregistrer",
+            "saving": "Enregistrement..."
+        },
         "dangerZone": {
             "title": "Zone de danger",
             "description": "Actions irréversibles sur ce dépôt",

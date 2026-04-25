@@ -5,6 +5,7 @@ import { getUserSession } from '@/services/auth/auth.service';
 import { decrypt, encrypt } from '@/lib/encryption';
 import { Prisma } from 'generated/client';
 import { RepositoryPayload } from '@/types/repository.type';
+import { teardownRepositoryWebhook } from '@/services/webhook/repoWebhook.service';
 
 export async function createRepository(
     { repo, name, gitProvider, gitAccountId }: RepositoryCreateForm,
@@ -163,11 +164,17 @@ async function getRepositoryById(repositoryId: string) {
 }
 
 export async function deleteRepository(repositoryId: string) {
-    await getRepositoryById(repositoryId);
+    try {
+        await getRepositoryById(repositoryId);
 
-    await prisma.repository.delete({
-        where: { id: repositoryId },
-    });
+        await teardownRepositoryWebhook(repositoryId);
+
+        await prisma.repository.delete({
+            where: { id: repositoryId },
+        });
+    } catch (error: unknown) {
+        throw new Error('Failed to delete repository');
+    }
 }
 
 export async function updateEnvVariables(
@@ -231,6 +238,8 @@ export async function updateEnvVariables(
 
 export async function relinkGitAccount(repositoryId: string, gitAccountId: string) {
     try {
+        await teardownRepositoryWebhook(repositoryId);
+
         await prisma.repository.update({
             where: { id: repositoryId },
             data: { gitAccountId },

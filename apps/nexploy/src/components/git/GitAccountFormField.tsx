@@ -33,7 +33,10 @@ interface GitAccountFormFieldProps {
     noAccountsContent?: ReactNode;
 }
 
-export function GitAccountFormField({ onValueChange, noAccountsContent }: GitAccountFormFieldProps) {
+export function GitAccountFormField({
+    onValueChange,
+    noAccountsContent,
+}: GitAccountFormFieldProps) {
     const t = useTranslations('repository.steps.gitSource');
     const { control } = useFormContext();
 
@@ -42,7 +45,7 @@ export function GitAccountFormField({ onValueChange, noAccountsContent }: GitAcc
         fetcherApi,
     );
 
-    if (isLoading) return <Skeleton className="h-9 w-full" />;
+    if (isLoading) return <Skeleton className="h-9 w-52" />;
 
     if (!accounts?.length) return <>{noAccountsContent}</>;
 

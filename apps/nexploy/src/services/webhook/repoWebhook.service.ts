@@ -91,56 +91,60 @@ export async function setupRepositoryWebhook(
 }
 
 export async function teardownRepositoryWebhook(repositoryId: string): Promise<void> {
-    const repo = await prisma.repository.findUnique({
-        where: { id: repositoryId },
-        select: {
-            id: true,
-            name: true,
-            gitProvider: true,
-            gitId: true,
-            gitAccountId: true,
-            webhookId: true,
-            userId: true,
-            gitAccount: {
-                select: {
-                    gitProvider: { select: { baseUrl: true } },
+    try {
+        const repo = await prisma.repository.findUnique({
+            where: { id: repositoryId },
+            select: {
+                id: true,
+                name: true,
+                gitProvider: true,
+                gitId: true,
+                gitAccountId: true,
+                webhookId: true,
+                userId: true,
+                gitAccount: {
+                    select: {
+                        gitProvider: { select: { baseUrl: true } },
+                    },
                 },
             },
-        },
-    });
+        });
 
-    if (!repo) return;
+        if (!repo) return;
 
-    if (repo.webhookId) {
-        try {
-            const oldToken = await getGitProviderToken(repo.gitProvider, {
-                gitAccountId: repo.gitAccountId ?? undefined,
-                requestedUserId: repo.userId,
-            });
-            const token = await getValidToken(
-                oldToken,
-                repo.gitProvider,
-                repo.userId,
-                repo.gitAccountId ?? undefined,
-            );
+        if (repo.webhookId) {
+            try {
+                const oldToken = await getGitProviderToken(repo.gitProvider, {
+                    gitAccountId: repo.gitAccountId ?? undefined,
+                    requestedUserId: repo.userId,
+                });
+                const token = await getValidToken(
+                    oldToken,
+                    repo.gitProvider,
+                    repo.userId,
+                    repo.gitAccountId ?? undefined,
+                );
 
-            await tokenGitStorage.run(token, async () => {
-                if (repo.gitProvider === 'github') {
-                    const [owner, repoName] = repo.name.split('/');
-                    if (!owner || !repoName)
-                        throw new Error(`Invalid repository name: ${repo.name}`);
-                    await githubDeleteWebhook(owner, repoName, repo.webhookId!);
-                } else if (repo.gitProvider === 'gitlab') {
-                    const gitlabBase =
-                        repo.gitAccount?.gitProvider?.baseUrl ?? 'https://gitlab.com';
-                    await gitlabDeleteWebhook(gitlabBase, repo.gitId, repo.webhookId!);
-                }
-            });
-        } catch {}
+                await tokenGitStorage.run(token, async () => {
+                    if (repo.gitProvider === 'github') {
+                        const [owner, repoName] = repo.name.split('/');
+                        if (!owner || !repoName)
+                            throw new Error(`Invalid repository name: ${repo.name}`);
+                        await githubDeleteWebhook(owner, repoName, repo.webhookId!);
+                    } else if (repo.gitProvider === 'gitlab') {
+                        const gitlabBase =
+                            repo.gitAccount?.gitProvider?.baseUrl ?? 'https://gitlab.com';
+                        await gitlabDeleteWebhook(gitlabBase, repo.gitId, repo.webhookId!);
+                    }
+                });
+            } catch {}
+        }
+
+        await prisma.repository.update({
+            where: { id: repositoryId },
+            data: { webhookId: null, webhookSecret: null },
+        });
+    } catch {
+        throw new Error('Failed to teardown repository webhook');
     }
-
-    await prisma.repository.update({
-        where: { id: repositoryId },
-        data: { webhookId: null, webhookSecret: null },
-    });
 }

@@ -6,17 +6,20 @@ import { relinkGitAccountSchema } from '@workspace/schemas-zod/repository/relink
 import { revalidatePath } from 'next/cache';
 import { setToastServer } from '@/lib/toastServer';
 import { relinkGitAccount } from '@/services/repository.service';
+import { getTranslations } from 'next-intl/server';
 
 export const relinkGitAccountAction = authActionServer
     .use(requirePermission('repository', 'update'))
     .inputSchema(relinkGitAccountSchema)
     .bindArgsSchemas(repositoryIdSchema)
     .action(async ({ parsedInput, bindArgsParsedInputs: [repositoryId] }) => {
+        const t = await getTranslations('repository.reassociateGitAccount');
         try {
             await relinkGitAccount(repositoryId, parsedInput.gitAccountId);
 
             revalidatePath('/[locale]/(app)/repositories/[repositoryId]', 'page');
+            await setToastServer({ type: 'success', message: t('success') });
         } catch {
-            await setToastServer({ type: 'error', message: 'Failed to relink Git account' });
+            await setToastServer({ type: 'error', message: t('error') });
         }
     });

@@ -1,5 +1,6 @@
 import { getRepositorieById } from '@/services/repository.service';
 import { DangerZone } from '@/components/repositories/tabs/settings/DangerZone';
+import { SwitchGitAccountSection } from '@/components/repositories/tabs/settings/SwitchGitAccountSection';
 import { notFound } from 'next/navigation';
 
 interface RepositorySettingsTabProps {
@@ -12,6 +13,10 @@ export async function RepositorySettingsTab({ repositoryId }: RepositorySettings
 
     return (
         <div className="mx-5 space-y-6">
+            <SwitchGitAccountSection
+                repositoryId={repository.id}
+                currentGitAccountId={repository.gitAccountId}
+            />
             <DangerZone repository={repository} />
         </div>
     );
