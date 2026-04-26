@@ -10,6 +10,7 @@ import { TwoFactorUseBackupCodeForm } from '@/components/auth/2faUseBackupCodeFo
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
+import { getTranslations } from 'next-intl/server';
 
 export async function generateMetadata(): Promise<Metadata> {
     return {
@@ -19,6 +20,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function TwoFactoVerifCodePage() {
+    const t = await getTranslations('auth.twoFactor');
+
     return (
         <div className="flex min-h-screen items-center justify-center p-4">
             <Card>
@@ -29,10 +32,10 @@ export default async function TwoFactoVerifCodePage() {
                                 <ArrowLeft className={'!size-5'} />
                             </Link>
                         </Button>
-                        <CardTitle className="text-2xl">Use Backup Code</CardTitle>
+                        <CardTitle className="text-2xl">{t('backupCodeTitle')}</CardTitle>
                     </div>
                     <CardDescription>
-                        Enter a backup code to restore access to your account
+                        {t('backupCodeDescription')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">

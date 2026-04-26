@@ -20,6 +20,7 @@ import { Link } from '@/i18n/navigation';
 import { useParams, usePathname } from 'next/navigation';
 import { addSpaceBeforeUppercase, capitalizeWords } from '@/utils/capitalize';
 import { useBreadcrumbStore } from '@/stores/useBreadcrumbStore';
+import { useTranslations } from 'next-intl';
 
 const ITEMS_TO_DISPLAY = 2;
 const MAX_ITEMS_BEFORE_COLLAPSE = 3;
@@ -28,6 +29,7 @@ export function BreadcrumbPath() {
     const pathname = usePathname();
     const params = useParams();
     const overrides = useBreadcrumbStore((state) => state.overrides);
+    const t = useTranslations('common');
 
     const segmentToParamName = Object.fromEntries(
         Object.entries(params).flatMap(([paramName, value]) =>
@@ -96,7 +98,7 @@ export function BreadcrumbPath() {
                     <DropdownMenu>
                         <DropdownMenuTrigger className="flex items-center gap-1">
                             <BreadcrumbEllipsis className="size-4" />
-                            <span className="sr-only">Toggle menu</span>
+                            <span className="sr-only">{t('toggleMenu')}</span>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">
                             {middleItems.map(({ name, href }) => (

@@ -359,6 +359,8 @@
         "undo": "Undo",
         "redo": "Redo",
         "watching": "Watching",
+        "nodePalette": "Node palette",
+        "pipelineTemplates": "Templates",
         "shortcuts": "Keyboard shortcuts",
         "exitBuild": "Exit build preview",
         "exitBuildEsc": "Press Esc to exit",

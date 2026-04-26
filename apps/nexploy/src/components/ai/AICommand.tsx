@@ -120,7 +120,7 @@ export function AICommand() {
                                             }
                                         >
                                             <Container className="mr-2 h-4 w-4" />
-                                            <span>Containers</span>
+                                            <span>{tNav('containers')}</span>
                                             <CommandShortcut>⌘C</CommandShortcut>
                                         </CommandItem>
                                         <CommandItem
@@ -129,7 +129,7 @@ export function AICommand() {
                                             }
                                         >
                                             <LayoutList className="mr-2 h-4 w-4" />
-                                            <span>Images</span>
+                                            <span>{tNav('images')}</span>
                                             <CommandShortcut>⌘I</CommandShortcut>
                                         </CommandItem>
                                         <CommandItem
@@ -138,7 +138,7 @@ export function AICommand() {
                                             }
                                         >
                                             <Database className="mr-2 h-4 w-4" />
-                                            <span>Volumes</span>
+                                            <span>{tNav('volumes')}</span>
                                             <CommandShortcut>⌘V</CommandShortcut>
                                         </CommandItem>
                                     </CommandGroup>

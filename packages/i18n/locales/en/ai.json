@@ -2,6 +2,8 @@
     "commandGroups": {
         "navigation": "Navigation",
         "containers": "Containers",
+        "images": "Images",
+        "volumes": "Volumes",
         "stacks": "Stacks",
         "repositories": "Repositories",
         "general": "General"

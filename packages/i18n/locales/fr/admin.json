@@ -184,6 +184,7 @@
         "delete": "Supprimer",
         "create": "Ajouter le registre",
         "save": "Enregistrer",
+        "list": "Liste des registres",
         "noRegistries": "Aucun registre configuré. Ajoutez-en un pour pousser les images lors des builds.",
         "createSuccess": "Registre ajouté avec succès",
         "createFailed": "Échec de l'ajout du registre",

@@ -184,6 +184,7 @@
         "delete": "Delete",
         "create": "Add Registry",
         "save": "Save changes",
+        "list": "Registry list",
         "noRegistries": "No registries configured. Add one to push images during builds.",
         "createSuccess": "Registry added successfully",
         "createFailed": "Failed to add registry",

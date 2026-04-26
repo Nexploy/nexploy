@@ -8,6 +8,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@workspace/ui/components/card';
+import { getTranslations } from 'next-intl/server';
 
 export async function generateMetadata(): Promise<Metadata> {
     return {
@@ -17,26 +18,28 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function TwoFactoVerifCodePage() {
+    const t = await getTranslations('auth.twoFactor');
+
     return (
         <div className="flex min-h-screen items-center justify-center p-4">
             <Card className="w-full max-w-md">
                 <CardHeader>
-                    <CardTitle className="text-2xl">Verification Code</CardTitle>
+                    <CardTitle className="text-2xl">{t('codeLabel')}</CardTitle>
                     <CardDescription>
-                        Enter the 6-digit code displayed in your authenticator app
+                        {t('description')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <TwoFactorVerifCodeForm />
                     <div className="text-center text-sm">
                         <span className="text-muted-foreground">
-                            Can't access your authenticator app?{' '}
+                            {t('cantAccessAuthApp')}{' '}
                         </span>
                         <Link
                             href="/2fa/backup-codes"
                             className="text-primary font-medium hover:underline"
                         >
-                            Use a backup code
+                            {t('useBackupCode')}
                         </Link>
                     </div>
                 </CardContent>
