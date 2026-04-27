@@ -316,6 +316,101 @@ class GitService {
         }
     }
 
+    async cherryPick(
+        workDir: string,
+        commitHash: string,
+        options?: { noCommit?: boolean; remote?: string; targetBranch?: string },
+    ): Promise<void> {
+        const remote = options?.remote ?? 'origin';
+        try {
+            await this.exec('git', ['fetch', remote], { cwd: workDir });
+        } catch {
+            /* empty */
+        }
+        if (options?.targetBranch) {
+            await this.exec('git', ['checkout', options.targetBranch], { cwd: workDir });
+        }
+        const args = ['cherry-pick'];
+        if (options?.noCommit) args.push('--no-commit');
+        args.push(commitHash);
+        try {
+            await this.exec('git', args, { cwd: workDir });
+        } catch (error) {
+            const msg = error instanceof Error ? error.message : String(error);
+            throw new Error(`git cherry-pick failed: ${msg}`);
+        }
+    }
+
+    async mergeBranch(
+        workDir: string,
+        sourceBranch: string,
+        options?: {
+            strategy?: 'merge' | 'squash';
+            message?: string;
+            remote?: string;
+            push?: boolean;
+            targetBranch?: string;
+        },
+    ): Promise<string> {
+        const remote = options?.remote ?? 'origin';
+        try {
+            await this.exec('git', ['fetch', remote], { cwd: workDir });
+        } catch {
+            /* empty */
+        }
+
+        if (options?.targetBranch) {
+            await this.exec('git', ['checkout', options.targetBranch], { cwd: workDir });
+        }
+
+        const currentBranch = (
+            await this.exec('git', ['rev-parse', '--abbrev-ref', 'HEAD'], { cwd: workDir })
+        ).trim();
+
+        const args = ['merge'];
+        if (options?.strategy === 'squash') args.push('--squash');
+        if (options?.message) args.push('-m', options.message);
+        args.push(`${remote}/${sourceBranch}`);
+
+        try {
+            await this.exec('git', args, { cwd: workDir });
+        } catch (error) {
+            const msg = error instanceof Error ? error.message : String(error);
+            throw new Error(`git merge failed: ${msg}`);
+        }
+
+        if (options?.strategy === 'squash' && options?.message) {
+            await this.exec('git', ['commit', '-m', options.message], { cwd: workDir });
+        }
+
+        if (options?.push) {
+            await this.exec('git', ['push', remote, currentBranch], { cwd: workDir });
+        }
+
+        return currentBranch;
+    }
+
+    async getChangelogCommits(
+        workDir: string,
+        from: string,
+        to: string,
+    ): Promise<{ hash: string; subject: string; author: string; date: string }[]> {
+        const range = from ? `${from}..${to}` : to;
+        const output = await this.exec(
+            'git',
+            ['log', range, '--format=%H|%s|%an|%ai', '--no-merges'],
+            { cwd: workDir },
+        );
+        if (!output.trim()) return [];
+        return output
+            .trim()
+            .split('\n')
+            .map((line) => {
+                const [hash = '', subject = '', author = '', date = ''] = line.split('|');
+                return { hash: hash.slice(0, 8), subject, author, date };
+            });
+    }
+
     async cloneExternal(
         repoUrl: string,
         branch: string,
@@ -330,7 +425,7 @@ class GitService {
                 u.password = token;
                 cloneUrl = u.toString();
             } catch {
-                // not a valid URL — use as-is
+                /* empty */
             }
         }
 

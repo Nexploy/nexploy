@@ -10,6 +10,7 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
+import { Switch } from '@workspace/ui/components/switch';
 import {
     Select,
     SelectContent,
@@ -19,8 +20,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
-export function WaitForUrlConfig() {
+export function MergeBranchConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
@@ -28,15 +30,30 @@ export function WaitForUrlConfig() {
         <div className="space-y-4">
             <FormField
                 control={form.control}
-                name="url"
+                name="sourceBranch"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('url')}</FormLabel>
+                        <FormLabel>{t('mergeSourceBranch')}</FormLabel>
+                        <FormControl>
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input {...field} placeholder={t('mergeSourceBranchPlaceholder')} />
+                            </RefAware>
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="targetBranch"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>{t('mergeTargetBranch')}</FormLabel>
                         <FormControl>
                             <Input
                                 {...field}
-                                placeholder="https://example.com/health"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
+                                value={field.value ?? ''}
+                                placeholder={t('mergeTargetBranchPlaceholder')}
                             />
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -45,10 +62,10 @@ export function WaitForUrlConfig() {
             />
             <FormField
                 control={form.control}
-                name="method"
+                name="strategy"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('httpMethod')}</FormLabel>
+                        <FormLabel>{t('mergeStrategy')}</FormLabel>
                         <Select value={field.value} onValueChange={field.onChange}>
                             <FormControl>
                                 <SelectTrigger>
@@ -57,10 +74,11 @@ export function WaitForUrlConfig() {
                             </FormControl>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectLabel>{t('httpMethod')}</SelectLabel>
-                                    <SelectItem value="GET">GET</SelectItem>
-                                    <SelectItem value="POST">POST</SelectItem>
-                                    <SelectItem value="HEAD">HEAD</SelectItem>
+                                    <SelectLabel>{t('mergeStrategy')}</SelectLabel>
+                                    <SelectItem value="merge">{t('mergeStrategyMerge')}</SelectItem>
+                                    <SelectItem value="squash">
+                                        {t('mergeStrategySquash')}
+                                    </SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
@@ -70,16 +88,15 @@ export function WaitForUrlConfig() {
             />
             <FormField
                 control={form.control}
-                name="expectedStatus"
+                name="message"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('expectedStatus')}</FormLabel>
+                        <FormLabel>{t('mergeMessage')}</FormLabel>
                         <FormControl>
                             <Input
                                 {...field}
-                                type="number"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
+                                value={field.value ?? ''}
+                                placeholder={t('mergeMessagePlaceholder')}
                             />
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -88,18 +105,12 @@ export function WaitForUrlConfig() {
             />
             <FormField
                 control={form.control}
-                name="timeout"
+                name="remote"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('timeoutSeconds')}</FormLabel>
+                        <FormLabel>{t('gitRemote')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                type="number"
-                                min={1}
-                                onChange={(e) => field.onChange(Number(e.target.value))}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} placeholder="origin" />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -107,18 +118,12 @@ export function WaitForUrlConfig() {
             />
             <FormField
                 control={form.control}
-                name="interval"
+                name="push"
                 render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('intervalSeconds')}</FormLabel>
+                    <FormItem className="flex items-center justify-between">
+                        <FormLabel>{t('mergePush')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                type="number"
-                                min={1}
-                                onChange={(e) => field.onChange(Number(e.target.value))}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

@@ -1,23 +1,11 @@
 import type { Metadata } from 'next';
-import { Folder, Link2 } from 'lucide-react';
+import { Folder, FolderGit2, Link2 } from 'lucide-react';
 import { SiGithub, SiGitlab } from '@icons-pack/react-simple-icons';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
-import {
-    Empty,
-    EmptyDescription,
-    EmptyHeader,
-    EmptyMedia,
-    EmptyTitle,
-} from '@workspace/ui/components/empty';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, } from '@workspace/ui/components/empty';
 import { AddRepository } from '@/components/repositories/AddRepository';
 import { Link } from '@/i18n/navigation';
-import {
-    Card,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle, } from '@workspace/ui/components/card';
 import { getRepositories } from '@/services/repository.service';
 import { StatusLive } from '@/components/shared/StatusLive';
 import { RunBuildButton } from '@/components/repositories/RunBuildButton';
@@ -47,7 +35,7 @@ export default async function RepositoriesPage() {
                 <div className="flex justify-between gap-2 px-5">
                     <div className={'flex gap-3'}>
                         <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                            <Folder className="text-primary size-7" />
+                            <FolderGit2 className="text-primary size-7" />
                         </div>
                         <div className={'flex flex-col'}>
                             <h1 className="text-3xl leading-none font-semibold tracking-tight">
@@ -60,7 +48,6 @@ export default async function RepositoriesPage() {
                     </div>
                     <AddRepository />
                 </div>
-
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className={'px-5 pt-1 pb-5'}>
                         {repositories.length === 0 ? (

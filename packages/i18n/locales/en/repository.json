@@ -623,6 +623,22 @@
             "sonarqube-scan": {
                 "name": "SonarQube Scan",
                 "description": "Analyse code quality and security with SonarQube or SonarCloud"
+            },
+            "create-release": {
+                "name": "Create Release",
+                "description": "Create a GitHub or GitLab release from a tag"
+            },
+            "cherry-pick-commit": {
+                "name": "Cherry-pick Commit",
+                "description": "Apply a specific commit from another branch onto the current branch"
+            },
+            "merge-branch": {
+                "name": "Merge Branch",
+                "description": "Merge one Git branch into another"
+            },
+            "generate-changelog": {
+                "name": "Generate Changelog",
+                "description": "Extract commits and generate a formatted CHANGELOG.md"
             }
         },
         "config": {
@@ -856,7 +872,45 @@
             "conditionModeAndDesc": "All inputs must succeed",
             "conditionModeOrDesc": "At least one must succeed",
             "conditionInputNodes": "Connected input nodes",
-            "conditionNoInputs": "No input nodes connected"
+            "conditionNoInputs": "No input nodes connected",
+            "releaseProvider": "Provider",
+            "releaseToken": "Access Token",
+            "releaseOwner": "Owner / Namespace",
+            "releaseRepo": "Repository",
+            "releaseBaseUrl": "GitLab Base URL",
+            "releaseTagName": "Tag Name",
+            "releaseTagNamePlaceholder": "v1.0.0",
+            "releaseTargetBranch": "Target Branch",
+            "releaseTargetBranchPlaceholder": "main",
+            "releaseTitle": "Release Title",
+            "releaseTitlePlaceholder": "Release v1.0.0",
+            "releaseNotes": "Release Notes",
+            "releaseNotesPlaceholder": "Describe the changes in this release...",
+            "releaseDraft": "Save as draft",
+            "releasePrerelease": "Mark as pre-release",
+            "cherryPickCommitHash": "Commit Hash",
+            "cherryPickCommitHashPlaceholder": "abc1234",
+            "cherryPickTargetBranch": "Target Branch",
+            "cherryPickTargetBranchPlaceholder": "Leave empty to use current branch",
+            "cherryPickNoCommit": "Apply without committing (--no-commit)",
+            "mergeSourceBranch": "Source Branch",
+            "mergeSourceBranchPlaceholder": "feature/my-branch",
+            "mergeTargetBranch": "Target Branch",
+            "mergeTargetBranchPlaceholder": "Leave empty to use current branch",
+            "mergeStrategy": "Strategy",
+            "mergeStrategyMerge": "Merge commit",
+            "mergeStrategySquash": "Squash",
+            "mergeMessage": "Commit Message",
+            "mergeMessagePlaceholder": "Merge feature/my-branch into main",
+            "mergePush": "Push after merge",
+            "changelogFromTag": "From Tag / Ref",
+            "changelogFromTagPlaceholder": "v1.0.0 (leave empty for all commits)",
+            "changelogToRef": "To Ref",
+            "changelogOutputPath": "Output Path",
+            "changelogFormat": "Format",
+            "changelogFormatConventional": "Conventional Commits",
+            "changelogFormatSimple": "Simple list",
+            "changelogAppend": "Prepend to existing file"
         },
         "validation": {
             "noSourceNode": "Pipeline must start with a Clone Repository node",
@@ -1026,7 +1080,19 @@
             "qualityGatePassed": "Quality gate passed",
             "projectKey": "Project key",
             "desc_qualityGatePassed": "Whether the SonarQube quality gate passed",
-            "desc_projectKey": "SonarQube project key that was analysed"
+            "desc_projectKey": "SonarQube project key that was analysed",
+            "releaseId": "Release ID",
+            "desc_releaseId": "ID of the release created on GitHub or GitLab",
+            "releaseUrl": "Release URL",
+            "desc_releaseUrl": "URL of the published release page",
+            "targetBranch": "Target branch",
+            "desc_targetBranch": "Branch that was merged into",
+            "sourceBranch": "Source branch",
+            "desc_sourceBranch": "Branch that was merged from",
+            "changelogPath": "Changelog path",
+            "desc_changelogPath": "Absolute path to the generated CHANGELOG.md file",
+            "changelog": "Changelog content",
+            "desc_changelog": "Raw Markdown content of the generated changelog section"
         },
         "noInputsAvailable": "No inputs available from previous nodes",
         "nodeOutputs": "Node outputs",

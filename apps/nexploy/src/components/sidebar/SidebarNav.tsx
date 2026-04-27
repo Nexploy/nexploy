@@ -8,7 +8,7 @@ import {
     Container,
     Database,
     EthernetPort,
-    Folder,
+    FolderGit2,
     HardDrive,
     LayoutList,
     Network,
@@ -45,7 +45,7 @@ const groups: SidebarNavGroup[] = [
             {
                 titleKey: 'repositories',
                 href: '/repositories',
-                icon: Folder,
+                icon: FolderGit2,
             },
             {
                 titleKey: 'monitoring',

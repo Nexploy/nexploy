@@ -56,7 +56,7 @@ export function HttpRequestConfig() {
                         <FormLabel>{t('httpMethod')}</FormLabel>
                         <Select value={field.value} onValueChange={field.onChange}>
                             <FormControl>
-                                <SelectTrigger className="h-8 text-xs">
+                                <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
                             </FormControl>

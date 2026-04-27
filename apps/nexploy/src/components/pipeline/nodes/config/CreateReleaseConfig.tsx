@@ -10,6 +10,8 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
+import { Textarea } from '@workspace/ui/components/textarea';
+import { Switch } from '@workspace/ui/components/switch';
 import {
     Select,
     SelectContent,
@@ -19,10 +21,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
-export function UpdateCommitStatusConfig() {
+export function CreateReleaseConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
+    const provider = form.watch('provider');
 
     return (
         <div className="space-y-4">
@@ -31,7 +35,7 @@ export function UpdateCommitStatusConfig() {
                 name="provider"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('commitStatusProvider')}</FormLabel>
+                        <FormLabel>{t('releaseProvider')}</FormLabel>
                         <Select value={field.value} onValueChange={field.onChange}>
                             <FormControl>
                                 <SelectTrigger>
@@ -40,7 +44,7 @@ export function UpdateCommitStatusConfig() {
                             </FormControl>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectLabel>{t('commitStatusProvider')}</SelectLabel>
+                                    <SelectLabel>{t('releaseProvider')}</SelectLabel>
                                     <SelectItem value="github">GitHub</SelectItem>
                                     <SelectItem value="gitlab">GitLab</SelectItem>
                                 </SelectGroup>
@@ -55,7 +59,7 @@ export function UpdateCommitStatusConfig() {
                 name="token"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('commitStatusToken')}</FormLabel>
+                        <FormLabel>{t('releaseToken')}</FormLabel>
                         <FormControl>
                             <Input {...field} type="password" placeholder="ghp_..." />
                         </FormControl>
@@ -68,7 +72,7 @@ export function UpdateCommitStatusConfig() {
                 name="owner"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('commitStatusOwner')}</FormLabel>
+                        <FormLabel>{t('releaseOwner')}</FormLabel>
                         <FormControl>
                             <Input {...field} placeholder="my-org" />
                         </FormControl>
@@ -81,7 +85,7 @@ export function UpdateCommitStatusConfig() {
                 name="repo"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('commitStatusRepo')}</FormLabel>
+                        <FormLabel>{t('releaseRepo')}</FormLabel>
                         <FormControl>
                             <Input {...field} placeholder="my-repo" />
                         </FormControl>
@@ -89,14 +93,31 @@ export function UpdateCommitStatusConfig() {
                     </FormItem>
                 )}
             />
+            {provider === 'gitlab' && (
+                <FormField
+                    control={form.control}
+                    name="baseUrl"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('releaseBaseUrl')}</FormLabel>
+                            <FormControl>
+                                <Input {...field} placeholder="https://gitlab.com" />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                        </FormItem>
+                    )}
+                />
+            )}
             <FormField
                 control={form.control}
-                name="sha"
+                name="tagName"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('commitStatusSha')}</FormLabel>
+                        <FormLabel>{t('releaseTagName')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="abc1234..." />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input {...field} placeholder={t('releaseTagNamePlaceholder')} />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -104,41 +125,70 @@ export function UpdateCommitStatusConfig() {
             />
             <FormField
                 control={form.control}
-                name="state"
+                name="targetBranch"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('commitStatusState')}</FormLabel>
-                        <Select value={field.value} onValueChange={field.onChange}>
-                            <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue />
-                                </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>{t('commitStatusState')}</SelectLabel>
-                                    <SelectItem value="pending">pending</SelectItem>
-                                    <SelectItem value="success">success</SelectItem>
-                                    <SelectItem value="failure">failure</SelectItem>
-                                    <SelectItem value="error">error</SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
+                        <FormLabel>{t('releaseTargetBranch')}</FormLabel>
+                        <FormControl>
+                            <Input {...field} placeholder={t('releaseTargetBranchPlaceholder')} />
+                        </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
                 )}
             />
             <FormField
                 control={form.control}
-                name="description"
+                name="releaseTitle"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('commitStatusDescription')}</FormLabel>
+                        <FormLabel>{t('releaseTitle')}</FormLabel>
                         <FormControl>
-                            <Input
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input {...field} placeholder={t('releaseTitlePlaceholder')} />
+                            </RefAware>
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="releaseNotes"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>{t('releaseNotes')}</FormLabel>
+                        <FormControl>
+                            <Textarea
                                 {...field}
-                                placeholder={t('commitStatusDescriptionPlaceholder')}
+                                placeholder={t('releaseNotesPlaceholder')}
+                                rows={5}
                             />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="draft"
+                render={({ field }) => (
+                    <FormItem className="flex items-center justify-between">
+                        <FormLabel>{t('releaseDraft')}</FormLabel>
+                        <FormControl>
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="prerelease"
+                render={({ field }) => (
+                    <FormItem className="flex items-center justify-between">
+                        <FormLabel>{t('releasePrerelease')}</FormLabel>
+                        <FormControl>
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

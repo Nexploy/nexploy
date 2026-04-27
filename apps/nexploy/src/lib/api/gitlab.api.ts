@@ -35,6 +35,31 @@ const GITLAB_STATE_MAP = {
     error: 'failed',
 } as const;
 
+export async function gitlabCreateRelease(
+    token: string,
+    baseUrl: string,
+    owner: string,
+    repo: string,
+    options: {
+        tagName: string;
+        ref: string;
+        name: string;
+        description: string;
+    },
+): Promise<{ tag_name: string; _links: { self: string } }> {
+    const encodedProject = encodeURIComponent(`${owner}/${repo}`);
+    return kyGitlab(baseUrl, token)
+        .post(`v4/projects/${encodedProject}/releases`, {
+            json: {
+                tag_name: options.tagName,
+                ref: options.ref,
+                name: options.name || options.tagName,
+                description: options.description,
+            },
+        })
+        .json<{ tag_name: string; _links: { self: string } }>();
+}
+
 export async function gitlabUpdateCommitStatus(
     token: string,
     baseUrl: string,

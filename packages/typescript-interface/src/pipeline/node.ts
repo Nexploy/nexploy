@@ -73,6 +73,10 @@ export type NodeId =
     // Git
     | 'git-tag'
     | 'git-clone-extra'
+    | 'create-release'
+    | 'cherry-pick-commit'
+    | 'merge-branch'
+    | 'generate-changelog'
     // Secrets
     | 'fetch-secrets'
     // Code Quality

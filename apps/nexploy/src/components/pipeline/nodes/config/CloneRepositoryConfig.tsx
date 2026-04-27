@@ -54,8 +54,6 @@ export function CloneRepositoryConfig() {
         fetcherApi,
     );
 
-    console.log(repo);
-
     const currentBranch = form.getValues('branch');
     useEffect(() => {
         if (branches && branches.length > 0 && !currentBranch) {

@@ -18,6 +18,7 @@ import {
     GitBranch,
     GitCommit,
     GitFork,
+    GitMerge,
     Globe,
     Hammer,
     HardDrive,
@@ -45,7 +46,9 @@ import {
     Variable,
     Webhook,
     Workflow,
+    NotepadText,
     PackagePlus,
+    PackageCheck,
     ScanSearch,
     Wrench,
 } from 'lucide-react';
@@ -193,6 +196,11 @@ const NODE_CATEGORY: Record<string, string> = {
     'fetch-secrets': 'config',
     // Code Quality
     'sonarqube-scan': 'build',
+    // Git CI/CD
+    'create-release': 'integration',
+    'cherry-pick-commit': 'source',
+    'merge-branch': 'source',
+    'generate-changelog': 'source',
 };
 
 export const NODE_BG_MUTED: Record<string, string> = Object.fromEntries(
@@ -268,6 +276,11 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'fetch-secrets': KeyRound,
     // Code Quality
     'sonarqube-scan': ScanSearch,
+    // Git CI/CD
+    'create-release': PackageCheck,
+    'cherry-pick-commit': GitCommit,
+    'merge-branch': GitMerge,
+    'generate-changelog': NotepadText,
 };
 
 export const TEMPLATE_ICONS: Record<string, LucideIcon> = {

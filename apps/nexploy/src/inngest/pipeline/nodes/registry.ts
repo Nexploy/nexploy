@@ -49,6 +49,10 @@ import { gitTagExecutor } from './executors/git-tag.executor';
 import { gitCloneExtraExecutor } from './executors/git-clone-extra.executor';
 import { fetchSecretsExecutor } from './executors/fetch-secrets.executor';
 import { sonarqubeScanExecutor } from './executors/sonarqube-scan.executor';
+import { createReleaseExecutor } from './executors/create-release.executor';
+import { cherryPickCommitExecutor } from './executors/cherry-pick-commit.executor';
+import { mergeBranchExecutor } from './executors/merge-branch.executor';
+import { generateChangelogExecutor } from './executors/generate-changelog.executor';
 import { deleteImageExecutor } from './executors/delete-image.executor';
 import { deleteNetworkExecutor } from './executors/delete-network.executor';
 import { deleteVolumeExecutor } from './executors/delete-volume.executor';
@@ -123,6 +127,10 @@ const executors: INodeExecutor[] = [
     // Git
     gitTagExecutor,
     gitCloneExtraExecutor,
+    createReleaseExecutor,
+    cherryPickCommitExecutor,
+    mergeBranchExecutor,
+    generateChangelogExecutor,
     // Secrets
     fetchSecretsExecutor,
     // Code Quality

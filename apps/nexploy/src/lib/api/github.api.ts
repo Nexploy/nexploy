@@ -145,6 +145,38 @@ export async function githubExchangeManifestCode(code: string): Promise<GitHubMa
         .json<GitHubManifestResponse>();
 }
 
+export async function githubCreateRelease(
+    token: string,
+    owner: string,
+    repo: string,
+    options: {
+        tagName: string;
+        targetBranch: string;
+        name: string;
+        body: string;
+        draft: boolean;
+        prerelease: boolean;
+    },
+): Promise<{ id: number; html_url: string; tag_name: string }> {
+    return kyGithubApi
+        .post(`repos/${owner}/${repo}/releases`, {
+            token,
+            headers: {
+                Accept: 'application/vnd.github+json',
+                'X-GitHub-Api-Version': '2022-11-28',
+            },
+            json: {
+                tag_name: options.tagName,
+                target_commitish: options.targetBranch,
+                name: options.name || options.tagName,
+                body: options.body,
+                draft: options.draft,
+                prerelease: options.prerelease,
+            },
+        } as KyGithubOptions)
+        .json<{ id: number; html_url: string; tag_name: string }>();
+}
+
 export async function githubUpdateCommitStatus(
     token: string,
     owner: string,

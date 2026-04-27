@@ -35,7 +35,7 @@ export function FetchSecretsConfig() {
                         <FormLabel>{t('secretsProvider')}</FormLabel>
                         <Select value={field.value} onValueChange={field.onChange}>
                             <FormControl>
-                                <SelectTrigger className="h-8 text-xs">
+                                <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
                             </FormControl>
@@ -118,7 +118,7 @@ export function FetchSecretsConfig() {
                         <FormLabel>{t('secretsOutputAs')}</FormLabel>
                         <Select value={field.value} onValueChange={field.onChange}>
                             <FormControl>
-                                <SelectTrigger className="h-8 text-xs">
+                                <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
                             </FormControl>

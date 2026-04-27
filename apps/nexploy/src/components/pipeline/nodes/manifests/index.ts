@@ -49,6 +49,10 @@ import { gitTagManifest } from './git-tag.manifest';
 import { gitCloneExtraManifest } from './git-clone-extra.manifest';
 import { fetchSecretsManifest } from './fetch-secrets.manifest';
 import { sonarqubeScanManifest } from './sonarqube-scan.manifest';
+import { createReleaseManifest } from './create-release.manifest';
+import { cherryPickCommitManifest } from './cherry-pick-commit.manifest';
+import { mergeBranchManifest } from './merge-branch.manifest';
+import { generateChangelogManifest } from './generate-changelog.manifest';
 import { deleteImageManifest } from './delete-image.manifest';
 import { deleteNetworkManifest } from './delete-network.manifest';
 import { deleteVolumeManifest } from './delete-volume.manifest';
@@ -122,6 +126,10 @@ export const allBuiltinManifests: NodeManifest[] = [
     // Git
     gitTagManifest,
     gitCloneExtraManifest,
+    createReleaseManifest,
+    cherryPickCommitManifest,
+    mergeBranchManifest,
+    generateChangelogManifest,
     // Secrets
     fetchSecretsManifest,
     // Code Quality

@@ -622,6 +622,22 @@
             "sonarqube-scan": {
                 "name": "Analyse SonarQube",
                 "description": "Analyse la qualité du code et la sécurité avec SonarQube ou SonarCloud"
+            },
+            "create-release": {
+                "name": "Créer une Release",
+                "description": "Créer une release GitHub ou GitLab à partir d'un tag"
+            },
+            "cherry-pick-commit": {
+                "name": "Cherry-pick",
+                "description": "Appliquer un commit spécifique d'une autre branche sur la branche courante"
+            },
+            "merge-branch": {
+                "name": "Fusionner une branche",
+                "description": "Fusionner une branche Git dans une autre"
+            },
+            "generate-changelog": {
+                "name": "Générer un Changelog",
+                "description": "Extraire les commits et générer un CHANGELOG.md formaté"
             }
         },
         "config": {
@@ -855,7 +871,45 @@
             "conditionModeAndDesc": "Toutes les entrées doivent réussir",
             "conditionModeOrDesc": "Au moins une doit réussir",
             "conditionInputNodes": "Nœuds d'entrée connectés",
-            "conditionNoInputs": "Aucun nœud d'entrée connecté"
+            "conditionNoInputs": "Aucun nœud d'entrée connecté",
+            "releaseProvider": "Fournisseur",
+            "releaseToken": "Jeton d'accès",
+            "releaseOwner": "Propriétaire / Espace de noms",
+            "releaseRepo": "Dépôt",
+            "releaseBaseUrl": "URL de base GitLab",
+            "releaseTagName": "Nom du tag",
+            "releaseTagNamePlaceholder": "v1.0.0",
+            "releaseTargetBranch": "Branche cible",
+            "releaseTargetBranchPlaceholder": "main",
+            "releaseTitle": "Titre de la release",
+            "releaseTitlePlaceholder": "Release v1.0.0",
+            "releaseNotes": "Notes de release",
+            "releaseNotesPlaceholder": "Décrivez les changements inclus dans cette release...",
+            "releaseDraft": "Sauvegarder comme brouillon",
+            "releasePrerelease": "Marquer comme pré-release",
+            "cherryPickCommitHash": "Hash du commit",
+            "cherryPickCommitHashPlaceholder": "abc1234",
+            "cherryPickTargetBranch": "Branche cible",
+            "cherryPickTargetBranchPlaceholder": "Laisser vide pour utiliser la branche courante",
+            "cherryPickNoCommit": "Appliquer sans commiter (--no-commit)",
+            "mergeSourceBranch": "Branche source",
+            "mergeSourceBranchPlaceholder": "feature/ma-branche",
+            "mergeTargetBranch": "Branche cible",
+            "mergeTargetBranchPlaceholder": "Laisser vide pour utiliser la branche courante",
+            "mergeStrategy": "Stratégie",
+            "mergeStrategyMerge": "Commit de merge",
+            "mergeStrategySquash": "Squash",
+            "mergeMessage": "Message de commit",
+            "mergeMessagePlaceholder": "Merge feature/ma-branche dans main",
+            "mergePush": "Pousser après le merge",
+            "changelogFromTag": "Depuis le tag / ref",
+            "changelogFromTagPlaceholder": "v1.0.0 (vide pour tous les commits)",
+            "changelogToRef": "Jusqu'au ref",
+            "changelogOutputPath": "Chemin de sortie",
+            "changelogFormat": "Format",
+            "changelogFormatConventional": "Commits conventionnels",
+            "changelogFormatSimple": "Liste simple",
+            "changelogAppend": "Ajouter au début du fichier existant"
         },
         "validation": {
             "noSourceNode": "Le pipeline doit commencer par un nœud de clonage du dépôt",
@@ -1025,7 +1079,19 @@
             "qualityGatePassed": "Quality gate passée",
             "projectKey": "Clé de projet",
             "desc_qualityGatePassed": "Si la quality gate SonarQube a été passée",
-            "desc_projectKey": "Clé du projet SonarQube analysé"
+            "desc_projectKey": "Clé du projet SonarQube analysé",
+            "releaseId": "ID de la release",
+            "desc_releaseId": "ID de la release créée sur GitHub ou GitLab",
+            "releaseUrl": "URL de la release",
+            "desc_releaseUrl": "URL de la page de la release publiée",
+            "targetBranch": "Branche cible",
+            "desc_targetBranch": "Branche dans laquelle la fusion a eu lieu",
+            "sourceBranch": "Branche source",
+            "desc_sourceBranch": "Branche qui a été fusionnée",
+            "changelogPath": "Chemin du changelog",
+            "desc_changelogPath": "Chemin absolu vers le fichier CHANGELOG.md généré",
+            "changelog": "Contenu du changelog",
+            "desc_changelog": "Contenu Markdown brut de la section de changelog générée"
         },
         "noInputsAvailable": "Aucune entrée disponible des noeuds précédents",
         "nodeOutputs": "Sorties du nœud",

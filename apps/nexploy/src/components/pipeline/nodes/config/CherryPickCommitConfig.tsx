@@ -9,19 +9,11 @@ import {
     FormLabel,
     FormMessage,
 } from '@workspace/ui/components/form';
-import { Textarea } from '@workspace/ui/components/textarea';
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
+import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
-export function RunScriptConfig() {
+export function CherryPickCommitConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
@@ -29,40 +21,33 @@ export function RunScriptConfig() {
         <div className="space-y-4">
             <FormField
                 control={form.control}
-                name="shell"
+                name="commitHash"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('shell')}</FormLabel>
-                        <Select value={field.value} onValueChange={field.onChange}>
-                            <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue />
-                                </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>{t('shell')}</SelectLabel>
-                                    <SelectItem value="bash">bash</SelectItem>
-                                    <SelectItem value="sh">sh</SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
+                        <FormLabel>{t('cherryPickCommitHash')}</FormLabel>
+                        <FormControl>
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input
+                                    {...field}
+                                    placeholder={t('cherryPickCommitHashPlaceholder')}
+                                />
+                            </RefAware>
+                        </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
                 )}
             />
             <FormField
                 control={form.control}
-                name="script"
+                name="targetBranch"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('script')}</FormLabel>
+                        <FormLabel>{t('cherryPickTargetBranch')}</FormLabel>
                         <FormControl>
-                            <Textarea
+                            <Input
                                 {...field}
-                                placeholder={'#!/bin/bash\necho "Hello from pipeline"'}
-                                className="border-border bg-background text-foreground focus:border-primary font-mono text-xs"
-                                rows={8}
+                                value={field.value ?? ''}
+                                placeholder={t('cherryPickTargetBranchPlaceholder')}
                             />
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -71,10 +56,23 @@ export function RunScriptConfig() {
             />
             <FormField
                 control={form.control}
-                name="continueOnError"
+                name="remote"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>{t('gitRemote')}</FormLabel>
+                        <FormControl>
+                            <Input {...field} placeholder="origin" />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="noCommit"
                 render={({ field }) => (
                     <FormItem className="flex items-center justify-between">
-                        <FormLabel>{t('continueOnError')}</FormLabel>
+                        <FormLabel>{t('cherryPickNoCommit')}</FormLabel>
                         <FormControl>
                             <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
