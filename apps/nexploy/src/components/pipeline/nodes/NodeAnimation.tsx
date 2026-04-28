@@ -109,6 +109,7 @@ export function NodeAnimation({
                     className={cn(
                         'bg-card absolute size-4 rounded-full text-green-500',
                         square ? 'top-1 right-1' : 'top-[11px] right-[11px]',
+                        isEndNode && 'top-1 left-1',
                     )}
                 />
             )}
@@ -117,6 +118,7 @@ export function NodeAnimation({
                     className={cn(
                         'bg-card absolute size-4 rounded-full text-red-500',
                         square ? 'top-1 right-1' : 'top-[11px] right-[11px]',
+                        isEndNode && 'top-1 left-1',
                     )}
                 />
             )}
@@ -125,6 +127,7 @@ export function NodeAnimation({
                     className={cn(
                         'bg-card absolute size-4 rounded-full text-red-500',
                         square ? 'top-1 right-1' : 'top-[11px] right-[11px]',
+                        isEndNode && 'top-1 left-1',
                     )}
                 />
             )}
@@ -133,6 +136,7 @@ export function NodeAnimation({
                     className={cn(
                         'bg-card absolute size-4 rounded-full text-yellow-500',
                         square ? 'top-1 right-1' : 'top-[11px] right-[11px]',
+                        isEndNode && 'top-1 left-1',
                     )}
                 />
             )}
