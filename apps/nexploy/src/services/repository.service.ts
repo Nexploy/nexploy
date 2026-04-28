@@ -6,6 +6,7 @@ import { decrypt, encrypt } from '@/lib/encryption';
 import { Prisma } from 'generated/client';
 import { RepositoryPayload } from '@/types/repository.type';
 import { teardownRepositoryWebhook } from '@/services/webhook/repoWebhook.service';
+import { verifyRepoAccessFromAccount } from '@/services/git/git.service';
 
 export async function createRepository(
     { repo, name, gitProvider, gitAccountId }: RepositoryCreateForm,
@@ -248,14 +249,30 @@ export async function getRepositoryWebhookStatus(repositoryId: string) {
 }
 
 export async function relinkGitAccount(repositoryId: string, gitAccountId: string) {
-    try {
-        await teardownRepositoryWebhook(repositoryId);
+    const repo = await prisma.repository.findUnique({
+        where: { id: repositoryId },
+        select: { gitId: true, repositoryUrl: true, gitProvider: true, userId: true },
+    });
 
-        await prisma.repository.update({
-            where: { id: repositoryId },
-            data: { gitAccountId },
-        });
-    } catch (error: unknown) {
-        throw new Error('Failed to relink Git account');
-    }
+    if (!repo) throw new Error('Repository not found');
+
+    const repoInfo = await verifyRepoAccessFromAccount(
+        repo.gitProvider,
+        repo.gitId,
+        repo.repositoryUrl,
+        gitAccountId,
+        repo.userId,
+    );
+
+    await teardownRepositoryWebhook(repositoryId);
+
+    await prisma.repository.update({
+        where: { id: repositoryId },
+        data: {
+            gitAccountId,
+            gitId: repoInfo.id,
+            name: repoInfo.fullName,
+            repositoryUrl: repoInfo.url,
+        },
+    });
 }

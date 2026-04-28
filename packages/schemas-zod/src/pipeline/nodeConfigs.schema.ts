@@ -230,7 +230,7 @@ export const deleteImageConfigSchema = z.object({
 });
 
 export const deleteNetworkConfigSchema = z.object({
-    networkName: refable(z.string().min(1, 'Network name is required')).default(''),
+    networkId: refable(z.string().min(1, 'Network ID is required')).default(''),
     force: z.boolean().default(false),
 });
 
@@ -354,14 +354,14 @@ export const gitCloneExtraConfigSchema = z.object({
 
 export const cherryPickCommitConfigSchema = z.object({
     commitHash: refable(z.string().min(1, 'Commit hash is required')).default(''),
-    targetBranch: z.string().optional(),
+    targetBranch: z.string().default(''),
     noCommit: z.boolean().default(false),
     remote: z.string().default('origin'),
 });
 
 export const mergeBranchConfigSchema = z.object({
     sourceBranch: refable(z.string().min(1, 'Source branch is required')).default(''),
-    targetBranch: z.string().optional(),
+    targetBranch: z.string().default(''),
     strategy: z.enum(['merge', 'squash']).default('merge'),
     message: z.string().optional(),
     remote: z.string().default('origin'),

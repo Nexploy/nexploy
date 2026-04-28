@@ -213,6 +213,7 @@
         "saving": "Enregistrement...",
         "success": "Compte Git ré-associé avec succès",
         "error": "Échec de la ré-association du compte Git",
+        "repoNotAccessible": "Ce dépôt n'est pas accessible depuis le compte sélectionné. Assurez-vous que le compte dispose des permissions nécessaires.",
         "orDelete": "Ou, supprimer ce dépôt"
     },
     "steps": {
@@ -393,6 +394,7 @@
         "empty": "Faites glisser des nœuds depuis la palette pour construire votre pipeline",
         "palette": "Nœuds",
         "search": "Rechercher des nœuds...",
+        "searchNoResults": "Aucun nœud ne correspond à votre recherche",
         "categories": {
             "source": "Source",
             "build": "Build",
@@ -427,7 +429,7 @@
                 "name": "Déployer le conteneur",
                 "description": "Déployer un conteneur Docker depuis l'image construite"
             },
-            "inject-env-vars": {
+            "env-vars": {
                 "name": "Variables d'environnement",
                 "description": "Injecte les variables d'environnement du dépôt dans le pipeline pour les nœuds suivants."
             },
@@ -653,6 +655,7 @@
             "branchDefault": "Branche par défaut",
             "repoLoading": "Chargement du dépôt...",
             "branchLoading": "Chargement des branches...",
+            "branchSelect": "Sélectionner une branche",
             "cloneCommitHash": "Hash du commit",
             "cloneCommitHashPlaceholder": "ex. abc1234",
             "cloneCommitHashDescription": "Laisser vide pour utiliser le dernier commit de la branche",
@@ -691,7 +694,7 @@
             "viewOnly": "lecture seule",
             "noConfig": "Aucune configuration requise pour ce nœud.",
             "cleanWorkdirInfo": "Supprime le répertoire du dépôt cloné du disque après l'exécution du pipeline.",
-            "injectEnvVarsInfo": "Injecte les variables d'environnement du dépôt dans le pipeline sous forme de fichier .env, les rendant disponibles aux nœuds suivants.",
+            "envVarsInfo": "Injecte les variables d'environnement du dépôt dans le pipeline sous forme de fichier .env, les rendant disponibles aux nœuds suivants.",
             "saveVersionInfo": "Enregistre le build actuel comme une nouvelle version numérotée en utilisant le tag d'image et les informations du commit.",
             "validateDockerfileInfo": "Vérifie que le Dockerfile existe et est lisible dans le répertoire de travail.",
             "deployContainerNoConfig": "Le conteneur est automatiquement déployé à partir de l'image construite par le node Build Docker Image. Connectez-le après ce node pour déployer le résultat.",
@@ -725,9 +728,11 @@
             "createContainerNetworkPlaceholder": "ex. mon-réseau (laisser vide pour le réseau par défaut)",
             "imageId": "ID de l'image",
             "imageIdPlaceholder": "Sélectionner une image...",
-            "networkName": "Nom du réseau",
-            "networkNamePlaceholder": "ex. mon-réseau",
+            "networkId": "ID du réseau",
+            "networkIdPlaceholder": "Sélectionner un réseau...",
             "networkDriver": "Driver",
+            "driver": "Driver",
+            "selectDriver": "Sélectionner un driver",
             "volume": "Volume",
             "volumeName": "Nom du volume",
             "volumeNamePlaceholder": "Sélectionner un volume",

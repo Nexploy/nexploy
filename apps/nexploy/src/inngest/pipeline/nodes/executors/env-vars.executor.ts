@@ -5,8 +5,8 @@ import {
     NodeExecutionResult,
 } from '@/types/pipeline.type';
 
-export class InjectEnvVarsExecutor implements INodeExecutor {
-    readonly type = 'inject-env-vars';
+export class EnvVarsExecutor implements INodeExecutor {
+    readonly type = 'env-vars';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { buildConfig, allOutputs, logger, nodeId } = ctx;
@@ -30,4 +30,4 @@ export class InjectEnvVarsExecutor implements INodeExecutor {
     }
 }
 
-export const injectEnvVarsExecutor = new InjectEnvVarsExecutor();
+export const envVarsExecutor = new EnvVarsExecutor();

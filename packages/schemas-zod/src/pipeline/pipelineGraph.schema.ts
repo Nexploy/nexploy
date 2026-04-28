@@ -10,7 +10,7 @@ export const nodeTypeSchema = z.enum([
     'pull-from-registry',
     'validate-dockerfile',
     'validate-compose',
-    'inject-env-vars',
+    'env-vars',
     'set-env-vars',
     'clean-workdir',
     'send-notification',

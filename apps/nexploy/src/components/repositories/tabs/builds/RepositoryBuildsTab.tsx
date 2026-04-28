@@ -40,9 +40,9 @@ export async function RepositoryBuildsTab({ repositoryId }: RepositoryOverviewTa
                 <div className="flex flex-col gap-4">
                     {Array.from(groups.entries()).map(([key, group]) => (
                         <div key={key ?? 'none'} className="flex flex-col gap-1">
-                            <h3 className="text-muted-foreground px-1 text-sm font-medium">
+                            <span className="text-muted-foreground px-1 text-sm font-medium">
                                 {group.name}
-                            </h3>
+                            </span>
                             <div className="divide-y rounded-md border">
                                 {group.builds.map((build) => (
                                     <RepositoryBuild

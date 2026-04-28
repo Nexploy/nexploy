@@ -213,6 +213,7 @@
         "saving": "Saving...",
         "success": "Git account successfully re-associated",
         "error": "Failed to re-associate Git account",
+        "repoNotAccessible": "This repository is not accessible from the selected account. Make sure the account has the required permissions.",
         "orDelete": "Or, delete this repository"
     },
     "steps": {
@@ -394,6 +395,7 @@
         "empty": "Drag nodes from the palette to build your pipeline",
         "palette": "Nodes",
         "search": "Search nodes...",
+        "searchNoResults": "No nodes match your search",
         "categories": {
             "source": "Source",
             "build": "Build",
@@ -428,7 +430,7 @@
                 "name": "Deploy Container",
                 "description": "Deploy a Docker container from the built image"
             },
-            "inject-env-vars": {
+            "env-vars": {
                 "name": "Environment Variables",
                 "description": "Injects repository environment variables into the pipeline for use by subsequent nodes."
             },
@@ -654,6 +656,7 @@
             "branchDefault": "Default branch",
             "repoLoading": "Loading repository...",
             "branchLoading": "Loading branches...",
+            "branchSelect": "Select a branch",
             "cloneCommitHash": "Commit Hash",
             "cloneCommitHashPlaceholder": "e.g. abc1234",
             "cloneCommitHashDescription": "Leave empty to use the latest commit of the branch",
@@ -692,7 +695,7 @@
             "viewOnly": "view only",
             "noConfig": "No configuration required for this node.",
             "cleanWorkdirInfo": "Removes the cloned repository directory from disk after the pipeline completes.",
-            "injectEnvVarsInfo": "Injects the repository environment variables into the pipeline as a .env file, making them available to subsequent nodes.",
+            "envVarsInfo": "Injects the repository environment variables into the pipeline as a .env file, making them available to subsequent nodes.",
             "saveVersionInfo": "Saves the current build as a new numbered version using the built image tag and commit info.",
             "validateDockerfileInfo": "Validates that the Dockerfile exists and is readable in the work directory.",
             "deployContainerNoConfig": "The container is automatically deployed using the image built by the Build Docker Image node. Connect it after that node to deploy the result.",
@@ -724,9 +727,11 @@
             "createContainerRestartPolicy": "Restart Policy",
             "createContainerNetwork": "Network",
             "createContainerNetworkPlaceholder": "e.g. my-network (leave empty for default)",
-            "networkName": "Network Name",
-            "networkNamePlaceholder": "e.g. my-network",
+            "networkId": "Network ID",
+            "networkIdPlaceholder": "Select a network...",
             "networkDriver": "Driver",
+            "driver": "Driver",
+            "selectDriver": "Select a driver",
             "volume": "Volume",
             "volumeName": "Volume Name",
             "volumeNamePlaceholder": "Select a volume",

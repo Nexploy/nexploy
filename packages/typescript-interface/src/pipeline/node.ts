@@ -1,6 +1,12 @@
 import { NodeDefinition } from './nodeDefinition';
 
-export type NodeRunStatus = 'running' | 'completed' | 'skipped' | 'failed' | 'cancelled' | 'not-configured';
+export type NodeRunStatus =
+    | 'running'
+    | 'completed'
+    | 'skipped'
+    | 'failed'
+    | 'cancelled'
+    | 'not-configured';
 
 export interface NodeData {
     nodeType: string;
@@ -21,7 +27,7 @@ export type NodeId =
     | 'pull-from-registry'
     | 'validate-dockerfile'
     | 'validate-compose'
-    | 'inject-env-vars'
+    | 'env-vars'
     | 'set-env-vars'
     | 'clean-workdir'
     | 'send-notification'
@@ -124,12 +130,7 @@ export interface PipelineGraph {
     edges: PipelineEdge[];
 }
 
-export interface NodeLifecycleResult {
-    success: boolean;
-    error?: string;
-}
-
 export interface NodeLifecycleCallbacks {
-    onAdd?: (repositoryId: string) => Promise<NodeLifecycleResult>;
+    onAdd?: (repositoryId: string) => Promise<void>;
     onRemove?: (repositoryId: string, remainingNodesOfType: number) => Promise<void>;
 }

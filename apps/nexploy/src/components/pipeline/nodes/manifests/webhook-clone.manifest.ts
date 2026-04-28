@@ -55,11 +55,7 @@ export const webhookCloneManifest: NodeManifest = {
     ],
     lifecycle: {
         onAdd: async (repositoryId) => {
-            const result = await setupWebhookAction({ repositoryId });
-            if (result?.data && !result.data.configured) {
-                return { success: false, error: result.data.error };
-            }
-            return { success: true };
+            await setupWebhookAction({ repositoryId });
         },
         onRemove: async (repositoryId, remaining) => {
             if (remaining === 0) {

@@ -38,17 +38,17 @@ export function RemoveContainerConfig() {
                     <FormItem>
                         <FormLabel>{t('containerId')}</FormLabel>
                         <FormControl>
-                            <RefAware value={field.value} onChange={field.onChange}>
+                            <RefAware
+                                className={'w-fit'}
+                                value={field.value}
+                                onChange={field.onChange}
+                            >
                                 <Select
                                     {...field}
                                     onValueChange={field.onChange}
                                     disabled={isLoading}
                                 >
-                                    <SelectTrigger
-                                        className={
-                                            'w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3'
-                                        }
-                                    >
+                                    <SelectTrigger className="max-w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3">
                                         {isLoading ? (
                                             <span className="text-muted-foreground flex items-center gap-2 pl-2">
                                                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -80,7 +80,7 @@ export function RemoveContainerConfig() {
                                                         className="pl-0"
                                                     >
                                                         <Status
-                                                            className="m-0 flex-1 rounded-none border-0 p-0 pl-2.5 text-sm"
+                                                            className="m-0 w-full rounded-none border-0 p-0 pl-2.5 text-sm"
                                                             status={
                                                                 container.state === 'running'
                                                                     ? 'online'

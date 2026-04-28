@@ -5,5 +5,4 @@ export const NEXPLOY_LABELS = {
     commitHash: 'nexploy.commitHash',
     commitMessage: 'nexploy.commitMessage',
     branch: 'nexploy.branch',
-    imageTag: 'nexploy.imageTag',
 };

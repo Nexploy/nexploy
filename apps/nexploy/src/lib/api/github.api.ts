@@ -15,6 +15,14 @@ export type {
     GitHubManifestResponse,
 };
 
+export async function githubGetRepository(owner: string, repo: string): Promise<GithubRepo> {
+    return kyGithubApi
+        .get(`repos/${owner}/${repo}`, {
+            headers: { Accept: 'application/vnd.github+json' },
+        })
+        .json<GithubRepo>();
+}
+
 export async function githubGetCommit(
     repoPath: string,
     ref: string,

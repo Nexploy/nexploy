@@ -19,7 +19,12 @@ export const relinkGitAccountAction = authActionServer
 
             revalidatePath('/[locale]/(app)/repositories/[repositoryId]', 'page');
             await setToastServer({ type: 'success', message: t('success') });
-        } catch {
-            await setToastServer({ type: 'error', message: t('error') });
+        } catch (error: unknown) {
+            const isNotAccessible =
+                error instanceof Error && error.message === 'REPO_NOT_ACCESSIBLE';
+            await setToastServer({
+                type: 'error',
+                message: isNotAccessible ? t('repoNotAccessible') : t('error'),
+            });
         }
     });

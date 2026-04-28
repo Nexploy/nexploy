@@ -4,6 +4,12 @@ import { usePipelinePanelStore } from '@/stores/usePipelinePanelStore';
 import { useTranslations } from 'next-intl';
 import { ArrowLeft, ChevronRight, Search, Wrench, X } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
+import {
+    InputGroup,
+    InputGroupAddon,
+    InputGroupButton,
+    InputGroupInput,
+} from '@workspace/ui/components/input-group';
 import { useNodeRegistryStore } from '@/stores/useNodeRegistryStore';
 import { NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { NodeItem } from '@/components/pipeline/nodes/add/NodeItem';
@@ -101,23 +107,26 @@ export function NodeAddPanel() {
             <div className="flex flex-1 flex-col overflow-hidden">
                 {!activeCategory && (
                     <div className="border-b p-2">
-                        <div className="border-border bg-card flex h-8 items-center gap-2 rounded-md border pr-1 pl-2.5">
-                            <Search className="text-muted-foreground size-3.5 shrink-0" />
-                            <input
+                        <InputGroup className="h-8">
+                            <InputGroupAddon>
+                                <Search className="size-3.5" />
+                            </InputGroupAddon>
+                            <InputGroupInput
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder={t('search')}
-                                className="text-foreground placeholder:text-muted-foreground w-full bg-transparent text-xs outline-none"
                             />
                             {search && (
-                                <button
-                                    onClick={() => setSearch('')}
-                                    className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
-                                >
-                                    <X className="size-3.5" />
-                                </button>
+                                <InputGroupAddon align="inline-end">
+                                    <InputGroupButton
+                                        size={'icon-xs'}
+                                        onClick={() => setSearch('')}
+                                    >
+                                        <X className="size-3" />
+                                    </InputGroupButton>
+                                </InputGroupAddon>
                             )}
-                        </div>
+                        </InputGroup>
                     </div>
                 )}
 
@@ -155,6 +164,12 @@ export function NodeAddPanel() {
                     colorShadow="from-sidebar via-sidebar/50"
                 >
                     <div className="grid grid-cols-1 gap-2 p-2">
+                        {isSearching && searchResults.length === 0 && (
+                            <p className="text-muted-foreground text-center text-xs">
+                                {t('searchNoResults')}
+                            </p>
+                        )}
+
                         {isSearching &&
                             searchResults.map((def) => (
                                 <NodeItem

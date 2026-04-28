@@ -25,6 +25,8 @@ import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { isBuiltinNetwork } from '@workspace/shared/nexployFilter';
 import { AlertTriangle, Loader2 } from 'lucide-react';
+import { isNodeFieldRef } from '@/lib/nodeFieldRef';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
 export function DeleteNetworkConfig() {
     const t = useTranslations('repository.pipeline.config');
@@ -38,82 +40,95 @@ export function DeleteNetworkConfig() {
         <div className="space-y-4">
             <FormField
                 control={form.control}
-                name="networkName"
+                name="networkId"
                 render={({ field }) => {
                     const isStale =
                         !isLoading &&
                         !!field.value &&
-                        !networks.find((n) => n.name === field.value);
+                        !isNodeFieldRef(field.value) &&
+                        !networks.find((n) => n.id === field.value);
 
                     return (
-                        <FormItem>
-                            <FormLabel>{t('networkName')}</FormLabel>
+                        <FormItem className="flex flex-col">
+                            <FormLabel>{t('networkId')}</FormLabel>
                             <FormControl>
-                                <Select
-                                    {...field}
-                                    onValueChange={field.onChange}
-                                    disabled={isLoading}
-                                >
-                                    <SelectTrigger className="w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3">
-                                        {isLoading ? (
-                                            <span className="text-muted-foreground flex items-center gap-2 pl-2">
-                                                <Loader2 className="h-3 w-3 animate-spin" />
-                                                {t('networksLoading')}
-                                            </span>
-                                        ) : isStale ? (
-                                            <span className="flex items-center gap-1.5">
-                                                <AlertTriangle className="h-3 w-3 shrink-0" />
-                                                {t('networkUnavailable')}
-                                            </span>
-                                        ) : (
-                                            <SelectValue
-                                                placeholder={t('networkNamePlaceholder')}
-                                            />
-                                        )}
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectLabel>{t('networksSelectLabel')}</SelectLabel>
-                                            {networks.length === 0 ? (
-                                                <span className="text-muted-foreground px-2 py-1.5 text-sm">
-                                                    {t('noNetworksFound')}
-                                                </span>
-                                            ) : (
-                                                networks.map((n) => (
-                                                    <SelectItem
-                                                        key={n.id}
-                                                        value={n.name}
-                                                        className="pl-0"
-                                                    >
-                                                        <Status
-                                                            className="m-0 flex-1 rounded-none border-0 p-0 pl-2.5 text-sm"
-                                                            status={
-                                                                isBuiltinNetwork(n.name)
-                                                                    ? 'maintenance'
-                                                                    : 'online'
-                                                            }
-                                                            variant="outline"
-                                                        >
-                                                            <Tooltip>
-                                                                <TooltipTrigger asChild>
-                                                                    <StatusIndicator className="pl-2" />
-                                                                </TooltipTrigger>
-                                                                <TooltipContent>
-                                                                    {isBuiltinNetwork(n.name)
-                                                                        ? tDocker('systemNetwork')
-                                                                        : tDocker('customNetwork')}
-                                                                </TooltipContent>
-                                                            </Tooltip>
-                                                            <span className="truncate">
-                                                                {n.name}
-                                                            </span>
-                                                        </Status>
-                                                    </SelectItem>
-                                                ))
-                                            )}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
+                                <RefAware value={field.value} onChange={field.onChange}>
+                                    {isLoading ? (
+                                        <p className="text-muted-foreground bg-input/30 border-input flex h-9 items-center gap-1 rounded-md border px-3 py-2 text-sm">
+                                            <Loader2 className="h-3 w-3 animate-spin" />
+                                            {t('networksLoading')}
+                                        </p>
+                                    ) : (
+                                        <Select
+                                            {...field}
+                                            onValueChange={field.onChange}
+                                            disabled={isLoading}
+                                        >
+                                            <SelectTrigger className="max-w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3">
+                                                {isStale ? (
+                                                    <span className="flex items-center gap-1.5">
+                                                        <AlertTriangle className="h-3 w-3 shrink-0" />
+                                                        {t('networkUnavailable')}
+                                                    </span>
+                                                ) : (
+                                                    <SelectValue
+                                                        placeholder={t('networkIdPlaceholder')}
+                                                    />
+                                                )}
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectLabel>
+                                                        {t('networksSelectLabel')}
+                                                    </SelectLabel>
+                                                    {networks.length === 0 ? (
+                                                        <span className="text-muted-foreground px-2 py-1.5 text-sm">
+                                                            {t('noNetworksFound')}
+                                                        </span>
+                                                    ) : (
+                                                        networks.map((n) => (
+                                                            <SelectItem
+                                                                key={n.id}
+                                                                value={n.id}
+                                                                className="pl-0"
+                                                            >
+                                                                <Status
+                                                                    className="m-0 w-full rounded-none border-0 p-0 pl-2.5 text-sm"
+                                                                    status={
+                                                                        isBuiltinNetwork(n.name)
+                                                                            ? 'maintenance'
+                                                                            : 'online'
+                                                                    }
+                                                                    variant="outline"
+                                                                >
+                                                                    <Tooltip>
+                                                                        <TooltipTrigger asChild>
+                                                                            <StatusIndicator className="pl-2" />
+                                                                        </TooltipTrigger>
+                                                                        <TooltipContent>
+                                                                            {isBuiltinNetwork(
+                                                                                n.name,
+                                                                            )
+                                                                                ? tDocker(
+                                                                                      'systemNetwork',
+                                                                                  )
+                                                                                : tDocker(
+                                                                                      'customNetwork',
+                                                                                  )}
+                                                                        </TooltipContent>
+                                                                    </Tooltip>
+                                                                    <span className="truncate">
+                                                                        {n.name}
+                                                                    </span>
+                                                                </Status>
+                                                            </SelectItem>
+                                                        ))
+                                                    )}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    )}
+                                </RefAware>
                             </FormControl>
                             <FormMessage className="text-xs" />
                         </FormItem>

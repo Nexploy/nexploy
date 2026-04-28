@@ -83,7 +83,7 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
                 <div
                     onDoubleClick={(e) => e.stopPropagation()}
                     className={cn(
-                        'bg-background absolute -top-9 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1',
+                        'bg-background absolute -top-9 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-md',
                         'scale-75 opacity-0 transition-all duration-150 group-hover:scale-100 group-hover:opacity-100',
                     )}
                 >

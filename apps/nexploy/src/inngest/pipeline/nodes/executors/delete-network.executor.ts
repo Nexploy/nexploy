@@ -13,44 +13,42 @@ export class DeleteNetworkExecutor implements INodeExecutor {
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
 
-        const networkName = nodeConfig.networkName.trim();
+        const networkId = nodeConfig.networkId;
         const force = nodeConfig.force;
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
 
-        await logger.info(nodeId, `Deleting Docker network: ${networkName}`);
+        await logger.info(nodeId, `Deleting Docker network: ${networkId}`);
 
         let result: { deleted: string[]; skipped: { id: string; name: string; reason?: string }[] };
         try {
             result = await kyDocker
                 .post('networks/delete', {
-                    json: { networkIds: [networkName], force },
+                    json: { networkIds: [networkId], force },
                     signal: abortSignal,
                     environmentId,
                 } as KyDockerOptions)
                 .json();
         } catch (error) {
-            throw new Error(`Failed to delete network: ${networkName}`);
+            throw new Error(`Failed to delete network: ${networkId}`);
         }
 
-        const skippedEntry = result.skipped?.find(
-            (s) => s.id === networkName || s.name === networkName,
-        );
+        const skippedEntry = result.skipped?.find((s) => s.id === networkId);
 
         if (skippedEntry) {
             const reasonMessages: Record<string, string> = {
-                has_containers: `Network ${networkName} is in use by containers`,
-                builtin: `Network ${networkName} is a built-in network`,
-                compose_stack: `Network ${networkName} belongs to a Compose stack`,
-                not_found: `Network ${networkName} not found`,
+                has_containers: `Network ${networkId} is in use by containers`,
+                builtin: `Network ${networkId} is a built-in network`,
+                compose_stack: `Network ${networkId} belongs to a Compose stack`,
+                not_found: `Network ${networkId} not found`,
             };
             const msg =
                 reasonMessages[skippedEntry.reason ?? ''] ??
-                `Network ${networkName} error: ${skippedEntry.reason}`;
+                `Network ${networkId} error: ${skippedEntry.reason}`;
             throw new Error(msg);
         }
 
-        await logger.info(nodeId, `Network deleted: ${networkName}`);
-        return { output: { deletedNetwork: networkName } };
+        await logger.info(nodeId, `Network deleted: ${networkId}`);
+        return { output: { deletedNetwork: networkId } };
     }
 }
 

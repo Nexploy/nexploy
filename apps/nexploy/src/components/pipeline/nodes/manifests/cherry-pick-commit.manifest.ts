@@ -25,18 +25,4 @@ export const cherryPickCommitManifest: NodeManifest = {
     },
     configSchema: cherryPickCommitConfigSchema,
     configPanel: CherryPickCommitConfig,
-    inputFields: [
-        {
-            key: 'workDir',
-            labelKey: 'pipeline.inputs.workDir',
-            descriptionKey: 'pipeline.inputs.desc_workDir',
-            type: 'input',
-        },
-        {
-            key: 'commitHash',
-            labelKey: 'pipeline.inputs.commitHash',
-            descriptionKey: 'pipeline.inputs.desc_commitHash',
-            type: 'input',
-        },
-    ],
 };

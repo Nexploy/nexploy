@@ -25,6 +25,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Input } from '@workspace/ui/components/input';
+import { GitBranchIcon } from 'lucide-react';
 
 interface RepositoryGitMeta {
     gitProvider: string;
@@ -85,7 +86,7 @@ export function CloneRepositoryConfig() {
                                             {t('branchLoading')}
                                         </span>
                                     ) : (
-                                        <SelectValue placeholder="..." />
+                                        <SelectValue placeholder={t('branchSelect')} />
                                     )}
                                 </SelectTrigger>
                             </FormControl>
@@ -94,7 +95,10 @@ export function CloneRepositoryConfig() {
                                     <SelectLabel>{t('cloneBranch')}</SelectLabel>
                                     {branches?.map((branch) => (
                                         <SelectItem key={branch.name} value={branch.name}>
-                                            {branch.name}
+                                            <div className="flex items-center gap-2">
+                                                <GitBranchIcon />
+                                                {branch.name}
+                                            </div>
                                         </SelectItem>
                                     ))}
                                 </SelectGroup>

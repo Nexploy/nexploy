@@ -693,12 +693,10 @@
         "selectScope": "Sélectionner un scope",
         "scopeDescription": "La portée du réseau (local, global ou swarm)"
     },
-    "networkDriver": {
+    "createNetworkPage": {
         "driver": "Driver",
         "selectDriver": "Sélectionner un driver",
-        "driverDescription": "Le type de réseau à créer"
-    },
-    "createNetworkPage": {
+        "driverDescription": "Le type de réseau à créer",
         "title": "Nouveau réseau",
         "description": "Créer un nouveau réseau Docker",
         "back": "Retour",

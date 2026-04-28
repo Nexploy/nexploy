@@ -84,9 +84,11 @@ export async function setupRepositoryWebhook(
         });
 
         return { configured: true };
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        return { configured: false, error: errorMessage };
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        }
+        throw new Error('Unknown error');
     }
 }
 

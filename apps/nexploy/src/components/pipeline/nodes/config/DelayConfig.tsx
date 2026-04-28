@@ -29,7 +29,6 @@ export function DelayConfig() {
                                 type="number"
                                 min={1}
                                 onChange={(e) => field.onChange(Number(e.target.value))}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>
                         <FormMessage className="text-xs" />

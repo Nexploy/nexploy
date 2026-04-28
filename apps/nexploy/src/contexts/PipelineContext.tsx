@@ -1,15 +1,29 @@
 'use client';
 
-import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useRef, } from 'react';
+import {
+    createContext,
+    type ReactNode,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useRef,
+} from 'react';
 import useSWR from 'swr';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { fetcherApi } from '@/lib/api/fetcherApi';
-import { addEdge, type Connection, type Edge, type Node, useEdgesState, useNodesState, } from '@xyflow/react';
+import {
+    addEdge,
+    type Connection,
+    type Edge,
+    type Node,
+    useEdgesState,
+    useNodesState,
+} from '@xyflow/react';
 import { type NodeId, type PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { flowToGraph, graphToFlow } from '@/components/pipeline/utils/graphConvert';
 import { usePipelineHistory } from '@/hooks/usePipelineHistory';
 import { getNodeLifecycle } from '@/components/pipeline/nodeManifestRegistry';
-import { toast } from 'sonner';
 import { useAction } from 'next-safe-action/hooks';
 import { savePipelineAction } from '@/actions/repository/pipeline/savePipeline.action';
 import { useParams } from 'next/navigation';
@@ -137,16 +151,10 @@ export function PipelineProvider({
     const triggerAutoSave = useCallback(() => setSaveVersion((v) => v + 1), []);
 
     const handleNodeAdded = useCallback(
-        (nodeType: NodeId, nodeId: string) => {
+        (nodeType: NodeId) => {
             const lifecycle = getNodeLifecycle(nodeType);
             if (!lifecycle?.onAdd) return;
-            lifecycle.onAdd(repositoryId).then((result) => {
-                if (!result.success) {
-                    toast.error(result.error);
-                    setNodes((nds) => nds.filter((n) => n.id !== nodeId));
-                    setSaveVersion((v) => v + 1);
-                }
-            });
+            lifecycle.onAdd(repositoryId);
         },
         [repositoryId, setNodes],
     );

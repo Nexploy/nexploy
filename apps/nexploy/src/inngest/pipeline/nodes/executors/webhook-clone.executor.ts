@@ -4,7 +4,6 @@ import { updateBuildGitInfo } from '@/services/inngest/build.inngest.service';
 import { webhookCloneConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 
-
 export class WebhookCloneExecutor implements INodeExecutor {
     readonly type = 'webhook-clone';
     readonly configSchema = webhookCloneConfigSchema;

@@ -16,6 +16,7 @@ import { GithubRepo } from '@workspace/typescript-interface/git/repository/githu
 import { decrypt, encrypt } from '@/lib/encryption';
 import {
     githubGetInstallationRepositories,
+    githubGetRepository,
     githubGetRepositoryBranches,
     githubGetUserInstallations,
 } from '@/lib/api/github.api';
@@ -250,6 +251,66 @@ export async function listGitAccounts(userId: string) {
         });
     } catch (error: unknown) {
         throw new Error('Failed to list git accounts');
+    }
+}
+
+export async function verifyRepoAccessFromAccount(
+    gitProvider: string,
+    gitId: string,
+    repositoryUrl: string,
+    gitAccountId: string,
+    userId: string,
+): Promise<GitRepository> {
+    const oldToken = await getGitProviderToken(gitProvider, { gitAccountId, requestedUserId: userId });
+    const token = await getValidToken(oldToken, gitProvider, userId, gitAccountId);
+
+    switch (gitProvider) {
+        case 'github': {
+            const { owner, repo } = extractGitHubRepo(repositoryUrl);
+            try {
+                const repoData = await tokenGitStorage.run(token, async () => {
+                    return await githubGetRepository(owner, repo);
+                });
+                if (String(repoData.id) !== gitId) {
+                    throw new Error('REPO_NOT_ACCESSIBLE');
+                }
+                return {
+                    id: String(repoData.id),
+                    name: repoData.name,
+                    fullName: repoData.full_name,
+                    url: repoData.clone_url,
+                    private: repoData.private,
+                    defaultBranch: repoData.default_branch,
+                };
+            } catch (error: unknown) {
+                const msg = error instanceof Error ? error.message : '';
+                if (msg === 'REPO_NOT_ACCESSIBLE') throw error;
+                throw new Error('REPO_NOT_ACCESSIBLE');
+            }
+        }
+        case 'gitlab': {
+            const gitlabCreds = await getGitProviderCredentialsByAccountId(gitAccountId);
+            const gitlabBaseUrl = gitlabCreds?.baseUrl ?? 'https://gitlab.com';
+            try {
+                const repoData = await tokenGitStorage.run(token, async () => {
+                    return await kyGitlab(gitlabBaseUrl)
+                        .get(`v4/projects/${gitId}`)
+                        .json<GitlabRepo>();
+                });
+                return {
+                    id: String(repoData.id),
+                    name: repoData.name,
+                    fullName: repoData.path_with_namespace,
+                    url: repoData.http_url_to_repo,
+                    private: repoData.visibility === 'private',
+                    defaultBranch: repoData.default_branch,
+                };
+            } catch {
+                throw new Error('REPO_NOT_ACCESSIBLE');
+            }
+        }
+        default:
+            throw new Error(`Unsupported provider: ${gitProvider}`);
     }
 }
 

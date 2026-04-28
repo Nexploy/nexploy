@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -46,7 +52,7 @@ export function RunCommandInContainerConfig() {
                                 >
                                     <SelectTrigger
                                         className={
-                                            'w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3'
+                                            'max-w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3'
                                         }
                                     >
                                         {isLoading ? (
@@ -80,7 +86,7 @@ export function RunCommandInContainerConfig() {
                                                         className="pl-0"
                                                     >
                                                         <Status
-                                                            className="m-0 flex-1 rounded-none border-0 p-0 pl-2.5 text-sm"
+                                                            className="m-0 w-full rounded-none border-0 p-0 pl-2.5 text-sm"
                                                             status={
                                                                 container.state === 'running'
                                                                     ? 'online'
