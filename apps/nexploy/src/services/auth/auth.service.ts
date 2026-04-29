@@ -6,7 +6,6 @@ import { prisma } from '../../../prisma/prisma';
 import { getTranslations } from 'next-intl/server';
 import { redirect, RedirectType } from 'next/navigation';
 import { TypeChangeUsernameFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
-import { SocialAccount } from '@workspace/typescript-interface/auth/social-account';
 
 export async function getUserSession(headerCustom?: Headers): Promise<Session | null> {
     try {
@@ -83,21 +82,4 @@ export async function changeUsername({ newName }: TypeChangeUsernameFormSchema) 
     }
 
     return parseRes.user;
-}
-
-export async function listAccount(): Promise<SocialAccount[]> {
-    const t = await getTranslations('auth');
-
-    const resListUserAccount = await auth.api.listUserAccounts({
-        headers: await headers(),
-        asResponse: true,
-    });
-
-    const parseRes = await resListUserAccount.json();
-
-    if (parseRes.code) {
-        throw new Error(`${parseRes.message} - ${t('errorContactAdmin')}`);
-    }
-
-    return parseRes as unknown as SocialAccount[];
 }

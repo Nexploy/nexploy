@@ -1,5 +1,4 @@
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
-import { updateBuildEnvironment } from '@/services/inngest/build.inngest.service';
 import { setEnvironmentConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 
@@ -10,11 +9,9 @@ export class SetEnvironmentExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof setEnvironmentConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { buildId, nodeConfig, logger, nodeId } = ctx;
+        const { nodeConfig, logger, nodeId } = ctx;
 
         const environmentId = nodeConfig.environmentId;
-
-        await updateBuildEnvironment(buildId, environmentId);
 
         await logger.info(nodeId, `Environment set: ${environmentId}`);
 

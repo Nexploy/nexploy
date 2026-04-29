@@ -17,7 +17,7 @@ import {
     useStore,
 } from '@xyflow/react';
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
-import { Maximize, Minus, Paintbrush, Plus } from 'lucide-react';
+import { Maximize, Minus, Paintbrush, Plus, SquareMousePointer } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
@@ -316,21 +316,9 @@ export function PipelineCanvas() {
                 {displayNodes.length === 0 && (
                     <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3">
                         <div className="border-border bg-card flex size-16 items-center justify-center rounded-2xl border">
-                            <svg
-                                className="text-muted-foreground size-8"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                strokeWidth={1}
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"
-                                />
-                            </svg>
+                            <SquareMousePointer size={28} className={'text-muted-foreground'} />
                         </div>
-                        <p className="text-muted-foreground text-sm">{t('empty')}</p>
+                        <p className="text-muted-foreground mx-5 text-sm">{t('empty')}</p>
                     </div>
                 )}
             </ReactFlow>

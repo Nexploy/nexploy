@@ -17,7 +17,7 @@ export const onRemoveBuild = authActionServer
             const t = await getTranslations('repository.builds');
             await setToastServer({ type: 'success', message: t('removeSuccess') });
 
-            revalidatePath('/[locale]/repositories', 'page');
+            revalidatePath('/repositories/[repositoryId]', 'page');
         } catch (error: unknown) {
             if (error instanceof Error) {
                 await setToastServer({

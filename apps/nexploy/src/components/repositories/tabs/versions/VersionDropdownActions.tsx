@@ -12,7 +12,6 @@ import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
 import { onDeleteVersion } from '@/actions/repository/versions/deleteVersion.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Version } from '@workspace/typescript-interface/docker/docker.version';
 
@@ -24,9 +23,13 @@ interface VersionDropdownActionsProps {
 export function VersionDropdownActions({ version, repositoryId }: VersionDropdownActionsProps) {
     const t = useTranslations('repository.versions');
     const tCommon = useTranslations('common');
-    const router = useRouter();
+
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
-    const { executeAsync } = useAction(onDeleteVersion);
+    const { execute } = useAction(onDeleteVersion, {
+        onSuccess: () => {
+            toast.success(t('deleteSuccess'));
+        },
+    });
 
     const handleDelete = () => {
         openAlertDialog({
@@ -34,18 +37,11 @@ export function VersionDropdownActions({ version, repositoryId }: VersionDropdow
             description: t('confirmDelete'),
             cancelLabel: tCommon('cancel'),
             actionLabel: tCommon('delete'),
-            onAction: async () => {
-                const result = await executeAsync({
+            onAction: async () =>
+                execute({
                     repositoryId,
                     imageTag: version.imageTag,
-                });
-                if (result?.serverError) {
-                    toast.error(result.serverError);
-                } else {
-                    toast.success(t('deleteSuccess'));
-                    router.refresh();
-                }
-            },
+                }),
         });
     };
 

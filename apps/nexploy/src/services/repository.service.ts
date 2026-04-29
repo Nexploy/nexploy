@@ -7,6 +7,7 @@ import { Prisma } from 'generated/client';
 import { RepositoryPayload } from '@/types/repository.type';
 import { teardownRepositoryWebhook } from '@/services/webhook/repoWebhook.service';
 import { verifyRepoAccessFromAccount } from '@/services/git/git.service';
+import { DeleteRepositoryInput } from '@workspace/schemas-zod/repository/settings/deleteRepository.schema';
 
 export async function createRepository(
     { repo, name, gitProvider, gitAccountId }: RepositoryCreateForm,
@@ -164,12 +165,15 @@ async function getRepositoryById(repositoryId: string) {
     }
 }
 
-export async function deleteRepository(repositoryId: string) {
+export async function deleteRepository({ repositoryId, confirmName }: DeleteRepositoryInput) {
+    const repository = await getRepositoryById(repositoryId);
+
+    if (confirmName !== repository.name) {
+        throw new Error(`Confirmation failed: expected "${repository.name}"`);
+    }
+
+    await teardownRepositoryWebhook(repositoryId);
     try {
-        await getRepositoryById(repositoryId);
-
-        await teardownRepositoryWebhook(repositoryId);
-
         await prisma.repository.delete({
             where: { id: repositoryId },
         });

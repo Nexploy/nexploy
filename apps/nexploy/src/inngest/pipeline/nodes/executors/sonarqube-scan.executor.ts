@@ -1,9 +1,5 @@
 import { getFromClosestAncestor } from '@/types/pipeline.helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { sonarqubeScanConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -15,14 +11,19 @@ export class SonarqubeScanExecutor implements INodeExecutor {
     readonly configSchema = sonarqubeScanConfigSchema;
 
     async execute(ctx: NodeExecutionContext<Config>): Promise<NodeExecutionResult> {
-        const { nodeId, nodeConfig, allOutputs, logger, abortSignal, edges } = ctx;
+        const { buildConfig, nodeId, nodeConfig, allOutputs, logger, abortSignal, edges } = ctx;
 
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         if (!workDir) {
             throw new Error('No workDir found — connect this node after a Clone Repository node');
         }
 
-        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(
+            allOutputs,
+            edges,
+            nodeId,
+            'environmentId',
+        );
         const {
             mode,
             projectKey,
@@ -37,7 +38,9 @@ export class SonarqubeScanExecutor implements INodeExecutor {
             sonarqubePort,
         } = nodeConfig;
 
-        const resolvedProjectKey = projectKey || ctx.buildConfig.repositorySlug;
+        const repositorySlug = `nexploy-${buildConfig.repositoryName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+
+        const resolvedProjectKey = projectKey || repositorySlug;
 
         await logger.info(nodeId, `Starting SonarQube analysis (mode: ${mode})`);
         await logger.info(nodeId, `Project key: ${resolvedProjectKey}`);

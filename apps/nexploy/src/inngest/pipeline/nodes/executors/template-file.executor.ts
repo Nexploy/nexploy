@@ -13,7 +13,7 @@ export class TemplateFileExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof templateFileConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, buildConfig, logger, nodeId, edges } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, edges } = ctx;
 
         const { inputPath, outputPath } = nodeConfig;
 
@@ -34,27 +34,17 @@ export class TemplateFileExecutor implements INodeExecutor {
             );
         }
 
-        const varMap: Record<string, string> = { ...buildConfig.envVariables };
-
-        for (const [, outputData] of allOutputs.entries()) {
-            for (const [k, v] of Object.entries(outputData)) {
-                if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') {
-                    varMap[k.toUpperCase()] = String(v);
-                }
-            }
-        }
-
-        const pipelineEnv = getFromClosestAncestor<Record<string, string>>(
-            allOutputs,
-            edges,
-            nodeId,
-            'envVariables',
-        );
-        if (pipelineEnv) Object.assign(varMap, pipelineEnv);
+        const envVariables =
+            getFromClosestAncestor<Record<string, string>>(
+                allOutputs,
+                edges,
+                nodeId,
+                'envVariables',
+            ) ?? {};
 
         let replaced = 0;
         const result = content.replace(/\{\{([A-Za-z0-9_]+)\}\}/g, (match, varName: string) => {
-            const value = varMap[varName] ?? varMap[varName.toUpperCase()];
+            const value = envVariables[varName] ?? envVariables[varName.toUpperCase()];
             if (value !== undefined) {
                 replaced++;
                 return value;

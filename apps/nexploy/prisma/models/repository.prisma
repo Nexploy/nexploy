@@ -5,7 +5,7 @@ model Repository {
   repositoryUrl String @unique
 
   gitProvider  String
-  gitId        String  @unique
+  gitId        String      @unique
   gitAccountId String?
   gitAccount   GitAccount? @relation(fields: [gitAccountId], references: [id], onDelete: SetNull)
 
@@ -71,9 +71,6 @@ model Build {
 
   repositoryId String
   repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
-
-  environmentId String?
-  environment   Environment? @relation("BuildEnvironment", fields: [environmentId], references: [id])
 
   @@map("build")
 }

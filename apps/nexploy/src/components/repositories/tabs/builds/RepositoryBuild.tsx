@@ -17,13 +17,9 @@ import { isBuildLive } from '@/utils/buildStatus';
 import { BuildDropdownActions } from '@/components/repositories/BuildDropdownActions';
 import { useTranslations } from 'next-intl';
 
-type BuildWithEnvironment = Build & {
-    environment: { id: string; name: string } | null;
-};
-
 interface BuildLogsProps {
     repositoryId: string;
-    build: BuildWithEnvironment;
+    build: Build;
 }
 
 export function RepositoryBuild({ repositoryId, build }: BuildLogsProps) {

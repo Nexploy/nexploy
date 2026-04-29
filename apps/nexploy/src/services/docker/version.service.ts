@@ -3,7 +3,7 @@ import { Version } from '@workspace/typescript-interface/docker/docker.version';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { decrypt } from '@/lib/encryption';
 import { getRepositorieWithEnv } from '@/services/repository.service';
-import { Image, ImageDeleteResponse } from '@workspace/typescript-interface/docker/docker.image';
+import { Image } from '@workspace/typescript-interface/docker/docker.image';
 import { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
 import * as yaml from 'yaml';
 
@@ -105,21 +105,21 @@ export async function deployComposeVersion(
 }
 
 export async function deleteVersion(repositoryId: string, imageTag: string): Promise<void> {
-    const imageName = `${repositoryId}:${imageTag}`;
-
     try {
+        const imageName = `${repositoryId}:${imageTag}`;
+
         await kyDocker
             .post('images/delete', {
                 json: { imageIds: [imageName], force: false },
             } as KyDockerOptions)
             .json();
-    } catch {
-        // Image may already be absent; proceed to remove the DB record
-    }
 
-    await prisma.version.delete({
-        where: { repositoryId_imageTag: { repositoryId, imageTag } },
-    });
+        await prisma.version.delete({
+            where: { repositoryId_imageTag: { repositoryId, imageTag } },
+        });
+    } catch {
+        throw new Error('Failed to delete version');
+    }
 }
 
 export async function getVersionsByRepository(repositoryId: string): Promise<Version[]> {

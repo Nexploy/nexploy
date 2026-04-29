@@ -1,9 +1,5 @@
 import { getFromClosestAncestor } from '@/types/pipeline.helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { getNextVersionNumber, upsertVersion } from '@/services/inngest/version.inngest.service';
 
 export class SaveVersionExecutor implements INodeExecutor {
@@ -11,6 +7,8 @@ export class SaveVersionExecutor implements INodeExecutor {
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { buildConfig, logger, nodeId, inputNodes, allOutputs, edges } = ctx;
+
+        buildConfig;
 
         await logger.info(nodeId, 'Saving version...');
 
@@ -25,10 +23,20 @@ export class SaveVersionExecutor implements INodeExecutor {
             }
         }
 
-        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(
+            allOutputs,
+            edges,
+            nodeId,
+            'environmentId',
+        );
         const branch = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'branch');
         const commitHash = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitHash');
-        const commitMessage = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitMessage');
+        const commitMessage = getFromClosestAncestor<string>(
+            allOutputs,
+            edges,
+            nodeId,
+            'commitMessage',
+        );
 
         const versionNumber = await getNextVersionNumber(buildConfig.repositoryId, environmentId);
 

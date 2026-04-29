@@ -5,17 +5,15 @@ export class EnvVarsExecutor implements INodeExecutor {
     readonly type = 'env-vars';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { buildConfig, allOutputs, logger, nodeId, edges } = ctx;
+        const { allOutputs, logger, nodeId, edges } = ctx;
 
-        const fromBuild = buildConfig.envVariables ?? {};
-        const existing = getFromClosestAncestor<Record<string, string>>(
-            allOutputs,
-            edges,
-            nodeId,
-            'envVariables',
-        );
-
-        const envVariables = { ...fromBuild, ...existing };
+        const envVariables =
+            getFromClosestAncestor<Record<string, string>>(
+                allOutputs,
+                edges,
+                nodeId,
+                'envVariables',
+            ) ?? {};
 
         const envCount = Object.keys(envVariables).length;
 

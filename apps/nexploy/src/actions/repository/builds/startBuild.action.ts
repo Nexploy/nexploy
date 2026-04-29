@@ -14,7 +14,7 @@ export const onStartBuild = authActionServer
         const t = await getTranslations('repository');
         try {
             const buildId = await startBuildRepositoryInngest(parsedInput, ctx.session.user.id);
-            revalidatePath('/[locale]/repositories', 'page');
+            revalidatePath('/repositories/[repositoryId]', 'page');
             return { buildId };
         } catch (err: unknown) {
             await setToastServer({

@@ -12,21 +12,6 @@ export async function RepositoryBuildsTab({ repositoryId }: RepositoryOverviewTa
         getTranslations('repository.builds'),
     ]);
 
-    const groups = builds.reduce<Map<string | null, { name: string; builds: typeof builds }>>(
-        (acc, build) => {
-            const key = build.environmentId ?? null;
-            if (!acc.has(key)) {
-                acc.set(key, {
-                    name: build.environment?.name ?? t('noEnvironment'),
-                    builds: [],
-                });
-            }
-            acc.get(key)!.builds.push(build);
-            return acc;
-        },
-        new Map(),
-    );
-
     return (
         <div className="flex flex-col gap-2 px-5">
             <h2 className="text-xl font-semibold">{t('history')}</h2>
@@ -37,22 +22,9 @@ export async function RepositoryBuildsTab({ repositoryId }: RepositoryOverviewTa
                     </div>
                 </div>
             ) : (
-                <div className="flex flex-col gap-4">
-                    {Array.from(groups.entries()).map(([key, group]) => (
-                        <div key={key ?? 'none'} className="flex flex-col gap-1">
-                            <span className="text-muted-foreground px-1 text-sm font-medium">
-                                {group.name}
-                            </span>
-                            <div className="divide-y rounded-md border">
-                                {group.builds.map((build) => (
-                                    <RepositoryBuild
-                                        key={build.id}
-                                        repositoryId={repositoryId}
-                                        build={build}
-                                    />
-                                ))}
-                            </div>
-                        </div>
+                <div className="flex flex-col divide-y rounded-md border">
+                    {builds.map((build) => (
+                        <RepositoryBuild key={build.id} repositoryId={repositoryId} build={build} />
                     ))}
                 </div>
             )}

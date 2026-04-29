@@ -9,11 +9,5 @@
         "./lib/*": "./src/lib/*.ts",
         "./components/*": "./src/components/*.tsx",
         "./hooks/*": "./src/hooks/*.ts"
-    },
-    "dependencies": {
-        "class-variance-authority": "^0.7.1",
-        "lucide-react": "^0.562.0",
-        "motion": "^12.23.25",
-        "radix-ui": "^1.4.3"
     }
 }

@@ -25,9 +25,9 @@ export function RunBuildButton({ repositoryId, showText = true, ...props }: Depl
         },
     });
 
-    const handleDeploy = (e: MouseEvent<HTMLButtonElement>, commitHash?: string) => {
+    const handleDeploy = (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        execute({ repositoryId, commitHash });
+        execute({ repositoryId });
     };
 
     return (

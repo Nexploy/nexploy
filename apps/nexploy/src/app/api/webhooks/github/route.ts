@@ -49,7 +49,6 @@ export async function POST(request: Request) {
             {
                 repositoryId: repo.id,
                 branch: parsed.branch,
-                commitHash: parsed.commitHash,
             },
             repo.userId,
             'webhook',

@@ -28,7 +28,9 @@ export class BuildDockerImageExecutor implements INodeExecutor {
             ? `${dockerfileFilePath.replace(/\/$/, '')}/${dockerfileName}`
             : dockerfileName;
 
-        const imageName = `${buildConfig.repositorySlug}-${nodeId}:${buildConfig.buildId}`;
+        const repositorySlug = `nexploy-${buildConfig.repositoryName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+
+        const imageName = `${repositorySlug}-${nodeId}:${buildConfig.buildId}`;
 
         await logger.info(nodeId, `Building Docker image: ${imageName}`);
 
@@ -38,7 +40,12 @@ export class BuildDockerImageExecutor implements INodeExecutor {
 
         const branch = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'branch');
         const commitHash = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitHash');
-        const commitMessage = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitMessage');
+        const commitMessage = getFromClosestAncestor<string>(
+            allOutputs,
+            edges,
+            nodeId,
+            'commitMessage',
+        );
 
         const labels: Record<string, string> = {
             [NEXPLOY_LABELS.repositoryId]: buildConfig.repositoryId,
@@ -48,7 +55,12 @@ export class BuildDockerImageExecutor implements INodeExecutor {
             ...(commitMessage && { [NEXPLOY_LABELS.commitMessage]: commitMessage }),
         };
 
-        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(
+            allOutputs,
+            edges,
+            nodeId,
+            'environmentId',
+        );
 
         try {
             const result = await dockerService.buildImage(

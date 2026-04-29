@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowLeft, Folder, Plus } from 'lucide-react';
+import { ArrowLeft, FolderGit2, Plus } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
@@ -35,7 +35,7 @@ export default function AddRepositoryPage() {
             <div className="flex justify-between gap-4 px-5">
                 <div className="flex gap-3">
                     <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <Folder className="text-primary size-7" />
+                        <FolderGit2 className="text-primary size-7" />
                     </div>
                     <div>
                         <h1 className="text-3xl leading-none font-semibold tracking-tight">

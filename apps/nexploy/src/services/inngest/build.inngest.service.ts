@@ -11,7 +11,7 @@ import { createLogInngest } from '@/services/inngest/log.inngest.service';
 import { createBuildChannel } from '@/inngest/channels/build.channel';
 
 export async function startBuildRepositoryInngest(
-    { repositoryId, branch, commitHash }: StartBuildSchemaType,
+    { repositoryId, branch }: StartBuildSchemaType,
     userId: string,
     triggerSource: 'manual' | 'webhook' = 'manual',
 ) {
@@ -32,35 +32,19 @@ export async function startBuildRepositoryInngest(
         );
     }
 
-    const pipelineNodes = pipelineConfig.nodes as Array<{
-        data?: { type?: string; config?: Record<string, unknown> };
-    }>;
-    const setEnvNode = pipelineNodes.find((n) => n.data?.type === 'set-environment');
-    const environmentId = setEnvNode?.data?.config?.environmentId as string | undefined;
-
     const build = await createBuild({
         repositoryId: repository.id,
-        environmentId: environmentId || undefined,
         pipelineSnapshot: { nodes: pipelineConfig.nodes, edges: pipelineConfig.edges },
     });
 
-    const repositorySlug = `nexploy-${repository.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
-
-    const envVariables: Record<string, string> = {};
-    for (const env of repository.envVariables) {
-        envVariables[env.key] = env.value;
-    }
-
     const config: BuildConfig = {
         userId,
+        repositoryName: repository.name,
+        gitBranch: branch,
         gitAccountId: repository.gitAccountId ?? undefined,
         repositoryId: repository.id,
         gitProvider: repository.gitProvider,
         gitUrl: repository.repositoryUrl,
-        gitBranch: branch,
-        gitCommitHash: commitHash,
-        envVariables,
-        repositorySlug,
         buildId: build.id,
         triggerSource,
     };
@@ -79,7 +63,6 @@ export async function removeBuild(buildId: string) {
 
 export async function createBuild({
     repositoryId,
-    environmentId,
     commitMessage,
     commitHash,
     pipelineSnapshot,
@@ -93,14 +76,13 @@ export async function createBuild({
     try {
         return await prisma.$transaction(async (tx) => {
             const last = await tx.build.findFirst({
-                where: environmentId ? { environmentId } : { repositoryId },
+                where: { repositoryId },
                 orderBy: { number: 'desc' },
                 select: { number: true },
             });
             return tx.build.create({
                 data: {
                     repositoryId,
-                    ...(environmentId ? { environmentId } : {}),
                     number: (last?.number ?? 0) + 1,
                     commitMessage,
                     commitHash,
@@ -146,14 +128,6 @@ export async function updateStatusBuild(buildId: string, status: BuildStatus) {
         return await prisma.build.update({ where: { id: buildId }, data: { status } });
     } catch {
         throw new Error('Failed to update status build');
-    }
-}
-
-export async function updateBuildEnvironment(buildId: string, environmentId: string) {
-    try {
-        await prisma.build.update({ where: { id: buildId }, data: { environmentId } });
-    } catch {
-        throw new Error('Failed to update build environment');
     }
 }
 
@@ -266,7 +240,6 @@ export async function getAllBuilds(repositoryId: string) {
         return await prisma.build.findMany({
             where: { repositoryId },
             orderBy: { createdAt: 'desc' },
-            include: { environment: { select: { id: true, name: true } } },
         });
     } catch {
         throw new Error('Failed to get builds');

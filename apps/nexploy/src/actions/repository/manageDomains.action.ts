@@ -11,7 +11,7 @@ export const manageDomains = authActionServer
     .use(requirePermission('repository', 'update'))
     .inputSchema(domainsFormSchema)
     .bindArgsSchemas(repositoryIdSchema)
-    .action(async ({ parsedInput, ctx, bindArgsParsedInputs: [repositoryId] }) => {
+    .action(async ({ parsedInput, bindArgsParsedInputs: [repositoryId] }) => {
         try {
             const { domains, deletedIds } = parsedInput;
 

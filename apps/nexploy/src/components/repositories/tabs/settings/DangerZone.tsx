@@ -6,8 +6,8 @@ import { Button } from '@workspace/ui/components/button';
 import { Repository } from 'generated/client';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
-import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { DeleteRepositoryForm } from '@/components/repositories/DeleteRepositoryForm';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore.ts';
 
 interface DangerZoneProps {
     repository: Repository;

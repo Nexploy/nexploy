@@ -8,14 +8,12 @@ export interface BuildLogEntry {
 
 export interface BuildConfig {
     userId: string;
+    repositoryName: string;
     gitAccountId?: string;
     repositoryId: string;
     gitProvider: string;
     gitUrl: string;
     gitBranch?: string;
-    gitCommitHash?: string;
-    envVariables: Record<string, string>;
-    repositorySlug: string;
     buildId: string;
     triggerSource: 'manual' | 'webhook';
 }

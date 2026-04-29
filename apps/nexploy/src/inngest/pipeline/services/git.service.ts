@@ -129,13 +129,7 @@ class GitService {
                 };
             }
 
-            const cloneArgs = ['clone'];
-
-            if (!buildConfig.gitCommitHash) {
-                cloneArgs.push('--depth=1');
-            }
-
-            cloneArgs.push('--single-branch');
+            const cloneArgs = ['clone', '--depth=1', '--single-branch'];
             if (buildConfig.gitBranch) {
                 cloneArgs.push(`--branch=${buildConfig.gitBranch}`);
             }
@@ -177,21 +171,8 @@ class GitService {
                     throw cloneError;
                 }
             }
-
-            if (buildConfig.gitCommitHash) {
-                if (!/^[0-9a-f]{7,40}$/i.test(buildConfig.gitCommitHash)) {
-                    throw new Error(`Invalid commit hash: ${buildConfig.gitCommitHash}`);
-                }
-                await this.exec('git', ['checkout', buildConfig.gitCommitHash], {
-                    cwd: workDir,
-                    env: gitEnv,
-                });
-            }
         } catch (error: unknown) {
             await rm(workDir, { recursive: true, force: true }).catch(() => {});
-            const commitInfo = buildConfig.gitCommitHash
-                ? `, commit: ${buildConfig.gitCommitHash}`
-                : '';
             const errorMessage = error instanceof Error ? error.message : String(error);
             const isAuthError =
                 errorMessage.includes('Authentication failed') ||
@@ -205,7 +186,7 @@ class GitService {
             }
 
             throw new Error(
-                `Failed to clone repository from ${buildConfig.gitUrl} (branch: ${buildConfig.gitBranch}${commitInfo}): ${errorMessage}`,
+                `Failed to clone repository from ${buildConfig.gitUrl} (branch: ${buildConfig.gitBranch}): ${errorMessage}`,
             );
         } finally {
             if (credsTmpDir) {

@@ -14,7 +14,6 @@ export class WebhookCloneExecutor implements INodeExecutor {
         const { buildId, buildConfig, nodeConfig, logger, nodeId, reporter } = ctx;
 
         const branch = buildConfig.gitBranch;
-        const commitHash = buildConfig.gitCommitHash;
 
         if (!branch) {
             throw new Error(
@@ -33,10 +32,9 @@ export class WebhookCloneExecutor implements INodeExecutor {
             };
         }
 
-        const commitSuffix = commitHash ? ` (commit: ${commitHash.substring(0, 7)})` : '';
         await logger.info(
             nodeId,
-            `Cloning repository ${buildConfig.gitUrl} from webhook payload (branch: ${branch}${commitSuffix})`,
+            `Cloning repository ${buildConfig.gitUrl} from webhook payload (branch: ${branch})`,
         );
 
         const onProgress = async (progress: number, message: string) => {
@@ -47,17 +45,12 @@ export class WebhookCloneExecutor implements INodeExecutor {
             const effectiveConfig = {
                 ...buildConfig,
                 gitBranch: branch,
-                gitCommitHash: commitHash,
             };
 
             const workDir = await gitService.cloneRepository(effectiveConfig, onProgress);
 
-            if (commitHash) {
-                await logger.info(nodeId, `Checked out commit ${commitHash.substring(0, 7)}`);
-            }
-
             const commitInfo = await gitService.getCommitInfo(workDir);
-            const resolvedHash = commitInfo?.hash ?? commitHash;
+            const resolvedHash = commitInfo?.hash;
             const resolvedMessage = commitInfo?.message;
 
             await updateBuildGitInfo(buildId, branch, resolvedHash, resolvedMessage);
