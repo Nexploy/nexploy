@@ -2,7 +2,7 @@
     "title": "Dépôts",
     "noRepositories": "Aucun dépôt",
     "noRepositoriesDescription": "Ajoutez votre dépôt pour commencer.",
-    "manageRepositories": "Gérez et organisez vos dépôts",
+    "manageRepositories": "Déployez vos applications depuis vos dépôts Git",
     "addRepository": "Ajouter un dépôt",
     "importRepository": "Importer un dépôt",
     "create": {
@@ -211,8 +211,6 @@
         "description": "Le compte Git associé à ce dépôt a été supprimé. Sans compte connecté, les builds ne peuvent pas cloner votre dépôt et les webhooks ne peuvent pas être authentifiés. Veuillez sélectionner un compte Git à ré-associer à ce dépôt.",
         "save": "Enregistrer",
         "saving": "Enregistrement...",
-        "success": "Compte Git ré-associé avec succès",
-        "error": "Échec de la ré-association du compte Git",
         "repoNotAccessible": "Ce dépôt n'est pas accessible depuis le compte sélectionné. Assurez-vous que le compte dispose des permissions nécessaires.",
         "orDelete": "Ou, supprimer ce dépôt"
     },
@@ -424,10 +422,6 @@
             "build-docker-image": {
                 "name": "Construire l'image Docker",
                 "description": "Construire une image Docker depuis un Dockerfile"
-            },
-            "deploy-container": {
-                "name": "Déployer le conteneur",
-                "description": "Déployer un conteneur Docker depuis l'image construite"
             },
             "env-vars": {
                 "name": "Variables d'environnement",
@@ -719,8 +713,8 @@
             "pullImageNamePlaceholderPrivate": "ex. monapp:1.0.0",
             "createContainerName": "Nom du conteneur",
             "createContainerNamePlaceholder": "ex. mon-app (laisser vide pour auto-générer)",
-            "createContainerImage": "Image",
-            "createContainerImagePlaceholder": "ex. nginx:latest",
+            "createContainerImage": "Image ID",
+            "createContainerImagePlaceholder": "Sélectionner une image",
             "createContainerSimple": "Simple",
             "createContainerAdvanced": "Avancé",
             "createContainerRestartPolicy": "Politique de redémarrage",

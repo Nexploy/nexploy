@@ -21,7 +21,6 @@ export type NodeId =
     | 'clone-repository'
     | 'webhook-clone'
     | 'build-docker-image'
-    | 'deploy-container'
     | 'deploy-compose'
     | 'push-to-registry'
     | 'pull-from-registry'

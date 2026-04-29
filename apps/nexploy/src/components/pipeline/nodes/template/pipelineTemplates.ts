@@ -29,7 +29,7 @@ export const PIPELINE_TEMPLATES: PipelineTemplate[] = [
             { type: 'clone-repository', offsetX: 0, offsetY: 0 },
             { type: 'env-vars', offsetX: 240, offsetY: 0 },
             { type: 'build-docker-image', offsetX: 480, offsetY: 0 },
-            { type: 'deploy-container', offsetX: 720, offsetY: 0 },
+            { type: 'create-container', offsetX: 720, offsetY: 0 },
         ],
         edges: [
             { sourceIndex: 0, targetIndex: 1, sourceHandle: 'output', targetHandle: 'input' },

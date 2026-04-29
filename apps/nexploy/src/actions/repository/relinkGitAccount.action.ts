@@ -16,15 +16,14 @@ export const relinkGitAccountAction = authActionServer
         const t = await getTranslations('repository.reassociateGitAccount');
         try {
             await relinkGitAccount(repositoryId, parsedInput.gitAccountId);
-
             revalidatePath('/[locale]/(app)/repositories/[repositoryId]', 'page');
-            await setToastServer({ type: 'success', message: t('success') });
         } catch (error: unknown) {
-            const isNotAccessible =
-                error instanceof Error && error.message === 'REPO_NOT_ACCESSIBLE';
-            await setToastServer({
-                type: 'error',
-                message: isNotAccessible ? t('repoNotAccessible') : t('error'),
-            });
+            if (error instanceof Error) {
+                const isNotAccessible = error.message === 'REPO_NOT_ACCESSIBLE';
+                await setToastServer({
+                    type: 'error',
+                    message: isNotAccessible ? t('repoNotAccessible') : error.message,
+                });
+            }
         }
     });

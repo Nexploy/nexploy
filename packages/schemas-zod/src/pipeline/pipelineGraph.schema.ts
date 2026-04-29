@@ -4,7 +4,6 @@ export const nodeTypeSchema = z.enum([
     'clone-repository',
     'webhook-clone',
     'build-docker-image',
-    'deploy-container',
     'deploy-compose',
     'push-to-registry',
     'pull-from-registry',

@@ -7,6 +7,7 @@ import {
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { createContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
+import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
 import { z } from 'zod';
 
 export class CreateContainerExecutor implements INodeExecutor {
@@ -16,16 +17,21 @@ export class CreateContainerExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof createContainerConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { nodeConfig, allOutputs, buildConfig, logger, nodeId, abortSignal } = ctx;
 
         const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
         const containerName = nodeConfig.containerName;
-        const imageName = nodeConfig.imageName;
+        const imageName = nodeConfig.imageId;
 
         await logger.info(
             nodeId,
             `Creating container from image: ${imageName}${containerName ? ` (name: ${containerName})` : ''}`,
         );
+
+        const labels: Record<string, string> = {
+            [NEXPLOY_LABELS.repositoryId]: buildConfig.repositoryId,
+            [NEXPLOY_LABELS.buildId]: buildConfig.buildId,
+        };
 
         try {
             const result = await kyDocker
@@ -40,6 +46,7 @@ export class CreateContainerExecutor implements INodeExecutor {
                         ports: nodeConfig.ports,
                         envVars: nodeConfig.envVars,
                         volumes: nodeConfig.volumes,
+                        labels,
                     },
                     signal: abortSignal,
                     environmentId,

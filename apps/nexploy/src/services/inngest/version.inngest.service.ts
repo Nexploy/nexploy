@@ -15,12 +15,16 @@ export async function getNextVersionNumber(
     repositoryId: string,
     environmentId?: string,
 ): Promise<number> {
-    const lastVersion = await prisma.version.findFirst({
-        where: { repositoryId, environmentId },
-        orderBy: { versionNumber: 'desc' },
-        select: { versionNumber: true },
-    });
-    return (lastVersion?.versionNumber ?? 0) + 1;
+    try {
+        const lastVersion = await prisma.version.findFirst({
+            where: { repositoryId, environmentId },
+            orderBy: { versionNumber: 'desc' },
+            select: { versionNumber: true },
+        });
+        return (lastVersion?.versionNumber ?? 0) + 1;
+    } catch (error: unknown) {
+        throw new Error('Failed to get next version number');
+    }
 }
 
 export async function upsertVersion(input: CreateVersionInput): Promise<void> {

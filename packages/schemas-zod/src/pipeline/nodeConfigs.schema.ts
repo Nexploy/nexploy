@@ -27,19 +27,6 @@ export const composeFileConfigSchema = z.object({
     composeFilePath: z.string().optional(),
 });
 
-export const deployContainerConfigSchema = z.object({
-    environmentId: z.string().optional(),
-    ports: z
-        .array(
-            z.object({
-                containerPort: z.number(),
-                hostPort: z.number().optional(),
-                protocol: z.enum(['tcp', 'udp']).default('tcp'),
-            }),
-        )
-        .default([]),
-});
-
 export const varEntrySchema = z.object({
     id: z.string(),
     key: z.string().min(1, 'Key is required'),
@@ -105,7 +92,7 @@ const createContainerVolumeSchema = z.object({
 
 export const createContainerConfigSchema = z.object({
     containerName: refable(z.string()).optional(),
-    imageName: refable(z.string()),
+    imageId: refable(z.string()),
     restartPolicy: z
         .enum(['no', 'always', 'on-failure', 'unless-stopped'])
         .default('unless-stopped'),

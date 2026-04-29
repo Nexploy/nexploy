@@ -3,7 +3,6 @@ import { cloneRepositoryExecutor } from './executors/clone-repository.executor';
 import { webhookCloneExecutor } from './executors/webhook-clone.executor';
 import { envVarsExecutor } from './executors/env-vars.executor';
 import { buildDockerImageExecutor } from './executors/build-docker-image.executor';
-import { deployContainerExecutor } from './executors/deploy-container.executor';
 import { deployComposeExecutor } from './executors/deploy-compose.executor';
 import { pushToRegistryExecutor } from './executors/push-to-registry.executor';
 import { pullFromRegistryExecutor } from './executors/pull-from-registry.executor';
@@ -68,7 +67,6 @@ const executors: INodeExecutor[] = [
     pushToRegistryExecutor,
     pullFromRegistryExecutor,
     // Deploy
-    deployContainerExecutor,
     deployComposeExecutor,
     // Utility
     envVarsExecutor,

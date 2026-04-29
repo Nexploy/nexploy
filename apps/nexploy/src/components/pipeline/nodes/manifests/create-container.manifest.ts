@@ -9,7 +9,7 @@ export const createContainerManifest: NodeManifest = {
     type: 'create-container',
     definition: {
         id: 'create-container',
-        type: 'base-node',
+        type: 'large-node',
         category: 'deploy',
         metadata: {
             name: 'create-container.name',
@@ -20,14 +20,29 @@ export const createContainerManifest: NodeManifest = {
         handles: {
             inputs: [{ id: 'input', position: Position.Left }],
             outputs: [{ id: 'output', position: Position.Right }],
-            attachments: [],
+            attachments: [{ id: 'save-version', position: Position.Bottom }],
         },
     },
     configSchema: createContainerConfigSchema,
     configPanel: CreateContainerConfig,
     inputFields: [
-        { key: 'containerId', labelKey: 'pipeline.inputs.containerId', descriptionKey: 'pipeline.inputs.desc_containerId', type: 'input' },
-        { key: 'containerName', labelKey: 'pipeline.inputs.containerName', descriptionKey: 'pipeline.inputs.desc_containerName', type: 'input' },
-        { key: 'imageName', labelKey: 'pipeline.inputs.imageName', descriptionKey: 'pipeline.inputs.desc_imageName', type: 'input' },
+        {
+            key: 'containerId',
+            labelKey: 'pipeline.inputs.containerId',
+            descriptionKey: 'pipeline.inputs.desc_containerId',
+            type: 'input',
+        },
+        {
+            key: 'containerName',
+            labelKey: 'pipeline.inputs.containerName',
+            descriptionKey: 'pipeline.inputs.desc_containerName',
+            type: 'input',
+        },
+        {
+            key: 'imageId',
+            labelKey: 'pipeline.inputs.imageId',
+            descriptionKey: 'pipeline.inputs.desc_imageId',
+            type: 'input',
+        },
     ],
 };

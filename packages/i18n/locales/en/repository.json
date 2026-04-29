@@ -2,7 +2,7 @@
     "title": "Repositories",
     "noRepositories": "No repositories",
     "noRepositoriesDescription": "Add your repository to get started.",
-    "manageRepositories": "Manage and organize your repositories",
+    "manageRepositories": "Deploy applications from your Git repositories",
     "addRepository": "Add Repository",
     "importRepository": "Import Repository",
     "create": {
@@ -211,8 +211,6 @@
         "description": "The Git account linked to this repository has been removed. Without a connected account, builds cannot clone your repository and webhooks cannot be authenticated. Please select a Git account to re-associate with this repository.",
         "save": "Save",
         "saving": "Saving...",
-        "success": "Git account successfully re-associated",
-        "error": "Failed to re-associate Git account",
         "repoNotAccessible": "This repository is not accessible from the selected account. Make sure the account has the required permissions.",
         "orDelete": "Or, delete this repository"
     },
@@ -425,10 +423,6 @@
             "build-docker-image": {
                 "name": "Build Docker Image",
                 "description": "Build a Docker image from a Dockerfile"
-            },
-            "deploy-container": {
-                "name": "Deploy Container",
-                "description": "Deploy a Docker container from the built image"
             },
             "env-vars": {
                 "name": "Environment Variables",
@@ -720,8 +714,8 @@
             "pullImageNamePlaceholderPrivate": "e.g. myapp:1.0.0",
             "createContainerName": "Container Name",
             "createContainerNamePlaceholder": "e.g. my-app (leave empty to auto-generate)",
-            "createContainerImage": "Image",
-            "createContainerImagePlaceholder": "e.g. nginx:latest",
+            "createContainerImage": "Image ID",
+            "createContainerImagePlaceholder": "Select an image",
             "createContainerSimple": "Simple",
             "createContainerAdvanced": "Advanced",
             "createContainerRestartPolicy": "Restart Policy",

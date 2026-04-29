@@ -39,15 +39,13 @@ export function CreateContainerConfig() {
     const { images, isLoading } = useEnvironmentImages(environmentId);
 
     const imageOptions = useMemo(() => {
-        const tags = new Set<string>();
+        const options: { value: string; label: string }[] = [];
         for (const img of images) {
-            for (const repoTag of img.repoTags ?? []) {
-                if (repoTag !== '<none>:<none>') tags.add(repoTag);
-            }
+            const tags = (img.repoTags ?? []).filter((t) => t !== '<none>:<none>');
+            const label = tags.length > 0 ? tags.join(', ') : img.id.slice(7, 19);
+            options.push({ value: img.id, label });
         }
-        return Array.from(tags)
-            .sort()
-            .map((tag) => ({ value: tag, label: tag }));
+        return options.sort((a, b) => a.label.localeCompare(b.label));
     }, [images]);
 
     const {
@@ -91,7 +89,7 @@ export function CreateContainerConfig() {
 
             <FormField
                 control={form.control}
-                name="imageName"
+                name="imageId"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>{t('createContainerImage')}</FormLabel>

@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
 import {
     FormControl,
     FormDescription,
@@ -29,10 +23,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import {
-    InputAutoComplete,
-    InputAutoCompleteOption,
-} from '@workspace/ui/components/search-command';
+import { InputAutoComplete, InputAutoCompleteOption, } from '@workspace/ui/components/search-command';
 
 interface ContainerBasicConfigProps {
     listImages: InputAutoCompleteOption[];
@@ -73,11 +64,11 @@ export function ContainerBasicConfig({ listImages }: ContainerBasicConfigProps) 
                             <FormLabel>{t('dockerImage')}</FormLabel>
                             <FormControl>
                                 <InputAutoComplete
+                                    {...field}
                                     options={listImages}
                                     heading={t('availableImages')}
                                     autoComplete="off"
                                     placeholder="postgres:latest"
-                                    {...field}
                                 />
                             </FormControl>
                             <FormDescription>{t('dockerImageDescription')}</FormDescription>

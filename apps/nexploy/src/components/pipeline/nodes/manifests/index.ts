@@ -7,7 +7,6 @@ import { buildDockerImageManifest } from './build-docker-image.manifest';
 import { pushToRegistryManifest } from './push-to-registry.manifest';
 import { pullFromRegistryManifest } from './pull-from-registry.manifest';
 import { setEnvironmentManifest } from './set-environment.manifest';
-import { deployContainerManifest } from './deploy-container.manifest';
 import { deployComposeManifest } from './deploy-compose.manifest';
 import { envVarsManifest } from './env-vars.manifest';
 import { setEnvVarsManifest } from './set-env-vars.manifest';
@@ -69,7 +68,6 @@ export const allBuiltinManifests: NodeManifest[] = [
     pullFromRegistryManifest,
     // Deploy
     setEnvironmentManifest,
-    deployContainerManifest,
     deployComposeManifest,
     // Utility
     envVarsManifest,
