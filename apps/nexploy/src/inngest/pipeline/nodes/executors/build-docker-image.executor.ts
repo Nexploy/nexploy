@@ -1,9 +1,5 @@
-import {
-    getFromAllOutputs,
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
 import { buildDockerImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -17,9 +13,9 @@ export class BuildDockerImageExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof buildDockerImageConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { buildConfig, allOutputs, logger, nodeId, abortSignal, nodeConfig } = ctx;
+        const { buildConfig, allOutputs, logger, nodeId, abortSignal, nodeConfig, edges } = ctx;
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         if (!workDir) {
             throw new Error(
                 'No workDir found in input nodes — connect this node after a Source node',
@@ -40,9 +36,9 @@ export class BuildDockerImageExecutor implements INodeExecutor {
             await logger.info(nodeId, message);
         };
 
-        const branch = getFromAllOutputs<string>(allOutputs, 'branch');
-        const commitHash = getFromAllOutputs<string>(allOutputs, 'commitHash');
-        const commitMessage = getFromAllOutputs<string>(allOutputs, 'commitMessage');
+        const branch = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'branch');
+        const commitHash = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitHash');
+        const commitMessage = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitMessage');
 
         const labels: Record<string, string> = {
             [NEXPLOY_LABELS.repositoryId]: buildConfig.repositoryId,
@@ -52,7 +48,7 @@ export class BuildDockerImageExecutor implements INodeExecutor {
             ...(commitMessage && { [NEXPLOY_LABELS.commitMessage]: commitMessage }),
         };
 
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         try {
             const result = await dockerService.buildImage(

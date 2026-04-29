@@ -1,5 +1,5 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
@@ -15,11 +15,11 @@ export class CreateNetworkExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof createNetworkConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const name = nodeConfig.name;
         const driver = nodeConfig.driver;
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         await logger.info(nodeId, `Creating Docker network: ${name} (driver: ${driver})`);
 

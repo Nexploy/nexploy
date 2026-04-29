@@ -44,7 +44,9 @@
         "deleteSuccess": "Version supprimée avec succès",
         "deleteError": "Échec de la suppression de la version",
         "composeConfigNotFound": "Configuration Compose introuvable pour cette version",
-        "imageNotFound": "Image Docker introuvable. Elle a peut-être été supprimée. Veuillez reconstruire avant de déployer."
+        "imageNotFound": "Image Docker introuvable. Elle a peut-être été supprimée. Veuillez reconstruire avant de déployer.",
+        "stack": "Stack",
+        "container": "Conteneur"
     },
     "deployment": {
         "title": "Déploiement",
@@ -689,7 +691,7 @@
             "noConfig": "Aucune configuration requise pour ce nœud.",
             "cleanWorkdirInfo": "Supprime le répertoire du dépôt cloné du disque après l'exécution du pipeline.",
             "envVarsInfo": "Injecte les variables d'environnement du dépôt dans le pipeline sous forme de fichier .env, les rendant disponibles aux nœuds suivants.",
-            "saveVersionInfo": "Enregistre le build actuel comme une nouvelle version numérotée en utilisant le tag d'image et les informations du commit.",
+            "saveVersionInfo": "Sauvegarde ce build comme version numérotée, accessible depuis l'onglet Versions pour effectuer un rollback.",
             "validateDockerfileInfo": "Vérifie que le Dockerfile existe et est lisible dans le répertoire de travail.",
             "deployContainerNoConfig": "Le conteneur est automatiquement déployé à partir de l'image construite par le node Build Docker Image. Connectez-le après ce node pour déployer le résultat.",
             "environment": "Environnement",
@@ -713,8 +715,8 @@
             "pullImageNamePlaceholderPrivate": "ex. monapp:1.0.0",
             "createContainerName": "Nom du conteneur",
             "createContainerNamePlaceholder": "ex. mon-app (laisser vide pour auto-générer)",
-            "createContainerImage": "Image ID",
-            "createContainerImagePlaceholder": "Sélectionner une image",
+            "createContainerImage": "Image Name",
+            "createContainerImagePlaceholder": "ex. nginx:latest",
             "createContainerSimple": "Simple",
             "createContainerAdvanced": "Avancé",
             "createContainerRestartPolicy": "Politique de redémarrage",

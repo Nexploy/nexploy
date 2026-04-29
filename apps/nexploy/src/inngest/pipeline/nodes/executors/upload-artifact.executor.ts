@@ -1,11 +1,10 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { uploadArtifactConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { safeResolvePath } from '@workspace/shared/pathSafety';
@@ -22,7 +21,7 @@ export class UploadArtifactExecutor
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof uploadArtifactConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, edges } = ctx;
 
         const {
             endpoint,
@@ -47,7 +46,7 @@ export class UploadArtifactExecutor
                 }),
             );
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         const base = workDir ?? process.cwd();
         const resolvedSource = safeResolvePath(base, sourcePath);
 

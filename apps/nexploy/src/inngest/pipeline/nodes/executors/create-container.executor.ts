@@ -1,9 +1,5 @@
-import {
-    getFromAllOutputs,
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { createContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
@@ -17,11 +13,11 @@ export class CreateContainerExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof createContainerConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, buildConfig, logger, nodeId, abortSignal } = ctx;
+        const { nodeConfig, allOutputs, buildConfig, logger, nodeId, abortSignal, edges } = ctx;
 
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
         const containerName = nodeConfig.containerName;
-        const imageName = nodeConfig.imageId;
+        const imageName = nodeConfig.imageName;
 
         await logger.info(
             nodeId,

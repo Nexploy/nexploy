@@ -1,7 +1,7 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
@@ -17,7 +17,7 @@ export class FetchSecretsExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof fetchSecretsConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const provider = nodeConfig.provider;
         const endpoint = nodeConfig.endpoint;
@@ -25,7 +25,7 @@ export class FetchSecretsExecutor implements INodeExecutor {
         const secretPath = nodeConfig.secretPath;
         const outputAs = nodeConfig.outputAs;
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
 
         await logger.info(nodeId, `Fetching secrets from ${provider} at path: ${secretPath}`);
 

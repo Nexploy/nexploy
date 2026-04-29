@@ -1,9 +1,8 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { composeFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -16,9 +15,9 @@ export class ValidateComposeExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof composeFileConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { allOutputs, logger, nodeId, nodeConfig } = ctx;
+        const { allOutputs, logger, nodeId, nodeConfig, edges } = ctx;
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
 
         if (!workDir) {
             throw new Error(

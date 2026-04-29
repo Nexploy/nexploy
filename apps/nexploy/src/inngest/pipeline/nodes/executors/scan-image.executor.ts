@@ -1,9 +1,8 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { scanImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -16,7 +15,7 @@ export class ScanImageExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof scanImageConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, buildId } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, buildId, edges } = ctx;
 
         const image = nodeConfig.image;
         const tag = nodeConfig.tag;
@@ -24,7 +23,7 @@ export class ScanImageExecutor implements INodeExecutor {
         const trivyVersion = nodeConfig.trivyVersion;
         const exitOnVulnerabilities = nodeConfig.exitOnVulnerabilities;
 
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
         const fullImage = `${image}:${tag}`;
 
         await logger.info(

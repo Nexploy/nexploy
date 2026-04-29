@@ -1,24 +1,23 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import { getFromAllOutputs, INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { safeResolvePath } from '@workspace/shared/pathSafety';
 import { templateFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 
-export class TemplateFileExecutor
-    implements INodeExecutor
-{
+export class TemplateFileExecutor implements INodeExecutor {
     readonly type = 'template-file';
     readonly configSchema = templateFileConfigSchema;
 
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof templateFileConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, buildConfig, logger, nodeId } = ctx;
+        const { nodeConfig, allOutputs, buildConfig, logger, nodeId, edges } = ctx;
 
         const { inputPath, outputPath } = nodeConfig;
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         const base = workDir ?? process.cwd();
 
         const resolvedInput = safeResolvePath(base, inputPath);
@@ -45,7 +44,12 @@ export class TemplateFileExecutor
             }
         }
 
-        const pipelineEnv = getFromAllOutputs<Record<string, string>>(allOutputs, 'envVariables');
+        const pipelineEnv = getFromClosestAncestor<Record<string, string>>(
+            allOutputs,
+            edges,
+            nodeId,
+            'envVariables',
+        );
         if (pipelineEnv) Object.assign(varMap, pipelineEnv);
 
         let replaced = 0;

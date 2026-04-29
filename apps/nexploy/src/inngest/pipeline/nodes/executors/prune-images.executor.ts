@@ -1,9 +1,8 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { pruneImagesConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -16,13 +15,13 @@ export class PruneImagesExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof pruneImagesConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const filter = nodeConfig.filter;
         const olderThan = nodeConfig.olderThan;
         const dangling = nodeConfig.dangling ?? true;
 
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         await logger.info(
             nodeId,

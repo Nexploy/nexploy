@@ -1,5 +1,5 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
@@ -15,14 +15,14 @@ export class SonarqubeScanExecutor implements INodeExecutor {
     readonly configSchema = sonarqubeScanConfigSchema;
 
     async execute(ctx: NodeExecutionContext<Config>): Promise<NodeExecutionResult> {
-        const { nodeId, nodeConfig, allOutputs, logger, abortSignal } = ctx;
+        const { nodeId, nodeConfig, allOutputs, logger, abortSignal, edges } = ctx;
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         if (!workDir) {
             throw new Error('No workDir found — connect this node after a Clone Repository node');
         }
 
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
         const {
             mode,
             projectKey,

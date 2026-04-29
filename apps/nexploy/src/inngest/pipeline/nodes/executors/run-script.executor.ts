@@ -2,12 +2,11 @@ import * as childProcess from 'node:child_process';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { runScriptConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -19,13 +18,13 @@ export class RunScriptExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof runScriptConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const script = nodeConfig.script;
         const shell = nodeConfig.shell;
         const continueOnError = nodeConfig.continueOnError;
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
 
         await logger.info(nodeId, `Running script with ${shell}${workDir ? ` in ${workDir}` : ''}`);
 

@@ -1,9 +1,8 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { deployStackConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -16,14 +15,14 @@ export class DeployStackExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof deployStackConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const stackName = nodeConfig.stackName;
         const composeFilePath = nodeConfig.composeFilePath;
         const prune = nodeConfig.prune;
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         await logger.info(nodeId, `Deploying Swarm stack "${stackName}" from ${composeFilePath}`);
 

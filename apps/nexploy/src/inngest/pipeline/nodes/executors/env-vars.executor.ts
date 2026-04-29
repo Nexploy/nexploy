@@ -1,19 +1,19 @@
-import {
-    getFromAllOutputs,
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 
 export class EnvVarsExecutor implements INodeExecutor {
     readonly type = 'env-vars';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { buildConfig, allOutputs, logger, nodeId } = ctx;
+        const { buildConfig, allOutputs, logger, nodeId, edges } = ctx;
 
         const fromBuild = buildConfig.envVariables ?? {};
-        const existing =
-            getFromAllOutputs<Record<string, string>>(allOutputs, 'envVariables') ?? {};
+        const existing = getFromClosestAncestor<Record<string, string>>(
+            allOutputs,
+            edges,
+            nodeId,
+            'envVariables',
+        );
 
         const envVariables = { ...fromBuild, ...existing };
 

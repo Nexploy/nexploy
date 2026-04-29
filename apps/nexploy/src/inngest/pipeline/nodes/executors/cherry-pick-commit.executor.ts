@@ -1,5 +1,5 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
@@ -16,16 +16,16 @@ export class CherryPickCommitExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof cherryPickCommitConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeId, nodeConfig, allOutputs, logger, abortSignal } = ctx;
+        const { nodeId, nodeConfig, allOutputs, logger, abortSignal, edges } = ctx;
 
         const { targetBranch, noCommit, remote } = nodeConfig;
 
         const commitHash =
-            nodeConfig.commitHash || getFromAllOutputs<string>(allOutputs, 'commitHash') || '';
+            nodeConfig.commitHash || getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitHash') || '';
         if (!commitHash)
             throw new Error('No commit hash — provide one or connect an upstream node');
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         if (!workDir) throw new Error('No workDir found — connect a clone node first');
 
         if (abortSignal.aborted) throw new Error('Build cancelled');

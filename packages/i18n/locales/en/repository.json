@@ -44,7 +44,9 @@
         "deleteSuccess": "Version deleted successfully",
         "deleteError": "Failed to delete version",
         "composeConfigNotFound": "Compose configuration not found for this version",
-        "imageNotFound": "Docker image not found. It may have been deleted. Please rebuild before deploying."
+        "imageNotFound": "Docker image not found. It may have been deleted. Please rebuild before deploying.",
+        "stack": "Stack",
+        "container": "Container"
     },
     "deployment": {
         "title": "Deployment",
@@ -690,7 +692,7 @@
             "noConfig": "No configuration required for this node.",
             "cleanWorkdirInfo": "Removes the cloned repository directory from disk after the pipeline completes.",
             "envVarsInfo": "Injects the repository environment variables into the pipeline as a .env file, making them available to subsequent nodes.",
-            "saveVersionInfo": "Saves the current build as a new numbered version using the built image tag and commit info.",
+            "saveVersionInfo": "Saves this build as a numbered version, accessible from the Versions tab to perform a rollback.",
             "validateDockerfileInfo": "Validates that the Dockerfile exists and is readable in the work directory.",
             "deployContainerNoConfig": "The container is automatically deployed using the image built by the Build Docker Image node. Connect it after that node to deploy the result.",
             "environment": "Environment",
@@ -714,8 +716,8 @@
             "pullImageNamePlaceholderPrivate": "e.g. myapp:1.0.0",
             "createContainerName": "Container Name",
             "createContainerNamePlaceholder": "e.g. my-app (leave empty to auto-generate)",
-            "createContainerImage": "Image ID",
-            "createContainerImagePlaceholder": "Select an image",
+            "createContainerImage": "Image Name",
+            "createContainerImagePlaceholder": "e.g. nginx:latest",
             "createContainerSimple": "Simple",
             "createContainerAdvanced": "Advanced",
             "createContainerRestartPolicy": "Restart Policy",

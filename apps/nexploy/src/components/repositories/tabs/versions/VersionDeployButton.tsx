@@ -19,7 +19,11 @@ interface VersionDeployButtonProps {
     isCurrent: boolean;
 }
 
-export function VersionDeployButton({ version, repositoryId, isCurrent }: VersionDeployButtonProps) {
+export function VersionDeployButton({
+    version,
+    repositoryId,
+    isCurrent,
+}: VersionDeployButtonProps) {
     const t = useTranslations('repository.versions');
     const router = useRouter();
     const selectedEnvironmentId = useEnvironmentStore((s) => s.selectedEnvironmentId);

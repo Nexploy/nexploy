@@ -91,8 +91,8 @@ const createContainerVolumeSchema = z.object({
 });
 
 export const createContainerConfigSchema = z.object({
-    containerName: refable(z.string()).optional(),
-    imageId: refable(z.string()),
+    containerName: refable(z.string()).default(''),
+    imageName: refable(z.string()),
     restartPolicy: z
         .enum(['no', 'always', 'on-failure', 'unless-stopped'])
         .default('unless-stopped'),

@@ -1,8 +1,8 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    getFromAllOutputs,
 } from '@/types/pipeline.type';
 import { generateChangelogConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
@@ -74,15 +74,15 @@ export class GenerateChangelogExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof generateChangelogConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeId, nodeConfig, allOutputs, logger, abortSignal } = ctx;
+        const { nodeId, nodeConfig, allOutputs, logger, abortSignal, edges } = ctx;
 
         const { outputPath, format, append } = nodeConfig;
 
         const fromTag =
-            nodeConfig.fromTag || getFromAllOutputs<string>(allOutputs, 'tagName') || '';
+            nodeConfig.fromTag || getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'tagName') || '';
         const toRef = nodeConfig.toRef || 'HEAD';
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         if (!workDir) throw new Error('No workDir found — connect a clone node first');
 
         if (abortSignal.aborted) throw new Error('Build cancelled');

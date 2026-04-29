@@ -1,9 +1,8 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { setEnvVarsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -15,7 +14,7 @@ export class SetEnvVarsExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof setEnvVarsConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { logger, nodeId, nodeConfig, allOutputs } = ctx;
+        const { logger, nodeId, nodeConfig, allOutputs, edges } = ctx;
 
         const raw = nodeConfig.vars;
 
@@ -27,7 +26,7 @@ export class SetEnvVarsExecutor implements INodeExecutor {
         }
 
         const existing =
-            getFromAllOutputs<Record<string, string>>(allOutputs, 'envVariables') ?? {};
+            getFromClosestAncestor<Record<string, string>>(allOutputs, edges, nodeId, 'envVariables') ?? {};
 
         const envVariables = { ...fromNode, ...existing };
 

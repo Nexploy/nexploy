@@ -1,4 +1,9 @@
-import { getFromAllOutputs, INodeExecutor, NodeExecutionContext, NodeExecutionResult, } from '@/types/pipeline.type';
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { deleteNetworkConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
@@ -11,11 +16,11 @@ export class DeleteNetworkExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof deleteNetworkConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const networkId = nodeConfig.networkId;
         const force = nodeConfig.force;
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         await logger.info(nodeId, `Deleting Docker network: ${networkId}`);
 

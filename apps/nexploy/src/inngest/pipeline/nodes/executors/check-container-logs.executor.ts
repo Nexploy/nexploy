@@ -1,4 +1,9 @@
-import { getFromAllOutputs, INodeExecutor, NodeExecutionContext, NodeExecutionResult, } from '@/types/pipeline.type';
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { checkContainerLogsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -24,7 +29,7 @@ export class CheckContainerLogsExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof checkContainerLogsConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const containerId = nodeConfig.containerId;
         const pattern = nodeConfig.pattern;
@@ -32,7 +37,7 @@ export class CheckContainerLogsExecutor implements INodeExecutor {
         const timeout = nodeConfig.timeout;
         const failIfFound = nodeConfig.failIfFound;
 
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
         const regex = new RegExp(pattern);
         const sinceTimestamp = since ? parseSinceDuration(since) : undefined;
 

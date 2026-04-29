@@ -1,9 +1,8 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { updateServiceConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -16,14 +15,14 @@ export class UpdateServiceExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof updateServiceConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const serviceName = nodeConfig.serviceName;
         const image = nodeConfig.image;
         const tag = nodeConfig.tag;
         const forceUpdate = nodeConfig.forceUpdate;
 
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
         const fullImage = `${image}:${tag}`;
 
         await logger.info(nodeId, `Updating Swarm service "${serviceName}" to image ${fullImage}`);

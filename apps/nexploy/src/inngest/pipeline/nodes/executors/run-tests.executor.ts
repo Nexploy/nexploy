@@ -1,5 +1,5 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
@@ -15,13 +15,13 @@ export class RunTestsExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof runTestsConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const command = nodeConfig.command;
         const image = nodeConfig.image;
         const workdir = nodeConfig.workdir ?? '/workspace';
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         await logger.info(nodeId, `Running tests in ephemeral container (image: ${image})`);
         await logger.info(nodeId, `Command: ${command}`);

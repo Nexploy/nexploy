@@ -1,9 +1,8 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { gitCloneExtraConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { gitService } from '@/inngest/pipeline/services/git.service';
@@ -17,11 +16,11 @@ export class GitCloneExtraExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof gitCloneExtraConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, edges } = ctx;
 
         const { repoUrl, branch, targetDir, token } = nodeConfig;
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         if (!workDir) throw new Error('No workDir found — run a clone node first');
 
         const cloneDest = safeResolvePath(workDir, targetDir);

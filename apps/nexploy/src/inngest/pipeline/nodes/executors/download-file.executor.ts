@@ -1,11 +1,10 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { downloadFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { safeResolvePath } from '@workspace/shared/pathSafety';
@@ -18,13 +17,13 @@ export class DownloadFileExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof downloadFileConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const url = nodeConfig.url;
         const destinationPath = nodeConfig.destinationPath;
         const filename = nodeConfig.filename;
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         const base = workDir ?? process.cwd();
 
         const resolvedDest = safeResolvePath(base, destinationPath);

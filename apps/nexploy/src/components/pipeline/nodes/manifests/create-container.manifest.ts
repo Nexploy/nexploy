@@ -39,9 +39,9 @@ export const createContainerManifest: NodeManifest = {
             type: 'input',
         },
         {
-            key: 'imageId',
-            labelKey: 'pipeline.inputs.imageId',
-            descriptionKey: 'pipeline.inputs.desc_imageId',
+            key: 'imageName',
+            labelKey: 'pipeline.inputs.imageName',
+            descriptionKey: 'pipeline.inputs.desc_imageName',
             type: 'input',
         },
     ],

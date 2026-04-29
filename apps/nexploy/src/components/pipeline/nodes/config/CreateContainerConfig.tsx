@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -26,6 +20,7 @@ import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { Plus, Trash2 } from 'lucide-react';
 import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId';
 import { useEnvironmentImages } from '@/hooks/sse/useEnvironmentImages';
+import { useEnvironmentNetworks } from '@/hooks/sse/useEnvironmentNetworks';
 import { useMemo } from 'react';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
@@ -36,16 +31,25 @@ export function CreateContainerConfig() {
 
     const environmentId = usePipelineEnvironmentId();
 
-    const { images, isLoading } = useEnvironmentImages(environmentId);
+    const { images, isLoading: imagesLoading } = useEnvironmentImages(environmentId);
+    const { networks, isLoading: networksLoading } = useEnvironmentNetworks(environmentId);
+
+    const networkOptions = useMemo(() => {
+        return networks
+            .map((n) => ({ value: n.name, label: n.name }))
+            .sort((a, b) => a.label.localeCompare(b.label));
+    }, [networks]);
 
     const imageOptions = useMemo(() => {
-        const options: { value: string; label: string }[] = [];
+        const tags = new Set<string>();
         for (const img of images) {
-            const tags = (img.repoTags ?? []).filter((t) => t !== '<none>:<none>');
-            const label = tags.length > 0 ? tags.join(', ') : img.id.slice(7, 19);
-            options.push({ value: img.id, label });
+            for (const repoTag of img.repoTags ?? []) {
+                if (repoTag !== '<none>:<none>') tags.add(repoTag);
+            }
         }
-        return options.sort((a, b) => a.label.localeCompare(b.label));
+        return Array.from(tags)
+            .sort()
+            .map((tag) => ({ value: tag, label: tag }));
     }, [images]);
 
     const {
@@ -89,7 +93,7 @@ export function CreateContainerConfig() {
 
             <FormField
                 control={form.control}
-                name="imageId"
+                name="imageName"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>{t('createContainerImage')}</FormLabel>
@@ -99,7 +103,7 @@ export function CreateContainerConfig() {
                                     {...field}
                                     className="truncate"
                                     options={imageOptions}
-                                    isLoading={isLoading}
+                                    isLoading={imagesLoading}
                                     placeholder={t('createContainerImagePlaceholder')}
                                     heading={t('availableImages')}
                                 />
@@ -149,9 +153,13 @@ export function CreateContainerConfig() {
                         <FormLabel>{t('createContainerNetwork')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input
+                                <InputAutoComplete
                                     {...field}
+                                    className="truncate"
+                                    options={networkOptions}
+                                    isLoading={networksLoading}
                                     placeholder={t('createContainerNetworkPlaceholder')}
+                                    heading={t('availableNetworks')}
                                 />
                             </RefAware>
                         </FormControl>

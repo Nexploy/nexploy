@@ -1,9 +1,8 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { gitTagConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { gitService } from '@/inngest/pipeline/services/git.service';
@@ -16,11 +15,11 @@ export class GitTagExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof gitTagConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, edges } = ctx;
 
         const { tagName, message, remote } = nodeConfig;
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         if (!workDir) throw new Error('No workDir found — run a clone node first');
 
         await logger.info(

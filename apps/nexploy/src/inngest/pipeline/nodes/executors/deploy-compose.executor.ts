@@ -1,9 +1,8 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
@@ -17,9 +16,9 @@ export class DeployComposeExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof composeFileConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { buildConfig, allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
+        const { buildConfig, allOutputs, logger, nodeId, nodeConfig, abortSignal, edges } = ctx;
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
 
         if (!workDir) {
             throw new Error(
@@ -41,9 +40,9 @@ export class DeployComposeExecutor implements INodeExecutor {
             }
         }
 
-        const branch = getFromAllOutputs<string>(allOutputs, 'branch');
-        const commitHash = getFromAllOutputs<string>(allOutputs, 'commitHash');
-        const commitMessage = getFromAllOutputs<string>(allOutputs, 'commitMessage');
+        const branch = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'branch');
+        const commitHash = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitHash');
+        const commitMessage = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitMessage');
 
         const labels: Record<string, string> = {
             [NEXPLOY_LABELS.repositoryId]: buildConfig.repositoryId,
@@ -57,7 +56,7 @@ export class DeployComposeExecutor implements INodeExecutor {
 
         const onLog = async (message: string) => logger.info(nodeId, message);
 
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         try {
             const result = await dockerService.deployCompose(

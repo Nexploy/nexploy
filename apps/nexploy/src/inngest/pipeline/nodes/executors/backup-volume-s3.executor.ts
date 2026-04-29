@@ -1,5 +1,5 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
@@ -20,12 +20,12 @@ export class BackupVolumeS3Executor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof backupVolumeS3ConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeId, nodeConfig, allOutputs, logger, abortSignal } = ctx;
+        const { nodeId, nodeConfig, allOutputs, logger, abortSignal, edges } = ctx;
 
         const volumeName = nodeConfig.volumeName;
         const accountId = nodeConfig.accountId;
         const bucket = nodeConfig.bucket;
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         await logger.info(nodeId, `Fetching AWS credentials for account ${accountId}`);
         const creds = await getAwsCredentials(accountId);

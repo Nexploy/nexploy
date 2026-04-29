@@ -1,9 +1,8 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    
 } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { cacheSaveConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -16,14 +15,14 @@ export class CacheSaveExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof cacheSaveConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const volumeName = nodeConfig.volumeName;
         const sourcePath = nodeConfig.sourcePath;
         const cacheKey = nodeConfig.cacheKey;
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         if (!workDir) {
             await logger.warn(nodeId, 'No workDir found in pipeline outputs — skipping cache save');

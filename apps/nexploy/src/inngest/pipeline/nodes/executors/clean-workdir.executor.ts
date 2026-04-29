@@ -1,5 +1,5 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
@@ -10,13 +10,13 @@ export class CleanWorkdirExecutor implements INodeExecutor {
     readonly type = 'clean-workdir';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { inputOutputs, allOutputs, logger, nodeId } = ctx;
+        const { inputOutputs, allOutputs, logger, nodeId, edges } = ctx;
 
         const workDirFromInputs = inputOutputs
             .map((o) => o.workDir)
             .find((v): v is string => typeof v === 'string');
 
-        const workDir = workDirFromInputs ?? getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = workDirFromInputs ?? getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
 
         if (!workDir) {
             await logger.info(nodeId, 'No work directory to clean up');

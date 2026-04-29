@@ -1,5 +1,5 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
@@ -15,15 +15,15 @@ export class RunMigrationExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof runMigrationConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, abortSignal } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const image = nodeConfig.image;
         const command = nodeConfig.command;
         const databaseUrl = nodeConfig.databaseUrl;
         const workdir = nodeConfig.workdir;
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
-        const environmentId = getFromAllOutputs<string>(allOutputs, 'environmentId');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         await logger.info(
             nodeId,

@@ -1,8 +1,8 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-    getFromAllOutputs,
 } from '@/types/pipeline.type';
 import { mergeBranchConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
@@ -16,16 +16,16 @@ export class MergeBranchExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof mergeBranchConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeId, nodeConfig, allOutputs, logger, abortSignal } = ctx;
+        const { nodeId, nodeConfig, allOutputs, logger, abortSignal, edges } = ctx;
 
         const { targetBranch, strategy, message, remote, push } = nodeConfig;
 
         const sourceBranch =
-            nodeConfig.sourceBranch || getFromAllOutputs<string>(allOutputs, 'branch') || '';
+            nodeConfig.sourceBranch || getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'branch') || '';
         if (!sourceBranch)
             throw new Error('No source branch — provide one or connect an upstream node');
 
-        const workDir = getFromAllOutputs<string>(allOutputs, 'workDir');
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         if (!workDir) throw new Error('No workDir found — connect a clone node first');
 
         if (abortSignal.aborted) throw new Error('Build cancelled');

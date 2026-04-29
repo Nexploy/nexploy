@@ -1,5 +1,5 @@
+import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import {
-    getFromAllOutputs,
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
@@ -17,13 +17,13 @@ export class CreateReleaseExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof createReleaseConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeId, nodeConfig, allOutputs, logger, abortSignal } = ctx;
+        const { nodeId, nodeConfig, allOutputs, logger, abortSignal, edges } = ctx;
 
         const { provider, token, owner, repo, baseUrl, targetBranch, draft, prerelease } =
             nodeConfig;
 
         const tagName =
-            nodeConfig.tagName || getFromAllOutputs<string>(allOutputs, 'tagName') || '';
+            nodeConfig.tagName || getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'tagName') || '';
 
         if (!tagName) throw new Error('No tag name — provide one or connect a Git Tag node');
 

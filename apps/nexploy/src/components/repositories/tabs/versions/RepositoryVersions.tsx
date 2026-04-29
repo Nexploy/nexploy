@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Clock, GitBranch, GitCommit } from 'lucide-react';
+import { Boxes, Clock, Container, GitBranch, GitCommit } from 'lucide-react';
 import dayjs from 'dayjs';
 import { Separator } from '@workspace/ui/components/separator';
 import { Badge } from '@workspace/ui/components/badge';
@@ -23,15 +23,19 @@ export function RepositoryVersions({ repositoryId, versions }: RepositoryVersion
 
     const containers = useContainersStore((s) => s.containers);
 
-    const deployedBuildIds = useMemo(() => {
+    const { deployedBuildIds, containerNameByBuildId } = useMemo(() => {
         const ids = new Set<string>();
+        const nameMap = new Map<string, string>();
         for (const c of containers) {
             if (c.labels?.[NEXPLOY_LABELS.repositoryId] === repositoryId) {
                 const buildId = c.labels?.[NEXPLOY_LABELS.buildId];
-                if (buildId) ids.add(buildId);
+                if (buildId) {
+                    ids.add(buildId);
+                    if (!nameMap.has(buildId)) nameMap.set(buildId, c.name);
+                }
             }
         }
-        return ids;
+        return { deployedBuildIds: ids, containerNameByBuildId: nameMap };
     }, [containers, repositoryId]);
 
     const isCurrentVersion = (version: Version) => deployedBuildIds.has(version.imageTag);
@@ -70,7 +74,7 @@ export function RepositoryVersions({ repositoryId, versions }: RepositoryVersion
                             {version.commitMessage ?? `Build #${version.imageTag}`}
                         </span>
                     </div>
-                    <div className="text-muted-foreground flex items-center gap-2 text-xs">
+                    <div className="text-muted-foreground flex min-w-0 items-center gap-2 text-xs">
                         <span className="flex items-center gap-1">
                             <Clock className="size-3" />
                             {dayjs(version.createdAt).format('DD/MM/YYYY HH:mm:ss')}
@@ -92,6 +96,20 @@ export function RepositoryVersions({ repositoryId, versions }: RepositoryVersion
                                     {version.branch}
                                 </span>
                             </>
+                        )}
+                        <Separator orientation="vertical" className="!h-3 w-1" />
+                        {version.hasComposeConfig ? (
+                            <span className="flex items-center gap-1">
+                                <Boxes className="size-3" />
+                                {t('stack')}
+                            </span>
+                        ) : (
+                            <span className="flex min-w-0 items-center gap-1">
+                                <Container className="size-3 shrink-0" />
+                                <span className="truncate">
+                                    {containerNameByBuildId.get(version.imageTag)}
+                                </span>
+                            </span>
                         )}
                     </div>
                 </div>
