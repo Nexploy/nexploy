@@ -31,6 +31,39 @@ export async function getEnvironmentById(id: string) {
     }
 }
 
+export async function setDefaultEnvironmentById(environmentId: string) {
+    try {
+        await kyDocker.post(`environments/${environmentId}/set-default`);
+    } catch (error: any) {
+        throw new Error(error?.message);
+    }
+
+    try {
+        await prisma.$transaction(async (tx) => {
+            await tx.environment.updateMany({
+                where: { isDefault: true },
+                data: { isDefault: false },
+            });
+            await tx.environment.update({
+                where: { id: environmentId },
+                data: { isDefault: true },
+            });
+        });
+    } catch {
+        throw new Error('Failed to set default environment in database');
+    }
+}
+
+export async function getDefaultEnvironment() {
+    try {
+        return await prisma.environment.findFirst({
+            where: { isDefault: true, isActive: true },
+        });
+    } catch {
+        throw new Error('Failed to get default environment');
+    }
+}
+
 export async function createEnvironment(data: EnvironmentSchemaType, userId: string) {
     try {
         await kyDocker.post('environments/validate', {
@@ -43,6 +76,7 @@ export async function createEnvironment(data: EnvironmentSchemaType, userId: str
     const environment = await prisma.environment.create({
         data: {
             ...data,
+            isDefault: false,
             userId,
             tlsCert: data.tlsCert ? encrypt(data.tlsCert) : null,
             tlsKey: data.tlsKey ? encrypt(data.tlsKey) : null,
@@ -60,6 +94,27 @@ export async function createEnvironment(data: EnvironmentSchemaType, userId: str
     } catch (error: any) {
         await prisma.environment.delete({ where: { id: environment.id } }).catch(() => {});
         throw new Error(`Failed to register environment with docker-api: ${error.message}`);
+    }
+
+    if (data.isDefault) {
+        try {
+            await kyDocker.post(`environments/${environment.id}/set-default`);
+        } catch (error: any) {
+            throw new Error(error?.message);
+        }
+
+        await prisma.$transaction(async (tx) => {
+            await tx.environment.updateMany({
+                where: { isDefault: true },
+                data: { isDefault: false },
+            });
+            await tx.environment.update({
+                where: { id: environment.id },
+                data: { isDefault: true },
+            });
+        });
+
+        environment.isDefault = true;
     }
 
     return environment;
@@ -124,9 +179,17 @@ export async function updateEnvironment(environmentData: EnvironmentSchemaType) 
 
     let environment: Environment;
     try {
-        environment = await prisma.environment.update({
-            where: { id: environmentData.id },
-            data: encryptedData,
+        environment = await prisma.$transaction(async (tx) => {
+            if (environmentData.isDefault) {
+                await tx.environment.updateMany({
+                    where: { isDefault: true, id: { not: environmentData.id } },
+                    data: { isDefault: false },
+                });
+            }
+            return tx.environment.update({
+                where: { id: environmentData.id },
+                data: encryptedData,
+            });
         });
     } catch (error: unknown) {
         throw new Error('Failed to update environment in database');
@@ -168,6 +231,14 @@ export async function updateEnvironment(environmentData: EnvironmentSchemaType) 
             });
 
             throw new Error(`Failed to update environment in docker-api: ${error.message}`);
+        }
+    }
+
+    if (environmentData.isDefault) {
+        try {
+            await kyDocker.post(`environments/${environmentData.id}/set-default`);
+        } catch {
+            // Non-fatal: DB is source of truth. docker-api will use correct default on restart.
         }
     }
 

@@ -39,6 +39,7 @@
     "noEnvironment": "No environment",
     "edit": "Edit",
     "delete": "Delete",
+    "setAsDefault": "Set as default",
     "updateAvailable": "Update available",
     "updateDescription": "Version {version} is available.",
     "update": "Update"

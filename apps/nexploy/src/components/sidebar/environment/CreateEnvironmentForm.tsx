@@ -23,6 +23,7 @@ import {
 } from '@workspace/ui/components/form';
 import { TlsCertificateField } from './TlsCertificateField';
 import { DownloadCertScriptButton } from './DownloadCertScriptButton';
+import { Switch } from '@workspace/ui/components/switch';
 import { createEnvironmentAction } from '@/actions/environment/createEnvironment.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
@@ -43,6 +44,7 @@ export function CreateEnvironmentForm() {
                     connectionType: 'UNIX_SOCKET' as const,
                     socketPath: '/var/run/docker.sock',
                     description: '',
+                    isDefault: false,
                 },
             },
             actionProps: {
@@ -251,6 +253,30 @@ export function CreateEnvironmentForm() {
                         />
                     </div>
                 )}
+                <FormField
+                    control={form.control}
+                    name="isDefault"
+                    render={({ field }) => (
+                        <FormItem className="flex items-center justify-between rounded-lg border">
+                            <FormLabel className={'cursor-pointer p-3'}>
+                                <div>
+                                    {t('isDefault')}
+                                    <p className="text-muted-foreground text-xs">
+                                        {t('isDefaultDescription')}
+                                    </p>
+                                </div>
+                                <FormControl>
+                                    <Switch
+                                        className={'cursor-pointer'}
+                                        checked={field.value ?? false}
+                                        onCheckedChange={field.onChange}
+                                        disabled={form.formState.isSubmitting}
+                                    />
+                                </FormControl>
+                            </FormLabel>
+                        </FormItem>
+                    )}
+                />
                 <div className="flex justify-end gap-2 pt-4">
                     <Button
                         type="submit"

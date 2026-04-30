@@ -12,12 +12,13 @@ import {
 } from '@workspace/ui/components/dropdown-menu';
 import { Button } from '@workspace/ui/components/button';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar, } from '@workspace/ui/components/sidebar';
-import { Check, ChevronsUpDown, MoreHorizontal, Pencil, Plus, Trash } from 'lucide-react';
+import { Check, ChevronsUpDown, MoreHorizontal, Pencil, Plus, Star, Trash } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { CreateEnvironmentForm } from '@/components/sidebar/environment/CreateEnvironmentForm';
 import { EditEnvironmentForm } from '@/components/sidebar/environment/EditEnvironmentForm';
 import { Environment } from 'generated/client';
 import { deleteEnvironmentAction } from '@/actions/environment/deleteEnvironment.action';
+import { setDefaultEnvironmentAction } from '@/actions/environment/setDefaultEnvironment.action';
 import { useRouter } from 'next/navigation';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
@@ -39,6 +40,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
         selectEnvironment,
         addEnvironment,
         removeEnvironment,
+        updateEnvironment,
         getSelectedEnvironment,
     } = useEnvironmentStore();
 
@@ -79,6 +81,14 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                 router.refresh();
             },
         });
+    };
+
+    const handleSetDefault = async (environment: Environment) => {
+        await setDefaultEnvironmentAction({ environmentId: environment.id });
+        storeEnvironments.forEach((env) => {
+            updateEnvironment(env.id, { isDefault: env.id === environment.id });
+        });
+        router.refresh();
     };
 
     const handleEnvironmentDelete = async (environment: Environment) => {
@@ -140,9 +150,14 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                                             {environment.name.charAt(0).toUpperCase()}
                                         </span>
                                     </div>
-                                    <span className="flex-1">{environment.name}</span>
+                                    <div className={'flex flex-1 items-center gap-2'}>
+                                        {environment.name}
+                                        {environment.isDefault && (
+                                            <Star className="text-muted-foreground size-3 fill-current" />
+                                        )}
+                                    </div>
                                     {selectedEnvironmentId === environment.id && (
-                                        <Check className="ml-auto size-4" />
+                                        <Check className="size-4" />
                                     )}
                                 </DropdownMenuItem>
                                 <DropdownMenu>
@@ -163,6 +178,14 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                                             <Pencil />
                                             {t('edit')}
                                         </DropdownMenuItem>
+                                        {!environment.isDefault && (
+                                            <DropdownMenuItem
+                                                onClick={() => handleSetDefault(environment)}
+                                            >
+                                                <Star />
+                                                {t('setAsDefault')}
+                                            </DropdownMenuItem>
+                                        )}
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
                                             variant="destructive"

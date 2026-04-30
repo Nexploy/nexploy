@@ -14,6 +14,7 @@ export const environmentSchema = z
         tlsKey: z.string().optional(),
         tlsCa: z.string().optional(),
         description: z.string().optional(),
+        isDefault: z.boolean().optional(),
     })
     .refine(
         (data) => {

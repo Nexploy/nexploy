@@ -70,6 +70,25 @@ app.post(
     }),
 );
 
+app.post(
+    '/:environmentId/set-default',
+    route({ param: environmentIdSchema }, async (c) => {
+        const { environmentId } = c.req.valid('param');
+
+        logger.info({ environmentId }, 'Setting default environment');
+
+        dockerClientRegistry.setDefaultEnvironment(environmentId);
+
+        logger.info({ environmentId }, 'Default environment set successfully');
+
+        return {
+            success: true,
+            message: 'Default environment set successfully.',
+            environmentId,
+        };
+    }),
+);
+
 app.delete(
     '/:environmentId',
     route({ param: environmentIdSchema }, async (c) => {
@@ -114,6 +133,10 @@ app.patch(
         await stateManagerFactory.shutdownEnvironment(environmentId);
         await dockerClientRegistry.reloadEnvironment(config);
         await stateManagerFactory.initializeEnvironment(environmentId);
+
+        if (config.isDefault) {
+            dockerClientRegistry.setDefaultEnvironment(environmentId);
+        }
 
         logger.info({ environmentId }, 'Environment updated successfully');
 

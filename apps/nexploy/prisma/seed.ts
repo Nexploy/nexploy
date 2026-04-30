@@ -23,6 +23,7 @@ async function seedEnvironment() {
             socketPath: '/var/run/docker.sock',
             isDefault: true,
             isActive: true,
+            userId: DOCKER_API_USER_ID,
             description: 'Default local Docker environment using Unix socket',
         },
     });

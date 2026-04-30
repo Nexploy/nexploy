@@ -145,6 +145,14 @@ class DockerClientRegistry {
         return this.defaultEnvironmentId;
     }
 
+    setDefaultEnvironment(environmentId: string): void {
+        if (!this.clients.has(environmentId)) {
+            throw new Error(`Cannot set default: environment ${environmentId}`);
+        }
+        this.defaultEnvironmentId = environmentId;
+        logger.info({ environmentId }, 'Default environment updated');
+    }
+
     async unregisterEnvironment(environmentId: string): Promise<void> {
         this.stopHealthCheck(environmentId);
         this.clients.delete(environmentId);

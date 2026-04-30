@@ -39,6 +39,7 @@
     "noEnvironment": "Aucun environnement",
     "edit": "Modifier",
     "delete": "Supprimer",
+    "setAsDefault": "Définir par défaut",
     "updateAvailable": "Mise à jour disponible",
     "updateDescription": "La version {version} est disponible.",
     "update": "Mettre à jour"

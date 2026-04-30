@@ -622,6 +622,8 @@
         "certAlreadyConfigured": "Certificate already configured",
         "certAlreadyConfiguredPaste": "Certificate already configured. Paste new content to replace it.",
         "certReplace": "Replace",
+        "isDefault": "Default environment",
+        "isDefaultDescription": "Use this environment during a build when no environment is specified",
         "createSuccess": "Environment created successfully",
         "adding": "Adding...",
         "addEnvironment": "Adding environment",
