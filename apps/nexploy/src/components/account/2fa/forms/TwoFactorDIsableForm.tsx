@@ -15,7 +15,7 @@ import { useRouter } from 'next/navigation';
 export function TwoFactorDisableForm() {
     const tValidation = useTranslations('validation');
     const t = useTranslations('account.twoFactor');
-    const { onSuccess } = useConfirmationDialogStore();
+    const { closeDialog } = useConfirmationDialogStore();
     const router = useRouter();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
@@ -29,7 +29,7 @@ export function TwoFactorDisableForm() {
             },
             actionProps: {
                 onSuccess: () => {
-                    if (onSuccess) onSuccess();
+                    closeDialog();
                     router.refresh();
                 },
             },

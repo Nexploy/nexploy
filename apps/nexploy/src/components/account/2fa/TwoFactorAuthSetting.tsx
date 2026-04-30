@@ -17,9 +17,6 @@ export function TwoFactorAuthSetting() {
             description: t('disableDescription'),
             closeOnBackground: false,
             content: <TwoFactorDisableForm />,
-            onSuccess: () => {
-                closeDialog();
-            },
         });
     };
 

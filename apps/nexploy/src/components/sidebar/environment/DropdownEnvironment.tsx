@@ -1,6 +1,9 @@
 'use client';
 
-import { initializeEnvironmentStore, useEnvironmentStore, } from '@/stores/environment/useEnvironmentStore';
+import {
+    initializeEnvironmentStore,
+    useEnvironmentStore,
+} from '@/stores/environment/useEnvironmentStore';
 import { useEffect } from 'react';
 import {
     DropdownMenu,
@@ -11,7 +14,12 @@ import {
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 import { Button } from '@workspace/ui/components/button';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar, } from '@workspace/ui/components/sidebar';
+import {
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    useSidebar,
+} from '@workspace/ui/components/sidebar';
 import { Check, ChevronsUpDown, MoreHorizontal, Pencil, Plus, Star, Trash } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { CreateEnvironmentForm } from '@/components/sidebar/environment/CreateEnvironmentForm';
@@ -23,6 +31,7 @@ import { useRouter } from 'next/navigation';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
+import { useAction } from 'next-safe-action/hooks';
 
 interface DropdownEnvironmentProps {
     environments: Environment[];
@@ -48,6 +57,15 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
     const { openAlertDialog } = useAlertConfirmationDialogStore();
     const t = useTranslations('navigation');
     const tCommon = useTranslations('common');
+
+    const { execute } = useAction(setDefaultEnvironmentAction, {
+        onSuccess: ({ input }) => {
+            storeEnvironments.forEach((env) => {
+                updateEnvironment(env.id, { isDefault: env.id === input.environmentId });
+            });
+            router.refresh();
+        },
+    });
 
     const currentEnvironment = getSelectedEnvironment();
     const isSidebarExpanded = state === 'expanded' || isMobile;
@@ -81,14 +99,6 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                 router.refresh();
             },
         });
-    };
-
-    const handleSetDefault = async (environment: Environment) => {
-        await setDefaultEnvironmentAction({ environmentId: environment.id });
-        storeEnvironments.forEach((env) => {
-            updateEnvironment(env.id, { isDefault: env.id === environment.id });
-        });
-        router.refresh();
     };
 
     const handleEnvironmentDelete = async (environment: Environment) => {
@@ -180,9 +190,13 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                                         </DropdownMenuItem>
                                         {!environment.isDefault && (
                                             <DropdownMenuItem
-                                                onClick={() => handleSetDefault(environment)}
+                                                onClick={() =>
+                                                    execute({
+                                                        environmentId: environment.id,
+                                                    })
+                                                }
                                             >
-                                                <Star />
+                                                <Star className={'fill-current'} />
                                                 {t('setAsDefault')}
                                             </DropdownMenuItem>
                                         )}

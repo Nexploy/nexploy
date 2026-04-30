@@ -34,11 +34,6 @@ export async function getEnvironmentById(id: string) {
 export async function setDefaultEnvironmentById(environmentId: string) {
     try {
         await kyDocker.post(`environments/${environmentId}/set-default`);
-    } catch (error: any) {
-        throw new Error(error?.message);
-    }
-
-    try {
         await prisma.$transaction(async (tx) => {
             await tx.environment.updateMany({
                 where: { isDefault: true },
@@ -50,7 +45,9 @@ export async function setDefaultEnvironmentById(environmentId: string) {
             });
         });
     } catch {
-        throw new Error('Failed to set default environment in database');
+        throw new Error(
+            'Failed to set default environment. Is the Docker environment configured correctly?',
+        );
     }
 }
 

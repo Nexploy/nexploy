@@ -27,11 +27,12 @@ import { createUserFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { Info, Plus } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import { toast } from 'sonner';
 
 export function CreateUserForm() {
     const tValidation = useTranslations('validation');
     const t = useTranslations('admin');
-    const { onSuccess } = useConfirmationDialogStore();
+    const { closeDialog } = useConfirmationDialogStore();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onCreateUserAction,
@@ -47,8 +48,9 @@ export function CreateUserForm() {
                 },
             },
             actionProps: {
-                onSuccess: ({ data }) => {
-                    if (data && onSuccess) onSuccess(data);
+                onSuccess: () => {
+                    toast.success(t('userAddedSuccess'));
+                    closeDialog();
                 },
             },
         },
@@ -160,7 +162,9 @@ export function CreateUserForm() {
                                     <SelectGroup>
                                         <SelectLabel>{t('role')}</SelectLabel>
                                         <SelectItem value="read">{t('readRole')}</SelectItem>
-                                        <SelectItem value="readWrite">{t('readWriteRole')}</SelectItem>
+                                        <SelectItem value="readWrite">
+                                            {t('readWriteRole')}
+                                        </SelectItem>
                                         <SelectItem value="admin">{t('adminRole')}</SelectItem>
                                     </SelectGroup>
                                 </SelectContent>

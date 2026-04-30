@@ -20,9 +20,9 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 export function CreateRegistryForm() {
-    const { onSuccess } = useConfirmationDialogStore();
     const t = useTranslations('admin.registry');
     const tCommon = useTranslations('common');
+    const { closeDialog } = useConfirmationDialogStore();
 
     const { form, handleSubmitWithAction } = useHookFormAction(
         createRegistryAction,
@@ -38,7 +38,8 @@ export function CreateRegistryForm() {
             },
             actionProps: {
                 onSuccess: () => {
-                    if (onSuccess) onSuccess();
+                    toast.success(t('createSuccess'));
+                    closeDialog();
                 },
                 onError: ({ error }) => {
                     toast.error(error.thrownError?.message);
