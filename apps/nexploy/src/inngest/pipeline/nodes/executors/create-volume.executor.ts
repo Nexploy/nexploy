@@ -1,9 +1,5 @@
-import { getFromClosestAncestor } from '@/types/pipeline.helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { createVolumeConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -19,7 +15,12 @@ export class CreateVolumeExecutor implements INodeExecutor {
 
         const name = nodeConfig.name;
         const driver = nodeConfig.driver;
-        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(
+            allOutputs,
+            edges,
+            nodeId,
+            'environmentId',
+        );
 
         await logger.info(nodeId, `Creating Docker volume: ${name}`);
 

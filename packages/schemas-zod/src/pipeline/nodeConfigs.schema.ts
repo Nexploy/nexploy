@@ -99,7 +99,7 @@ export const createContainerConfigSchema = z.object({
     networkName: refable(z.string()).optional(),
     advanced: z.boolean().default(false),
     ports: z.array(createContainerPortSchema).default([]),
-    envVars: z.array(createContainerEnvVarSchema).default([]),
+    envVars: refable(z.array(createContainerEnvVarSchema)).default([]),
     volumes: z.array(createContainerVolumeSchema).default([]),
 });
 
@@ -364,11 +364,6 @@ export const generateChangelogConfigSchema = z.object({
 });
 
 export const createReleaseConfigSchema = z.object({
-    provider: z.enum(['github', 'gitlab']).default('github'),
-    token: z.string().min(1, 'Token is required').default(''),
-    owner: z.string().min(1, 'Owner is required').default(''),
-    repo: z.string().min(1, 'Repository is required').default(''),
-    baseUrl: z.string().default('https://gitlab.com'),
     tagName: refable(z.string().min(1, 'Tag name is required')).default(''),
     targetBranch: z.string().default('main'),
     releaseTitle: refable(z.string()).default(''),

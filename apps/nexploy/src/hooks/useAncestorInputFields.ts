@@ -53,6 +53,7 @@ export function useAncestorInputFields(nodeId: string): AncestorWithInputs[] {
                 if (!inputFields?.length) return null;
                 return { nodeId: id, nodeType, inputFields };
             })
-            .filter((x): x is AncestorWithInputs => x !== null);
+            .filter((x): x is AncestorWithInputs => x !== null)
+            .reverse();
     }, [nodeId, getNodes, getEdges]);
 }

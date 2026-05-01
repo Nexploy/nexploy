@@ -4,7 +4,6 @@
     "warning": "Warning",
     "info": "Info",
     "operationSuccess": "Operation completed successfully",
-    "operationFailed": "Operation failed",
     "unexpectedError": "An unexpected error occurred",
     "networkError": "Network error. Please check your connection.",
     "unauthorized": "You are not authorized to perform this action",

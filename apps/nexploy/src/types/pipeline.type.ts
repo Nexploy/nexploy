@@ -1,5 +1,5 @@
-import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
-import { PipelineEdge } from '@workspace/typescript-interface/pipeline/node';
+import { BuildConfig } from '@workspace/typescript-interface/repository/build';
+import { PipelineEdge, PipelineNode } from '@workspace/typescript-interface/pipeline/node';
 import { z } from 'zod';
 
 export type LogLevel = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
@@ -23,6 +23,7 @@ export interface NodeExecutionContext<TConfig = Record<string, unknown>> {
     inputNodes: InputNodeInfo[];
     inputOutputs: NodeOutputData[];
     allOutputs: NodeOutputStore;
+    nodes: PipelineNode[];
     edges: PipelineEdge[];
     logger: PipelineLogger;
     reporter: PipelineReporter;

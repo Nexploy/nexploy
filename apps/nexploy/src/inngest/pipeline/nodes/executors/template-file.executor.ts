@@ -1,6 +1,6 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import { getFromClosestAncestor } from '@/types/pipeline.helpers';
+import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { safeResolvePath } from '@workspace/shared/pathSafety';
 import { templateFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';

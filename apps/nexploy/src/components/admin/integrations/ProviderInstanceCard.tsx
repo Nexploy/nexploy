@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@workspace/ui/components/button';
 import { Trash2 } from 'lucide-react';
@@ -9,6 +8,8 @@ import { statusMap } from '@/utils/statusMap';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { deleteGitProviderAction } from '@/actions/git/deleteGitProvider.action';
+import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useAction } from 'next-safe-action/hooks';
 
 interface ProviderInstanceCardProps {
     id: string;
@@ -23,27 +24,27 @@ export function ProviderInstanceCard({
     appName,
     maskedClientId,
 }: ProviderInstanceCardProps) {
-    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
     const tOAuth = useTranslations('integrations.oauth');
-    const tNotifications = useTranslations('notifications');
+    const tCommon = useTranslations('common');
 
-    const handleRemove = async () => {
-        setIsLoading(true);
-        try {
-            const result = await deleteGitProviderAction({ id });
-            if (result?.serverError) {
-                toast.error(result.serverError);
-            } else {
-                toast.success(tOAuth('deleteSuccess'));
-                router.refresh();
-            }
-        } catch {
-            toast.error(tNotifications('operationFailed'));
-        } finally {
-            setIsLoading(false);
-        }
+    const { executeAsync, isPending } = useAction(deleteGitProviderAction, {
+        onSuccess: () => {
+            toast.success(tOAuth('deleteSuccess'));
+            router.refresh();
+        },
+    });
+
+    const handleRemoveClick = () => {
+        openAlertDialog({
+            title: tOAuth('deleteConfirmTitle'),
+            description: tOAuth('deleteConfirmDescription', { name: displayName }),
+            cancelLabel: tCommon('cancel'),
+            actionLabel: tOAuth('deleteConfirmAction'),
+            onAction: () => executeAsync({ id }),
+        });
     };
 
     const statusText = appName ? `${tOAuth('configured')} — ${appName}` : tOAuth('configured');
@@ -66,10 +67,9 @@ export function ProviderInstanceCard({
             <Button
                 variant="destructiveOutline"
                 size="icon"
-                onClick={handleRemove}
+                onClick={handleRemoveClick}
                 icon={Trash2}
-                disabled={isLoading}
-                isLoading={isLoading}
+                disabled={isPending}
             />
         </div>
     );

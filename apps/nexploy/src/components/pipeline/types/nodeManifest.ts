@@ -7,7 +7,7 @@ export interface NodeInputField {
     key: string;
     labelKey: string;
     descriptionKey?: string;
-    type: 'input' | 'number';
+    type: 'input' | 'number' | 'array';
 }
 
 export interface NodeManifest {

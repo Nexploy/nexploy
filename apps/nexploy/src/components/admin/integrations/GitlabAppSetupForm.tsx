@@ -25,7 +25,7 @@ export function GitlabAppSetupForm() {
 
     const appUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
-    const { form, handleSubmitWithAction } = useHookFormAction(
+    const { form, handleSubmitWithAction, action } = useHookFormAction(
         saveGitLabProviderAction,
         zodResolver(gitlabSetupSchema),
         {
@@ -153,7 +153,12 @@ export function GitlabAppSetupForm() {
                     )}
                 />
                 <div className="flex justify-end">
-                    <Button type="submit" className={'self-end'}>
+                    <Button
+                        type="submit"
+                        disabled={action.isPending}
+                        isLoading={action.isPending}
+                        className={'self-end'}
+                    >
                         {t('guide.gitlab.createApp')}
                     </Button>
                 </div>

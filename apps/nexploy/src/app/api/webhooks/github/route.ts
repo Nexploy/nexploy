@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { parseGitHubWebhook } from '@/services/webhook/github.webhook.service';
-import { startBuildRepositoryInngest } from '@/services/inngest/build.inngest.service';
+import { startBuildRepository } from '@/services/repository/build.service';
 import { findRepositoryByWebhook } from '@/services/webhook/webhook.service';
 import { timingSafeEqual } from '@/lib/api/crypto-utils';
 
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        await startBuildRepositoryInngest(
+        await startBuildRepository(
             {
                 repositoryId: repo.id,
                 branch: parsed.branch,

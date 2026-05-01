@@ -1,28 +1,19 @@
-import { getFromClosestAncestor } from '@/types/pipeline.helpers';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { getAllEnvsBuild } from '@/services/repository/build.service';
 
 export class EnvVarsExecutor implements INodeExecutor {
     readonly type = 'env-vars';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { allOutputs, logger, nodeId, edges } = ctx;
+        const { logger, nodeId, buildConfig } = ctx;
+        const envVariables = await getAllEnvsBuild(buildConfig.repositoryId);
 
-        const envVariables =
-            getFromClosestAncestor<Record<string, string>>(
-                allOutputs,
-                edges,
-                nodeId,
-                'envVariables',
-            ) ?? {};
-
-        const envCount = Object.keys(envVariables).length;
-
-        if (envCount === 0) {
+        if (envVariables.length === 0) {
             await logger.info(nodeId, 'No environment variables to inject');
             return { output: {}, skipped: true };
         }
 
-        await logger.info(nodeId, `Injecting ${envCount} environment variables`);
+        await logger.info(nodeId, `Injecting ${envVariables.length} environment variables`);
 
         return { output: { envVariables } };
     }

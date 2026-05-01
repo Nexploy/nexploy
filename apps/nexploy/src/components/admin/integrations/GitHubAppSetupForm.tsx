@@ -133,7 +133,12 @@ export function GitHubAppSetupForm() {
                 <form ref={manifestFormRef} action={target} method="post">
                     <input type="hidden" name="manifest" value={manifestJson} />
                     <div className="flex justify-end">
-                        <Button type="button" onClick={form.handleSubmit(handleCreate)}>
+                        <Button
+                            type="button"
+                            onClick={form.handleSubmit(handleCreate)}
+                            isLoading={form.formState.isSubmitting}
+                            disabled={form.formState.isSubmitting}
+                        >
                             {t('createApp')}
                         </Button>
                     </div>

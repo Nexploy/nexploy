@@ -4,7 +4,6 @@
     "warning": "Avertissement",
     "info": "Information",
     "operationSuccess": "Opération terminée avec succès",
-    "operationFailed": "L'opération a échoué",
     "unexpectedError": "Une erreur inattendue s'est produite",
     "networkError": "Erreur réseau. Veuillez vérifier votre connexion.",
     "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action",

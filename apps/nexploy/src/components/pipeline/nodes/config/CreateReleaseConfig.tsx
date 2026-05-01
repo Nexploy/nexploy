@@ -2,6 +2,9 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
+import { useParams } from 'next/navigation';
+import useSWR from 'swr';
+import { useEffect } from 'react';
 import {
     FormControl,
     FormField,
@@ -22,92 +25,45 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { fetcherApi } from '@/lib/api/fetcherApi';
+import { GitBranch } from '@workspace/typescript-interface/git/git';
+import { GitBranchIcon } from 'lucide-react';
+
+interface RepositoryGitMeta {
+    gitProvider: string;
+    gitAccountId: string | null;
+    gitId: string;
+    name: string;
+    branch: string;
+}
 
 export function CreateReleaseConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
-    const provider = form.watch('provider');
+    const params = useParams<{ repositoryId: string }>();
+
+    const { data: repo, isLoading: isLoadingRepo } = useSWR<RepositoryGitMeta>(
+        { url: `/api/repositories/${params.repositoryId}` },
+        fetcherApi,
+    );
+    const { data: branches, isLoading: isLoadingBranches } = useSWR<GitBranch[]>(
+        repo?.gitAccountId
+            ? {
+                  url: `/api/git/branches?provider=${repo.gitProvider}&gitAccountId=${repo.gitAccountId}&repoId=${repo.gitId}&owner=${repo.name.split('/')[0]}&repoName=${repo.name.split('/')[1]}`,
+              }
+            : null,
+        fetcherApi,
+    );
+
+    const currentBranch = form.getValues('targetBranch');
+    useEffect(() => {
+        if (branches && branches.length > 0 && !currentBranch) {
+            form.setValue('targetBranch', branches[0]?.name);
+        }
+    }, [branches]);
 
     return (
         <div className="space-y-4">
-            <FormField
-                control={form.control}
-                name="provider"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('releaseProvider')}</FormLabel>
-                        <Select value={field.value} onValueChange={field.onChange}>
-                            <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue />
-                                </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>{t('releaseProvider')}</SelectLabel>
-                                    <SelectItem value="github">GitHub</SelectItem>
-                                    <SelectItem value="gitlab">GitLab</SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-            />
-            <FormField
-                control={form.control}
-                name="token"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('releaseToken')}</FormLabel>
-                        <FormControl>
-                            <Input {...field} type="password" placeholder="ghp_..." />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-            />
-            <FormField
-                control={form.control}
-                name="owner"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('releaseOwner')}</FormLabel>
-                        <FormControl>
-                            <Input {...field} placeholder="my-org" />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-            />
-            <FormField
-                control={form.control}
-                name="repo"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('releaseRepo')}</FormLabel>
-                        <FormControl>
-                            <Input {...field} placeholder="my-repo" />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-            />
-            {provider === 'gitlab' && (
-                <FormField
-                    control={form.control}
-                    name="baseUrl"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>{t('releaseBaseUrl')}</FormLabel>
-                            <FormControl>
-                                <Input {...field} placeholder="https://gitlab.com" />
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                        </FormItem>
-                    )}
-                />
-            )}
             <FormField
                 control={form.control}
                 name="tagName"
@@ -129,10 +85,41 @@ export function CreateReleaseConfig() {
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>{t('releaseTargetBranch')}</FormLabel>
-                        <FormControl>
-                            <Input {...field} placeholder={t('releaseTargetBranchPlaceholder')} />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
+                        <Select
+                            {...field}
+                            onValueChange={field.onChange}
+                            disabled={isLoadingRepo || isLoadingBranches || !repo}
+                        >
+                            <FormControl>
+                                <SelectTrigger>
+                                    {isLoadingRepo ? (
+                                        <span className="text-muted-foreground">
+                                            {t('repoLoading')}
+                                        </span>
+                                    ) : isLoadingBranches ? (
+                                        <span className="text-muted-foreground">
+                                            {t('branchLoading')}
+                                        </span>
+                                    ) : (
+                                        <SelectValue placeholder={t('branchSelect')} />
+                                    )}
+                                </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>{t('releaseTargetBranch')}</SelectLabel>
+                                    {branches?.map((branch) => (
+                                        <SelectItem key={branch.name} value={branch.name}>
+                                            <div className="flex items-center gap-2">
+                                                <GitBranchIcon />
+                                                {branch.name}
+                                            </div>
+                                        </SelectItem>
+                                    ))}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                        <FormMessage />
                     </FormItem>
                 )}
             />

@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation';
 import { useInngestSubscription } from '@inngest/realtime/hooks';
 import dayjs from 'dayjs';
 import useSWR from 'swr';
-import { BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
+import { BuildLogEntry } from '@workspace/typescript-interface/repository/build';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { getLogLevelColor, getLogLevelColorGradiant, parseAnsiColors } from '@/utils/color';

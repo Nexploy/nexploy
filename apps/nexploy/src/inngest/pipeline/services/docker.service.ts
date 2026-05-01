@@ -20,32 +20,6 @@ class DockerService {
         );
     }
 
-    async deployContainer(
-        repositoryId: string,
-        imageName: string,
-        envVars: Record<string, string>,
-        signal: AbortSignal,
-        containerName: string,
-        environmentId?: string,
-        labels?: Record<string, string>,
-    ): Promise<{ containerId: string }> {
-        try {
-            return await kyDocker
-                .post('pipeline/deploy', {
-                    json: {
-                        repositoryId,
-                        imageName,
-                        options: { envVars, containerName, labels },
-                    },
-                    signal,
-                    environmentId,
-                } as KyDockerOptions)
-                .json<{ containerId: string }>();
-        } catch (error: unknown) {
-            throw new Error(`Deployment failed : ${error}`);
-        }
-    }
-
     async pushToRegistry(
         imageName: string,
         targetName: string,

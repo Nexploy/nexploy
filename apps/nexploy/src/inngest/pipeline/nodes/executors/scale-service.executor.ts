@@ -1,4 +1,4 @@
-import { getFromClosestAncestor } from '@/types/pipeline.helpers';
+import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
 import {
     INodeExecutor,
     NodeExecutionContext,

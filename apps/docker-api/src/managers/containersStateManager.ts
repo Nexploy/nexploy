@@ -8,7 +8,7 @@ import {
     ContainersStateEvents,
 } from '@workspace/typescript-interface/docker/docker.containers';
 import { BaseStateManager } from '@/lib/BaseStateManager';
-import { DeployOptions } from '@workspace/typescript-interface/inngest/deploy';
+import { DeployOptions } from '@workspace/typescript-interface/repository/deploy';
 import { EventEmitter } from 'events';
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';

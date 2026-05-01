@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
-import { BuildConfig, BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
+import { BuildConfig, BuildLogEntry } from '@workspace/typescript-interface/repository/build';
 import { inngest } from '@/inngest/client';
-import { updateNodeStatus, updateStatusBuild } from '@/services/inngest/build.inngest.service';
-import { createLogInngest } from '@/services/inngest/log.inngest.service';
+import { updateNodeStatus, updateStatusBuild } from '@/services/repository/build.service';
+import { createLog } from '@/services/repository/log.service';
 import { LogLevel, PipelineReporter, PipelineStatus } from '@/types/pipeline.type';
 import { createPipelineLogger, pipelineOrchestrator } from '@/inngest/pipeline/orchestrator';
 import { prisma } from '../../../prisma/prisma';
@@ -30,7 +30,7 @@ export const buildFunction = inngest.createFunction(
                     step: stepName,
                     message,
                 };
-                await createLogInngest(log);
+                await createLog(log);
                 try {
                     await inngest.realtime.publish(buildChannel.log({ log }));
                 } catch {

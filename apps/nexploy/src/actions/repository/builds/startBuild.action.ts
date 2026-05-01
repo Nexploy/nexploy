@@ -3,7 +3,7 @@
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { startBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
-import { startBuildRepositoryInngest } from '@/services/inngest/build.inngest.service';
+import { startBuildRepository } from '@/services/repository/build.service';
 import { revalidatePath } from 'next/cache';
 import { getTranslations } from 'next-intl/server';
 
@@ -13,9 +13,9 @@ export const onStartBuild = authActionServer
     .action(async ({ parsedInput, ctx }) => {
         const t = await getTranslations('repository');
         try {
-            const buildId = await startBuildRepositoryInngest(parsedInput, ctx.session.user.id);
+            const newBuild = await startBuildRepository(parsedInput, ctx.session.user.id);
             revalidatePath('/repositories/[repositoryId]', 'page');
-            return { buildId };
+            return newBuild;
         } catch (err: unknown) {
             await setToastServer({
                 type: 'error',

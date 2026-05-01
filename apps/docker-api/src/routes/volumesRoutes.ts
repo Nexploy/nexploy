@@ -1,13 +1,13 @@
 import { docker } from '@/utils/dockerClient';
-import { route, HttpError } from '@/helpers/route';
+import { HttpError, route } from '@/helpers/route';
 import { Hono } from 'hono';
 import { volumesStateManager } from '@/managers/volumesStateManager';
 import {
     cacheRestoreSchema,
     cacheSaveSchema,
     volumeCreateSchema,
-    volumeDeleteSchema,
     volumeDeleteQuerySchema,
+    volumeDeleteSchema,
     volumeNameParamSchema,
 } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 import { restoreCache, saveCache } from '@/services/cacheService';
@@ -50,14 +50,14 @@ app.post(
             if (err.statusCode !== 404) throw err;
         }
 
-        const volume = await docker.createVolume({
+        await docker.createVolume({
             Name: name,
             Driver: driver,
             DriverOpts: driverOpts,
             Labels: labels,
         });
 
-        return { volumeName: volume.Name };
+        return { volumeName: name };
     }),
 );
 

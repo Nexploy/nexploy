@@ -2,7 +2,7 @@
 
 import { BuildStatus } from 'generated/client';
 import dayjs from 'dayjs';
-import { BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
+import { BuildLogEntry } from '@workspace/typescript-interface/repository/build';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { StatusLive } from '@/components/shared/StatusLive';
 import { cn } from '@workspace/ui/lib/utils';

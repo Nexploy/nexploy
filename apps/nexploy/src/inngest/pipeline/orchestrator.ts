@@ -1,5 +1,5 @@
 import { NonRetriableError } from 'inngest';
-import { type BuildConfig } from '@workspace/typescript-interface/inngest/build';
+import { type BuildConfig } from '@workspace/typescript-interface/repository/build';
 import {
     type PipelineGraph,
     type PipelineNode,
@@ -19,7 +19,7 @@ import {
 import { formatErrorDetails, getParentNodeIds, resolveNodeConfig } from './utils';
 import { analyzeGraph } from '@/inngest/pipeline/utils/graphQueries';
 import { getNodeExecutor } from '@/inngest/pipeline/nodes/registry';
-import { getBuildStatus } from '@/services/inngest/build.inngest.service';
+import { getBuildStatus } from '@/services/repository/build.service';
 
 export { createPipelineLogger } from './utils';
 
@@ -206,6 +206,7 @@ export class PipelineOrchestrator {
                             inputNodes,
                             inputOutputs,
                             allOutputs,
+                            nodes: graph.nodes,
                             edges: graph.edges,
                             logger,
                             reporter,

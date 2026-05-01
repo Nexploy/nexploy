@@ -1,5 +1,5 @@
 import { RepositoryBuild } from '@/components/repositories/tabs/builds/RepositoryBuild';
-import { getAllBuilds } from '@/services/inngest/build.inngest.service';
+import { getAllBuilds } from '@/services/repository/build.service';
 import { getTranslations } from 'next-intl/server';
 
 interface RepositoryOverviewTabProps {

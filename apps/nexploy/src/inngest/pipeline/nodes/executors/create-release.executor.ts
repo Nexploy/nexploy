@@ -1,13 +1,11 @@
-import { getFromClosestAncestor } from '@/types/pipeline.helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { createReleaseConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { githubCreateRelease } from '@/lib/api/github.api';
 import { gitlabCreateRelease } from '@/lib/api/gitlab.api';
+import { extractGitHubRepo, extractGitLabRepo, getGitProviderToken, } from '@/services/git/git.service';
+import { getValidToken } from '@/services/api/gitProvider.service';
 import { z } from 'zod';
 
 export class CreateReleaseExecutor implements INodeExecutor {
@@ -17,18 +15,36 @@ export class CreateReleaseExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof createReleaseConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeId, nodeConfig, allOutputs, logger, abortSignal, edges } = ctx;
-
-        const { provider, token, owner, repo, baseUrl, targetBranch, draft, prerelease } =
-            nodeConfig;
+        const { nodeId, nodeConfig, buildConfig, allOutputs, logger, abortSignal, edges } = ctx;
 
         const tagName =
-            nodeConfig.tagName || getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'tagName') || '';
+            nodeConfig.tagName ||
+            getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'tagName') ||
+            '';
 
         if (!tagName) throw new Error('No tag name — provide one or connect a Git Tag node');
 
+        const targetBranch = nodeConfig.targetBranch || 'main';
+
         const releaseTitle = nodeConfig.releaseTitle || tagName;
         const releaseNotes = nodeConfig.releaseNotes || '';
+        const { draft, prerelease } = nodeConfig;
+
+        const provider = buildConfig.gitProvider;
+
+        const tokenData = await getGitProviderToken(provider, {
+            gitAccountId: buildConfig.gitAccountId,
+            requestedUserId: buildConfig.userId,
+        });
+        const validToken = await getValidToken(
+            tokenData,
+            provider,
+            buildConfig.userId,
+            buildConfig.gitAccountId,
+        );
+        const token = validToken.accessToken;
+
+        if (!token) throw new Error('No access token available for Git provider');
 
         await logger.info(
             nodeId,
@@ -41,6 +57,7 @@ export class CreateReleaseExecutor implements INodeExecutor {
         let releaseUrl: string;
 
         if (provider === 'github') {
+            const { owner, repo } = extractGitHubRepo(buildConfig.gitUrl);
             const result = await githubCreateRelease(token, owner, repo, {
                 tagName,
                 targetBranch,
@@ -52,6 +69,7 @@ export class CreateReleaseExecutor implements INodeExecutor {
             releaseId = String(result.id);
             releaseUrl = result.html_url;
         } else {
+            const { baseUrl, owner, repo } = extractGitLabRepo(buildConfig.gitUrl);
             const result = await gitlabCreateRelease(token, baseUrl, owner, repo, {
                 tagName,
                 ref: targetBranch,

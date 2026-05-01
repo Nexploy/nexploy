@@ -1,4 +1,4 @@
-import { getFromClosestAncestor } from '@/types/pipeline.helpers';
+import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';

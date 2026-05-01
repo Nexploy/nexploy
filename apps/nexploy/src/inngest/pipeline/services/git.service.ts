@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { access, mkdir, mkdtemp, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
 import os from 'os';
-import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
+import { BuildConfig } from '@workspace/typescript-interface/repository/build';
 import { getValidToken } from '@/services/api/gitProvider.service';
 import { getGitProviderToken } from '@/services/git/git.service';
 import { ProgressCallback } from '@/types/pipeline.type';

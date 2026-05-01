@@ -1,5 +1,5 @@
 import { channel, topic } from '@inngest/realtime';
-import { BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
+import { BuildLogEntry } from '@workspace/typescript-interface/repository/build';
 import { CommitInfo } from '@/types/pipeline.type';
 
 export const createBuildChannel = (buildId: string) => {

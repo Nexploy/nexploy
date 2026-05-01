@@ -20,8 +20,8 @@ export function RunBuildButton({ repositoryId, showText = true, ...props }: Depl
 
     const { execute, isPending } = useAction(onStartBuild, {
         onSuccess: ({ data }) => {
-            toast.success(t('startSuccess'));
-            if (data) setActiveBuildId(data.buildId);
+            toast.success(t('startSuccess', { number: data?.numberBuild }));
+            if (data) setActiveBuildId(data.id);
         },
     });
 

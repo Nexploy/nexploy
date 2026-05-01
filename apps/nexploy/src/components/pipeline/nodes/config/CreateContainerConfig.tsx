@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -196,20 +202,10 @@ export function CreateContainerConfig() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <RefAware
-                                                    value={field.value}
-                                                    onChange={field.onChange}
-                                                >
-                                                    <Input
-                                                        {...field}
-                                                        value={
-                                                            typeof field.value === 'string'
-                                                                ? field.value
-                                                                : ''
-                                                        }
-                                                        placeholder={tDocker('hostPort')}
-                                                    />
-                                                </RefAware>
+                                                <Input
+                                                    {...field}
+                                                    placeholder={tDocker('hostPort')}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -221,20 +217,10 @@ export function CreateContainerConfig() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <RefAware
-                                                    value={field.value}
-                                                    onChange={field.onChange}
-                                                >
-                                                    <Input
-                                                        {...field}
-                                                        value={
-                                                            typeof field.value === 'string'
-                                                                ? field.value
-                                                                : ''
-                                                        }
-                                                        placeholder={tDocker('containerPort')}
-                                                    />
-                                                </RefAware>
+                                                <Input
+                                                    {...field}
+                                                    placeholder={tDocker('containerPort')}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -280,92 +266,78 @@ export function CreateContainerConfig() {
                 )}
             </div>
 
-            <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                    <FormLabel>{tDocker('envVars')}</FormLabel>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="h-7 text-xs"
-                        onClick={() => appendEnv({ key: '', value: '' })}
-                    >
-                        <Plus className="size-3" />
-                        {tDocker('addVariable')}
-                    </Button>
-                </div>
-                {envFields.length === 0 ? (
-                    <p className="text-muted-foreground text-xs">
-                        {tDocker('noEnvVarsConfigured')}
-                    </p>
-                ) : (
-                    <div className="space-y-1.5">
-                        {envFields.map((field, index) => (
-                            <div key={field.id} className="flex items-center gap-1.5">
-                                <FormField
-                                    control={form.control}
-                                    name={`envVars.${index}.key`}
-                                    render={({ field }) => (
-                                        <FormItem className="flex-1">
-                                            <FormControl>
-                                                <RefAware
-                                                    value={field.value}
-                                                    onChange={field.onChange}
-                                                >
+            <RefAware
+                value={form.watch('envVars')}
+                onChange={(v) => form.setValue('envVars', v, { shouldDirty: true })}
+                emptyValue={[]}
+            >
+                <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                        <FormLabel>{tDocker('envVars')}</FormLabel>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-7 text-xs"
+                            onClick={() => appendEnv({ key: '', value: '' })}
+                        >
+                            <Plus className="size-3" />
+                            {tDocker('addVariable')}
+                        </Button>
+                    </div>
+                    {envFields.length === 0 ? (
+                        <p className="text-muted-foreground text-xs">
+                            {tDocker('noEnvVarsConfigured')}
+                        </p>
+                    ) : (
+                        <div className="space-y-1.5">
+                            {envFields.map((field, index) => (
+                                <div key={field.id} className="flex items-center gap-1.5">
+                                    <FormField
+                                        control={form.control}
+                                        name={`envVars.${index}.key`}
+                                        render={({ field }) => (
+                                            <FormItem className="flex-1">
+                                                <FormControl>
                                                     <Input
                                                         {...field}
-                                                        value={
-                                                            typeof field.value === 'string'
-                                                                ? field.value
-                                                                : ''
-                                                        }
                                                         placeholder={tDocker('keyPlaceholder')}
                                                         className="font-mono"
                                                     />
-                                                </RefAware>
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <span className="text-muted-foreground text-xs">=</span>
-                                <FormField
-                                    control={form.control}
-                                    name={`envVars.${index}.value`}
-                                    render={({ field }) => (
-                                        <FormItem className="flex-1">
-                                            <FormControl>
-                                                <RefAware
-                                                    value={field.value}
-                                                    onChange={field.onChange}
-                                                >
+                                                </FormControl>
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <span className="text-muted-foreground text-xs">=</span>
+                                    <FormField
+                                        control={form.control}
+                                        name={`envVars.${index}.value`}
+                                        render={({ field }) => (
+                                            <FormItem className="flex-1">
+                                                <FormControl>
                                                     <Input
                                                         {...field}
-                                                        value={
-                                                            typeof field.value === 'string'
-                                                                ? field.value
-                                                                : ''
-                                                        }
                                                         placeholder={tDocker('valuePlaceholder')}
                                                         className="font-mono"
                                                     />
-                                                </RefAware>
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <Button
-                                    type="button"
-                                    variant="destructiveGhost"
-                                    size="icon"
-                                    onClick={() => removeEnv(index)}
-                                >
-                                    <Trash2 />
-                                </Button>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+                                                </FormControl>
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="destructiveGhost"
+                                        size="icon"
+                                        onClick={() => removeEnv(index)}
+                                    >
+                                        <Trash2 />
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </RefAware>
 
             <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -401,20 +373,10 @@ export function CreateContainerConfig() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <RefAware
-                                                    value={field.value}
-                                                    onChange={field.onChange}
-                                                >
-                                                    <Input
-                                                        {...field}
-                                                        value={
-                                                            typeof field.value === 'string'
-                                                                ? field.value
-                                                                : ''
-                                                        }
-                                                        placeholder={tDocker('hostPath')}
-                                                    />
-                                                </RefAware>
+                                                <Input
+                                                    {...field}
+                                                    placeholder={tDocker('hostPath')}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -426,20 +388,10 @@ export function CreateContainerConfig() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <RefAware
-                                                    value={field.value}
-                                                    onChange={field.onChange}
-                                                >
-                                                    <Input
-                                                        {...field}
-                                                        value={
-                                                            typeof field.value === 'string'
-                                                                ? field.value
-                                                                : ''
-                                                        }
-                                                        placeholder={tDocker('containerPath')}
-                                                    />
-                                                </RefAware>
+                                                <Input
+                                                    {...field}
+                                                    placeholder={tDocker('containerPath')}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}

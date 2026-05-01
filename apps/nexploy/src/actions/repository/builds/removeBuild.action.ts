@@ -3,7 +3,7 @@
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { removeBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
-import { removeBuild } from '@/services/inngest/build.inngest.service';
+import { removeBuild } from '@/services/repository/build.service.ts';
 import { revalidatePath } from 'next/cache';
 import { getTranslations } from 'next-intl/server';
 

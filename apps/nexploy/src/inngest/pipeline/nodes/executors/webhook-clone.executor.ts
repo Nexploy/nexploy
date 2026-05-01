@@ -1,6 +1,6 @@
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
-import { updateBuildGitInfo } from '@/services/inngest/build.inngest.service';
+import { updateBuildGitInfo } from '@/services/repository/build.service';
 import { webhookCloneConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 

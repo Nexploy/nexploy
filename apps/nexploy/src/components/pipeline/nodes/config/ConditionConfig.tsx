@@ -5,6 +5,7 @@ import { useReactFlow } from '@xyflow/react';
 import { useFormContext } from 'react-hook-form';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
+import { findClosestEnabledNodes } from '@/helpers/pipeline.helpers';
 import { cn } from '@workspace/ui/lib/utils';
 import { FormControl, FormField, FormItem, FormLabel } from '@workspace/ui/components/form';
 
@@ -17,10 +18,7 @@ export function ConditionConfig() {
     const nodes = getNodes();
     const edges = getEdges();
 
-    const inputNodes = edges
-        .filter((e) => e.target === panelNodeId)
-        .map((e) => nodes.find((n) => n.id === e.source))
-        .filter((n): n is NonNullable<typeof n> => n !== undefined);
+    const inputNodes = panelNodeId ? findClosestEnabledNodes(panelNodeId, nodes, edges) : [];
 
     return (
         <div className="space-y-4">

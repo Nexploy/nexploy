@@ -1,6 +1,6 @@
-import { getFromClosestAncestor } from '@/types/pipeline.helpers';
+import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
-import { getNextVersionNumber, upsertVersion } from '@/services/inngest/version.inngest.service';
+import { getNextVersionNumber, upsertVersion } from '@/services/repository/version.service';
 import { getDefaultEnvironment } from '@/services/environment/environment.service';
 
 export class SaveVersionExecutor implements INodeExecutor {

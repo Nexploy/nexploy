@@ -1,12 +1,12 @@
 import { RepositoryEnv } from '@/components/repositories/tabs/envs/RepositoryEnv';
-import { getAllEnvsBuildInngest } from '@/services/inngest/build.inngest.service';
+import { getAllEnvsBuild } from '@/services/repository/build.service';
 
 interface RepositoryEnvTabProps {
     repositoryId: string;
 }
 
 export async function RepositoryEnvTab({ repositoryId }: RepositoryEnvTabProps) {
-    const envVariables = await getAllEnvsBuildInngest(repositoryId);
+    const envVariables = await getAllEnvsBuild(repositoryId);
 
     return <RepositoryEnv repositoryId={repositoryId} envVariables={envVariables} />;
 }

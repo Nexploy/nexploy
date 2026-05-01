@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@workspace/ui/components/button';
 import { Trash2 } from 'lucide-react';
@@ -9,6 +8,8 @@ import { statusMap } from '@/utils/statusMap';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { disconnectCloudflareAction } from '@/actions/cloudflare/disconnect.action';
+import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useAction } from 'next-safe-action/hooks';
 
 interface CloudflareInstanceCardProps {
     id: string;
@@ -16,26 +17,26 @@ interface CloudflareInstanceCardProps {
 }
 
 export function CloudflareInstanceCard({ id, displayName }: CloudflareInstanceCardProps) {
-    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const t = useTranslations('integrations.cloudflare');
-    const tNotifications = useTranslations('notifications');
+    const tCommon = useTranslations('common');
+    const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
-    const handleRemove = async () => {
-        setIsLoading(true);
-        try {
-            const result = await disconnectCloudflareAction({ id });
-            if (result?.serverError) {
-                toast.error(result.serverError);
-            } else {
-                toast.success(t('deletedSuccess'));
-                router.refresh();
-            }
-        } catch {
-            toast.error(tNotifications('operationFailed'));
-        } finally {
-            setIsLoading(false);
-        }
+    const { executeAsync, isPending } = useAction(disconnectCloudflareAction, {
+        onSuccess: () => {
+            toast.success(t('deletedSuccess'));
+            router.refresh();
+        },
+    });
+
+    const handleRemoveClick = () => {
+        openAlertDialog({
+            title: t('deleteConfirmTitle'),
+            description: t('deleteConfirmDescription', { name: displayName }),
+            cancelLabel: tCommon('cancel'),
+            actionLabel: t('deleteConfirmAction'),
+            onAction: () => executeAsync({ id }),
+        });
     };
 
     return (
@@ -53,10 +54,9 @@ export function CloudflareInstanceCard({ id, displayName }: CloudflareInstanceCa
             <Button
                 variant="destructiveOutline"
                 size="icon"
-                onClick={handleRemove}
+                onClick={handleRemoveClick}
                 icon={Trash2}
-                disabled={isLoading}
-                isLoading={isLoading}
+                disabled={isPending}
             />
         </div>
     );

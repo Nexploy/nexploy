@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { internalApiAuth, route } from '@/lib/api/nextRoute';
 import { syncVersionDeleteSchema } from '@workspace/schemas-zod/repository/version.schema';
-import { deleteVersionsByImageTag } from '@/services/inngest/version.inngest.service';
+import { deleteVersionsByImageTag } from '@/services/repository/version.service';
 
 export const POST = route
     .use(internalApiAuth)

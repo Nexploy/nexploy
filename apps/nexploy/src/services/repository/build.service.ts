@@ -1,5 +1,5 @@
 import { prisma } from '../../../prisma/prisma';
-import { BuildConfig, BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
+import { BuildConfig, BuildLogEntry } from '@workspace/typescript-interface/repository/build';
 import { addBuildJob } from '@/inngest/jobs/queue';
 import { inngest } from '@/inngest/client';
 import { getRepositorieWithEnv } from '@/services/repository.service';
@@ -7,10 +7,10 @@ import { setToastServer } from '@/lib/toastServer';
 import { decrypt } from '@/lib/encryption';
 import { StartBuildSchemaType } from '@workspace/schemas-zod/inngest/build.schema';
 import { BuildStatus } from 'generated/client';
-import { createLogInngest } from '@/services/inngest/log.inngest.service';
+import { createLog } from '@/services/repository/log.service';
 import { createBuildChannel } from '@/inngest/channels/build.channel';
 
-export async function startBuildRepositoryInngest(
+export async function startBuildRepository(
     { repositoryId, branch }: StartBuildSchemaType,
     userId: string,
     triggerSource: 'manual' | 'webhook' = 'manual',
@@ -50,7 +50,7 @@ export async function startBuildRepositoryInngest(
     };
 
     await addBuildJob(build.id, config);
-    return build.id;
+    return { id: build.id, numberBuild: build.number };
 }
 
 export async function removeBuild(buildId: string) {
@@ -155,7 +155,7 @@ export async function updateNodeStatus(
     }
 }
 
-export async function cancelBuildInngest(buildId: string) {
+export async function cancelBuildRepository(buildId: string) {
     const build = await prisma.build.findUnique({
         where: { id: buildId },
         select: { status: true, nodeStatuses: true, pipelineSnapshot: true },
@@ -210,7 +210,7 @@ export async function cancelBuildInngest(buildId: string) {
         });
     }
 
-    await Promise.all(logs.map((log) => createLogInngest(log)));
+    await Promise.all(logs.map((log) => createLog(log)));
 
     const buildChannel = createBuildChannel(buildId);
     const publishSafe = async (payload: Parameters<typeof inngest.realtime.publish>[0]) => {
@@ -246,7 +246,7 @@ export async function getAllBuilds(repositoryId: string) {
     }
 }
 
-export async function getAllEnvsBuildInngest(repositoryId: string) {
+export async function getAllEnvsBuild(repositoryId: string) {
     try {
         const envs = await prisma.envVariable.findMany({ where: { repositoryId } });
         return envs.map((env) => ({ ...env, value: decrypt(env.value) }));

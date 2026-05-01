@@ -1,6 +1,6 @@
 import { EventSchemas, Inngest } from 'inngest';
 import { realtimeMiddleware } from '@inngest/realtime/middleware';
-import { BuildConfig } from '@workspace/typescript-interface/inngest/build';
+import { BuildConfig } from '@workspace/typescript-interface/repository/build';
 import { BackupScheduleStartEvent } from '@workspace/typescript-interface/aws/backupSchedule';
 
 type Events = {

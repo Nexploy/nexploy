@@ -1,5 +1,8 @@
 import { NodeDefinition } from './nodeDefinition';
 
+export type MinimalNode = { id: string; data: { disabled?: boolean } };
+export type MinimalEdge = { source: string; target: string };
+
 export type NodeRunStatus =
     | 'running'
     | 'completed'

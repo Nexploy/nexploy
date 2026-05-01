@@ -29,6 +29,19 @@ export function extractGitHubRepo(repositoryUrl: string): { owner: string; repo:
     throw new Error(`Invalid GitHub repository URL: ${repositoryUrl}`);
 }
 
+export function extractGitLabRepo(repositoryUrl: string): {
+    baseUrl: string;
+    owner: string;
+    repo: string;
+} {
+    const url = new URL(repositoryUrl);
+    const parts = url.pathname.replace(/\.git$/, '').split('/').filter(Boolean);
+    if (parts.length < 2) throw new Error(`Invalid GitLab repository URL: ${repositoryUrl}`);
+    const repo = parts[parts.length - 1]!;
+    const owner = parts.slice(0, -1).join('/');
+    return { baseUrl: `${url.protocol}//${url.host}`, owner, repo };
+}
+
 export async function getGitProviderToken(
     provider: string,
     { gitAccountId, requestedUserId }: { gitAccountId?: string; requestedUserId?: string } = {},

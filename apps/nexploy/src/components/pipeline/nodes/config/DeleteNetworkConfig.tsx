@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -52,13 +46,13 @@ export function DeleteNetworkConfig() {
                         <FormItem className="flex flex-col">
                             <FormLabel>{t('networkId')}</FormLabel>
                             <FormControl>
-                                <RefAware value={field.value} onChange={field.onChange}>
-                                    {isLoading ? (
-                                        <p className="text-muted-foreground bg-input/30 border-input flex h-9 items-center gap-1 rounded-md border px-3 py-2 text-sm">
-                                            <Loader2 className="h-3 w-3 animate-spin" />
-                                            {t('networksLoading')}
-                                        </p>
-                                    ) : (
+                                {isLoading ? (
+                                    <p className="text-muted-foreground bg-input/30 border-input flex h-9 items-center gap-1 rounded-md border px-3 py-2 text-sm">
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                        {t('networksLoading')}
+                                    </p>
+                                ) : (
+                                    <RefAware value={field.value} onChange={field.onChange}>
                                         <Select
                                             {...field}
                                             onValueChange={field.onChange}
@@ -127,8 +121,8 @@ export function DeleteNetworkConfig() {
                                                 </SelectGroup>
                                             </SelectContent>
                                         </Select>
-                                    )}
-                                </RefAware>
+                                    </RefAware>
+                                )}
                             </FormControl>
                             <FormMessage className="text-xs" />
                         </FormItem>

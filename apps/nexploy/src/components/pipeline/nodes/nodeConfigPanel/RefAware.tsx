@@ -11,9 +11,9 @@ import { useValidAncestorNodeIds } from '@/contexts/RefValidationContext';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 interface RefAwareProps {
-    value: string | NodeFieldRef;
-    onChange: (value: string | NodeFieldRef) => void;
-    emptyValue?: string;
+    value: unknown;
+    onChange: (value: unknown) => void;
+    emptyValue?: unknown;
     className?: string;
 }
 

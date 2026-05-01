@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import { useLocalStorage } from 'usehooks-ts';
-import { BuildLogEntry } from '@workspace/typescript-interface/inngest/build';
+import { BuildLogEntry } from '@workspace/typescript-interface/repository/build';
 
 interface UseLogsToolbarOptions {
     logs: BuildLogEntry[];

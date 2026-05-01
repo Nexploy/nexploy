@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@workspace/ui/components/button';
 import { Trash2 } from 'lucide-react';
@@ -9,6 +8,8 @@ import { statusMap } from '@/utils/statusMap';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { deleteAwsAccountAction } from '@/actions/aws/deleteAccount.action';
+import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useAction } from 'next-safe-action/hooks';
 
 interface AwsInstanceCardProps {
     id: string;
@@ -17,27 +18,32 @@ interface AwsInstanceCardProps {
     maskedAccessKeyId: string;
 }
 
-export function AwsInstanceCard({ id, displayName, region, maskedAccessKeyId }: AwsInstanceCardProps) {
-    const [isLoading, setIsLoading] = useState(false);
+export function AwsInstanceCard({
+    id,
+    displayName,
+    region,
+    maskedAccessKeyId,
+}: AwsInstanceCardProps) {
     const router = useRouter();
     const t = useTranslations('integrations.aws');
-    const tNotifications = useTranslations('notifications');
+    const tCommon = useTranslations('common');
+    const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
-    const handleRemove = async () => {
-        setIsLoading(true);
-        try {
-            const result = await deleteAwsAccountAction({ id });
-            if (result?.serverError) {
-                toast.error(result.serverError);
-            } else {
-                toast.success(t('deletedSuccess'));
-                router.refresh();
-            }
-        } catch {
-            toast.error(tNotifications('operationFailed'));
-        } finally {
-            setIsLoading(false);
-        }
+    const { executeAsync, isPending } = useAction(deleteAwsAccountAction, {
+        onSuccess: () => {
+            toast.success(t('deletedSuccess'));
+            router.refresh();
+        },
+    });
+
+    const handleRemoveClick = () => {
+        openAlertDialog({
+            title: t('deleteConfirmTitle'),
+            description: t('deleteConfirmDescription', { name: displayName }),
+            cancelLabel: tCommon('cancel'),
+            actionLabel: t('deleteConfirmAction'),
+            onAction: () => executeAsync({ id }),
+        });
     };
 
     return (
@@ -47,7 +53,9 @@ export function AwsInstanceCard({ id, displayName, region, maskedAccessKeyId }: 
                     <span className="font-medium">{displayName}</span>
                     <Status status={statusMap['connected'].status}>
                         <StatusIndicator />
-                        <StatusLabel>{t('configured')} — {region}</StatusLabel>
+                        <StatusLabel>
+                            {t('configured')} — {region}
+                        </StatusLabel>
                     </Status>
                 </div>
                 <p className="text-muted-foreground text-sm">Access Key ID: {maskedAccessKeyId}</p>
@@ -56,10 +64,9 @@ export function AwsInstanceCard({ id, displayName, region, maskedAccessKeyId }: 
             <Button
                 variant="destructiveOutline"
                 size="icon"
-                onClick={handleRemove}
+                onClick={handleRemoveClick}
                 icon={Trash2}
-                disabled={isLoading}
-                isLoading={isLoading}
+                disabled={isPending}
             />
         </div>
     );

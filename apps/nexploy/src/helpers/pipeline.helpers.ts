@@ -1,5 +1,5 @@
-import { PipelineEdge } from '@workspace/typescript-interface/pipeline/node';
-import { NodeOutputData, NodeOutputStore } from './pipeline.type';
+import { MinimalEdge, MinimalNode, PipelineEdge } from '@workspace/typescript-interface/pipeline/node';
+import { NodeOutputData, NodeOutputStore } from '@/types/pipeline.type';
 
 export function getFromInputs<T>(inputOutputs: NodeOutputData[], key: string): T | undefined {
     for (const output of inputOutputs) {
@@ -38,4 +38,30 @@ export function getFromClosestAncestor<T>(
     }
 
     return undefined;
+}
+
+export function findClosestEnabledNodes<TNode extends MinimalNode>(
+    nodeId: string,
+    nodes: TNode[],
+    edges: MinimalEdge[],
+    visited = new Set<string>(),
+): TNode[] {
+    if (visited.has(nodeId)) return [];
+    visited.add(nodeId);
+
+    const parentIds = edges.filter((e) => e.target === nodeId).map((e) => e.source);
+    const result: TNode[] = [];
+
+    for (const parentId of parentIds) {
+        const parent = nodes.find((n) => n.id === parentId);
+        if (!parent) continue;
+
+        if (!parent.data.disabled) {
+            result.push(parent);
+        } else {
+            result.push(...findClosestEnabledNodes(parentId, nodes, edges, visited));
+        }
+    }
+
+    return result;
 }
