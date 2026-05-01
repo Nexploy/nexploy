@@ -1,9 +1,5 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { setEnvVarsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 
@@ -16,28 +12,29 @@ export class SetEnvVarsExecutor implements INodeExecutor {
     ): Promise<NodeExecutionResult> {
         const { logger, nodeId, nodeConfig, allOutputs, edges } = ctx;
 
-        const raw = nodeConfig.vars;
+        const rawVars = Array.isArray(nodeConfig.vars) ? nodeConfig.vars : [];
+        const ownMap = Object.fromEntries(
+            rawVars.filter((e) => e.key).map((e) => [e.key, e.value]),
+        );
 
-        let fromNode;
-        if (Array.isArray(raw)) {
-            fromNode = Object.fromEntries(raw.filter((e) => e.key).map((e) => [e.key, e.value]));
-        } else {
-            fromNode = raw ?? {};
-        }
+        const ancestorEnvs =
+            getFromClosestAncestor<{ key: string; value: string }[]>(
+                allOutputs,
+                edges,
+                nodeId,
+                'envVariables',
+            ) ?? [];
+        const ancestorMap = Object.fromEntries(ancestorEnvs.map((e) => [e.key, e.value]));
 
-        const existing =
-            getFromClosestAncestor<Record<string, string>>(allOutputs, edges, nodeId, 'envVariables') ?? {};
+        const merged = { ...ancestorMap, ...ownMap };
+        const envVariables = Object.entries(merged).map(([key, value]) => ({ key, value }));
 
-        const envVariables = { ...fromNode, ...existing };
-
-        const count = Object.keys(envVariables).length;
-
-        if (count === 0) {
+        if (envVariables.length === 0) {
             await logger.info(nodeId, 'No variables defined, skipping');
-            return { output: { envVariables: {} }, skipped: true };
+            return { output: { envVariables: [] }, skipped: true };
         }
 
-        await logger.info(nodeId, `Injecting ${count} environment variable(s) into the pipeline`);
+        await logger.info(nodeId, `Injecting ${envVariables.length} environment variable(s) into the pipeline`);
 
         return { output: { envVariables } };
     }

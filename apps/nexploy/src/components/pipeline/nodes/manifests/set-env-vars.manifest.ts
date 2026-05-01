@@ -25,4 +25,12 @@ export const setEnvVarsManifest: NodeManifest = {
     },
     configSchema: setEnvVarsConfigSchema,
     configPanel: SetEnvVarsConfig,
+    inputFields: [
+        {
+            key: 'envVariables',
+            labelKey: 'pipeline.inputs.envVariables',
+            descriptionKey: 'pipeline.inputs.desc_envVariables',
+            type: 'array',
+        },
+    ],
 };
