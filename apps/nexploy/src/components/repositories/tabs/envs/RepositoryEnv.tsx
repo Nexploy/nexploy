@@ -134,16 +134,6 @@ export function RepositoryEnv({
                         description={t('description')}
                     />
                     <div className="flex gap-2">
-                        {hasChanges && (
-                            <Button
-                                size="sm"
-                                onClick={handleSubmitWithAction}
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? <Loader2 className="animate-spin" /> : <Save />}
-                                {t('saveChanges')}
-                            </Button>
-                        )}
                         <ImportEnv
                             onImport={(vars) => {
                                 const currentEnvs = form.getValues('envVariables');
@@ -156,6 +146,16 @@ export function RepositoryEnv({
                             <Plus />
                             {t('addVariable')}
                         </Button>
+                        {hasChanges && (
+                            <Button
+                                size="sm"
+                                onClick={handleSubmitWithAction}
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? <Loader2 className="animate-spin" /> : <Save />}
+                                {t('saveChanges')}
+                            </Button>
+                        )}
                     </div>
                 </div>
             </CardHeader>

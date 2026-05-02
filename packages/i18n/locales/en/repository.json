@@ -454,7 +454,7 @@
       },
       "set-env-vars": {
         "name": "Set Env Vars",
-        "description": "Inject additional environment variables into the pipeline"
+        "description": "Inject additional environment variables into the pipeline. Variables accumulate throughout the pipeline."
       },
       "clean-workdir": {
         "name": "Clean Work Dir",
@@ -689,7 +689,7 @@
       "viewOnly": "view only",
       "noConfig": "No configuration required for this node.",
       "cleanWorkdirInfo": "Removes the cloned repository directory from disk after the pipeline completes.",
-      "envVarsInfo": "Injects the repository environment variables into the pipeline, making them available to subsequent nodes.",
+      "envVarsInfo": "Injects the repository environment variables into the pipeline, making them available to subsequent nodes. Variables accumulate throughout the pipeline.",
       "saveVersionInfo": "Saves the current build as a new numbered version using the built image tag and commit info.",
       "validateDockerfileInfo": "Validates that the Dockerfile exists and is readable in the work directory.",
       "deployContainerNoConfig": "The container is automatically deployed using the image built by the Build Docker Image node. Connect it after that node to deploy the result.",

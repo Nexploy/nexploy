@@ -2,6 +2,7 @@ import { prisma } from '../../prisma/prisma';
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { SavePipelineInput } from '@workspace/schemas-zod/pipeline/pipelineGraph.schema';
 import { type NodeRunStatus } from '@/types/pipeline.type';
+import { decryptPipelineNodes, encryptPipelineNodes } from '@/lib/pipelineEncryption';
 
 export interface BuildPipelineStatus {
     nodeStatuses: Record<string, NodeRunStatus>;
@@ -34,8 +35,9 @@ export async function getPipelineConfig(repositoryId: string): Promise<PipelineG
 
         if (!config) return null;
 
+        const nodes = decryptPipelineNodes(config.nodes as unknown as PipelineGraph['nodes']);
         return {
-            nodes: config.nodes as unknown as PipelineGraph['nodes'],
+            nodes,
             edges: config.edges as unknown as PipelineGraph['edges'],
         };
     } catch (error: unknown) {
@@ -48,15 +50,16 @@ export async function savePipelineConfig({
     graph,
 }: SavePipelineInput): Promise<void> {
     try {
+        const encryptedNodes = encryptPipelineNodes(graph.nodes);
         await prisma.pipelineConfig.upsert({
             where: { repositoryId },
             create: {
                 repositoryId,
-                nodes: graph.nodes as object[],
+                nodes: encryptedNodes as object[],
                 edges: graph.edges as object[],
             },
             update: {
-                nodes: graph.nodes as object[],
+                nodes: encryptedNodes as object[],
                 edges: graph.edges as object[],
             },
         });

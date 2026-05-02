@@ -5,8 +5,7 @@ import { updateNodeStatus, updateStatusBuild } from '@/services/repository/build
 import { createLog } from '@/services/repository/log.service';
 import { LogLevel, PipelineReporter, PipelineStatus } from '@/types/pipeline.type';
 import { createPipelineLogger, pipelineOrchestrator } from '@/inngest/pipeline/orchestrator';
-import { prisma } from '../../../prisma/prisma';
-import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
+import { getPipelineConfig } from '@/services/pipeline.service';
 import { createBuildChannel } from '@/inngest/channels/build.channel';
 
 export const buildFunction = inngest.createFunction(
@@ -95,20 +94,13 @@ export const buildFunction = inngest.createFunction(
 
             const logger = createPipelineLogger(publishLog);
 
-            const pipelineConfig = await prisma.pipelineConfig.findUnique({
-                where: { repositoryId: config.repositoryId },
-            });
+            const graph = await getPipelineConfig(config.repositoryId);
 
-            if (!pipelineConfig) {
+            if (!graph) {
                 throw new Error(
                     `No pipeline configuration found for repository: ${config.repositoryId}`,
                 );
             }
-
-            const graph: PipelineGraph = {
-                nodes: pipelineConfig.nodes as unknown as PipelineGraph['nodes'],
-                edges: pipelineConfig.edges as unknown as PipelineGraph['edges'],
-            };
 
             return await pipelineOrchestrator.execute(
                 buildId,
