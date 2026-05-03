@@ -20,6 +20,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select.tsx';
 import { NETWORK_DRIVERS } from '@/lib/constants/docker.ts';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
 export function CreateNetworkConfig() {
     const t = useTranslations('repository.pipeline.config');
@@ -34,7 +35,9 @@ export function CreateNetworkConfig() {
                     <FormItem>
                         <FormLabel>{t('networkName')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder={t('networkNamePlaceholder')} />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input {...field} placeholder={t('networkNamePlaceholder')} />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

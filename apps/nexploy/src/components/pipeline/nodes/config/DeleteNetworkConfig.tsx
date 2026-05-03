@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -60,7 +66,7 @@ export function DeleteNetworkConfig() {
                                         >
                                             <SelectTrigger className="max-w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3">
                                                 {isStale ? (
-                                                    <span className="flex items-center gap-1.5">
+                                                    <span className="flex items-center gap-1.5 pl-3">
                                                         <AlertTriangle className="h-3 w-3 shrink-0" />
                                                         {t('networkUnavailable')}
                                                     </span>

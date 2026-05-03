@@ -44,10 +44,7 @@ function transformNodes(
     return nodes.map((node) => {
         const paths = ENCRYPTED_NODE_FIELDS[node.data.type];
         if (!paths) return node;
-        const config = paths.reduce(
-            (acc, path) => applyToPath(acc, path, fn),
-            node.data.config as Record<string, unknown>,
-        );
+        const config = paths.reduce((acc, path) => applyToPath(acc, path, fn), node.data.config);
         return { ...node, data: { ...node.data, config } };
     });
 }

@@ -1,9 +1,17 @@
 'use client';
 
 import { createContext, type ReactNode, useContext, useMemo } from 'react';
-import { useAncestorInputFields } from '@/hooks/useAncestorInputFields';
+import { type AncestorWithInputs, useAncestorInputFields } from '@/hooks/useAncestorInputFields';
 
-const RefValidationContext = createContext<Set<string>>(new Set());
+interface RefValidationContextValue {
+    validIds: Set<string>;
+    ancestors: AncestorWithInputs[];
+}
+
+const RefValidationContext = createContext<RefValidationContextValue>({
+    validIds: new Set(),
+    ancestors: [],
+});
 
 interface RefValidationProviderProps {
     nodeId: string;
@@ -13,16 +21,17 @@ interface RefValidationProviderProps {
 export function RefValidationProvider({ nodeId, children }: RefValidationProviderProps) {
     const ancestors = useAncestorInputFields(nodeId);
     const validIds = useMemo(() => new Set(ancestors.map((a) => a.nodeId)), [ancestors]);
+    const value = useMemo(() => ({ validIds, ancestors }), [validIds, ancestors]);
 
-    return (
-        <RefValidationContext.Provider value={validIds}>{children}</RefValidationContext.Provider>
-    );
+    return <RefValidationContext.Provider value={value}>{children}</RefValidationContext.Provider>;
 }
 
 export function useValidAncestorNodeIds(): Set<string> {
-    const context = useContext(RefValidationContext);
-    if (!context) {
-        throw new Error('useValidAncestorNodeIds must be used within a RefValidationProvider');
-    }
-    return context;
+    return useContext(RefValidationContext).validIds;
+}
+
+export function useAncestorIndex(nodeId: string): number | undefined {
+    const { ancestors } = useContext(RefValidationContext);
+    const idx = ancestors.findIndex((a) => a.nodeId === nodeId);
+    return idx === -1 ? undefined : idx + 1;
 }

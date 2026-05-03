@@ -7,7 +7,7 @@ import { AlertTriangle, Variable, X } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { cn } from '@workspace/ui/lib/utils';
 import { useTranslations } from 'next-intl';
-import { useValidAncestorNodeIds } from '@/contexts/RefValidationContext';
+import { useValidAncestorNodeIds, useAncestorIndex } from '@/contexts/RefValidationContext';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 interface RefAwareProps {
@@ -31,6 +31,7 @@ export function RefAware({
     const ref = isNodeFieldRef(value) ? value : null;
     const isRef = ref !== null;
     const isStale = isRef && validAncestorIds.size > 0 && !validAncestorIds.has(ref.nodeId);
+    const blockIndex = useAncestorIndex(ref?.nodeId ?? '');
 
     const handleDrop = (e: React.DragEvent<HTMLElement>) => {
         e.preventDefault();
@@ -38,11 +39,7 @@ export function RefAware({
         if (!data) return;
         try {
             const parsed = JSON.parse(data) as NodeFieldRef;
-            onChange({
-                nodeId: parsed.nodeId,
-                inputKey: parsed.inputKey,
-                labelKey: parsed.labelKey,
-            });
+            onChange(parsed);
         } catch {}
     };
 
@@ -58,13 +55,18 @@ export function RefAware({
             <div
                 className={cn(
                     'flex h-9 items-center gap-1.5 rounded-md border px-2 text-xs',
-                    'border-dashed',
+                    'relative border-dashed',
                     isStale && 'border-destructive/60 bg-destructive/10 text-destructive',
                     className,
                 )}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
             >
+                {!isStale && blockIndex !== undefined && (
+                    <span className="bg-muted text-muted-foreground absolute -top-2 left-1.5 flex size-4 shrink-0 items-center justify-center rounded text-[9px] font-bold">
+                        {blockIndex}
+                    </span>
+                )}
                 {isStale ? (
                     <AlertTriangle className="text-destructive size-3 shrink-0" />
                 ) : (

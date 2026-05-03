@@ -27,7 +27,6 @@ function InputChip({ nodeId, nodeType, field }: InputChipProps) {
 
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
         e.dataTransfer.setData('application/nexploy-node-ref', JSON.stringify(ref));
-        e.dataTransfer.setData(`application/nexploy-node-ref-${field.type}`, JSON.stringify(ref));
         e.dataTransfer.effectAllowed = 'copy';
     };
 

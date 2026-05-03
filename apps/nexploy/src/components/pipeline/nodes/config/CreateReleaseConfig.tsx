@@ -145,11 +145,13 @@ export function CreateReleaseConfig() {
                     <FormItem>
                         <FormLabel>{t('releaseNotes')}</FormLabel>
                         <FormControl>
-                            <Textarea
-                                {...field}
-                                placeholder={t('releaseNotesPlaceholder')}
-                                rows={5}
-                            />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Textarea
+                                    {...field}
+                                    placeholder={t('releaseNotesPlaceholder')}
+                                    rows={5}
+                                />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

@@ -10,6 +10,7 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
 export function CacheSaveConfig() {
     const t = useTranslations('repository.pipeline.config');
@@ -24,11 +25,13 @@ export function CacheSaveConfig() {
                     <FormItem>
                         <FormLabel>{t('cacheVolumeName')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="build-cache"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input
+                                    {...field}
+                                    placeholder="build-cache"
+                                    className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
+                                />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -41,11 +44,13 @@ export function CacheSaveConfig() {
                     <FormItem>
                         <FormLabel>{t('cacheSourcePath')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="node_modules"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input
+                                    {...field}
+                                    placeholder="node_modules"
+                                    className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
+                                />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -58,11 +63,13 @@ export function CacheSaveConfig() {
                     <FormItem>
                         <FormLabel>{t('cacheKey')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder={t('cacheKeyPlaceholder')}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input
+                                    {...field}
+                                    placeholder={t('cacheKeyPlaceholder')}
+                                    className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
+                                />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

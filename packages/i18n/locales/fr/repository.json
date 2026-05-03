@@ -715,7 +715,7 @@
             "pullImageNamePlaceholderPrivate": "ex. monapp:1.0.0",
             "createContainerName": "Nom du conteneur",
             "createContainerNamePlaceholder": "ex. mon-app (laisser vide pour auto-générer)",
-            "createContainerImage": "Image Name",
+            "createContainerImage": "Nom de l'image",
             "createContainerImagePlaceholder": "ex. nginx:latest",
             "createContainerSimple": "Simple",
             "createContainerAdvanced": "Avancé",

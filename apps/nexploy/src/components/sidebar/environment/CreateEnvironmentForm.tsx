@@ -259,7 +259,7 @@ export function CreateEnvironmentForm() {
                     render={({ field }) => (
                         <FormItem className="flex items-center justify-between rounded-lg border">
                             <FormLabel className={'cursor-pointer p-3'}>
-                                <div>
+                                <div className={'flex flex-col gap-2'}>
                                     {t('isDefault')}
                                     <p className="text-muted-foreground text-xs">
                                         {t('isDefaultDescription')}

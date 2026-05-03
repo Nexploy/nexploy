@@ -20,11 +20,10 @@ export const validateDockerfileConfigSchema = z.object({
 });
 
 export const composeFileConfigSchema = z.object({
-    composeFileName: z
-        .string()
-        .min(1, 'Compose file name is required')
-        .default('docker-compose.yml'),
-    composeFilePath: z.string().optional(),
+    composeFileName: refable(
+        z.string().min(1, 'Compose file name is required'),
+    ).default('docker-compose.yml'),
+    composeFilePath: refable(z.string()).optional(),
 });
 
 export const varEntrySchema = z.object({
@@ -97,19 +96,21 @@ export const createContainerConfigSchema = z.object({
         .enum(['no', 'always', 'on-failure', 'unless-stopped'])
         .default('unless-stopped'),
     networkName: refable(z.string()).optional(),
-    advanced: z.boolean().default(false),
+    portsSource: refable(z.array(createContainerPortSchema)).optional(),
     ports: z.array(createContainerPortSchema).default([]),
-    envVars: refable(z.array(createContainerEnvVarSchema)).default([]),
+    envVarsSource: refable(z.array(createContainerEnvVarSchema)).optional(),
+    envVars: z.array(createContainerEnvVarSchema).default([]),
+    volumesSource: refable(z.array(createContainerVolumeSchema)).optional(),
     volumes: z.array(createContainerVolumeSchema).default([]),
 });
 
 export const createNetworkConfigSchema = z.object({
-    name: z.string().min(1, 'Network name is required').default(''),
+    name: refable(z.string().min(1, 'Network name is required')).default(''),
     driver: z.string().default('bridge'),
 });
 
 export const createVolumeConfigSchema = z.object({
-    name: z.string().min(1, 'Volume name is required').default(''),
+    name: refable(z.string().min(1, 'Volume name is required')).default(''),
     driver: z.string().optional(),
 });
 
@@ -367,7 +368,7 @@ export const createReleaseConfigSchema = z.object({
     tagName: refable(z.string().min(1, 'Tag name is required')).default(''),
     targetBranch: z.string().default('main'),
     releaseTitle: refable(z.string()).default(''),
-    releaseNotes: z.string().default(''),
+    releaseNotes: refable(z.string()).default(''),
     draft: z.boolean().default(false),
     prerelease: z.boolean().default(false),
 });

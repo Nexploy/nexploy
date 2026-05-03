@@ -572,19 +572,22 @@
         "containerPort": "Container port",
         "protocol": "Protocol",
         "noPortsConfigured": "No ports configured",
+        "dragToImportPorts": "Drag a reference to import ports from another node",
         "envVars": "Environment Variables",
         "envVarsDescription": "Variables to inject into the container",
         "addVariable": "Add Variable",
         "keyPlaceholder": "Key",
         "valuePlaceholder": "Value",
         "noEnvVarsConfigured": "No environment variables configured",
+        "dragToImportEnvVars": "Drag a reference to import environment variables from another node",
         "volumes": "Volumes",
         "volumesDescription": "Volume mounting between host and container",
         "addVolume": "Add Volume",
         "hostPath": "/host/path",
         "containerPath": "/container/path",
         "readOnly": "RO",
-        "noVolumesConfigured": "No volumes configured"
+        "noVolumesConfigured": "No volumes configured",
+        "dragToImportVolumes": "Drag a reference to import volumes from another node"
     },
     "containerCard": {
         "image": "Image:",

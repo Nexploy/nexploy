@@ -15,7 +15,12 @@ export class CreateContainerExecutor implements INodeExecutor {
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, buildConfig, logger, nodeId, abortSignal, edges } = ctx;
 
-        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(
+            allOutputs,
+            edges,
+            nodeId,
+            'environmentId',
+        );
         const containerName = nodeConfig.containerName;
         const imageName = nodeConfig.imageName;
 
@@ -29,6 +34,12 @@ export class CreateContainerExecutor implements INodeExecutor {
             [NEXPLOY_LABELS.buildId]: buildConfig.buildId,
         };
 
+        console.log({
+            ports: [...(nodeConfig.portsSource ?? []), ...nodeConfig.ports],
+            envVars: [...(nodeConfig.envVarsSource ?? []), ...nodeConfig.envVars],
+            volumes: [...(nodeConfig.volumesSource ?? []), ...nodeConfig.volumes],
+        });
+
         try {
             const result = await kyDocker
                 .post('container/create', {
@@ -39,9 +50,9 @@ export class CreateContainerExecutor implements INodeExecutor {
                         network: nodeConfig.networkName || undefined,
                         autoRemove: false,
                         privileged: false,
-                        ports: nodeConfig.ports,
-                        envVars: nodeConfig.envVars,
-                        volumes: nodeConfig.volumes,
+                        ports: [...(nodeConfig.portsSource ?? []), ...nodeConfig.ports],
+                        envVars: [...(nodeConfig.envVarsSource ?? []), ...nodeConfig.envVars],
+                        volumes: [...(nodeConfig.volumesSource ?? []), ...nodeConfig.volumes],
                         labels,
                     },
                     signal: abortSignal,

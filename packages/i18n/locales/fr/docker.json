@@ -572,19 +572,22 @@
         "containerPort": "Port conteneur",
         "protocol": "Protocole",
         "noPortsConfigured": "Aucun port configuré",
+        "dragToImportPorts": "Glissez un input pour importer des ports d'un autre nœud",
         "envVars": "Variables d'environnement",
         "envVarsDescription": "Variables à injecter dans le conteneur",
         "addVariable": "Ajouter une variable",
         "keyPlaceholder": "Clé",
         "valuePlaceholder": "Valeur",
         "noEnvVarsConfigured": "Aucune variable d'environnement configurée",
+        "dragToImportEnvVars": "Glissez un input pour importer des variables d'environnement d'un autre nœud",
         "volumes": "Volumes",
         "volumesDescription": "Montage de volumes entre l'hôte et le conteneur",
         "addVolume": "Ajouter un volume",
         "hostPath": "/chemin/hôte",
         "containerPath": "/chemin/conteneur",
         "readOnly": "RO",
-        "noVolumesConfigured": "Aucun volume configuré"
+        "noVolumesConfigured": "Aucun volume configuré",
+        "dragToImportVolumes": "Glissez un input pour importer des volumes d'un autre nœud"
     },
     "containerCard": {
         "image": "Image :",

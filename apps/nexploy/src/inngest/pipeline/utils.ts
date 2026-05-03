@@ -66,9 +66,15 @@ function resolveRef(
 
     if (resolvedValue === undefined) {
         const sourceLabel = ref.nodeType ?? nodeTypeMap.get(ref.nodeId) ?? ref.nodeId;
-        warnings.add(
-            `Input "${ref.inputKey}" from "${sourceLabel}" is unavailable — the source node was deleted or disabled`,
-        );
+        if (!sourceOutput) {
+            warnings.add(
+                `Field "${ref.inputKey}" from node "${sourceLabel}" (id: ${ref.nodeId}) is unavailable — the source node produced no output (deleted or disabled)`,
+            );
+        } else {
+            warnings.add(
+                `Field "${ref.inputKey}" from node "${sourceLabel}" (id: ${ref.nodeId}) is unavailable — the field does not exist in the source node's output (available fields: ${Object.keys(sourceOutput).join(", ") || "none"})`,
+            );
+        }
     }
 
     return resolvedValue;

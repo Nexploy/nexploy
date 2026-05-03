@@ -20,6 +20,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select.tsx';
 import { VOLUME_DRIVERS } from '@/lib/constants/docker.ts';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
 export function CreateVolumeConfig() {
     const t = useTranslations('repository.pipeline.config');
@@ -35,7 +36,9 @@ export function CreateVolumeConfig() {
                     <FormItem>
                         <FormLabel>{t('volumeName')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder={t('volumeNamePlaceholder')} />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input {...field} placeholder={t('volumeNamePlaceholder')} />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

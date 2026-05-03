@@ -10,6 +10,7 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
 export function DeployComposeConfig() {
     const t = useTranslations('repository.pipeline.config');
@@ -24,11 +25,13 @@ export function DeployComposeConfig() {
                     <FormItem className="space-y-1.5">
                         <FormLabel>{t('composeFileName')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="docker-compose.yml"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input
+                                    {...field}
+                                    placeholder="docker-compose.yml"
+                                    className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
+                                />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -41,11 +44,13 @@ export function DeployComposeConfig() {
                     <FormItem>
                         <FormLabel>{t('composeFilePath')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder={t('composeFilePathPlaceholder')}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input
+                                    {...field}
+                                    placeholder={t('composeFilePathPlaceholder')}
+                                    className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
+                                />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
