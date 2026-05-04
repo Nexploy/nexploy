@@ -85,7 +85,8 @@ export type NodeId =
     | 'merge-branch'
     | 'generate-changelog'
     // Secrets
-    | 'fetch-secrets'
+    | 'fetch-secrets-vault'
+    | 'fetch-secrets-doppler'
     // Code Quality
     | 'sonarqube-scan';
 

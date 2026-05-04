@@ -14,6 +14,7 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
+import { Switch } from '@workspace/ui/components/switch';
 import { Button } from '@workspace/ui/components/button';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { useAction } from 'next-safe-action/hooks';
@@ -85,8 +86,32 @@ export function WebhookCloneConfig() {
                                 placeholder={t('webhookBranchFilterPlaceholder')}
                             />
                         </FormControl>
-                        <FormDescription>{t('webhookBranchFilterDescription')}</FormDescription>
+                        <FormDescription className={'text-xs'}>
+                            {t('webhookBranchFilterDescription')}
+                        </FormDescription>
                         <FormMessage />
+                    </FormItem>
+                )}
+            />
+
+            <FormField
+                control={form.control}
+                name="submodules"
+                render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between gap-4">
+                        <div className={'flex flex-col gap-1'}>
+                            <FormLabel>{t('cloneSubmodules')}</FormLabel>
+                            <FormDescription className={'text-xs'}>
+                                {t('cloneSubmodulesDescription')}
+                            </FormDescription>
+                        </div>
+                        <FormControl>
+                            <Switch
+                                className={'cursor-pointer'}
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                            />
+                        </FormControl>
                     </FormItem>
                 )}
             />

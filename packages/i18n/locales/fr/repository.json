@@ -521,9 +521,13 @@
                 "name": "Télécharger un fichier",
                 "description": "Télécharge un fichier depuis une URL dans le répertoire de travail"
             },
-            "fetch-secrets": {
-                "name": "Récupérer les secrets",
-                "description": "Récupère des secrets depuis Vault, Doppler ou un fichier .env"
+            "fetch-secrets-vault": {
+                "name": "Secrets Vault",
+                "description": "Récupère les secrets depuis HashiCorp Vault KV. Les variables s'accumulent tout au long du pipeline."
+            },
+            "fetch-secrets-doppler": {
+                "name": "Secrets Doppler",
+                "description": "Récupère les secrets depuis Doppler. Les variables s'accumulent tout au long du pipeline."
             },
             "git-clone-extra": {
                 "name": "Cloner un dépôt supplémentaire",
@@ -651,6 +655,8 @@
             "cloneCommitHash": "Hash du commit",
             "cloneCommitHashPlaceholder": "ex. abc1234",
             "cloneCommitHashDescription": "Laisser vide pour utiliser le dernier commit de la branche",
+            "cloneSubmodules": "Sous-modules Git",
+            "cloneSubmodulesDescription": "Cloner récursivement tous les sous-modules Git déclarés dans .gitmodules",
             "dockerfilePath": "Chemin du Dockerfile",
             "dockerfileFilePath": "Chemin du fichier",
             "dockerfileFilePathPlaceholder": "Laisser vide pour la racine du dépôt",
@@ -821,13 +827,14 @@
             "trivyVersion": "Version Trivy",
             "scanSeverity": "Sévérité minimale",
             "scanTag": "Tag",
-            "secretsOutputAs": "Sortir sous forme de",
-            "secretsOutputEnvVars": "Variables d'environnement pipeline",
-            "secretsOutputJsonFile": "Fichier JSON (secrets.json)",
-            "secretsPath": "Chemin du secret",
-            "secretsProvider": "Fournisseur de secrets",
-            "secretsToken": "Jeton",
-            "secretsVaultEndpoint": "Endpoint Vault",
+            "vaultEndpoint": "Endpoint Vault",
+            "vaultToken": "Token Vault",
+            "vaultSecretPath": "Chemin du secret",
+            "vaultKvVersion": "Version du moteur KV",
+            "vaultNamespace": "Namespace (Enterprise)",
+            "dopplerServiceToken": "Token de service",
+            "dopplerProject": "Projet (optionnel)",
+            "dopplerConfig": "Config / Environnement (optionnel)",
             "serviceForceUpdate": "Forcer la mise à jour",
             "serviceImage": "Image",
             "serviceName": "Nom du service",

@@ -35,7 +35,9 @@ export class CloneRepositoryExecutor implements INodeExecutor {
         };
 
         try {
-            const workDir = await gitService.cloneRepository(effectiveConfig, onProgress);
+            const workDir = await gitService.cloneRepository(effectiveConfig, onProgress, {
+                submodules: nodeConfig.submodules,
+            });
 
             if (effectiveCommitHash) {
                 await logger.info(

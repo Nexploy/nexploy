@@ -77,6 +77,7 @@ class GitService {
     async cloneRepository(
         buildConfig: BuildConfig,
         onProgress?: ProgressCallback,
+        options?: { submodules?: boolean },
     ): Promise<string> {
         const workDir = join(
             process.env.DEPLOYER_WORK_DIR as string,
@@ -130,6 +131,9 @@ class GitService {
             }
 
             const cloneArgs = ['clone', '--depth=1', '--single-branch'];
+            if (options?.submodules) {
+                cloneArgs.push('--recurse-submodules', '--shallow-submodules');
+            }
             if (buildConfig.gitBranch) {
                 cloneArgs.push(`--branch=${buildConfig.gitBranch}`);
             }

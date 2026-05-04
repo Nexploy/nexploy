@@ -45,7 +45,8 @@ import { cacheRestoreExecutor } from './executors/cache-restore.executor';
 import { cacheSaveExecutor } from './executors/cache-save.executor';
 import { gitTagExecutor } from './executors/git-tag.executor';
 import { gitCloneExtraExecutor } from './executors/git-clone-extra.executor';
-import { fetchSecretsExecutor } from './executors/fetch-secrets.executor';
+import { fetchSecretsVaultExecutor } from './executors/fetch-secrets-vault.executor';
+import { fetchSecretsDopplerExecutor } from './executors/fetch-secrets-doppler.executor';
 import { sonarqubeScanExecutor } from './executors/sonarqube-scan.executor';
 import { createReleaseExecutor } from './executors/create-release.executor';
 import { cherryPickCommitExecutor } from './executors/cherry-pick-commit.executor';
@@ -128,7 +129,8 @@ const executors: INodeExecutor[] = [
     mergeBranchExecutor,
     generateChangelogExecutor,
     // Secrets
-    fetchSecretsExecutor,
+    fetchSecretsVaultExecutor,
+    fetchSecretsDopplerExecutor,
     // Code Quality
     sonarqubeScanExecutor,
 ];

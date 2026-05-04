@@ -25,6 +25,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Input } from '@workspace/ui/components/input';
+import { Switch } from '@workspace/ui/components/switch';
 import { GitBranchIcon } from 'lucide-react';
 
 interface RepositoryGitMeta {
@@ -125,6 +126,28 @@ export function CloneRepositoryConfig() {
                         </FormControl>
                         <FormDescription>{t('cloneCommitHashDescription')}</FormDescription>
                         <FormMessage />
+                    </FormItem>
+                )}
+            />
+
+            <FormField
+                control={form.control}
+                name="submodules"
+                render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between gap-4">
+                        <div className={'flex flex-col gap-1'}>
+                            <FormLabel>{t('cloneSubmodules')}</FormLabel>
+                            <FormDescription className={'text-xs'}>
+                                {t('cloneSubmodulesDescription')}
+                            </FormDescription>
+                        </div>
+                        <FormControl>
+                            <Switch
+                                className={'cursor-pointer'}
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                            />
+                        </FormControl>
                     </FormItem>
                 )}
             />

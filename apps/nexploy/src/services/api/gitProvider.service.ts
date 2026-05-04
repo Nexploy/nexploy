@@ -1,4 +1,4 @@
-import { extractGitHubRepo, updateGitProviderToken } from '@/services/git/git.service';
+import { extractGitHubRepo, updateGitProviderToken, getGitProviderToken } from '@/services/git/git.service';
 import { GitLabCommit, GitProviderToken } from '@workspace/typescript-interface/git/git';
 import { kyGitlab } from '@/lib/api/kyGitlab';
 import dayjs from 'dayjs';
@@ -20,12 +20,30 @@ export async function getValidToken(
     }
 
     if (dayjs(token.accessTokenExpiresAt).isBefore(dayjs())) {
-        if (provider === 'gitlab') {
-            return await refreshGitLabToken(token, userId, gitAccountId);
-        } else if (provider === 'github') {
-            return await refreshGitHubToken(token, userId, gitAccountId);
-        } else {
-            throw new Error(`Unknown provider: ${provider}`);
+        try {
+            if (provider === 'gitlab') {
+                return await refreshGitLabToken(token, userId, gitAccountId);
+            } else if (provider === 'github') {
+                return await refreshGitHubToken(token, userId, gitAccountId);
+            } else {
+                throw new Error(`Unknown provider: ${provider}`);
+            }
+        } catch {
+            // Rotating refresh tokens can be consumed by a concurrent process (race condition).
+            // Re-read from DB — if another process already refreshed successfully, use that token.
+            const freshToken = await getGitProviderToken(provider, {
+                gitAccountId,
+                requestedUserId: userId,
+            });
+            if (
+                !freshToken.accessTokenExpiresAt ||
+                dayjs(freshToken.accessTokenExpiresAt).isAfter(dayjs())
+            ) {
+                return freshToken;
+            }
+            throw new Error(
+                `Your ${provider} OAuth token has expired or been revoked. Please reconnect your account from the integrations settings.`,
+            );
         }
     }
 
@@ -181,6 +199,15 @@ async function refreshGitLabToken(
 
     if (!response.ok) {
         const message = await response.text();
+        let errorData: { error?: string } = {};
+        try {
+            errorData = JSON.parse(message);
+        } catch {}
+        if (errorData.error === 'invalid_grant') {
+            throw new Error(
+                'Your GitLab OAuth token has expired or been revoked. Please reconnect your GitLab account from the integrations settings.',
+            );
+        }
         throw new Error(`Failed to refresh token. Status ${response.status}. Message: ${message}`);
     }
 

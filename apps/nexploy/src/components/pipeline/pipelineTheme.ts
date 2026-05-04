@@ -191,7 +191,8 @@ const NODE_CATEGORY: Record<string, string> = {
     'git-tag': 'source',
     'git-clone-extra': 'source',
     // Secrets & Config
-    'fetch-secrets': 'config',
+    'fetch-secrets-vault': 'config',
+    'fetch-secrets-doppler': 'config',
     // Code Quality
     'sonarqube-scan': 'build',
     // Git CI/CD
@@ -269,7 +270,8 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'git-tag': Milestone,
     'git-clone-extra': GitFork,
     // Secrets
-    'fetch-secrets': KeyRound,
+    'fetch-secrets-vault': ShieldCheck,
+    'fetch-secrets-doppler': KeyRound,
     // Code Quality
     'sonarqube-scan': ScanSearch,
     // Git CI/CD

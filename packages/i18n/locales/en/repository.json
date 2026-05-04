@@ -608,9 +608,13 @@
                 "name": "Git Clone Extra",
                 "description": "Clone an additional repository into a work directory subdirectory"
             },
-            "fetch-secrets": {
-                "name": "Fetch Secrets",
-                "description": "Fetch secrets from Vault, Doppler, or a .env file"
+            "fetch-secrets-vault": {
+                "name": "Vault Secrets",
+                "description": "Fetch secrets from HashiCorp Vault KV engine. Variables accumulate throughout the pipeline."
+            },
+            "fetch-secrets-doppler": {
+                "name": "Doppler Secrets",
+                "description": "Fetch secrets from Doppler. Variables accumulate throughout the pipeline."
             },
             "sonarqube-scan": {
                 "name": "SonarQube Scan",
@@ -650,6 +654,8 @@
             "cloneCommitHash": "Commit Hash",
             "cloneCommitHashPlaceholder": "e.g. abc1234",
             "cloneCommitHashDescription": "Leave empty to use the latest commit of the branch",
+            "cloneSubmodules": "Git Submodules",
+            "cloneSubmodulesDescription": "Recursively clone all git submodules declared in .gitmodules",
             "dockerfilePath": "Dockerfile Path",
             "dockerfileFilePath": "File Path",
             "dockerfileFilePathPlaceholder": "Leave empty for repository root",
@@ -840,13 +846,14 @@
             "gitCloneTargetDir": "Target Directory",
             "gitCloneToken": "Access Token",
             "gitCloneTokenPlaceholder": "Leave empty for public repositories",
-            "secretsProvider": "Secrets Provider",
-            "secretsVaultEndpoint": "Vault Endpoint",
-            "secretsToken": "Token",
-            "secretsPath": "Secret Path",
-            "secretsOutputAs": "Output As",
-            "secretsOutputEnvVars": "Pipeline env vars",
-            "secretsOutputJsonFile": "JSON file (secrets.json)",
+            "vaultEndpoint": "Vault Endpoint",
+            "vaultToken": "Vault Token",
+            "vaultSecretPath": "Secret Path",
+            "vaultKvVersion": "KV Engine Version",
+            "vaultNamespace": "Namespace (Enterprise)",
+            "dopplerServiceToken": "Service Token",
+            "dopplerProject": "Project (optional)",
+            "dopplerConfig": "Config / Environment (optional)",
             "s3BucketName": "S3 Bucket Name",
             "sonarqubeMode": "Mode",
             "sonarqubeModeCustom": "Custom SonarQube / SonarCloud",

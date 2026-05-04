@@ -47,7 +47,9 @@ export class WebhookCloneExecutor implements INodeExecutor {
                 gitBranch: branch,
             };
 
-            const workDir = await gitService.cloneRepository(effectiveConfig, onProgress);
+            const workDir = await gitService.cloneRepository(effectiveConfig, onProgress, {
+                submodules: nodeConfig.submodules,
+            });
 
             const commitInfo = await gitService.getCommitInfo(workDir);
             const resolvedHash = commitInfo?.hash;

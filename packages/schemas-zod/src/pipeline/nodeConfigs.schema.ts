@@ -12,10 +12,12 @@ const relativePath = (label: string) =>
 export const cloneRepositoryConfigSchema = z.object({
     branch: z.string().default('main'),
     commitHash: z.string().optional(),
+    submodules: z.boolean().default(false),
 });
 
 export const webhookCloneConfigSchema = z.object({
     branchFilter: z.string().optional(),
+    submodules: z.boolean().default(false),
 });
 
 export const buildDockerImageConfigSchema = z.object({
@@ -99,7 +101,7 @@ const createContainerVolumeSchema = z.object({
 
 export const createContainerConfigSchema = z.object({
     containerName: refable(z.string()).default(''),
-    imageName: refable(z.string()),
+    imageName: refable(z.string().min(1, 'Image name is required')),
     restartPolicy: z
         .enum(['no', 'always', 'on-failure', 'unless-stopped'])
         .default('unless-stopped'),
@@ -385,10 +387,16 @@ export const sonarqubeScanConfigSchema = z.object({
 
 // ─── Secrets ─────────────────────────────────────────────────────────────────
 
-export const fetchSecretsConfigSchema = z.object({
-    provider: z.enum(['vault', 'doppler', 'env-file']).default('vault'),
-    endpoint: z.string().optional(),
-    token: z.string().min(1, 'Token is required').default(''),
-    secretPath: z.string().min(1, 'Secret path is required').default(''),
-    outputAs: z.enum(['env-vars', 'json-file']).default('env-vars'),
+export const fetchSecretsVaultConfigSchema = z.object({
+    endpoint: refable(z.string().min(1, 'Vault endpoint is required')).default(''),
+    token: refable(z.string().min(1, 'Token is required')).default(''),
+    secretPath: refable(z.string().min(1, 'Secret path is required')).default(''),
+    kvVersion: z.enum(['v1', 'v2']).default('v2'),
+    namespace: refable(z.string()).optional(),
+});
+
+export const fetchSecretsDopplerConfigSchema = z.object({
+    serviceToken: refable(z.string().min(1, 'Service token is required')).default(''),
+    project: refable(z.string()).optional(),
+    config: refable(z.string()).optional(),
 });

@@ -1,13 +1,9 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { generateChangelogConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { gitService } from '@/inngest/pipeline/services/git.service';
-import { writeFile, readFile, access } from 'fs/promises';
+import { access, readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { z } from 'zod';
 
@@ -33,10 +29,7 @@ function parseConventionalCommit(subject: string): { type: string; scope?: strin
     return { type: 'other', desc: subject };
 }
 
-function formatConventional(
-    commits: { hash: string; subject: string }[],
-    toRef: string,
-): string {
+function formatConventional(commits: { hash: string; subject: string }[], toRef: string): string {
     const grouped: Record<string, string[]> = {};
 
     for (const { hash, subject } of commits) {
@@ -79,7 +72,9 @@ export class GenerateChangelogExecutor implements INodeExecutor {
         const { outputPath, format, append } = nodeConfig;
 
         const fromTag =
-            nodeConfig.fromTag || getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'tagName') || '';
+            nodeConfig.fromTag ||
+            getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'tagName') ||
+            '';
         const toRef = nodeConfig.toRef || 'HEAD';
 
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
@@ -94,13 +89,14 @@ export class GenerateChangelogExecutor implements INodeExecutor {
         await logger.info(nodeId, `Found ${commits.length} commits`);
 
         if (commits.length === 0) {
-            await logger.warn(nodeId, 'No commits found in range — writing empty changelog section');
+            await logger.warn(
+                nodeId,
+                'No commits found in range — writing empty changelog section',
+            );
         }
 
         const content =
-            format === 'conventional'
-                ? formatConventional(commits, toRef)
-                : formatSimple(commits);
+            format === 'conventional' ? formatConventional(commits, toRef) : formatSimple(commits);
 
         const absolutePath = join(workDir, outputPath);
 
@@ -109,9 +105,7 @@ export class GenerateChangelogExecutor implements INodeExecutor {
             try {
                 await access(absolutePath);
                 existing = await readFile(absolutePath, 'utf8');
-            } catch {
-                // file doesn't exist yet — start fresh
-            }
+            } catch {}
         }
 
         await writeFile(absolutePath, content + existing, 'utf8');
