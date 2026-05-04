@@ -4,14 +4,17 @@ import { useEffect, useState } from 'react';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { Image, ImageEvent } from '@workspace/typescript-interface/docker/docker.image';
 import { useImageStore } from '@/stores/docker/useImageStore';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
-export function useEnvironmentImages(environmentId?: string): {
+export function useEnvironmentImages(): {
     images: Image[];
     isLoading: boolean;
 } {
     const globalImages = useImageStore((s) => s.images);
     const [images, setImages] = useState<Image[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+
+    const environmentId = usePipelineEnvironmentId();
 
     useEffect(() => {
         if (!environmentId) return;

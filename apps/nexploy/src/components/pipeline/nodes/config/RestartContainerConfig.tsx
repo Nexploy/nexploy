@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -44,7 +38,11 @@ export function RestartContainerConfig() {
                     <FormItem>
                         <FormLabel>{t('containerId')}</FormLabel>
                         <FormControl>
-                            <RefAware value={field.value} onChange={field.onChange}>
+                            <RefAware
+                                className={'truncate'}
+                                value={field.value}
+                                onChange={field.onChange}
+                            >
                                 <Select
                                     {...field}
                                     onValueChange={field.onChange}
@@ -86,7 +84,7 @@ export function RestartContainerConfig() {
                                                         className="pl-0"
                                                     >
                                                         <Status
-                                                            className="m-0 flex-1 rounded-none border-0 p-0 pl-2.5 text-sm"
+                                                            className="m-0 w-full rounded-none border-0 p-0 pl-2.5 text-sm"
                                                             status={
                                                                 container.state === 'running'
                                                                     ? 'online'

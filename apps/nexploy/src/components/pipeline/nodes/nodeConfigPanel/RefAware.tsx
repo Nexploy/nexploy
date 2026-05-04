@@ -7,7 +7,7 @@ import { AlertTriangle, Variable, X } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { cn } from '@workspace/ui/lib/utils';
 import { useTranslations } from 'next-intl';
-import { useValidAncestorNodeIds, useAncestorIndex } from '@/contexts/RefValidationContext';
+import { useAncestorIndex, useValidAncestorNodeIds } from '@/contexts/RefValidationContext';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 interface RefAwareProps {
@@ -57,7 +57,6 @@ export function RefAware({
                     'flex h-9 items-center gap-1.5 rounded-md border px-2 text-xs',
                     'relative border-dashed',
                     isStale && 'border-destructive/60 bg-destructive/10 text-destructive',
-                    className,
                 )}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}

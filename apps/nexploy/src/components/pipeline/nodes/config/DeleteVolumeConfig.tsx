@@ -19,7 +19,6 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Switch } from '@workspace/ui/components/switch';
-import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId';
 import { useEnvironmentVolumes } from '@/hooks/sse/useEnvironmentVolumes';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { isNodeFieldRef } from '@/lib/nodeFieldRef';
@@ -29,8 +28,7 @@ export function DeleteVolumeConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const environmentId = usePipelineEnvironmentId();
-    const { volumes, isLoading } = useEnvironmentVolumes(environmentId);
+    const { volumes, isLoading } = useEnvironmentVolumes();
 
     return (
         <div className="space-y-4">

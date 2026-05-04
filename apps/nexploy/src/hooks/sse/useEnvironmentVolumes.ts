@@ -4,14 +4,17 @@ import { useEffect, useState } from 'react';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { Volume, VolumeEvent } from '@workspace/typescript-interface/docker/docker.volume';
 import { useVolumeStore } from '@/stores/docker/useVolumeStore';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
-export function useEnvironmentVolumes(environmentId?: string): {
+export function useEnvironmentVolumes(): {
     volumes: Volume[];
     isLoading: boolean;
 } {
     const globalVolumes = useVolumeStore((s) => s.volumes);
     const [volumes, setVolumes] = useState<Volume[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+
+    const environmentId = usePipelineEnvironmentId();
 
     useEffect(() => {
         if (!environmentId) return;

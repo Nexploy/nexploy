@@ -85,11 +85,7 @@ export function HttpRequestConfig() {
                             render={({ field: f }) => (
                                 <FormItem className="flex-1">
                                     <FormControl>
-                                        <Input
-                                            {...f}
-                                            placeholder={t('varKey')}
-                                            className="h-7 font-mono text-xs"
-                                        />
+                                        <Input {...f} placeholder={t('varKey')} />
                                     </FormControl>
                                 </FormItem>
                             )}
@@ -134,12 +130,14 @@ export function HttpRequestConfig() {
                     <FormItem>
                         <FormLabel>{t('httpBody')}</FormLabel>
                         <FormControl>
-                            <Textarea
-                                {...field}
-                                placeholder='{"key": "value"}'
-                                className="border-border bg-background text-foreground focus:border-primary font-mono text-xs"
-                                rows={4}
-                            />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Textarea
+                                    {...field}
+                                    placeholder='{"key": "value"}'
+                                    className="border-border bg-background text-foreground focus:border-primary font-mono text-xs"
+                                    rows={4}
+                                />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -156,7 +154,6 @@ export function HttpRequestConfig() {
                                 {...field}
                                 type="number"
                                 onChange={(e) => field.onChange(Number(e.target.value))}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -170,7 +167,11 @@ export function HttpRequestConfig() {
                     <FormItem className="flex items-center justify-between">
                         <FormLabel>{t('continueOnError')}</FormLabel>
                         <FormControl>
-                            <Switch checked={field.value} onCheckedChange={field.onChange} />
+                            <Switch
+                                className={'cursor-pointer'}
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                            />
                         </FormControl>
                     </FormItem>
                 )}

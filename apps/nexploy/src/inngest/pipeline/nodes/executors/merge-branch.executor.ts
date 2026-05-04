@@ -1,9 +1,5 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { mergeBranchConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { gitService } from '@/inngest/pipeline/services/git.service';
@@ -21,7 +17,9 @@ export class MergeBranchExecutor implements INodeExecutor {
         const { targetBranch, strategy, message, remote, push } = nodeConfig;
 
         const sourceBranch =
-            nodeConfig.sourceBranch || getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'branch') || '';
+            nodeConfig.sourceBranch ||
+            getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'branch') ||
+            '';
         if (!sourceBranch)
             throw new Error('No source branch — provide one or connect an upstream node');
 

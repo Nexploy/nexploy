@@ -10,6 +10,7 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
 export function GitTagConfig() {
     const t = useTranslations('repository.pipeline.config');
@@ -37,7 +38,9 @@ export function GitTagConfig() {
                     <FormItem>
                         <FormLabel>{t('gitTagMessage')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder={t('gitTagMessagePlaceholder')} />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input {...field} placeholder={t('gitTagMessagePlaceholder')} />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

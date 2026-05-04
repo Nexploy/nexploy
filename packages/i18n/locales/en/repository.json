@@ -437,8 +437,8 @@
                 "description": "Deploy a Docker Compose stack"
             },
             "push-to-registry": {
-                "name": "Push to a Registry",
-                "description": "Push all images built upstream to a Docker registry"
+                "name": "Push an image to a registry",
+                "description": "Push a Docker image to a private or public registry"
             },
             "pull-from-registry": {
                 "name": "Pull an image",
@@ -698,7 +698,7 @@
             "environment": "Environment",
             "selectEnvironment": "Select an environment",
             "container": "Container",
-            "containerId": "Container Id",
+            "containerId": "Container ID",
             "containerName": "Container Name",
             "containerNamePlaceholder": "Select a container",
             "containerNoEnvironmentHint": "Connect this node to a <bold>Set Environment</bold> node to pick a container from a list.",

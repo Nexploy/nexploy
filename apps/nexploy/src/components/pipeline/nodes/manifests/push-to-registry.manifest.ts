@@ -26,7 +26,23 @@ export const pushToRegistryManifest: NodeManifest = {
     configSchema: pushToRegistryConfigSchema,
     configPanel: PushToRegistryConfig,
     inputFields: [
-        { key: 'tag', labelKey: 'pipeline.inputs.imageTag', descriptionKey: 'pipeline.inputs.desc_tag', type: 'input' },
-        { key: 'registryUrl', labelKey: 'pipeline.inputs.registryUrl', descriptionKey: 'pipeline.inputs.desc_registryUrl', type: 'input' },
+        {
+            key: 'imageName',
+            labelKey: 'pipeline.inputs.imageName',
+            descriptionKey: 'pipeline.inputs.desc_imageName',
+            type: 'input',
+        },
+        {
+            key: 'tag',
+            labelKey: 'pipeline.inputs.imageTag',
+            descriptionKey: 'pipeline.inputs.desc_tag',
+            type: 'input',
+        },
+        {
+            key: 'registryUrl',
+            labelKey: 'pipeline.inputs.registryUrl',
+            descriptionKey: 'pipeline.inputs.desc_registryUrl',
+            type: 'input',
+        },
     ],
 };

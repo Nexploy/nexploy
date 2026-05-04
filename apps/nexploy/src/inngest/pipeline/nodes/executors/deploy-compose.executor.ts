@@ -4,13 +4,14 @@ import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
 import { composeFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
+import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 
 export class DeployComposeExecutor implements INodeExecutor {
     readonly type = 'deploy-compose';
     readonly configSchema = composeFileConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof composeFileConfigSchema>>,
+        ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof composeFileConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { buildConfig, allOutputs, logger, nodeId, nodeConfig, abortSignal, edges } = ctx;
 

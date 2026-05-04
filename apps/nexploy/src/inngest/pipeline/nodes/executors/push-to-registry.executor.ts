@@ -3,13 +3,14 @@ import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { getRegistryWithPassword } from '@/services/registry.service';
 import { pushToRegistryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
+import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 
 export class PushToRegistryExecutor implements INodeExecutor {
     readonly type = 'push-to-registry';
     readonly configSchema = pushToRegistryConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof pushToRegistryConfigSchema>>,
+        ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof pushToRegistryConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
 
@@ -35,14 +36,17 @@ export class PushToRegistryExecutor implements INodeExecutor {
             .map((o) => o['environmentId'])
             .find((v) => typeof v === 'string') as string | undefined;
 
-        const imageNames = [...allOutputs.values()]
-            .map((o) => o['imageName'])
-            .filter((v): v is string => typeof v === 'string');
+        const configImageName = nodeConfig.imageName?.trim();
+        const imageNames: string[] = configImageName
+            ? [configImageName]
+            : [...allOutputs.values()]
+                  .map((o) => o['imageName'])
+                  .filter((v): v is string => typeof v === 'string');
 
         if (imageNames.length === 0) {
             await logger.warn(
                 nodeId,
-                'No built images found — connect this node after one or more Build Docker Image nodes',
+                'No built images found — connect this node after one or more Build Docker Image nodes, or specify an image name in the configuration',
             );
             return { output: {}, skipped: true };
         }

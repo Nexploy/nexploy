@@ -27,5 +27,10 @@ export const containerRunEphemeralSchema = z.object({
 
 export const containerExecBodySchema = z.object({
     command: z.string().min(1),
-    workdir: z.string().optional(),
+    workdir: z
+        .string()
+        .refine((v) => v.startsWith('/'), {
+            message: 'Container working directory must be an absolute path',
+        })
+        .optional(),
 });

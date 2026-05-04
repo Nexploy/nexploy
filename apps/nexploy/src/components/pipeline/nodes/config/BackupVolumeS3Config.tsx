@@ -21,7 +21,6 @@ import {
 } from '@workspace/ui/components/select';
 import { Input } from '@workspace/ui/components/input';
 import { type AwsAccountInfo } from '@workspace/typescript-interface/aws/aws';
-import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId';
 import { useEnvironmentVolumes } from '@/hooks/sse/useEnvironmentVolumes';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { fetcherApi } from '@/lib/api/fetcherApi';
@@ -33,9 +32,7 @@ export function BackupVolumeS3Config() {
     const tAdmin = useTranslations('admin');
     const form = useFormContext();
 
-    const environmentId = usePipelineEnvironmentId();
-
-    const { volumes, isLoading } = useEnvironmentVolumes(environmentId);
+    const { volumes, isLoading } = useEnvironmentVolumes();
     const { data: awsAccounts, isLoading: isLoadingAccounts } = useSWR<AwsAccountInfo[]>(
         { url: '/api/aws/accounts' },
         fetcherApi,

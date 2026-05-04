@@ -61,3 +61,9 @@ export const imageTagBodySchema = z.object({
     repo: z.string().min(1),
     tag: z.string().min(1),
 });
+
+export const imagePruneSchema = z.object({
+    dangling: z.boolean().default(true),
+    filter: z.string().optional(),
+    olderThan: z.string().optional(),
+});

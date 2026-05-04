@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -18,7 +24,6 @@ import { Button } from '@workspace/ui/components/button';
 import { Label } from '@workspace/ui/components/label';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { Plus, Trash2 } from 'lucide-react';
-import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId';
 import { useEnvironmentImages } from '@/hooks/sse/useEnvironmentImages';
 import { useEnvironmentNetworks } from '@/hooks/sse/useEnvironmentNetworks';
 import { useMemo } from 'react';
@@ -29,10 +34,8 @@ export function CreateContainerConfig() {
     const tDocker = useTranslations('docker.createContainer');
     const form = useFormContext();
 
-    const environmentId = usePipelineEnvironmentId();
-
-    const { images, isLoading: imagesLoading } = useEnvironmentImages(environmentId);
-    const { networks, isLoading: networksLoading } = useEnvironmentNetworks(environmentId);
+    const { images, isLoading: imagesLoading } = useEnvironmentImages();
+    const { networks, isLoading: networksLoading } = useEnvironmentNetworks();
 
     const networkOptions = useMemo(() => {
         return networks

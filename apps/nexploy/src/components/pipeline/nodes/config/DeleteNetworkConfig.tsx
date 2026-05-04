@@ -19,7 +19,6 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Switch } from '@workspace/ui/components/switch';
-import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId';
 import { useEnvironmentNetworks } from '@/hooks/sse/useEnvironmentNetworks';
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
@@ -33,8 +32,7 @@ export function DeleteNetworkConfig() {
     const tDocker = useTranslations('docker.tables');
     const form = useFormContext();
 
-    const environmentId = usePipelineEnvironmentId();
-    const { networks, isLoading } = useEnvironmentNetworks(environmentId);
+    const { networks, isLoading } = useEnvironmentNetworks();
 
     return (
         <div className="space-y-4">

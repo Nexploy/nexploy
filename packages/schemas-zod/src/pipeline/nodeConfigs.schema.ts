@@ -49,6 +49,7 @@ export const setEnvVarsConfigSchema = z.object({
 export const pushToRegistryConfigSchema = z.object({
     registryId: z.string().min(1, 'Registry is required').default(''),
     registryName: z.string().default(''),
+    imageName: refable(z.string()).default(''),
 });
 
 export const pullFromRegistryConfigSchema = z.object({
@@ -164,9 +165,14 @@ export const runScriptConfigSchema = z.object({
 });
 
 export const runCommandInContainerConfigSchema = z.object({
-    containerId: z.string().min(1, 'Container is required').default(''),
-    command: z.string().min(1, 'Command is required').default(''),
-    workdir: z.string().optional(),
+    containerId: refable(z.string().min(1, 'Container is required')).default(''),
+    command: refable(z.string().min(1, 'Command is required')).default(''),
+    workdir: refable(
+        z.string().refine((v) => v.startsWith('/'), {
+            message: 'Container working directory must be an absolute path',
+        }),
+    ).optional(),
+    continueOnError: z.boolean().default(false),
 });
 
 export const runTestsConfigSchema = z.object({
@@ -178,12 +184,12 @@ export const runTestsConfigSchema = z.object({
 // ─── HTTP / Webhooks ─────────────────────────────────────────────────────────
 
 export const httpRequestConfigSchema = z.object({
-    url: refable(z.string().min(1, 'URL is required')).default(''),
+    url: refable(z.url()).default(''),
     method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD']).default('POST'),
     headers: z
         .array(z.object({ id: z.string(), key: z.string(), value: refable(z.string()) }))
         .default([]),
-    body: z.string().optional(),
+    body: refable(z.string()).optional(),
     expectedStatus: z.number().default(200),
     continueOnError: z.boolean().default(false),
 });
@@ -325,14 +331,14 @@ export const cacheSaveConfigSchema = z.object({
 
 export const gitTagConfigSchema = z.object({
     tagName: z.string().min(1, 'Tag name is required').default(''),
-    message: z.string().optional(),
+    message: refable(z.string()).optional(),
     remote: z.string().default('origin'),
 });
 
 export const gitCloneExtraConfigSchema = z.object({
     repoUrl: z.string().min(1, 'Repository URL is required').default(''),
     branch: z.string().default('main'),
-    targetDir: z.string().min(1, 'Target directory is required').default(''),
+    targetDir: relativePath('Target directory').default('extra'),
     token: z.string().optional(),
 });
 
@@ -344,10 +350,10 @@ export const cherryPickCommitConfigSchema = z.object({
 });
 
 export const mergeBranchConfigSchema = z.object({
-    sourceBranch: refable(z.string().min(1, 'Source branch is required')).default(''),
-    targetBranch: z.string().default(''),
+    sourceBranch: z.string().min(1, 'Source branch is required').default(''),
+    targetBranch: z.string().min(1, 'Target branch is required').default(''),
     strategy: z.enum(['merge', 'squash']).default('merge'),
-    message: z.string().optional(),
+    message: refable(z.string()).default(''),
     remote: z.string().default('origin'),
     push: z.boolean().default(false),
 });

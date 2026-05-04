@@ -438,8 +438,8 @@
                 "description": "Déployer une stack Docker Compose"
             },
             "push-to-registry": {
-                "name": "Pousser vers un registre",
-                "description": "Pousser toutes les images construites en amont vers un registre Docker"
+                "name": "Pousser une image vers un registre",
+                "description": "Pousser une image Docker vers un registre privé ou public"
             },
             "pull-from-registry": {
                 "name": "Télécharger une image",
@@ -699,7 +699,7 @@
             "environment": "Environnement",
             "selectEnvironment": "Sélectionner un environnement",
             "container": "Conteneur",
-            "containerId": "Id du conteneur",
+            "containerId": "ID du conteneur",
             "containerName": "Nom du conteneur",
             "containerNamePlaceholder": "Sélectionner un conteneur",
             "containerNoEnvironmentHint": "Reliez ce nœud à un nœud <bold>Définir un environnement</bold> pour sélectionner un conteneur dans une liste.",

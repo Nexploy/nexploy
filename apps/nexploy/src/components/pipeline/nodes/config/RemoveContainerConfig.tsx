@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -39,7 +45,7 @@ export function RemoveContainerConfig() {
                         <FormLabel>{t('containerId')}</FormLabel>
                         <FormControl>
                             <RefAware
-                                className={'w-fit'}
+                                className={'truncate'}
                                 value={field.value}
                                 onChange={field.onChange}
                             >
@@ -48,7 +54,7 @@ export function RemoveContainerConfig() {
                                     onValueChange={field.onChange}
                                     disabled={isLoading}
                                 >
-                                    <SelectTrigger className="max-w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3">
+                                    <SelectTrigger className="w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3">
                                         {isLoading ? (
                                             <span className="text-muted-foreground flex items-center gap-2 pl-2">
                                                 <Loader2 className="h-3 w-3 animate-spin" />

@@ -6,6 +6,7 @@ import {
     imageDeleteSchema,
     imageIdParamSchema,
     imageMirrorSchema,
+    imagePruneSchema,
     imagePullWithAuthSchema,
     imageScanSchema,
     imageTagBodySchema,
@@ -93,6 +94,26 @@ app.post(
     route({ json: imageDeleteSchema }, async (c) => {
         const { imageIds, force } = c.req.valid('json');
         return await deleteImages(imageIds, force);
+    }),
+);
+
+app.post(
+    '/prune',
+    route({ json: imagePruneSchema }, async (c) => {
+        const { dangling, filter, olderThan } = c.req.valid('json');
+
+        const filters: Record<string, string[]> = {
+            dangling: [dangling ? '1' : '0'],
+        };
+        if (olderThan) filters.until = [olderThan];
+        if (filter) filters.label = [filter];
+
+        const result = await docker.pruneImages({ filters: JSON.stringify(filters) });
+
+        return {
+            removedImages: result.ImagesDeleted?.length ?? 0,
+            reclaimedSpace: result.SpaceReclaimed ?? 0,
+        };
     }),
 );
 

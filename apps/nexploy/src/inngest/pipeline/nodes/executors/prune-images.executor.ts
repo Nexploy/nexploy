@@ -1,9 +1,5 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { pruneImagesConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -21,7 +17,12 @@ export class PruneImagesExecutor implements INodeExecutor {
         const olderThan = nodeConfig.olderThan;
         const dangling = nodeConfig.dangling ?? true;
 
-        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(
+            allOutputs,
+            edges,
+            nodeId,
+            'environmentId',
+        );
 
         await logger.info(
             nodeId,
@@ -41,16 +42,13 @@ export class PruneImagesExecutor implements INodeExecutor {
                 } as KyDockerOptions)
                 .json<{ reclaimedSpace: number; removedImages: number }>();
 
-            const mb = ((result.reclaimedSpace ?? 0) / 1024 / 1024).toFixed(2);
-            await logger.info(
-                nodeId,
-                `Pruned ${result.removedImages ?? 0} images, reclaimed ${mb} MB`,
-            );
+            const mb = (result.reclaimedSpace / 1024 / 1024).toFixed(2);
+            await logger.info(nodeId, `Pruned ${result.removedImages} images, reclaimed ${mb} MB`);
 
             return {
                 output: {
-                    removedImages: result.removedImages ?? 0,
-                    reclaimedSpace: result.reclaimedSpace ?? 0,
+                    removedImages: result.removedImages,
+                    reclaimedSpace: result.reclaimedSpace,
                 },
             };
         } catch (error) {

@@ -3,7 +3,12 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from '@workspace/ui/components/accordion';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@workspace/ui/components/accordion';
 import { LayoutList, Loader2, Pencil, RefreshCw, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
@@ -16,6 +21,7 @@ import type { RegistryImage } from '@/app/api/registry/[id]/images/route';
 import { Separator } from '@workspace/ui/components/separator';
 import useSWR from 'swr';
 import { fetcherApi } from '@/lib/api/fetcherApi';
+import { Card } from '@workspace/ui/components/card.tsx';
 
 interface RegistryCardProps {
     registry: RegistryInfo;
@@ -140,13 +146,18 @@ export function RegistryCard({ registry }: RegistryCardProps) {
                         </div>
                     </AccordionTrigger>
                     <AccordionContent className="px-4 pt-0 pb-4">
-                        {isLoading && (
-                            <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                        {isLoading ? (
+                            <Card className="flex flex-row items-center gap-2 p-3">
                                 <Loader2 className="size-4 animate-spin" />
                                 {t('imagesLoading')}
-                            </div>
+                            </Card>
+                        ) : (
+                            error && (
+                                <Card className="border-destructive/20 bg-destructive/5 p-3">
+                                    <p className="text-destructive text-sm">{t('imagesError')}</p>
+                                </Card>
+                            )
                         )}
-                        {error && <p className="text-destructive text-sm">{t('imagesError')}</p>}
                         {images && images.length === 0 && (
                             <p className="text-muted-foreground text-sm">{t('imagesEmpty')}</p>
                         )}

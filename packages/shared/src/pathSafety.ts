@@ -11,3 +11,13 @@ export function safeResolvePath(base: string, userPath: string): string {
     }
     return resolved;
 }
+
+export function safeContainerPath(containerPath: string): string {
+    if (containerPath.includes('\0')) {
+        throw new Error('Container path must not contain null bytes');
+    }
+    if (!containerPath.startsWith('/')) {
+        throw new Error(`Container working directory must be an absolute path, got: "${containerPath}"`);
+    }
+    return path.posix.normalize(containerPath);
+}

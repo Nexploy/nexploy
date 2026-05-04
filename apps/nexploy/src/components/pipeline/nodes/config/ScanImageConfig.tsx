@@ -21,8 +21,6 @@ import {
 } from '@workspace/ui/components/select';
 import { Input } from '@workspace/ui/components/input';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
-
-import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId';
 import { useEnvironmentImages } from '@/hooks/sse/useEnvironmentImages';
 import { useEffect, useMemo } from 'react';
 
@@ -30,9 +28,7 @@ export function ScanImageConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const environmentId = usePipelineEnvironmentId();
-
-    const { images, isLoading } = useEnvironmentImages(environmentId);
+    const { images, isLoading } = useEnvironmentImages();
 
     const selectedImage = form.watch('image');
 

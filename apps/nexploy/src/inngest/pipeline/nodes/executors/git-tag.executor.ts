@@ -1,19 +1,16 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { gitTagConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { z } from 'zod';
+import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 
 export class GitTagExecutor implements INodeExecutor {
     readonly type = 'git-tag';
     readonly configSchema = gitTagConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof gitTagConfigSchema>>,
+        ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof gitTagConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, edges } = ctx;
 

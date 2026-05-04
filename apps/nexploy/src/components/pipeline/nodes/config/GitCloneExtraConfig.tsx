@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 
 export function GitCloneExtraConfig() {
@@ -25,6 +19,23 @@ export function GitCloneExtraConfig() {
                         <FormLabel>{t('gitCloneUrl')}</FormLabel>
                         <FormControl>
                             <Input {...field} placeholder="https://github.com/org/repo.git" />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="token"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>{t('gitCloneToken')}</FormLabel>
+                        <FormControl>
+                            <Input
+                                {...field}
+                                type="password"
+                                placeholder={t('gitCloneTokenPlaceholder')}
+                            />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -51,23 +62,6 @@ export function GitCloneExtraConfig() {
                         <FormLabel>{t('gitCloneTargetDir')}</FormLabel>
                         <FormControl>
                             <Input {...field} placeholder="extra-repo" />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-            />
-            <FormField
-                control={form.control}
-                name="token"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('gitCloneToken')}</FormLabel>
-                        <FormControl>
-                            <Input
-                                {...field}
-                                type="password"
-                                placeholder={t('gitCloneTokenPlaceholder')}
-                            />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

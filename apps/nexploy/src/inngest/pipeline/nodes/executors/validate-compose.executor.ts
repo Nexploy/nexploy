@@ -1,19 +1,16 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { composeFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
+import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 
 export class ValidateComposeExecutor implements INodeExecutor {
     readonly type = 'validate-compose';
     readonly configSchema = composeFileConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof composeFileConfigSchema>>,
+        ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof composeFileConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { allOutputs, logger, nodeId, nodeConfig, edges } = ctx;
 

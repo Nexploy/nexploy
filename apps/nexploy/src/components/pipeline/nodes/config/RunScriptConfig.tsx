@@ -76,7 +76,11 @@ export function RunScriptConfig() {
                     <FormItem className="flex items-center justify-between">
                         <FormLabel>{t('continueOnError')}</FormLabel>
                         <FormControl>
-                            <Switch checked={field.value} onCheckedChange={field.onChange} />
+                            <Switch
+                                className={'cursor-pointer'}
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                            />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

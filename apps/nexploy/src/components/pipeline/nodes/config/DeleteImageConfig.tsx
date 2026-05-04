@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -13,7 +19,6 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Switch } from '@workspace/ui/components/switch';
-import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId';
 import { useEnvironmentImages } from '@/hooks/sse/useEnvironmentImages';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
@@ -24,8 +29,7 @@ export function DeleteImageConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const environmentId = usePipelineEnvironmentId();
-    const { images, isLoading } = useEnvironmentImages(environmentId);
+    const { images, isLoading } = useEnvironmentImages();
 
     return (
         <div className="space-y-4">
@@ -62,12 +66,16 @@ export function DeleteImageConfig() {
                                                         {t('imageUnavailable')}
                                                     </span>
                                                 ) : (
-                                                    <SelectValue placeholder={t('imageIdPlaceholder')} />
+                                                    <SelectValue
+                                                        placeholder={t('imageIdPlaceholder')}
+                                                    />
                                                 )}
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectGroup>
-                                                    <SelectLabel>{t('imagesSelectLabel')}</SelectLabel>
+                                                    <SelectLabel>
+                                                        {t('imagesSelectLabel')}
+                                                    </SelectLabel>
                                                     {images.length === 0 ? (
                                                         <span className="text-muted-foreground px-2 py-1.5 text-sm">
                                                             {t('noImagesAvailable')}
