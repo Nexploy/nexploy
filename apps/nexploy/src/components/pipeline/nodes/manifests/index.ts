@@ -38,7 +38,6 @@ import { uploadArtifactManifest } from './upload-artifact.manifest';
 import { downloadFileManifest } from './download-file.manifest';
 import { runMigrationManifest } from './run-migration.manifest';
 import { backupVolumeS3Manifest } from './backup-volume-s3.manifest';
-import { deployStackManifest } from './deploy-stack.manifest';
 import { updateServiceManifest } from './update-service.manifest';
 import { scaleServiceManifest } from './scale-service.manifest';
 import { checkContainerLogsManifest } from './check-container-logs.manifest';
@@ -113,7 +112,6 @@ export const allBuiltinManifests: NodeManifest[] = [
     runMigrationManifest,
     backupVolumeS3Manifest,
     // Docker Swarm
-    deployStackManifest,
     updateServiceManifest,
     scaleServiceManifest,
     // Monitoring

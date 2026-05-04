@@ -517,10 +517,6 @@
                 "name": "Délai",
                 "description": "Met la pipeline en pause pendant un nombre de secondes fixe"
             },
-            "deploy-stack": {
-                "name": "Déployer une stack",
-                "description": "Déploie une stack Docker Swarm depuis un fichier Compose"
-            },
             "download-file": {
                 "name": "Télécharger un fichier",
                 "description": "Télécharge un fichier depuis une URL dans le répertoire de travail"

@@ -1,12 +1,9 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { downloadFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { safeResolvePath } from '@workspace/shared/pathSafety';
 import { z } from 'zod';
 
@@ -15,7 +12,7 @@ export class DownloadFileExecutor implements INodeExecutor {
     readonly configSchema = downloadFileConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof downloadFileConfigSchema>>,
+        ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof downloadFileConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 

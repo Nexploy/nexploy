@@ -50,7 +50,6 @@ export const nodeTypeSchema = z.enum([
     'run-migration',
     'backup-volume-s3',
     // Docker Swarm
-    'deploy-stack',
     'update-service',
     'scale-service',
     // Monitoring

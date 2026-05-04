@@ -38,7 +38,6 @@ import { uploadArtifactExecutor } from './executors/upload-artifact.executor';
 import { downloadFileExecutor } from './executors/download-file.executor';
 import { runMigrationExecutor } from './executors/run-migration.executor';
 import { backupVolumeS3Executor } from './executors/backup-volume-s3.executor';
-import { deployStackExecutor } from './executors/deploy-stack.executor';
 import { updateServiceExecutor } from './executors/update-service.executor';
 import { scaleServiceExecutor } from './executors/scale-service.executor';
 import { checkContainerLogsExecutor } from './executors/check-container-logs.executor';
@@ -114,7 +113,6 @@ const executors: INodeExecutor[] = [
     runMigrationExecutor,
     backupVolumeS3Executor,
     // Docker Swarm
-    deployStackExecutor,
     updateServiceExecutor,
     scaleServiceExecutor,
     // Monitoring

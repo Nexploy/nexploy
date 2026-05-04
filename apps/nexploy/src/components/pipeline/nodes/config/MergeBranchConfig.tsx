@@ -25,6 +25,7 @@ import {
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { GitBranch } from '@workspace/typescript-interface/git/git';
 import { GitBranchIcon } from 'lucide-react';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
 interface RepositoryGitMeta {
     gitProvider: string;
@@ -52,47 +53,53 @@ export function MergeBranchConfig() {
         fetcherApi,
     );
 
-    const branchSelect = (name: string, labelKey: string) => (
+    const branchSelect = (name: string, labelKey: string, withRef?: boolean) => (
         <FormField
             control={form.control}
             name={name}
             render={({ field }) => (
                 <FormItem>
                     <FormLabel>{t(labelKey as any)}</FormLabel>
-                    <Select
-                        {...field}
-                        onValueChange={field.onChange}
-                        disabled={isLoadingRepo || isLoadingBranches || !repo}
-                    >
-                        <FormControl>
-                            <SelectTrigger>
-                                {isLoadingRepo ? (
-                                    <span className="text-muted-foreground">
-                                        {t('repoLoading')}
-                                    </span>
-                                ) : isLoadingBranches ? (
-                                    <span className="text-muted-foreground">
-                                        {t('branchLoading')}
-                                    </span>
-                                ) : (
-                                    <SelectValue placeholder={t('branchSelect')} />
-                                )}
-                            </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>{t(labelKey as any)}</SelectLabel>
-                                {branches?.map((branch) => (
-                                    <SelectItem key={branch.name} value={branch.name}>
-                                        <div className="flex items-center gap-2">
-                                            <GitBranchIcon />
-                                            {branch.name}
-                                        </div>
-                                    </SelectItem>
-                                ))}
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+                    <FormControl>
+                        <RefAware
+                            value={withRef ? field.value : ''}
+                            onChange={withRef ? field.onChange : () => {}}
+                        >
+                            <Select
+                                {...field}
+                                value={typeof field.value === 'string' ? field.value : ''}
+                                onValueChange={field.onChange}
+                                disabled={isLoadingRepo || isLoadingBranches || !repo}
+                            >
+                                <SelectTrigger>
+                                    {isLoadingRepo ? (
+                                        <span className="text-muted-foreground">
+                                            {t('repoLoading')}
+                                        </span>
+                                    ) : isLoadingBranches ? (
+                                        <span className="text-muted-foreground">
+                                            {t('branchLoading')}
+                                        </span>
+                                    ) : (
+                                        <SelectValue placeholder={t('branchSelect')} />
+                                    )}
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>{t(labelKey as any)}</SelectLabel>
+                                        {branches?.map((branch) => (
+                                            <SelectItem key={branch.name} value={branch.name}>
+                                                <div className="flex items-center gap-2">
+                                                    <GitBranchIcon />
+                                                    {branch.name}
+                                                </div>
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </RefAware>
+                    </FormControl>
                     <FormMessage className="text-xs" />
                 </FormItem>
             )}
@@ -101,7 +108,7 @@ export function MergeBranchConfig() {
 
     return (
         <div className="space-y-4">
-            {branchSelect('sourceBranch', 'mergeSourceBranch')}
+            {branchSelect('sourceBranch', 'mergeSourceBranch', true)}
             {branchSelect('targetBranch', 'mergeTargetBranch')}
             <FormField
                 control={form.control}

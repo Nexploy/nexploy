@@ -580,10 +580,6 @@
                 "name": "Backup Volume to S3",
                 "description": "Archive a Docker volume and upload it to an S3 bucket"
             },
-            "deploy-stack": {
-                "name": "Deploy Stack",
-                "description": "Deploy a Docker Swarm stack from a Compose file"
-            },
             "update-service": {
                 "name": "Update Service",
                 "description": "Update a Docker Swarm service to a new image"

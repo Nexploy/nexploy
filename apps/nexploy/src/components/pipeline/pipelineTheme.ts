@@ -180,7 +180,6 @@ const NODE_CATEGORY: Record<string, string> = {
     'run-migration': 'database',
     'backup-volume-s3': 'database',
     // Docker Swarm
-    'deploy-stack': 'deploy',
     'update-service': 'deploy',
     'scale-service': 'deploy',
     // Monitoring
@@ -259,7 +258,6 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'run-migration': Database,
     'backup-volume-s3': CloudBackup,
     // Docker Swarm
-    'deploy-stack': Layers,
     'update-service': RefreshCw,
     'scale-service': ArrowUpDown,
     // Monitoring

@@ -10,6 +10,7 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
 export function DownloadFileConfig() {
     const t = useTranslations('repository.pipeline.config');
@@ -24,11 +25,9 @@ export function DownloadFileConfig() {
                     <FormItem>
                         <FormLabel>{t('url')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="https://example.com/file.zip"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input {...field} placeholder="https://example.com/file" />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -41,11 +40,9 @@ export function DownloadFileConfig() {
                     <FormItem>
                         <FormLabel>{t('downloadDestination')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="./downloads"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input {...field} placeholder="downloads/files" />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -58,11 +55,9 @@ export function DownloadFileConfig() {
                     <FormItem>
                         <FormLabel>{t('downloadFilename')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder={t('downloadFilenamePlaceholder')}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input {...field} placeholder={t('downloadFilenamePlaceholder')} />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

@@ -1,6 +1,14 @@
 import { z } from 'zod';
 import { refable } from './nodeFieldRef.schema.ts';
 
+const relativePath = (label: string) =>
+    z
+        .string()
+        .min(1, `${label} is required`)
+        .refine((v) => !v.startsWith('/'), `${label} must be a relative path`)
+        .refine((v) => !v.split('/').some((seg) => seg === '..'), `${label} must not contain '..'`)
+        .refine((v) => !/[`$\\|;&<>()\n\r]/.test(v), `${label} contains invalid characters`);
+
 export const cloneRepositoryConfigSchema = z.object({
     branch: z.string().default('main'),
     commitHash: z.string().optional(),
@@ -11,19 +19,19 @@ export const webhookCloneConfigSchema = z.object({
 });
 
 export const buildDockerImageConfigSchema = z.object({
-    dockerfilePath: refable(z.string().min(1, 'Dockerfile path is required')).default('Dockerfile'),
-    dockerfileFilePath: refable(z.string()).optional(),
+    dockerfilePath: refable(relativePath('Dockerfile path')).default('Dockerfile'),
+    dockerfileFilePath: refable(relativePath('Dockerfile file path')).optional(),
 });
 
 export const validateDockerfileConfigSchema = z.object({
-    dockerfilePath: z.string().min(1, 'Dockerfile path is required').default('Dockerfile'),
+    dockerfilePath: relativePath('Dockerfile path').default('Dockerfile'),
 });
 
 export const composeFileConfigSchema = z.object({
-    composeFileName: refable(
-        z.string().min(1, 'Compose file name is required'),
-    ).default('docker-compose.yml'),
-    composeFilePath: refable(z.string()).optional(),
+    composeFileName: refable(z.string().min(1, 'Compose file name is required')).default(
+        'docker-compose.yml',
+    ),
+    composeFilePath: refable(relativePath('Compose file path')).optional(),
 });
 
 export const varEntrySchema = z.object({
@@ -73,19 +81,19 @@ export const removeContainerConfigSchema = z.object({
 });
 
 const createContainerPortSchema = z.object({
-    hostPort: refable(z.string()),
-    containerPort: refable(z.string()),
+    hostPort: z.string(),
+    containerPort: z.string(),
     protocol: z.enum(['tcp', 'udp']).default('tcp'),
 });
 
 const createContainerEnvVarSchema = z.object({
-    key: refable(z.string()),
-    value: refable(z.string()),
+    key: z.string(),
+    value: z.string(),
 });
 
 const createContainerVolumeSchema = z.object({
-    hostPath: refable(z.string()),
-    containerPath: refable(z.string()),
+    hostPath: z.string(),
+    containerPath: z.string(),
     readOnly: z.boolean().default(false),
 });
 
@@ -230,8 +238,8 @@ export const deleteVolumeConfigSchema = z.object({
 // ─── Files & Artifacts ───────────────────────────────────────────────────────
 
 export const templateFileConfigSchema = z.object({
-    inputPath: z.string().min(1, 'Input path is required').default(''),
-    outputPath: z.string().min(1, 'Output path is required').default(''),
+    inputPath: relativePath('Input path').default(''),
+    outputPath: relativePath('Output path').default(''),
 });
 
 export const uploadArtifactConfigSchema = z.object({
@@ -240,15 +248,15 @@ export const uploadArtifactConfigSchema = z.object({
     accessKey: z.string().min(1, 'Access key is required').default(''),
     secretKey: z.string().min(1, 'Secret key is required').default(''),
     region: z.string().default('us-east-1'),
-    sourcePath: z.string().min(1, 'Source path is required').default(''),
+    sourcePath: relativePath('Source path').default(''),
     destinationPath: z.string().min(1, 'Destination path is required').default(''),
     useSSL: z.boolean().default(true),
 });
 
 export const downloadFileConfigSchema = z.object({
-    url: z.string().min(1, 'URL is required').default(''),
-    destinationPath: z.string().min(1, 'Destination path is required').default(''),
-    filename: z.string().optional(),
+    url: refable(z.string().min(1, 'URL is required')).default(''),
+    destinationPath: refable(relativePath('Destination path')).default('.'),
+    filename: refable(z.string()).optional(),
 });
 
 // ─── Database ────────────────────────────────────────────────────────────────
@@ -267,12 +275,6 @@ export const backupVolumeS3ConfigSchema = z.object({
 });
 
 // ─── Docker Swarm ─────────────────────────────────────────────────────────────
-
-export const deployStackConfigSchema = z.object({
-    stackName: z.string().min(1, 'Stack name is required').default(''),
-    composeFilePath: z.string().default('docker-compose.yml'),
-    prune: z.boolean().default(false),
-});
 
 export const updateServiceConfigSchema = z.object({
     serviceName: z.string().min(1, 'Service name is required').default(''),
@@ -298,14 +300,6 @@ export const checkContainerLogsConfigSchema = z.object({
 
 // ─── Cache ────────────────────────────────────────────────────────────────────
 
-const cacheRelativePath = (label: string) =>
-    z
-        .string()
-        .min(1, `${label} is required`)
-        .refine((v) => !v.startsWith('/'), `${label} must be a relative path`)
-        .refine((v) => !v.split('/').some((seg) => seg === '..'), `${label} must not contain '..'`)
-        .refine((v) => !/[`$\\|;&<>()\n\r]/.test(v), `${label} contains invalid characters`);
-
 const cacheKeySchema = z
     .string()
     .regex(
@@ -315,13 +309,13 @@ const cacheKeySchema = z
 
 export const cacheRestoreConfigSchema = z.object({
     volumeName: refable(z.string().min(1, 'Volume name is required')).default(''),
-    cachePath: refable(cacheRelativePath('Cache path')).default(''),
+    cachePath: refable(relativePath('Cache path')).default(''),
     cacheKey: refable(cacheKeySchema).optional(),
 });
 
 export const cacheSaveConfigSchema = z.object({
     volumeName: refable(z.string().min(1, 'Volume name is required')).default(''),
-    sourcePath: refable(cacheRelativePath('Source path')).default(''),
+    sourcePath: refable(relativePath('Source path')).default(''),
     cacheKey: refable(cacheKeySchema).optional(),
 });
 
@@ -359,7 +353,7 @@ export const mergeBranchConfigSchema = z.object({
 export const generateChangelogConfigSchema = z.object({
     fromTag: refable(z.string()).default(''),
     toRef: refable(z.string()).default('HEAD'),
-    outputPath: z.string().default('CHANGELOG.md'),
+    outputPath: relativePath('Output path').default('CHANGELOG.md'),
     format: z.enum(['conventional', 'simple']).default('conventional'),
     append: z.boolean().default(false),
 });
