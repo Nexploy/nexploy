@@ -1,26 +1,28 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { scaleServiceConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
+import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 
 export class ScaleServiceExecutor implements INodeExecutor {
     readonly type = 'scale-service';
     readonly configSchema = scaleServiceConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof scaleServiceConfigSchema>>,
+        ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof scaleServiceConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const serviceName = nodeConfig.serviceName;
         const replicas = nodeConfig.replicas;
 
-        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
+        const environmentId = getFromClosestAncestor<string>(
+            allOutputs,
+            edges,
+            nodeId,
+            'environmentId',
+        );
 
         await logger.info(
             nodeId,

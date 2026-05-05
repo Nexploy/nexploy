@@ -92,6 +92,7 @@ export class ContainersStateManager extends BaseStateManager {
             'create',
             'destroy',
             'health_status',
+            'rename',
         ];
 
         if (stateChangeEvents.includes(action)) {
@@ -373,6 +374,7 @@ export class ContainersStateManager extends BaseStateManager {
 
     private hasStateChanged(oldState: Containers, newState: Containers): boolean {
         return (
+            oldState.name !== newState.name ||
             oldState.state !== newState.state ||
             oldState.status !== newState.status ||
             oldState.health !== newState.health ||
@@ -383,6 +385,8 @@ export class ContainersStateManager extends BaseStateManager {
     private getStateChanges(oldState: Containers, newState: Containers): ContainersStateChanges {
         const changes: ContainersStateChanges = {};
 
+        if (oldState.name !== newState.name)
+            changes.name = { from: oldState.name, to: newState.name };
         if (oldState.state !== newState.state)
             changes.state = { from: oldState.state, to: newState.state };
         if (oldState.status !== newState.status)

@@ -14,7 +14,7 @@ const app = new Hono();
 app.post(
     '/',
     route({ json: createServiceSchema }, async (c) => {
-        const { name, image, replicas, ports, env, networks, constraints, labels, command } =
+        const { name, image, mode, replicas, ports, env, networks, constraints, labels, command } =
             c.req.valid('json');
 
         const serviceSpec: Record<string, unknown> = {
@@ -26,11 +26,9 @@ app.post(
                     ...(command && command.length > 0 ? { Command: command } : {}),
                 },
             },
-            Mode: {
-                Replicated: {
-                    Replicas: replicas ?? 1,
-                },
-            },
+            Mode: mode === 'global'
+                ? { Global: {} }
+                : { Replicated: { Replicas: replicas ?? 1 } },
             ...(labels ? { Labels: labels } : {}),
         };
 

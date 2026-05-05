@@ -3,13 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { Plus, Trash2 } from 'lucide-react';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
@@ -55,20 +49,24 @@ export function ContainerPorts() {
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
-                            <div key={field.id} className="flex items-center gap-3">
+                            <div key={field.id} className="flex gap-3">
                                 <FormField
                                     control={form.control}
                                     name={`ports.${index}.hostPort`}
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input placeholder={t('hostPort')} {...field} />
+                                                <Input
+                                                    {...field}
+                                                    type={'number'}
+                                                    placeholder={t('hostPort')}
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
-                                <span className="text-muted-foreground">→</span>
+                                <span className="text-muted-foreground mt-1.5">→</span>
                                 <FormField
                                     control={form.control}
                                     name={`ports.${index}.containerPort`}
@@ -76,8 +74,9 @@ export function ContainerPorts() {
                                         <FormItem className="flex-1">
                                             <FormControl>
                                                 <Input
-                                                    placeholder={t('containerPort')}
                                                     {...field}
+                                                    type={'number'}
+                                                    placeholder={t('containerPort')}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -94,7 +93,7 @@ export function ContainerPorts() {
                                                     value={field.value}
                                                     onValueChange={field.onChange}
                                                 >
-                                                    <SelectTrigger className="w-24">
+                                                    <SelectTrigger>
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>

@@ -94,12 +94,11 @@ export async function runTrivyContainer(
 
 export async function scanImage(
     image: string,
-    tag: string,
     severity: Severity,
     trivyVersion = 'canary',
     buildId: string,
 ): Promise<ScanImageResult> {
-    const fullImage = `${image}:${tag}`;
+    const fullImage = image;
     const severities = getSeveritiesAbove(severity);
 
     const { stdout, stderr, exitCode } = await runTrivyContainer(

@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import {
     FormControl,
     FormField,
@@ -19,29 +19,19 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import { Switch } from '@workspace/ui/components/switch';
 import { Button } from '@workspace/ui/components/button';
-import { Label } from '@workspace/ui/components/label';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { Plus, Trash2 } from 'lucide-react';
 import { useEnvironmentImages } from '@/hooks/sse/useEnvironmentImages';
-import { useEnvironmentNetworks } from '@/hooks/sse/useEnvironmentNetworks';
 import { useMemo } from 'react';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
-export function CreateContainerConfig() {
+export function CreateServiceConfig() {
     const t = useTranslations('repository.pipeline.config');
     const tDocker = useTranslations('docker.createContainer');
     const form = useFormContext();
 
     const { images, isLoading: imagesLoading } = useEnvironmentImages();
-    const { networks, isLoading: networksLoading } = useEnvironmentNetworks();
-
-    const networkOptions = useMemo(() => {
-        return networks
-            .map((n) => ({ value: n.name, label: n.name }))
-            .sort((a, b) => a.label.localeCompare(b.label));
-    }, [networks]);
 
     const imageOptions = useMemo(() => {
         const tags = new Set<string>();
@@ -54,6 +44,8 @@ export function CreateContainerConfig() {
             .sort()
             .map((tag) => ({ value: tag, label: tag }));
     }, [images]);
+
+    const mode = useWatch({ control: form.control, name: 'mode' });
 
     const {
         fields: portFields,
@@ -68,25 +60,28 @@ export function CreateContainerConfig() {
     } = useFieldArray({ control: form.control, name: 'envVars' });
 
     const {
-        fields: volumeFields,
-        append: appendVolume,
-        remove: removeVolume,
-    } = useFieldArray({ control: form.control, name: 'volumes' });
+        fields: networkFields,
+        append: appendNetwork,
+        remove: removeNetwork,
+    } = useFieldArray({ control: form.control, name: 'networks' });
+
+    const {
+        fields: constraintFields,
+        append: appendConstraint,
+        remove: removeConstraint,
+    } = useFieldArray({ control: form.control, name: 'constraints' });
 
     return (
         <div className="space-y-4">
             <FormField
                 control={form.control}
-                name="containerName"
+                name="serviceName"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('createContainerName')}</FormLabel>
+                        <FormLabel>{t('createServiceName')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input
-                                    {...field}
-                                    placeholder={t('createContainerNamePlaceholder')}
-                                />
+                                <Input {...field} placeholder={t('createServiceNamePlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -108,7 +103,7 @@ export function CreateContainerConfig() {
                                     options={imageOptions}
                                     isLoading={imagesLoading}
                                     placeholder={t('createContainerImagePlaceholder')}
-                                    heading={t('availableImages')}
+                                    heading={t('imagesSelectLabel')}
                                 />
                             </RefAware>
                         </FormControl>
@@ -119,10 +114,10 @@ export function CreateContainerConfig() {
 
             <FormField
                 control={form.control}
-                name="restartPolicy"
+                name="mode"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('createContainerRestartPolicy')}</FormLabel>
+                        <FormLabel>{t('createServiceMode')}</FormLabel>
                         <FormControl>
                             <Select value={field.value} onValueChange={field.onChange}>
                                 <SelectTrigger>
@@ -130,15 +125,13 @@ export function CreateContainerConfig() {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectLabel>
-                                            {t('createContainerRestartPolicy')}
-                                        </SelectLabel>
-                                        <SelectItem value="unless-stopped">
-                                            unless-stopped
+                                        <SelectLabel>{t('createServiceMode')}</SelectLabel>
+                                        <SelectItem value="replicated">
+                                            {t('createServiceModeReplicated')}
                                         </SelectItem>
-                                        <SelectItem value="always">always</SelectItem>
-                                        <SelectItem value="on-failure">on-failure</SelectItem>
-                                        <SelectItem value="no">no</SelectItem>
+                                        <SelectItem value="global">
+                                            {t('createServiceModeGlobal')}
+                                        </SelectItem>
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
@@ -148,28 +141,26 @@ export function CreateContainerConfig() {
                 )}
             />
 
-            <FormField
-                control={form.control}
-                name="networkName"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('createContainerNetwork')}</FormLabel>
-                        <FormControl>
-                            <RefAware value={field.value} onChange={field.onChange}>
-                                <InputAutoComplete
+            {mode === 'replicated' && (
+                <FormField
+                    control={form.control}
+                    name="replicas"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('createServiceReplicas')}</FormLabel>
+                            <FormControl>
+                                <Input
                                     {...field}
-                                    className="truncate"
-                                    options={networkOptions}
-                                    isLoading={networksLoading}
-                                    placeholder={t('createContainerNetworkPlaceholder')}
-                                    heading={t('availableNetworks')}
+                                    type="number"
+                                    min={1}
+                                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
                                 />
-                            </RefAware>
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-            />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                        </FormItem>
+                    )}
+                />
+            )}
 
             <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -180,7 +171,7 @@ export function CreateContainerConfig() {
                         size="sm"
                         className="h-7 text-xs"
                         onClick={() =>
-                            appendPort({ hostPort: '', containerPort: '', protocol: 'tcp' })
+                            appendPort({ publishedPort: '', targetPort: '', protocol: 'tcp' })
                         }
                     >
                         <Plus className="size-3" />
@@ -189,9 +180,9 @@ export function CreateContainerConfig() {
                 </div>
                 <FormField
                     control={form.control}
-                    name={`portsSource`}
+                    name="portsSource"
                     render={({ field }) => (
-                        <FormItem className="flex-1">
+                        <FormItem>
                             <FormControl>
                                 <RefAware {...field} emptyValue={undefined}>
                                     <div className="text-muted-foreground flex items-center justify-center rounded border border-dashed p-1 text-center text-[10px]">
@@ -203,34 +194,37 @@ export function CreateContainerConfig() {
                         </FormItem>
                     )}
                 />
-                {portFields.length ? (
+                {portFields.length > 0 && (
                     <div className="space-y-1.5">
                         {portFields.map((field, index) => (
-                            <div key={field.id} className="flex items-center gap-1.5">
+                            <div key={field.id} className="flex gap-1.5">
                                 <FormField
                                     control={form.control}
-                                    name={`ports.${index}.hostPort`}
+                                    name={`ports.${index}.publishedPort`}
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
                                                 <Input
                                                     {...field}
+                                                    type="number"
                                                     placeholder={tDocker('hostPort')}
+                                                    onChange={(e) => field.onChange(e.target.value)}
                                                 />
                                             </FormControl>
                                             <FormMessage className="text-xs" />
                                         </FormItem>
                                     )}
                                 />
-                                <span className="text-muted-foreground text-xs">→</span>
+                                <span className="text-muted-foreground pt-2.5 text-xs">→</span>
                                 <FormField
                                     control={form.control}
-                                    name={`ports.${index}.containerPort`}
+                                    name={`ports.${index}.targetPort`}
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
                                                 <Input
                                                     {...field}
+                                                    type="number"
                                                     placeholder={tDocker('containerPort')}
                                                 />
                                             </FormControl>
@@ -253,16 +247,12 @@ export function CreateContainerConfig() {
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         <SelectGroup>
-                                                            <SelectLabel>
-                                                                {tDocker('protocol')}
-                                                            </SelectLabel>
                                                             <SelectItem value="tcp">TCP</SelectItem>
                                                             <SelectItem value="udp">UDP</SelectItem>
                                                         </SelectGroup>
                                                     </SelectContent>
                                                 </Select>
                                             </FormControl>
-                                            <FormMessage className="text-xs" />
                                         </FormItem>
                                     )}
                                 />
@@ -277,7 +267,7 @@ export function CreateContainerConfig() {
                             </div>
                         ))}
                     </div>
-                ) : null}
+                )}
             </div>
 
             <div className="space-y-2">
@@ -296,9 +286,9 @@ export function CreateContainerConfig() {
                 </div>
                 <FormField
                     control={form.control}
-                    name={`envVarsSource`}
+                    name="envVarsSource"
                     render={({ field }) => (
-                        <FormItem className="flex-1">
+                        <FormItem>
                             <FormControl>
                                 <RefAware {...field} emptyValue={undefined}>
                                     <div className="text-muted-foreground flex items-center justify-center rounded border border-dashed p-1 text-center text-[10px]">
@@ -310,7 +300,7 @@ export function CreateContainerConfig() {
                         </FormItem>
                     )}
                 />
-                {envFields.length ? (
+                {envFields.length > 0 && (
                     <div className="space-y-1.5">
                         {envFields.map((field, index) => (
                             <div key={field.id} className="flex items-center gap-1.5">
@@ -358,97 +348,40 @@ export function CreateContainerConfig() {
                             </div>
                         ))}
                     </div>
-                ) : null}
+                )}
             </div>
 
+            {/* Networks */}
             <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                    <FormLabel>{tDocker('volumes')}</FormLabel>
+                    <FormLabel>{t('createServiceNetworks')}</FormLabel>
                     <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         className="h-7 text-xs"
-                        onClick={() =>
-                            appendVolume({
-                                hostPath: '',
-                                containerPath: '',
-                                readOnly: false,
-                            })
-                        }
+                        onClick={() => appendNetwork({ value: '' })}
                     >
                         <Plus className="size-3" />
-                        {tDocker('addVolume')}
+                        {t('createServiceAddNetwork')}
                     </Button>
                 </div>
-
-                <FormField
-                    control={form.control}
-                    name={`volumesSource`}
-                    render={({ field }) => (
-                        <FormItem className="flex-1">
-                            <FormControl>
-                                <RefAware {...field} emptyValue={undefined}>
-                                    <div className="text-muted-foreground flex items-center justify-center rounded border border-dashed p-1 text-center text-[10px]">
-                                        {tDocker('dragToImportVolumes')}
-                                    </div>
-                                </RefAware>
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                        </FormItem>
-                    )}
-                />
-
-                {volumeFields.length ? (
+                {networkFields.length > 0 && (
                     <div className="space-y-1.5">
-                        {volumeFields.map((field, index) => (
+                        {networkFields.map((field, index) => (
                             <div key={field.id} className="flex items-center gap-1.5">
                                 <FormField
                                     control={form.control}
-                                    name={`volumes.${index}.hostPath`}
+                                    name={`networks.${index}.value`}
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
                                                 <Input
                                                     {...field}
-                                                    placeholder={tDocker('hostPath')}
+                                                    placeholder={t(
+                                                        'createServiceNetworkPlaceholder',
+                                                    )}
                                                 />
-                                            </FormControl>
-                                            <FormMessage className="text-xs" />
-                                        </FormItem>
-                                    )}
-                                />
-                                <span className="text-muted-foreground text-xs">→</span>
-                                <FormField
-                                    control={form.control}
-                                    name={`volumes.${index}.containerPath`}
-                                    render={({ field }) => (
-                                        <FormItem className="flex-1">
-                                            <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={tDocker('containerPath')}
-                                                />
-                                            </FormControl>
-                                            <FormMessage className="text-xs" />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name={`volumes.${index}.readOnly`}
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <div className="flex items-center gap-1">
-                                                    <Switch
-                                                        checked={field.value}
-                                                        onCheckedChange={field.onChange}
-                                                    />
-                                                    <Label className="text-xs">
-                                                        {tDocker('readOnly')}
-                                                    </Label>
-                                                </div>
                                             </FormControl>
                                             <FormMessage className="text-xs" />
                                         </FormItem>
@@ -458,14 +391,65 @@ export function CreateContainerConfig() {
                                     type="button"
                                     variant="destructiveGhost"
                                     size="icon"
-                                    onClick={() => removeVolume(index)}
+                                    onClick={() => removeNetwork(index)}
                                 >
                                     <Trash2 />
                                 </Button>
                             </div>
                         ))}
                     </div>
-                ) : null}
+                )}
+            </div>
+
+            {/* Constraints */}
+            <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                    <FormLabel>{t('createServiceConstraints')}</FormLabel>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-7 text-xs"
+                        onClick={() => appendConstraint({ value: '' })}
+                    >
+                        <Plus className="size-3" />
+                        {t('createServiceAddConstraint')}
+                    </Button>
+                </div>
+                {constraintFields.length > 0 && (
+                    <div className="space-y-1.5">
+                        {constraintFields.map((field, index) => (
+                            <div key={field.id} className="flex items-center gap-1.5">
+                                <FormField
+                                    control={form.control}
+                                    name={`constraints.${index}.value`}
+                                    render={({ field }) => (
+                                        <FormItem className="flex-1">
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    placeholder={t(
+                                                        'createServiceConstraintPlaceholder',
+                                                    )}
+                                                    className="font-mono"
+                                                />
+                                            </FormControl>
+                                            <FormMessage className="text-xs" />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button
+                                    type="button"
+                                    variant="destructiveGhost"
+                                    size="icon"
+                                    onClick={() => removeConstraint(index)}
+                                >
+                                    <Trash2 />
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -37,6 +37,7 @@ export const createTerminalRoutes = (
             const containerId = c.req.param('containerId')!;
             const shell = c.req.param('shell') ?? 'auto';
             const environmentId = c.req.query('environment');
+            const user = c.req.query('user');
 
             let exec: Exec | null = null;
             let stream: Duplex | null = null;
@@ -71,6 +72,7 @@ export const createTerminalRoutes = (
                             Tty: true,
                             Cmd: getShellCommand(shell),
                             Env: ['TERM=xterm-256color'],
+                            ...(user ? { User: user } : {}),
                         };
 
                         logger.info(

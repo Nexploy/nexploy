@@ -11,7 +11,15 @@
         "stats": "Stats",
         "console": "Console",
         "attach": "Attach",
-        "domains": "Domains"
+        "domains": "Domains",
+        "renameTitle": "Rename Container",
+        "renameDescription": "Enter a new name for this container."
+    },
+    "renameContainer": {
+        "nameLabel": "Container Name",
+        "namePlaceholder": "my-container",
+        "cancel": "Cancel",
+        "rename": "Rename"
     },
     "environmentDisconnected": {
         "title": "Environment Not Connected",
@@ -412,6 +420,7 @@
     },
     "containerTerminal": {
         "title": "Console — {name}",
+        "userPlaceholder": "user[:group] or uid[:gid]",
         "shellPlaceholder": "auto, sh, bash, ash...",
         "shellLabel": "Shell cmd",
         "reconnect": "Reconnect",

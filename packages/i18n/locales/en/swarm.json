@@ -30,7 +30,7 @@
     "detectingIp": "Detecting public IP...",
     "initializeSwarmConfirmDescription": "The swarm will be initialized with advertise address {ip}. Other nodes will use this address to join the cluster.",
     "failedToDetectIp": "Failed to detect public IP. Please check your connectivity.",
-    "advertiseAddressAutoDetect": "Leave blank to let Docker auto-detect. Required if this node is behind a NAT/cloud IP.",
+    "advertiseAddressAutoDetect": "Leave blank to let Docker auto-detect.",
     "joinTokenRequired": "Join token is required",
     "managerAddressRequired": "At least one manager address is required",
     "notInSwarmMode": "Not in Swarm Mode",
@@ -83,6 +83,7 @@
     "pleaseWaitSwarmLoading": "Please wait while the swarm state is being loaded.",
     "notInSwarmModeTitle": "Not in Swarm Mode",
     "notInSwarmModeDescription": "This Docker host is not part of a swarm cluster. Initialize a new swarm to become the first manager, or join an existing swarm.",
+    "service": "Service",
     "services": "Services",
     "image": "Image",
     "mode": "Mode",
@@ -118,5 +119,8 @@
     "addPort": "Add Port",
     "publishedPort": "Published",
     "targetPort": "Container",
-    "creating": "Creating..."
+    "creating": "Creating...",
+    "nodesPerPage": "Nodes per page",
+    "imagePlaceholder": "ex. image:version",
+    "imageName": "Image name"
 }

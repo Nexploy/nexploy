@@ -20,8 +20,8 @@ const app = new Hono();
 app.post(
     '/scan',
     route({ json: imageScanSchema }, async (c) => {
-        const { image, tag, severity, trivyVersion, buildId } = c.req.valid('json');
-        return await scanImage(image, tag, severity, trivyVersion, buildId);
+        const { image, severity, trivyVersion, buildId } = c.req.valid('json');
+        return await scanImage(image, severity, trivyVersion, buildId);
     }),
 );
 

@@ -25,9 +25,7 @@ import { waitForUrlManifest } from './wait-for-url.manifest';
 import { waitForPortManifest } from './wait-for-port.manifest';
 import { delayManifest } from './delay.manifest';
 import { conditionManifest } from './condition.manifest';
-import { runScriptManifest } from './run-script.manifest';
 import { runCommandInContainerManifest } from './run-command-in-container.manifest';
-import { runTestsManifest } from './run-tests.manifest';
 import { httpRequestManifest } from './http-request.manifest';
 import { updateCommitStatusManifest } from './update-commit-status.manifest';
 import { tagImageManifest } from './tag-image.manifest';
@@ -36,8 +34,8 @@ import { pruneImagesManifest } from './prune-images.manifest';
 import { templateFileManifest } from './template-file.manifest';
 import { uploadArtifactManifest } from './upload-artifact.manifest';
 import { downloadFileManifest } from './download-file.manifest';
-import { runMigrationManifest } from './run-migration.manifest';
 import { backupVolumeS3Manifest } from './backup-volume-s3.manifest';
+import { createServiceManifest } from './create-service.manifest';
 import { updateServiceManifest } from './update-service.manifest';
 import { scaleServiceManifest } from './scale-service.manifest';
 import { checkContainerLogsManifest } from './check-container-logs.manifest';
@@ -92,9 +90,7 @@ export const allBuiltinManifests: NodeManifest[] = [
     delayManifest,
     conditionManifest,
     // Script Execution
-    runScriptManifest,
     runCommandInContainerManifest,
-    runTestsManifest,
     // HTTP / Webhooks
     httpRequestManifest,
     updateCommitStatusManifest,
@@ -110,9 +106,9 @@ export const allBuiltinManifests: NodeManifest[] = [
     uploadArtifactManifest,
     downloadFileManifest,
     // Database
-    runMigrationManifest,
     backupVolumeS3Manifest,
     // Docker Swarm
+    createServiceManifest,
     updateServiceManifest,
     scaleServiceManifest,
     // Monitoring

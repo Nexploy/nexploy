@@ -1,6 +1,13 @@
 'use client';
 
-import { Activity, Container as IconContainer, FileText, Globe, Terminal } from 'lucide-react';
+import {
+    Activity,
+    Container as IconContainer,
+    FileText,
+    Globe,
+    PencilLine,
+    Terminal,
+} from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { CardInfoDetail } from '@/components/docker/container/cards/CardInfoDetail';
@@ -32,12 +39,26 @@ import { ToolbarButton } from '@/components/shared/ToolbarButton';
 import { useMemo } from 'react';
 import { CardDriverGraph } from '@/components/docker/container/cards/CardDriverGraph';
 import { CardSecurity } from '@/components/docker/container/cards/CardSecurity';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import { RenameContainerForm } from '@/components/docker/container/forms/RenameContainerForm';
 
 const cuidSchema = z.cuid();
 
 export function ContainerDetailPage() {
     const container = useContainerStore((state) => state.container);
     const t = useTranslations('docker.containerDetail');
+    const { openDialog } = useConfirmationDialogStore();
+
+    const handleRename = () => {
+        if (!container) return;
+        openDialog({
+            title: t('renameTitle'),
+            description: t('renameDescription'),
+            content: (
+                <RenameContainerForm containerId={container.id} currentName={container.name} />
+            ),
+        });
+    };
 
     const repositoryId = useMemo(() => {
         const fromName = container?.name?.replace(/^nexploy-/, '');
@@ -62,9 +83,20 @@ export function ContainerDetailPage() {
                     {!container ? (
                         <Skeleton className="h-6 w-40" />
                     ) : (
-                        <h1 className="text-3xl font-semibold tracking-tight break-all">
-                            {container.name}
-                        </h1>
+                        <button
+                            type="button"
+                            onClick={handleRename}
+                            className={'group flex cursor-pointer items-center gap-1 self-start'}
+                        >
+                            <h1 className="text-3xl font-semibold tracking-tight break-all group-hover:underline">
+                                {container.name}
+                            </h1>
+                            <PencilLine
+                                className={
+                                    'size-4 opacity-0 transition-opacity group-hover:opacity-100'
+                                }
+                            />
+                        </button>
                     )}
                     <p className="text-muted-foreground text-sm">{t('description')}</p>
                 </div>

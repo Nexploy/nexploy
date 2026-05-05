@@ -25,6 +25,17 @@ export const containerRunEphemeralSchema = z.object({
     networkMode: z.string().optional(),
 });
 
+export const containerRenameSchema = z.object({
+    containerId: z.string().min(1),
+    name: z.string().min(1).regex(/^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/, {
+        message: 'Name must start with a letter or digit and contain only letters, digits, _, . or -',
+    }),
+});
+
+export const containerRenameBodySchema = z.object({
+    name: z.string().min(1),
+});
+
 export const containerExecBodySchema = z.object({
     command: z.string().min(1),
     workdir: z
@@ -33,4 +44,5 @@ export const containerExecBodySchema = z.object({
             message: 'Container working directory must be an absolute path',
         })
         .optional(),
+    user: z.string().optional(),
 });

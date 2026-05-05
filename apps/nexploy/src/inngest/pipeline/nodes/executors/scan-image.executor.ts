@@ -1,9 +1,5 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { scanImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -18,17 +14,20 @@ export class ScanImageExecutor implements INodeExecutor {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal, buildId, edges } = ctx;
 
         const image = nodeConfig.image;
-        const tag = nodeConfig.tag;
         const severity = nodeConfig.severity;
         const trivyVersion = nodeConfig.trivyVersion;
         const exitOnVulnerabilities = nodeConfig.exitOnVulnerabilities;
 
-        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
-        const fullImage = `${image}:${tag}`;
+        const environmentId = getFromClosestAncestor<string>(
+            allOutputs,
+            edges,
+            nodeId,
+            'environmentId',
+        );
 
         await logger.info(
             nodeId,
-            `Scanning image ${fullImage} for ${severity}+ vulnerabilities using Trivy`,
+            `Scanning image ${image} for ${severity}+ vulnerabilities using Trivy`,
         );
 
         try {
@@ -36,7 +35,6 @@ export class ScanImageExecutor implements INodeExecutor {
                 .post('images/scan', {
                     json: {
                         image,
-                        tag,
                         severity,
                         trivyVersion,
                         buildId,
@@ -65,14 +63,13 @@ export class ScanImageExecutor implements INodeExecutor {
 
             if (result.vulnerabilities > 0 && exitOnVulnerabilities) {
                 throw new Error(
-                    `Image ${fullImage} has ${result.vulnerabilities} ${severity}+ vulnerabilities (CRITICAL: ${result.critical}, HIGH: ${result.high})`,
+                    `Image ${image} has ${result.vulnerabilities} ${severity}+ vulnerabilities (CRITICAL: ${result.critical}, HIGH: ${result.high})`,
                 );
             }
 
             return {
                 output: {
                     image,
-                    tag,
                     vulnerabilities: result.vulnerabilities,
                     critical: result.critical,
                     high: result.high,

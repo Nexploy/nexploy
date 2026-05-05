@@ -516,17 +516,9 @@
                 "outputTrue": "True",
                 "outputFalse": "False"
             },
-            "run-script": {
-                "name": "Run Script",
-                "description": "Execute a shell script in the work directory"
-            },
             "run-command-in-container": {
                 "name": "Run Command in Container",
                 "description": "Execute a command inside a running Docker container"
-            },
-            "run-tests": {
-                "name": "Run Tests",
-                "description": "Run a test suite in an ephemeral Docker container"
             },
             "http-request": {
                 "name": "HTTP Request",
@@ -572,13 +564,13 @@
                 "name": "Download File",
                 "description": "Download a file from a URL into the work directory"
             },
-            "run-migration": {
-                "name": "Run Migration",
-                "description": "Run database migrations in an ephemeral container"
-            },
             "backup-volume-s3": {
                 "name": "Backup Volume to S3",
                 "description": "Archive a Docker volume and upload it to an S3 bucket"
+            },
+            "create-service": {
+                "name": "Create Service",
+                "description": "Create a new Docker Swarm service from an image"
             },
             "update-service": {
                 "name": "Update Service",
@@ -716,8 +708,8 @@
             "pullImageNamePlaceholderPrivate": "e.g. myapp:1.0.0",
             "createContainerName": "Container Name",
             "createContainerNamePlaceholder": "e.g. my-app (leave empty to auto-generate)",
-            "createContainerImage": "Image Name",
-            "createContainerImagePlaceholder": "Select an image",
+            "createContainerImage": "Image name",
+            "createContainerImagePlaceholder": "e.g. image:version",
             "createContainerSimple": "Simple",
             "createContainerAdvanced": "Advanced",
             "createContainerRestartPolicy": "Restart Policy",
@@ -772,6 +764,7 @@
             "continueOnError": "Continue on Error",
             "command": "Command",
             "workdir": "Working Directory",
+            "execUser": "User",
             "testImage": "Container Image",
             "testCommand": "Test Command",
             "httpHeaders": "Headers",
@@ -787,13 +780,12 @@
             "sourceImage": "Source Image",
             "sourceTag": "Source Tag",
             "targetTag": "Target Tag",
-            "scanImage": "Image",
-            "scanImagePlaceholder": "Select an image...",
+            "scanImage": "Image name",
+            "scanImagePlaceholder": "e.g. image:version",
             "noImagesAvailable": "No images available",
             "availableImages": "Available images",
             "availableNetworks": "Available networks",
             "trivyVersion": "Trivy version",
-            "scanTag": "Tag",
             "scanSeverity": "Minimum Severity",
             "exitOnVulnerabilities": "Fail on Vulnerabilities",
             "pruneOnlyDangling": "Only Dangling Images",
@@ -827,6 +819,18 @@
             "serviceTag": "Tag",
             "serviceForceUpdate": "Force Update",
             "serviceReplicas": "Replicas",
+            "createServiceName": "Service Name",
+            "createServiceNamePlaceholder": "e.g. my-service",
+            "createServiceMode": "Mode",
+            "createServiceModeReplicated": "Replicated",
+            "createServiceModeGlobal": "Global (one per node)",
+            "createServiceReplicas": "Replicas",
+            "createServiceNetworks": "Overlay Networks",
+            "createServiceNetworkPlaceholder": "e.g. my-overlay-network",
+            "createServiceAddNetwork": "Add Network",
+            "createServiceConstraints": "Placement Constraints",
+            "createServiceConstraintPlaceholder": "e.g. node.role==worker",
+            "createServiceAddConstraint": "Add Constraint",
             "logPattern": "Pattern (regex)",
             "logPatternPlaceholder": "e.g. .*ready.*",
             "logSince": "Since",
@@ -1050,6 +1054,8 @@
             "desc_migrated": "Whether the migration ran successfully",
             "desc_testsPassed": "Whether all tests passed",
             "desc_versionNumber": "Version number that was saved",
+            "serviceId": "Service ID",
+            "desc_serviceId": "Docker Swarm service ID",
             "desc_serviceName": "Docker service or Swarm service name",
             "desc_replicas": "Number of replicas set",
             "desc_image": "Image name that was scanned or tagged",

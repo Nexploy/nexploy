@@ -561,21 +561,9 @@
                 "name": "Exécuter une commande dans un conteneur",
                 "description": "Exécute une commande dans un conteneur Docker en cours d'exécution"
             },
-            "run-migration": {
-                "name": "Exécuter les migrations",
-                "description": "Lance les migrations de base de données dans un conteneur éphémère"
-            },
             "backup-volume-s3": {
                 "name": "Sauvegarder le volume sur S3",
                 "description": "Archive un volume Docker et l'envoie vers un bucket S3"
-            },
-            "run-script": {
-                "name": "Exécuter un script",
-                "description": "Exécute un script shell dans le répertoire de travail"
-            },
-            "run-tests": {
-                "name": "Exécuter les tests",
-                "description": "Lance une suite de tests dans un conteneur Docker éphémère"
             },
             "scale-service": {
                 "name": "Mettre à l'échelle un service",
@@ -596,6 +584,10 @@
             "update-commit-status": {
                 "name": "Mettre à jour le statut du commit",
                 "description": "Met à jour le statut d'un commit GitHub ou GitLab"
+            },
+            "create-service": {
+                "name": "Créer un service",
+                "description": "Créer un nouveau service Docker Swarm à partir d'une image"
             },
             "update-service": {
                 "name": "Mettre à jour un service",
@@ -718,7 +710,7 @@
             "createContainerName": "Nom du conteneur",
             "createContainerNamePlaceholder": "ex. mon-app (laisser vide pour auto-générer)",
             "createContainerImage": "Nom de l'image",
-            "createContainerImagePlaceholder": "ex. nginx:latest",
+            "createContainerImagePlaceholder": "ex. image:version",
             "createContainerSimple": "Simple",
             "createContainerAdvanced": "Avancé",
             "createContainerRestartPolicy": "Politique de redémarrage",
@@ -820,13 +812,12 @@
             "s3Bucket": "Bucket",
             "s3Endpoint": "Endpoint S3 / MinIO",
             "s3SecretKey": "Clé secrète",
-            "scanImage": "Image",
-            "scanImagePlaceholder": "Sélectionner une image...",
+            "scanImage": "Nom de l'image",
+            "scanImagePlaceholder": "ex. image:version",
             "noImagesAvailable": "Aucune image disponible",
             "availableImages": "Images disponibles",
             "trivyVersion": "Version Trivy",
             "scanSeverity": "Sévérité minimale",
-            "scanTag": "Tag",
             "vaultEndpoint": "Endpoint Vault",
             "vaultToken": "Token Vault",
             "vaultSecretPath": "Chemin du secret",
@@ -840,6 +831,18 @@
             "serviceName": "Nom du service",
             "serviceReplicas": "Réplicas",
             "serviceTag": "Tag",
+            "createServiceName": "Nom du service",
+            "createServiceNamePlaceholder": "ex. my-service",
+            "createServiceMode": "Mode",
+            "createServiceModeReplicated": "Répliqué",
+            "createServiceModeGlobal": "Global (un par nœud)",
+            "createServiceReplicas": "Réplicas",
+            "createServiceNetworks": "Réseaux overlay",
+            "createServiceNetworkPlaceholder": "ex. my-overlay-network",
+            "createServiceAddNetwork": "Ajouter un réseau",
+            "createServiceConstraints": "Contraintes de placement",
+            "createServiceConstraintPlaceholder": "ex. node.role==worker",
+            "createServiceAddConstraint": "Ajouter une contrainte",
             "shell": "Shell",
             "sourceImage": "Image source",
             "sourceTag": "Tag source",
@@ -855,6 +858,7 @@
             "url": "URL",
             "useSSL": "Utiliser SSL",
             "workdir": "Répertoire de travail",
+            "execUser": "Utilisateur",
             "s3BucketName": "Nom du bucket S3",
             "sonarqubeMode": "Mode",
             "sonarqubeModeCustom": "SonarQube personnalisé / SonarCloud",
@@ -1051,6 +1055,8 @@
             "desc_migrated": "Si la migration s'est exécutée avec succès",
             "desc_testsPassed": "Si tous les tests ont réussi",
             "desc_versionNumber": "Numéro de version qui a été sauvegardé",
+            "serviceId": "ID du service",
+            "desc_serviceId": "Identifiant du service Docker Swarm",
             "desc_serviceName": "Nom du service Docker ou Swarm",
             "desc_replicas": "Nombre de répliques définies",
             "desc_image": "Nom de l'image scannée ou taguée",

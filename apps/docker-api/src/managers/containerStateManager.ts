@@ -20,6 +20,7 @@ const CONTAINER_STATE_CHANGE_EVENTS = new Set<ContainerStateEvents>([
     'create',
     'destroy',
     'health_status',
+    'rename',
 ]);
 
 export class ContainerStateManager extends BaseSingleResourceStateManager<Container> {
@@ -57,6 +58,7 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
 
     hasStateChanged(oldState: Container, newState: Container): boolean {
         return (
+            oldState.name !== newState.name ||
             oldState.state !== newState.state ||
             oldState.status !== newState.status ||
             oldState.health !== newState.health ||
@@ -104,6 +106,8 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
     private getStateChanges(oldState: Container, newState: Container): ContainerStateChanges {
         const changes: ContainerStateChanges = {};
 
+        if (oldState.name !== newState.name)
+            changes.name = { from: oldState.name, to: newState.name };
         if (oldState.state !== newState.state)
             changes.state = { from: oldState.state, to: newState.state };
         if (oldState.status !== newState.status)

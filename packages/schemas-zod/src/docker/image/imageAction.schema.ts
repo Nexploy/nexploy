@@ -51,7 +51,6 @@ export const imageNameParamSchema = z.object({
 
 export const imageScanSchema = z.object({
     image: z.string().min(1),
-    tag: z.string().min(1),
     severity: z.enum(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']),
     trivyVersion: z.string().optional(),
     buildId: z.string().min(1),

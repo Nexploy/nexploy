@@ -25,9 +25,7 @@ import { waitForUrlExecutor } from './executors/wait-for-url.executor';
 import { waitForPortExecutor } from './executors/wait-for-port.executor';
 import { delayExecutor } from './executors/delay.executor';
 import { conditionExecutor } from './executors/condition.executor';
-import { runScriptExecutor } from './executors/run-script.executor';
 import { runCommandInContainerExecutor } from './executors/run-command-in-container.executor';
-import { runTestsExecutor } from './executors/run-tests.executor';
 import { httpRequestExecutor } from './executors/http-request.executor';
 import { updateCommitStatusExecutor } from './executors/update-commit-status.executor';
 import { tagImageExecutor } from './executors/tag-image.executor';
@@ -36,8 +34,8 @@ import { pruneImagesExecutor } from './executors/prune-images.executor';
 import { templateFileExecutor } from './executors/template-file.executor';
 import { uploadArtifactExecutor } from './executors/upload-artifact.executor';
 import { downloadFileExecutor } from './executors/download-file.executor';
-import { runMigrationExecutor } from './executors/run-migration.executor';
 import { backupVolumeS3Executor } from './executors/backup-volume-s3.executor';
+import { createServiceExecutor } from './executors/create-service.executor';
 import { updateServiceExecutor } from './executors/update-service.executor';
 import { scaleServiceExecutor } from './executors/scale-service.executor';
 import { checkContainerLogsExecutor } from './executors/check-container-logs.executor';
@@ -93,9 +91,7 @@ const executors: INodeExecutor[] = [
     delayExecutor,
     conditionExecutor,
     // Script Execution
-    runScriptExecutor,
     runCommandInContainerExecutor,
-    runTestsExecutor,
     // HTTP / Webhooks
     httpRequestExecutor,
     updateCommitStatusExecutor,
@@ -111,9 +107,9 @@ const executors: INodeExecutor[] = [
     uploadArtifactExecutor,
     downloadFileExecutor,
     // Database
-    runMigrationExecutor,
     backupVolumeS3Executor,
     // Docker Swarm
+    createServiceExecutor,
     updateServiceExecutor,
     scaleServiceExecutor,
     // Monitoring

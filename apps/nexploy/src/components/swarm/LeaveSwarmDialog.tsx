@@ -1,86 +1,52 @@
 'use client';
 
-import { useState } from 'react';
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from '@workspace/ui/components/alert-dialog';
+import { useRef } from 'react';
 import { Button } from '@workspace/ui/components/button';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Label } from '@workspace/ui/components/label';
 import { LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 import { onSwarmLeaveAction } from '@/actions/docker/swarm/leave.action';
+import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
+import { Field } from '@workspace/ui/components/field.tsx';
 
-interface LeaveSwarmDialogProps {
-    trigger?: React.ReactNode;
-    isManager?: boolean;
-}
-
-export function LeaveSwarmDialog({ trigger, isManager }: LeaveSwarmDialogProps) {
-    const [isLoading, setIsLoading] = useState(false);
-    const [force, setForce] = useState(false);
+export function LeaveSwarmDialog() {
+    const forceRef = useRef(false);
+    const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const t = useTranslations('swarm');
     const tCommon = useTranslations('common');
 
-    const handleLeave = async () => {
-        setIsLoading(true);
-        try {
-            await onSwarmLeaveAction({ force });
-            toast.success(t('leftSwarmSuccess'));
-        } finally {
-            setIsLoading(false);
-        }
+    const handleOpen = () => {
+        forceRef.current = false;
+        openAlertDialog({
+            title: t('leaveSwarmConfirmTitle'),
+            description: (
+                <div className="space-y-4">
+                    <p>{t('leaveSwarmConfirmDescription')}</p>
+                    <div className="flex cursor-pointer items-center space-x-2">
+                        <Field orientation="horizontal">
+                            <Checkbox
+                                id="force-leave"
+                                className={'cursor-pointer'}
+                                defaultChecked={false}
+                                onCheckedChange={(checked) => (forceRef.current = checked === true)}
+                            />
+                            <Label htmlFor="force-leave" className={'cursor-pointer'}>
+                                {t('forceLeave')}
+                            </Label>
+                        </Field>
+                    </div>
+                </div>
+            ),
+            cancelLabel: tCommon('cancel'),
+            actionLabel: t('leaveSwarm'),
+            onAction: async () => {
+                await onSwarmLeaveAction({ force: forceRef.current });
+                toast.success(t('leftSwarmSuccess'));
+            },
+        });
     };
 
-    return (
-        <AlertDialog>
-            <AlertDialogTrigger asChild>
-                {trigger || (
-                    <Button variant="destructive" size="sm">
-                        <LogOut className="mr-2 size-4" />
-                        {t('leaveSwarm')}
-                    </Button>
-                )}
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>{t('leaveSwarmConfirmTitle')}</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        {t('leaveSwarmConfirmDescription')}
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-
-                <div className="flex items-center space-x-2 py-4">
-                    <Checkbox
-                        id="force"
-                        checked={force}
-                        onCheckedChange={(checked) => setForce(checked === true)}
-                    />
-                    <Label htmlFor="force" className="text-sm">
-                        {t('forceLeave')}
-                    </Label>
-                </div>
-
-                <AlertDialogFooter>
-                    <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
-                    <AlertDialogAction
-                        onClick={handleLeave}
-                        disabled={isLoading}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    >
-                        {isLoading ? t('leaving') : t('leaveSwarm')}
-                    </AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
-    );
+    return <Button size={'icon'} icon={LogOut} variant="destructiveOutline" onClick={handleOpen} />;
 }

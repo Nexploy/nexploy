@@ -20,7 +20,8 @@ export type ContainersStateEvents =
     | 'kill'
     | 'create'
     | 'destroy'
-    | 'health_status';
+    | 'health_status'
+    | 'rename';
 
 export type ContainersType = 'initial' | 'added' | 'updated' | 'removed' | 'heartbeat';
 
@@ -82,6 +83,10 @@ export interface ContainersEvent {
 }
 
 export interface ContainersStateChanges {
+    name?: {
+        from: string;
+        to: string;
+    };
     state?: {
         from: string;
         to: string;

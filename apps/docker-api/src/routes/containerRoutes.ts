@@ -12,6 +12,7 @@ import {
     containerExecBodySchema,
     containerIdParamSchema,
     containerLogsQuerySchema,
+    containerRenameBodySchema,
     containerRunEphemeralSchema,
 } from '@workspace/schemas-zod/docker/container/containerAction.schema';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
@@ -99,7 +100,7 @@ app.post(
     '/:id/exec',
     route({ param: containerIdParamSchema, json: containerExecBodySchema }, async (c) => {
         const { id } = c.req.valid('param');
-        const { command, workdir } = c.req.valid('json');
+        const { command, workdir, user } = c.req.valid('json');
 
         const container = docker.getContainer(id);
 
@@ -109,6 +110,7 @@ app.post(
             AttachStderr: true,
         };
         if (workdir) execOptions['WorkingDir'] = workdir;
+        if (user) execOptions['User'] = user;
 
         const exec = await container.exec(execOptions as any);
         const stream = await exec.start({ hijack: true, stdin: false });
@@ -380,6 +382,17 @@ app.post(
 
         await newContainer.start();
         return { id: newContainer.id };
+    }),
+);
+
+app.post(
+    '/:id/rename',
+    route({ param: containerIdParamSchema, json: containerRenameBodySchema }, async (c) => {
+        const { id } = c.req.valid('param');
+        const { name } = c.req.valid('json');
+        const container = docker.getContainer(id);
+        await container.rename({ name });
+        return { name };
     }),
 );
 

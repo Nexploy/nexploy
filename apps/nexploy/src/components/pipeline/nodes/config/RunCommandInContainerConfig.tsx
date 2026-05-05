@@ -153,6 +153,21 @@ export function RunCommandInContainerConfig() {
             />
             <FormField
                 control={form.control}
+                name="user"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>{t('execUser')}</FormLabel>
+                        <FormControl>
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input {...field} placeholder="user[:group] or uid[:gid]" />
+                            </RefAware>
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
                 name="continueOnError"
                 render={({ field }) => (
                     <FormItem className="flex items-center justify-between">

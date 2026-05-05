@@ -2,7 +2,6 @@ import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { runCommandInContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { safeContainerPath } from '@workspace/shared/pathSafety';
 import { z } from 'zod';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 
@@ -18,8 +17,8 @@ export class RunCommandInContainerExecutor implements INodeExecutor {
         const containerId = nodeConfig.containerId;
         const command = nodeConfig.command;
         const continueOnError = nodeConfig.continueOnError;
-
-        const workdir = nodeConfig.workdir ? safeContainerPath(nodeConfig.workdir) : undefined;
+        const workdir = nodeConfig.workdir;
+        const user = nodeConfig.user;
         const environmentId = getFromClosestAncestor<string>(
             allOutputs,
             edges,
@@ -35,6 +34,7 @@ export class RunCommandInContainerExecutor implements INodeExecutor {
                     json: {
                         command,
                         ...(workdir && { workdir }),
+                        ...(user && { user }),
                     },
                     signal: abortSignal,
                     environmentId,

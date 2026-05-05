@@ -11,7 +11,8 @@ export type ContainerStateEvents =
     | 'kill'
     | 'create'
     | 'destroy'
-    | 'health_status';
+    | 'health_status'
+    | 'rename';
 
 export type ContainerType =
     | 'initial'
@@ -142,6 +143,10 @@ export interface ContainerEvent {
 }
 
 export interface ContainerStateChanges {
+    name?: {
+        from: string;
+        to: string;
+    };
     state?: {
         from: string;
         to: string;

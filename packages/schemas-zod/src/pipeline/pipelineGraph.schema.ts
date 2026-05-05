@@ -29,9 +29,7 @@ export const nodeTypeSchema = z.enum([
     'delay',
     'condition',
     // Script Execution
-    'run-script',
     'run-command-in-container',
-    'run-tests',
     // HTTP / Webhooks
     'http-request',
     'update-commit-status',
@@ -47,9 +45,9 @@ export const nodeTypeSchema = z.enum([
     'upload-artifact',
     'download-file',
     // Database
-    'run-migration',
     'backup-volume-s3',
     // Docker Swarm
+    'create-service',
     'update-service',
     'scale-service',
     // Monitoring

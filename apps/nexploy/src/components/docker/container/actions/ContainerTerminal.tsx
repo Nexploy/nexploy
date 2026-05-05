@@ -17,6 +17,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
+import { Input } from '@workspace/ui/components/input';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { statusMap } from '@/utils/statusMap';
 import { Terminal } from 'lucide-react';
 import { useTerminalStore } from '@/stores/useTerminalStore';
@@ -33,6 +35,7 @@ const shellKeys = ['auto', 'bash', 'sh', 'ash', 'dash'] as const;
 export function ContainerTerminal({ children }: ContainerTerminalProps) {
     const [open, setOpen] = useState(false);
     const [selectedShell, setSelectedShell] = useLocalStorage('terminal-selectedShell', 'auto');
+    const [selectedUser, setSelectedUser] = useLocalStorage('terminal-selectedUser', '');
     const t = useTranslations('docker.containerTerminal');
     const tStatus = useTranslations('docker.status');
 
@@ -41,11 +44,15 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
 
     const { connectionState, connect, disconnect, terminalRef } = useTerminalStore();
 
-    const buildSocketUrl = (shell: string) => {
+    const buildSocketUrl = (shell: string, user?: string) => {
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const baseUrl = `${protocol}//${window.location.host}/api/ws/docker/terminal/${container?.id}/${shell}`;
-
-        return selectedEnvironmentId ? `${baseUrl}?environment=${selectedEnvironmentId}` : baseUrl;
+        const params = new URLSearchParams();
+        if (selectedEnvironmentId) params.set('environment', selectedEnvironmentId);
+        const resolvedUser = user !== undefined ? user : selectedUser;
+        if (resolvedUser) params.set('user', resolvedUser);
+        const query = params.toString();
+        return query ? `${baseUrl}?${query}` : baseUrl;
     };
 
     const socketUrl = buildSocketUrl(selectedShell);
@@ -71,6 +78,21 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
         await connect(buildSocketUrl(shellCommand));
     };
 
+    const onUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedUser(e.target.value);
+    };
+
+    const onUserKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            (e.target as HTMLInputElement).blur();
+        }
+    };
+
+    const onUserBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+        disconnect();
+        await connect(buildSocketUrl(selectedShell, e.target.value));
+    };
+
     const currentStatus = statusMap[connectionState];
     const isConnected = connectionState === 'connected';
 
@@ -84,25 +106,40 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                     aria-describedby={undefined}
                     className="gap-0 overflow-hidden border border-neutral-800 bg-black p-0 sm:max-w-5/6"
                 >
-                    <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 p-2 pl-3">
-                        <div className="flex flex-row items-center gap-2">
-                            <DialogTitle className="flex items-center gap-2 text-sm text-white">
-                                <div className="flex size-4 items-center">
+                    <DialogHeader className="flex flex-row items-center justify-between overflow-hidden border-b border-neutral-800 p-2 pl-3">
+                        <div className="flex items-center gap-2 overflow-hidden">
+                            <DialogTitle className="flex items-center gap-2 overflow-hidden text-sm text-white">
+                                <div className="flex size-4 shrink-0 items-center">
                                     <Terminal />
                                 </div>
-                                {t('title', { name: container?.name ?? 'Unknown Container' })}
-                                <Status
-                                    className="rounded-none bg-transparent"
-                                    status={currentStatus.status}
-                                >
-                                    <StatusIndicator />
-                                    <StatusLabel className={currentStatus.text}>
-                                        {tStatus(currentStatus.labelKey)}
-                                    </StatusLabel>
-                                </Status>
+                                <span className="truncate">
+                                    {t('title', { name: container?.name ?? 'Unknown Container' })}
+                                </span>
                             </DialogTitle>
+                            <Status
+                                className="shrink-0 rounded-none bg-transparent"
+                                status={currentStatus.status}
+                            >
+                                <StatusIndicator />
+                                <StatusLabel className={currentStatus.text}>
+                                    {tStatus(currentStatus.labelKey)}
+                                </StatusLabel>
+                            </Status>
                         </div>
                         <div className="flex flex-row items-center gap-2">
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Input
+                                        value={selectedUser}
+                                        onChange={onUserChange}
+                                        onKeyDown={onUserKeyDown}
+                                        onBlur={onUserBlur}
+                                        placeholder={t('userPlaceholder')}
+                                        className="!h-7 w-36 bg-white/10 text-xs text-white/90 placeholder:text-white/40"
+                                    />
+                                </TooltipTrigger>
+                                <TooltipContent>{t('userPlaceholder')}</TooltipContent>
+                            </Tooltip>
                             <Select value={selectedShell} onValueChange={onValueChange}>
                                 <SelectTrigger className="!h-7 bg-white/10 text-white/90">
                                     <SelectValue placeholder={t('shellPlaceholder')} />

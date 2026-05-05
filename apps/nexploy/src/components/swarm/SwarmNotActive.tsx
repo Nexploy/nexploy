@@ -1,49 +1,63 @@
 'use client';
 
 import { useState } from 'react';
-import { Loader2, Network } from 'lucide-react';
-import { InitSwarmDialog } from './InitSwarmDialog';
-import { JoinSwarmDialog } from './JoinSwarmDialog';
+import { Play, UserPlus } from 'lucide-react';
+import { Button } from '@workspace/ui/components/button';
+import { InitSwarmForm } from './InitSwarmDialog';
+import { JoinSwarmForm } from './JoinSwarmDialog';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
 
 export function SwarmNotActive() {
     const [isPending, setIsPending] = useState(false);
+    const { openDialog, closeDialog } = useConfirmationDialogStore();
     const t = useTranslations('swarm');
 
     const handleSuccess = () => {
+        closeDialog();
         setIsPending(true);
+    };
+
+    const handleInitSwarm = () => {
+        openDialog({
+            title: t('initializeSwarmTitle'),
+            description: t('initializeSwarmDescription'),
+            content: <InitSwarmForm />,
+            onSuccess: handleSuccess,
+        });
+    };
+
+    const handleJoinSwarm = () => {
+        openDialog({
+            title: t('joinSwarmTitle'),
+            description: t('joinSwarmDescription'),
+            content: <JoinSwarmForm />,
+            onSuccess: handleSuccess,
+        });
     };
 
     if (isPending) {
         return (
-            <div className="flex flex-1 items-center justify-center p-8">
-                <div className="text-center">
-                    <div className="bg-primary/10 mx-auto mb-6 flex size-20 items-center justify-center rounded-full">
-                        <Loader2 className="text-primary size-10 animate-spin" />
-                    </div>
-                    <h2 className="mb-2 text-2xl font-semibold">{t('connectingToSwarm')}</h2>
-                    <p className="text-muted-foreground max-w-md">
-                        {t('pleaseWaitSwarmLoading')}
-                    </p>
-                </div>
+            <div className="flex flex-1 flex-col items-center justify-center p-8 pb-32">
+                <h2 className="text-2xl font-semibold">{t('connectingToSwarm')}</h2>
+                <p className="text-muted-foreground">{t('pleaseWaitSwarmLoading')}</p>
             </div>
         );
     }
 
     return (
-        <div className="flex flex-1 items-center justify-center p-8">
-            <div className="text-center">
-                <div className="bg-muted/50 mx-auto mb-6 flex size-20 items-center justify-center rounded-full">
-                    <Network className="text-muted-foreground size-10" />
-                </div>
-                <h2 className="mb-2 text-2xl font-semibold">{t('notInSwarmModeTitle')}</h2>
-                <p className="text-muted-foreground mb-8 max-w-md">
-                    {t('notInSwarmModeDescription')}
-                </p>
-                <div className="flex justify-center gap-4">
-                    <InitSwarmDialog onInitSuccess={handleSuccess} />
-                    <JoinSwarmDialog onJoinSuccess={handleSuccess} />
-                </div>
+        <div className="flex flex-1 flex-col items-center justify-center p-8 pb-32 text-center">
+            <h2 className="mb-2 text-2xl font-semibold">{t('notInSwarmModeTitle')}</h2>
+            <p className="text-muted-foreground mb-8 max-w-md">{t('notInSwarmModeDescription')}</p>
+            <div className="flex justify-center gap-4">
+                <Button onClick={handleInitSwarm}>
+                    <Play />
+                    {t('initializeSwarm')}
+                </Button>
+                <Button variant="outline" onClick={handleJoinSwarm}>
+                    <UserPlus className="mr-2 size-4" />
+                    {t('joinSwarm')}
+                </Button>
             </div>
         </div>
     );

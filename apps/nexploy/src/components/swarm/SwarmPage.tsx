@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Layers, LogOut, Network, RefreshCw, Server } from 'lucide-react';
+import { Layers, Network, RefreshCw, Server } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
@@ -44,14 +44,13 @@ export function SwarmPage() {
                             <Network className="text-primary size-7" />
                         </div>
                         <div className="flex flex-col">
-                            <div className={'flex items-center gap-2'}>
+                            <div className={'flex gap-2'}>
                                 <h1 className="text-3xl leading-none font-semibold tracking-tight">
                                     {t('title')}
                                 </h1>
                                 <Button
                                     variant="outline"
                                     size="icon"
-                                    className={'size-7'}
                                     onClick={handleRefresh}
                                     disabled={isRefreshing}
                                 >
@@ -66,17 +65,9 @@ export function SwarmPage() {
                         </div>
                     </div>
                     {isSwarmActive && (
-                        <div className="flex items-center gap-2">
+                        <div className="flex gap-2">
                             <CreateServiceDialog />
-                            <LeaveSwarmDialog
-                                isManager={swarmInfo?.isManager}
-                                trigger={
-                                    <Button variant="outline">
-                                        <LogOut />
-                                        {t('leaveSwarm')}
-                                    </Button>
-                                }
-                            />
+                            <LeaveSwarmDialog />
                         </div>
                     )}
                 </div>

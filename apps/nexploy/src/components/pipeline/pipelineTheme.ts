@@ -11,7 +11,6 @@ import {
     FileCode2,
     FileKey,
     FileSearch,
-    FlaskConical,
     FolderInput,
     FolderOpen,
     FolderOutput,
@@ -159,9 +158,7 @@ const NODE_CATEGORY: Record<string, string> = {
     delay: 'flow',
     condition: 'flow',
     // Script Execution
-    'run-script': 'script',
     'run-command-in-container': 'script',
-    'run-tests': 'script',
     // HTTP / Webhooks
     'http-request': 'integration',
     'update-commit-status': 'integration',
@@ -177,9 +174,9 @@ const NODE_CATEGORY: Record<string, string> = {
     'upload-artifact': 'files',
     'download-file': 'files',
     // Database
-    'run-migration': 'database',
     'backup-volume-s3': 'database',
     // Docker Swarm
+    'create-service': 'deploy',
     'update-service': 'deploy',
     'scale-service': 'deploy',
     // Monitoring
@@ -238,9 +235,7 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     delay: Timer,
     condition: GitBranch,
     // Script Execution
-    'run-script': Terminal,
     'run-command-in-container': SquareTerminal,
-    'run-tests': FlaskConical,
     // HTTP / Webhooks
     'http-request': Webhook,
     'update-commit-status': GitCommit,
@@ -256,9 +251,9 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'upload-artifact': Upload,
     'download-file': Download,
     // Database
-    'run-migration': Database,
     'backup-volume-s3': CloudBackup,
     // Docker Swarm
+    'create-service': Layers,
     'update-service': RefreshCw,
     'scale-service': ArrowUpDown,
     // Monitoring

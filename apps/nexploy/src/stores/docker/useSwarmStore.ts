@@ -177,12 +177,16 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                     }
                     if (data.changes.state) {
                         if (data.changes.state.to === 'down') {
-                            toast.error(clientT('toasts.nodeDown', { hostname: data.node.hostname }));
+                            toast.error(
+                                clientT('toasts.nodeDown', { hostname: data.node.hostname }),
+                            );
                         } else if (
                             data.changes.state.to === 'ready' &&
                             data.changes.state.from === 'down'
                         ) {
-                            toast.success(clientT('toasts.nodeBackOnline', { hostname: data.node.hostname }));
+                            toast.success(
+                                clientT('toasts.nodeBackOnline', { hostname: data.node.hostname }),
+                            );
                         }
                     }
 
@@ -194,7 +198,9 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 sseMultiplexer.subscribe('swarm', 'node-removed', (e) => {
                     const data = JSON.parse(e.data) as SwarmNodeRemovedEvent;
                     get().removeNode(data.nodeId);
-                    toast.info(clientT('toasts.nodeLeft', { hostname: data.previousNode.hostname }));
+                    toast.info(
+                        clientT('toasts.nodeLeft', { hostname: data.previousNode.hostname }),
+                    );
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -220,7 +226,9 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 sseMultiplexer.subscribe('swarm', 'service-removed', (e) => {
                     const data = JSON.parse(e.data) as SwarmServiceRemovedEvent;
                     get().removeService(data.serviceId);
-                    toast.info(clientT('toasts.serviceRemoved', { name: data.previousService.name }));
+                    toast.info(
+                        clientT('toasts.serviceRemoved', { name: data.previousService.name }),
+                    );
                     set({ lastUpdate: data.timestamp });
                 }),
             );

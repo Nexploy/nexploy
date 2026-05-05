@@ -1,20 +1,18 @@
 import type {
     SwarmInfo,
     SwarmNode,
+    SwarmNodeAvailability,
+    SwarmNodeRole,
+    SwarmNodeState,
     SwarmService,
     SwarmTask,
-    SwarmNodeRole,
-    SwarmNodeAvailability,
-    SwarmNodeState,
     SwarmTaskState,
 } from './swarm.types';
 
-// ===== BASE EVENT =====
 interface BaseSwarmEvent {
     timestamp: number;
 }
 
-// ===== INITIAL STATE EVENTS =====
 export interface SwarmInitialStateEvent extends BaseSwarmEvent {
     type: 'initial';
     isSwarmActive: true;
@@ -29,7 +27,6 @@ export interface SwarmNotActiveEvent extends BaseSwarmEvent {
     isSwarmActive: false;
 }
 
-// ===== NODE EVENTS =====
 export interface SwarmNodeAddedEvent extends BaseSwarmEvent {
     type: 'node-added';
     node: SwarmNode;
@@ -56,7 +53,6 @@ export interface SwarmNodeChanges {
     managerStatus?: boolean;
 }
 
-// ===== SERVICE EVENTS =====
 export interface SwarmServiceAddedEvent extends BaseSwarmEvent {
     type: 'service-added';
     service: SwarmService;
@@ -82,7 +78,6 @@ export interface SwarmServiceChanges {
     updateStatus?: boolean;
 }
 
-// ===== TASK EVENTS =====
 export interface SwarmTaskAddedEvent extends BaseSwarmEvent {
     type: 'task-added';
     task: SwarmTask;
@@ -109,18 +104,15 @@ export interface SwarmTaskChanges {
     error?: string;
 }
 
-// ===== SWARM INFO EVENT =====
 export interface SwarmInfoUpdatedEvent extends BaseSwarmEvent {
     type: 'swarm-updated';
     swarmInfo: SwarmInfo;
 }
 
-// ===== HEARTBEAT =====
 export interface SwarmHeartbeatEvent extends BaseSwarmEvent {
     type: 'heartbeat';
 }
 
-// ===== UNION TYPE =====
 export type SwarmEvent =
     | SwarmInitialStateEvent
     | SwarmNotActiveEvent

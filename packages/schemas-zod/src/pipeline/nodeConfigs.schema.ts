@@ -158,12 +158,6 @@ export const conditionConfigSchema = z.object({
 
 // ─── Script Execution ────────────────────────────────────────────────────────
 
-export const runScriptConfigSchema = z.object({
-    script: z.string().min(1, 'Script is required').default(''),
-    shell: z.enum(['bash', 'sh']).default('bash'),
-    continueOnError: z.boolean().default(false),
-});
-
 export const runCommandInContainerConfigSchema = z.object({
     containerId: refable(z.string().min(1, 'Container is required')).default(''),
     command: refable(z.string().min(1, 'Command is required')).default(''),
@@ -171,14 +165,9 @@ export const runCommandInContainerConfigSchema = z.object({
         z.string().refine((v) => v.startsWith('/'), {
             message: 'Container working directory must be an absolute path',
         }),
-    ).optional(),
+    ).default('/app'),
+    user: refable(z.string()).default(''),
     continueOnError: z.boolean().default(false),
-});
-
-export const runTestsConfigSchema = z.object({
-    command: z.string().min(1, 'Command is required').default(''),
-    image: z.string().min(1, 'Image is required').default('node:20-alpine'),
-    workdir: z.string().optional(),
 });
 
 // ─── HTTP / Webhooks ─────────────────────────────────────────────────────────
@@ -216,7 +205,6 @@ export const tagImageConfigSchema = z.object({
 
 export const scanImageConfigSchema = z.object({
     image: z.string().min(1, 'Image is required').default(''),
-    tag: z.string().default('latest'),
     trivyVersion: z.string().default('canary'),
     severity: z.enum(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']).default('HIGH'),
     exitOnVulnerabilities: z.boolean().default(true),
@@ -269,13 +257,6 @@ export const downloadFileConfigSchema = z.object({
 
 // ─── Database ────────────────────────────────────────────────────────────────
 
-export const runMigrationConfigSchema = z.object({
-    image: z.string().min(1, 'Image is required').default(''),
-    command: z.string().min(1, 'Command is required').default(''),
-    databaseUrl: z.string().min(1, 'Database URL is required').default(''),
-    workdir: z.string().optional(),
-});
-
 export const backupVolumeS3ConfigSchema = z.object({
     volumeName: refable(z.string().min(1, 'Volume name is required')).default(''),
     accountId: z.string().min(1, 'AWS account ID is required').default(''),
@@ -292,8 +273,32 @@ export const updateServiceConfigSchema = z.object({
 });
 
 export const scaleServiceConfigSchema = z.object({
-    serviceName: z.string().min(1, 'Service name is required').default(''),
+    serviceName: refable(z.string().min(1, 'Service name is required')).default(''),
     replicas: z.number().min(0).default(1),
+});
+
+const createServicePortSchema = z.object({
+    publishedPort: z.coerce.number().min(1).max(65535),
+    targetPort: z.coerce.number().min(1).max(65535),
+    protocol: z.enum(['tcp', 'udp']).default('tcp'),
+});
+
+const createServiceEnvVarSchema = z.object({
+    key: z.string(),
+    value: z.string(),
+});
+
+export const createServiceConfigSchema = z.object({
+    serviceName: refable(z.string().min(1, 'Service name is required')).default(''),
+    imageName: refable(z.string().min(1, 'Image name is required')).default(''),
+    mode: z.enum(['replicated', 'global']).default('replicated'),
+    replicas: z.coerce.number().int().min(1).default(1),
+    portsSource: refable(z.array(createServicePortSchema)).optional(),
+    ports: z.array(createServicePortSchema).default([]),
+    envVarsSource: refable(z.array(createServiceEnvVarSchema)).optional(),
+    envVars: z.array(createServiceEnvVarSchema).default([]),
+    networks: z.array(z.object({ value: z.string() })).default([]),
+    constraints: z.array(z.object({ value: z.string() })).default([]),
 });
 
 // ─── Monitoring ───────────────────────────────────────────────────────────────

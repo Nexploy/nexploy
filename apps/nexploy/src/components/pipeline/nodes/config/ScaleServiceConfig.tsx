@@ -10,6 +10,7 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware.tsx';
 
 export function ScaleServiceConfig() {
     const t = useTranslations('repository.pipeline.config');
@@ -24,11 +25,9 @@ export function ScaleServiceConfig() {
                     <FormItem>
                         <FormLabel>{t('serviceName')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="my-stack_web"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input {...field} placeholder="my-stack_web" />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -46,7 +45,6 @@ export function ScaleServiceConfig() {
                                 type="number"
                                 min={0}
                                 onChange={(e) => field.onChange(Number(e.target.value))}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>
                         <FormMessage className="text-xs" />

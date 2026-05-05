@@ -22,7 +22,7 @@ import {
 import { Input } from '@workspace/ui/components/input';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { useEnvironmentImages } from '@/hooks/sse/useEnvironmentImages';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 export function ScanImageConfig() {
     const t = useTranslations('repository.pipeline.config');
@@ -30,46 +30,18 @@ export function ScanImageConfig() {
 
     const { images, isLoading } = useEnvironmentImages();
 
-    const selectedImage = form.watch('image');
-
     const imageOptions = useMemo(() => {
         const names = new Set<string>();
         for (const img of images) {
             for (const repoTag of img.repoTags ?? []) {
                 if (repoTag === '<none>:<none>') continue;
-                const name = repoTag.split(':')[0];
-                if (name) names.add(name);
+                names.add(repoTag);
             }
         }
         return Array.from(names)
             .sort()
             .map((name) => ({ value: name, label: name }));
     }, [images]);
-
-    const availableTags = useMemo(() => {
-        if (!selectedImage) return [];
-        const tags = new Set<string>();
-        for (const img of images) {
-            for (const repoTag of img.repoTags ?? []) {
-                if (repoTag.startsWith(`${selectedImage}:`)) {
-                    const tag = repoTag.slice(selectedImage.length + 1);
-                    if (tag) tags.add(tag);
-                }
-            }
-        }
-        return Array.from(tags).sort();
-    }, [images, selectedImage]);
-
-    useEffect(() => {
-        if (availableTags.length === 0) {
-            form.setValue('tag', 'latest', { shouldDirty: true });
-            return;
-        }
-        const currentTag = form.getValues('tag');
-        if (!availableTags.includes(currentTag)) {
-            form.setValue('tag', availableTags[0], { shouldDirty: true });
-        }
-    }, [availableTags]);
 
     return (
         <div className="space-y-4">
@@ -107,38 +79,6 @@ export function ScanImageConfig() {
                     )}
                 />
             </div>
-
-            <FormField
-                control={form.control}
-                name="tag"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('scanTag')}</FormLabel>
-                        <Select value={field.value} onValueChange={field.onChange}>
-                            <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="latest" />
-                                </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>{t('scanTag')}</SelectLabel>
-                                    {availableTags.length === 0 ? (
-                                        <SelectItem value="latest">latest</SelectItem>
-                                    ) : (
-                                        availableTags.map((tag) => (
-                                            <SelectItem key={tag} value={tag}>
-                                                {tag}
-                                            </SelectItem>
-                                        ))
-                                    )}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-            />
 
             <FormField
                 control={form.control}

@@ -29,7 +29,7 @@
     "detectingIp": "Détection de l'IP publique...",
     "initializeSwarmConfirmDescription": "Le swarm sera initialisé avec l'adresse d'annonce {ip}. Les autres nœuds utiliseront cette adresse pour rejoindre le cluster.",
     "failedToDetectIp": "Impossible de détecter l'IP publique. Vérifiez votre connectivité.",
-    "advertiseAddressAutoDetect": "Laissez vide pour que Docker détecte automatiquement. Requis si ce nœud est derrière un NAT ou une IP cloud.",
+    "advertiseAddressAutoDetect": "Laissez vide pour que Docker détecte automatiquement.",
     "joinTokenRequired": "Le jeton de connexion est requis",
     "managerAddressRequired": "Au moins une adresse de manager est requise",
     "notInSwarmMode": "Mode Swarm non actif",
@@ -83,6 +83,7 @@
     "notInSwarmModeTitle": "Mode Swarm non actif",
     "notInSwarmModeDescription": "Cet hôte Docker ne fait pas partie d'un cluster swarm. Initialisez un nouveau swarm pour devenir le premier manager, ou rejoignez un swarm existant.",
     "optional": "(optionnel)",
+    "service": "Service",
     "services": "Services",
     "image": "Image",
     "mode": "Mode",
@@ -118,5 +119,8 @@
     "addPort": "Ajouter un port",
     "publishedPort": "Publié",
     "targetPort": "Conteneur",
-    "creating": "Création..."
+    "creating": "Création...",
+    "nodesPerPage": "Nœuds par page",
+    "imagePlaceholder": "ex. image:version",
+    "imageName": "Nom de l'image"
 }

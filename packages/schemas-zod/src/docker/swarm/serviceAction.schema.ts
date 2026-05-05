@@ -11,6 +11,7 @@ export const scaleServiceSchema = z.object({
 export const createServiceSchema = z.object({
     name: z.string().min(1),
     image: z.string().min(1),
+    mode: z.enum(['replicated', 'global']).optional().default('replicated'),
     replicas: z.number().int().min(1).optional().default(1),
     ports: z
         .array(
