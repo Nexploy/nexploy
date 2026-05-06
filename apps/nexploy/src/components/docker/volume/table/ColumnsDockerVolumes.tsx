@@ -21,6 +21,7 @@ type TranslationFunction = (key: string) => string;
 export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume>[] => [
     {
         id: 'select',
+        size: 28,
         header: ({ table }) => (
             <Checkbox
                 checked={
@@ -64,7 +65,7 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
                     className="flex items-start gap-2 hover:opacity-80"
                 >
                     <Status
-                        className={'max-w-60 truncate border-0 text-sm'}
+                        className={'max-w-full border-0 text-sm'}
                         status={volumeUsed ? 'online' : 'offline'}
                         variant="outline"
                     >

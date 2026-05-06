@@ -146,7 +146,7 @@ app.post(
         const {
             envVars,
             volumes,
-            network,
+            networks,
             hostname,
             name,
             ports,
@@ -174,8 +174,15 @@ app.post(
             createOptions.HostConfig = {};
         }
 
-        if (network) {
-            createOptions.HostConfig.NetworkMode = network;
+        if (networks.length > 0) {
+            createOptions.HostConfig.NetworkMode = networks[0];
+            if (networks.length > 1) {
+                createOptions.NetworkingConfig = {
+                    EndpointsConfig: Object.fromEntries(
+                        networks.map((net) => [net, {}]),
+                    ),
+                };
+            }
         }
         if (ports.length > 0) {
             createOptions.ExposedPorts = {};

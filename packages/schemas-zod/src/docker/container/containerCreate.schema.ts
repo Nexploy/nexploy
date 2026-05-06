@@ -21,7 +21,7 @@ export const containerCreateFormSchema = z.object({
     name: z.string().optional(),
     image: z.string().min(1, 'Image is required'),
     restart: z.enum(['no', 'always', 'on-failure', 'unless-stopped']).default('unless-stopped'),
-    network: z.string().optional(),
+    networks: z.array(z.string()).default([]),
     hostname: z.string().optional(),
     autoRemove: z.boolean().default(false),
     privileged: z.boolean().default(false),

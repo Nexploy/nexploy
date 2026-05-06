@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@workspace/ui/components/card';
 import {
     FormControl,
     FormDescription,
@@ -12,7 +18,7 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
-import { InputAutoComplete, InputAutoCompleteOption, } from '@workspace/ui/components/search-command';
+import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import {
     Select,
     SelectContent,
@@ -22,16 +28,29 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
+import { useImageStore } from '@/stores/docker/useImageStore.ts';
+import { useMemo } from 'react';
 
-interface ServiceBasicConfigProps {
-    listImages: InputAutoCompleteOption[];
-}
-
-export function ServiceBasicConfig({ listImages }: ServiceBasicConfigProps) {
+export function ServiceBasicConfig() {
     const t = useTranslations('swarm.createService');
     const tCommon = useTranslations('common');
     const form = useFormContext();
     const mode = useWatch({ control: form.control, name: 'mode' });
+
+    const images = useImageStore((state) => state.images);
+
+    const imageOptions = useMemo(() => {
+        const names = new Set<string>();
+        for (const img of images) {
+            for (const repoTag of img.repoTags ?? []) {
+                if (repoTag === '<none>:<none>') continue;
+                names.add(repoTag);
+            }
+        }
+        return Array.from(names)
+            .sort()
+            .map((name) => ({ value: name, label: name }));
+    }, [images]);
 
     return (
         <Card>
@@ -64,7 +83,7 @@ export function ServiceBasicConfig({ listImages }: ServiceBasicConfigProps) {
                             <FormControl>
                                 <InputAutoComplete
                                     {...field}
-                                    options={listImages}
+                                    options={imageOptions}
                                     heading={t('availableImages')}
                                     autoComplete="off"
                                     placeholder="nginx:latest"

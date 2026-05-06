@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@workspace/ui/components/card';
 import {
     FormControl,
     FormDescription,
@@ -23,16 +29,29 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import { InputAutoComplete, InputAutoCompleteOption, } from '@workspace/ui/components/search-command';
+import { InputAutoComplete } from '@workspace/ui/components/search-command';
+import { useImageStore } from '@/stores/docker/useImageStore.ts';
+import { useMemo } from 'react';
 
-interface ContainerBasicConfigProps {
-    listImages: InputAutoCompleteOption[];
-}
-
-export function ContainerBasicConfig({ listImages }: ContainerBasicConfigProps) {
+export function ContainerBasicConfig() {
     const t = useTranslations('docker.createContainer');
     const tCommon = useTranslations('common');
     const form = useFormContext();
+
+    const images = useImageStore((state) => state.images);
+
+    const imageOptions = useMemo(() => {
+        const names = new Set<string>();
+        for (const img of images) {
+            for (const repoTag of img.repoTags ?? []) {
+                if (repoTag === '<none>:<none>') continue;
+                names.add(repoTag);
+            }
+        }
+        return Array.from(names)
+            .sort()
+            .map((name) => ({ value: name, label: name }));
+    }, [images]);
 
     return (
         <Card>
@@ -65,7 +84,7 @@ export function ContainerBasicConfig({ listImages }: ContainerBasicConfigProps) 
                             <FormControl>
                                 <InputAutoComplete
                                     {...field}
-                                    options={listImages}
+                                    options={imageOptions}
                                     heading={t('availableImages')}
                                     autoComplete="off"
                                     placeholder="postgres:latest"
@@ -77,45 +96,24 @@ export function ContainerBasicConfig({ listImages }: ContainerBasicConfigProps) 
                     )}
                 />
 
-                <div className="grid gap-4 md:grid-cols-2">
-                    <FormField
-                        control={form.control}
-                        name="hostname"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>
-                                    {t('hostname')}
-                                    <span className="text-muted-foreground text-xs">
-                                        {tCommon('optional')}
-                                    </span>
-                                </FormLabel>
-                                <FormControl>
-                                    <Input placeholder={t('hostnamePlaceholder')} {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
-                        name="network"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>
-                                    {t('network')}
-                                    <span className="text-muted-foreground text-xs">
-                                        {tCommon('optional')}
-                                    </span>
-                                </FormLabel>
-                                <FormControl>
-                                    <Input placeholder={t('networkPlaceholder')} {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
+                <FormField
+                    control={form.control}
+                    name="hostname"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>
+                                {t('hostname')}
+                                <span className="text-muted-foreground text-xs">
+                                    {tCommon('optional')}
+                                </span>
+                            </FormLabel>
+                            <FormControl>
+                                <Input placeholder={t('hostnamePlaceholder')} {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
                 <FormField
                     control={form.control}

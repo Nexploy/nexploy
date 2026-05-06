@@ -62,9 +62,9 @@ const globalFilterFn: FilterFn<ImageRow> = (row, _, value) => {
 export function TableDockerImages() {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>('');
+    const [expanded, setExpanded] = useState<ExpandedState>({});
     const [rowSelection, setRowSelection] = useState({});
     const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
-    const [expanded, setExpanded] = useState<ExpandedState>({});
 
     const router = useRouter();
     const t = useTranslations('docker.tables');
@@ -211,12 +211,20 @@ export function TableDockerImages() {
                 </div>
             </div>
             <div className="bg-card overflow-hidden rounded-md border shadow-sm">
-                <Table>
+                <Table className={'table-fixed'}>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id}>
+                                    <TableHead
+                                        key={header.id}
+                                        className="overflow-hidden"
+                                        style={
+                                            header.column.getSize() !== 150
+                                                ? { width: header.column.getSize() }
+                                                : undefined
+                                        }
+                                    >
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(
@@ -266,7 +274,7 @@ export function TableDockerImages() {
                                     data-state={row.getIsSelected() && 'selected'}
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell key={cell.id} className="overflow-hidden">
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext(),

@@ -9,8 +9,7 @@ import { Button } from '@workspace/ui/components/button';
 import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { createServiceFormSchema } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
-import { onCreateServiceAction } from '@/actions/docker/swarm/serviceAction.action';
-import { InputAutoCompleteOption } from '@workspace/ui/components/search-command';
+import { onCreateServiceAction } from '@/actions/docker/swarm/createService.action';
 import { useTranslations } from 'next-intl';
 import { ServiceBasicConfig } from './ServiceBasicConfig';
 import { ServicePorts } from './ServicePorts';
@@ -22,11 +21,7 @@ import { ServiceResources } from './ServiceResources';
 import { ServicePlacement } from './ServicePlacement';
 import { ServiceUpdatePolicy } from './ServiceUpdatePolicy';
 
-interface CreateServiceProps {
-    listImages: InputAutoCompleteOption[];
-}
-
-export default function CreateService({ listImages }: CreateServiceProps) {
+export default function CreateService() {
     const router = useRouter();
     const t = useTranslations('swarm.createService');
 
@@ -115,7 +110,7 @@ export default function CreateService({ listImages }: CreateServiceProps) {
 
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
                         <div className="flex flex-col gap-4 px-5 pb-5">
-                            <ServiceBasicConfig listImages={listImages} />
+                            <ServiceBasicConfig />
                             <ServicePorts />
                             <ServiceEnvVars />
                             <ServiceNetworks />

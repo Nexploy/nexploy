@@ -64,6 +64,7 @@
     "nameId": "Name / ID",
     "searchByNameAction": "Search by name, action...",
     "all": "All",
+    "swarmServices": "Swarm Services",
     "container": "Container",
     "image": "Image",
     "network": "Network",
@@ -490,7 +491,15 @@
         "selectVolumesToDelete": "Please select volumes to delete",
         "disconnectContainersFirst": "Disconnect all containers using this volume first",
         "volumesPerPage": "Volumes per page",
-        "noVolumesFound": "No volumes found."
+        "noVolumesFound": "No volumes found.",
+        "containerStatus": "Status",
+        "containerImage": "Image",
+        "containerPorts": "Ports",
+        "containersPerPage": "Containers per page",
+        "noContainersFound": "No containers found.",
+        "noContainersMatchSearch": "No containers match your search.",
+        "removeContainers": "Remove Containers",
+        "confirmRemoveContainers": "Are you sure you want to remove {count} container(s)?"
     },
     "advancedConfig": {
         "title": "Advanced Configuration",
@@ -596,7 +605,13 @@
         "containerPath": "/container/path",
         "readOnly": "RO",
         "noVolumesConfigured": "No volumes configured",
-        "dragToImportVolumes": "Drag a reference to import volumes from another node"
+        "dragToImportVolumes": "Drag a reference to import volumes from another node",
+        "networks": "Networks",
+        "networksDescription": "Docker networks to connect this container to",
+        "addNetwork": "Add Network",
+        "noNetworksConfigured": "No networks configured",
+        "networkNamePlaceholder": "my-network",
+        "availableNetworks": "Available networks"
     },
     "containerCard": {
         "image": "Image:",
@@ -902,5 +917,7 @@
         "volumeSkipNotFound": "{count, plural, one {Volume {name} was not found.} other {# volumes were not found.}}",
         "imageSkipInUse": "{count, plural, one {Image {name} is in use by containers. Enable \"Force delete\" to remove it anyway.} other {# images are in use by containers. Enable \"Force delete\" to remove them anyway.}}",
         "imageSkipNotFound": "{count, plural, one {Image {name} was not found.} other {# images were not found.}}"
-    }
+    },
+    "viewGrid": "Grid view",
+    "viewTable": "Table view"
 }

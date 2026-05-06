@@ -1,12 +1,10 @@
 import { Hono } from 'hono';
-import type Dockerode from 'dockerode';
 import { docker } from '@/utils/dockerClient';
 import { route } from '@/helpers/route';
-import { swarmStateManager } from '@/managers/swarmStateManager';
 import {
-    serviceIdParamSchema,
-    scaleServiceSchema,
     createServiceSchema,
+    scaleServiceSchema,
+    serviceIdParamSchema,
 } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
 
 const app = new Hono();
@@ -60,13 +58,19 @@ app.post(
             if (resourceLimits?.nanoCPUs || resourceLimits?.memoryBytes) {
                 resources['Limits'] = {
                     ...(resourceLimits.nanoCPUs ? { NanoCPUs: resourceLimits.nanoCPUs } : {}),
-                    ...(resourceLimits.memoryBytes ? { MemoryBytes: resourceLimits.memoryBytes } : {}),
+                    ...(resourceLimits.memoryBytes
+                        ? { MemoryBytes: resourceLimits.memoryBytes }
+                        : {}),
                 };
             }
             if (resourceReservations?.nanoCPUs || resourceReservations?.memoryBytes) {
                 resources['Reservations'] = {
-                    ...(resourceReservations.nanoCPUs ? { NanoCPUs: resourceReservations.nanoCPUs } : {}),
-                    ...(resourceReservations.memoryBytes ? { MemoryBytes: resourceReservations.memoryBytes } : {}),
+                    ...(resourceReservations.nanoCPUs
+                        ? { NanoCPUs: resourceReservations.nanoCPUs }
+                        : {}),
+                    ...(resourceReservations.memoryBytes
+                        ? { MemoryBytes: resourceReservations.memoryBytes }
+                        : {}),
                 };
             }
             taskTemplate['Resources'] = resources;
@@ -75,7 +79,9 @@ app.post(
         if (restartPolicy?.condition) {
             taskTemplate['RestartPolicy'] = {
                 Condition: restartPolicy.condition,
-                ...(restartPolicy.maxAttempts !== undefined ? { MaxAttempts: restartPolicy.maxAttempts } : {}),
+                ...(restartPolicy.maxAttempts !== undefined
+                    ? { MaxAttempts: restartPolicy.maxAttempts }
+                    : {}),
             };
         }
 
@@ -86,10 +92,7 @@ app.post(
         const serviceSpec: Record<string, unknown> = {
             Name: name,
             TaskTemplate: taskTemplate,
-            Mode:
-                mode === 'global'
-                    ? { Global: {} }
-                    : { Replicated: { Replicas: replicas ?? 1 } },
+            Mode: mode === 'global' ? { Global: {} } : { Replicated: { Replicas: replicas ?? 1 } },
             ...(labels ? { Labels: labels } : {}),
         };
 
@@ -110,16 +113,18 @@ app.post(
 
         if (updateConfig) {
             serviceSpec['UpdateConfig'] = {
-                ...(updateConfig.parallelism !== undefined ? { Parallelism: updateConfig.parallelism } : {}),
+                ...(updateConfig.parallelism !== undefined
+                    ? { Parallelism: updateConfig.parallelism }
+                    : {}),
                 ...(updateConfig.delay !== undefined ? { Delay: updateConfig.delay } : {}),
-                ...(updateConfig.failureAction ? { FailureAction: updateConfig.failureAction } : {}),
+                ...(updateConfig.failureAction
+                    ? { FailureAction: updateConfig.failureAction }
+                    : {}),
                 ...(updateConfig.order ? { Order: updateConfig.order } : {}),
             };
         }
 
-        const result = await docker.createService(serviceSpec as Dockerode.CreateServiceOptions);
-
-        await swarmStateManager.hardRefresh();
+        const result = await docker.createService(serviceSpec);
 
         return { success: true, id: result.ID };
     }),
@@ -145,8 +150,6 @@ app.post(
             },
         });
 
-        await swarmStateManager.hardRefresh();
-
         return { success: true };
     }),
 );
@@ -158,8 +161,6 @@ app.delete(
 
         const service = docker.getService(id);
         await service.remove();
-
-        await swarmStateManager.hardRefresh();
 
         return { success: true };
     }),

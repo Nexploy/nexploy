@@ -3,43 +3,39 @@
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { Plus, Trash2 } from 'lucide-react';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
-import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
+import { InputAutoComplete } from '@workspace/ui/components/search-command';
+import { useNetworkStore } from '@/stores/docker/useNetworkStore';
 
-export function ServicePlacement() {
-    const t = useTranslations('swarm.createService');
+export function ContainerNetworks() {
+    const t = useTranslations('docker.createContainer');
     const form = useFormContext();
-    const { fields, append, remove } = useFieldArray({
-        control: form.control,
-        name: 'constraints',
-    });
+    const { fields, append, remove } = useFieldArray({ control: form.control, name: 'networks' });
+
+    const networks = useNetworkStore((state) => state.networks);
+
+    const networkOptions = networks.map((net) => ({ value: net.name, label: net.name }));
 
     return (
         <Card>
             <CardHeader>
                 <div className="flex justify-between">
-                    <div className={'flex flex-col gap-2'}>
-                        <CardTitle>{t('placement')}</CardTitle>
-                        <CardDescription>{t('placementDescription')}</CardDescription>
+                    <div className="flex flex-col gap-2">
+                        <CardTitle>{t('networks')}</CardTitle>
+                        <CardDescription>{t('networksDescription')}</CardDescription>
                     </div>
                     <Button type="button" size="sm" variant="outline" onClick={() => append('')}>
                         <Plus />
-                        {t('addConstraint')}
+                        {t('addNetwork')}
                     </Button>
                 </div>
             </CardHeader>
             <CardContent>
                 {fields.length === 0 ? (
                     <p className="text-muted-foreground py-8 text-center text-sm">
-                        {t('noConstraintsConfigured')}
+                        {t('noNetworksConfigured')}
                     </p>
                 ) : (
                     <div className="space-y-3">
@@ -47,14 +43,17 @@ export function ServicePlacement() {
                             <div key={field.id} className="flex items-center gap-3">
                                 <FormField
                                     control={form.control}
-                                    name={`constraints.${index}`}
+                                    name={`networks.${index}`}
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    placeholder={t('constraintPlaceholder')}
-                                                    className="font-mono"
-                                                    {...field}
+                                                <InputAutoComplete
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                    options={networkOptions}
+                                                    heading={t('availableNetworks')}
+                                                    placeholder={t('networkNamePlaceholder')}
+                                                    autoComplete="off"
                                                 />
                                             </FormControl>
                                             <FormMessage />

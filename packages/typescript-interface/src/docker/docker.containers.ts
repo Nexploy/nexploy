@@ -82,6 +82,20 @@ export interface ContainersEvent {
     timestamp: number;
 }
 
+export interface ContainerTableRow {
+    id: string;
+    isGroup: boolean;
+    name: string;
+    stackName?: string;
+    state?: ContainerState;
+    status?: string;
+    image?: string;
+    ports?: ContainersPorts[];
+    subRows?: ContainerTableRow[];
+    runningCount?: number;
+    totalCount?: number;
+}
+
 export interface ContainersStateChanges {
     name?: {
         from: string;

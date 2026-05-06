@@ -33,7 +33,8 @@ import { Label } from '@workspace/ui/components/label';
 import { MoreHorizontal, Scaling, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
-import { onScaleServiceAction, onRemoveServiceAction } from '@/actions/docker/swarm/serviceAction.action';
+import { onScaleServiceAction } from '@/actions/docker/swarm/scaleService.action';
+import { onRemoveServiceAction } from '@/actions/docker/swarm/removeService.action';
 import { useTranslations } from 'next-intl';
 
 interface ServiceActionsProps {

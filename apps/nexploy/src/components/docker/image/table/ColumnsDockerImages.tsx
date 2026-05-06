@@ -6,7 +6,6 @@ import { ArrowUpDown, ChevronRight, MoreVertical } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Badge } from '@workspace/ui/components/badge';
-import CopyButton from '@/components/shared/CopyButton';
 import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';
 import { ImageDropdownActions } from '@/components/docker/image/ImageDropdownActions';
@@ -22,6 +21,7 @@ type TranslationFunction = (key: string) => string;
 export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRow>[] => [
     {
         id: 'select',
+        size: 28,
         header: ({ table }) => {
             const allRows = table.getRowModel().flatRows;
             const selectableRows = allRows.filter((row) => !row.original.isGroup);
@@ -89,7 +89,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="size-6"
+                            className="size-6 shrink-0"
                             onClick={() => row.toggleExpanded()}
                         >
                             <ChevronRight
@@ -100,7 +100,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                             />
                         </Button>
                         <Status
-                            className={'max-w-60 truncate border-0 text-sm'}
+                            className="max-w-full justify-start border-0 text-sm"
                             status={containersUsed ? 'online' : 'offline'}
                             variant="outline"
                         >
@@ -116,7 +116,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                                     )}
                                 </TooltipContent>
                             </Tooltip>
-                            <StatusLabel className="truncate font-medium text-current">
+                            <StatusLabel className="min-w-0 truncate font-medium text-current hover:underline">
                                 {nameJoin}
                             </StatusLabel>
                         </Status>
@@ -131,7 +131,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                     style={{ paddingLeft: depth > 0 ? `${depth * 24 + 8}px` : undefined }}
                 >
                     <Status
-                        className={'max-w-60 truncate border-0 text-sm'}
+                        className="max-w-full justify-start border-0 text-sm"
                         status={containersUsed ? 'online' : 'offline'}
                         variant="outline"
                     >
@@ -148,7 +148,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                             </TooltipContent>
                         </Tooltip>
 
-                        <StatusLabel className="truncate font-medium text-current hover:underline">
+                        <StatusLabel className="min-w-0 truncate font-medium text-current hover:underline">
                             {nameJoin}
                         </StatusLabel>
                     </Status>
@@ -172,28 +172,17 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             if (isGroup) {
                 const tags = row.original.tag || [];
                 return (
-                    <div className="flex flex-wrap gap-1">
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Badge variant="outline" className="text-xs">
-                                    {tags.length} {t('versions')}
-                                </Badge>
-                            </TooltipTrigger>
-                            <TooltipContent className={'flex max-w-xs flex-col gap-1 p-2 text-sm'}>
-                                {tags.map((tag: string) => (
-                                    <Badge key={tag} variant="secondary" className="font-mono">
-                                        {tag}
-                                    </Badge>
-                                ))}
-                            </TooltipContent>
-                        </Tooltip>
-                    </div>
+                    <Badge variant="outline" className="max-w-full justify-start text-xs">
+                        <span className={'truncate'}>
+                            {tags.length} {t('versions')}
+                        </span>
+                    </Badge>
                 );
             }
             const tag = row.original.tag;
             return (
-                <Badge variant="secondary" className="font-mono">
-                    {tag.join(' → ')}
+                <Badge variant="secondary" className="max-w-full justify-start font-mono text-xs">
+                    <span className={'truncate'}>{tag.join(' → ')}</span>
                 </Badge>
             );
         },
@@ -206,17 +195,11 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             if (isGroup) {
                 return <span className="text-muted-foreground text-sm">—</span>;
             }
-            const imageId = row.original.id;
+
             return (
-                <div className="flex max-w-50 items-center gap-2">
-                    <code className="text-muted-foreground truncate text-sm">{imageId}</code>
-                    <CopyButton
-                        textToCopy={row.original.id}
-                        className="size-7 !text-xs"
-                        size={'icon'}
-                        variant={'ghost'}
-                    />
-                </div>
+                <Badge variant={'secondary'} className={'max-w-full justify-start'}>
+                    <span className={'truncate'}>{row.original.id}</span>
+                </Badge>
             );
         },
     },
@@ -235,9 +218,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             const created = row.original.created;
             const date = dayjs(created).format('DD/MM/YYYY');
 
-            return (
-                <div className="text-muted-foreground flex items-center gap-2 text-sm">{date}</div>
-            );
+            return <div className="text-muted-foreground truncate text-sm">{date}</div>;
         },
     },
     {
@@ -253,11 +234,12 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
         ),
         cell: ({ row }) => {
             const size = row.original.size;
-            return <div className="flex items-center gap-2 text-sm">{formatBytes(size)}</div>;
+            return <div className="truncate text-sm">{formatBytes(size)}</div>;
         },
     },
     {
         id: 'actions',
+        size: 50,
         cell: ({ row }) => {
             const isGroup = row.original.isGroup;
             if (isGroup) {
@@ -266,7 +248,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm">
+                        <Button variant="ghost" size="icon">
                             <MoreVertical />
                         </Button>
                     </DropdownMenuTrigger>

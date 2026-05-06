@@ -64,6 +64,7 @@
     "nameId": "Nom / ID",
     "searchByNameAction": "Rechercher par nom, action...",
     "all": "Tous",
+    "swarmServices": "Services Swarm",
     "container": "Conteneur",
     "image": "Image",
     "network": "Réseau",
@@ -490,7 +491,15 @@
         "selectVolumesToDelete": "Veuillez sélectionner des volumes à supprimer",
         "disconnectContainersFirst": "Déconnectez d'abord tous les conteneurs utilisant ce volume",
         "volumesPerPage": "Volumes par page",
-        "noVolumesFound": "Aucun volume trouvé."
+        "noVolumesFound": "Aucun volume trouvé.",
+        "containerStatus": "Statut",
+        "containerImage": "Image",
+        "containerPorts": "Ports",
+        "containersPerPage": "Conteneurs par page",
+        "noContainersFound": "Aucun conteneur trouvé.",
+        "noContainersMatchSearch": "Aucun conteneur ne correspond à votre recherche.",
+        "removeContainers": "Supprimer les conteneurs",
+        "confirmRemoveContainers": "Êtes-vous sûr de vouloir supprimer {count} conteneur(s) ?"
     },
     "advancedConfig": {
         "title": "Configuration avancée",
@@ -596,7 +605,13 @@
         "containerPath": "/chemin/conteneur",
         "readOnly": "RO",
         "noVolumesConfigured": "Aucun volume configuré",
-        "dragToImportVolumes": "Glissez un input pour importer des volumes d'un autre nœud"
+        "dragToImportVolumes": "Glissez un input pour importer des volumes d'un autre nœud",
+        "networks": "Réseaux",
+        "networksDescription": "Réseaux Docker auxquels connecter ce conteneur",
+        "addNetwork": "Ajouter un réseau",
+        "noNetworksConfigured": "Aucun réseau configuré",
+        "networkNamePlaceholder": "mon-réseau",
+        "availableNetworks": "Réseaux disponibles"
     },
     "containerCard": {
         "image": "Image :",
@@ -902,5 +917,7 @@
         "volumeSkipNotFound": "{count, plural, one {Le volume {name} est introuvable.} other {# volumes sont introuvables.}}",
         "imageSkipInUse": "{count, plural, one {L'image {name} est utilisée par des conteneurs. Activez « Forcer la suppression » pour la supprimer quand même.} other {# images sont utilisées par des conteneurs. Activez « Forcer la suppression » pour les supprimer quand même.}}",
         "imageSkipNotFound": "{count, plural, one {L'image {name} est introuvable.} other {# images sont introuvables.}}"
-    }
+    },
+    "viewGrid": "Vue grille",
+    "viewTable": "Vue tableau"
 }

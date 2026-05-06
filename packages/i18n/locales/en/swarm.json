@@ -172,6 +172,7 @@
         "addNetwork": "Add Network",
         "noNetworksConfigured": "No networks configured.",
         "networkPlaceholder": "my-overlay-network",
+        "availableNetworks": "Available overlay networks",
         "labels": "Labels",
         "labelsDescription": "Metadata labels assigned to the service.",
         "addLabel": "Add Label",

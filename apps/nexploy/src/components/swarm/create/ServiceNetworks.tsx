@@ -11,8 +11,9 @@ import {
     CardTitle,
 } from '@workspace/ui/components/card';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
-import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
+import { InputAutoComplete } from '@workspace/ui/components/search-command';
+import { useNetworkStore } from '@/stores/docker/useNetworkStore';
 
 export function ServiceNetworks() {
     const t = useTranslations('swarm.createService');
@@ -22,20 +23,18 @@ export function ServiceNetworks() {
         name: 'networks',
     });
 
+    const networks = useNetworkStore((state) => state.networks);
+    const networkOptions = networks.map((net) => ({ value: net.name, label: net.name }));
+
     return (
         <Card>
             <CardHeader>
-                <div className="flex items-center justify-between">
-                    <div>
+                <div className="flex justify-between">
+                    <div className="flex flex-col gap-2">
                         <CardTitle>{t('networks')}</CardTitle>
                         <CardDescription>{t('networksDescription')}</CardDescription>
                     </div>
-                    <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => append('')}
-                    >
+                    <Button type="button" size="sm" variant="outline" onClick={() => append('')}>
                         <Plus />
                         {t('addNetwork')}
                     </Button>
@@ -56,10 +55,13 @@ export function ServiceNetworks() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
+                                                <InputAutoComplete
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                    options={networkOptions}
+                                                    heading={t('availableNetworks')}
                                                     placeholder={t('networkPlaceholder')}
-                                                    className="font-mono"
-                                                    {...field}
+                                                    autoComplete="off"
                                                 />
                                             </FormControl>
                                             <FormMessage />

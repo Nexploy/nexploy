@@ -1,13 +1,14 @@
 'use client';
 
-import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import {
-    FilterFn,
+    ExpandedState,
     flexRender,
     getCoreRowModel,
+    getExpandedRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
+    RowSelectionState,
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
@@ -19,17 +20,13 @@ import {
     TableHeader,
     TableRow,
 } from '@workspace/ui/components/table';
-import React, { useMemo, useState } from 'react';
-import { getColumnsTableVolumes } from '@/components/docker/volume/table/ColumnsDockerVolumes';
+import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { useVolumeStore } from '@/stores/docker/useVolumeStore';
-import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
-import { Input } from '@workspace/ui/components/input';
+import { Containers } from '@workspace/typescript-interface/docker/docker.containers';
 import { Button } from '@workspace/ui/components/button';
-import { ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
-import { formatBytes } from '@/utils/formatBytes';
-import { Badge } from '@workspace/ui/components/badge';
+import { Input } from '@workspace/ui/components/input';
 import { Skeleton } from '@workspace/ui/components/skeleton';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import {
     Select,
     SelectContent,
@@ -39,114 +36,93 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
-import { onVolumeAction } from '@/actions/docker/volume/volumeAction.action';
+import { cn } from '@workspace/ui/lib/utils';
+import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
+import {
+    buildContainerRows,
+    containerTableGlobalFilterFn,
+    ContainerTableRow,
+} from './containerTableUtils';
+import { getColumnsDockerContainers } from './ColumnsDockerContainers';
+import { ContainerTableActions } from './ContainerTableActions';
 
-const globalFilterFn: FilterFn<Volume> = (row, _, value) => {
-    const search = value.toLowerCase();
-    const { name, driver, mountpoint } = row.original;
+interface TableDockerContainersProps {
+    containers: Containers[];
+    isLoading: boolean;
+}
 
-    const size = formatBytes(row.original.usageData?.Size || 0);
+function getSelectedContainers(
+    rows: ContainerTableRow[],
+    selectedIds: string[],
+): ContainerTableRow[] {
+    return rows
+        .flatMap((r) => (r.isGroup ? (r.subRows ?? []) : [r]))
+        .filter((r) => selectedIds.includes(r.id));
+}
 
-    return (
-        name.toLowerCase().includes(search) ||
-        driver.toLowerCase().includes(search) ||
-        mountpoint.toLowerCase().includes(search) ||
-        size.toLowerCase().includes(search)
-    );
-};
-
-export function TableDockerVolumes() {
+export function TableDockerContainers({ containers, isLoading }: TableDockerContainersProps) {
     const [sorting, setSorting] = useState<SortingState>([]);
-    const [globalFilter, setGlobalFilter] = useState<string>('');
-    const [rowSelection, setRowSelection] = useState({});
+    const [globalFilter, setGlobalFilter] = useState('');
+    const [expanded, setExpanded] = useState<ExpandedState>({});
+    const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
     const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
 
     const t = useTranslations('docker.tables');
     const tCommon = useTranslations('common');
 
-    const volumes = useVolumeStore((state) => state.volumes);
-    const lastUpdate = useVolumeStore((state) => state.lastUpdate);
-    const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
-
-    const columns = useMemo(() => getColumnsTableVolumes(t), [t]);
-
-    const isLoading = !volumes.length && !lastUpdate;
-    const isEmpty = !volumes.length && !!lastUpdate;
+    const rows = useMemo(() => buildContainerRows(containers), [containers]);
+    const columns = useMemo(() => getColumnsDockerContainers(t, tCommon), [t, tCommon]);
 
     const table = useReactTable({
-        data: volumes,
+        data: rows,
         columns,
-        getRowId: (originalRow: Volume) => originalRow.name,
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
         onGlobalFilterChange: setGlobalFilter,
-        globalFilterFn,
+        onExpandedChange: setExpanded,
+        onRowSelectionChange: setRowSelection,
+        globalFilterFn: containerTableGlobalFilterFn,
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        onRowSelectionChange: setRowSelection,
-        initialState: {
-            pagination: {
-                pageSize: pageSize === 'all' ? volumes.length : pageSize,
-            },
-        },
-        state: {
-            sorting,
-            globalFilter,
-            rowSelection,
-        },
+        getExpandedRowModel: getExpandedRowModel(),
+        getRowId: (row) => row.id,
+        getSubRows: (row) => row.subRows,
+        initialState: { pagination: { pageSize: PAGE_SIZE_DEFAULT } },
+        state: { sorting, globalFilter, expanded, rowSelection },
     });
 
-    const numberOfSelectedRows = Object.keys(rowSelection).length;
-
-    const handleDeleteAction = () => {
-        const volumeNames = Object.keys(rowSelection);
-        openAlertDialog({
-            title: t('deleteVolumes'),
-            description: t('confirmDeleteVolumes', { count: volumeNames.length }),
-            cancelLabel: tCommon('cancel'),
-            actionLabel: tCommon('remove'),
-            onAction: async () => {
-                await onVolumeAction({ volumeNames, action: 'delete' });
-                table.resetRowSelection();
-            },
-        });
-    };
+    const selectedIds = Object.keys(rowSelection);
+    const selectedContainers = useMemo(
+        () => getSelectedContainers(rows, selectedIds),
+        [rows, selectedIds],
+    );
 
     const isShowingAll = pageSize === 'all';
+    const isEmpty = !isLoading && rows.length === 0;
+    const noMatch = !isLoading && rows.length > 0 && table.getRowModel().rows.length === 0;
 
     return (
-        <div className={'mx-5 space-y-3'}>
-            <div className={'flex justify-between'}>
+        <div className="mx-5 space-y-3">
+            <div className="flex items-center justify-between gap-3 pt-1">
                 <Input
-                    className={'w-1/5 shadow-xs'}
+                    className="w-1/5 shadow-xs"
                     placeholder={tCommon('searchPlaceholder')}
-                    value={globalFilter ?? ''}
+                    value={globalFilter}
                     onChange={(e) => setGlobalFilter(e.target.value)}
                 />
-                <div className={'flex gap-3'}>
-                    <Button
-                        variant={'destructive'}
-                        onClick={handleDeleteAction}
-                        disabled={!numberOfSelectedRows}
-                        icon={Trash2}
-                    >
-                        {tCommon('remove')}
-                        {!!numberOfSelectedRows && (
-                            <Badge variant={'secondary'} className={'rounded-full'}>
-                                {numberOfSelectedRows}
-                            </Badge>
-                        )}
-                    </Button>
-                </div>
+                <ContainerTableActions
+                    selectedContainers={selectedContainers}
+                    onResetSelection={() => table.resetRowSelection()}
+                />
             </div>
+
             <div className="bg-card overflow-hidden rounded-md border shadow-sm">
                 <Table className={'table-fixed'}>
                     <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
+                        {table.getHeaderGroups().map((hg) => (
+                            <TableRow key={hg.id}>
+                                {hg.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
                                         className="overflow-hidden"
@@ -169,34 +145,43 @@ export function TableDockerVolumes() {
                     </TableHeader>
                     <TableBody>
                         {isLoading &&
-                            Array.from({ length: 5 }).map((_, rowIndex) => (
-                                <TableRow key={rowIndex} className="h-12">
-                                    {table.getAllColumns().map((column) => (
-                                        <TableCell key={column.id}>
+                            Array.from({ length: 5 }).map((_, i) => (
+                                <TableRow key={i} className="h-12">
+                                    {columns.map((_, ci) => (
+                                        <TableCell key={ci}>
                                             <Skeleton className="h-6 w-full" />
                                         </TableCell>
                                     ))}
                                 </TableRow>
                             ))}
 
-                        {!isLoading && isEmpty ? (
+                        {isEmpty && (
                             <TableRow>
-                                <TableCell
-                                    colSpan={table.getAllColumns().length}
-                                    className="py-6 text-center"
-                                >
-                                    {t('noVolumesFound')}
+                                <TableCell colSpan={columns.length} className="py-6 text-center">
+                                    {t('noContainersFound')}
                                 </TableCell>
                             </TableRow>
-                        ) : (
+                        )}
+
+                        {noMatch && (
+                            <TableRow>
+                                <TableCell colSpan={columns.length} className="py-6 text-center">
+                                    {t('noContainersMatchSearch')}
+                                </TableCell>
+                            </TableRow>
+                        )}
+
+                        {!isLoading &&
+                            !isEmpty &&
+                            !noMatch &&
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
-                                    className={'h-12'}
+                                    className={cn('h-12', row.original.isGroup && 'bg-muted/30')}
                                     data-state={row.getIsSelected() && 'selected'}
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell key={cell.id} className="overflow-hidden">
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext(),
@@ -204,20 +189,20 @@ export function TableDockerVolumes() {
                                         </TableCell>
                                     ))}
                                 </TableRow>
-                            ))
-                        )}
+                            ))}
                     </TableBody>
                 </Table>
             </div>
-            <div className={'flex items-center justify-between'}>
-                <div className={'flex items-center gap-2'}>
-                    <span className="text-muted-foreground text-sm">{t('volumesPerPage')}:</span>
+
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <span className="text-muted-foreground text-sm">{t('containersPerPage')}:</span>
                     <Select
                         value={pageSize === 'all' ? 'all' : String(pageSize)}
                         onValueChange={(value) => {
                             if (value === 'all') {
                                 setPageSize('all');
-                                table.setPageSize(volumes.length);
+                                table.setPageSize(rows.length || 1);
                             } else {
                                 const size = Number(value);
                                 setPageSize(size);
@@ -225,7 +210,7 @@ export function TableDockerVolumes() {
                             }
                         }}
                     >
-                        <SelectTrigger size={'sm'} className="min-w-24">
+                        <SelectTrigger size="sm" className="w-24">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -243,31 +228,31 @@ export function TableDockerVolumes() {
                 </div>
 
                 {!isShowingAll && (
-                    <div className={'flex items-center gap-2'}>
+                    <div className="flex items-center gap-2">
                         <span className="text-muted-foreground text-sm">
                             {tCommon('pageOf', {
                                 current: table.getState().pagination.pageIndex + 1,
                                 total: table.getPageCount(),
                             })}
                         </span>
-                        <div className={'flex gap-1'}>
+                        <div className="flex gap-1">
                             <Button
-                                variant={'outline'}
-                                size={'sm'}
+                                variant="outline"
+                                size="sm"
                                 onClick={() => table.previousPage()}
                                 disabled={!table.getCanPreviousPage()}
                             >
-                                <ChevronLeft className={'h-4 w-4'} />
+                                <ChevronLeft className="h-4 w-4" />
                                 {tCommon('previous')}
                             </Button>
                             <Button
-                                variant={'outline'}
-                                size={'sm'}
+                                variant="outline"
+                                size="sm"
                                 onClick={() => table.nextPage()}
                                 disabled={!table.getCanNextPage()}
                             >
                                 {tCommon('next')}
-                                <ChevronRight className={'h-4 w-4'} />
+                                <ChevronRight className="h-4 w-4" />
                             </Button>
                         </div>
                     </div>

@@ -10,19 +10,15 @@ import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { onContainerCreateAction } from '@/actions/docker/container/containerCreate.action';
-import { InputAutoCompleteOption } from '@workspace/ui/components/search-command';
 import { useTranslations } from 'next-intl';
 import { ContainerTemplates } from '@/components/docker/containers/create/ContainerTemplates';
 import { ContainerBasicConfig } from '@/components/docker/containers/create/ContainerBasicConfig';
 import { ContainerPorts } from '@/components/docker/containers/create/ContainerPorts';
 import { ContainerEnvVars } from '@/components/docker/containers/create/ContainerEnvVars';
 import { ContainerVolumes } from '@/components/docker/containers/create/ContainerVolumes';
+import { ContainerNetworks } from '@/components/docker/containers/create/ContainerNetworks';
 
-interface CreateContainerProps {
-    listImages: InputAutoCompleteOption[];
-}
-
-export default function CreateContainer({ listImages }: CreateContainerProps) {
+export default function CreateContainer() {
     const router = useRouter();
     const t = useTranslations('docker.createContainer');
     const searchParams = useSearchParams();
@@ -37,7 +33,7 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                     name: '',
                     image: imageFromUrl,
                     restart: 'unless-stopped' as const,
-                    network: '',
+                    networks: [],
                     hostname: '',
                     autoRemove: false,
                     privileged: false,
@@ -108,10 +104,11 @@ export default function CreateContainer({ listImages }: CreateContainerProps) {
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
                         <div className="flex flex-col gap-4 px-5 pb-5">
                             <ContainerTemplates />
-                            <ContainerBasicConfig listImages={listImages} />
+                            <ContainerBasicConfig />
                             <ContainerPorts />
                             <ContainerEnvVars />
                             <ContainerVolumes />
+                            <ContainerNetworks />
                         </div>
                     </ScrollAreaWithShadow>
                 </form>

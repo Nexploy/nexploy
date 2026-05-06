@@ -25,8 +25,8 @@ export function ServiceLabels() {
     return (
         <Card>
             <CardHeader>
-                <div className="flex items-center justify-between">
-                    <div>
+                <div className="flex justify-between">
+                    <div className={'flex flex-col gap-2'}>
                         <CardTitle>{t('labels')}</CardTitle>
                         <CardDescription>{t('labelsDescription')}</CardDescription>
                     </div>

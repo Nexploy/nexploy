@@ -1,6 +1,6 @@
 'use client';
 
-import { Container as IconContainer, Container, Layers, LayoutGrid, Plus } from 'lucide-react';
+import { Container as IconContainer, Container, Layers, LayoutGrid, Plus, Table2, } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { Badge } from '@workspace/ui/components/badge';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, } from '@workspace/ui/components/empty';
@@ -8,14 +8,20 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { ContainersStack } from '@/components/docker/containers/ContainersStack';
 import { ContainersStandalone } from '@/components/docker/containers/ContainersStandalone';
+import { TableDockerContainers } from '@/components/docker/containers/TableDockerContainers';
 import { useContainersStore } from '@/stores/docker/useContainersStore';
 import Link from 'next/link';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import { cn } from '@workspace/ui/lib/utils';
+import { useLocalStorage } from 'usehooks-ts';
 
 export default function ContainersPage() {
     const t = useTranslations('docker');
     const tNav = useTranslations('navigation');
+
+    const [viewMode, setViewMode] = useLocalStorage<'grid' | 'table'>('container-viewMode', 'grid');
 
     const lastUpdate = useContainersStore((state) => state.lastUpdate);
     const containers = useContainersStore((state) => state.containers);
@@ -25,6 +31,8 @@ export default function ContainersPage() {
     const standaloneContainersLenght = standaloneContainers.length;
 
     const numberOfStackAndStandaloneContainer = stacksSize + standaloneContainersLenght;
+
+    const allStackContainers = Array.from(stacks.values()).flat();
 
     const tabs = [
         {
@@ -107,31 +115,92 @@ export default function ContainersPage() {
 
             {!isLoading && !isEmpty && (
                 <Tabs className="flex flex-1 flex-col overflow-hidden" defaultValue="all">
-                    <TabsList className="mx-5 mb-2">
-                        {tabs.map((tab) => (
-                            <TabsTrigger key={tab.id} value={tab.id} className="flex flex-1 gap-2">
-                                <div className="flex items-center gap-2">
-                                    <tab.icon />
-                                    <span>{tab.label}</span>
-                                </div>
-                                <Badge className="rounded-full" variant="secondary">
-                                    {tab.count}
-                                </Badge>
-                            </TabsTrigger>
-                        ))}
-                    </TabsList>
+                    <div className="mx-5 mb-2 flex items-center justify-between gap-2">
+                        <TabsList>
+                            {tabs.map((tab) => (
+                                <TabsTrigger
+                                    key={tab.id}
+                                    value={tab.id}
+                                    className="flex flex-1 gap-2"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <tab.icon />
+                                        <span>{tab.label}</span>
+                                    </div>
+                                    <Badge className="rounded-full" variant="secondary">
+                                        {tab.count}
+                                    </Badge>
+                                </TabsTrigger>
+                            ))}
+                        </TabsList>
+
+                        <div className="flex items-center gap-1 rounded-lg border p-1">
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className={cn('size-7', viewMode === 'grid' && 'bg-muted')}
+                                        onClick={() => setViewMode('grid')}
+                                    >
+                                        <LayoutGrid className="size-4" />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>{t('viewGrid')}</TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className={cn('size-7', viewMode === 'table' && 'bg-muted')}
+                                        onClick={() => setViewMode('table')}
+                                    >
+                                        <Table2 className="size-4" />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>{t('viewTable')}</TooltipContent>
+                            </Tooltip>
+                        </div>
+                    </div>
+
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
                         <div className="pb-5">
-                            <TabsContent value="all" className="flex flex-col space-y-4">
-                                {stacksSize ? <ContainersStack /> : null}
-                                <ContainersStandalone />
-                            </TabsContent>
-                            <TabsContent value="stacks">
-                                <ContainersStack />
-                            </TabsContent>
-                            <TabsContent value="containers">
-                                <ContainersStandalone keepEmpty />
-                            </TabsContent>
+                            {viewMode === 'grid' ? (
+                                <>
+                                    <TabsContent value="all" className="flex flex-col space-y-4">
+                                        {stacksSize ? <ContainersStack /> : null}
+                                        <ContainersStandalone />
+                                    </TabsContent>
+                                    <TabsContent value="stacks">
+                                        <ContainersStack />
+                                    </TabsContent>
+                                    <TabsContent value="containers">
+                                        <ContainersStandalone keepEmpty />
+                                    </TabsContent>
+                                </>
+                            ) : (
+                                <>
+                                    <TabsContent value="all">
+                                        <TableDockerContainers
+                                            containers={containers}
+                                            isLoading={isLoading}
+                                        />
+                                    </TabsContent>
+                                    <TabsContent value="stacks">
+                                        <TableDockerContainers
+                                            containers={allStackContainers}
+                                            isLoading={isLoading}
+                                        />
+                                    </TabsContent>
+                                    <TabsContent value="containers">
+                                        <TableDockerContainers
+                                            containers={standaloneContainers}
+                                            isLoading={isLoading}
+                                        />
+                                    </TabsContent>
+                                </>
+                            )}
                         </div>
                     </ScrollAreaWithShadow>
                 </Tabs>

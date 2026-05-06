@@ -31,8 +31,8 @@ export function ServicePorts() {
     return (
         <Card>
             <CardHeader>
-                <div className="flex items-center justify-between">
-                    <div>
+                <div className="flex justify-between">
+                    <div className={'flex flex-col gap-2'}>
                         <CardTitle>{t('ports')}</CardTitle>
                         <CardDescription>{t('portsDescription')}</CardDescription>
                     </div>
@@ -41,7 +41,12 @@ export function ServicePorts() {
                         size="sm"
                         variant="outline"
                         onClick={() =>
-                            append({ published: 80, target: 80, protocol: 'tcp', publishMode: 'ingress' })
+                            append({
+                                published: 80,
+                                target: 80,
+                                protocol: 'tcp',
+                                publishMode: 'ingress',
+                            })
                         }
                     >
                         <Plus />

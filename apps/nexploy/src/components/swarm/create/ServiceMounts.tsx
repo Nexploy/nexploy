@@ -33,8 +33,8 @@ export function ServiceMounts() {
     return (
         <Card>
             <CardHeader>
-                <div className="flex items-center justify-between">
-                    <div>
+                <div className="flex justify-between">
+                    <div className={'flex flex-col gap-2'}>
                         <CardTitle>{t('mounts')}</CardTitle>
                         <CardDescription>{t('mountsDescription')}</CardDescription>
                     </div>

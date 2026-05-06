@@ -8,7 +8,6 @@ export const scaleServiceSchema = z.object({
     replicas: z.number().int().min(0),
 });
 
-// API schema used by docker-api route handler
 export const createServiceSchema = z.object({
     name: z.string().min(1),
     image: z.string().min(1),
@@ -69,7 +68,6 @@ export const createServiceSchema = z.object({
         .optional(),
 });
 
-// Form schema used by the create service page
 export const createServiceFormSchema = z.object({
     name: z.string().min(1),
     image: z.string().min(1),

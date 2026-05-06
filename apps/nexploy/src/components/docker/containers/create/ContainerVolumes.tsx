@@ -3,13 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { Plus, Trash2 } from 'lucide-react';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
@@ -24,8 +18,8 @@ export function ContainerVolumes() {
     return (
         <Card>
             <CardHeader>
-                <div className="flex items-center justify-between">
-                    <div>
+                <div className="flex justify-between">
+                    <div className={'flex flex-col gap-2'}>
                         <CardTitle>{t('volumes')}</CardTitle>
                         <CardDescription>{t('volumesDescription')}</CardDescription>
                     </div>
