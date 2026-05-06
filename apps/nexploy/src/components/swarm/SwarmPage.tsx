@@ -1,6 +1,6 @@
 'use client';
 
-import { Layers, Network, Plus, Server } from 'lucide-react';
+import { LayoutDashboard, Layers, Network, Plus, Server } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
@@ -50,7 +50,10 @@ export function SwarmPage() {
             {isSwarmActive ? (
                 <Tabs defaultValue="overview" className="flex flex-1 flex-col overflow-hidden">
                     <TabsList className="mx-5 w-fit">
-                        <TabsTrigger value="overview">{t('overview')}</TabsTrigger>
+                        <TabsTrigger value="overview" className="flex items-center gap-2">
+                            <LayoutDashboard className="size-4" />
+                            {t('overview')}
+                        </TabsTrigger>
                         <TabsTrigger value="nodes" className="flex items-center gap-2">
                             <Server className="size-4" />
                             {t('nodes')}

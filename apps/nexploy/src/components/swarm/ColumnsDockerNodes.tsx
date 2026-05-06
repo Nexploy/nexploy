@@ -2,15 +2,16 @@
 
 import * as React from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, Crown } from 'lucide-react';
+import { ArrowUpDown, Crown, MoreHorizontal } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
+import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
 import type {
     SwarmNode,
     SwarmNodeAvailability,
     SwarmNodeState,
 } from '@workspace/typescript-interface/docker/swarm';
-import { NodeActions } from './NodeActions';
+import { NodeDropdownActions } from './NodeDropdownActions';
 
 type TranslationFunction = (key: string) => string;
 
@@ -177,6 +178,17 @@ export const getColumnsTableNodes = (t: TranslationFunction): ColumnDef<SwarmNod
     },
     {
         id: 'actions',
-        cell: ({ row }) => <NodeActions node={row.original} />,
+        cell: ({ row }) => (
+            <div className="flex justify-end">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <MoreHorizontal />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <NodeDropdownActions node={row.original} />
+                </DropdownMenu>
+            </div>
+        ),
     },
 ];

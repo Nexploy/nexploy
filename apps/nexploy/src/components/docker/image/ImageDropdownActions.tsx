@@ -1,5 +1,9 @@
-import { Fragment, useRef } from 'react';
-import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, } from '@workspace/ui/components/dropdown-menu';
+import React, { Fragment, useRef } from 'react';
+import {
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+} from '@workspace/ui/components/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Play, Trash } from 'lucide-react';
 import { onImageAction } from '@/actions/docker/image/imageAction.action';
@@ -44,27 +48,28 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
                     cancelLabel: t('cancel'),
                     actionLabel: t('remove'),
                     description: (
-                        <div className="space-y-3">
+                        <div className={'space-y-4'}>
                             <p className="text-muted-foreground text-sm">
                                 {t('image.removeDescription', { name: imageName.join(', ') })}
                             </p>
-                            <div className="flex items-center gap-3">
-                                <Switch
-                                    id="force-delete-image"
-                                    defaultChecked={false}
-                                    onCheckedChange={(checked) => {
-                                        forceRef.current = checked;
-                                    }}
-                                />
-                                <div>
-                                    <Label htmlFor="force-delete-image" className="font-medium">
+                            <Label
+                                htmlFor={'force-delete-images'}
+                                className={
+                                    'bg-muted/50 border-destructive flex cursor-pointer items-center justify-between rounded-lg border p-3'
+                                }
+                            >
+                                <div className={'space-y-0.5'}>
+                                    <p className={'text-destructive text-sm font-medium'}>
                                         {t('image.forceDelete')}
-                                    </Label>
-                                    <p className="text-muted-foreground text-xs">
-                                        {t('image.forceDeleteDescription')}
                                     </p>
+                                    <p className={'text-xs'}>{t('image.forceDeleteDescription')}</p>
                                 </div>
-                            </div>
+                                <Switch
+                                    id="force-delete-images"
+                                    defaultChecked={false}
+                                    onCheckedChange={(checked) => (forceRef.current = checked)}
+                                />
+                            </Label>
                         </div>
                     ),
                     onAction: () => handleAction('delete'),

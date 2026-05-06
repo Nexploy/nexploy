@@ -248,6 +248,26 @@ export class SonarqubeScanExecutor implements INodeExecutor {
                                 containerPath: '/opt/sonarqube/data',
                                 readOnly: false,
                             },
+                            {
+                                hostPath: 'nexploy-sonarqube-conf',
+                                containerPath: '/opt/sonarqube/conf',
+                                readOnly: false,
+                            },
+                            {
+                                hostPath: 'nexploy-sonarqube-extensions',
+                                containerPath: '/opt/sonarqube/extensions',
+                                readOnly: false,
+                            },
+                            {
+                                hostPath: 'nexploy-sonarqube-logs',
+                                containerPath: '/opt/sonarqube/logs',
+                                readOnly: false,
+                            },
+                            {
+                                hostPath: 'nexploy-sonarqube-temp',
+                                containerPath: '/opt/sonarqube/temp',
+                                readOnly: false,
+                            },
                         ],
                         envVars: [{ key: 'SONAR_ES_BOOTSTRAP_CHECKS_DISABLE', value: 'true' }],
                         restart: 'no',
@@ -344,9 +364,9 @@ export class SonarqubeScanExecutor implements INodeExecutor {
                 if (res.ok) {
                     const data = (await res.json()) as { status: string };
                     if (data.status === 'UP') return;
+                    await logger.info(nodeId, `SonarQube status: ${data.status}, waiting...`);
                 }
             } catch {}
-            await logger.info(nodeId, 'SonarQube not ready yet, retrying...');
             await new Promise((r) => setTimeout(r, 5000));
         }
         throw new Error(`SonarQube did not become ready within ${maxWaitSeconds}s`);

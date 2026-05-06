@@ -4,8 +4,8 @@ import { route } from '@/helpers/route';
 import { swarmStateManager } from '@/managers/swarmStateManager';
 import { HttpError } from '@workspace/shared/http-error';
 import {
-    nodeIdParamSchema,
     nodeDeleteBodySchema,
+    nodeIdParamSchema,
 } from '@workspace/schemas-zod/docker/swarm/nodeAction.schema';
 
 const app = new Hono();
@@ -126,10 +126,10 @@ app.post(
 app.delete(
     '/:id',
     route({ param: nodeIdParamSchema, json: nodeDeleteBodySchema }, async (c) => {
-        const { id: nodeId } = c.req.valid('param');
-        const { force = false } = c.req.valid('json');
+        const { id } = c.req.valid('param');
+        const { force } = c.req.valid('json');
 
-        const node = docker.getNode(nodeId);
+        const node = docker.getNode(id);
         await node.remove({ force });
 
         await swarmStateManager.hardRefresh();
