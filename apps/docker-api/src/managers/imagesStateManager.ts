@@ -26,6 +26,7 @@ const IMAGE_STATE_CHANGE_EVENTS = new Set<ImageAction>([
     'import',
     'load',
     'save',
+    'build',
 ]);
 
 export class ImagesStateManager extends BaseStateManager {
@@ -372,7 +373,8 @@ export class ImagesStateManager extends BaseStateManager {
         return (
             JSON.stringify(oldState.repoTags) !== JSON.stringify(newState.repoTags) ||
             oldState.size !== newState.size ||
-            oldState.containersUsed !== newState.containersUsed
+            oldState.containersUsed !== newState.containersUsed ||
+            JSON.stringify(oldState.labels) !== JSON.stringify(newState.labels)
         );
     }
 
@@ -391,6 +393,8 @@ export class ImagesStateManager extends BaseStateManager {
                 from: oldState.containersUsed,
                 to: newState.containersUsed,
             };
+        if (JSON.stringify(oldState.labels) !== JSON.stringify(newState.labels))
+            changes.labels = { from: oldState.labels, to: newState.labels };
 
         return changes;
     }

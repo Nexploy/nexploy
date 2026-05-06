@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, EthernetPort, Trash2 } from 'lucide-react';
+import { EthernetPort, Trash2 } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useNetworkStore } from '@/stores/docker/useNetworkStore';
 import { CardNetworkDetails } from '@/components/docker/network/cards/CardNetworkDetails';
@@ -21,7 +21,6 @@ export function NetworkDetailPage({ networkId }: NetworkDetailPageProps) {
     const network = useNetworkStore((state) => state.getNetwork(networkId));
     const t = useTranslations('docker.networkDetail');
     const tActions = useTranslations('docker.dropdownActions');
-    const tCommon = useTranslations('common');
     const router = useRouter();
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
@@ -58,10 +57,6 @@ export function NetworkDetailPage({ networkId }: NetworkDetailPageProps) {
                     )}
                     <p className="text-muted-foreground text-sm">{t('description')}</p>
                 </div>
-                <Button variant="outline" onClick={() => router.back()}>
-                    <ArrowLeft className="size-4" />
-                    {tCommon('back')}
-                </Button>
                 <Button icon={Trash2} variant="destructive" size="icon" onClick={handleRemove} />
             </div>
             <ScrollAreaWithShadow className="h-full overflow-hidden">

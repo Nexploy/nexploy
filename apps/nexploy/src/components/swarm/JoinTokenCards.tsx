@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { Button } from '@workspace/ui/components/button';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
-import { Copy, Eye, EyeOff, Users, Crown } from 'lucide-react';
-import { toast } from 'sonner';
+import { Crown, Eye, EyeOff, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import CopyButton from '@/components/shared/CopyButton.tsx';
 
 export function JoinTokenCards() {
     const { swarmInfo, isSwarmActive } = useSwarmStore();
@@ -18,18 +18,13 @@ export function JoinTokenCards() {
         return null;
     }
 
-    const copyToClipboard = (text: string, toastKey: 'workerCommandCopied' | 'managerCommandCopied') => {
-        navigator.clipboard.writeText(text);
-        toast.success(t(toastKey));
-    };
-
     const formatToken = (token: string, show: boolean) => {
         if (show) return token;
         if (!token) return '***';
         return token.slice(0, 15) + '...' + token.slice(-10);
     };
 
-    const getJoinCommand = (token: string, role: string) => {
+    const getJoinCommand = (token: string) => {
         const addr = swarmInfo.localNodeId ? `<MANAGER_IP>:2377` : '192.168.x.x:2377';
         return `docker swarm join --token ${token} ${addr}`;
     };
@@ -55,19 +50,11 @@ export function JoinTokenCards() {
                                 <Eye className="size-4" />
                             )}
                         </Button>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-8"
-                            onClick={() =>
-                                copyToClipboard(
-                                    getJoinCommand(swarmInfo.joinTokens.worker, 'worker'),
-                                    'workerCommandCopied',
-                                )
-                            }
-                        >
-                            <Copy className="size-4" />
-                        </Button>
+                        <CopyButton
+                            className={'size-8'}
+                            size={'icon'}
+                            textToCopy={getJoinCommand(swarmInfo.joinTokens.worker)}
+                        />
                     </div>
                 </CardHeader>
                 <CardContent>
@@ -99,19 +86,11 @@ export function JoinTokenCards() {
                                 <Eye className="size-4" />
                             )}
                         </Button>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-8"
-                            onClick={() =>
-                                copyToClipboard(
-                                    getJoinCommand(swarmInfo.joinTokens.manager, 'manager'),
-                                    'managerCommandCopied',
-                                )
-                            }
-                        >
-                            <Copy className="size-4" />
-                        </Button>
+                        <CopyButton
+                            className={'size-8'}
+                            size={'icon'}
+                            textToCopy={getJoinCommand(swarmInfo.joinTokens.manager)}
+                        />
                     </div>
                 </CardHeader>
                 <CardContent>

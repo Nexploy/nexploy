@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, Box, Play, Trash } from 'lucide-react';
+import { Box, Play, Trash } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useImageStore } from '@/stores/docker/useImageStore';
 import { CardImageDetails } from '@/components/docker/image/cards/CardImageDetails';
@@ -22,7 +22,6 @@ interface ImageDetailPageProps {
 export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
     const t = useTranslations('docker.imageDetail');
     const tActions = useTranslations('docker.dropdownActions');
-    const tCommon = useTranslations('common');
 
     const image = useImageStore((state) => state.getImage(imageId));
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
@@ -66,10 +65,6 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
                     )}
                     <p className="text-muted-foreground text-sm">{t('description')}</p>
                 </div>
-                <Button variant="outline" onClick={() => router.back()}>
-                    <ArrowLeft className="size-4" />
-                    {tCommon('back')}
-                </Button>
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <Button size="icon" onClick={handleUse}>

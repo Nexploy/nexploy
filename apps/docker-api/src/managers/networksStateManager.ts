@@ -18,6 +18,7 @@ const NETWORK_STATE_CHANGE_EVENTS = new Set<NetworkAction>([
     'disconnect',
     'destroy',
     'remove',
+    'update',
 ]);
 
 export class NetworksStateManager extends BaseStateManager {
@@ -218,7 +219,12 @@ export class NetworksStateManager extends BaseStateManager {
             JSON.stringify(oldState.containers) !== JSON.stringify(newState.containers) ||
             oldState.internal !== newState.internal ||
             oldState.attachable !== newState.attachable ||
-            JSON.stringify(oldState.labels) !== JSON.stringify(newState.labels)
+            JSON.stringify(oldState.labels) !== JSON.stringify(newState.labels) ||
+            oldState.driver !== newState.driver ||
+            oldState.scope !== newState.scope ||
+            oldState.enableIPv6 !== newState.enableIPv6 ||
+            JSON.stringify(oldState.ipam) !== JSON.stringify(newState.ipam) ||
+            JSON.stringify(oldState.options) !== JSON.stringify(newState.options)
         );
     }
 
@@ -238,6 +244,16 @@ export class NetworksStateManager extends BaseStateManager {
             changes.attachable = { from: oldState.attachable, to: newState.attachable };
         if (oldLabels !== newLabels)
             changes.labels = { from: oldState.labels, to: newState.labels };
+        if (oldState.driver !== newState.driver)
+            changes.driver = { from: oldState.driver, to: newState.driver };
+        if (oldState.scope !== newState.scope)
+            changes.scope = { from: oldState.scope, to: newState.scope };
+        if (oldState.enableIPv6 !== newState.enableIPv6)
+            changes.enableIPv6 = { from: oldState.enableIPv6, to: newState.enableIPv6 };
+        if (JSON.stringify(oldState.ipam) !== JSON.stringify(newState.ipam))
+            changes.ipam = true;
+        if (JSON.stringify(oldState.options) !== JSON.stringify(newState.options))
+            changes.options = true;
 
         return changes;
     }

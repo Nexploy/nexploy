@@ -103,4 +103,14 @@ export interface ContainersStateChanges {
         from?: number | null;
         to?: number | null;
     };
+    image?: {
+        from: string | undefined;
+        to: string | undefined;
+    };
+    error?: {
+        from: string | undefined;
+        to: string | undefined;
+    };
+    ports?: boolean;
+    mounts?: boolean;
 }

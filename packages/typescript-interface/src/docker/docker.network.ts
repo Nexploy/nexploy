@@ -17,7 +17,7 @@ export interface Network {
     timestamp: number;
 }
 
-export type NetworkAction = 'create' | 'connect' | 'disconnect' | 'destroy' | 'remove';
+export type NetworkAction = 'create' | 'connect' | 'disconnect' | 'destroy' | 'remove' | 'update';
 
 export interface NetworkDeleteResponse {
     deleted: string[];
@@ -41,6 +41,20 @@ export interface NetworkStateChanges {
         from: Record<string, string>;
         to: Record<string, string>;
     };
+    driver?: {
+        from: string | undefined;
+        to: string | undefined;
+    };
+    scope?: {
+        from: string | undefined;
+        to: string | undefined;
+    };
+    enableIPv6?: {
+        from: boolean;
+        to: boolean;
+    };
+    ipam?: boolean;
+    options?: boolean;
 }
 
 export interface NetworkEvent {

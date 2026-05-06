@@ -6,10 +6,7 @@ import type {
     SwarmEvent,
     SwarmInfo,
     SwarmNode,
-    SwarmNodeAvailability,
     SwarmNodeChanges,
-    SwarmNodeRole,
-    SwarmNodeState,
     SwarmService,
     SwarmServiceChanges,
     SwarmServiceMode,
@@ -172,6 +169,8 @@ export class SwarmStateManager extends BaseStateManager {
             await this.handleNodeEvent(actorId, action);
         } else if (eventType === 'service') {
             await this.handleServiceEvent(actorId, action);
+        } else if (eventType === 'task') {
+            await this.handleTaskEvent(actorId, action);
         }
     }
 
@@ -539,7 +538,7 @@ export class SwarmStateManager extends BaseStateManager {
     }
 
     getEventFilters(): Record<string, string[]> {
-        return { type: ['node', 'service'] };
+        return { type: ['node', 'service', 'task'] };
     }
 
     protected onStop(): void {
@@ -590,9 +589,9 @@ export class SwarmStateManager extends BaseStateManager {
             createdAt: node.CreatedAt ? dayjs(node.CreatedAt).valueOf() : dayjs().valueOf(),
             updatedAt: node.UpdatedAt ? dayjs(node.UpdatedAt).valueOf() : dayjs().valueOf(),
             hostname: description.Hostname || 'unknown',
-            role: (spec.Role?.toLowerCase() || 'worker') as SwarmNodeRole,
-            availability: (spec.Availability?.toLowerCase() || 'active') as SwarmNodeAvailability,
-            state: (status.State?.toLowerCase() || 'unknown') as SwarmNodeState,
+            role: spec.Role?.toLowerCase() || 'worker',
+            availability: spec.Availability?.toLowerCase() || 'active',
+            state: status.State?.toLowerCase() || 'unknown',
             address: status.Addr || '',
             engineVersion: description.Engine?.EngineVersion || '',
             platform: {
@@ -717,6 +716,72 @@ export class SwarmStateManager extends BaseStateManager {
         };
     }
 
+    private async handleTaskEvent(taskId: string, action: string): Promise<void> {
+        try {
+            if (action === 'remove') {
+                const previousTask = this.tasks.get(taskId);
+                if (previousTask) {
+                    this.tasks.delete(taskId);
+                    const event: SwarmEvent = {
+                        type: 'task-removed',
+                        taskId,
+                        previousTask,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('task-removed', event);
+                }
+                return;
+            }
+
+            const tasksList = await this.docker.listTasks({ filters: { id: [taskId] } });
+            if (tasksList.length === 0) return;
+
+            const task = tasksList[0];
+            const service = task.ServiceID ? this.services.get(task.ServiceID) : undefined;
+            const node = task.NodeID ? this.nodes.get(task.NodeID) : undefined;
+            const parsedTask = this.parseTaskInfo(task, service?.name, node?.hostname);
+            const previousTask = this.tasks.get(parsedTask.id);
+            this.tasks.set(parsedTask.id, parsedTask);
+
+            if (!previousTask) {
+                const event: SwarmEvent = {
+                    type: 'task-added',
+                    task: parsedTask,
+                    timestamp: Date.now(),
+                };
+                this.emit('task-added', event);
+            } else {
+                const changes = this.getTaskChanges(previousTask, parsedTask);
+                if (Object.keys(changes).length > 0) {
+                    const event: SwarmEvent = {
+                        type: 'task-updated',
+                        task: parsedTask,
+                        previousTask,
+                        changes,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('task-updated', event);
+                }
+            }
+        } catch (err: any) {
+            if (err.statusCode === 404) {
+                const previousTask = this.tasks.get(taskId);
+                this.tasks.delete(taskId);
+                if (previousTask) {
+                    const event: SwarmEvent = {
+                        type: 'task-removed',
+                        taskId,
+                        previousTask,
+                        timestamp: Date.now(),
+                    };
+                    this.emit('task-removed', event);
+                }
+            } else {
+                logger.error({ err, taskId }, 'Error handling task event');
+            }
+        }
+    }
+
     private getNodeChanges(previous: SwarmNode, current: SwarmNode): SwarmNodeChanges {
         const changes: SwarmNodeChanges = {};
 
@@ -728,6 +793,18 @@ export class SwarmStateManager extends BaseStateManager {
         }
         if (previous.state !== current.state) {
             changes.state = { from: previous.state, to: current.state };
+        }
+        if (previous.hostname !== current.hostname) {
+            changes.hostname = { from: previous.hostname, to: current.hostname };
+        }
+        if (previous.address !== current.address) {
+            changes.address = { from: previous.address, to: current.address };
+        }
+        if (
+            previous.resources.nanoCPUs !== current.resources.nanoCPUs ||
+            previous.resources.memoryBytes !== current.resources.memoryBytes
+        ) {
+            changes.resources = true;
         }
 
         const prevLabels = Object.keys(previous.labels);
@@ -773,6 +850,24 @@ export class SwarmStateManager extends BaseStateManager {
         if (previous.updateStatus?.state !== current.updateStatus?.state) {
             changes.updateStatus = true;
         }
+        if (previous.name !== current.name) {
+            changes.name = { from: previous.name, to: current.name };
+        }
+        if (JSON.stringify(previous.ports) !== JSON.stringify(current.ports)) {
+            changes.ports = true;
+        }
+        if (JSON.stringify(previous.labels) !== JSON.stringify(current.labels)) {
+            changes.labels = true;
+        }
+        if (JSON.stringify(previous.env) !== JSON.stringify(current.env)) {
+            changes.env = true;
+        }
+        if (JSON.stringify(previous.constraints) !== JSON.stringify(current.constraints)) {
+            changes.constraints = true;
+        }
+        if (JSON.stringify(previous.networks) !== JSON.stringify(current.networks)) {
+            changes.networks = true;
+        }
 
         return changes;
     }
@@ -794,6 +889,9 @@ export class SwarmStateManager extends BaseStateManager {
         }
         if (current.error && previous.error !== current.error) {
             changes.error = current.error;
+        }
+        if (previous.containerStatus?.containerId !== current.containerStatus?.containerId) {
+            changes.containerStatus = true;
         }
 
         return changes;

@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { Layers, Network, RefreshCw, Server } from 'lucide-react';
-import { Button } from '@workspace/ui/components/button';
+import { Layers, Network, Plus, Server } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
+import { Button } from '@workspace/ui/components/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
@@ -11,29 +10,26 @@ import { SwarmNotActive } from './SwarmNotActive';
 import { SwarmOverview } from './SwarmOverview';
 import { NodesTable } from './NodesTable';
 import { ServicesTable } from './ServicesTable';
-import { CreateServiceDialog } from './CreateServiceDialog';
 import { LeaveSwarmDialog } from './LeaveSwarmDialog';
-import { toast } from 'sonner';
-import { onSwarmRefreshAction } from '@/actions/docker/swarm/refresh.action';
 import { SSEProvider } from '@/providers/SSEProviders';
-import { cn } from '@workspace/ui/lib/utils';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 
 export function SwarmPage() {
     const { isSwarmActive, swarmInfo, nodes, services } = useSwarmStore();
-    const [isRefreshing, setIsRefreshing] = useState(false);
     const t = useTranslations('swarm');
-    const tNotifications = useTranslations('notifications');
 
-    const handleRefresh = async () => {
-        setIsRefreshing(true);
-        try {
-            await onSwarmRefreshAction();
-            toast.success(tNotifications('operationSuccess'));
-        } finally {
-            setIsRefreshing(false);
-        }
-    };
+    const activeActions = isSwarmActive ? (
+        <div className="flex gap-2">
+            <Button asChild>
+                <Link href="/swarm/services/create">
+                    <Plus />
+                    {t('createService.createButton')}
+                </Link>
+            </Button>
+            <LeaveSwarmDialog />
+        </div>
+    ) : null;
 
     return (
         <SSEProvider connections={['swarm']}>
@@ -44,19 +40,9 @@ export function SwarmPage() {
                             <Network className="text-primary size-7" />
                         </div>
                         <div className="flex flex-col">
-                            <div className={'flex gap-2'}>
-                                <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                                    {t('title')}
-                                </h1>
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    onClick={handleRefresh}
-                                    disabled={isRefreshing}
-                                >
-                                    <RefreshCw className={cn(isRefreshing ? 'animate-spin' : '')} />
-                                </Button>
-                            </div>
+                            <h1 className="text-3xl leading-none font-semibold tracking-tight">
+                                {t('title')}
+                            </h1>
                             <p className="text-muted-foreground text-sm">
                                 {isSwarmActive
                                     ? t('clusterWithNodes', { count: swarmInfo?.totalNodes || 0 })
@@ -64,12 +50,7 @@ export function SwarmPage() {
                             </p>
                         </div>
                     </div>
-                    {isSwarmActive && (
-                        <div className="flex gap-2">
-                            <CreateServiceDialog />
-                            <LeaveSwarmDialog />
-                        </div>
-                    )}
+                    {activeActions}
                 </div>
 
                 {isSwarmActive ? (

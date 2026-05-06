@@ -51,6 +51,9 @@ export interface SwarmNodeChanges {
     state?: { from: SwarmNodeState; to: SwarmNodeState };
     labels?: { added: string[]; removed: string[]; changed: string[] };
     managerStatus?: boolean;
+    hostname?: { from: string; to: string };
+    address?: { from: string; to: string };
+    resources?: boolean;
 }
 
 export interface SwarmServiceAddedEvent extends BaseSwarmEvent {
@@ -76,6 +79,12 @@ export interface SwarmServiceChanges {
     runningReplicas?: { from: number; to: number };
     image?: { from: string; to: string };
     updateStatus?: boolean;
+    name?: { from: string; to: string };
+    ports?: boolean;
+    labels?: boolean;
+    env?: boolean;
+    constraints?: boolean;
+    networks?: boolean;
 }
 
 export interface SwarmTaskAddedEvent extends BaseSwarmEvent {
@@ -102,6 +111,7 @@ export interface SwarmTaskChanges {
     nodeId?: { from: string | undefined; to: string | undefined };
     message?: string;
     error?: string;
+    containerStatus?: boolean;
 }
 
 export interface SwarmInfoUpdatedEvent extends BaseSwarmEvent {

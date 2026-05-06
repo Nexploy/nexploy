@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, HardDrive, Trash2 } from 'lucide-react';
+import { HardDrive, Trash2 } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useVolumeStore } from '@/stores/docker/useVolumeStore';
 import { CardVolumeDetails } from '@/components/docker/volume/cards/CardVolumeDetails';
@@ -21,7 +21,7 @@ export function VolumeDetailPage({ volumeName }: VolumeDetailPageProps) {
     const volume = useVolumeStore((state) => state.getVolume(volumeName));
     const t = useTranslations('docker.volumeDetail');
     const tActions = useTranslations('docker.dropdownActions');
-    const tCommon = useTranslations('common');
+
     const router = useRouter();
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
@@ -59,9 +59,6 @@ export function VolumeDetailPage({ volumeName }: VolumeDetailPageProps) {
                     )}
                     <p className="text-muted-foreground text-sm">{t('description')}</p>
                 </div>
-                <Button icon={ArrowLeft} variant="outline" onClick={() => router.back()}>
-                    {tCommon('back')}
-                </Button>
                 <Button icon={Trash2} variant="destructive" size="icon" onClick={handleRemove} />
             </div>
             <ScrollAreaWithShadow className="h-full overflow-hidden">

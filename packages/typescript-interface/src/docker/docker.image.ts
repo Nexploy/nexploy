@@ -33,7 +33,7 @@ export interface Image {
 }
 
 export type ImageType = 'initial' | 'state-change' | 'updated' | 'added' | 'removed' | 'heartbeat';
-export type ImageAction = 'pull' | 'push' | 'tag' | 'untag' | 'delete' | 'import' | 'load' | 'save';
+export type ImageAction = 'pull' | 'push' | 'tag' | 'untag' | 'delete' | 'import' | 'load' | 'save' | 'build';
 
 export type ImageDeleteResult =
     | { type: 'deleted'; id: string }
@@ -73,6 +73,10 @@ export interface ImageStateChanges {
     containers?: {
         from: number;
         to: number;
+    };
+    labels?: {
+        from: Record<string, string>;
+        to: Record<string, string>;
     };
 }
 

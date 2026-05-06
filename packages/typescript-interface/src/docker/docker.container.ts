@@ -163,4 +163,14 @@ export interface ContainerStateChanges {
         from?: number | null;
         to?: number | null;
     };
+    error?: {
+        from: string | undefined;
+        to: string | undefined;
+    };
+    restartCount?: {
+        from: number | undefined;
+        to: number | undefined;
+    };
+    networkPorts?: boolean;
+    mounts?: boolean;
 }

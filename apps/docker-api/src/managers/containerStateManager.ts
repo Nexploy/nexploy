@@ -62,7 +62,11 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
             oldState.state !== newState.state ||
             oldState.status !== newState.status ||
             oldState.health !== newState.health ||
-            oldState.exitCode !== newState.exitCode
+            oldState.exitCode !== newState.exitCode ||
+            oldState.error !== newState.error ||
+            oldState.restartCount !== newState.restartCount ||
+            JSON.stringify(oldState.network?.ports) !== JSON.stringify(newState.network?.ports) ||
+            JSON.stringify(oldState.mounts) !== JSON.stringify(newState.mounts)
         );
     }
 
@@ -119,6 +123,14 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
                 from: oldState.exitCode,
                 to: newState.exitCode,
             };
+        if (oldState.error !== newState.error)
+            changes.error = { from: oldState.error, to: newState.error };
+        if (oldState.restartCount !== newState.restartCount)
+            changes.restartCount = { from: oldState.restartCount, to: newState.restartCount };
+        if (JSON.stringify(oldState.network?.ports) !== JSON.stringify(newState.network?.ports))
+            changes.networkPorts = true;
+        if (JSON.stringify(oldState.mounts) !== JSON.stringify(newState.mounts))
+            changes.mounts = true;
 
         return changes;
     }

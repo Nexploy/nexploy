@@ -378,7 +378,11 @@ export class ContainersStateManager extends BaseStateManager {
             oldState.state !== newState.state ||
             oldState.status !== newState.status ||
             oldState.health !== newState.health ||
-            oldState.exitCode !== newState.exitCode
+            oldState.exitCode !== newState.exitCode ||
+            oldState.image !== newState.image ||
+            oldState.error !== newState.error ||
+            JSON.stringify(oldState.ports) !== JSON.stringify(newState.ports) ||
+            JSON.stringify(oldState.mounts) !== JSON.stringify(newState.mounts)
         );
     }
 
@@ -398,6 +402,14 @@ export class ContainersStateManager extends BaseStateManager {
                 from: oldState.exitCode,
                 to: newState.exitCode,
             };
+        if (oldState.image !== newState.image)
+            changes.image = { from: oldState.image, to: newState.image };
+        if (oldState.error !== newState.error)
+            changes.error = { from: oldState.error, to: newState.error };
+        if (JSON.stringify(oldState.ports) !== JSON.stringify(newState.ports))
+            changes.ports = true;
+        if (JSON.stringify(oldState.mounts) !== JSON.stringify(newState.mounts))
+            changes.mounts = true;
 
         return changes;
     }

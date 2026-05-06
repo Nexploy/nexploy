@@ -1,4 +1,3 @@
-// ===== SWARM INFO =====
 export interface SwarmInfo {
     id: string;
     version: number;
@@ -18,7 +17,6 @@ export interface SwarmJoinTokens {
     manager: string;
 }
 
-// ===== SWARM NODE =====
 export interface SwarmNode {
     id: string;
     version: number;
@@ -100,7 +98,6 @@ export type SwarmUpdateState =
     | 'rollback_paused'
     | 'rollback_completed';
 
-// ===== SWARM TASK =====
 export interface SwarmTask {
     id: string;
     version: number;
@@ -143,7 +140,6 @@ export type SwarmTaskState =
 
 export type SwarmTaskDesiredState = 'running' | 'shutdown' | 'accepted';
 
-// ===== HELPER TYPES =====
 export interface SwarmStats {
     isSwarmActive: boolean;
     totalNodes: number;

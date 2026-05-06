@@ -14,21 +14,82 @@ const app = new Hono();
 app.post(
     '/',
     route({ json: createServiceSchema }, async (c) => {
-        const { name, image, mode, replicas, ports, env, networks, constraints, labels, command } =
-            c.req.valid('json');
+        const {
+            name,
+            image,
+            mode,
+            replicas,
+            ports,
+            env,
+            networks,
+            constraints,
+            labels,
+            command,
+            workDir,
+            user,
+            mounts,
+            resourceLimits,
+            resourceReservations,
+            restartPolicy,
+            updateConfig,
+        } = c.req.valid('json');
+
+        const containerSpec: Record<string, unknown> = {
+            Image: image,
+            ...(env && env.length > 0 ? { Env: env } : {}),
+            ...(command && command.length > 0 ? { Command: command } : {}),
+            ...(workDir ? { Dir: workDir } : {}),
+            ...(user ? { User: user } : {}),
+        };
+
+        if (mounts && mounts.length > 0) {
+            containerSpec['Mounts'] = mounts.map((m) => ({
+                Type: m.type ?? 'bind',
+                Source: m.source ?? '',
+                Target: m.target,
+                ReadOnly: m.readOnly ?? false,
+            }));
+        }
+
+        const taskTemplate: Record<string, unknown> = {
+            ContainerSpec: containerSpec,
+        };
+
+        if (resourceLimits || resourceReservations) {
+            const resources: Record<string, unknown> = {};
+            if (resourceLimits?.nanoCPUs || resourceLimits?.memoryBytes) {
+                resources['Limits'] = {
+                    ...(resourceLimits.nanoCPUs ? { NanoCPUs: resourceLimits.nanoCPUs } : {}),
+                    ...(resourceLimits.memoryBytes ? { MemoryBytes: resourceLimits.memoryBytes } : {}),
+                };
+            }
+            if (resourceReservations?.nanoCPUs || resourceReservations?.memoryBytes) {
+                resources['Reservations'] = {
+                    ...(resourceReservations.nanoCPUs ? { NanoCPUs: resourceReservations.nanoCPUs } : {}),
+                    ...(resourceReservations.memoryBytes ? { MemoryBytes: resourceReservations.memoryBytes } : {}),
+                };
+            }
+            taskTemplate['Resources'] = resources;
+        }
+
+        if (restartPolicy?.condition) {
+            taskTemplate['RestartPolicy'] = {
+                Condition: restartPolicy.condition,
+                ...(restartPolicy.maxAttempts !== undefined ? { MaxAttempts: restartPolicy.maxAttempts } : {}),
+            };
+        }
+
+        if (constraints && constraints.length > 0) {
+            taskTemplate['Placement'] = { Constraints: constraints };
+        }
 
         const serviceSpec: Record<string, unknown> = {
             Name: name,
-            TaskTemplate: {
-                ContainerSpec: {
-                    Image: image,
-                    ...(env && env.length > 0 ? { Env: env } : {}),
-                    ...(command && command.length > 0 ? { Command: command } : {}),
-                },
-            },
-            Mode: mode === 'global'
-                ? { Global: {} }
-                : { Replicated: { Replicas: replicas ?? 1 } },
+            TaskTemplate: taskTemplate,
+            Mode:
+                mode === 'global'
+                    ? { Global: {} }
+                    : { Replicated: { Replicas: replicas ?? 1 } },
             ...(labels ? { Labels: labels } : {}),
         };
 
@@ -42,14 +103,17 @@ app.post(
                     Protocol: p.protocol ?? 'tcp',
                     TargetPort: p.target,
                     PublishedPort: p.published,
-                    PublishMode: 'ingress',
+                    PublishMode: p.publishMode ?? 'ingress',
                 })),
             };
         }
 
-        if (constraints && constraints.length > 0) {
-            (serviceSpec['TaskTemplate'] as Record<string, unknown>)['Placement'] = {
-                Constraints: constraints,
+        if (updateConfig) {
+            serviceSpec['UpdateConfig'] = {
+                ...(updateConfig.parallelism !== undefined ? { Parallelism: updateConfig.parallelism } : {}),
+                ...(updateConfig.delay !== undefined ? { Delay: updateConfig.delay } : {}),
+                ...(updateConfig.failureAction ? { FailureAction: updateConfig.failureAction } : {}),
+                ...(updateConfig.order ? { Order: updateConfig.order } : {}),
             };
         }
 
