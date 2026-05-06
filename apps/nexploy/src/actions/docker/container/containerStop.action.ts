@@ -9,9 +9,9 @@ import { setToastServer } from '@/lib/toastServer';
 export const onContainerStopAction = authActionServer
     .use(requirePermission('docker', 'manage'))
     .inputSchema(containerActionsSchema)
-    .action(async ({ parsedInput: { containerId } }) => {
+    .action(async ({ parsedInput: { containerIds } }) => {
         try {
-            return await kyDocker.post(`container/${containerId}/stop`).json();
+            return await kyDocker.post('container/stop', { json: { containerIds } }).json();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({

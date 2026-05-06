@@ -26,7 +26,7 @@ export class StartContainerExecutor implements INodeExecutor {
         await logger.info(nodeId, `Starting container: ${containerId}`);
 
         try {
-            await kyDocker.post(`container/${containerId}/start`, opts);
+            await kyDocker.post('container/start', { ...opts, json: { containerIds: [containerId] } });
         } catch (error) {
             if (error instanceof HTTPError && error.response.status === 409) {
                 await logger.warn(nodeId, error.message);

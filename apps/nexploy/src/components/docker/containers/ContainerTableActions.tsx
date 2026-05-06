@@ -3,7 +3,6 @@
 import { useTranslations } from 'next-intl';
 import { Play, RotateCw, Square, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
-import { Badge } from '@workspace/ui/components/badge';
 import { useAction } from 'next-safe-action/hooks';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { onContainerStartAction } from '@/actions/docker/container/containerStart.action';
@@ -11,6 +10,8 @@ import { onContainerStopAction } from '@/actions/docker/container/containerStop.
 import { onContainerRestartAction } from '@/actions/docker/container/containerRestart.action';
 import { onContainerRemoveAction } from '@/actions/docker/container/containerRemove.action';
 import { ContainerTableRow } from './containerTableUtils';
+import { Badge } from '@workspace/ui/components/badge.tsx';
+import React from 'react';
 
 interface ContainerTableActionsProps {
     selectedContainers: ContainerTableRow[];
@@ -28,11 +29,12 @@ export function ContainerTableActions({
 
     const { executeAsync: startAsync, isPending: isStarting } = useAction(onContainerStartAction);
     const { executeAsync: stopAsync, isPending: isStopping } = useAction(onContainerStopAction);
-    const { executeAsync: restartAsync, isPending: isRestarting } = useAction(onContainerRestartAction);
+    const { executeAsync: restartAsync, isPending: isRestarting } =
+        useAction(onContainerRestartAction);
     const { executeAsync: removeAsync, isPending: isRemoving } = useAction(onContainerRemoveAction);
 
     const isAnyLoading = isStarting || isStopping || isRestarting || isRemoving;
-    const count = selectedContainers.length;
+    const numberOfSelectedRows = selectedContainers.length;
 
     const canStart = selectedContainers.some(
         (c) => !['running', 'restarting', 'paused'].includes(c.state ?? ''),
@@ -41,26 +43,26 @@ export function ContainerTableActions({
     const canRestart = selectedContainers.some((c) => c.state === 'running');
 
     const handleStart = async () => {
-        const targets = selectedContainers
+        const containerIds = selectedContainers
             .filter((c) => !['running', 'restarting', 'paused'].includes(c.state ?? ''))
             .map((c) => c.id);
-        await Promise.all(targets.map((id) => startAsync({ containerId: id })));
+        if (containerIds.length) await startAsync({ containerIds });
         onResetSelection();
     };
 
     const handleStop = async () => {
-        const targets = selectedContainers
+        const containerIds = selectedContainers
             .filter((c) => c.state === 'running')
             .map((c) => c.id);
-        await Promise.all(targets.map((id) => stopAsync({ containerId: id })));
+        if (containerIds.length) await stopAsync({ containerIds });
         onResetSelection();
     };
 
     const handleRestart = async () => {
-        const targets = selectedContainers
+        const containerIds = selectedContainers
             .filter((c) => c.state === 'running')
             .map((c) => c.id);
-        await Promise.all(targets.map((id) => restartAsync({ containerId: id })));
+        if (containerIds.length) await restartAsync({ containerIds });
         onResetSelection();
     };
 
@@ -69,11 +71,10 @@ export function ContainerTableActions({
             title: t('removeContainers'),
             cancelLabel: tCommon('cancel'),
             actionLabel: tCommon('remove'),
-            description: t('confirmRemoveContainers', { count }),
+            description: t('confirmRemoveContainers', { count: numberOfSelectedRows }),
             onAction: async () => {
-                await Promise.all(
-                    selectedContainers.map((c) => removeAsync({ containerId: c.id })),
-                );
+                const containerIds = selectedContainers.map((c) => c.id);
+                if (containerIds.length) await removeAsync({ containerIds });
                 onResetSelection();
             },
         });
@@ -81,9 +82,6 @@ export function ContainerTableActions({
 
     return (
         <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="rounded-full">
-                {count}
-            </Badge>
             <Button
                 variant="outline"
                 icon={Play}
@@ -92,6 +90,11 @@ export function ContainerTableActions({
                 isLoading={isStarting}
             >
                 {tActions('start')}
+                {!!numberOfSelectedRows && (
+                    <Badge variant={'secondary'} className={'rounded-full'}>
+                        {numberOfSelectedRows}
+                    </Badge>
+                )}
             </Button>
             <Button
                 variant="outline"
@@ -101,6 +104,11 @@ export function ContainerTableActions({
                 isLoading={isStopping}
             >
                 {tActions('stop')}
+                {!!numberOfSelectedRows && (
+                    <Badge variant={'secondary'} className={'rounded-full'}>
+                        {numberOfSelectedRows}
+                    </Badge>
+                )}
             </Button>
             <Button
                 variant="outline"
@@ -110,15 +118,25 @@ export function ContainerTableActions({
                 isLoading={isRestarting}
             >
                 {tActions('restart')}
+                {!!numberOfSelectedRows && (
+                    <Badge variant={'secondary'} className={'rounded-full'}>
+                        {numberOfSelectedRows}
+                    </Badge>
+                )}
             </Button>
             <Button
                 variant="destructive"
                 icon={Trash2}
                 onClick={handleRemove}
-                disabled={!count || isAnyLoading}
+                disabled={!numberOfSelectedRows || isAnyLoading}
                 isLoading={isRemoving}
             >
                 {tCommon('remove')}
+                {!!numberOfSelectedRows && (
+                    <Badge variant={'secondary'} className={'rounded-full'}>
+                        {numberOfSelectedRows}
+                    </Badge>
+                )}
             </Button>
         </div>
     );

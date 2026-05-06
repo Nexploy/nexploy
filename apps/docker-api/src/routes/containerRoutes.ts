@@ -9,8 +9,9 @@ import { logger } from '@/utils/logger';
 import { PortType } from '@workspace/typescript-interface/docker/docker.port';
 import { HttpError } from '@workspace/shared/http-error';
 import {
+    containerActionsSchema,
     containerExecBodySchema,
-    containerIdParamSchema,
+    containerIdOrNameParamSchema,
     containerLogsQuerySchema,
     containerRenameBodySchema,
     containerRunEphemeralSchema,
@@ -18,11 +19,26 @@ import {
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 import { containersStateManager } from '@/managers/containersStateManager';
-import { dockerStatusManager } from '@/managers/dockerStatusManager';
 
 const NAMED_VOLUME_REGEX = /\/var\/lib\/docker\/volumes\/([^/]+)\/_data/;
 
 const app = new Hono();
+
+app.get(
+    '/:idOrName',
+    route({ param: containerIdOrNameParamSchema }, async (c) => {
+        const { idOrName } = c.req.valid('param');
+
+        const container = docker.getContainer(idOrName);
+        const containerInfo = await container.inspect();
+
+        if (!container) {
+            throw new HttpError(`Container '${idOrName}' not found`, 404);
+        }
+
+        return containerInfo;
+    }),
+);
 
 app.post(
     '/run-ephemeral',
@@ -74,12 +90,12 @@ app.post(
 );
 
 app.get(
-    '/:id/logs',
-    route({ param: containerIdParamSchema, query: containerLogsQuerySchema }, async (c) => {
-        const { id } = c.req.valid('param');
+    '/:idOrName/logs',
+    route({ param: containerIdOrNameParamSchema, query: containerLogsQuerySchema }, async (c) => {
+        const { idOrName } = c.req.valid('param');
         const { tail = '100', since } = c.req.valid('query');
 
-        const container = docker.getContainer(id);
+        const container = docker.getContainer(idOrName);
 
         const logsOptions: Record<string, unknown> = {
             stdout: true,
@@ -97,12 +113,12 @@ app.get(
 );
 
 app.post(
-    '/:id/exec',
-    route({ param: containerIdParamSchema, json: containerExecBodySchema }, async (c) => {
-        const { id } = c.req.valid('param');
+    '/:idOrName/exec',
+    route({ param: containerIdOrNameParamSchema, json: containerExecBodySchema }, async (c) => {
+        const { idOrName } = c.req.valid('param');
         const { command, workdir, user } = c.req.valid('json');
 
-        const container = docker.getContainer(id);
+        const container = docker.getContainer(idOrName);
 
         const execOptions: Record<string, unknown> = {
             Cmd: ['sh', '-c', command],
@@ -178,9 +194,7 @@ app.post(
             createOptions.HostConfig.NetworkMode = networks[0];
             if (networks.length > 1) {
                 createOptions.NetworkingConfig = {
-                    EndpointsConfig: Object.fromEntries(
-                        networks.map((net) => [net, {}]),
-                    ),
+                    EndpointsConfig: Object.fromEntries(networks.map((net) => [net, {}])),
                 };
             }
         }
@@ -195,7 +209,7 @@ app.post(
                 exposedPorts[containerPortKey] = {};
                 portBindings[containerPortKey] = [
                     {
-                        HostPort: port.hostPort,
+                        HostPort: String(port.hostPort),
                     },
                 ];
             });
@@ -393,84 +407,67 @@ app.post(
 );
 
 app.post(
-    '/:id/rename',
-    route({ param: containerIdParamSchema, json: containerRenameBodySchema }, async (c) => {
-        const { id } = c.req.valid('param');
-        const { name } = c.req.valid('json');
-        const container = docker.getContainer(id);
+    '/rename',
+    route({ json: containerRenameBodySchema }, async (c) => {
+        const { containerId, name } = c.req.valid('json');
+        const container = docker.getContainer(containerId);
         await container.rename({ name });
         return { name };
     }),
 );
 
 app.post(
-    '/:id/start',
-    route({ param: containerIdParamSchema }, async (c) => {
-        const { id } = c.req.valid('param');
-        return await docker.getContainer(id).start();
+    '/start',
+    route({ json: containerActionsSchema }, async (c) => {
+        const { containerIds } = c.req.valid('json');
+        await Promise.all(containerIds.map((id) => docker.getContainer(id).start()));
     }),
 );
 
 app.post(
-    '/:id/stop',
-    route({ param: containerIdParamSchema }, async (c) => {
-        const { id } = c.req.valid('param');
-        return await docker.getContainer(id).stop();
+    '/stop',
+    route({ json: containerActionsSchema }, async (c) => {
+        const { containerIds } = c.req.valid('json');
+        await Promise.all(containerIds.map((id) => docker.getContainer(id).stop()));
     }),
 );
 
 app.post(
-    '/:id/pause',
-    route({ param: containerIdParamSchema }, async (c) => {
-        const { id } = c.req.valid('param');
-        await docker.getContainer(id).pause();
+    '/pause',
+    route({ json: containerActionsSchema }, async (c) => {
+        const { containerIds } = c.req.valid('json');
+        await Promise.all(containerIds.map((id) => docker.getContainer(id).pause()));
     }),
 );
 
 app.post(
-    '/:id/unpause',
-    route({ param: containerIdParamSchema }, async (c) => {
-        const { id } = c.req.valid('param');
-        await docker.getContainer(id).unpause();
+    '/unpause',
+    route({ json: containerActionsSchema }, async (c) => {
+        const { containerIds } = c.req.valid('json');
+        await Promise.all(containerIds.map((id) => docker.getContainer(id).unpause()));
     }),
 );
 
 app.post(
-    '/:id/restart',
-    route({ param: containerIdParamSchema }, async (c) => {
-        const { id } = c.req.valid('param');
-        await docker.getContainer(id).restart();
-    }),
-);
-
-app.get(
-    '/:id/info',
-    route({ param: containerIdParamSchema }, async (c) => {
-        const { id } = c.req.valid('param');
-        const container = docker.getContainer(id);
-
-        try {
-            return await container.inspect();
-        } catch (error: any) {
-            if (error.statusCode === 404) {
-                throw new HttpError(`Container '${id}' not found`, 404);
-            }
-
-            throw error;
-        }
+    '/restart',
+    route({ json: containerActionsSchema }, async (c) => {
+        const { containerIds } = c.req.valid('json');
+        await Promise.all(containerIds.map((id) => docker.getContainer(id).restart()));
     }),
 );
 
 app.delete(
-    '/:id/remove',
-    route({ param: containerIdParamSchema }, async (c) => {
-        const { id } = c.req.valid('param');
-        const container = docker.getContainer(id);
-
-        const containerInfo = await container.inspect();
-        if (containerInfo.State.Running) await container.stop();
-
-        return await container.remove();
+    '/remove',
+    route({ json: containerActionsSchema }, async (c) => {
+        const { containerIds } = c.req.valid('json');
+        await Promise.all(
+            containerIds.map(async (id) => {
+                const container = docker.getContainer(id);
+                const containerInfo = await container.inspect();
+                if (containerInfo.State.Running) await container.stop();
+                return container.remove();
+            }),
+        );
     }),
 );
 
@@ -489,24 +486,6 @@ app.get(
     '/current',
     route(async () => {
         return containersStateManager.getAllStates();
-    }),
-);
-
-app.get(
-    '/:id',
-    route({ param: containerIdParamSchema }, async (c) => {
-        const { id } = c.req.valid('param');
-        const container = containersStateManager.getContainer(id);
-
-        if (!container) {
-            throw new HttpError(`Container '${id}' not found`, 404);
-        }
-
-        return {
-            container,
-            dockerStatus: dockerStatusManager.getStatus(),
-            timestamp: Date.now(),
-        };
     }),
 );
 

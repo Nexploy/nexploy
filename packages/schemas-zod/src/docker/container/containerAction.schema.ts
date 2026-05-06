@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 export const containerActionsSchema = z.object({
-    containerId: z.string(),
+    containerIds: z.array(z.string().min(1)).min(1),
 });
 
-export const containerIdParamSchema = z.object({
-    id: z.string().min(1),
+export const containerIdOrNameParamSchema = z.object({
+    idOrName: z.string().min(1),
 });
 
 export const containerNameParamSchema = z.object({
@@ -27,12 +27,17 @@ export const containerRunEphemeralSchema = z.object({
 
 export const containerRenameSchema = z.object({
     containerId: z.string().min(1),
-    name: z.string().min(1).regex(/^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/, {
-        message: 'Name must start with a letter or digit and contain only letters, digits, _, . or -',
-    }),
+    name: z
+        .string()
+        .min(1)
+        .regex(/^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/, {
+            message:
+                'Name must start with a letter or digit and contain only letters, digits, _, . or -',
+        }),
 });
 
 export const containerRenameBodySchema = z.object({
+    containerId: z.string().min(1),
     name: z.string().min(1),
 });
 

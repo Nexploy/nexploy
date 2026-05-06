@@ -3,6 +3,7 @@ import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/type
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { sonarqubeScanConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
+import { ContainerInspectInfo } from 'dockerode';
 
 type Config = z.infer<typeof sonarqubeScanConfigSchema>;
 
@@ -197,10 +198,10 @@ export class SonarqubeScanExecutor implements INodeExecutor {
 
         try {
             const info = await kyDocker
-                .get(`container/${SONARQUBE_CONTAINER_NAME}/info`, {
+                .get(`container/${SONARQUBE_CONTAINER_NAME}`, {
                     environmentId,
                 } as KyDockerOptions)
-                .json<{ State: { Running: boolean } }>();
+                .json<ContainerInspectInfo>();
 
             if (info.State.Running) {
                 await logger.info(
@@ -212,9 +213,10 @@ export class SonarqubeScanExecutor implements INodeExecutor {
                     nodeId,
                     'Local SonarQube container exists but is stopped, starting it...',
                 );
-                await kyDocker.post(`container/${SONARQUBE_CONTAINER_NAME}/start`, {
+                await kyDocker.post('container/start', {
                     signal: abortSignal,
                     environmentId,
+                    json: { containerIds: [info.Id] },
                 } as KyDockerOptions);
             }
             await logger.info(nodeId, 'Waiting for SonarQube to be ready...');
@@ -235,8 +237,8 @@ export class SonarqubeScanExecutor implements INodeExecutor {
                         image: `sonarqube:${sonarqubeVersion}`,
                         ports: [
                             {
-                                containerPort: '9000',
-                                hostPort: `${sonarqubePort}`,
+                                containerPort: 9000,
+                                hostPort: sonarqubePort,
                                 protocol: 'tcp',
                             },
                         ],

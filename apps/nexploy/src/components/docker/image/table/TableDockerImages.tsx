@@ -46,6 +46,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useRouter } from '@/i18n/navigation';
 import { Switch } from '@workspace/ui/components/switch';
+import { Label } from '@workspace/ui/components/label.tsx';
 
 const globalFilterFn: FilterFn<ImageRow> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -125,8 +126,8 @@ export function TableDockerImages() {
             description: (
                 <div className={'space-y-4'}>
                     <p>{t('confirmRemoveImages', { count: imageIds.length })}</p>
-                    <label
-                        htmlFor={'force-delete'}
+                    <Label
+                        htmlFor={'force-delete-images'}
                         className={
                             'bg-muted/50 border-destructive flex cursor-pointer items-center justify-between rounded-lg border p-3'
                         }
@@ -142,7 +143,7 @@ export function TableDockerImages() {
                             defaultChecked={false}
                             onCheckedChange={(checked) => (forceRef.current = checked)}
                         />
-                    </label>
+                    </Label>
                 </div>
             ),
             onAction: async () => {

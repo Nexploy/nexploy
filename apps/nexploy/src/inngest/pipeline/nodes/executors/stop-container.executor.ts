@@ -26,7 +26,7 @@ export class StopContainerExecutor implements INodeExecutor {
         await logger.info(nodeId, `Stopping container: ${containerId}`);
 
         try {
-            await kyDocker.post(`container/${containerId}/stop`, opts);
+            await kyDocker.post('container/stop', { ...opts, json: { containerIds: [containerId] } });
         } catch (error) {
             if (error instanceof HTTPError && error.response.status === 409) {
                 await logger.warn(nodeId, error.message);

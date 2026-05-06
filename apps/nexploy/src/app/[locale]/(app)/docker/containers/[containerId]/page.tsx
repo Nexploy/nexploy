@@ -4,7 +4,7 @@ import { SSEProvider } from '@/providers/SSEProviders';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { notFound } from 'next/navigation';
-import { Container } from '@workspace/typescript-interface/docker/docker.container';
+import { ContainerInspectInfo } from 'dockerode';
 
 export async function generateMetadata({
     params,
@@ -27,10 +27,10 @@ export default async function ContainerPage({
 
     let containerName: string;
     try {
-        const { container } = await kyDocker
+        const container = await kyDocker
             .get(`container/${containerId}`)
-            .json<{ container: Container }>();
-        containerName = container.name;
+            .json<ContainerInspectInfo>();
+        containerName = container.Name.replace(/^\//, '');
     } catch {
         notFound();
     }

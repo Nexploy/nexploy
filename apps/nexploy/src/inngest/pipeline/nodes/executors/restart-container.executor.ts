@@ -27,7 +27,7 @@ export class RestartContainerExecutor implements INodeExecutor {
         await logger.info(nodeId, `Restarting container: ${containerId}`);
 
         try {
-            await kyDocker.post(`container/${containerId}/restart`, opts);
+            await kyDocker.post('container/restart', { ...opts, json: { containerIds: [containerId] } });
         } catch (error) {
             if (error instanceof HTTPError && error.response.status === 409) {
                 await logger.warn(nodeId, error.message);

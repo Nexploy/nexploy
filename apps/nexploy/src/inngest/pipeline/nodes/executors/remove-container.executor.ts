@@ -27,7 +27,7 @@ export class RemoveContainerExecutor implements INodeExecutor {
         await logger.info(nodeId, `Removing container: ${containerId}`);
 
         try {
-            await kyDocker.delete(`container/${containerId}/remove`, opts);
+            await kyDocker.delete('container/remove', { ...opts, json: { containerIds: [containerId] } });
         } catch (error) {
             if (error instanceof HTTPError && error.response.status === 409) {
                 await logger.warn(nodeId, error.message);

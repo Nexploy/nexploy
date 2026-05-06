@@ -29,7 +29,7 @@ export function useContainerActions({
                   id: 'unpause',
                   icon: Play,
                   label: t('resume'),
-                  onClick: () => onContainerUnpauseAction({ containerId }),
+                  onClick: () => onContainerUnpauseAction({ containerIds: [containerId] }),
                   disabledStates: [],
                   variant: 'outline',
               }
@@ -37,7 +37,7 @@ export function useContainerActions({
                   id: 'start',
                   icon: Play,
                   label: t('start'),
-                  onClick: () => onContainerStartAction({ containerId }),
+                  onClick: () => onContainerStartAction({ containerIds: [containerId] }),
                   disabledStates: ['running', 'restarting', 'paused'],
                   variant: 'outline',
               },
@@ -45,7 +45,7 @@ export function useContainerActions({
             id: 'stop',
             icon: Square,
             label: t('stop'),
-            onClick: () => onContainerStopAction({ containerId }),
+            onClick: () => onContainerStopAction({ containerIds: [containerId] }),
             disabledStates: ['exited', 'created', 'dead'],
             variant: 'outline',
         },
@@ -53,7 +53,7 @@ export function useContainerActions({
             id: 'pause',
             icon: Pause,
             label: t('pause'),
-            onClick: () => onContainerPauseAction({ containerId }),
+            onClick: () => onContainerPauseAction({ containerIds: [containerId] }),
             disabledStates: ['paused', 'exited', 'dead', 'created'],
             variant: 'outline',
         },
@@ -61,7 +61,7 @@ export function useContainerActions({
             id: 'restart',
             icon: RotateCw,
             label: t('restart'),
-            onClick: () => onContainerRestartAction({ containerId }),
+            onClick: () => onContainerRestartAction({ containerIds: [containerId] }),
             disabledStates: ['created', 'dead'],
             variant: 'outline',
         },
@@ -78,7 +78,9 @@ export function useContainerActions({
                         actionLabel: t('remove'),
                         onAction: async () => {
                             try {
-                                const result = await onContainerRemoveAction({ containerId });
+                                const result = await onContainerRemoveAction({
+                                    containerIds: [containerId],
+                                });
                                 resolve(result);
                             } catch (error) {
                                 reject(error);

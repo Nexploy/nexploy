@@ -11,7 +11,7 @@ export const onContainerRenameAction = authActionServer
     .inputSchema(containerRenameSchema)
     .action(async ({ parsedInput: { containerId, name } }) => {
         try {
-            return await kyDocker.post(`container/${containerId}/rename`, { json: { name } }).json();
+            return await kyDocker.post('container/rename', { json: { containerId, name } }).json();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({

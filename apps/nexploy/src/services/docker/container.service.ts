@@ -20,7 +20,7 @@ export async function getContainerPortMappings(
 ): Promise<Record<number, number>> {
     try {
         const inspectInfo = await kyDocker
-            .get(`container/${containerNameOrId}/info`, {
+            .get(`container/${containerNameOrId}`, {
                 environmentId,
             } as KyDockerOptions)
             .json<ContainerInspectInfo>();
