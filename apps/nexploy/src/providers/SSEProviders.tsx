@@ -5,16 +5,17 @@ import { useContainersStore } from '@/stores/docker/useContainersStore';
 import { useImagesStore } from '../stores/docker/useImagesStore';
 import { useDockerStore } from '@/stores/docker/useDockerStore';
 import { useEventsStore } from '@/stores/docker/useEventsStore';
-import { useVolumeStore } from '@/stores/docker/useVolumeStore';
 import { useNetworkStore } from '@/stores/docker/useNetworkStore';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { useContainerLogsStore } from '@/stores/docker/useContainerLogsStore';
 import { useImageStore } from '../stores/docker/useImageStore';
+import { useVolumeStore } from '@/stores/docker/useVolumeStore';
 import { SSEChannel } from '@workspace/typescript-interface/sse';
 import { useContainerStatsStore } from '@/stores/docker/useContainerStatsStore';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
 import { useRequestsStore } from '@/stores/traefik/useRequestsStore';
 import { useMonitoringStore } from '@/stores/monitoring/useMonitoringStore';
+import { useVolumesStore } from '@/stores/docker/useVolumesStore.ts';
 
 type ExtractConnectParams<T> = T extends (params: infer P) => void ? P : never;
 
@@ -27,6 +28,7 @@ type SSEParams = {
     events?: ExtractConnectParams<ReturnType<typeof useEventsStore.getState>['connect']>;
     container?: ExtractConnectParams<ReturnType<typeof useContainerStore.getState>['connect']>;
     image?: ExtractConnectParams<ReturnType<typeof useImageStore.getState>['connect']>;
+    volume?: ExtractConnectParams<ReturnType<typeof useVolumeStore.getState>['connect']>;
     logs?: ExtractConnectParams<ReturnType<typeof useContainerLogsStore.getState>['connect']>;
     stats?: ExtractConnectParams<ReturnType<typeof useContainerStatsStore.getState>['connect']>;
     swarm?: ExtractConnectParams<ReturnType<typeof useSwarmStore.getState>['connect']>;
@@ -70,8 +72,8 @@ export function SSEProvider({
     const eventsConnect = useEventsStore((s) => s.connect);
     const eventsDisconnect = useEventsStore((s) => s.disconnect);
 
-    const volumesConnect = useVolumeStore((s) => s.connect);
-    const volumesDisconnect = useVolumeStore((s) => s.disconnect);
+    const volumesConnect = useVolumesStore((s) => s.connect);
+    const volumesDisconnect = useVolumesStore((s) => s.disconnect);
 
     const networksConnect = useNetworkStore((s) => s.connect);
     const networksDisconnect = useNetworkStore((s) => s.disconnect);
@@ -81,6 +83,9 @@ export function SSEProvider({
 
     const imageDetailConnect = useImageStore((s) => s.connect);
     const imageDetailDisconnect = useImageStore((s) => s.disconnect);
+
+    const volumeConnect = useVolumeStore((s) => s.connect);
+    const volumeDisconnect = useVolumeStore((s) => s.disconnect);
 
     const containerLogsConnect = useContainerLogsStore((s) => s.connect);
     const containerLogsDisconnect = useContainerLogsStore((s) => s.disconnect);
@@ -102,6 +107,7 @@ export function SSEProvider({
             containers: containersConnect,
             container: containerConnect,
             image: imageDetailConnect,
+            volume: volumeConnect,
             stats: containerStatsConnect,
             logs: containerLogsConnect,
             images: imageConnect,
@@ -118,11 +124,12 @@ export function SSEProvider({
             containers: containersDisconnect,
             container: containerDisconnect,
             image: imageDetailDisconnect,
+            images: imageDisconnect,
             logs: containerLogsDisconnect,
             stats: containerStatsDisconnect,
-            images: imageDisconnect,
             docker: dockerDisconnect,
             events: eventsDisconnect,
+            volume: volumeDisconnect,
             volumes: volumesDisconnect,
             networks: networksDisconnect,
             swarm: swarmDisconnect,

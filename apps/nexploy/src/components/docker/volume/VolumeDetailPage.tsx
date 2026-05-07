@@ -2,23 +2,25 @@
 
 import { HardDrive, Trash2 } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
-import { useVolumeStore } from '@/stores/docker/useVolumeStore';
+import { useVolumeStore } from '@/stores/docker/useVolumeStore.ts';
 import { CardVolumeDetails } from '@/components/docker/volume/cards/CardVolumeDetails';
 import { CardVolumeContainers } from '@/components/docker/volume/cards/CardVolumeContainers';
-
 import { Button } from '@workspace/ui/components/button';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { onVolumeAction } from '@/actions/docker/volume/volumeAction.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
+import { NotFoundSSE } from '@/components/shared/NotFoundSSE';
 
 interface VolumeDetailPageProps {
     volumeName: string;
 }
 
 export function VolumeDetailPage({ volumeName }: VolumeDetailPageProps) {
-    const volume = useVolumeStore((state) => state.getVolume(volumeName));
+    const volume = useVolumeStore((state) => state.volume);
+    const notFound = useVolumeStore((state) => state.notFound);
     const t = useTranslations('docker.volumeDetail');
     const tActions = useTranslations('docker.dropdownActions');
 
@@ -43,30 +45,48 @@ export function VolumeDetailPage({ volumeName }: VolumeDetailPageProps) {
         });
     };
 
+    if (notFound) {
+        return (
+            <NotFoundSSE
+                title={t('notFoundTitle')}
+                description={t('notFoundDescription')}
+                backLabel={t('backToVolumes')}
+            />
+        );
+    }
+
     return (
-        <div className="flex h-full flex-1 flex-col gap-5 pt-5">
-            <div className="flex gap-3 px-5">
-                <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                    <HardDrive className="text-primary size-7" />
+        <BreadcrumbProvider segments={{ volumeName }}>
+            <div className="flex h-full flex-1 flex-col gap-5 pt-5">
+                <div className="flex gap-3 px-5">
+                    <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+                        <HardDrive className="text-primary size-7" />
+                    </div>
+                    <div className="flex flex-1 flex-col">
+                        {!volume ? (
+                            <Skeleton className="h-6 w-40" />
+                        ) : (
+                            <h1 className="text-3xl leading-none font-semibold tracking-tight break-all">
+                                {volumeName}
+                            </h1>
+                        )}
+                        <p className="text-muted-foreground text-sm">{t('description')}</p>
+                    </div>
+                    <Button
+                        icon={Trash2}
+                        variant="destructive"
+                        size="icon"
+                        onClick={handleRemove}
+                        disabled={!volume}
+                    />
                 </div>
-                <div className="flex flex-1 flex-col">
-                    {!volume ? (
-                        <Skeleton className="h-6 w-40" />
-                    ) : (
-                        <h1 className="text-3xl leading-none font-semibold tracking-tight break-all">
-                            {volumeName}
-                        </h1>
-                    )}
-                    <p className="text-muted-foreground text-sm">{t('description')}</p>
-                </div>
-                <Button icon={Trash2} variant="destructive" size="icon" onClick={handleRemove} />
+                <ScrollAreaWithShadow className="h-full overflow-hidden">
+                    <div className="flex flex-col gap-5 px-5 pb-5">
+                        <CardVolumeDetails />
+                        <CardVolumeContainers volumeName={volumeName} />
+                    </div>
+                </ScrollAreaWithShadow>
             </div>
-            <ScrollAreaWithShadow className="h-full overflow-hidden">
-                <div className="flex flex-col gap-5 px-5 pb-5">
-                    <CardVolumeDetails volume={volume} />
-                    <CardVolumeContainers volumeName={volumeName} isLoading={!volume} />
-                </div>
-            </ScrollAreaWithShadow>
-        </div>
+        </BreadcrumbProvider>
     );
 }

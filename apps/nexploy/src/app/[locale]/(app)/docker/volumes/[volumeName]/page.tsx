@@ -1,9 +1,6 @@
 import type { Metadata } from 'next';
 import { VolumeDetailPage } from '@/components/docker/volume/VolumeDetailPage';
-import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
-import { kyDocker } from '@/lib/api/kyDocker';
-import { notFound } from 'next/navigation';
-import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
+import { SSEProvider } from '@/providers/SSEProviders';
 
 export async function generateMetadata({
     params,
@@ -21,15 +18,9 @@ export default async function VolumePage({ params }: { params: Promise<{ volumeN
     const { volumeName } = await params;
     const decodedName = decodeURIComponent(volumeName);
 
-    try {
-        await kyDocker.get(`volumes/${decodedName}/inspect`).json<Volume>();
-    } catch {
-        notFound();
-    }
-
     return (
-        <BreadcrumbProvider segments={{ volumeName }}>
-            <VolumeDetailPage volumeName={volumeName} />
-        </BreadcrumbProvider>
+        <SSEProvider connections={['volume']} params={{ volume: { volumeName: decodedName } }}>
+            <VolumeDetailPage volumeName={decodedName} />
+        </SSEProvider>
     );
 }

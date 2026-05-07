@@ -9,6 +9,7 @@ import containersEvents from './routes/events/containersEvents';
 import containerEvents from './routes/events/containerEvents';
 import imageEvents from './routes/events/imageEvents';
 import dockerStatusEvents from './routes/events/dockerStatusEvents';
+import volumeEvents from './routes/events/volumeEvents';
 import volumesEvents from './routes/events/volumesEvents';
 import eventsEvents from './routes/events/eventsEvents';
 import imagesEvents from './routes/events/imagesEvents';
@@ -76,6 +77,7 @@ app.route('/api/image/events', imageEvents);
 app.route('/api/images/events', imagesEvents);
 app.route('/api/images', imagesRoutes);
 
+app.route('/api/volume/events', volumeEvents);
 app.route('/api/volumes/events', volumesEvents);
 app.route('/api/volumes', volumesRoutes);
 

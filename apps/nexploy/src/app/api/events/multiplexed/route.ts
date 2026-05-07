@@ -13,6 +13,7 @@ const CHANNEL_ENDPOINTS: Record<SSEChannel, string> = {
     stats: `/api/container/events/stream/:containerId/stats/:refreshRate`,
     image: '/api/image/events/stream/:imageId',
     images: '/api/images/events/stream',
+    volume: '/api/volume/events/stream/:volumeName',
     docker: '/api/docker/events/stream',
     events: '/api/events/events/stream',
     volumes: '/api/volumes/events/stream',

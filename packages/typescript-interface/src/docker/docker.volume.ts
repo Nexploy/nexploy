@@ -57,6 +57,13 @@ export interface VolumeEvent {
     changes?: VolumeStateChanges;
 }
 
+export interface VolumeDetailEvent {
+    type: 'initial-state' | 'state-change' | 'removed' | 'not-found' | 'heartbeat';
+    volumeName: string;
+    volume?: Volume;
+    timestamp: number;
+}
+
 export type Mount = {
     type: string;
     source: string;

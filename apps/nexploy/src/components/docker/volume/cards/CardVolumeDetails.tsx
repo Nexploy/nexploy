@@ -6,20 +6,17 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import CopyButton from '@/components/shared/CopyButton';
 import { useTranslations } from 'next-intl';
-import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
 import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';
 import { Badge } from '@workspace/ui/components/badge';
+import { useVolumeStore } from '@/stores/docker/useVolumeStore';
 
-interface CardVolumeDetailsProps {
-    volume: Volume | undefined;
-}
-
-export function CardVolumeDetails({ volume }: CardVolumeDetailsProps) {
+export function CardVolumeDetails() {
     const t = useTranslations('docker.volumeDetails');
+    const volume = useVolumeStore((state) => state.volume);
 
     if (!volume) {
-        return <Skeleton className="h-80" />;
+        return <Skeleton className="h-96" />;
     }
 
     const labelEntries = Object.entries(volume.labels || {});

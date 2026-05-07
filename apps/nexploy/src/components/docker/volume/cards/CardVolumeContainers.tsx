@@ -6,21 +6,22 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import { useContainersStore } from '@/stores/docker/useContainersStore';
+import { useVolumeStore } from '@/stores/docker/useVolumeStore';
 import Link from 'next/link';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import * as React from 'react';
 
 interface CardVolumeContainersProps {
     volumeName: string;
-    isLoading?: boolean;
 }
 
-export function CardVolumeContainers({ volumeName, isLoading }: CardVolumeContainersProps) {
+export function CardVolumeContainers({ volumeName }: CardVolumeContainersProps) {
     const t = useTranslations('docker.volumeContainers');
     const containers = useContainersStore((state) => state.containers);
+    const isConnecting = useVolumeStore((state) => state.isConnecting);
 
-    if (isLoading) {
-        return <Skeleton className="h-40" />;
+    if (isConnecting) {
+        return <Skeleton className="h-52" />;
     }
 
     const usingContainers = containers.filter((c) =>

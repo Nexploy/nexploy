@@ -22,7 +22,7 @@ import {
 import React, { useMemo, useState } from 'react';
 import { getColumnsTableVolumes } from '@/components/docker/volume/table/ColumnsDockerVolumes';
 import { useTranslations } from 'next-intl';
-import { useVolumeStore } from '@/stores/docker/useVolumeStore';
+import { useVolumesStore } from '../../../../stores/docker/useVolumesStore';
 import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
@@ -65,8 +65,8 @@ export function TableDockerVolumes() {
     const t = useTranslations('docker.tables');
     const tCommon = useTranslations('common');
 
-    const volumes = useVolumeStore((state) => state.volumes);
-    const lastUpdate = useVolumeStore((state) => state.lastUpdate);
+    const volumes = useVolumesStore((state) => state.volumes);
+    const lastUpdate = useVolumesStore((state) => state.lastUpdate);
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
     const columns = useMemo(() => getColumnsTableVolumes(t), [t]);

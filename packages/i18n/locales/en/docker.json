@@ -247,7 +247,10 @@
     },
     "volumeDetail": {
         "description": "Details and information about the Docker volume",
-        "deleteVolume": "Delete this volume"
+        "deleteVolume": "Delete this volume",
+        "notFoundTitle": "Volume not found",
+        "notFoundDescription": "This volume no longer exists or has been removed.",
+        "backToVolumes": "Back to volumes"
     },
     "volumeDetails": {
         "title": "Volume details",

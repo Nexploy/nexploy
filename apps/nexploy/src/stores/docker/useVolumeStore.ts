@@ -1,141 +1,121 @@
 import { create } from 'zustand';
-import { VolumeEvent } from '@workspace/typescript-interface/docker/docker.volume';
-import { toast } from 'sonner';
-import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
-import { VolumeState } from '@workspace/typescript-interface/stores/docker/volumesStore';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
-import { clientT } from '@/lib/i18n/clientTranslations';
+import { VolumeDetailState } from '@workspace/typescript-interface/stores/docker/volumeDetailStore';
+import { VolumeDetailEvent } from '@workspace/typescript-interface/docker/docker.volume';
 
-export const useVolumeStore = create<VolumeState>((set, get) => ({
-    volumes: [],
+const defaultValue = {
+    volumeName: null,
+    volume: null,
+    notFound: false,
+    isConnecting: true,
+    isMonitoring: false,
     error: null,
     lastUpdate: null,
     eventSource: null,
     reconnectTimeout: null,
+};
 
-    setVolumes: (volumes) => set({ volumes }),
+export const useVolumeStore = create<VolumeDetailState>((set, get) => ({
+    ...defaultValue,
 
-    setError: (error) => set({ error }),
-    setLastUpdate: (timestamp) => set({ lastUpdate: timestamp }),
-
-    addVolume: (volume) =>
-        set((state) => {
-            const newVolumes = [...state.volumes, volume];
-
-            newVolumes.sort((a, b) => {
-                const nameA = a.name.toLowerCase();
-                const nameB = b.name.toLowerCase();
-                return nameA.localeCompare(nameB);
-            });
-
-            return { volumes: newVolumes };
-        }),
-
-    removeVolume: (volumeName) =>
-        set((state) => ({
-            volumes: state.volumes.filter((vol) => vol.name !== volumeName),
-        })),
-
-    updateVolume: (volume) =>
-        set((state) => ({
-            volumes: state.volumes.map((vol) => (vol.name === volume.name ? volume : vol)),
-        })),
-
-    getVolume: (name) => {
-        return get().volumes.find((vol) => vol.name === name);
-    },
-
-    connect: () => {
+    connect: ({ volumeName }) => {
         const state = get();
+
+        if (state.isMonitoring && state.volumeName === volumeName) {
+            return;
+        }
+
+        if (state.isMonitoring) {
+            state.disconnect();
+        }
 
         if (state.reconnectTimeout) {
             clearTimeout(state.reconnectTimeout);
         }
 
+        set({ volumeName, error: null, isConnecting: true, notFound: false });
+
+        const unsubscribers: (() => void)[] = [];
+
         try {
-            const unsubscribers: (() => void)[] = [];
-
             unsubscribers.push(
-                sseMultiplexer.subscribe('volumes', 'initial-state', (e) => {
-                    const data: VolumeEvent = JSON.parse(e.data);
-                    set({
-                        volumes: data.volumes || [],
-                        lastUpdate: data.timestamp,
-                        error: null,
-                    });
-                }),
-            );
-
-            unsubscribers.push(
-                sseMultiplexer.subscribe('volumes', 'heartbeat', (e) => {
-                    const { timestamp }: DockerStatusEvent = JSON.parse(e.data);
-                    set({ lastUpdate: timestamp });
-                }),
-            );
-
-            unsubscribers.push(
-                sseMultiplexer.subscribe('volumes', 'state-change', (e) => {
-                    const data: VolumeEvent = JSON.parse(e.data);
-
-                    if (data.volume) {
-                        const volumes = [...get().volumes];
-                        const index = volumes.findIndex((vol) => vol.name === data.volume!.name);
-
-                        if (index !== -1) {
-                            volumes[index] = data.volume;
-                        } else {
-                            volumes.push(data.volume);
-                        }
-
+                sseMultiplexer.subscribe(
+                    'volume',
+                    'initial-state',
+                    (e) => {
+                        const data: VolumeDetailEvent = JSON.parse(e.data);
                         set({
-                            volumes,
+                            volume: data.volume ?? null,
+                            lastUpdate: data.timestamp,
+                            error: null,
+                            isMonitoring: true,
+                            isConnecting: false,
+                            notFound: false,
+                        });
+                    },
+                    { volumeName },
+                ),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe(
+                    'volume',
+                    'state-change',
+                    (e) => {
+                        const data: VolumeDetailEvent = JSON.parse(e.data);
+                        set({ volume: data.volume ?? null, lastUpdate: data.timestamp });
+                    },
+                    { volumeName },
+                ),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe(
+                    'volume',
+                    'removed',
+                    (e) => {
+                        const data: VolumeDetailEvent = JSON.parse(e.data);
+                        set({ volume: null, notFound: true, lastUpdate: data.timestamp });
+                    },
+                    { volumeName },
+                ),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe(
+                    'volume',
+                    'not-found',
+                    (e) => {
+                        const data = JSON.parse(e.data);
+                        set({
+                            volume: null,
+                            notFound: true,
+                            isConnecting: false,
+                            isMonitoring: true,
                             lastUpdate: data.timestamp,
                         });
-                    }
-                }),
+                    },
+                    { volumeName },
+                ),
             );
 
             unsubscribers.push(
-                sseMultiplexer.subscribe('volumes', 'volume-added', (e) => {
-                    const data: VolumeEvent = JSON.parse(e.data);
-                    if (!data.volume) return;
-
-                    get().addVolume(data.volume);
-                    toast.success(clientT('toasts.volumeAdded', { name: data.volume.name }));
-                    set({ lastUpdate: data.timestamp });
-                }),
-            );
-
-            unsubscribers.push(
-                sseMultiplexer.subscribe('volumes', 'volume-updated', (e) => {
-                    const data: VolumeEvent = JSON.parse(e.data);
-                    const volume = data.volume;
-                    if (!volume) return;
-
-                    get().updateVolume(volume);
-                    set({ lastUpdate: data.timestamp });
-                }),
-            );
-
-            unsubscribers.push(
-                sseMultiplexer.subscribe('volumes', 'volume-removed', (e) => {
-                    const data: VolumeEvent = JSON.parse(e.data);
-                    if (!data.volumeName) return;
-
-                    get().removeVolume(data.volumeName);
-                    toast.success(clientT('toasts.volumeRemoved', { name: data.volumeName }));
-                    set({ lastUpdate: data.timestamp });
-                }),
+                sseMultiplexer.subscribe(
+                    'volume',
+                    'heartbeat',
+                    (e) => {
+                        const data = JSON.parse(e.data);
+                        set({ lastUpdate: data.timestamp });
+                    },
+                    { volumeName },
+                ),
             );
 
             set({
                 eventSource: { close: () => unsubscribers.forEach((fn) => fn()) } as EventSource,
             });
         } catch (err) {
-            console.error('Volumes - Failed to connect :', err);
-            set({
-                error: err as Error,
-            });
+            set({ error: err as Error });
         }
     },
 
@@ -150,21 +130,6 @@ export const useVolumeStore = create<VolumeState>((set, get) => ({
             state.eventSource.close();
         }
 
-        set({
-            eventSource: null,
-            reconnectTimeout: null,
-        });
-    },
-
-    reset: () => {
-        get().disconnect();
-
-        set({
-            volumes: [],
-            error: null,
-            lastUpdate: null,
-            eventSource: null,
-            reconnectTimeout: null,
-        });
+        set(defaultValue);
     },
 }));

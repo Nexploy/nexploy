@@ -1,6 +1,6 @@
 'use client';
 
-import { useVolumeStore } from '@/stores/docker/useVolumeStore';
+import { useVolumesStore } from '../../../stores/docker/useVolumesStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { Database, HardDrive, Server } from 'lucide-react';
 import { formatBytes } from '@/utils/formatBytes';
@@ -10,8 +10,8 @@ import { useTranslations } from 'next-intl';
 
 export function CardInfoVolumes() {
     const t = useTranslations('docker');
-    const volumes = useVolumeStore((state) => state.volumes);
-    const lastUpdate = useVolumeStore((state) => state.lastUpdate);
+    const volumes = useVolumesStore((state) => state.volumes);
+    const lastUpdate = useVolumesStore((state) => state.lastUpdate);
 
     const isLoading = !volumes.length && !lastUpdate;
 
