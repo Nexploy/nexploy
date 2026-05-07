@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { DropdownActionTool } from '@workspace/typescript-interface/commun';
-import { AlertTriangle, Crown, Pause, Play, Tag, Trash2, Users } from 'lucide-react';
+import { AlertTriangle, Crown, Pause, Play, Trash2, Users } from 'lucide-react';
 import { onSwarmNodeAction } from '@/actions/docker/swarm/nodeAction.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
@@ -10,10 +10,9 @@ import { Switch } from '@workspace/ui/components/switch';
 
 interface UseNodeActionsProps {
     node: SwarmNode;
-    onEditLabels?: (node: SwarmNode) => void;
 }
 
-export function useNodeActions({ node, onEditLabels }: UseNodeActionsProps): DropdownActionTool[] {
+export function useNodeActions({ node }: UseNodeActionsProps): DropdownActionTool[] {
     const t = useTranslations('swarm');
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const forceRef = useRef(false);
@@ -35,28 +34,26 @@ export function useNodeActions({ node, onEditLabels }: UseNodeActionsProps): Dro
               },
     ];
 
-    if (node.availability !== 'active') {
-        tools.push({ icon: Play, label: t('activate'), onClick: () => handleAction('activate') });
-    }
-    if (node.availability !== 'pause') {
-        tools.push({ icon: Pause, label: t('pause'), onClick: () => handleAction('pause') });
-    }
-    if (node.availability !== 'drain') {
-        tools.push({
+    tools.push(
+        {
+            icon: Play,
+            label: t('activate'),
+            disabled: node.availability === 'active',
+            onClick: () => handleAction('activate'),
+        },
+        {
+            icon: Pause,
+            label: t('pause'),
+            disabled: node.availability === 'pause',
+            onClick: () => handleAction('pause'),
+        },
+        {
             icon: AlertTriangle,
             label: t('drain'),
+            disabled: node.availability === 'drain',
             onClick: () => handleAction('drain'),
-        });
-    }
-
-    if (onEditLabels) {
-        tools.push({
-            icon: Tag,
-            label: t('editLabels'),
-            onClick: () => onEditLabels(node),
-            separator: true,
-        });
-    }
+        },
+    );
 
     tools.push({
         icon: Trash2,

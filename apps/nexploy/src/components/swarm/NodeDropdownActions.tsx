@@ -11,12 +11,11 @@ import { useNodeActions } from '@/hooks/useNodeActions';
 
 interface NodeDropdownActionsProps {
     node: SwarmNode;
-    onEditLabels?: (node: SwarmNode) => void;
 }
 
-export function NodeDropdownActions({ node, onEditLabels }: NodeDropdownActionsProps) {
+export function NodeDropdownActions({ node }: NodeDropdownActionsProps) {
     const t = useTranslations('swarm');
-    const tools = useNodeActions({ node, onEditLabels });
+    const tools = useNodeActions({ node });
 
     return (
         <DropdownMenuContent align="end">
@@ -27,6 +26,7 @@ export function NodeDropdownActions({ node, onEditLabels }: NodeDropdownActionsP
                     {tool.separator && <DropdownMenuSeparator />}
                     <DropdownMenuItem
                         variant={tool === tools[tools.length - 1] ? 'destructive' : undefined}
+                        disabled={tool.disabled}
                         onClick={(event) => {
                             event.stopPropagation();
                             tool.onClick?.();

@@ -6,4 +6,5 @@ export interface DropdownActionTool {
     label: string;
     onClick?: () => Promise<any> | void;
     separator?: boolean;
+    disabled?: boolean;
 }

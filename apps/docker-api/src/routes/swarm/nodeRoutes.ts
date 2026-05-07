@@ -28,7 +28,6 @@ app.post(
             Role: 'manager',
         });
 
-        await swarmStateManager.hardRefresh();
         const updatedNode = swarmStateManager.getNode(nodeId);
 
         return { success: true, node: updatedNode };
@@ -53,7 +52,6 @@ app.post(
             Role: 'worker',
         });
 
-        await swarmStateManager.hardRefresh();
         const updatedNode = swarmStateManager.getNode(nodeId);
 
         return { success: true, node: updatedNode };
@@ -74,7 +72,6 @@ app.post(
             Availability: 'drain',
         });
 
-        await swarmStateManager.hardRefresh();
         const updatedNode = swarmStateManager.getNode(nodeId);
 
         return { success: true, node: updatedNode };
@@ -95,7 +92,6 @@ app.post(
             Availability: 'active',
         });
 
-        await swarmStateManager.hardRefresh();
         const updatedNode = swarmStateManager.getNode(nodeId);
 
         return { success: true, node: updatedNode };
@@ -116,7 +112,6 @@ app.post(
             Availability: 'pause',
         });
 
-        await swarmStateManager.hardRefresh();
         const updatedNode = swarmStateManager.getNode(nodeId);
 
         return { success: true, node: updatedNode };
@@ -131,8 +126,6 @@ app.delete(
 
         const node = docker.getNode(id);
         await node.remove({ force });
-
-        await swarmStateManager.hardRefresh();
 
         return { success: true };
     }),
