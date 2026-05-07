@@ -10,8 +10,15 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
-import { useMemo, useState } from 'react';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@workspace/ui/components/table';
+import { useState } from 'react';
 import { getColumnsTableNodes } from './ColumnsDockerNodes';
 import { useTranslations } from 'next-intl';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
@@ -29,7 +36,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, } from '@workspace/ui/components/empty';
+import {
+    Empty,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from '@workspace/ui/components/empty';
 import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 
 const globalFilterFn: FilterFn<SwarmNode> = (row, _, value) => {
@@ -57,11 +70,9 @@ export function NodesTable() {
     const isSwarmActive = useSwarmStore((state) => state.isSwarmActive);
     const lastUpdate = useSwarmStore((state) => state.lastUpdate);
 
-    const columns = useMemo(() => getColumnsTableNodes(t), [t]);
-
     const table = useReactTable({
         data: nodes,
-        columns,
+        columns: getColumnsTableNodes(t),
         getRowId: (row: SwarmNode) => row.id,
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
@@ -138,7 +149,7 @@ export function NodesTable() {
                         {isLoading &&
                             Array.from({ length: 3 }).map((_, i) => (
                                 <TableRow key={i} className="h-12">
-                                    {columns.map((_, ci) => (
+                                    {table.getAllColumns().map((_, ci) => (
                                         <TableCell key={ci}>
                                             <Skeleton className="h-6 w-full" />
                                         </TableCell>
@@ -148,7 +159,10 @@ export function NodesTable() {
 
                         {noMatch && (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="py-6 text-center">
+                                <TableCell
+                                    colSpan={table.getAllColumns().length}
+                                    className="py-6 text-center"
+                                >
                                     {tCommon('noMatchSearch')}
                                 </TableCell>
                             </TableRow>

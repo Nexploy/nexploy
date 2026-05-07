@@ -19,7 +19,7 @@ import {
     TableHeader,
     TableRow,
 } from '@workspace/ui/components/table';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { getColumnsTableVolumes } from '@/components/docker/volume/table/ColumnsDockerVolumes';
 import { useTranslations } from 'next-intl';
 import { useVolumesStore } from '@/stores/docker/useVolumesStore.ts';
@@ -69,14 +69,12 @@ export function TableDockerVolumes() {
     const lastUpdate = useVolumesStore((state) => state.lastUpdate);
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
-    const columns = useMemo(() => getColumnsTableVolumes(t), [t]);
-
     const isLoading = !volumes.length && !lastUpdate;
     const isEmpty = !volumes.length && !!lastUpdate;
 
     const table = useReactTable({
         data: volumes,
-        columns,
+        columns: getColumnsTableVolumes(t),
         getRowId: (originalRow: Volume) => originalRow.name,
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,

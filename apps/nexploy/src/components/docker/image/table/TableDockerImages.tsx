@@ -21,7 +21,7 @@ import {
     TableHeader,
     TableRow,
 } from '@workspace/ui/components/table';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { getColumnsTableImages } from '@/components/docker/image/table/ColumnsDockerImages';
 import { useTranslations } from 'next-intl';
 import { useImagesStore } from '../../../../stores/docker/useImagesStore';
@@ -76,15 +76,12 @@ export function TableDockerImages() {
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const forceRef = useRef(false);
 
-    const groupedImages = useMemo(() => groupImagesByRepository(images), [images]);
-    const columns = useMemo(() => getColumnsTableImages(t), [t]);
-
     const isLoading = !images.length && !lastUpdate;
     const isEmpty = !images.length && !!lastUpdate;
 
     const table = useReactTable({
-        data: groupedImages,
-        columns,
+        data: groupImagesByRepository(images),
+        columns: getColumnsTableImages(t),
         getRowId: (originalRow: ImageRow) => originalRow.id,
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,

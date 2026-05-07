@@ -12,8 +12,15 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@workspace/ui/components/table';
+import React, { useCallback, useRef, useState } from 'react';
 import { getColumnsTableNetworks } from '@/components/docker/network/table/ColumnsDockerNetworks';
 import { useNetworkStore } from '@/stores/docker/useNetworkStore';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
@@ -64,14 +71,12 @@ export function TableDockerNetworks() {
     const tDocker = useTranslations('docker');
     const tCommon = useTranslations('common');
 
-    const columns = useMemo(() => getColumnsTableNetworks(t), [t]);
-
     const isLoading = !networks.length && !lastUpdate;
     const isEmpty = !networks.length && !!lastUpdate;
 
     const table = useReactTable({
         data: networks,
-        columns,
+        columns: getColumnsTableNetworks(t),
         getRowId: (originalRow: Network) => originalRow.id,
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,

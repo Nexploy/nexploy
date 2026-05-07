@@ -18,7 +18,7 @@ import {
     TableHeader,
     TableRow,
 } from '@workspace/ui/components/table';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
@@ -58,7 +58,6 @@ const globalFilterFn: FilterFn<SwarmService> = (row, _, value) => {
 export function ServicesTable() {
     const services = useSwarmStore((state) => state.services);
     const lastUpdate = useSwarmStore((state) => state.lastUpdate);
-
     const getTasksByService = useSwarmStore((state) => state.getTasksByService);
 
     const t = useTranslations('swarm');
@@ -68,20 +67,12 @@ export function ServicesTable() {
     const [globalFilter, setGlobalFilter] = useState('');
     const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
 
-    const getRunningTasksCount = useMemo(
-        () => (serviceId: string) =>
-            getTasksByService(serviceId).filter((task) => task.state === 'running').length,
-        [getTasksByService],
-    );
-
-    const columns = useMemo(
-        () => getColumnsSwarmServices(t, getRunningTasksCount),
-        [t, getRunningTasksCount],
-    );
+    const getRunningTasksCount = (serviceId: string) =>
+        getTasksByService(serviceId).filter((task) => task.state === 'running').length;
 
     const table = useReactTable({
         data: services,
-        columns,
+        columns: getColumnsSwarmServices(t, getRunningTasksCount),
         getRowId: (row) => row.id,
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
@@ -156,7 +147,7 @@ export function ServicesTable() {
                         {isLoading &&
                             Array.from({ length: 3 }).map((_, i) => (
                                 <TableRow key={i} className="h-12">
-                                    {columns.map((_, ci) => (
+                                    {table.getAllColumns().map((_, ci) => (
                                         <TableCell key={ci}>
                                             <Skeleton className="h-6 w-full" />
                                         </TableCell>
@@ -166,7 +157,10 @@ export function ServicesTable() {
 
                         {noMatch && (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="py-6 text-center">
+                                <TableCell
+                                    colSpan={table.getAllColumns().length}
+                                    className="py-6 text-center"
+                                >
                                     {tCommon('noMatchSearch')}
                                 </TableCell>
                             </TableRow>

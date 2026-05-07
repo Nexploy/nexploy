@@ -70,12 +70,11 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
     const t = useTranslations('docker.tables');
     const tCommon = useTranslations('common');
 
-    const containerRows = useMemo(() => buildContainerRows(containers), [containers]);
-    const columns = useMemo(() => getColumnsDockerContainers(t, tCommon), [t, tCommon]);
+    const containerRows = buildContainerRows(containers);
 
     const table = useReactTable({
         data: containerRows,
-        columns,
+        columns: getColumnsDockerContainers(t, tCommon),
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
         onGlobalFilterChange: setGlobalFilter,
@@ -147,7 +146,7 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
                         {isLoading &&
                             Array.from({ length: 5 }).map((_, i) => (
                                 <TableRow key={i} className="h-12">
-                                    {columns.map((_, ci) => (
+                                    {table.getAllColumns().map((_, ci) => (
                                         <TableCell key={ci}>
                                             <Skeleton className="h-6 w-full" />
                                         </TableCell>
@@ -157,7 +156,10 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
 
                         {isEmpty && (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="py-6 text-center">
+                                <TableCell
+                                    colSpan={table.getAllColumns().length}
+                                    className="py-6 text-center"
+                                >
                                     {t('noContainersFound')}
                                 </TableCell>
                             </TableRow>
@@ -165,7 +167,10 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
 
                         {noMatch && (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="py-6 text-center">
+                                <TableCell
+                                    colSpan={table.getAllColumns().length}
+                                    className="py-6 text-center"
+                                >
                                     {t('noContainersMatchSearch')}
                                 </TableCell>
                             </TableRow>
