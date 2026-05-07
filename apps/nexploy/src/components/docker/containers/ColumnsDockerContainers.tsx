@@ -96,7 +96,7 @@ export function getColumnsDockerContainers(
                             <div className="bg-primary/10 flex size-7 shrink-0 items-center justify-center rounded-md">
                                 <Layers className="text-primary size-4" />
                             </div>
-                            <span className="min-w-0 flex-1 truncate font-medium">
+                            <span className="min-w-0 flex-1 truncate">
                                 {row.original.stackName}
                             </span>
                             <Badge variant="secondary" className="shrink-0 text-xs">
@@ -108,12 +108,9 @@ export function getColumnsDockerContainers(
                 return (
                     <Link
                         href={`/docker/containers/${row.original.id}`}
-                        className="flex min-w-0 items-center hover:underline"
-                        style={{
-                            paddingLeft: row.depth > 0 ? `${row.depth * 36}px` : undefined,
-                        }}
+                        className="flex hover:underline"
                     >
-                        <span className="truncate font-medium">{row.original.name}</span>
+                        <span className="truncate">{row.original.name}</span>
                     </Link>
                 );
             },
@@ -202,7 +199,7 @@ export function getColumnsDockerContainers(
                                 className={'max-w-full justify-start'}
                             >
                                 <span className={'truncate'}>
-                                    {p.publicPort !== 0 ? p.publicPort : '—'} → {p.privatePort}
+                                    {p.publicPort} → {p.privatePort}/{p.type}
                                 </span>
                             </Badge>
                         ))}
@@ -239,11 +236,7 @@ export function getColumnsDockerContainers(
                                     <MoreVertical />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <ContainersDropdownActions
-                                containerId={row.original.id}
-                                containerName={row.original.name}
-                                containerState={row.original.state!}
-                            />
+                            <ContainersDropdownActions container={row.original} />
                         </DropdownMenu>
                     </div>
                 );

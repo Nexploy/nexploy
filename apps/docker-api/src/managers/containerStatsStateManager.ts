@@ -1,4 +1,3 @@
-import { docker } from '@/utils/dockerClient';
 import { BaseSingleResourceStateManager } from '@/lib/BaseSingleResourceStateManager';
 import {
     ContainerStats,

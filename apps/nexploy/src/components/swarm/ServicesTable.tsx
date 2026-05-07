@@ -1,6 +1,16 @@
 'use client';
 
 import {
+    FilterFn,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    SortingState,
+    useReactTable,
+} from '@tanstack/react-table';
+import {
     Table,
     TableBody,
     TableCell,
@@ -8,12 +18,21 @@ import {
     TableHeader,
     TableRow,
 } from '@workspace/ui/components/table';
-import { Badge } from '@workspace/ui/components/badge';
-import { useSwarmStore } from '@/stores/docker/useSwarmStore';
-import { ServiceActions } from './ServiceActions';
-import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
+import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Layers } from 'lucide-react';
+import { Button } from '@workspace/ui/components/button';
+import { Input } from '@workspace/ui/components/input';
+import { Skeleton } from '@workspace/ui/components/skeleton';
+import { ChevronLeft, ChevronRight, Layers } from 'lucide-react';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@workspace/ui/components/select';
 import {
     Empty,
     EmptyDescription,
@@ -21,35 +40,66 @@ import {
     EmptyMedia,
     EmptyTitle,
 } from '@workspace/ui/components/empty';
+import { useSwarmStore } from '@/stores/docker/useSwarmStore';
+import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
+import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
+import { getColumnsSwarmServices } from './ColumnsSwarmServices';
 
-function getReplicaBadgeVariant(
-    running: number,
-    desired: number,
-): 'default' | 'secondary' | 'destructive' | 'outline' {
-    if (desired === 0) return 'secondary';
-    if (running === desired) return 'default';
-    if (running === 0) return 'destructive';
-    return 'secondary';
-}
-
-function formatImage(image: string): string {
-    const parts = image.split('/');
-    const nameTag = parts[parts.length - 1];
-    if (nameTag && nameTag.length > 40) {
-        return nameTag.slice(0, 37) + '...';
-    }
-    return nameTag || image;
-}
+const globalFilterFn: FilterFn<SwarmService> = (row, _, value) => {
+    const search = value.toLowerCase();
+    const { name, image, mode } = row.original;
+    return (
+        name.toLowerCase().includes(search) ||
+        image.toLowerCase().includes(search) ||
+        mode.toLowerCase().includes(search)
+    );
+};
 
 export function ServicesTable() {
-    const { services, tasks } = useSwarmStore();
+    const services = useSwarmStore((state) => state.services);
+    const lastUpdate = useSwarmStore((state) => state.lastUpdate);
+
+    const getTasksByService = useSwarmStore((state) => state.getTasksByService);
+
     const t = useTranslations('swarm');
+    const tCommon = useTranslations('common');
 
-    const getRunningTasksCount = (serviceId: string) => {
-        return tasks.filter((task) => task.serviceId === serviceId && task.state === 'running').length;
-    };
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const [globalFilter, setGlobalFilter] = useState('');
+    const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
 
-    if (services.length === 0) {
+    const getRunningTasksCount = useMemo(
+        () => (serviceId: string) =>
+            getTasksByService(serviceId).filter((task) => task.state === 'running').length,
+        [getTasksByService],
+    );
+
+    const columns = useMemo(
+        () => getColumnsSwarmServices(t, getRunningTasksCount),
+        [t, getRunningTasksCount],
+    );
+
+    const table = useReactTable({
+        data: services,
+        columns,
+        getRowId: (row) => row.id,
+        getCoreRowModel: getCoreRowModel(),
+        onSortingChange: setSorting,
+        onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn,
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        initialState: { pagination: { pageSize: PAGE_SIZE_DEFAULT } },
+        state: { sorting, globalFilter },
+    });
+
+    const isLoading = services.length === 0 && !lastUpdate;
+    const isEmpty = services.length === 0 && !!lastUpdate;
+    const isShowingAll = pageSize === 'all';
+    const noMatch = !isEmpty && services.length > 0 && table.getRowModel().rows.length === 0;
+
+    if (isEmpty) {
         return (
             <div className="px-5">
                 <Empty>
@@ -66,104 +116,143 @@ export function ServicesTable() {
     }
 
     return (
-        <div className="px-5">
-            <div className="border-border rounded-lg border">
-                <Table>
+        <div className="mx-5 space-y-3">
+            <div className="pt-1">
+                <Input
+                    className="w-1/5 shadow-xs"
+                    placeholder={tCommon('searchPlaceholder')}
+                    value={globalFilter}
+                    onChange={(e) => setGlobalFilter(e.target.value)}
+                />
+            </div>
+
+            <div className="bg-card overflow-hidden rounded-md border shadow-sm">
+                <Table className="table-fixed">
                     <TableHeader>
-                        <TableRow>
-                            <TableHead>{t('service')}</TableHead>
-                            <TableHead>{t('image')}</TableHead>
-                            <TableHead>{t('mode')}</TableHead>
-                            <TableHead>{t('replicas')}</TableHead>
-                            <TableHead>{t('ports')}</TableHead>
-                            <TableHead>{t('updateStatus')}</TableHead>
-                            <TableHead className="w-[50px]"></TableHead>
-                        </TableRow>
+                        {table.getHeaderGroups().map((hg) => (
+                            <TableRow key={hg.id}>
+                                {hg.headers.map((header) => (
+                                    <TableHead
+                                        key={header.id}
+                                        className="overflow-hidden"
+                                        style={
+                                            header.column.getSize() !== 150
+                                                ? { width: header.column.getSize() }
+                                                : undefined
+                                        }
+                                    >
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                  header.column.columnDef.header,
+                                                  header.getContext(),
+                                              )}
+                                    </TableHead>
+                                ))}
+                            </TableRow>
+                        ))}
                     </TableHeader>
                     <TableBody>
-                        {services.map((service: SwarmService) => {
-                            const runningTasks = getRunningTasksCount(service.id);
-                            return (
-                                <TableRow key={service.id}>
-                                    <TableCell className="font-medium">{service.name}</TableCell>
-                                    <TableCell>
-                                        <code className="bg-muted rounded px-1.5 py-0.5 text-xs">
-                                            {formatImage(service.image)}
-                                        </code>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Badge variant="outline" className="text-xs capitalize">
-                                            {service.mode === 'replicated' ? t('replicated') : t('global')}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell>
-                                        {service.mode === 'replicated' ? (
-                                            <Badge
-                                                variant={getReplicaBadgeVariant(
-                                                    runningTasks,
-                                                    service.replicas,
-                                                )}
-                                            >
-                                                {t('tasksRunning', {
-                                                    running: runningTasks,
-                                                    total: service.replicas,
-                                                })}
-                                            </Badge>
-                                        ) : (
-                                            <Badge variant="outline">{t('global')}</Badge>
-                                        )}
-                                    </TableCell>
-                                    <TableCell className="text-muted-foreground text-sm">
-                                        {service.ports.length > 0 ? (
-                                            <div className="flex flex-wrap gap-1">
-                                                {service.ports.slice(0, 3).map((port, i) => (
-                                                    <Badge
-                                                        key={i}
-                                                        variant="outline"
-                                                        className="font-mono text-xs"
-                                                    >
-                                                        {port.publishedPort}:{port.targetPort}/
-                                                        {port.protocol}
-                                                    </Badge>
-                                                ))}
-                                                {service.ports.length > 3 && (
-                                                    <Badge variant="outline" className="text-xs">
-                                                        +{service.ports.length - 3}
-                                                    </Badge>
-                                                )}
-                                            </div>
-                                        ) : (
-                                            <span className="text-muted-foreground text-xs">
-                                                {t('noPortsExposed')}
-                                            </span>
-                                        )}
-                                    </TableCell>
-                                    <TableCell>
-                                        {service.updateStatus ? (
-                                            <Badge
-                                                variant={
-                                                    service.updateStatus.state === 'completed'
-                                                        ? 'default'
-                                                        : service.updateStatus.state === 'updating'
-                                                          ? 'secondary'
-                                                          : 'destructive'
-                                                }
-                                                className="text-xs capitalize"
-                                            >
-                                                {service.updateStatus.state}
-                                            </Badge>
-                                        ) : (
-                                            <span className="text-muted-foreground text-xs">—</span>
-                                        )}
-                                    </TableCell>
-                                    <TableCell>
-                                        <ServiceActions service={service} />
-                                    </TableCell>
+                        {isLoading &&
+                            Array.from({ length: 3 }).map((_, i) => (
+                                <TableRow key={i} className="h-12">
+                                    {columns.map((_, ci) => (
+                                        <TableCell key={ci}>
+                                            <Skeleton className="h-6 w-full" />
+                                        </TableCell>
+                                    ))}
                                 </TableRow>
-                            );
-                        })}
+                            ))}
+
+                        {noMatch && (
+                            <TableRow>
+                                <TableCell colSpan={columns.length} className="py-6 text-center">
+                                    {tCommon('noMatchSearch')}
+                                </TableCell>
+                            </TableRow>
+                        )}
+
+                        {!isLoading &&
+                            !noMatch &&
+                            table.getRowModel().rows.map((row) => (
+                                <TableRow key={row.id} className="h-12">
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell key={cell.id} className="overflow-hidden">
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext(),
+                                            )}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))}
                     </TableBody>
                 </Table>
+            </div>
+
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <span className="text-muted-foreground text-sm">{t('servicesPerPage')}:</span>
+                    <Select
+                        value={pageSize === 'all' ? 'all' : String(pageSize)}
+                        onValueChange={(value) => {
+                            if (value === 'all') {
+                                setPageSize('all');
+                                table.setPageSize(services.length || 1);
+                            } else {
+                                const size = Number(value);
+                                setPageSize(size);
+                                table.setPageSize(size);
+                            }
+                        }}
+                    >
+                        <SelectTrigger size="sm" className="w-24">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>{tCommon('size')}</SelectLabel>
+                                {PAGE_SIZE_OPTIONS.map((size) => (
+                                    <SelectItem key={size} value={`${size}`}>
+                                        {size}
+                                    </SelectItem>
+                                ))}
+                                <SelectItem value="all">{tCommon('all')}</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {!isShowingAll && (
+                    <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground text-sm">
+                            {tCommon('pageOf', {
+                                current: table.getState().pagination.pageIndex + 1,
+                                total: table.getPageCount(),
+                            })}
+                        </span>
+                        <div className="flex gap-1">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => table.previousPage()}
+                                disabled={!table.getCanPreviousPage()}
+                            >
+                                <ChevronLeft className="h-4 w-4" />
+                                {tCommon('previous')}
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => table.nextPage()}
+                                disabled={!table.getCanNextPage()}
+                            >
+                                {tCommon('next')}
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

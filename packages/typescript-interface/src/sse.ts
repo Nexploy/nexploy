@@ -12,6 +12,7 @@ export interface SSEProxyConfig {
 export type SSEChannel =
     | 'container'
     | 'containers'
+    | 'image'
     | 'images'
     | 'docker'
     | 'events'

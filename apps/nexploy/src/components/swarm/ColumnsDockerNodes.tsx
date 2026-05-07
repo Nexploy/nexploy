@@ -71,9 +71,11 @@ export const getColumnsTableNodes = (t: TranslationFunction): ColumnDef<SwarmNod
         cell: ({ row }) => {
             const { hostname, managerStatus } = row.original;
             return (
-                <div className="flex items-center gap-2 font-medium">
-                    {managerStatus?.leader && <Crown className="size-4 text-yellow-500" />}
-                    {hostname}
+                <div className="flex min-w-0 items-center gap-1.5">
+                    <div>
+                        {managerStatus?.leader && <Crown className="size-4 text-yellow-500" />}
+                    </div>
+                    <span className="min-w-0 flex-1 truncate">{hostname}</span>
                 </div>
             );
         },
@@ -90,8 +92,11 @@ export const getColumnsTableNodes = (t: TranslationFunction): ColumnDef<SwarmNod
             </Button>
         ),
         cell: ({ row }) => (
-            <Badge variant={row.original.role === 'manager' ? 'default' : 'secondary'}>
-                {row.original.role}
+            <Badge
+                variant={row.original.role === 'manager' ? 'default' : 'secondary'}
+                className={'max-w-full justify-start'}
+            >
+                <span className={'truncate'}>{row.original.role}</span>
             </Badge>
         ),
     },
@@ -107,7 +112,12 @@ export const getColumnsTableNodes = (t: TranslationFunction): ColumnDef<SwarmNod
             </Button>
         ),
         cell: ({ row }) => (
-            <Badge variant={getStateBadgeVariant(row.original.state)}>{row.original.state}</Badge>
+            <Badge
+                variant={getStateBadgeVariant(row.original.state)}
+                className={'max-w-full justify-start'}
+            >
+                <span className={'truncate'}>{row.original.state}</span>
+            </Badge>
         ),
     },
     {
@@ -122,8 +132,11 @@ export const getColumnsTableNodes = (t: TranslationFunction): ColumnDef<SwarmNod
             </Button>
         ),
         cell: ({ row }) => (
-            <Badge variant={getAvailabilityBadgeVariant(row.original.availability)}>
-                {row.original.availability}
+            <Badge
+                variant={getAvailabilityBadgeVariant(row.original.availability)}
+                className={'max-w-full justify-start'}
+            >
+                <span className={'truncate'}>{row.original.availability}</span>
             </Badge>
         ),
     },
@@ -131,16 +144,16 @@ export const getColumnsTableNodes = (t: TranslationFunction): ColumnDef<SwarmNod
         accessorKey: 'address',
         header: t('address'),
         cell: ({ row }) => (
-            <span className="text-muted-foreground text-sm">{row.original.address || '-'}</span>
+            <div className="text-muted-foreground truncate">{row.original.address || '—'}</div>
         ),
     },
     {
         accessorKey: 'engineVersion',
         header: t('engine'),
         cell: ({ row }) => (
-            <span className="text-muted-foreground text-sm">
-                {row.original.engineVersion || '-'}
-            </span>
+            <div className="text-muted-foreground truncate">
+                {row.original.engineVersion || '—'}
+            </div>
         ),
     },
     {
@@ -149,35 +162,15 @@ export const getColumnsTableNodes = (t: TranslationFunction): ColumnDef<SwarmNod
         cell: ({ row }) => {
             const { nanoCPUs, memoryBytes } = row.original.resources;
             return (
-                <span className="text-muted-foreground text-sm">
+                <div className="text-muted-foreground truncate">
                     {formatCPUs(nanoCPUs)} CPUs / {formatBytes(memoryBytes)}
-                </span>
-            );
-        },
-    },
-    {
-        id: 'labels',
-        header: t('labels'),
-        cell: ({ row }) => {
-            const entries = Object.entries(row.original.labels || {});
-            return (
-                <div className="flex flex-wrap gap-1">
-                    {entries.slice(0, 2).map(([key, value]) => (
-                        <Badge key={key} variant="outline" className="text-xs">
-                            {key}={value}
-                        </Badge>
-                    ))}
-                    {entries.length > 2 && (
-                        <Badge variant="outline" className="text-xs">
-                            +{entries.length - 2}
-                        </Badge>
-                    )}
                 </div>
             );
         },
     },
     {
         id: 'actions',
+        size: 50,
         cell: ({ row }) => (
             <div className="flex justify-end">
                 <DropdownMenu>

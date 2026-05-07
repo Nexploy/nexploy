@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { NetworkDetailPage } from '@/components/docker/network/NetworkDetailPage';
-import { SSEProvider } from '@/providers/SSEProviders';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { notFound } from 'next/navigation';
@@ -31,9 +30,7 @@ export default async function NetworkPage({ params }: { params: Promise<{ networ
 
     return (
         <BreadcrumbProvider segments={{ networkId: networkName }}>
-            <SSEProvider connections={['networks', 'containers']}>
-                <NetworkDetailPage networkId={networkId} />
-            </SSEProvider>
+            <NetworkDetailPage networkId={networkId} />
         </BreadcrumbProvider>
     );
 }

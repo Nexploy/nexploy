@@ -24,7 +24,7 @@ import {
 import React, { useMemo, useRef, useState } from 'react';
 import { getColumnsTableImages } from '@/components/docker/image/table/ColumnsDockerImages';
 import { useTranslations } from 'next-intl';
-import { useImageStore } from '@/stores/docker/useImageStore';
+import { useImagesStore } from '../../../../stores/docker/useImagesStore';
 import { ImageRow } from '@workspace/typescript-interface/docker/docker.image';
 import { groupImagesByRepository, matchesSearch } from './imageTableUtils';
 import { Input } from '@workspace/ui/components/input';
@@ -71,8 +71,8 @@ export function TableDockerImages() {
     const t = useTranslations('docker.tables');
     const tCommon = useTranslations('common');
 
-    const images = useImageStore((state) => state.images);
-    const lastUpdate = useImageStore((state) => state.lastUpdate);
+    const images = useImagesStore((state) => state.images);
+    const lastUpdate = useImagesStore((state) => state.lastUpdate);
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const forceRef = useRef(false);
 

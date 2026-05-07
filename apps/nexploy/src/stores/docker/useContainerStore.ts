@@ -9,7 +9,8 @@ const defaultValue = {
     error: null,
     lastUpdate: null,
     isMonitoring: false,
-    isConnecting: false,
+    isConnecting: true,
+    notFound: false,
     eventSource: null,
     reconnectTimeout: null,
 };
@@ -37,7 +38,6 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
 
         set({
             containerId,
-            isConnecting: true,
             error: null,
         });
 
@@ -57,6 +57,7 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
                             error: null,
                             isMonitoring: true,
                             isConnecting: false,
+                            notFound: false,
                         });
                     },
                     { containerId },
@@ -91,6 +92,26 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
                             container: null,
                             lastUpdate: data.timestamp,
                             error: null,
+                        });
+                    },
+                    { containerId },
+                ),
+            );
+
+            unsubscribers.push(
+                sseMultiplexer.subscribe(
+                    'container',
+                    'not-found',
+                    (e) => {
+                        const data = JSON.parse(e.data);
+
+                        set({
+                            container: null,
+                            lastUpdate: data.timestamp,
+                            error: null,
+                            isMonitoring: true,
+                            isConnecting: false,
+                            notFound: true,
                         });
                     },
                     { containerId },

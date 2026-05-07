@@ -218,7 +218,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             const created = row.original.created;
             const date = dayjs(created).format('DD/MM/YYYY');
 
-            return <div className="text-muted-foreground truncate text-sm">{date}</div>;
+            return <div className="text-muted-foreground truncate">{date}</div>;
         },
     },
     {

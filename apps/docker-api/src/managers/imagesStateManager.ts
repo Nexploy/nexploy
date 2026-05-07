@@ -414,9 +414,7 @@ export class ImagesStateManager extends BaseStateManager {
     }
 
     getByName(imageName: string): Image | undefined {
-        return Array.from(this.images.values()).find((image) =>
-            image.repoTags.includes(imageName),
-        );
+        return Array.from(this.images.values()).find((image) => image.repoTags.includes(imageName));
     }
 
     async hardRefresh(): Promise<void> {

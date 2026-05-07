@@ -30,7 +30,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
-import { useImageStore } from '@/stores/docker/useImageStore.ts';
+import { useImagesStore } from '../../../../stores/docker/useImagesStore.ts';
 import { useMemo } from 'react';
 
 export function ContainerBasicConfig() {
@@ -38,7 +38,7 @@ export function ContainerBasicConfig() {
     const tCommon = useTranslations('common');
     const form = useFormContext();
 
-    const images = useImageStore((state) => state.images);
+    const images = useImagesStore((state) => state.images);
 
     const imageOptions = useMemo(() => {
         const names = new Set<string>();

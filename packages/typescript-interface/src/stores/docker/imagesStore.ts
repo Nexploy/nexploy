@@ -2,6 +2,7 @@ import { Image } from '../../docker/docker.image';
 
 export interface ImageState {
     images: Image[];
+    isConnecting: boolean;
     error: Error | null;
     lastUpdate: number | null;
     eventSource: EventSource | null;

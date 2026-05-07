@@ -5,19 +5,24 @@ export const serviceIdParamSchema = z.object({
 });
 
 export const scaleServiceSchema = z.object({
-    replicas: z.number().int().min(0),
+    replicas: z.number().min(0),
+});
+
+export const scaleServiceFormSchema = z.object({
+    id: z.string().min(1),
+    replicas: z.number().min(0),
 });
 
 export const createServiceSchema = z.object({
     name: z.string().min(1),
     image: z.string().min(1),
     mode: z.enum(['replicated', 'global']).optional().default('replicated'),
-    replicas: z.number().int().min(1).optional().default(1),
+    replicas: z.number().min(1).optional().default(1),
     ports: z
         .array(
             z.object({
-                published: z.number().int().min(1).max(65535),
-                target: z.number().int().min(1).max(65535),
+                published: z.number().min(1).max(65535),
+                target: z.number().min(1).max(65535),
                 protocol: z.enum(['tcp', 'udp']).optional().default('tcp'),
                 publishMode: z.enum(['ingress', 'host']).optional().default('ingress'),
             }),

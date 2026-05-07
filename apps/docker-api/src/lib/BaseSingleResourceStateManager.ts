@@ -162,6 +162,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
                     { resourceId: this.resourceId },
                     `${this.resourceType} not found during initialization`,
                 );
+                this.emit('not-found', { resourceId: this.resourceId, timestamp: Date.now() });
             } else {
                 logger.error(
                     { err, resourceId: this.resourceId },
@@ -312,7 +313,9 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
             const oldState = this.currentState;
             this.currentState = newState;
 
-            if (oldState && this.hasStateChanged(oldState, newState)) {
+            if (!oldState) {
+                this.emitInitialState(newState);
+            } else if (this.hasStateChanged(oldState, newState)) {
                 this.emitStateChange(newState, oldState);
             }
         } catch (err: any) {

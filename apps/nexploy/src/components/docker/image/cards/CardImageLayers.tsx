@@ -5,9 +5,7 @@ import { List } from 'lucide-react';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
-import { getImageHistory } from '@/actions/docker/image/imageDetail.action';
-import { ImageHistoryEntry } from '@workspace/typescript-interface/docker/docker.image';
+import { useImageStore } from '../../../../stores/docker/useImageStore';
 import { formatBytes } from '@/utils/formatBytes';
 import {
     Table,
@@ -18,23 +16,12 @@ import {
     TableRow,
 } from '@workspace/ui/components/table';
 
-interface CardImageLayersProps {
-    imageId: string;
-}
-
-export function CardImageLayers({ imageId }: CardImageLayersProps) {
+export function CardImageLayers() {
     const t = useTranslations('docker.imageLayers');
-    const [history, setHistory] = useState<ImageHistoryEntry[]>([]);
-    const [loading, setLoading] = useState(true);
+    const history = useImageStore((state) => state.history);
+    const isConnecting = useImageStore((state) => state.isConnecting);
 
-    useEffect(() => {
-        getImageHistory({ imageId }).then((result) => {
-            if (result?.data) setHistory(result.data);
-            setLoading(false);
-        });
-    }, [imageId]);
-
-    if (loading) return <Skeleton className="h-80" />;
+    if (isConnecting) return <Skeleton className="h-80" />;
 
     return (
         <Card>

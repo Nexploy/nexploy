@@ -13,7 +13,10 @@
         "attach": "Attach",
         "domains": "Domaines",
         "renameTitle": "Renommer le conteneur",
-        "renameDescription": "Entrez un nouveau nom pour ce conteneur."
+        "renameDescription": "Entrez un nouveau nom pour ce conteneur.",
+        "notFoundTitle": "Conteneur introuvable",
+        "notFoundDescription": "Ce conteneur n'existe plus ou a été supprimé.",
+        "backToContainers": "Retour aux conteneurs"
     },
     "renameContainer": {
         "nameLabel": "Nom du conteneur",
@@ -177,7 +180,10 @@
         "useImage": "Utiliser cette image pour créer un conteneur",
         "deleteImage": "Supprimer cette image",
         "exportImage": "Exporter cette image",
-        "cannotDeleteInUse": "Cette image est utilisée par un ou plusieurs conteneurs"
+        "cannotDeleteInUse": "Cette image est utilisée par un ou plusieurs conteneurs",
+        "notFoundTitle": "Image introuvable",
+        "notFoundDescription": "Cette image n'existe plus ou a été supprimée.",
+        "backToImages": "Retour aux images"
     },
     "imageDetails": {
         "title": "Détails de l'image",

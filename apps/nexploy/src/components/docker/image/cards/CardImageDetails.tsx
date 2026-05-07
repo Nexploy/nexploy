@@ -8,16 +8,12 @@ import CopyButton from '@/components/shared/CopyButton';
 import { useTranslations } from 'next-intl';
 import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';
-import { useImageStore } from '@/stores/docker/useImageStore';
+import { useImageStore } from '@/stores/docker/useImageStore.ts';
 import { Table, TableBody, TableCell, TableRow } from '@workspace/ui/components/table';
 
-interface CardImageDetailsProps {
-    imageId: string;
-}
-
-export function CardImageDetails({ imageId }: CardImageDetailsProps) {
+export function CardImageDetails() {
     const t = useTranslations('docker.imageDetails');
-    const image = useImageStore((state) => state.getImage(imageId));
+    const image = useImageStore((state) => state.image);
 
     if (!image) return <Skeleton className="h-80" />;
 

@@ -28,7 +28,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import { useImageStore } from '@/stores/docker/useImageStore.ts';
+import { useImagesStore } from '../../../stores/docker/useImagesStore.ts';
 import { useMemo } from 'react';
 
 export function ServiceBasicConfig() {
@@ -37,7 +37,7 @@ export function ServiceBasicConfig() {
     const form = useFormContext();
     const mode = useWatch({ control: form.control, name: 'mode' });
 
-    const images = useImageStore((state) => state.images);
+    const images = useImagesStore((state) => state.images);
 
     const imageOptions = useMemo(() => {
         const names = new Set<string>();

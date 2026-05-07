@@ -5,16 +5,12 @@ import { List } from 'lucide-react';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
-import { useImageStore } from '@/stores/docker/useImageStore';
+import { useImageStore } from '../../../../stores/docker/useImageStore';
 import { Table, TableBody, TableCell, TableRow } from '@workspace/ui/components/table';
 
-interface CardImageConfigProps {
-    imageId: string;
-}
-
-export function CardImageConfig({ imageId }: CardImageConfigProps) {
+export function CardImageConfig() {
     const t = useTranslations('docker.imageConfig');
-    const image = useImageStore((state) => state.getImage(imageId));
+    const image = useImageStore((state) => state.image);
 
     if (!image) return <Skeleton className="h-60" />;
 

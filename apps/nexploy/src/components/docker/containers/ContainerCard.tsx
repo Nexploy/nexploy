@@ -24,14 +24,8 @@ export function ContainerCard({ container }: ContainerCardProps) {
     const t = useTranslations('docker.containerCard');
     const autoplayPlugin = useMemo(() => Autoplay({ delay: 3000 }), []);
 
-    const containerName = container.name;
-    const containerState = container.state;
-    const containerId = container.id;
-
-    const containerStatus = container.status;
-
     return (
-        <Link href={`/docker/containers/${containerId}`}>
+        <Link href={`/docker/containers/${container.id}`}>
             <Card className="relative cursor-pointer rounded-xl border transition-all duration-300 hover:scale-[1.03] hover:shadow-xl">
                 <CardHeader className="flex">
                     <div className="flex flex-1 items-center gap-3 truncate">
@@ -39,7 +33,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
                             <IconContainer className="text-primary size-5" />
                         </div>
                         <CardTitle className="truncate text-lg font-semibold">
-                            {containerName}
+                            {container.name}
                         </CardTitle>
                     </div>
                     <DropdownMenu>
@@ -48,21 +42,17 @@ export function ContainerCard({ container }: ContainerCardProps) {
                                 <MoreVertical />
                             </Button>
                         </DropdownMenuTrigger>
-                        <ContainersDropdownActions
-                            containerId={container.id}
-                            containerName={containerName}
-                            containerState={containerState}
-                        />
+                        <ContainersDropdownActions container={container} />
                     </DropdownMenu>
                 </CardHeader>
 
                 <Status
                     className={'bg-card absolute -top-2 -right-2 truncate rounded-md'}
-                    status={containerDisplayState[containerState] ?? 'offline'}
+                    status={containerDisplayState[container.state] ?? 'offline'}
                     variant="outline"
                 >
                     <StatusIndicator />
-                    <StatusLabel className="truncate font-mono">{containerStatus}</StatusLabel>
+                    <StatusLabel className="truncate font-mono">{container.status}</StatusLabel>
                 </Status>
 
                 <CardContent className="flex flex-col gap-4">

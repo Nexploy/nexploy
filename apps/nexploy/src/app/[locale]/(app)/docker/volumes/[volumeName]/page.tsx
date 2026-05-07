@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { VolumeDetailPage } from '@/components/docker/volume/VolumeDetailPage';
-import { SSEProvider } from '@/providers/SSEProviders';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { notFound } from 'next/navigation';
@@ -30,9 +29,7 @@ export default async function VolumePage({ params }: { params: Promise<{ volumeN
 
     return (
         <BreadcrumbProvider segments={{ volumeName }}>
-            <SSEProvider connections={['volumes', 'containers']}>
-                <VolumeDetailPage volumeName={volumeName} />
-            </SSEProvider>
+            <VolumeDetailPage volumeName={volumeName} />
         </BreadcrumbProvider>
     );
 }

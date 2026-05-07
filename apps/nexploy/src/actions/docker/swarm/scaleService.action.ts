@@ -4,11 +4,11 @@ import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
-import { z } from 'zod';
+import { scaleServiceFormSchema } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
 
 export const onScaleServiceAction = authActionServer
     .use(requirePermission('docker', 'manage'))
-    .inputSchema(z.object({ id: z.string(), replicas: z.number().int().min(0) }))
+    .inputSchema(scaleServiceFormSchema)
     .action(async ({ parsedInput: { id, replicas } }) => {
         try {
             return await kyDocker

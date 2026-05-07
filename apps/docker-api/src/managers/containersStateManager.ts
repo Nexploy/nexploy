@@ -406,8 +406,7 @@ export class ContainersStateManager extends BaseStateManager {
             changes.image = { from: oldState.image, to: newState.image };
         if (oldState.error !== newState.error)
             changes.error = { from: oldState.error, to: newState.error };
-        if (JSON.stringify(oldState.ports) !== JSON.stringify(newState.ports))
-            changes.ports = true;
+        if (JSON.stringify(oldState.ports) !== JSON.stringify(newState.ports)) changes.ports = true;
         if (JSON.stringify(oldState.mounts) !== JSON.stringify(newState.mounts))
             changes.mounts = true;
 

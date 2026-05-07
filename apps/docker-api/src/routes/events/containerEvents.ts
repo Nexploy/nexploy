@@ -73,6 +73,19 @@ app.get('/stream/:containerId', (c) => {
             }
         };
 
+        const handleNotFound = async () => {
+            try {
+                await stream.writeSSE({
+                    data: JSON.stringify({ type: 'not-found', containerId, timestamp: Date.now() }),
+                    event: 'not-found',
+                    id: `${Date.now()}`,
+                });
+            } catch (err) {
+                logger.error({ err, clientId, containerId }, 'Error sending not-found');
+                cleanup();
+            }
+        };
+
         const heartbeat = setInterval(async () => {
             try {
                 const heartbeatData: ContainerEvent = {
@@ -98,7 +111,13 @@ app.get('/stream/:containerId', (c) => {
             manager.off('initial-state', handleInitialState);
             manager.off('state-change', handleStateChange);
             manager.off('removed', handleRemoved);
+            manager.off('not-found', handleNotFound);
         };
+
+        manager.on('initial-state', handleInitialState);
+        manager.on('state-change', handleStateChange);
+        manager.on('removed', handleRemoved);
+        manager.on('not-found', handleNotFound);
 
         const currentState = manager.getCurrentState();
         if (currentState) {
@@ -108,11 +127,9 @@ app.get('/stream/:containerId', (c) => {
                 container: currentState,
                 timestamp: Date.now(),
             });
+        } else {
+            await handleNotFound();
         }
-
-        manager.on('initial-state', handleInitialState);
-        manager.on('state-change', handleStateChange);
-        manager.on('removed', handleRemoved);
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 

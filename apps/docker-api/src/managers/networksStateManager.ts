@@ -250,8 +250,7 @@ export class NetworksStateManager extends BaseStateManager {
             changes.scope = { from: oldState.scope, to: newState.scope };
         if (oldState.enableIPv6 !== newState.enableIPv6)
             changes.enableIPv6 = { from: oldState.enableIPv6, to: newState.enableIPv6 };
-        if (JSON.stringify(oldState.ipam) !== JSON.stringify(newState.ipam))
-            changes.ipam = true;
+        if (JSON.stringify(oldState.ipam) !== JSON.stringify(newState.ipam)) changes.ipam = true;
         if (JSON.stringify(oldState.options) !== JSON.stringify(newState.options))
             changes.options = true;
 

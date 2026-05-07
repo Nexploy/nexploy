@@ -1,6 +1,6 @@
 'use client';
 
-import { useImageStore } from '@/stores/docker/useImageStore';
+import { useImagesStore } from '../../../stores/docker/useImagesStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { HardDrive, LayoutList, Tag } from 'lucide-react';
 import { formatBytes } from '@/utils/formatBytes';
@@ -11,8 +11,8 @@ import { useMemo } from 'react';
 
 export function CardInfoImages() {
     const t = useTranslations('docker');
-    const images = useImageStore((state) => state.images);
-    const lastUpdate = useImageStore((state) => state.lastUpdate);
+    const images = useImagesStore((state) => state.images);
+    const lastUpdate = useImagesStore((state) => state.lastUpdate);
 
     const isLoading = !images.length && !lastUpdate;
 

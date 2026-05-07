@@ -58,9 +58,7 @@ export class DockerStatusManager extends BaseMonitor {
             const statusChangedData: DockerStatusEvent = {
                 status: 'disconnected',
                 message: {
-                    key: isInitial
-                        ? 'errors.dockerNotReachable'
-                        : 'errors.dockerNoLongerReachable',
+                    key: isInitial ? 'errors.dockerNotReachable' : 'errors.dockerNoLongerReachable',
                     level: 'error',
                 },
                 timestamp: Date.now(),
@@ -74,9 +72,7 @@ export class DockerStatusManager extends BaseMonitor {
             const statusChangedData: DockerStatusEvent = {
                 status: 'connected',
                 message: {
-                    key: isInitial
-                        ? 'errors.dockerAvailable'
-                        : 'errors.dockerNowAvailable',
+                    key: isInitial ? 'errors.dockerAvailable' : 'errors.dockerNowAvailable',
                     level: 'success',
                 },
                 timestamp: Date.now(),

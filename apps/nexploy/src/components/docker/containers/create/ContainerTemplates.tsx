@@ -22,7 +22,7 @@ const CONTAINER_TEMPLATES = [
             name: 'postgres',
             image: 'postgres:16',
             restart: 'unless-stopped',
-            ports: [{ hostPort: '5432', containerPort: '5432', protocol: 'tcp' }],
+            ports: [{ hostPort: 5432, containerPort: 5432, protocol: 'tcp' }],
             envVars: [
                 { key: 'POSTGRES_USER', value: 'postgres' },
                 { key: 'POSTGRES_PASSWORD', value: 'password' },
@@ -46,7 +46,7 @@ const CONTAINER_TEMPLATES = [
             name: 'redis',
             image: 'redis:7-alpine',
             restart: 'unless-stopped',
-            ports: [{ hostPort: '6379', containerPort: '6379', protocol: 'tcp' }],
+            ports: [{ hostPort: 6379, containerPort: 6379, protocol: 'tcp' }],
             envVars: [],
             volumes: [{ hostPath: 'redis-data', containerPath: '/data', readOnly: false }],
         },
@@ -60,7 +60,7 @@ const CONTAINER_TEMPLATES = [
             name: 'mysql',
             image: 'mysql:8',
             restart: 'unless-stopped',
-            ports: [{ hostPort: '3306', containerPort: '3306', protocol: 'tcp' }],
+            ports: [{ hostPort: 3306, containerPort: 3306, protocol: 'tcp' }],
             envVars: [
                 { key: 'MYSQL_ROOT_PASSWORD', value: 'rootpassword' },
                 { key: 'MYSQL_DATABASE', value: 'mydb' },
@@ -79,7 +79,7 @@ const CONTAINER_TEMPLATES = [
             name: 'mongodb',
             image: 'mongo:7',
             restart: 'unless-stopped',
-            ports: [{ hostPort: '27017', containerPort: '27017', protocol: 'tcp' }],
+            ports: [{ hostPort: 27017, containerPort: 27017, protocol: 'tcp' }],
             envVars: [
                 { key: 'MONGO_INITDB_ROOT_USERNAME', value: 'admin' },
                 { key: 'MONGO_INITDB_ROOT_PASSWORD', value: 'password' },
@@ -103,14 +103,7 @@ export function ContainerTemplates() {
                 {CONTAINER_TEMPLATES.map((template) => (
                     <Card
                         key={template.name}
-                        onClick={() =>
-                            form.reset({
-                                ...template.config,
-                                ports: template.config.ports.map((p) => ({ ...p })),
-                                envVars: template.config.envVars.map((e) => ({ ...e })),
-                                volumes: template.config.volumes.map((v) => ({ ...v })),
-                            })
-                        }
+                        onClick={() => form.reset(template.config)}
                         className={cn(
                             'hover:border-primary flex cursor-pointer flex-col gap-3 rounded-lg border p-4 transition-all disabled:cursor-not-allowed disabled:opacity-50',
                             form.watch('image') === template.config.image && 'border-primary/70',

@@ -8,18 +8,18 @@ import { ContainerState } from '@workspace/typescript-interface/docker/docker.co
 import { useContainerActions } from '@/hooks/useContainerActions';
 
 interface ContainerDropdownActionsProps {
-    containerId: string;
-    containerName: string;
-    containerState: ContainerState;
+    container: {
+        id: string;
+        name: string;
+        state?: ContainerState;
+    };
 }
 
 export function ContainersDropdownActions({
-    containerId,
-    containerName,
-    containerState,
+    container: { id, name, state },
 }: ContainerDropdownActionsProps) {
-    const isPaused = containerState === 'paused';
-    const containerTools = useContainerActions({ containerId, containerName, isPaused });
+    const isPaused = state === 'paused';
+    const containerTools = useContainerActions({ containerId: id, containerName: name, isPaused });
 
     return (
         <DropdownMenuContent align="end">
@@ -32,7 +32,7 @@ export function ContainersDropdownActions({
                             event.stopPropagation();
                             tool.onClick && tool.onClick();
                         }}
-                        disabled={tool.disabledStates.includes(containerState)}
+                        disabled={state && tool.disabledStates.includes(state)}
                     >
                         <tool.icon />
                         {tool.label}

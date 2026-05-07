@@ -7,6 +7,7 @@ export interface ContainerState {
     lastUpdate: number | null;
     isMonitoring: boolean;
     isConnecting: boolean;
+    notFound: boolean;
     eventSource: EventSource | null;
     reconnectTimeout: NodeJS.Timeout | null;
 

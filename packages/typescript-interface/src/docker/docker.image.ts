@@ -61,6 +61,14 @@ export interface ImageEvent {
     imageId?: string;
 }
 
+export interface ImageDetailEvent {
+    type: 'initial-state' | 'state-change' | 'removed' | 'not-found' | 'heartbeat';
+    imageId: string;
+    image?: Image;
+    history?: ImageHistoryEntry[];
+    timestamp: number;
+}
+
 export interface ImageStateChanges {
     repoTags?: {
         from: string[];

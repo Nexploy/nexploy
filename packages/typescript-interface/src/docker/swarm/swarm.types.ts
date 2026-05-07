@@ -55,7 +55,6 @@ export type SwarmNodeAvailability = 'active' | 'pause' | 'drain';
 export type SwarmNodeState = 'unknown' | 'down' | 'ready' | 'disconnected';
 export type SwarmManagerReachability = 'unknown' | 'unreachable' | 'reachable';
 
-// ===== SWARM SERVICE =====
 export interface SwarmService {
     id: string;
     version: number;
