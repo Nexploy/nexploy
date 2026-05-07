@@ -31,6 +31,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import type { TranslationFunction } from '@workspace/typescript-interface/commun';
 
 export interface UserRow {
     id: string;
@@ -42,8 +43,6 @@ export interface UserRow {
     createdAt: Date;
     image: string | null;
 }
-
-type TranslationFunction = (key: string, values?: Record<string, string | number>) => string;
 
 interface ColumnsOptions {
     currentUserId?: string;

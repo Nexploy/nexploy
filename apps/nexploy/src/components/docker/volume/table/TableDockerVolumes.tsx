@@ -22,7 +22,7 @@ import {
 import React, { useMemo, useState } from 'react';
 import { getColumnsTableVolumes } from '@/components/docker/volume/table/ColumnsDockerVolumes';
 import { useTranslations } from 'next-intl';
-import { useVolumesStore } from '../../../../stores/docker/useVolumesStore';
+import { useVolumesStore } from '@/stores/docker/useVolumesStore.ts';
 import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';

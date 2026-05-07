@@ -32,13 +32,13 @@ export function CardImageDetails() {
                             </TableCell>
                             <TableCell className="max-w-0">
                                 <div className="flex items-center gap-2">
+                                    <code className="block truncate text-xs">{image.id}</code>
                                     <CopyButton
                                         textToCopy={image.id}
                                         className="size-6"
                                         size="icon"
                                         variant="ghost"
                                     />
-                                    <code className="block truncate text-xs">{image.id}</code>
                                 </div>
                             </TableCell>
                         </TableRow>

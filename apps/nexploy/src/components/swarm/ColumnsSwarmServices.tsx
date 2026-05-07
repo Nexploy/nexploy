@@ -8,8 +8,7 @@ import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/drop
 import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
 import { ServiceDropdownActions } from './ServiceDropdownActions';
 import Link from 'next/link';
-
-type TranslationFunction = (key: string, values?: Record<string, string | number>) => string;
+import type { TranslationFunction } from '@workspace/typescript-interface/commun';
 
 function getReplicaBadgeVariant(
     running: number,

@@ -14,12 +14,12 @@ import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/k
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import Link from 'next/link';
 import { isBuiltinNetwork } from '@workspace/shared/nexployFilter';
-
-type TranslationFunction = (key: string) => string;
+import type { TranslationFunction } from '@workspace/typescript-interface/commun';
 
 export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Network>[] => [
     {
         id: 'select',
+        size: 28,
         header: ({ table }) => (
             <Checkbox
                 checked={
@@ -67,7 +67,7 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
                     className="flex items-start gap-2"
                 >
                     <Status
-                        className={'max-w-60 truncate border-0 text-sm'}
+                        className="max-w-full justify-start border-0 text-sm"
                         status={isBuiltin ? 'maintenance' : 'online'}
                         variant="outline"
                     >
@@ -84,7 +84,7 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
                             </TooltipContent>
                         </Tooltip>
 
-                        <StatusLabel className="truncate font-medium text-current hover:underline">
+                        <StatusLabel className="min-w-0 truncate text-current hover:underline">
                             {name}
                         </StatusLabel>
                     </Status>
@@ -106,8 +106,8 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
         cell: ({ row }) => {
             const driver = row.original.driver;
             return (
-                <Badge variant="secondary" className="font-mono">
-                    {driver}
+                <Badge variant="secondary" className="max-w-full justify-start truncate text-xs">
+                    <span className={'truncate'}>{driver}</span>
                 </Badge>
             );
         },
@@ -117,7 +117,12 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
         header: t('scope'),
         cell: ({ row }) => {
             const scope = row.original.scope;
-            return <Badge variant="outline">{scope}</Badge>;
+
+            return (
+                <Badge variant="outline" className="max-w-full justify-start truncate text-xs">
+                    <span className={'truncate'}>{scope}</span>
+                </Badge>
+            );
         },
     },
     {
@@ -126,9 +131,9 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
         cell: ({ row }) => {
             const networkId = row.original.id;
             return (
-                <code className="text-muted-foreground line-clamp-1 max-w-50 truncate text-sm">
-                    {networkId}
-                </code>
+                <div className="flex">
+                    <code className="text-muted-foreground truncate">{networkId}</code>
+                </div>
             );
         },
     },
@@ -147,12 +152,15 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
             const containers = row.original.containers;
 
             const count = containers?.length || 0;
-            return <Badge variant={count > 0 ? 'default' : 'secondary'}>{count}</Badge>;
-        },
-        sortingFn: (rowA, rowB) => {
-            const lengthA = rowA.original.containers?.length || 0;
-            const lengthB = rowB.original.containers?.length || 0;
-            return lengthA - lengthB;
+
+            return (
+                <Badge
+                    className="max-w-full justify-start truncate text-xs"
+                    variant={count > 0 ? 'default' : 'secondary'}
+                >
+                    <span className={'truncate'}>{count}</span>
+                </Badge>
+            );
         },
     },
     {
@@ -170,17 +178,16 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
             const created = row.original.created;
             const date = dayjs.unix(created).format('DD/MM/YYYY');
 
-            return (
-                <div className="text-muted-foreground flex items-center gap-2 text-sm">{date}</div>
-            );
+            return <div className="text-muted-foreground truncate">{date}</div>;
         },
     },
     {
         id: 'actions',
+        size: 50,
         cell: ({ row }) => (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" className={'size-8'}>
                         <MoreVertical />
                     </Button>
                 </DropdownMenuTrigger>

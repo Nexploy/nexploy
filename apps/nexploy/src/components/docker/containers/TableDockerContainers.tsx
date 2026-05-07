@@ -70,11 +70,11 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
     const t = useTranslations('docker.tables');
     const tCommon = useTranslations('common');
 
-    const rows = useMemo(() => buildContainerRows(containers), [containers]);
+    const containerRows = useMemo(() => buildContainerRows(containers), [containers]);
     const columns = useMemo(() => getColumnsDockerContainers(t, tCommon), [t, tCommon]);
 
     const table = useReactTable({
-        data: rows,
+        data: containerRows,
         columns,
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
@@ -94,13 +94,13 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
 
     const selectedIds = Object.keys(rowSelection);
     const selectedContainers = useMemo(
-        () => getSelectedContainers(rows, selectedIds),
-        [rows, selectedIds],
+        () => getSelectedContainers(containerRows, selectedIds),
+        [containerRows, selectedIds],
     );
 
     const isShowingAll = pageSize === 'all';
-    const isEmpty = !isLoading && rows.length === 0;
-    const noMatch = !isLoading && rows.length > 0 && table.getRowModel().rows.length === 0;
+    const isEmpty = !isLoading && containerRows.length === 0;
+    const noMatch = !isLoading && containerRows.length > 0 && table.getRowModel().rows.length === 0;
 
     return (
         <div className="mx-5 space-y-3">
@@ -202,7 +202,7 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
                         onValueChange={(value) => {
                             if (value === 'all') {
                                 setPageSize('all');
-                                table.setPageSize(rows.length || 1);
+                                table.setPageSize(containerRows.length || 1);
                             } else {
                                 const size = Number(value);
                                 setPageSize(size);

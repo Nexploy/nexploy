@@ -12,15 +12,8 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
-import React, { useCallback, useRef, useState } from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { getColumnsTableNetworks } from '@/components/docker/network/table/ColumnsDockerNetworks';
 import { useNetworkStore } from '@/stores/docker/useNetworkStore';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
@@ -71,12 +64,14 @@ export function TableDockerNetworks() {
     const tDocker = useTranslations('docker');
     const tCommon = useTranslations('common');
 
+    const columns = useMemo(() => getColumnsTableNetworks(t), [t]);
+
     const isLoading = !networks.length && !lastUpdate;
     const isEmpty = !networks.length && !!lastUpdate;
 
     const table = useReactTable({
         data: networks,
-        columns: getColumnsTableNetworks(t),
+        columns,
         getRowId: (originalRow: Network) => originalRow.id,
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
@@ -170,12 +165,20 @@ export function TableDockerNetworks() {
                 </div>
             </div>
             <div className="bg-card overflow-hidden rounded-md border shadow-sm">
-                <Table>
+                <Table className={'table-fixed'}>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id}>
+                                    <TableHead
+                                        key={header.id}
+                                        className="overflow-hidden"
+                                        style={
+                                            header.column.getSize() !== 150
+                                                ? { width: header.column.getSize() }
+                                                : undefined
+                                        }
+                                    >
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(

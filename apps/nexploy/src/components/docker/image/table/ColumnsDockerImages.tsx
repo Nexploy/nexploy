@@ -15,8 +15,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { cn } from '@workspace/ui/lib/utils';
 import { ImageRow } from '@workspace/typescript-interface/docker/docker.image';
 import Link from 'next/link';
-
-type TranslationFunction = (key: string) => string;
+import type { TranslationFunction } from '@workspace/typescript-interface/commun';
 
 export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRow>[] => [
     {
@@ -116,7 +115,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                                     )}
                                 </TooltipContent>
                             </Tooltip>
-                            <StatusLabel className="min-w-0 truncate font-medium text-current hover:underline">
+                            <StatusLabel className="min-w-0 truncate text-current hover:underline">
                                 {nameJoin}
                             </StatusLabel>
                         </Status>
@@ -148,7 +147,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                             </TooltipContent>
                         </Tooltip>
 
-                        <StatusLabel className="min-w-0 truncate font-medium text-current hover:underline">
+                        <StatusLabel className="min-w-0 truncate text-current hover:underline">
                             {nameJoin}
                         </StatusLabel>
                     </Status>
@@ -248,7 +247,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" className={'size-8'}>
                             <MoreVertical />
                         </Button>
                     </DropdownMenuTrigger>

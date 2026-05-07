@@ -13,8 +13,7 @@ import { ContainerTableRow } from './containerTableUtils';
 import { StackActionsCell } from './StackActionsCell';
 import { ContainersDropdownActions } from './ContainersDropdownActions';
 import { containerDisplayState } from '@/utils/containerDisplayState';
-
-type TranslationFunction = (key: string) => string;
+import type { TranslationFunction } from '@workspace/typescript-interface/commun';
 
 export function getColumnsDockerContainers(
     t: TranslationFunction,
@@ -232,7 +231,7 @@ export function getColumnsDockerContainers(
                     <div className="flex justify-end">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm">
+                                <Button variant="ghost" className={'size-8'}>
                                     <MoreVertical />
                                 </Button>
                             </DropdownMenuTrigger>

@@ -12,8 +12,7 @@ import type {
     SwarmNodeState,
 } from '@workspace/typescript-interface/docker/swarm';
 import { NodeDropdownActions } from './NodeDropdownActions';
-
-type TranslationFunction = (key: string) => string;
+import type { TranslationFunction } from '@workspace/typescript-interface/commun';
 
 function formatBytes(bytes: number): string {
     if (bytes === 0) return '0 B';

@@ -7,7 +7,6 @@ import { Button } from '@workspace/ui/components/button';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Badge } from '@workspace/ui/components/badge';
 import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
-import CopyButton from '@/components/shared/CopyButton';
 import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';
 import { VolumeDropdownActions } from '@/components/docker/volume/VolumeDropdownActions';
@@ -15,8 +14,7 @@ import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/drop
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import Link from 'next/link';
-
-type TranslationFunction = (key: string) => string;
+import type { TranslationFunction } from '@workspace/typescript-interface/commun';
 
 export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume>[] => [
     {
@@ -100,8 +98,8 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
         cell: ({ row }) => {
             const driver = row.original.driver;
             return (
-                <Badge variant="secondary" className="font-mono">
-                    {driver}
+                <Badge variant="secondary" className="max-w-full justify-start text-xs">
+                    <span className={'truncate'}>{driver}</span>
                 </Badge>
             );
         },
@@ -112,14 +110,8 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
         cell: ({ row }) => {
             const mountpoint = row.original.mountpoint;
             return (
-                <div className="flex w-60 items-center gap-2">
-                    <code className="text-muted-foreground truncate text-sm">{mountpoint}</code>
-                    <CopyButton
-                        textToCopy={mountpoint}
-                        className="size-7 !text-xs"
-                        size={'icon'}
-                        variant={'ghost'}
-                    />
+                <div className="flex">
+                    <code className="text-muted-foreground truncate">{mountpoint}</code>
                 </div>
             );
         },
@@ -139,9 +131,7 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
             const createdAt = row.original.createdAt;
             const date = dayjs(createdAt).format('DD/MM/YYYY HH:mm');
 
-            return (
-                <div className="text-muted-foreground flex items-center gap-2 text-sm">{date}</div>
-            );
+            return <div className="text-muted-foreground truncate">{date}</div>;
         },
     },
     {
@@ -158,15 +148,17 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
         cell: ({ row }) => {
             const usageData = row.original.usageData;
             const size = usageData?.Size || 0;
-            return <div className="flex items-center gap-2 text-sm">{formatBytes(size)}</div>;
+
+            return <div className="truncate">{formatBytes(size)}</div>;
         },
     },
     {
         id: 'actions',
+        size: 50,
         cell: ({ row }) => (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" className={'size-8'}>
                         <MoreVertical />
                     </Button>
                 </DropdownMenuTrigger>
