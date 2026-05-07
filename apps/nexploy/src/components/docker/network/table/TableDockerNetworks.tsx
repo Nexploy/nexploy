@@ -12,14 +12,7 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
 import React, { useCallback, useRef, useState } from 'react';
 import { getColumnsTableNetworks } from '@/components/docker/network/table/ColumnsDockerNetworks';
 import { useNetworkStore } from '@/stores/docker/useNetworkStore';

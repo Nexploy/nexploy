@@ -171,7 +171,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             if (isGroup) {
                 const tags = row.original.tag || [];
                 return (
-                    <Badge variant="outline" className="max-w-full justify-start text-xs">
+                    <Badge variant="outline" className="max-w-full justify-start">
                         <span className={'truncate'}>
                             {tags.length} {t('versions')}
                         </span>
@@ -180,7 +180,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             }
             const tag = row.original.tag;
             return (
-                <Badge variant="secondary" className="max-w-full justify-start font-mono text-xs">
+                <Badge variant="secondary" className="max-w-full justify-start">
                     <span className={'truncate'}>{tag.join(' → ')}</span>
                 </Badge>
             );

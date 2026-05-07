@@ -18,7 +18,7 @@ import {
     TableHeader,
     TableRow,
 } from '@workspace/ui/components/table';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
@@ -58,6 +58,7 @@ const globalFilterFn: FilterFn<SwarmService> = (row, _, value) => {
 export function ServicesTable() {
     const services = useSwarmStore((state) => state.services);
     const lastUpdate = useSwarmStore((state) => state.lastUpdate);
+
     const getTasksByService = useSwarmStore((state) => state.getTasksByService);
 
     const t = useTranslations('swarm');
@@ -67,8 +68,11 @@ export function ServicesTable() {
     const [globalFilter, setGlobalFilter] = useState('');
     const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
 
-    const getRunningTasksCount = (serviceId: string) =>
-        getTasksByService(serviceId).filter((task) => task.state === 'running').length;
+    const getRunningTasksCount = useMemo(
+        () => (serviceId: string) =>
+            getTasksByService(serviceId).filter((task) => task.state === 'running').length,
+        [getTasksByService],
+    );
 
     const table = useReactTable({
         data: services,

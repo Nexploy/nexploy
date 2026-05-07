@@ -4,6 +4,17 @@ import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useTranslations } from 'next-intl';
+import { Badge } from '@workspace/ui/components/badge.tsx';
+
+const NETWORK_FIELDS = [
+    { key: 'mode', label: 'networkMode' },
+    { key: 'ipAddress', label: 'ipAddress' },
+    { key: 'gateway', label: 'gateway' },
+    { key: 'macAddress', label: 'macAddress' },
+    { key: 'bridge', label: 'bridge' },
+    { key: 'sandboxId', label: 'sandboxId' },
+    { key: 'endpointId', label: 'endpointId' },
+] as const;
 
 export function CardNetworkConfig() {
     const container = useContainerStore((state) => state.container);
@@ -13,7 +24,7 @@ export function CardNetworkConfig() {
         return <Skeleton className={'h-80 flex-2'} />;
     }
 
-    const hasNetworkData = Object.values(container.network).some(Boolean);
+    const visibleFields = NETWORK_FIELDS.filter(({ key }) => container.network[key]);
 
     return (
         <Card>
@@ -26,7 +37,7 @@ export function CardNetworkConfig() {
                 </div>
             </CardHeader>
             <CardContent className={'px-0'}>
-                {!hasNetworkData ? (
+                {visibleFields.length === 0 ? (
                     <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
                         {t('noData')}
                     </div>
@@ -37,76 +48,22 @@ export function CardNetworkConfig() {
                         className="h-50 overflow-hidden px-6"
                     >
                         <div className="space-y-3">
-                            {container.network.mode && (
-                                <div className="flex items-center justify-between border-b pb-2">
+                            {visibleFields.map(({ key, label }, index) => (
+                                <div
+                                    key={key}
+                                    className={`flex items-center justify-between ${index < visibleFields.length - 1 ? 'border-b pb-2' : ''}`}
+                                >
                                     <span className="text-muted-foreground text-sm">
-                                        {t('networkMode')}
+                                        {t(label)}
                                     </span>
-                                    <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
-                                        {container.network.mode}
-                                    </code>
+                                    <Badge
+                                        variant={'secondary'}
+                                        className={`truncate rounded-md text-xs`}
+                                    >
+                                        {container.network[key]}
+                                    </Badge>
                                 </div>
-                            )}
-                            {container.network.ipAddress && (
-                                <div className="flex items-center justify-between border-b pb-2">
-                                    <span className="text-muted-foreground text-sm">
-                                        {t('ipAddress')}
-                                    </span>
-                                    <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
-                                        {container.network.ipAddress}
-                                    </code>
-                                </div>
-                            )}
-                            {container.network.gateway && (
-                                <div className="flex items-center justify-between border-b pb-2">
-                                    <span className="text-muted-foreground text-sm">
-                                        {t('gateway')}
-                                    </span>
-                                    <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
-                                        {container.network.gateway}
-                                    </code>
-                                </div>
-                            )}
-                            {container.network.macAddress && (
-                                <div className="flex items-center justify-between border-b pb-2">
-                                    <span className="text-muted-foreground text-sm">
-                                        {t('macAddress')}
-                                    </span>
-                                    <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
-                                        {container.network.macAddress}
-                                    </code>
-                                </div>
-                            )}
-                            {container.network.bridge && (
-                                <div className="flex items-center justify-between border-b pb-2">
-                                    <span className="text-muted-foreground text-sm">
-                                        {t('bridge')}
-                                    </span>
-                                    <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
-                                        {container.network.bridge}
-                                    </code>
-                                </div>
-                            )}
-                            {container.network.sandboxId && (
-                                <div className="flex items-center justify-between border-b pb-2">
-                                    <span className="text-muted-foreground text-sm">
-                                        {t('sandboxId')}
-                                    </span>
-                                    <code className="bg-muted/50 truncate rounded-md px-2 py-1 text-xs">
-                                        {container.network.sandboxId}
-                                    </code>
-                                </div>
-                            )}
-                            {container.network.endpointId && (
-                                <div className="flex items-center justify-between">
-                                    <span className="text-muted-foreground text-sm">
-                                        {t('endpointId')}
-                                    </span>
-                                    <code className="bg-muted/50 truncate rounded-md px-2 py-1 text-xs">
-                                        {container.network.endpointId}
-                                    </code>
-                                </div>
-                            )}
+                            ))}
                         </div>
                     </ScrollAreaWithShadow>
                 )}

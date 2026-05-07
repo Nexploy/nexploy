@@ -9,7 +9,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { ReactNode } from 'react';
 import CopyButton from '@/components/shared/CopyButton';
-import { Table, TableBody, TableCell, TableRow } from '@workspace/ui/components/table';
+import { Badge } from '@workspace/ui/components/badge.tsx';
 
 export function CardInfoDetail() {
     const container = useContainerStore((state) => state.container);
@@ -66,40 +66,54 @@ export function CardInfoDetail() {
                     bottomShadow
                     className="h-60 overflow-hidden px-6"
                 >
-                    <Table>
-                        <TableBody>
-                            {fields.map((field, index) => (
-                                <TableRow key={index}>
-                                    <TableCell className="text-muted-foreground w-40 font-medium whitespace-nowrap">
-                                        {field.label}
-                                    </TableCell>
-                                    <TableCell className="max-w-0 text-right">
-                                        <div className="flex items-center justify-end gap-2">
-                                            {field.hasCopy && (
-                                                <CopyButton
-                                                    textToCopy={field.value as string}
-                                                    className="size-6 shrink-0"
-                                                    size="icon"
-                                                    variant="ghost"
-                                                />
-                                            )}
-                                            {field.href ? (
-                                                <Link href={field.href} className="min-w-0">
-                                                    <code className="block truncate text-xs hover:underline">
+                    <div className="space-y-3">
+                        {fields.map((field, index) => (
+                            <div
+                                key={index}
+                                className={`grid grid-cols-[auto_1fr] items-center gap-4 ${index < fields.length - 1 ? 'border-b pb-2' : ''}`}
+                            >
+                                <span className="text-muted-foreground text-sm whitespace-nowrap">
+                                    {field.label}
+                                </span>
+                                <div className="flex min-w-0 items-center gap-1">
+                                    <div className="flex min-w-0 flex-1 justify-end overflow-hidden">
+                                        {field.href ? (
+                                            <Link
+                                                href={field.href}
+                                                className="min-w-0 max-w-full overflow-hidden"
+                                            >
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="w-auto max-w-full shrink hover:underline"
+                                                >
+                                                    <span className="block truncate">
                                                         {field.value}
-                                                    </code>
-                                                </Link>
-                                            ) : (
-                                                <code className="block truncate text-xs">
+                                                    </span>
+                                                </Badge>
+                                            </Link>
+                                        ) : (
+                                            <Badge
+                                                variant="secondary"
+                                                className="w-auto max-w-full shrink"
+                                            >
+                                                <span className="block truncate">
                                                     {field.value}
-                                                </code>
-                                            )}
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                                                </span>
+                                            </Badge>
+                                        )}
+                                    </div>
+                                    {field.hasCopy && (
+                                        <CopyButton
+                                            textToCopy={field.value as string}
+                                            className="size-6 shrink-0"
+                                            size="icon"
+                                            variant="ghost"
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </ScrollAreaWithShadow>
             </CardContent>
         </Card>

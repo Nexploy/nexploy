@@ -119,7 +119,7 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
             const scope = row.original.scope;
 
             return (
-                <Badge variant="outline" className="max-w-full justify-start truncate text-xs">
+                <Badge variant="outline" className="max-w-full justify-start text-xs">
                     <span className={'truncate'}>{scope}</span>
                 </Badge>
             );

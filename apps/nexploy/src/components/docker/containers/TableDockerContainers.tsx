@@ -12,14 +12,7 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Containers } from '@workspace/typescript-interface/docker/docker.containers';
@@ -38,11 +31,7 @@ import {
 } from '@workspace/ui/components/select';
 import { cn } from '@workspace/ui/lib/utils';
 import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
-import {
-    buildContainerRows,
-    containerTableGlobalFilterFn,
-    ContainerTableRow,
-} from './containerTableUtils';
+import { buildContainerRows, containerTableGlobalFilterFn, ContainerTableRow, } from './containerTableUtils';
 import { getColumnsDockerContainers } from './ColumnsDockerContainers';
 import { ContainerTableActions } from './ContainerTableActions';
 
@@ -70,8 +59,7 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
     const t = useTranslations('docker.tables');
     const tCommon = useTranslations('common');
 
-    const containerRows = buildContainerRows(containers);
-
+    const containerRows = useMemo(() => buildContainerRows(containers), [containers]);
     const table = useReactTable({
         data: containerRows,
         columns: getColumnsDockerContainers(t, tCommon),
