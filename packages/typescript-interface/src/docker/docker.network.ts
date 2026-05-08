@@ -120,3 +120,10 @@ export interface NetworkDisconnectOptions {
     networkId: string;
     force?: boolean;
 }
+
+export interface NetworkDetailEvent {
+    type: 'initial-state' | 'state-change' | 'removed' | 'not-found' | 'heartbeat';
+    networkId: string;
+    network?: Network;
+    timestamp: number;
+}

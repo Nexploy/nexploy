@@ -82,8 +82,8 @@ export function VolumeDetailPage({ volumeName }: VolumeDetailPageProps) {
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="flex flex-col gap-5 px-5 pb-5">
+                        <CardVolumeContainers />
                         <CardVolumeDetails />
-                        <CardVolumeContainers volumeName={volumeName} />
                     </div>
                 </ScrollAreaWithShadow>
             </div>

@@ -10,21 +10,23 @@ import { Badge } from '@workspace/ui/components/badge';
 
 export function CardHealthDetails() {
     const container = useContainerStore((state) => state.container);
+    const isConnecting = useContainerStore((state) => state.isConnecting);
+
     const t = useTranslations('docker.containerHealth');
 
-    if (!container) {
+    if (isConnecting) {
         return <Skeleton className={'h-100 flex-1'} />;
     }
+
+    const logs = container?.health?.logs ?? [];
 
     return (
         <Card>
             <CardHeaderWithIcon icon={Activity} title={t('title')}>
-                {container.health?.logs?.length && (
-                    <Badge variant="secondary">{container.health?.logs.length}</Badge>
-                )}
+                {!!logs.length && <Badge variant="secondary">{logs.length}</Badge>}
             </CardHeaderWithIcon>
             <CardContent className="px-0">
-                {!container.health?.logs?.length ? (
+                {!logs.length ? (
                     <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
                         {t('noLogs')}
                     </div>
@@ -34,46 +36,42 @@ export function CardHealthDetails() {
                             <div className="flex items-center gap-2">
                                 <span className="text-muted-foreground text-sm">{t('status')}</span>
                                 <code className="bg-muted/50 rounded px-2 py-1 text-xs">
-                                    {container.health?.status}
+                                    {container?.health?.status}
                                 </code>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-muted-foreground text-sm">
-                                    {t('consecutiveFailures')}
-                                </span>
-                                <code className="bg-muted/50 rounded px-2 py-1 text-xs">
-                                    {container.health?.failingStreak}
-                                </code>
+                            <span className="text-muted-foreground text-sm whitespace-nowrap">
+                                {t('consecutiveFailures')}
+                            </span>
+                            <div className="flex justify-end">
+                                <Badge variant="secondary">
+                                    {container?.health?.failingStreak}
+                                </Badge>
                             </div>
                         </div>
                         <ScrollAreaWithShadow
                             colorShadow="from-card via-card/50"
                             bottomShadow
-                            className="h-72 overflow-hidden px-6"
+                            className="h-60 overflow-hidden px-6"
                         >
                             <div className="space-y-2">
-                                {container.health?.logs.map((log, idx) => (
+                                {logs.map((log, idx) => (
                                     <div key={idx} className="bg-muted/30 space-y-2 rounded-lg p-3">
-                                        <div className="flex items-center justify-between text-xs">
-                                            <span className="text-muted-foreground">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span className="text-muted-foreground text-xs">
                                                 {dayjs(log.start).format('DD/MM/YYYY HH:mm:ss')}
                                             </span>
-                                            <span
-                                                className={`rounded px-2 py-1 font-medium ${
-                                                    log.exitCode === 0
-                                                        ? 'bg-green-500/20 text-green-700 dark:text-green-400'
-                                                        : 'bg-red-500/20 text-red-700 dark:text-red-400'
-                                                }`}
+                                            <Badge
+                                                variant={
+                                                    log.exitCode === 0 ? 'default' : 'destructive'
+                                                }
                                             >
                                                 {t('exit', { code: log.exitCode })}
-                                            </span>
+                                            </Badge>
                                         </div>
                                         {log.output && (
-                                            <div className="bg-background/50 rounded p-2">
-                                                <code className="text-xs break-all">
-                                                    {log.output}
-                                                </code>
-                                            </div>
+                                            <code className="bg-background/50 block rounded p-2 text-xs break-all">
+                                                {log.output}
+                                            </code>
                                         )}
                                     </div>
                                 ))}

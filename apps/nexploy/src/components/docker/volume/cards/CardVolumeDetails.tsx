@@ -10,6 +10,7 @@ import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';
 import { Badge } from '@workspace/ui/components/badge';
 import { useVolumeStore } from '@/stores/docker/useVolumeStore';
+import { Table, TableBody, TableCell, TableRow } from '@workspace/ui/components/table';
 
 export function CardVolumeDetails() {
     const t = useTranslations('docker.volumeDetails');
@@ -25,101 +26,99 @@ export function CardVolumeDetails() {
         <Card>
             <CardHeaderWithIcon icon={List} title={t('title')} />
             <CardContent>
-                <div className="space-y-4">
-                    <div className="flex items-center gap-4 border-b pb-3">
-                        <span className="text-muted-foreground w-32 shrink-0 text-sm font-medium">
-                            {t('name')}
-                        </span>
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium">{volume.name}</span>
-                            <CopyButton
-                                textToCopy={volume.name}
-                                className="size-6"
-                                size="icon"
-                                variant="ghost"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 border-b pb-3">
-                        <span className="text-muted-foreground w-32 shrink-0 text-sm font-medium">
-                            {t('driver')}
-                        </span>
-                        <Badge variant="secondary" className="font-mono">
-                            {volume.driver}
-                        </Badge>
-                    </div>
-
-                    <div className="flex items-center gap-4 border-b pb-3">
-                        <span className="text-muted-foreground w-32 shrink-0 text-sm font-medium">
-                            {t('mountpoint')}
-                        </span>
-                        <div className="flex items-center gap-2">
-                            <code className="text-muted-foreground max-w-96 truncate text-xs">
-                                {volume.mountpoint}
-                            </code>
-                            <CopyButton
-                                textToCopy={volume.mountpoint}
-                                className="size-6"
-                                size="icon"
-                                variant="ghost"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 border-b pb-3">
-                        <span className="text-muted-foreground w-32 shrink-0 text-sm font-medium">
-                            {t('scope')}
-                        </span>
-                        <Badge variant="outline">{volume.scope}</Badge>
-                    </div>
-
-                    <div className="flex items-center gap-4 border-b pb-3">
-                        <span className="text-muted-foreground w-32 shrink-0 text-sm font-medium">
-                            {t('created')}
-                        </span>
-                        <span className="text-sm">
-                            {dayjs(volume.createdAt).format('YYYY-MM-DD HH:mm:ss')}
-                        </span>
-                    </div>
-
-                    {volume.usageData && volume.usageData.Size >= 0 && (
-                        <div className="flex items-center gap-4 border-b pb-3">
-                            <span className="text-muted-foreground w-32 shrink-0 text-sm font-medium">
-                                {t('size')}
-                            </span>
-                            <span className="text-sm font-medium">
-                                {formatBytes(volume.usageData.Size)}
-                            </span>
-                        </div>
-                    )}
-
-                    <div className="flex gap-4">
-                        <span className="text-muted-foreground w-32 shrink-0 pt-1 text-sm font-medium">
-                            {t('labels')}
-                        </span>
-                        {labelEntries.length ? (
-                            <div className="flex-1 overflow-hidden">
-                                <table className="w-full">
-                                    <tbody>
-                                        {labelEntries.map(([key, value]) => (
-                                            <tr key={key} className="border-b last:border-b-0">
-                                                <td className="text-muted-foreground max-w-80 truncate py-2 pr-4 text-sm">
-                                                    {key}
-                                                </td>
-                                                <td className="truncate py-2 text-sm">{value}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        ) : (
-                            <span className="text-muted-foreground pt-1 text-sm">
-                                {t('noLabels')}
-                            </span>
+                <Table>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell className="text-muted-foreground w-32 font-medium">
+                                {t('name')}
+                            </TableCell>
+                            <TableCell className="max-w-0">
+                                <div className="flex items-center gap-2">
+                                    <span className="truncate text-sm font-medium">{volume.name}</span>
+                                    <CopyButton
+                                        textToCopy={volume.name}
+                                        className="size-6 shrink-0"
+                                        size="icon"
+                                        variant="ghost"
+                                    />
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell className="text-muted-foreground w-32 font-medium">
+                                {t('driver')}
+                            </TableCell>
+                            <TableCell className="max-w-0">
+                                <Badge variant="secondary" className="font-mono">
+                                    {volume.driver}
+                                </Badge>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell className="text-muted-foreground w-32 font-medium">
+                                {t('mountpoint')}
+                            </TableCell>
+                            <TableCell className="max-w-0">
+                                <div className="flex items-center gap-2">
+                                    <code className="text-muted-foreground block truncate text-xs">
+                                        {volume.mountpoint}
+                                    </code>
+                                    <CopyButton
+                                        textToCopy={volume.mountpoint}
+                                        className="size-6 shrink-0"
+                                        size="icon"
+                                        variant="ghost"
+                                    />
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell className="text-muted-foreground w-32 font-medium">
+                                {t('scope')}
+                            </TableCell>
+                            <TableCell className="max-w-0 truncate">
+                                <Badge variant="outline">{volume.scope}</Badge>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell className="text-muted-foreground w-32 font-medium">
+                                {t('created')}
+                            </TableCell>
+                            <TableCell className="max-w-0 truncate">
+                                {dayjs(volume.createdAt).format('YYYY-MM-DD HH:mm:ss')}
+                            </TableCell>
+                        </TableRow>
+                        {volume.usageData && volume.usageData.Size >= 0 && (
+                            <TableRow>
+                                <TableCell className="text-muted-foreground w-32 font-medium">
+                                    {t('size')}
+                                </TableCell>
+                                <TableCell className="max-w-0 truncate">
+                                    {formatBytes(volume.usageData.Size)}
+                                </TableCell>
+                            </TableRow>
                         )}
-                    </div>
-                </div>
+                        <TableRow>
+                            <TableCell className="text-muted-foreground w-32 align-top font-medium">
+                                {t('labels')}
+                            </TableCell>
+                            <TableCell className="max-w-0">
+                                {labelEntries.length ? (
+                                    <div className="flex flex-col gap-1">
+                                        {labelEntries.map(([key, value]) => (
+                                            <div key={key} className="flex gap-2 text-sm">
+                                                <span className="text-muted-foreground shrink-0">{key}</span>
+                                                <span className="truncate">{value}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <span className="text-muted-foreground">{t('noLabels')}</span>
+                                )}
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
             </CardContent>
         </Card>
     );

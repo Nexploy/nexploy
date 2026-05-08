@@ -17,6 +17,8 @@ import { useTranslations } from 'next-intl';
 export function CardLabels() {
     const t = useTranslations('docker.labels');
     const container = useContainerStore((state) => state.container);
+    const isConnecting = useContainerStore((state) => state.isConnecting);
+
     const { openDialog } = useConfirmationDialogStore();
     const labelChanges = useContainerChangesStore((state) => state.labelChanges);
 
@@ -54,12 +56,12 @@ export function CardLabels() {
         };
     };
 
-    if (!container) {
+    if (isConnecting) {
         return <Skeleton className="h-100 flex-1" />;
     }
 
     const addedLabels = labelChanges.filter((change) => change.typeAction === 'add');
-    const labelCount = Object.keys(container.labels).length + addedLabels.length;
+    const labelCount = (Object.keys(container?.labels ?? {}).length ?? 0) + addedLabels.length;
 
     return (
         <Card>
@@ -92,7 +94,7 @@ export function CardLabels() {
                         className="h-50 overflow-hidden px-6"
                     >
                         <div className="space-y-2">
-                            {Object.entries(container.labels).map(([key, value], idx) => {
+                            {Object.entries(container?.labels ?? {}).map(([key, value], idx) => {
                                 const label = { key, value };
                                 const { isEdited, isDeleted, editedLabel } =
                                     getLabelChangeStatus(label);

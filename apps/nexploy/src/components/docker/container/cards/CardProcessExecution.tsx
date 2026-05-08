@@ -4,14 +4,35 @@ import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useTranslations } from 'next-intl';
+import { Badge } from '@workspace/ui/components/badge.tsx';
 
 export function CardProcessExecution() {
     const container = useContainerStore((state) => state.container);
+    const isConnecting = useContainerStore((state) => state.isConnecting);
+
     const t = useTranslations('docker.containerProcess');
 
-    if (!container) {
+    if (isConnecting) {
         return <Skeleton className={'h-90 flex-1'} />;
     }
+
+    const fields = [
+        { label: t('path'), value: container?.path },
+        ...(container?.args?.length ? [{ label: t('args'), value: container.args.join(' ') }] : []),
+        ...(container?.cmd?.length ? [{ label: t('cmd'), value: container.cmd.join(' ') }] : []),
+        ...(container?.entrypoint
+            ? [
+                  {
+                      label: t('entrypoint'),
+                      value: Array.isArray(container.entrypoint)
+                          ? container.entrypoint.join(' ')
+                          : container.entrypoint,
+                  },
+              ]
+            : []),
+        { label: t('workingDir'), value: container?.workingDir || '—' },
+        { label: t('user'), value: container?.user || 'root' },
+    ];
 
     return (
         <Card>
@@ -24,7 +45,7 @@ export function CardProcessExecution() {
                 </div>
             </CardHeader>
             <CardContent className={'px-0'}>
-                {!container.path ? (
+                {!container?.path ? (
                     <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
                         {t('noData')}
                     </div>
@@ -35,58 +56,24 @@ export function CardProcessExecution() {
                         className="h-50 overflow-hidden px-6"
                     >
                         <div className="space-y-3">
-                            <div className="flex items-center justify-between border-b pb-2">
-                                <span className="text-muted-foreground text-sm">{t('path')}</span>
-                                <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
-                                    {container.path}
-                                </code>
-                            </div>
-                            {container.args && container.args.length > 0 && (
-                                <div className="flex items-start justify-between border-b pb-2">
-                                    <span className="text-muted-foreground text-sm">
-                                        {t('args')}
+                            {fields.map(({ label, value }, index) => (
+                                <div
+                                    key={label}
+                                    className={`grid grid-cols-[auto_1fr] items-center gap-4 ${index < fields.length - 1 ? 'border-b pb-2' : ''}`}
+                                >
+                                    <span className="text-muted-foreground text-sm whitespace-nowrap">
+                                        {label}
                                     </span>
-                                    <code className="bg-muted/50 max-w-md truncate rounded-md px-2 py-1 text-xs">
-                                        {container.args.join(' ')}
-                                    </code>
+                                    <div className="flex min-w-0 items-center justify-end overflow-hidden">
+                                        <Badge
+                                            variant="secondary"
+                                            className="w-auto max-w-full shrink"
+                                        >
+                                            <span className="block truncate">{value}</span>
+                                        </Badge>
+                                    </div>
                                 </div>
-                            )}
-                            {container.cmd && container.cmd.length > 0 && (
-                                <div className="flex items-start justify-between border-b pb-2">
-                                    <span className="text-muted-foreground text-sm">
-                                        {t('cmd')}
-                                    </span>
-                                    <code className="bg-muted/50 max-w-md truncate rounded-md px-2 py-1 text-xs">
-                                        {container.cmd.join(' ')}
-                                    </code>
-                                </div>
-                            )}
-                            {container.entrypoint && (
-                                <div className="flex items-start justify-between border-b pb-2">
-                                    <span className="text-muted-foreground text-sm">
-                                        {t('entrypoint')}
-                                    </span>
-                                    <code className="bg-muted/50 max-w-md truncate rounded-md px-2 py-1 text-xs">
-                                        {Array.isArray(container.entrypoint)
-                                            ? container.entrypoint.join(' ')
-                                            : container.entrypoint}
-                                    </code>
-                                </div>
-                            )}
-                            <div className="flex items-center justify-between border-b pb-2">
-                                <span className="text-muted-foreground text-sm">
-                                    {t('workingDir')}
-                                </span>
-                                <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
-                                    {container.workingDir || '—'}
-                                </code>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-muted-foreground text-sm">{t('user')}</span>
-                                <code className="bg-muted/50 rounded-md px-2 py-1 text-xs">
-                                    {container.user || 'root'}
-                                </code>
-                            </div>
+                            ))}
                         </div>
                     </ScrollAreaWithShadow>
                 )}

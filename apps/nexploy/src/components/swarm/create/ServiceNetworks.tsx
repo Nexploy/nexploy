@@ -13,7 +13,7 @@ import {
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
-import { useNetworkStore } from '@/stores/docker/useNetworkStore';
+import { useNetworksStore } from '../../../stores/docker/useNetworksStore';
 
 export function ServiceNetworks() {
     const t = useTranslations('swarm.createService');
@@ -23,7 +23,7 @@ export function ServiceNetworks() {
         name: 'networks',
     });
 
-    const networks = useNetworkStore((state) => state.networks);
+    const networks = useNetworksStore((state) => state.networks);
     const networkOptions = networks.map((net) => ({ value: net.name, label: net.name }));
 
     return (

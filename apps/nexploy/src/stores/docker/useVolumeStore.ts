@@ -21,7 +21,7 @@ export const useVolumeStore = create<VolumeDetailState>((set, get) => ({
     connect: ({ volumeName }) => {
         const state = get();
 
-        if (state.isMonitoring && state.volumeName === volumeName) {
+        if (state.isMonitoring && state.volume?.name === volumeName) {
             return;
         }
 
@@ -33,7 +33,7 @@ export const useVolumeStore = create<VolumeDetailState>((set, get) => ({
             clearTimeout(state.reconnectTimeout);
         }
 
-        set({ volumeName, error: null, isConnecting: true, notFound: false });
+        set({ error: null, isConnecting: true, notFound: false });
 
         const unsubscribers: (() => void)[] = [];
 

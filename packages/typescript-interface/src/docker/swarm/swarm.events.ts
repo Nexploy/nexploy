@@ -139,3 +139,11 @@ export type SwarmEvent =
     | SwarmHeartbeatEvent;
 
 export type SwarmEventType = SwarmEvent['type'];
+
+export interface ServiceDetailEvent {
+    type: 'initial-state' | 'service-updated' | 'service-removed' | 'task-added' | 'task-updated' | 'task-removed' | 'not-found' | 'heartbeat';
+    serviceId: string;
+    service?: SwarmService;
+    tasks?: SwarmTask[];
+    timestamp: number;
+}

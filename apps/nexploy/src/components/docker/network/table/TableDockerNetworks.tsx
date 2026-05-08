@@ -12,10 +12,17 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@workspace/ui/components/table';
 import React, { useCallback, useRef, useState } from 'react';
 import { getColumnsTableNetworks } from '@/components/docker/network/table/ColumnsDockerNetworks';
-import { useNetworkStore } from '@/stores/docker/useNetworkStore';
+import { useNetworksStore } from '../../../../stores/docker/useNetworksStore';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
@@ -57,8 +64,8 @@ export function TableDockerNetworks() {
     const [rowSelection, setRowSelection] = useState({});
     const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
 
-    const networks = useNetworkStore((state) => state.networks);
-    const lastUpdate = useNetworkStore((state) => state.lastUpdate);
+    const networks = useNetworksStore((state) => state.networks);
+    const lastUpdate = useNetworksStore((state) => state.lastUpdate);
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const t = useTranslations('docker.tables');
     const tDocker = useTranslations('docker');

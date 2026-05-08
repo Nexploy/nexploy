@@ -46,6 +46,7 @@ import Link from 'next/link';
 
 export function ContainerDetailPage() {
     const container = useContainerStore((state) => state.container);
+    const isConnecting = useContainerStore((state) => state.isConnecting);
     const notFound = useContainerStore((state) => state.notFound);
 
     const t = useTranslations('docker.containerDetail');
@@ -93,7 +94,7 @@ export function ContainerDetailPage() {
                         <IconContainer className="text-primary size-7" />
                     </div>
                     <div className="mt-3.5 flex flex-1 flex-col">
-                        {!container ? (
+                        {isConnecting ? (
                             <Skeleton className="h-8 w-40" />
                         ) : (
                             <button
@@ -121,7 +122,7 @@ export function ContainerDetailPage() {
                     <div className="flex flex-col gap-8 pb-5">
                         <CardInfoContainer />
                         <div className="space-y-5 px-5">
-                            {!container ? (
+                            {isConnecting ? (
                                 <Skeleton className="h-9 flex-1" />
                             ) : (
                                 <div

@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
-import { Key, Pencil, Plus } from 'lucide-react';
+import { Key, Plus } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
@@ -11,61 +11,17 @@ import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStor
 import { Badge } from '@workspace/ui/components/badge';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
-
-type EnvVar = { key: string; value: string };
+import { type EnvVar, EnvVarItem } from './EnvVarItem';
 
 function parseEnvString(envString: string): EnvVar {
     const [key, ...valueParts] = envString.split('=');
     return { key: key!, value: valueParts.join('=') };
 }
 
-interface EnvVarItemProps {
-    env: EnvVar;
-    isEdited: boolean;
-    isDeleted: boolean;
-    isNew?: boolean;
-    displayEnvVar: EnvVar;
-    onEdit: (envVar: EnvVar, originalEnvVar?: EnvVar) => void;
-}
-
-function EnvVarItem({ env, isEdited, isDeleted, isNew, displayEnvVar, onEdit }: EnvVarItemProps) {
-    const t = useTranslations('docker.containerEnv');
-    const statusIndicator = isNew ? (
-        <span className="text-green-500">+</span>
-    ) : isEdited ? (
-        <span className="text-primary">*</span>
-    ) : isDeleted ? (
-        <span className="text-destructive">-</span>
-    ) : null;
-
-    return (
-        <div className="bg-muted/60 flex items-center justify-between gap-2 rounded-md p-2">
-            <code className="flex gap-2 text-sm leading-none">
-                <span className="text-primary shrink-0 text-xs font-semibold">
-                    {displayEnvVar.key}:
-                </span>
-                <span className="text-xs break-all">{displayEnvVar.value || t('empty')}</span>
-                {statusIndicator}
-            </code>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-6 w-6"
-                        onClick={() => onEdit(displayEnvVar, isNew ? undefined : env)}
-                    >
-                        <Pencil />
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent>{t('edit')}</TooltipContent>
-            </Tooltip>
-        </div>
-    );
-}
-
 export function CardEnv() {
     const container = useContainerStore((state) => state.container);
+    const isConnecting = useContainerStore((state) => state.isConnecting);
+
     const { openDialog } = useConfirmationDialogStore();
     const envVarChanges = useContainerChangesStore((state) => state.envVarChanges);
     const t = useTranslations('docker.containerEnv');
@@ -104,12 +60,12 @@ export function CardEnv() {
         };
     };
 
-    if (!container) {
+    if (isConnecting) {
         return <Skeleton className="h-100 flex-1" />;
     }
 
     const addedEnvVars = envVarChanges.filter((change) => change.typeAction === 'add');
-    const hasEnvVars = container.env.length > 0 || addedEnvVars.length > 0;
+    const hasEnvVars = (container?.env.length ?? 0) > 0 || addedEnvVars.length > 0;
 
     return (
         <Card>
@@ -117,7 +73,7 @@ export function CardEnv() {
                 <div className="flex items-center justify-between gap-3">
                     <CardHeaderWithIcon as={'div'} icon={Key} title={t('title')}>
                         <Badge variant={'secondary'}>
-                            {container.env.length + addedEnvVars.length}
+                            {(container?.env.length ?? 0) + addedEnvVars.length}
                         </Badge>
                     </CardHeaderWithIcon>
                     <Tooltip>
@@ -144,7 +100,7 @@ export function CardEnv() {
                         className="h-72 overflow-hidden px-6"
                     >
                         <div className="space-y-2">
-                            {container.env.map((envString, idx) => {
+                            {container?.env.map((envString, idx) => {
                                 const env = parseEnvString(envString);
                                 const { isEdited, isDeleted, editedEnvVar } =
                                     getEnvChangeStatus(env);

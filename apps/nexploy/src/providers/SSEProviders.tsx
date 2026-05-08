@@ -5,7 +5,7 @@ import { useContainersStore } from '@/stores/docker/useContainersStore';
 import { useImagesStore } from '../stores/docker/useImagesStore';
 import { useDockerStore } from '@/stores/docker/useDockerStore';
 import { useEventsStore } from '@/stores/docker/useEventsStore';
-import { useNetworkStore } from '@/stores/docker/useNetworkStore';
+import { useNetworksStore } from '../stores/docker/useNetworksStore';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { useContainerLogsStore } from '@/stores/docker/useContainerLogsStore';
 import { useImageStore } from '../stores/docker/useImageStore';
@@ -16,6 +16,8 @@ import { useSwarmStore } from '@/stores/docker/useSwarmStore';
 import { useRequestsStore } from '@/stores/traefik/useRequestsStore';
 import { useMonitoringStore } from '@/stores/monitoring/useMonitoringStore';
 import { useVolumesStore } from '@/stores/docker/useVolumesStore.ts';
+import { useNetworkStore } from '../stores/docker/useNetworkStore';
+import { useSwarmServiceStore } from '../stores/docker/useSwarmServiceStore';
 
 type ExtractConnectParams<T> = T extends (params: infer P) => void ? P : never;
 
@@ -24,11 +26,13 @@ type SSEParams = {
     containers?: ExtractConnectParams<ReturnType<typeof useContainersStore.getState>['connect']>;
     images?: ExtractConnectParams<ReturnType<typeof useImagesStore.getState>['connect']>;
     volumes?: ExtractConnectParams<ReturnType<typeof useVolumeStore.getState>['connect']>;
-    networks?: ExtractConnectParams<ReturnType<typeof useNetworkStore.getState>['connect']>;
+    networks?: ExtractConnectParams<ReturnType<typeof useNetworksStore.getState>['connect']>;
     events?: ExtractConnectParams<ReturnType<typeof useEventsStore.getState>['connect']>;
     container?: ExtractConnectParams<ReturnType<typeof useContainerStore.getState>['connect']>;
     image?: ExtractConnectParams<ReturnType<typeof useImageStore.getState>['connect']>;
     volume?: ExtractConnectParams<ReturnType<typeof useVolumeStore.getState>['connect']>;
+    network?: ExtractConnectParams<ReturnType<typeof useNetworkStore.getState>['connect']>;
+    service?: ExtractConnectParams<ReturnType<typeof useSwarmServiceStore.getState>['connect']>;
     logs?: ExtractConnectParams<ReturnType<typeof useContainerLogsStore.getState>['connect']>;
     stats?: ExtractConnectParams<ReturnType<typeof useContainerStatsStore.getState>['connect']>;
     swarm?: ExtractConnectParams<ReturnType<typeof useSwarmStore.getState>['connect']>;
@@ -75,8 +79,8 @@ export function SSEProvider({
     const volumesConnect = useVolumesStore((s) => s.connect);
     const volumesDisconnect = useVolumesStore((s) => s.disconnect);
 
-    const networksConnect = useNetworkStore((s) => s.connect);
-    const networksDisconnect = useNetworkStore((s) => s.disconnect);
+    const networksConnect = useNetworksStore((s) => s.connect);
+    const networksDisconnect = useNetworksStore((s) => s.disconnect);
 
     const containerConnect = useContainerStore((s) => s.connect);
     const containerDisconnect = useContainerStore((s) => s.disconnect);
@@ -86,6 +90,12 @@ export function SSEProvider({
 
     const volumeConnect = useVolumeStore((s) => s.connect);
     const volumeDisconnect = useVolumeStore((s) => s.disconnect);
+
+    const networkConnect = useNetworkStore((s) => s.connect);
+    const networkDisconnect = useNetworkStore((s) => s.disconnect);
+
+    const swarmServiceConnect = useSwarmServiceStore((s) => s.connect);
+    const swarmServiceDisconnect = useSwarmServiceStore((s) => s.disconnect);
 
     const containerLogsConnect = useContainerLogsStore((s) => s.connect);
     const containerLogsDisconnect = useContainerLogsStore((s) => s.disconnect);
@@ -108,6 +118,8 @@ export function SSEProvider({
             container: containerConnect,
             image: imageDetailConnect,
             volume: volumeConnect,
+            network: networkConnect,
+            service: swarmServiceConnect,
             stats: containerStatsConnect,
             logs: containerLogsConnect,
             images: imageConnect,
@@ -130,6 +142,8 @@ export function SSEProvider({
             docker: dockerDisconnect,
             events: eventsDisconnect,
             volume: volumeDisconnect,
+            network: networkDisconnect,
+            service: swarmServiceDisconnect,
             volumes: volumesDisconnect,
             networks: networksDisconnect,
             swarm: swarmDisconnect,

@@ -211,8 +211,15 @@
         "layer": "Layer",
         "noLayers": "Aucun historique de layers"
     },
+    "imageContainers": {
+        "title": "Conteneurs utilisant cette image",
+        "noContainers": "Aucun conteneur n'utilise cette image"
+    },
     "networkDetail": {
-        "description": "Détails et informations du réseau Docker"
+        "description": "Détails et informations du réseau Docker",
+        "notFoundTitle": "Réseau introuvable",
+        "notFoundDescription": "Ce réseau n'existe plus ou a été supprimé.",
+        "backToNetworks": "Retour aux réseaux"
     },
     "networkDetails": {
         "title": "Détails du réseau",

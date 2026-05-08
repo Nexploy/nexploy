@@ -18,13 +18,15 @@ const NETWORK_FIELDS = [
 
 export function CardNetworkConfig() {
     const container = useContainerStore((state) => state.container);
+    const isConnecting = useContainerStore((state) => state.isConnecting);
+
     const t = useTranslations('docker.containerNetworkConfig');
 
-    if (!container) {
+    if (isConnecting) {
         return <Skeleton className={'h-80 flex-2'} />;
     }
 
-    const visibleFields = NETWORK_FIELDS.filter(({ key }) => container.network[key]);
+    const visibleFields = NETWORK_FIELDS.filter(({ key }) => container?.network?.[key]);
 
     return (
         <Card>
@@ -51,17 +53,21 @@ export function CardNetworkConfig() {
                             {visibleFields.map(({ key, label }, index) => (
                                 <div
                                     key={key}
-                                    className={`flex items-center justify-between ${index < visibleFields.length - 1 ? 'border-b pb-2' : ''}`}
+                                    className={`grid grid-cols-[auto_1fr] items-center gap-4 ${index < visibleFields.length - 1 ? 'border-b pb-2' : ''}`}
                                 >
-                                    <span className="text-muted-foreground text-sm">
+                                    <span className="text-muted-foreground text-sm whitespace-nowrap">
                                         {t(label)}
                                     </span>
-                                    <Badge
-                                        variant={'secondary'}
-                                        className={`truncate rounded-md text-xs`}
-                                    >
-                                        {container.network[key]}
-                                    </Badge>
+                                    <div className="flex min-w-0 items-center justify-end overflow-hidden">
+                                        <Badge
+                                            variant="secondary"
+                                            className="w-auto max-w-full shrink"
+                                        >
+                                            <span className="block truncate">
+                                                {container?.network?.[key]}
+                                            </span>
+                                        </Badge>
+                                    </div>
                                 </div>
                             ))}
                         </div>

@@ -3,14 +3,14 @@
 import { useEffect, useState } from 'react';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { Network, NetworkEvent } from '@workspace/typescript-interface/docker/docker.network';
-import { useNetworkStore } from '@/stores/docker/useNetworkStore';
+import { useNetworksStore } from '../../stores/docker/useNetworksStore';
 import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
 export function useEnvironmentNetworks(): {
     networks: Network[];
     isLoading: boolean;
 } {
-    const globalNetworks = useNetworkStore((s) => s.networks);
+    const globalNetworks = useNetworksStore((s) => s.networks);
     const [networks, setNetworks] = useState<Network[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 

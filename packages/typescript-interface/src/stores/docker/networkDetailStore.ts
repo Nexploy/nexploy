@@ -1,7 +1,8 @@
-import { Volume } from '../../docker/docker.volume';
+import { Network } from '../../docker/docker.network';
 
-export interface VolumeDetailState {
-    volume: Volume | null;
+export interface NetworkDetailState {
+    networkId: string | null;
+    network: Network | null;
     notFound: boolean;
     isConnecting: boolean;
     isMonitoring: boolean;
@@ -9,6 +10,6 @@ export interface VolumeDetailState {
     lastUpdate: number | null;
     eventSource: EventSource | null;
     reconnectTimeout: NodeJS.Timeout | null;
-    connect: (params: { volumeName: string }) => void;
+    connect: (params: { networkId: string }) => void;
     disconnect: () => void;
 }

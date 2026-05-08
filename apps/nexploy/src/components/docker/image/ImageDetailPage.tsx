@@ -12,6 +12,7 @@ import { useRouter } from '@/i18n/navigation';
 import { onImageAction } from '@/actions/docker/image/imageAction.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { CardImageConfig } from '@/components/docker/image/cards/CardImageConfig';
+import { CardImageContainers } from '@/components/docker/image/cards/CardImageContainers';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
 import { Tooltip, TooltipContent } from '@workspace/ui/components/tooltip.tsx';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
@@ -98,6 +99,7 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="flex flex-col gap-5 px-5 pb-5">
+                        <CardImageContainers />
                         <CardImageDetails />
                         <CardImageConfig />
                         <CardImageLayers />

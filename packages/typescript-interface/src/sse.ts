@@ -16,11 +16,13 @@ export type SSEChannel =
     | 'images'
     | 'volume'
     | 'volumes'
+    | 'network'
     | 'docker'
     | 'events'
     | 'networks'
     | 'logs'
     | 'stats'
+    | 'service'
     | 'swarm'
     | 'traefik'
     | 'monitoring';

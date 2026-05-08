@@ -17,6 +17,7 @@ import { serve } from '@hono/node-server';
 import { setupGracefulShutdown } from './utils/shutdown';
 import { DockerStatusManager } from '@/managers/dockerStatusManager';
 import { loadEnvironmentsFromAPI } from '@/lib/loadEnvironments';
+import networkEvents from '@/routes/events/networkEvents';
 import networksEvents from '@/routes/events/networksEvents';
 import { createNodeWebSocket } from '@hono/node-ws';
 import { createTerminalRoutes } from '@/routes/terminalRoutes';
@@ -26,6 +27,7 @@ import pipelineEvents from '@/routes/events/pipelineEvents';
 import pipelineRoutes from '@/routes/pipelineRoutes';
 import swarmRoutes from '@/routes/swarm';
 import swarmEvents from '@/routes/events/swarmEvents';
+import serviceEvents from '@/routes/events/serviceEvents';
 import traefikEvents from '@/routes/events/traefikEvents';
 import composeRoutes from './routes/composeRoutes';
 import environmentsRoutes from '@/routes/environments.routes';
@@ -81,6 +83,7 @@ app.route('/api/volume/events', volumeEvents);
 app.route('/api/volumes/events', volumesEvents);
 app.route('/api/volumes', volumesRoutes);
 
+app.route('/api/network/events', networkEvents);
 app.route('/api/networks/events', networksEvents);
 app.route('/api/networks', networksRoutes);
 
@@ -89,6 +92,8 @@ app.route('/api/pipeline', pipelineRoutes);
 
 app.route('/api/swarm/events', swarmEvents);
 app.route('/api/swarm', swarmRoutes);
+
+app.route('/api/service/events', serviceEvents);
 
 app.route('/api/traefik/events', traefikEvents);
 

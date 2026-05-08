@@ -1,23 +1,9 @@
-import type { Metadata } from 'next';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
 import { TwoFactorUseBackupCodeForm } from '@/components/auth/2faUseBackupCodeForm';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { getTranslations } from 'next-intl/server';
-
-export async function generateMetadata(): Promise<Metadata> {
-    return {
-        title: 'Two-Factor Authentication',
-        description: 'Verify your two-factor authentication code',
-    };
-}
 
 export default async function TwoFactoVerifCodePage() {
     const t = await getTranslations('auth.twoFactor');
@@ -34,9 +20,7 @@ export default async function TwoFactoVerifCodePage() {
                         </Button>
                         <CardTitle className="text-2xl">{t('backupCodeTitle')}</CardTitle>
                     </div>
-                    <CardDescription>
-                        {t('backupCodeDescription')}
-                    </CardDescription>
+                    <CardDescription>{t('backupCodeDescription')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <TwoFactorUseBackupCodeForm />

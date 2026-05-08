@@ -8,28 +8,33 @@ import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 
 export function CardExecuteId() {
     const container = useContainerStore((state) => state.container);
+    const isConnecting = useContainerStore((state) => state.isConnecting);
+
     const t = useTranslations('docker.containerExecId');
 
-    if (!container) {
+    if (isConnecting) {
         return <Skeleton className={'h-100 flex-1'} />;
     }
 
-    const execIdsLength = container.execIds?.length;
+    const execIds = container?.execIds ?? [];
 
     return (
         <Card>
             <CardHeaderWithIcon icon={Cpu} title={t('title')}>
-                {!!execIdsLength && <Badge variant="secondary">{execIdsLength}</Badge>}
+                {!!execIds.length && <Badge variant="secondary">{execIds.length}</Badge>}
             </CardHeaderWithIcon>
             <CardContent>
-                {!execIdsLength ? (
+                {!execIds.length ? (
                     <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
                         {t('noExecIds')}
                     </div>
                 ) : (
                     <div className="space-y-2">
-                        {container.execIds?.map((execId, idx) => (
-                            <code key={idx} className="bg-muted/30 block rounded-md p-2 text-xs">
+                        {execIds.map((execId, idx) => (
+                            <code
+                                key={idx}
+                                className="bg-muted/30 block truncate rounded-md p-2 text-xs"
+                            >
                                 {execId}
                             </code>
                         ))}

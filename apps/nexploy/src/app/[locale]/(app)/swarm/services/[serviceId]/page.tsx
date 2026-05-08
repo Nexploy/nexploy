@@ -1,18 +1,12 @@
-import type { Metadata } from 'next';
 import { ServiceDetailPage } from '@/components/swarm/ServiceDetailPage';
-
-export async function generateMetadata({
-    params,
-}: {
-    params: Promise<{ serviceId: string }>;
-}): Promise<Metadata> {
-    const { serviceId } = await params;
-    return {
-        title: `Service ${serviceId.slice(0, 12)}`,
-    };
-}
+import { SSEProvider } from '@/providers/SSEProviders';
 
 export default async function ServicePage({ params }: { params: Promise<{ serviceId: string }> }) {
     const { serviceId } = await params;
-    return <ServiceDetailPage serviceId={serviceId} />;
+
+    return (
+        <SSEProvider connections={['service']} params={{ service: { serviceId } }}>
+            <ServiceDetailPage serviceId={serviceId} />
+        </SSEProvider>
+    );
 }

@@ -13,7 +13,7 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 import { DialogClose, DialogFooter } from '@workspace/ui/components/dialog';
 import { Plus } from 'lucide-react';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
-import { useNetworkStore } from '@/stores/docker/useNetworkStore';
+import { useNetworksStore } from '../../../../stores/docker/useNetworksStore';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import {
     ContainerNetworkForm,
@@ -33,7 +33,7 @@ import { useTranslations } from 'next-intl';
 export function NetworkForm() {
     const { closeDialog } = useConfirmationDialogStore();
     const { onNetworkChange, networkChanges } = useContainerChangesStore();
-    const networks = useNetworkStore((state) => state.networks);
+    const networks = useNetworksStore((state) => state.networks);
     const container = useContainerStore((state) => state.container);
     const t = useTranslations('docker.forms');
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useNetworkStore } from '@/stores/docker/useNetworkStore';
+import { useNetworksStore } from '../../../stores/docker/useNetworksStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { Globe, Network, Share2, Shield } from 'lucide-react';
 import dayjs from 'dayjs';
@@ -11,8 +11,8 @@ import { isBuiltinNetwork } from '@workspace/shared/nexployFilter';
 
 export function CardInfoNetworks() {
     const t = useTranslations('docker');
-    const networks = useNetworkStore((state) => state.networks);
-    const lastUpdate = useNetworkStore((state) => state.lastUpdate);
+    const networks = useNetworksStore((state) => state.networks);
+    const lastUpdate = useNetworksStore((state) => state.lastUpdate);
 
     const isLoading = !networks.length && !lastUpdate;
 

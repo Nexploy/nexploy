@@ -24,6 +24,7 @@ function getPortUrl(port: number) {
 
 export function CardExposedPorts() {
     const container = useContainerStore((state) => state.container);
+    const isConnecting = useContainerStore((state) => state.isConnecting);
 
     const { openDialog } = useConfirmationDialogStore();
     const portChanges = useContainerChangesStore((state) => state.portChanges);
@@ -86,7 +87,7 @@ export function CardExposedPorts() {
 
     const addedPorts = portChanges.filter((change) => change.typeAction === 'add');
 
-    if (!container) {
+    if (isConnecting) {
         return <Skeleton className={'h-90 flex-1'} />;
     }
 
@@ -118,9 +119,9 @@ export function CardExposedPorts() {
                     className="h-60 overflow-hidden"
                 >
                     <div className={'px-6'}>
-                        {container.network.ports.length || addedPorts.length ? (
+                        {container?.network.ports.length || addedPorts.length ? (
                             <div className="grid grid-rows-1 gap-2 md:grid-rows-2 lg:grid-rows-3">
-                                {container.network.ports.map((port, idx) => {
+                                {container?.network.ports.map((port, idx) => {
                                     const { isEdited, isDeleted, editedPort } =
                                         getPortChangeStatus(port);
                                     const displayPort = editedPort || port;

@@ -3,18 +3,24 @@
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { Plus, Trash2 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@workspace/ui/components/card';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
-import { useNetworkStore } from '@/stores/docker/useNetworkStore';
+import { useNetworksStore } from '../../../../stores/docker/useNetworksStore';
 
 export function ContainerNetworks() {
     const t = useTranslations('docker.createContainer');
     const form = useFormContext();
     const { fields, append, remove } = useFieldArray({ control: form.control, name: 'networks' });
 
-    const networks = useNetworkStore((state) => state.networks);
+    const networks = useNetworksStore((state) => state.networks);
 
     const networkOptions = networks.map((net) => ({ value: net.name, label: net.name }));
 

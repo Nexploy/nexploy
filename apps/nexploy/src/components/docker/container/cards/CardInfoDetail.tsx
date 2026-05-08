@@ -13,47 +13,52 @@ import { Badge } from '@workspace/ui/components/badge.tsx';
 
 export function CardInfoDetail() {
     const container = useContainerStore((state) => state.container);
+    const isConnecting = useContainerStore((state) => state.isConnecting);
     const t = useTranslations('docker.containerDetails');
 
-    if (!container) {
+    if (isConnecting) {
         return <Skeleton className="h-90 flex-2" />;
     }
 
     const fields: { label: string; value: ReactNode; href?: string; hasCopy?: boolean }[] = [
-        { label: t('fullId'), value: container.id, hasCopy: true },
-        { label: t('name'), value: container.name },
-        { label: t('image'), value: container.image, href: `/docker/images/${container.imageId}` },
-        { label: t('platform'), value: container.platform },
-        { label: t('driver'), value: container.driver },
-        { label: t('state'), value: container.state },
-        { label: t('status'), value: container.status },
-        { label: t('isRunning'), value: container.running ? t('yes') : t('no') },
-        { label: t('isPaused'), value: container.paused ? t('yes') : t('no') },
-        { label: t('isRestarting'), value: container.restarting ? t('yes') : t('no') },
-        { label: t('isDead'), value: container.dead ? t('yes') : t('no') },
-        ...(container.health ? [{ label: t('health'), value: container.health.status }] : []),
-        ...(container.exitCode !== undefined
-            ? [{ label: t('exitCode'), value: container.exitCode }]
+        { label: t('fullId'), value: container?.id, hasCopy: true },
+        { label: t('name'), value: container?.name },
+        {
+            label: t('image'),
+            value: container?.image,
+            href: `/docker/images/${container?.imageId}`,
+        },
+        { label: t('platform'), value: container?.platform },
+        { label: t('driver'), value: container?.driver },
+        { label: t('state'), value: container?.state },
+        { label: t('status'), value: container?.status },
+        { label: t('isRunning'), value: container?.running ? t('yes') : t('no') },
+        { label: t('isPaused'), value: container?.paused ? t('yes') : t('no') },
+        { label: t('isRestarting'), value: container?.restarting ? t('yes') : t('no') },
+        { label: t('isDead'), value: container?.dead ? t('yes') : t('no') },
+        ...(container?.health ? [{ label: t('health'), value: container?.health.status }] : []),
+        ...(container?.exitCode !== undefined
+            ? [{ label: t('exitCode'), value: container?.exitCode }]
             : []),
-        { label: t('restartCount'), value: container.restartCount },
-        { label: t('createdAt'), value: dayjs(container.createdAt).format('DD/MM/YYYY HH:mm:ss') },
+        { label: t('restartCount'), value: container?.restartCount },
+        { label: t('createdAt'), value: dayjs(container?.createdAt).format('DD/MM/YYYY HH:mm:ss') },
         {
             label: t('startedAt'),
-            value: container.startedAt
-                ? dayjs(container.startedAt).format('DD/MM/YYYY HH:mm:ss')
+            value: container?.startedAt
+                ? dayjs(container?.startedAt).format('DD/MM/YYYY HH:mm:ss')
                 : '—',
         },
-        ...(container.finishedAt
+        ...(container?.finishedAt
             ? [
                   {
                       label: t('finishedAt'),
-                      value: dayjs(container.finishedAt).format('DD/MM/YYYY HH:mm:ss'),
+                      value: dayjs(container?.finishedAt).format('DD/MM/YYYY HH:mm:ss'),
                   },
               ]
             : []),
         {
             label: t('lastUpdated'),
-            value: dayjs(container.timestamp).format('DD/MM/YYYY HH:mm:ss'),
+            value: dayjs(container?.timestamp).format('DD/MM/YYYY HH:mm:ss'),
         },
     ];
 
@@ -80,7 +85,7 @@ export function CardInfoDetail() {
                                         {field.href ? (
                                             <Link
                                                 href={field.href}
-                                                className="min-w-0 max-w-full overflow-hidden"
+                                                className="max-w-full min-w-0 overflow-hidden"
                                             >
                                                 <Badge
                                                     variant="secondary"

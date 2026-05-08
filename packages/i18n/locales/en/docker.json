@@ -211,8 +211,15 @@
         "layer": "Layer",
         "noLayers": "No layer history"
     },
+    "imageContainers": {
+        "title": "Containers using this image",
+        "noContainers": "No containers are using this image"
+    },
     "networkDetail": {
-        "description": "Details and information about the Docker network"
+        "description": "Details and information about the Docker network",
+        "notFoundTitle": "Network not found",
+        "notFoundDescription": "This network no longer exists or has been removed.",
+        "backToNetworks": "Back to networks"
     },
     "networkDetails": {
         "title": "Network details",
