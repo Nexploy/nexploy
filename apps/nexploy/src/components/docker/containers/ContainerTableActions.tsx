@@ -90,7 +90,7 @@ export function ContainerTableActions({
                 isLoading={isStarting}
             >
                 {tActions('start')}
-                {!!numberOfSelectedRows && (
+                {numberOfSelectedRows > 1 && (
                     <Badge variant={'secondary'} className={'rounded-full'}>
                         {numberOfSelectedRows}
                     </Badge>
@@ -104,7 +104,7 @@ export function ContainerTableActions({
                 isLoading={isStopping}
             >
                 {tActions('stop')}
-                {!!numberOfSelectedRows && (
+                {numberOfSelectedRows > 1 && (
                     <Badge variant={'secondary'} className={'rounded-full'}>
                         {numberOfSelectedRows}
                     </Badge>
@@ -118,7 +118,7 @@ export function ContainerTableActions({
                 isLoading={isRestarting}
             >
                 {tActions('restart')}
-                {!!numberOfSelectedRows && (
+                {numberOfSelectedRows > 1 && (
                     <Badge variant={'secondary'} className={'rounded-full'}>
                         {numberOfSelectedRows}
                     </Badge>
@@ -128,11 +128,11 @@ export function ContainerTableActions({
                 variant="destructive"
                 icon={Trash2}
                 onClick={handleRemove}
-                disabled={!numberOfSelectedRows || isAnyLoading}
+                disabled={numberOfSelectedRows === 0 || isAnyLoading}
                 isLoading={isRemoving}
             >
                 {tCommon('remove')}
-                {!!numberOfSelectedRows && (
+                {numberOfSelectedRows > 1 && (
                     <Badge variant={'secondary'} className={'rounded-full'}>
                         {numberOfSelectedRows}
                     </Badge>

@@ -32,7 +32,7 @@ export function CardNetworkContainers() {
                     <div className="space-y-2">
                         {containerIds.map((containerId) => {
                             const container = getContainer(containerId);
-                            const displayName = container?.name || containerId.substring(0, 12);
+                            const displayName = container?.name || containerId;
 
                             return (
                                 <div

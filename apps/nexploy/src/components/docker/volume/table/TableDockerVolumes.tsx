@@ -11,14 +11,7 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
 import React, { useState } from 'react';
 import { getColumnsTableVolumes } from '@/components/docker/volume/table/ColumnsDockerVolumes';
 import { useTranslations } from 'next-intl';
@@ -127,11 +120,11 @@ export function TableDockerVolumes() {
                     <Button
                         variant={'destructive'}
                         onClick={handleDeleteAction}
-                        disabled={!numberOfSelectedRows}
+                        disabled={numberOfSelectedRows === 0}
                         icon={Trash2}
                     >
                         {tCommon('remove')}
-                        {!!numberOfSelectedRows && (
+                        {numberOfSelectedRows > 1 && (
                             <Badge variant={'secondary'} className={'rounded-full'}>
                                 {numberOfSelectedRows}
                             </Badge>

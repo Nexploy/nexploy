@@ -197,11 +197,11 @@ export function TableDockerImages() {
                     <Button
                         variant={'destructive'}
                         onClick={handleDeleteAction}
-                        disabled={!numberOfSelectedRows}
+                        disabled={numberOfSelectedRows === 0}
                     >
                         <Trash2 />
                         {tCommon('remove')}
-                        {!!numberOfSelectedRows && (
+                        {numberOfSelectedRows > 1 && (
                             <Badge variant={'secondary'} className={'rounded-full'}>
                                 {numberOfSelectedRows}
                             </Badge>

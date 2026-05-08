@@ -12,14 +12,7 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
 import React, { useCallback, useRef, useState } from 'react';
 import { getColumnsTableNetworks } from '@/components/docker/network/table/ColumnsDockerNetworks';
 import { useNetworksStore } from '../../../../stores/docker/useNetworksStore';
@@ -157,11 +150,11 @@ export function TableDockerNetworks() {
                     <Button
                         variant={'destructive'}
                         onClick={handleDeleteAction}
-                        disabled={!numberOfSelectedRows}
+                        disabled={numberOfSelectedRows === 0}
                         icon={Trash2}
                     >
                         {tCommon('remove')}
-                        {!!numberOfSelectedRows && (
+                        {numberOfSelectedRows > 1 && (
                             <Badge variant={'secondary'} className={'rounded-full'}>
                                 {numberOfSelectedRows}
                             </Badge>
