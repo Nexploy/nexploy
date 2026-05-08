@@ -1,5 +1,5 @@
 import { docker } from '@/utils/dockerClient';
-import { imagesStateManager } from '@/managers/imagesStateManager';
+import { imagesStateManager } from '@/managers/list/imagesStateManager';
 import { ImageDeleteResponse, ImageDeleteResult, } from '@workspace/typescript-interface/docker/docker.image';
 
 export async function deleteImages(

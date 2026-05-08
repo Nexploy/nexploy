@@ -1,7 +1,7 @@
 import { logger } from '@/utils/logger';
 import dayjs from 'dayjs';
 import { TraefikRequest } from '@workspace/typescript-interface/traefik/traefik.request';
-import { BaseStateManager } from '@/lib/BaseStateManager';
+import { BaseStateManager } from '@/lib/base/BaseStateManager';
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';

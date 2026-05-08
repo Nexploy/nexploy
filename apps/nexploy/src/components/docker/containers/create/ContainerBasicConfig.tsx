@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
 import {
     FormControl,
     FormDescription,
@@ -161,6 +155,7 @@ export function ContainerBasicConfig() {
                                     </div>
                                     <FormControl>
                                         <Switch
+                                            className={'cursor-pointer'}
                                             checked={field.value}
                                             onCheckedChange={field.onChange}
                                         />
@@ -184,6 +179,7 @@ export function ContainerBasicConfig() {
                                     </div>
                                     <FormControl>
                                         <Switch
+                                            className={'cursor-pointer'}
                                             checked={field.value}
                                             onCheckedChange={field.onChange}
                                         />

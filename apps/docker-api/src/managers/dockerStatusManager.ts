@@ -6,7 +6,7 @@ import {
     DockerStatus,
     DockerStatusEvent,
 } from '@workspace/typescript-interface/docker/docker.status';
-import { BaseMonitor } from '@/lib/BaseMonitor';
+import { BaseMonitor } from '@/lib/base/BaseMonitor';
 
 export class DockerStatusManager extends BaseMonitor {
     private status: DockerStatus = 'disconnected';

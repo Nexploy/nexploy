@@ -1,5 +1,5 @@
 import { docker } from '@/utils/dockerClient';
-import { volumesStateManager } from '@/managers/volumesStateManager';
+import { volumesStateManager } from '@/managers/list/volumesStateManager';
 import { VolumeDeleteResponse, VolumeDeleteResult } from '@workspace/typescript-interface/docker/docker.volume';
 
 export async function deleteVolumes(

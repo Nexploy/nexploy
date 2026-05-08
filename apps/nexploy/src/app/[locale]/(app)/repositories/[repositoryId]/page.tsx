@@ -5,8 +5,8 @@ import { RepositoryEnvTab } from '@/components/repositories/tabs/envs/Repository
 import { RepositoryDomainsTab } from '@/components/repositories/tabs/domains/RepositoryDomainsTab';
 import { RepositorySettingsTab } from '@/components/repositories/tabs/settings/RepositorySettingsTab';
 import { RepositoryVersionsTab } from '@/components/repositories/tabs/versions/RepositoryVersionsTab';
-import { ExternalLink, Link2 } from 'lucide-react';
-import { SiGithub, SiGitlab } from '@icons-pack/react-simple-icons';
+import { ExternalLink } from 'lucide-react';
+import { getGitIcon } from '@/utils/getGitIcon';
 import { RepositoryBuildsTab } from '@/components/repositories/tabs/builds/RepositoryBuildsTab';
 import { RepositoryPipelineTab } from '@/components/repositories/tabs/pipeline/RepositoryPipelineTab';
 import { getRepositorieById } from '@/services/repository.service';
@@ -22,13 +22,6 @@ interface RepositoryIdPageProps {
         repositoryId: string;
     }>;
 }
-
-const getGitIcon = (provider: string) => {
-    const p = provider.toLowerCase();
-    if (p.includes('github')) return SiGithub;
-    if (p.includes('gitlab')) return SiGitlab;
-    return Link2;
-};
 
 export default async function RepositoryIdPage({ params }: RepositoryIdPageProps) {
     const { repositoryId } = await params;

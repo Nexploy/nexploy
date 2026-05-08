@@ -13,6 +13,10 @@ import { onVolumeAction } from '@/actions/docker/volume/volumeAction.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
 import { NotFoundSSE } from '@/components/shared/NotFoundSSE';
+import * as React from 'react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip.tsx';
+import { StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
+import { cn } from '@workspace/ui/lib/utils.ts';
 
 interface VolumeDetailPageProps {
     volumeName: string;
@@ -26,6 +30,8 @@ export function VolumeDetailPage({ volumeName }: VolumeDetailPageProps) {
 
     const router = useRouter();
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
+
+    const volumeUsed = volume?.usageData?.RefCount;
 
     const handleRemove = () => {
         openAlertDialog({
@@ -66,9 +72,28 @@ export function VolumeDetailPage({ volumeName }: VolumeDetailPageProps) {
                         {!volume ? (
                             <Skeleton className="h-6 w-40" />
                         ) : (
-                            <h1 className="text-3xl leading-none font-semibold tracking-tight break-all">
-                                {volumeName}
-                            </h1>
+                            <div
+                                className={cn(
+                                    'group flex items-center gap-2',
+                                    volumeUsed ? 'online' : 'offline',
+                                )}
+                            >
+                                <h1 className="text-3xl leading-none font-semibold tracking-tight break-all">
+                                    {volumeName}
+                                </h1>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <StatusIndicator />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        {volumeUsed ? (
+                                            <p>{t('volumeUsed')}</p>
+                                        ) : (
+                                            <p>{t('volumeUnused')}</p>
+                                        )}
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
                         )}
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>

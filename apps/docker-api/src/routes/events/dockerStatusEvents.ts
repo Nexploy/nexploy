@@ -11,7 +11,7 @@ app.get('/stream', (c) => {
 
     return streamSSE(c, async (stream) => {
         let isActive = true;
-        const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+        const clientId = c.req.header('x-client-id');
 
         const initialData: DockerStatusEvent = {
             type: 'initial',
@@ -35,7 +35,7 @@ app.get('/stream', (c) => {
                     id: `${Date.now()}`,
                 });
             } catch (err) {
-                logger.error({ err }, 'Error sending docker-connecting');
+                logger.error({ err, clientId }, 'Error sending docker-connecting');
                 cleanup();
             }
         };
@@ -55,7 +55,7 @@ app.get('/stream', (c) => {
                     id: `${Date.now()}`,
                 });
             } catch (err) {
-                logger.error({ err }, 'Error sending heartbeat');
+                logger.error({ err, clientId }, 'Error sending heartbeat');
                 cleanup();
             }
         }, 15000);

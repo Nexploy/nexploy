@@ -257,7 +257,9 @@
         "deleteVolume": "Supprimer ce volume",
         "notFoundTitle": "Volume introuvable",
         "notFoundDescription": "Ce volume n'existe plus ou a été supprimé.",
-        "backToVolumes": "Retour aux volumes"
+        "backToVolumes": "Retour aux volumes",
+        "volumeUsed": "Volume utilisé",
+        "volumeUnused": "Volume non utilisé"
     },
     "volumeDetails": {
         "title": "Détails du volume",
@@ -267,6 +269,8 @@
         "scope": "Portée",
         "created": "Créé le",
         "size": "Taille",
+        "refCount": "Conteneurs",
+        "options": "Options",
         "labels": "Labels",
         "noLabels": "Aucun label"
     },

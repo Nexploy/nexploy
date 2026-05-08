@@ -1,19 +1,19 @@
 import { Hono } from 'hono';
 import dayjs from 'dayjs';
-import { getImagesStateManager } from '@/managers/imagesStateManager';
+import { getImagesStateManager } from '@/managers/list/imagesStateManager';
 import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
-import { buildDockerHostEnv, runDockerCompose } from '@/utils/dockerComposeRunner';
+import { buildDockerHostEnv, runDockerCompose } from '@/utils/compose/dockerComposeRunner';
 import path from 'path';
 import fs from 'fs';
 import yaml from 'yaml';
-import { findUnresolvedVariables, substituteEnvVars } from '@/utils/composePreprocessor';
+import { findUnresolvedVariables, substituteEnvVars } from '@/utils/compose/composePreprocessor';
 import {
     getTransformationSummary,
     transformBindMountsForRemote,
-} from '@/utils/composeVolumeTransformer';
+} from '@/utils/compose/composeVolumeTransformer';
 import type { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
 import type { VolumeTransformationResult } from '@workspace/typescript-interface/docker/docker.compose.volume';
 import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
@@ -49,7 +49,7 @@ function cleanupEnvFile(workDir: string): void {
 }
 
 app.post('/stream/compose', async (c) => {
-    const { workDir, projectName, composePath, envVars, buildId, labels } = await c.req.json<{
+    const { workDir, projectName, composePath, envVars, labels } = await c.req.json<{
         workDir: string;
         projectName: string;
         composePath: string;

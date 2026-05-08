@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
 import { EventsStateEvent } from '@workspace/typescript-interface/docker/docker.events';
-import { getEventsStateManager } from '@/managers/eventsStateManager';
+import { getEventsStateManager } from '@/managers/list/eventsStateManager';
 
 const app = new Hono();
 
@@ -10,7 +10,7 @@ app.get('/stream', (c) => {
     const manager = getEventsStateManager();
 
     return streamSSE(c, async (stream) => {
-        const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+        const clientId = c.req.header('x-client-id');
 
         const handleDockerEvent = async (eventData: EventsStateEvent) => {
             try {
@@ -77,7 +77,7 @@ app.get('/stream/:eventType', (c) => {
     const manager = getEventsStateManager();
 
     return streamSSE(c, async (stream) => {
-        const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+        const clientId = c.req.header('x-client-id');
 
         const handleDockerEvent = async (eventData: EventsStateEvent) => {
             try {
@@ -146,7 +146,7 @@ app.get('/stream/:eventType/:action', (c) => {
     const manager = getEventsStateManager();
 
     return streamSSE(c, async (stream) => {
-        const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+        const clientId = c.req.header('x-client-id');
 
         const handleDockerEvent = async (eventData: EventsStateEvent) => {
             try {

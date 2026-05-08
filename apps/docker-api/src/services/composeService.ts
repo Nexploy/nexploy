@@ -1,6 +1,6 @@
 import { docker } from '@/utils/dockerClient';
 import { ComposesAction } from '@workspace/typescript-interface/docker/docker.composeStack';
-import { containersStateManager } from '@/managers/containersStateManager';
+import { containersStateManager } from '@/managers/list/containersStateManager';
 
 export async function controlComposeStack(projectName: string, action: ComposesAction) {
     const composeContainers = containersStateManager

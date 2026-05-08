@@ -64,7 +64,7 @@ const buildEndpointUrl = (template: string, params?: Record<string, string>): st
 export const GET = route
     .use(authRouteServer)
     .use(requirePermission('docker', 'read'))
-    .handler(async (request: Request) => {
+    .handler(async (request: Request, context) => {
         const { searchParams } = new URL(request.url);
         const channelsParam = searchParams.get('channels');
         const environment = searchParams.get('environment');
@@ -101,6 +101,7 @@ export const GET = route
             return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
         }
 
+        const connectionId = context.ctx.session.user.id;
         const encoder = new TextEncoder();
         const decoder = new TextDecoder();
         const abortController = new AbortController();
@@ -216,6 +217,7 @@ export const GET = route
                             Accept: 'text/event-stream',
                             'Cache-Control': 'no-cache',
                             Connection: 'keep-alive',
+                            'X-Client-Id': connectionId,
                         };
                         if (process.env.DOCKER_API_KEY) {
                             sseHeaders['Authorization'] = `Bearer ${process.env.DOCKER_API_KEY}`;

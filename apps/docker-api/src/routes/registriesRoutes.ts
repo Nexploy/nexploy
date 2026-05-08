@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { route } from '@/helpers/route';
+import { route } from '@/utils/route';
 import { logger } from '@/utils/logger';
 import { writeDockerConfig, removeDockerConfig, validateRegistry } from '@/services/registryService';
 import {

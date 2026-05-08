@@ -5,7 +5,8 @@ export interface Volume {
     createdAt: number;
     labels: { [key: string]: string };
     scope: string;
-    options: { [key: string]: string };
+    options: { [key: string]: string } | null;
+    status?: { [key: string]: string };
     usageData?: {
         Size: number;
         RefCount: number;
@@ -30,8 +31,8 @@ export interface VolumeStateChanges {
         to: { [key: string]: string };
     };
     options?: {
-        from: { [key: string]: string };
-        to: { [key: string]: string };
+        from: { [key: string]: string } | null;
+        to: { [key: string]: string } | null;
     };
     usageData?: {
         from?: {

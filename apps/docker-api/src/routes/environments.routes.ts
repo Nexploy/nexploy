@@ -6,7 +6,7 @@ import {
     environmentIdSchema,
     environmentSchema,
 } from '@workspace/schemas-zod/docker/environment/environment.schema';
-import { route } from '@/helpers/route';
+import { route } from '@/utils/route';
 import { createDockerClient } from '@/utils/dockerClient';
 import { HttpError } from '@workspace/shared/http-error';
 

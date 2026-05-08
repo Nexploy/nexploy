@@ -94,14 +94,14 @@ export function SSEProvider({
     const networkConnect = useNetworkStore((s) => s.connect);
     const networkDisconnect = useNetworkStore((s) => s.disconnect);
 
-    const swarmServiceConnect = useSwarmServiceStore((s) => s.connect);
-    const swarmServiceDisconnect = useSwarmServiceStore((s) => s.disconnect);
-
     const containerLogsConnect = useContainerLogsStore((s) => s.connect);
     const containerLogsDisconnect = useContainerLogsStore((s) => s.disconnect);
 
     const containerStatsConnect = useContainerStatsStore((s) => s.connect);
     const containerStatsDisconnect = useContainerStatsStore((s) => s.disconnect);
+
+    const swarmServiceConnect = useSwarmServiceStore((s) => s.connect);
+    const swarmServiceDisconnect = useSwarmServiceStore((s) => s.disconnect);
 
     const swarmConnect = useSwarmStore((s) => s.connect);
     const swarmDisconnect = useSwarmStore((s) => s.disconnect);

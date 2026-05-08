@@ -33,15 +33,7 @@ export function CardVolumeDetails() {
                                 {t('name')}
                             </TableCell>
                             <TableCell className="max-w-0">
-                                <div className="flex items-center gap-2">
-                                    <span className="truncate text-sm font-medium">{volume.name}</span>
-                                    <CopyButton
-                                        textToCopy={volume.name}
-                                        className="size-6 shrink-0"
-                                        size="icon"
-                                        variant="ghost"
-                                    />
-                                </div>
+                                <span className="truncate text-sm font-medium">{volume.name}</span>
                             </TableCell>
                         </TableRow>
                         <TableRow>
@@ -98,6 +90,37 @@ export function CardVolumeDetails() {
                                 </TableCell>
                             </TableRow>
                         )}
+                        {volume.usageData && (
+                            <TableRow>
+                                <TableCell className="text-muted-foreground w-32 font-medium">
+                                    {t('refCount')}
+                                </TableCell>
+                                <TableCell className="max-w-0 truncate">
+                                    <Badge variant="secondary">
+                                        {volume.usageData.RefCount}
+                                    </Badge>
+                                </TableCell>
+                            </TableRow>
+                        )}
+                        {volume.options && Object.keys(volume.options).length > 0 && (
+                            <TableRow>
+                                <TableCell className="text-muted-foreground w-32 align-top font-medium">
+                                    {t('options')}
+                                </TableCell>
+                                <TableCell className="max-w-0">
+                                    <div className="flex flex-col gap-1">
+                                        {Object.entries(volume.options).map(([key, value]) => (
+                                            <div key={key} className="flex gap-2 text-sm">
+                                                <span className="text-muted-foreground shrink-0">
+                                                    {key}
+                                                </span>
+                                                <span className="truncate">{value}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        )}
                         <TableRow>
                             <TableCell className="text-muted-foreground w-32 align-top font-medium">
                                 {t('labels')}
@@ -107,7 +130,9 @@ export function CardVolumeDetails() {
                                     <div className="flex flex-col gap-1">
                                         {labelEntries.map(([key, value]) => (
                                             <div key={key} className="flex gap-2 text-sm">
-                                                <span className="text-muted-foreground shrink-0">{key}</span>
+                                                <span className="text-muted-foreground shrink-0">
+                                                    {key}
+                                                </span>
                                                 <span className="truncate">{value}</span>
                                             </div>
                                         ))}

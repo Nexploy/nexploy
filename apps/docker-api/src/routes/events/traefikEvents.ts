@@ -10,7 +10,7 @@ app.get('/stream', (c) => {
     const manager = getTraefikLogsManager();
 
     return streamSSE(c, async (stream) => {
-        const clientId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+        const clientId = c.req.header('x-client-id');
 
         const handleRequest = async (event: TraefikRequestEvent) => {
             try {

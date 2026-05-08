@@ -1,14 +1,14 @@
 import { Hono } from 'hono';
-import { containersStateManager } from '@/managers/containersStateManager';
-import { route } from '@/helpers/route';
+import { containersStateManager } from '@/managers/list/containersStateManager';
+import { route } from '@/utils/route';
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import {
     buildDockerHostEnv,
     getComposeContainerIds,
     runDockerCompose,
-} from '@/utils/dockerComposeRunner';
-import { substituteEnvVars } from '@/utils/composePreprocessor';
+} from '@/utils/compose/dockerComposeRunner';
+import { substituteEnvVars } from '@/utils/compose/composePreprocessor';
 import {
     deployComposeSchema,
     deploySchema,

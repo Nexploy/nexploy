@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
-import { route } from '@/helpers/route';
+import { route } from '@/utils/route';
 import {
     createServiceSchema,
     scaleServiceSchema,

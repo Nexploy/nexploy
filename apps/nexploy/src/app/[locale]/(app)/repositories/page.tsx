@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { Folder, FolderGit2, Link2 } from 'lucide-react';
-import { SiGithub, SiGitlab } from '@icons-pack/react-simple-icons';
+import { Folder, FolderGit2 } from 'lucide-react';
+import { getGitIcon } from '@/utils/getGitIcon';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, } from '@workspace/ui/components/empty';
 import { AddRepository } from '@/components/repositories/AddRepository';
@@ -17,13 +17,6 @@ import { Separator } from '@workspace/ui/components/separator';
 export const metadata: Metadata = {
     title: 'Repositories',
     description: 'Manage your Docker repositories',
-};
-
-const getGitIcon = (provider: string) => {
-    const p = provider.toLowerCase();
-    if (p.includes('github')) return SiGithub;
-    if (p.includes('gitlab')) return SiGitlab;
-    return Link2;
 };
 
 export default async function RepositoriesPage() {
