@@ -144,20 +144,20 @@ export default function MonitoringPage() {
 
     return (
         <SSEProvider connections={['monitoring']} params={{ monitoring: { refreshRate } }}>
-            <div className="flex h-full flex-1 flex-col gap-5 pt-5">
+            <div className="flex h-full flex-1 flex-col gap-5">
                 <div className="flex justify-between px-5">
                     <div className="flex gap-3">
-                        <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+                        <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
                             <Activity className="text-primary size-7" />
                         </div>
-                        <div className="flex flex-col">
-                            <h1 className="text-3xl leading-none font-semibold tracking-tight">
+                        <div className="mt-3.5 flex flex-col">
+                            <h1 className="text-3xl font-semibold tracking-tight break-all">
                                 {t('title')}
                             </h1>
                             <p className="text-muted-foreground text-sm">{t('description')}</p>
                         </div>
                     </div>
-                    <div className={'flex gap-3'}>
+                    <div className={'mt-5 flex gap-3'}>
                         <Select value={refreshRate} onValueChange={setRefreshRate}>
                             <SelectTrigger>
                                 <SelectValue placeholder={t('refreshRate')} />

@@ -123,13 +123,13 @@ export default function EventsPage() {
     const paginatedEvents = filteredEvents.slice(startIndex, endIndex);
 
     return (
-        <div className="flex h-full flex-1 flex-col gap-4 pt-5">
+        <div className="flex h-full flex-1 flex-col gap-5">
             <div className={'flex gap-3 px-5'}>
-                <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+                <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
                     <Bug className="text-primary size-7" />
                 </div>
-                <div className={'flex flex-col'}>
-                    <h1 className="text-3xl leading-none font-semibold tracking-tight">
+                <div className="mt-3.5 flex flex-col">
+                    <h1 className="text-3xl font-semibold tracking-tight">
                         Docker {t('eventsTitle')}
                     </h1>
                     <p className="text-muted-foreground text-sm">

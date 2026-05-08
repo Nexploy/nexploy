@@ -2,10 +2,22 @@ import type { Metadata } from 'next';
 import { Folder, FolderGit2 } from 'lucide-react';
 import { getGitIcon } from '@/utils/getGitIcon';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, } from '@workspace/ui/components/empty';
+import {
+    Empty,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from '@workspace/ui/components/empty';
 import { AddRepository } from '@/components/repositories/AddRepository';
 import { Link } from '@/i18n/navigation';
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import {
+    Card,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@workspace/ui/components/card';
 import { getRepositories } from '@/services/repository.service';
 import { StatusLive } from '@/components/shared/StatusLive';
 import { RunBuildButton } from '@/components/repositories/RunBuildButton';
@@ -23,17 +35,15 @@ export default async function RepositoriesPage() {
     const [repositories, t] = await Promise.all([getRepositories(), getTranslations('repository')]);
 
     return (
-        <div className="flex h-full flex-1 flex-col pt-5">
+        <div className="flex h-full flex-1 flex-col">
             <div className="flex flex-col gap-4 overflow-hidden">
                 <div className="flex justify-between gap-2 px-5">
                     <div className={'flex gap-3'}>
-                        <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+                        <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
                             <FolderGit2 className="text-primary size-7" />
                         </div>
-                        <div className={'flex flex-col'}>
-                            <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                                {t('title')}
-                            </h1>
+                        <div className="flex flex-col mt-3.5">
+                            <h1 className="text-3xl font-semibold tracking-tight">{t('title')}</h1>
                             <p className="text-muted-foreground text-sm">
                                 {t('manageRepositories')}
                             </p>

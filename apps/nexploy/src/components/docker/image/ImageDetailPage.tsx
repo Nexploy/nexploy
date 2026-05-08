@@ -65,37 +65,39 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
 
     return (
         <BreadcrumbProvider segments={{ imageId: imageName }}>
-            <div className="flex h-full flex-1 flex-col gap-5 pt-5">
+            <div className="flex h-full flex-1 flex-col gap-5">
                 <div className="flex gap-3 px-5">
-                    <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+                    <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
                         <Box className="text-primary size-7" />
                     </div>
-                    <div className="flex flex-1 flex-col">
+                    <div className="mt-3.5 flex flex-1 flex-col">
                         {!image ? (
-                            <Skeleton className="h-6 w-40" />
+                            <Skeleton className="h-9 w-40" />
                         ) : (
-                            <h1 className="text-3xl leading-none font-semibold tracking-tight break-all">
+                            <h1 className="text-3xl font-semibold tracking-tight break-all group-hover:underline">
                                 {imageName}
                             </h1>
                         )}
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button size="icon" onClick={handleUse} disabled={!image}>
-                                <Play className="size-4" />
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>{t('useImage')}</TooltipContent>
-                    </Tooltip>
-                    <Button
-                        variant="destructive"
-                        size="icon"
-                        onClick={handleRemove}
-                        disabled={!image}
-                    >
-                        <Trash className="size-4" />
-                    </Button>
+                    <div className={'mt-5 flex gap-3'}>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button size="icon" onClick={handleUse} disabled={!image}>
+                                    <Play className="size-4" />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{t('useImage')}</TooltipContent>
+                        </Tooltip>
+                        <Button
+                            variant="destructive"
+                            size="icon"
+                            onClick={handleRemove}
+                            disabled={!image}
+                        >
+                            <Trash className="size-4" />
+                        </Button>
+                    </div>
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="flex flex-col gap-5 px-5 pb-5">

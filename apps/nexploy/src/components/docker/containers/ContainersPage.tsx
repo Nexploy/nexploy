@@ -1,9 +1,22 @@
 'use client';
 
-import { Container as IconContainer, Container, Layers, LayoutGrid, Plus, Table2, } from 'lucide-react';
+import {
+    Container as IconContainer,
+    Container,
+    Layers,
+    LayoutGrid,
+    Plus,
+    Table2,
+} from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { Badge } from '@workspace/ui/components/badge';
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, } from '@workspace/ui/components/empty';
+import {
+    Empty,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from '@workspace/ui/components/empty';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { ContainersStack } from '@/components/docker/containers/ContainersStack';
@@ -59,14 +72,14 @@ export default function ContainersPage() {
     const isEmpty = !containers.length && lastUpdate;
 
     return (
-        <div className="flex h-full flex-1 flex-col gap-5 pt-5">
+        <div className="flex h-full flex-1 flex-col gap-5">
             <div className="flex justify-between gap-2 px-5">
                 <div className={'flex gap-3'}>
-                    <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+                    <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
                         <Container className="text-primary size-7" />
                     </div>
-                    <div>
-                        <h1 className="text-3xl leading-none font-semibold tracking-tight">
+                    <div className="mt-3.5 flex flex-col">
+                        <h1 className="text-3xl font-semibold tracking-tight">
                             {tNav('dockerContainers')}
                         </h1>
                         {isLoading ? (
@@ -85,7 +98,7 @@ export default function ContainersPage() {
                         )}
                     </div>
                 </div>
-                <Button asChild>
+                <Button asChild className={'mt-5'}>
                     <Link href={'/docker/containers/create'}>
                         <Plus />
                         {t('createContainer.create')}

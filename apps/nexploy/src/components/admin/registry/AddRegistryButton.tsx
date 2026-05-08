@@ -19,7 +19,7 @@ export function AddRegistryButton() {
     };
 
     return (
-        <Button icon={Plus} onClick={handleAdd}>
+        <Button className={'mt-5'} icon={Plus} onClick={handleAdd}>
             {t('add')}
         </Button>
     );

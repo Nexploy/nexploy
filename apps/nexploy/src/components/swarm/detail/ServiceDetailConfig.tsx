@@ -1,10 +1,11 @@
 'use client';
 
 import { Badge } from '@workspace/ui/components/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
 import { Key, Network, ShieldCheck } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 
 interface ServiceDetailConfigProps {
     service: SwarmService;
@@ -17,12 +18,7 @@ export function ServiceDetailConfig({ service }: ServiceDetailConfigProps) {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Ports */}
             <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                        <Network className="size-4" />
-                        {t('detail.portsTitle')}
-                    </CardTitle>
-                </CardHeader>
+                <CardHeaderWithIcon icon={Network} title={t('detail.portsTitle')} />
                 <CardContent>
                     {service.ports.length === 0 ? (
                         <p className="text-muted-foreground text-sm">{t('detail.noPorts')}</p>
@@ -31,7 +27,7 @@ export function ServiceDetailConfig({ service }: ServiceDetailConfigProps) {
                             {service.ports.map((port, i) => (
                                 <div
                                     key={i}
-                                    className="bg-muted/50 flex items-center justify-between rounded-md px-3 py-2 text-sm"
+                                    className="bg-muted/60 flex items-center justify-between rounded-md px-3 py-2 text-sm"
                                 >
                                     <span className="font-mono">
                                         {port.publishedPort} → {port.targetPort}
@@ -53,12 +49,7 @@ export function ServiceDetailConfig({ service }: ServiceDetailConfigProps) {
 
             {/* Networks */}
             <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                        <Network className="size-4" />
-                        {t('detail.networksTitle')}
-                    </CardTitle>
-                </CardHeader>
+                <CardHeaderWithIcon icon={Network} title={t('detail.networksTitle')} />
                 <CardContent>
                     {service.networks.length === 0 ? (
                         <p className="text-muted-foreground text-sm">{t('detail.noNetworks')}</p>
@@ -76,12 +67,7 @@ export function ServiceDetailConfig({ service }: ServiceDetailConfigProps) {
 
             {/* Environment Variables */}
             <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                        <Key className="size-4" />
-                        {t('detail.envTitle')}
-                    </CardTitle>
-                </CardHeader>
+                <CardHeaderWithIcon icon={Key} title={t('detail.envTitle')} />
                 <CardContent>
                     {service.env.length === 0 ? (
                         <p className="text-muted-foreground text-sm">{t('detail.noEnv')}</p>
@@ -92,7 +78,7 @@ export function ServiceDetailConfig({ service }: ServiceDetailConfigProps) {
                                 return (
                                     <div
                                         key={i}
-                                        className="bg-muted/50 flex items-center gap-2 rounded-md px-3 py-1.5 font-mono text-xs"
+                                        className="bg-muted/60 flex items-center gap-2 rounded-md px-3 py-1.5 font-mono text-xs"
                                     >
                                         <span className="text-primary font-semibold">{key}</span>
                                         <span className="text-muted-foreground">=</span>
@@ -107,12 +93,7 @@ export function ServiceDetailConfig({ service }: ServiceDetailConfigProps) {
 
             {/* Placement Constraints */}
             <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                        <ShieldCheck className="size-4" />
-                        {t('detail.constraintsTitle')}
-                    </CardTitle>
-                </CardHeader>
+                <CardHeaderWithIcon icon={ShieldCheck} title={t('detail.constraintsTitle')} />
                 <CardContent>
                     {service.constraints.length === 0 ? (
                         <p className="text-muted-foreground text-sm">
@@ -123,7 +104,7 @@ export function ServiceDetailConfig({ service }: ServiceDetailConfigProps) {
                             {service.constraints.map((c, i) => (
                                 <div
                                     key={i}
-                                    className="bg-muted/50 rounded-md px-3 py-1.5 font-mono text-xs"
+                                    className="bg-muted/60 rounded-md px-3 py-1.5 font-mono text-xs"
                                 >
                                     {c}
                                 </div>

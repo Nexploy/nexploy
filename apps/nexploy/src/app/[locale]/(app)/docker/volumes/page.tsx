@@ -13,21 +13,21 @@ export default function VolumesPage() {
     const tDocker = useTranslations('docker');
 
     return (
-        <div className="flex h-full flex-1 flex-col pt-5">
+        <div className="flex h-full flex-1 flex-col">
             <div className="flex flex-col gap-5 overflow-hidden">
                 <div className={'flex justify-between gap-3 px-5'}>
                     <div className={'flex gap-3'}>
-                        <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+                        <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
                             <HardDrive className="text-primary size-7" />
                         </div>
-                        <div className={'flex flex-col'}>
-                            <h1 className="text-3xl leading-none font-semibold tracking-tight">
+                        <div className="mt-3.5 flex flex-col">
+                            <h1 className="text-3xl font-semibold tracking-tight break-all">
                                 {t('title')}
                             </h1>
                             <p className="text-muted-foreground text-sm">{t('description')}</p>
                         </div>
                     </div>
-                    <Button asChild>
+                    <Button asChild className={'mt-5'}>
                         <Link href={'/docker/volumes/create'}>
                             <Plus />
                             {tDocker('createVolume')}

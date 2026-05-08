@@ -134,15 +134,13 @@ export default function RequestsPage() {
             connections={['traefik']}
             params={{ traefik: { environmentId: defaultLocalEnvironment?.id } }}
         >
-            <div className="flex h-full flex-1 flex-col gap-4 pt-5">
+            <div className="flex h-full flex-1 flex-col gap-5">
                 <div className="flex gap-3 px-5">
-                    <div className="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-lg">
+                    <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
                         <Send className="text-primary size-7" />
                     </div>
-                    <div className="flex flex-col">
-                        <h1 className="text-3xl leading-none font-semibold tracking-tight">
-                            {t('title')}
-                        </h1>
+                    <div className="mt-3.5 flex flex-col">
+                        <h1 className="text-3xl font-semibold tracking-tight">{t('title')}</h1>
                         <p className="text-muted-foreground text-sm">{getRequestsStatusText()}</p>
                     </div>
                 </div>

@@ -147,13 +147,13 @@ export function RegistryCard({ registry }: RegistryCardProps) {
                     </AccordionTrigger>
                     <AccordionContent className="px-4 pt-0 pb-4">
                         {isLoading ? (
-                            <Card className="flex flex-row items-center gap-2 p-3">
+                            <Card className="flex flex-row items-center gap-2 rounded-lg p-3 shadow-none">
                                 <Loader2 className="size-4 animate-spin" />
                                 {t('imagesLoading')}
                             </Card>
                         ) : (
                             error && (
-                                <Card className="border-destructive/20 bg-destructive/5 p-3">
+                                <Card className="border-destructive/20 bg-destructive/5 rounded-lg p-3 shadow-none">
                                     <p className="text-destructive text-sm">{t('imagesError')}</p>
                                 </Card>
                             )

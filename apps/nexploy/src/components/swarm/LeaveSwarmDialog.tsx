@@ -48,5 +48,13 @@ export function LeaveSwarmDialog() {
         });
     };
 
-    return <Button size={'icon'} icon={LogOut} variant="destructiveOutline" onClick={handleOpen} />;
+    return (
+        <Button
+            className={'mt-5 size-8'}
+            size={'icon'}
+            icon={LogOut}
+            variant="destructiveOutline"
+            onClick={handleOpen}
+        />
+    );
 }

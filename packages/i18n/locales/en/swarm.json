@@ -177,7 +177,8 @@
         "noEnv": "No environment variables configured.",
         "constraintsTitle": "Placement Constraints",
         "noConstraints": "No placement constraints configured.",
-        "labelsTitle": "Labels"
+        "labelsTitle": "Labels",
+        "noLabels": "No labels configured."
     },
     "imagePlaceholder": "ex. image:version",
     "imageName": "Image name",

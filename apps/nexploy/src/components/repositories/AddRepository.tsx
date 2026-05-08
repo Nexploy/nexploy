@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 export function AddRepository() {
     const t = useTranslations('repository');
     return (
-        <Button asChild>
+        <Button asChild className={'mt-5'}>
             <Link href={'/repositories/create'}>
                 <Plus />
                 {t('addRepository')}

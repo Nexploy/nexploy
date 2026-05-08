@@ -1,9 +1,11 @@
 'use client';
 
 import { Badge } from '@workspace/ui/components/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
-import { Tag } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
+import { Tags } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 
 interface ServiceDetailLabelsProps {
     labels: Record<string, string>;
@@ -14,34 +16,43 @@ export function ServiceDetailLabels({ labels }: ServiceDetailLabelsProps) {
 
     const entries = Object.entries(labels);
 
-    if (entries.length === 0) return null;
-
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                    <Tag className="size-4" />
-                    {t('detail.labelsTitle')}
-                    <Badge variant="secondary" className="ml-1">
-                        {entries.length}
-                    </Badge>
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="grid grid-cols-1 gap-1.5 md:grid-cols-2">
-                    {entries.map(([key, value]) => (
-                        <div
-                            key={key}
-                            className="bg-muted/50 flex items-center gap-2 rounded-md px-3 py-1.5 font-mono text-xs"
-                        >
-                            <span className="text-primary min-w-0 truncate font-semibold">
-                                {key}
-                            </span>
-                            <span className="text-muted-foreground shrink-0">=</span>
-                            <span className="min-w-0 truncate">{value}</span>
-                        </div>
-                    ))}
+                <div className="flex items-center gap-3">
+                    <CardHeaderWithIcon as="div" icon={Tags} title={t('labels')}>
+                        <Badge variant="secondary">{entries.length}</Badge>
+                    </CardHeaderWithIcon>
                 </div>
+            </CardHeader>
+            <CardContent className="px-0">
+                {entries.length > 0 ? (
+                    <ScrollAreaWithShadow
+                        colorShadow="from-card via-card/50"
+                        bottomShadow
+                        className="h-50 overflow-hidden px-6"
+                    >
+                        <div className="space-y-2">
+                            {entries.map(([key, value]) => (
+                                <div
+                                    key={key}
+                                    className="bg-muted/60 flex items-center gap-3 rounded-md px-3 py-2"
+                                >
+                                    <span className="text-muted-foreground min-w-0 shrink-0 font-mono text-xs">
+                                        {key}
+                                    </span>
+                                    <span className="ml-auto truncate font-mono text-xs">
+                                        {value || '—'}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </ScrollAreaWithShadow>
+                ) : (
+                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                        {t('detail.noLabels')}
+                    </div>
+                )}
             </CardContent>
         </Card>
     );

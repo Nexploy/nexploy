@@ -13,6 +13,7 @@ import type {
 } from '@workspace/typescript-interface/docker/swarm';
 import { NodeDropdownActions } from './NodeDropdownActions';
 import type { TranslationFunction } from '@workspace/typescript-interface/commun';
+import Link from 'next/link';
 
 function formatBytes(bytes: number): string {
     if (bytes === 0) return '0 B';
@@ -70,12 +71,13 @@ export const getColumnsTableNodes = (t: TranslationFunction): ColumnDef<SwarmNod
         cell: ({ row }) => {
             const { hostname, managerStatus } = row.original;
             return (
-                <div className="flex min-w-0 items-center gap-1.5">
-                    <div>
-                        {managerStatus?.leader && <Crown className="size-4 text-yellow-500" />}
-                    </div>
+                <Link
+                    href={`/swarm/nodes/${row.original.id}`}
+                    className="flex min-w-0 items-center gap-1.5 hover:underline"
+                >
+                    {managerStatus?.leader && <Crown className="size-4 text-yellow-500" />}
                     <span className="min-w-0 flex-1 truncate">{hostname}</span>
-                </div>
+                </Link>
             );
         },
     },

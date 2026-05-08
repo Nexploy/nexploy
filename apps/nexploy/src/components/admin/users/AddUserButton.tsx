@@ -19,7 +19,7 @@ export function AddUserButton() {
     };
 
     return (
-        <Button onClick={handleAddUser}>
+        <Button className={'mt-5'} onClick={handleAddUser}>
             <UserPlus />
             {t('addUser')}
         </Button>

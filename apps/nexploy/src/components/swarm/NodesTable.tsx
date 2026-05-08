@@ -173,13 +173,9 @@ export function NodesTable() {
                         {!isLoading &&
                             !noMatch &&
                             table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    className="h-12 cursor-pointer"
-                                    onClick={() => router.push(`/swarm/nodes/${row.original.id}`)}
-                                >
+                                <TableRow key={row.id} className="h-12">
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell key={cell.id} className="overflow-hidden">
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext(),

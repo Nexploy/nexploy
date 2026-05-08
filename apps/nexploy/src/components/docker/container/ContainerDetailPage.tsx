@@ -95,23 +95,19 @@ export function ContainerDetailPage() {
                     </div>
                     <div className="mt-3.5 flex flex-1 flex-col">
                         {isConnecting ? (
-                            <Skeleton className="h-8 w-40" />
+                            <Skeleton className="h-9 w-40" />
                         ) : (
                             <button
                                 type="button"
                                 onClick={handleRename}
                                 className={
-                                    'group flex cursor-pointer items-center gap-1 self-start'
+                                    'group flex cursor-pointer items-center gap-2 self-start'
                                 }
                             >
                                 <h1 className="text-3xl font-semibold tracking-tight break-all group-hover:underline">
                                     {container?.name}
                                 </h1>
-                                <PencilLine
-                                    className={
-                                        'size-4 opacity-0 transition-opacity group-hover:opacity-100'
-                                    }
-                                />
+                                <PencilLine className={'size-4'} />
                             </button>
                         )}
                         <p className="text-muted-foreground text-sm">{t('description')}</p>

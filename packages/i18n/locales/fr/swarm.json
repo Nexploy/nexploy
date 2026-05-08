@@ -177,7 +177,8 @@
         "noEnv": "Aucune variable d'environnement configurée.",
         "constraintsTitle": "Contraintes de placement",
         "noConstraints": "Aucune contrainte de placement configurée.",
-        "labelsTitle": "Labels"
+        "labelsTitle": "Labels",
+        "noLabels": "Aucun label configuré."
     },
     "imagePlaceholder": "ex. image:version",
     "imageName": "Nom de l'image",
