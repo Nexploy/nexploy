@@ -147,3 +147,11 @@ export interface ServiceDetailEvent {
     tasks?: SwarmTask[];
     timestamp: number;
 }
+
+export interface NodeDetailEvent {
+    type: 'initial-state' | 'node-updated' | 'node-removed' | 'not-found' | 'heartbeat';
+    nodeId: string;
+    node?: SwarmNode;
+    tasks?: SwarmTask[];
+    timestamp: number;
+}

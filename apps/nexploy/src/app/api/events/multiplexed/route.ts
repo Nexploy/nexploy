@@ -20,6 +20,7 @@ const CHANNEL_ENDPOINTS: Record<SSEChannel, string> = {
     volumes: '/api/volumes/events/stream',
     networks: '/api/networks/events/stream',
     service: '/api/service/events/stream/:serviceId',
+    node: '/api/node/events/stream/:nodeId',
     swarm: '/api/swarm/events/stream',
     traefik: '/api/traefik/events/stream',
     monitoring: '',

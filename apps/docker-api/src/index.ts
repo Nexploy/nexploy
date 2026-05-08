@@ -28,6 +28,7 @@ import pipelineRoutes from '@/routes/pipelineRoutes';
 import swarmRoutes from '@/routes/swarm';
 import swarmEvents from '@/routes/swarm/events/swarmEvents';
 import serviceEvents from '@/routes/swarm/events/serviceEvents';
+import nodeEvents from '@/routes/swarm/events/nodeEvents';
 import traefikEvents from '@/routes/events/traefikEvents';
 import composeRoutes from './routes/composeRoutes';
 import environmentsRoutes from '@/routes/environments.routes';
@@ -94,6 +95,7 @@ app.route('/api/swarm/events', swarmEvents);
 app.route('/api/swarm', swarmRoutes);
 
 app.route('/api/service/events', serviceEvents);
+app.route('/api/node/events', nodeEvents);
 
 app.route('/api/traefik/events', traefikEvents);
 

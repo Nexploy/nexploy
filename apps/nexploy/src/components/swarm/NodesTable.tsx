@@ -19,6 +19,7 @@ import {
     TableRow,
 } from '@workspace/ui/components/table';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { getColumnsTableNodes } from './ColumnsDockerNodes';
 import { useTranslations } from 'next-intl';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
@@ -65,6 +66,7 @@ export function NodesTable() {
 
     const t = useTranslations('swarm');
     const tCommon = useTranslations('common');
+    const router = useRouter();
 
     const nodes = useSwarmStore((state) => state.nodes);
     const isSwarmActive = useSwarmStore((state) => state.isSwarmActive);
@@ -171,7 +173,11 @@ export function NodesTable() {
                         {!isLoading &&
                             !noMatch &&
                             table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id} className="h-12">
+                                <TableRow
+                                    key={row.id}
+                                    className="h-12 cursor-pointer"
+                                    onClick={() => router.push(`/swarm/nodes/${row.original.id}`)}
+                                >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
                                             {flexRender(

@@ -23,6 +23,7 @@ export type SSEChannel =
     | 'logs'
     | 'stats'
     | 'service'
+    | 'node'
     | 'swarm'
     | 'traefik'
     | 'monitoring';

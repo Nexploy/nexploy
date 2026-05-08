@@ -18,6 +18,7 @@ import { useMonitoringStore } from '@/stores/monitoring/useMonitoringStore';
 import { useVolumesStore } from '@/stores/docker/useVolumesStore.ts';
 import { useNetworkStore } from '../stores/docker/useNetworkStore';
 import { useSwarmServiceStore } from '../stores/docker/useSwarmServiceStore';
+import { useSwarmNodeStore } from '../stores/docker/useSwarmNodeStore';
 
 type ExtractConnectParams<T> = T extends (params: infer P) => void ? P : never;
 
@@ -33,6 +34,7 @@ type SSEParams = {
     volume?: ExtractConnectParams<ReturnType<typeof useVolumeStore.getState>['connect']>;
     network?: ExtractConnectParams<ReturnType<typeof useNetworkStore.getState>['connect']>;
     service?: ExtractConnectParams<ReturnType<typeof useSwarmServiceStore.getState>['connect']>;
+    node?: ExtractConnectParams<ReturnType<typeof useSwarmNodeStore.getState>['connect']>;
     logs?: ExtractConnectParams<ReturnType<typeof useContainerLogsStore.getState>['connect']>;
     stats?: ExtractConnectParams<ReturnType<typeof useContainerStatsStore.getState>['connect']>;
     swarm?: ExtractConnectParams<ReturnType<typeof useSwarmStore.getState>['connect']>;
@@ -103,6 +105,9 @@ export function SSEProvider({
     const swarmServiceConnect = useSwarmServiceStore((s) => s.connect);
     const swarmServiceDisconnect = useSwarmServiceStore((s) => s.disconnect);
 
+    const swarmNodeConnect = useSwarmNodeStore((s) => s.connect);
+    const swarmNodeDisconnect = useSwarmNodeStore((s) => s.disconnect);
+
     const swarmConnect = useSwarmStore((s) => s.connect);
     const swarmDisconnect = useSwarmStore((s) => s.disconnect);
 
@@ -120,6 +125,7 @@ export function SSEProvider({
             volume: volumeConnect,
             network: networkConnect,
             service: swarmServiceConnect,
+            node: swarmNodeConnect,
             stats: containerStatsConnect,
             logs: containerLogsConnect,
             images: imageConnect,
@@ -144,6 +150,7 @@ export function SSEProvider({
             volume: volumeDisconnect,
             network: networkDisconnect,
             service: swarmServiceDisconnect,
+            node: swarmNodeDisconnect,
             volumes: volumesDisconnect,
             networks: networksDisconnect,
             swarm: swarmDisconnect,
