@@ -4,19 +4,23 @@ import { Card, CardContent } from '@workspace/ui/components/card';
 import { Server } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useTranslations } from 'next-intl';
-import type { SwarmNode } from '@workspace/typescript-interface/docker/swarm';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import CopyButton from '@/components/shared/CopyButton';
 import { Badge } from '@workspace/ui/components/badge';
 import { ReactNode } from 'react';
 import dayjs from 'dayjs';
+import { useSwarmNodeStore } from '@/stores/docker/useSwarmNodeStore.ts';
+import { Skeleton } from '@workspace/ui/components/skeleton.tsx';
 
-interface NodeDetailInfoProps {
-    node: SwarmNode;
-}
-
-export function NodeDetailInfo({ node }: NodeDetailInfoProps) {
+export function NodeDetailInfo() {
     const t = useTranslations('swarm');
+
+    const node = useSwarmNodeStore((s) => s.node);
+    const isConnecting = useSwarmNodeStore((s) => s.isConnecting);
+
+    if (!node || isConnecting) {
+        return <Skeleton className={'h-80 flex-1'} />;
+    }
 
     const fields: { label: string; value: ReactNode; hasCopy?: boolean; copyText?: string }[] = [
         { label: t('node.nodeId'), value: node.id, hasCopy: true, copyText: node.id },

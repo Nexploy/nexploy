@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import {
     FormControl,
     FormField,
@@ -25,6 +19,8 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import type { RegistryInfo } from '@/services/registry.service';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
+import { Globe } from 'lucide-react';
 
 interface RegistrySelectorProps {
     registries: RegistryInfo[];
@@ -36,10 +32,11 @@ export function RegistrySelector({ registries }: RegistrySelectorProps) {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{t('registry')}</CardTitle>
-                <CardDescription>{t('registryDescription')}</CardDescription>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={Globe}
+                title={t('registry')}
+                description={t('registryDescription')}
+            />
             <CardContent>
                 <FormField
                     control={form.control}

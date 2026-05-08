@@ -2,7 +2,9 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
+import { Settings } from 'lucide-react';
 import {
     FormControl,
     FormDescription,
@@ -49,10 +51,11 @@ export function ContainerBasicConfig() {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{t('basicConfig')}</CardTitle>
-                <CardDescription>{t('basicConfigDescription')}</CardDescription>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={Settings}
+                title={t('basicConfig')}
+                description={t('basicConfigDescription')}
+            />
             <CardContent className="space-y-4">
                 <FormField
                     control={form.control}

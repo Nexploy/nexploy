@@ -2,7 +2,9 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
+import { Copy } from 'lucide-react';
 import {
     FormControl,
     FormDescription,
@@ -19,10 +21,11 @@ export function NetworkConfigFromExisting() {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{t('configFromExisting')}</CardTitle>
-                <CardDescription>{t('configFromExistingDescription')}</CardDescription>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={Copy}
+                title={t('configFromExisting')}
+                description={t('configFromExistingDescription')}
+            />
             <CardContent>
                 <FormField
                     control={form.control}

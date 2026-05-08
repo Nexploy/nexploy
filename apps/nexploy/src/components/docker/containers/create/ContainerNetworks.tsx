@@ -2,14 +2,9 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { Plus, Trash2 } from 'lucide-react';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Network, Plus, Trash2 } from 'lucide-react';
+import { Card, CardContent } from '@workspace/ui/components/card';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
@@ -26,18 +21,22 @@ export function ContainerNetworks() {
 
     return (
         <Card>
-            <CardHeader>
-                <div className="flex justify-between">
-                    <div className="flex flex-col gap-2">
-                        <CardTitle>{t('networks')}</CardTitle>
-                        <CardDescription>{t('networksDescription')}</CardDescription>
-                    </div>
-                    <Button type="button" size="sm" variant="outline" onClick={() => append('')}>
-                        <Plus />
-                        {t('addNetwork')}
-                    </Button>
-                </div>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={Network}
+                title={t('networks')}
+                description={t('networksDescription')}
+            >
+                <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="ml-auto"
+                    onClick={() => append('')}
+                >
+                    <Plus />
+                    {t('addNetwork')}
+                </Button>
+            </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
                     <p className="text-muted-foreground py-8 text-center text-sm">

@@ -2,8 +2,9 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { Plus, Trash2 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import { HardDrive, Plus, Trash2 } from 'lucide-react';
+import { Card, CardContent } from '@workspace/ui/components/card';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
@@ -17,23 +18,22 @@ export function ContainerVolumes() {
 
     return (
         <Card>
-            <CardHeader>
-                <div className="flex justify-between">
-                    <div className={'flex flex-col gap-2'}>
-                        <CardTitle>{t('volumes')}</CardTitle>
-                        <CardDescription>{t('volumesDescription')}</CardDescription>
-                    </div>
-                    <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => append({ hostPath: '', containerPath: '', readOnly: false })}
-                    >
-                        <Plus />
-                        {t('addVolume')}
-                    </Button>
-                </div>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={HardDrive}
+                title={t('volumes')}
+                description={t('volumesDescription')}
+            >
+                <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="ml-auto"
+                    onClick={() => append({ hostPath: '', containerPath: '', readOnly: false })}
+                >
+                    <Plus />
+                    {t('addVolume')}
+                </Button>
+            </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
                     <p className="text-muted-foreground py-8 text-center text-sm">

@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import {
     FormControl,
     FormDescription,
@@ -12,6 +12,8 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
+import { Tag } from 'lucide-react';
 
 export function ImageNameConfig() {
     const t = useTranslations('docker.pullImagePage');
@@ -19,10 +21,11 @@ export function ImageNameConfig() {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{t('configuration')}</CardTitle>
-                <CardDescription>{t('configDescription')}</CardDescription>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={Tag}
+                title={t('configuration')}
+                description={t('configDescription')}
+            />
             <CardContent className="space-y-4">
                 <FormField
                     control={form.control}

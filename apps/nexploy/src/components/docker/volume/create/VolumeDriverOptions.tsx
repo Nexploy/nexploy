@@ -2,13 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 import {
     FormControl,
     FormDescription,
@@ -18,7 +13,7 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
-import { Plus } from 'lucide-react';
+import { Cpu, Plus } from 'lucide-react';
 import { useKeyValueState } from '@/hooks/useKeyValueState';
 import { KeyValueInput, KeyValueList } from '@/components/forms/KeyValue';
 
@@ -43,10 +38,11 @@ export function VolumeDriverOptions() {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{t('driverOptions')}</CardTitle>
-                <CardDescription>{t('driverOptionsCardDescription')}</CardDescription>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={Cpu}
+                title={t('driverOptions')}
+                description={t('driverOptionsCardDescription')}
+            />
             <CardContent>
                 <FormField
                     control={form.control}

@@ -3,16 +3,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { Activity, Cpu, MemoryStick, Server } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import type { SwarmNode, SwarmTask } from '@workspace/typescript-interface/docker/swarm';
 import { formatBytes } from '@/utils/formatBytes';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
 import { useSwarmNodeStore } from '@/stores/docker/useSwarmNodeStore.ts';
-
-interface NodeDetailStatsProps {
-    node: SwarmNode | null;
-    tasks: SwarmTask[];
-}
 
 function nodeStateToStatus(state: string): 'online' | 'offline' | 'degraded' | 'waiting' {
     switch (state) {
@@ -27,8 +21,12 @@ function nodeStateToStatus(state: string): 'online' | 'offline' | 'degraded' | '
     }
 }
 
-export function NodeDetailStats({ node, tasks }: NodeDetailStatsProps) {
+export function NodeDetailStats() {
     const t = useTranslations('swarm');
+
+    const node = useSwarmNodeStore((s) => s.node);
+    const tasks = useSwarmNodeStore((s) => s.tasks);
+
     const isConnecting = useSwarmNodeStore((s) => s.isConnecting);
 
     if (!node || isConnecting) {
@@ -109,7 +107,7 @@ export function NodeDetailStats({ node, tasks }: NodeDetailStatsProps) {
     ];
 
     return (
-        <div className="grid grid-cols-1 gap-4 px-5 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             {cards.map((card, index) => (
                 <Card key={index} className="flex flex-col justify-between gap-0 py-6">
                     <CardHeader className="flex flex-row justify-between space-y-0">

@@ -2,14 +2,9 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { Circle, Database, Database as MySQL, Leaf } from 'lucide-react';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Circle, Database, Database as MySQL, LayoutTemplate, Leaf } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 import { cn } from '@workspace/ui/lib/utils';
 
 const CONTAINER_TEMPLATES = [
@@ -95,10 +90,11 @@ export function ContainerTemplates() {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{t('templates')}</CardTitle>
-                <CardDescription>{t('templatesDescription')}</CardDescription>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={LayoutTemplate}
+                title={t('templates')}
+                description={t('templatesDescription')}
+            />
             <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {CONTAINER_TEMPLATES.map((template) => (
                     <Card

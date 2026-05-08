@@ -15,29 +15,16 @@ import { NodeDetailTasks } from './node/NodeDetailTasks';
 import { NodeDetailLabels } from './node/NodeDetailLabels';
 import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
 import { NodeDropdownActions } from './NodeDropdownActions';
+import { NodeDetailStats } from '@/components/swarm/node/NodeDetailStats.tsx';
 
 interface NodeDetailPageProps {
     nodeId: string;
-}
-
-function nodeStateToStatus(state: string): 'online' | 'offline' | 'degraded' | 'waiting' {
-    switch (state) {
-        case 'ready':
-            return 'online';
-        case 'down':
-            return 'offline';
-        case 'disconnected':
-            return 'degraded';
-        default:
-            return 'waiting';
-    }
 }
 
 export function NodeDetailPage({ nodeId }: NodeDetailPageProps) {
     const t = useTranslations('swarm');
 
     const node = useSwarmNodeStore((s) => s.node);
-    const tasks = useSwarmNodeStore((s) => s.tasks);
     const notFound = useSwarmNodeStore((s) => s.notFound);
     const isConnecting = useSwarmNodeStore((s) => s.isConnecting);
 
@@ -106,15 +93,11 @@ export function NodeDetailPage({ nodeId }: NodeDetailPageProps) {
                 </div>
 
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
-                    <div className="flex flex-col gap-8 pb-5">
-                        {/*<NodeDetailStats node={node} tasks={tasks} />*/}
-                        {node && (
-                            <div className="space-y-5 px-5">
-                                <NodeDetailInfo node={node} />
-                                <NodeDetailTasks tasks={tasks} />
-                                <NodeDetailLabels labels={node.labels ?? {}} />
-                            </div>
-                        )}
+                    <div className="flex flex-col gap-4 px-5 pb-5">
+                        <NodeDetailStats />
+                        <NodeDetailInfo />
+                        <NodeDetailTasks />
+                        <NodeDetailLabels />
                     </div>
                 </ScrollAreaWithShadow>
             </div>

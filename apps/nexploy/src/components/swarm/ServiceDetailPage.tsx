@@ -106,14 +106,12 @@ export function ServiceDetailPage({ serviceId }: ServiceDetailPageProps) {
                 </div>
 
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
-                    <div className="flex flex-col gap-8 pb-5">
-                        <div className="space-y-5 px-5">
-                            <ServiceDetailStats />
-                            <ServiceDetailInfo />
-                            <ServiceDetailTasks />
-                            <ServiceDetailConfig />
-                            <ServiceDetailLabels />
-                        </div>
+                    <div className="flex flex-col gap-5 px-5 pb-5">
+                        <ServiceDetailStats />
+                        <ServiceDetailInfo />
+                        <ServiceDetailTasks />
+                        <ServiceDetailConfig />
+                        <ServiceDetailLabels />
                     </div>
                 </ScrollAreaWithShadow>
             </div>

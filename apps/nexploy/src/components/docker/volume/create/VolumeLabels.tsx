@@ -2,13 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 import {
     FormControl,
     FormDescription,
@@ -18,7 +13,7 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
-import { Plus } from 'lucide-react';
+import { Plus, Tag } from 'lucide-react';
 import { useKeyValueState } from '@/hooks/useKeyValueState';
 import { KeyValueInput, KeyValueList } from '@/components/forms/KeyValue';
 
@@ -43,10 +38,11 @@ export function VolumeLabels() {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{t('labels')}</CardTitle>
-                <CardDescription>{t('labelsCardDescription')}</CardDescription>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={Tag}
+                title={t('labels')}
+                description={t('labelsCardDescription')}
+            />
             <CardContent>
                 <FormField
                     control={form.control}

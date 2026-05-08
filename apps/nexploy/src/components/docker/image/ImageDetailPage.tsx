@@ -100,7 +100,7 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
                     </div>
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
-                    <div className="flex flex-col gap-5 px-5 pb-5">
+                    <div className="flex flex-col gap-4 px-5 pb-5">
                         <CardImageContainers />
                         <CardImageDetails />
                         <CardImageConfig />

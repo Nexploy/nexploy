@@ -2,13 +2,9 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
+import { SlidersHorizontal } from 'lucide-react';
 import {
     FormControl,
     FormDescription,
@@ -63,10 +59,11 @@ export function AdvancedConfig() {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{t('title')}</CardTitle>
-                <CardDescription>{t('description')}</CardDescription>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={SlidersHorizontal}
+                title={t('title')}
+                description={t('description')}
+            />
             <CardContent className="space-y-4">
                 <FormField
                     control={form.control}

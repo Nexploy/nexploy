@@ -1,29 +1,31 @@
 'use client';
 
-import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { Tags } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { Badge } from '@workspace/ui/components/badge';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
+import { useSwarmNodeStore } from '@/stores/docker/useSwarmNodeStore.ts';
+import { Skeleton } from '@workspace/ui/components/skeleton.tsx';
 
-interface NodeDetailLabelsProps {
-    labels: Record<string, string>;
-}
-
-export function NodeDetailLabels({ labels }: NodeDetailLabelsProps) {
+export function NodeDetailLabels() {
     const t = useTranslations('swarm');
-    const entries = Object.entries(labels);
+
+    const node = useSwarmNodeStore((s) => s.node);
+    const isConnecting = useSwarmNodeStore((s) => s.isConnecting);
+
+    if (!node || isConnecting) {
+        return <Skeleton className={'h-80 flex-1'} />;
+    }
+
+    const entries = Object.entries(node.labels);
 
     return (
         <Card>
-            <CardHeader>
-                <div className="flex items-center gap-3">
-                    <CardHeaderWithIcon as="div" icon={Tags} title={t('labels')}>
-                        <Badge variant="secondary">{entries.length}</Badge>
-                    </CardHeaderWithIcon>
-                </div>
-            </CardHeader>
+            <CardHeaderWithIcon icon={Tags} title={t('labels')}>
+                {entries.length > 0 && <Badge variant="secondary">{entries.length}</Badge>}
+            </CardHeaderWithIcon>
             <CardContent className="px-0">
                 {entries.length > 0 ? (
                     <ScrollAreaWithShadow
@@ -40,7 +42,9 @@ export function NodeDetailLabels({ labels }: NodeDetailLabelsProps) {
                                     <span className="text-muted-foreground min-w-0 shrink-0 font-mono text-xs">
                                         {key}
                                     </span>
-                                    <span className="ml-auto truncate font-mono text-xs">{value || '—'}</span>
+                                    <span className="ml-auto truncate font-mono text-xs">
+                                        {value || '—'}
+                                    </span>
                                 </div>
                             ))}
                         </div>
