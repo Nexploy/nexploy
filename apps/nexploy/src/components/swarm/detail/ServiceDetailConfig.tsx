@@ -1,30 +1,39 @@
 'use client';
 
 import { Badge } from '@workspace/ui/components/badge';
-import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { Key, Network, ShieldCheck } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+import { useSwarmServiceStore } from '@/stores/docker/useSwarmServiceStore.ts';
+import { Skeleton } from '@workspace/ui/components/skeleton.tsx';
 
-interface ServiceDetailConfigProps {
-    service: SwarmService;
-}
-
-export function ServiceDetailConfig({ service }: ServiceDetailConfigProps) {
+export function ServiceDetailConfig() {
     const t = useTranslations('swarm');
+
+    const service = useSwarmServiceStore((s) => s.service);
+    const isConnecting = useSwarmServiceStore((s) => s.isConnecting);
+
+    if (isConnecting) {
+        return <Skeleton className={'h-80 flex-1'} />;
+    }
 
     return (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {/* Ports */}
             <Card>
-                <CardHeaderWithIcon icon={Network} title={t('detail.portsTitle')} />
+                <CardHeaderWithIcon icon={Network} title={t('detail.portsTitle')}>
+                    {service && service.ports.length > 0 && (
+                        <Badge variant="secondary">{service.ports.length}</Badge>
+                    )}
+                </CardHeaderWithIcon>
                 <CardContent>
-                    {service.ports.length === 0 ? (
-                        <p className="text-muted-foreground text-sm">{t('detail.noPorts')}</p>
+                    {service?.ports.length === 0 ? (
+                        <p className="text-muted-foreground py-9 text-center text-sm">
+                            {t('detail.noPorts')}
+                        </p>
                     ) : (
                         <div className="space-y-2">
-                            {service.ports.map((port, i) => (
+                            {service?.ports.map((port, i) => (
                                 <div
                                     key={i}
                                     className="bg-muted/60 flex items-center justify-between rounded-md px-3 py-2 text-sm"
@@ -46,16 +55,20 @@ export function ServiceDetailConfig({ service }: ServiceDetailConfigProps) {
                     )}
                 </CardContent>
             </Card>
-
-            {/* Networks */}
             <Card>
-                <CardHeaderWithIcon icon={Network} title={t('detail.networksTitle')} />
+                <CardHeaderWithIcon icon={Network} title={t('detail.networksTitle')}>
+                    {service && service.networks.length > 0 && (
+                        <Badge variant="secondary">{service.networks.length}</Badge>
+                    )}
+                </CardHeaderWithIcon>
                 <CardContent>
-                    {service.networks.length === 0 ? (
-                        <p className="text-muted-foreground text-sm">{t('detail.noNetworks')}</p>
+                    {service?.networks.length === 0 ? (
+                        <p className="text-muted-foreground py-9 text-center text-sm">
+                            {t('detail.noNetworks')}
+                        </p>
                     ) : (
                         <div className="flex flex-wrap gap-2">
-                            {service.networks.map((net, i) => (
+                            {service?.networks.map((net, i) => (
                                 <Badge key={i} variant="secondary">
                                     {net}
                                 </Badge>
@@ -64,16 +77,20 @@ export function ServiceDetailConfig({ service }: ServiceDetailConfigProps) {
                     )}
                 </CardContent>
             </Card>
-
-            {/* Environment Variables */}
             <Card>
-                <CardHeaderWithIcon icon={Key} title={t('detail.envTitle')} />
+                <CardHeaderWithIcon icon={Key} title={t('detail.envTitle')}>
+                    {service && service.env.length > 0 && (
+                        <Badge variant="secondary">{service.env.length}</Badge>
+                    )}
+                </CardHeaderWithIcon>
                 <CardContent>
-                    {service.env.length === 0 ? (
-                        <p className="text-muted-foreground text-sm">{t('detail.noEnv')}</p>
+                    {service?.env.length === 0 ? (
+                        <p className="text-muted-foreground py-9 text-center text-sm">
+                            {t('detail.noEnv')}
+                        </p>
                     ) : (
                         <div className="space-y-1.5">
-                            {service.env.map((entry, i) => {
+                            {service?.env.map((entry, i) => {
                                 const [key, ...rest] = entry.split('=');
                                 return (
                                     <div
@@ -90,18 +107,20 @@ export function ServiceDetailConfig({ service }: ServiceDetailConfigProps) {
                     )}
                 </CardContent>
             </Card>
-
-            {/* Placement Constraints */}
             <Card>
-                <CardHeaderWithIcon icon={ShieldCheck} title={t('detail.constraintsTitle')} />
+                <CardHeaderWithIcon icon={ShieldCheck} title={t('detail.constraintsTitle')}>
+                    {service && service.constraints.length > 0 && (
+                        <Badge variant="secondary">{service.constraints.length}</Badge>
+                    )}
+                </CardHeaderWithIcon>
                 <CardContent>
-                    {service.constraints.length === 0 ? (
-                        <p className="text-muted-foreground text-sm">
+                    {service?.constraints.length === 0 ? (
+                        <p className="text-muted-foreground py-9 text-center text-sm">
                             {t('detail.noConstraints')}
                         </p>
                     ) : (
                         <div className="space-y-1.5">
-                            {service.constraints.map((c, i) => (
+                            {service?.constraints.map((c, i) => (
                                 <div
                                     key={i}
                                     className="bg-muted/60 rounded-md px-3 py-1.5 font-mono text-xs"

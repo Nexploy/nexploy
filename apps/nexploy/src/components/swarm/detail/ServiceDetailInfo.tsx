@@ -3,43 +3,43 @@
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { Hash } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import CopyButton from '@/components/shared/CopyButton';
 import { Badge } from '@workspace/ui/components/badge';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { ReactNode } from 'react';
 import dayjs from 'dayjs';
+import { useSwarmServiceStore } from '@/stores/docker/useSwarmServiceStore.ts';
+import { Skeleton } from '@workspace/ui/components/skeleton.tsx';
 
-function formatTimestamp(ts: number): string {
-    return dayjs(ts).format('DD/MM/YYYY HH:mm:ss');
-}
-
-interface ServiceDetailInfoProps {
-    service: SwarmService;
-}
-
-export function ServiceDetailInfo({ service }: ServiceDetailInfoProps) {
+export function ServiceDetailInfo() {
     const t = useTranslations('swarm');
 
+    const service = useSwarmServiceStore((s) => s.service);
+    const isConnecting = useSwarmServiceStore((s) => s.isConnecting);
+
     const fields: { label: string; value: ReactNode; hasCopy?: boolean; copyText?: string }[] = [
-        { label: t('detail.serviceId'), value: service.id, hasCopy: true, copyText: service.id },
-        { label: t('image'), value: service.image, hasCopy: true, copyText: service.image },
-        { label: t('detail.version'), value: String(service.version) },
+        { label: t('detail.serviceId'), value: service?.id, hasCopy: true, copyText: service?.id },
+        { label: t('image'), value: service?.image, hasCopy: true, copyText: service?.image },
+        { label: t('detail.version'), value: String(service?.version) },
         {
             label: t('mode'),
             value: (
                 <Badge variant="outline" className="capitalize">
-                    {service.mode}
+                    {service?.mode}
                 </Badge>
             ),
         },
-        ...(service.replicas !== undefined
-            ? [{ label: t('replicas'), value: String(service.replicas) }]
-            : []),
-        { label: t('detail.createdAt'), value: formatTimestamp(service.createdAt) },
-        { label: t('detail.updatedAt'), value: formatTimestamp(service.updatedAt) },
-        ...(service.updateStatus
+        ...(service?.replicas ? [{ label: t('replicas'), value: String(service.replicas) }] : []),
+        {
+            label: t('detail.createdAt'),
+            value: dayjs(service?.createdAt).format('DD/MM/YYYY HH:mm:ss'),
+        },
+        {
+            label: t('detail.updatedAt'),
+            value: dayjs(service?.updatedAt).format('DD/MM/YYYY HH:mm:ss'),
+        },
+        ...(service?.updateStatus
             ? [
                   {
                       label: t('updateStatus'),
@@ -65,6 +65,10 @@ export function ServiceDetailInfo({ service }: ServiceDetailInfoProps) {
             : []),
     ];
 
+    if (isConnecting) {
+        return <Skeleton className={'h-80 flex-1'} />;
+    }
+
     return (
         <Card>
             <CardHeaderWithIcon icon={Hash} title={t('detail.infoTitle')} />
@@ -80,7 +84,7 @@ export function ServiceDetailInfo({ service }: ServiceDetailInfoProps) {
                                 key={index}
                                 className={`grid grid-cols-[auto_1fr] items-center gap-4 ${index < fields.length - 1 ? 'border-b pb-2' : ''}`}
                             >
-                                <span className="text-muted-foreground whitespace-nowrap text-sm">
+                                <span className="text-muted-foreground text-sm whitespace-nowrap">
                                     {field.label}
                                 </span>
                                 <div className="flex min-w-0 items-center justify-end gap-1">

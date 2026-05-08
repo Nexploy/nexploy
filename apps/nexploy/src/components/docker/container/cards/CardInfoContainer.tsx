@@ -9,9 +9,11 @@ import Link from 'next/link';
 
 export function CardInfoContainer() {
     const container = useContainerStore((state) => state.container);
+    const isConnecting = useContainerStore((state) => state.isConnecting);
+
     const t = useTranslations('docker.containerCards');
 
-    if (!container) {
+    if (isConnecting) {
         return (
             <div className="grid grid-cols-1 gap-4 px-5 md:grid-cols-4">
                 {Array.from({ length: 4 }).map((_, index) => (
@@ -25,28 +27,27 @@ export function CardInfoContainer() {
         {
             title: t('state'),
             icon: Activity,
-            content: container!.state,
-            render: () => (
-                <div>
+            content: container?.state,
+            render: () =>
+                container?.state && (
                     <Status
                         className="border-0"
-                        status={containerDisplayState[container!.state] ?? 'offline'}
+                        status={containerDisplayState[container.state] ?? 'offline'}
                         variant="outline"
                     >
                         <StatusIndicator />
-                        <div className="truncate text-2xl font-semibold">{container!.state}</div>
+                        <div className="truncate text-2xl font-semibold">{container.state}</div>
                     </Status>
-                </div>
-            ),
+                ),
         },
         {
             title: t('image'),
             icon: Box,
-            description: `${t('version')} ${container!.image.split(':')[1] || 'latest'}`,
+            description: `${t('version')} ${container?.image.split(':')[1] || 'latest'}`,
             render: () => (
-                <Link href={`/docker/images/${container.imageId}`} className="group">
+                <Link href={`/docker/images/${container?.imageId}`} className="group">
                     <div className="truncate text-2xl font-semibold group-hover:underline">
-                        {container.image}
+                        {container?.image}
                     </div>
                     <p className="text-muted-foreground truncate text-xs">
                         {`${t('version')} ${container!.image.split(':')[1] || 'latest'}`}

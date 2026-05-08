@@ -1,38 +1,32 @@
 'use client';
 
 import { Badge } from '@workspace/ui/components/badge';
-import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { Activity } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import {
-    Table,
-    TableBody,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
-import type { SwarmTask } from '@workspace/typescript-interface/docker/swarm';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import { TaskRow } from './TaskRow';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+import { useSwarmServiceStore } from '@/stores/docker/useSwarmServiceStore.ts';
+import { Skeleton } from '@workspace/ui/components/skeleton.tsx';
 
-interface ServiceDetailTasksProps {
-    tasks: SwarmTask[];
-}
-
-export function ServiceDetailTasks({ tasks }: ServiceDetailTasksProps) {
+export function ServiceDetailTasks() {
     const t = useTranslations('swarm');
+
+    const tasks = useSwarmServiceStore((s) => s.tasks);
+    const isConnecting = useSwarmServiceStore((s) => s.isConnecting);
 
     const sortedTasks = [...tasks].sort((a, b) => (a.slot ?? 0) - (b.slot ?? 0));
 
+    if (isConnecting) {
+        return <Skeleton className={'h-80 flex-1'} />;
+    }
+
     return (
         <Card>
-            <CardHeader>
-                <div className="flex items-center justify-between gap-3">
-                    <CardHeaderWithIcon as="div" icon={Activity} title={t('detail.tasksTitle')}>
-                        <Badge variant="secondary">{tasks.length}</Badge>
-                    </CardHeaderWithIcon>
-                </div>
-            </CardHeader>
+            <CardHeaderWithIcon icon={Activity} title={t('detail.tasksTitle')}>
+                {tasks.length > 0 && <Badge variant="secondary">{tasks.length}</Badge>}
+            </CardHeaderWithIcon>
             <CardContent className="p-0">
                 {sortedTasks.length === 0 ? (
                     <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">

@@ -26,7 +26,6 @@ export function ServiceDetailPage({ serviceId }: ServiceDetailPageProps) {
     const t = useTranslations('swarm');
 
     const service = useSwarmServiceStore((s) => s.service);
-    const tasks = useSwarmServiceStore((s) => s.tasks);
     const notFound = useSwarmServiceStore((s) => s.notFound);
     const isConnecting = useSwarmServiceStore((s) => s.isConnecting);
 
@@ -108,15 +107,13 @@ export function ServiceDetailPage({ serviceId }: ServiceDetailPageProps) {
 
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="flex flex-col gap-8 pb-5">
-                        {service && (
-                            <div className="space-y-5 px-5">
-                                <ServiceDetailStats service={service} tasks={tasks} />
-                                <ServiceDetailInfo service={service} />
-                                <ServiceDetailTasks tasks={tasks} />
-                                <ServiceDetailConfig service={service} />
-                                <ServiceDetailLabels labels={service.labels ?? {}} />
-                            </div>
-                        )}
+                        <div className="space-y-5 px-5">
+                            <ServiceDetailStats />
+                            <ServiceDetailInfo />
+                            <ServiceDetailTasks />
+                            <ServiceDetailConfig />
+                            <ServiceDetailLabels />
+                        </div>
                     </div>
                 </ScrollAreaWithShadow>
             </div>

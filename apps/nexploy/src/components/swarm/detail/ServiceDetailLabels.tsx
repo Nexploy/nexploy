@@ -6,22 +6,27 @@ import { Tags } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
+import { useSwarmServiceStore } from '@/stores/docker/useSwarmServiceStore.ts';
+import { Skeleton } from '@workspace/ui/components/skeleton.tsx';
 
-interface ServiceDetailLabelsProps {
-    labels: Record<string, string>;
-}
-
-export function ServiceDetailLabels({ labels }: ServiceDetailLabelsProps) {
+export function ServiceDetailLabels() {
     const t = useTranslations('swarm');
 
-    const entries = Object.entries(labels);
+    const service = useSwarmServiceStore((s) => s.service);
+    const isConnecting = useSwarmServiceStore((s) => s.isConnecting);
+
+    const entries = Object.entries(service?.labels ?? {});
+
+    if (isConnecting) {
+        return <Skeleton className={'h-80 flex-1'} />;
+    }
 
     return (
         <Card>
             <CardHeader>
                 <div className="flex items-center gap-3">
                     <CardHeaderWithIcon as="div" icon={Tags} title={t('labels')}>
-                        <Badge variant="secondary">{entries.length}</Badge>
+                        {entries.length > 0 && <Badge variant="secondary">{entries.length}</Badge>}
                     </CardHeaderWithIcon>
                 </div>
             </CardHeader>
