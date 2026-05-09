@@ -2,13 +2,7 @@
 
 import { useTranslations, useTranslations as useT } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import {
     FormControl,
     FormDescription,
@@ -27,6 +21,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
+import { RefreshCw } from 'lucide-react';
 
 export function ServiceUpdatePolicy() {
     const t = useTranslations('swarm.createService');
@@ -35,10 +31,11 @@ export function ServiceUpdatePolicy() {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{t('updatePolicy')}</CardTitle>
-                <CardDescription>{t('updatePolicyDescription')}</CardDescription>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={RefreshCw}
+                title={t('updatePolicy')}
+                description={t('updatePolicyDescription')}
+            />
             <CardContent className="space-y-6">
                 <div className="grid gap-4 md:grid-cols-2">
                     <FormField

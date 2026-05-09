@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import {
     FormControl,
     FormDescription,
@@ -18,6 +12,8 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
+import { Activity } from 'lucide-react';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 
 export function ServiceResources() {
     const t = useTranslations('swarm.createService');
@@ -25,10 +21,11 @@ export function ServiceResources() {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{t('resources')}</CardTitle>
-                <CardDescription>{t('resourcesDescription')}</CardDescription>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={Activity}
+                title={t('resources')}
+                description={t('resourcesDescription')}
+            />
             <CardContent className="space-y-6">
                 <div>
                     <p className="mb-3 text-sm font-medium">{t('limits')}</p>

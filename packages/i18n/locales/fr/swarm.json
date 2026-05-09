@@ -96,7 +96,6 @@
     "ports": "Ports",
     "noServicesFound": "Aucun service trouvé",
     "noServicesDescription": "Aucun service ne tourne actuellement dans ce swarm.",
-    "createService": "Créer un service",
     "removeService": "Supprimer le service",
     "scaleService": "Mettre à l'échelle",
     "scaleServiceTitle": "Mettre à l'échelle le service",

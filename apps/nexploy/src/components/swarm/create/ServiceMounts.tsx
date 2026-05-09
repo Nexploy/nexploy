@@ -2,14 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { Plus, Trash2 } from 'lucide-react';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { HardDrive, Plus, Trash2 } from 'lucide-react';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
@@ -24,6 +18,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 
 export function ServiceMounts() {
     const t = useTranslations('swarm.createService');
@@ -32,25 +27,24 @@ export function ServiceMounts() {
 
     return (
         <Card>
-            <CardHeader>
-                <div className="flex justify-between">
-                    <div className={'flex flex-col gap-2'}>
-                        <CardTitle>{t('mounts')}</CardTitle>
-                        <CardDescription>{t('mountsDescription')}</CardDescription>
-                    </div>
-                    <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() =>
-                            append({ source: '', target: '', type: 'bind', readOnly: false })
-                        }
-                    >
-                        <Plus />
-                        {t('addMount')}
-                    </Button>
-                </div>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={HardDrive}
+                title={t('mounts')}
+                description={t('mountsDescription')}
+                className={'justify-between'}
+            >
+                <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
+                        append({ source: '', target: '', type: 'bind', readOnly: false })
+                    }
+                >
+                    <Plus />
+                    {t('addMount')}
+                </Button>
+            </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
                     <p className="text-muted-foreground py-8 text-center text-sm">

@@ -2,17 +2,12 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { Plus, Trash2 } from 'lucide-react';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { KeyRound, Plus, Trash2 } from 'lucide-react';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 
 export function ServiceEnvVars() {
     const t = useTranslations('swarm.createService');
@@ -21,23 +16,22 @@ export function ServiceEnvVars() {
 
     return (
         <Card>
-            <CardHeader>
-                <div className="flex justify-between">
-                    <div className={'flex flex-col gap-2'}>
-                        <CardTitle>{t('envVars')}</CardTitle>
-                        <CardDescription>{t('envVarsDescription')}</CardDescription>
-                    </div>
-                    <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => append({ key: '', value: '' })}
-                    >
-                        <Plus />
-                        {t('addVariable')}
-                    </Button>
-                </div>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={KeyRound}
+                title={t('envVars')}
+                description={t('envVarsDescription')}
+                className={'justify-between'}
+            >
+                <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => append({ key: '', value: '' })}
+                >
+                    <Plus />
+                    {t('addVariable')}
+                </Button>
+            </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
                     <p className="text-muted-foreground py-8 text-center text-sm">

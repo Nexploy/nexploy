@@ -115,7 +115,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                                     )}
                                 </TooltipContent>
                             </Tooltip>
-                            <StatusLabel className="min-w-0 truncate text-current hover:underline">
+                            <StatusLabel className="min-w-0 truncate text-current">
                                 {nameJoin}
                             </StatusLabel>
                         </Status>

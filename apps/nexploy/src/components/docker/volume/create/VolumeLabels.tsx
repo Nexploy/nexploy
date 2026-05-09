@@ -13,7 +13,7 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
-import { Plus, Tag } from 'lucide-react';
+import { Plus, Tags } from 'lucide-react';
 import { useKeyValueState } from '@/hooks/useKeyValueState';
 import { KeyValueInput, KeyValueList } from '@/components/forms/KeyValue';
 
@@ -39,7 +39,7 @@ export function VolumeLabels() {
     return (
         <Card>
             <CardHeaderWithIcon
-                icon={Tag}
+                icon={Tags}
                 title={t('labels')}
                 description={t('labelsCardDescription')}
             />

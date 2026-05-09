@@ -2,18 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { Plus, Trash2 } from 'lucide-react';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Network, Plus, Trash2 } from 'lucide-react';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { useNetworksStore } from '../../../stores/docker/useNetworksStore';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 
 export function ServiceNetworks() {
     const t = useTranslations('swarm.createService');
@@ -28,18 +23,17 @@ export function ServiceNetworks() {
 
     return (
         <Card>
-            <CardHeader>
-                <div className="flex justify-between">
-                    <div className="flex flex-col gap-2">
-                        <CardTitle>{t('networks')}</CardTitle>
-                        <CardDescription>{t('networksDescription')}</CardDescription>
-                    </div>
-                    <Button type="button" size="sm" variant="outline" onClick={() => append('')}>
-                        <Plus />
-                        {t('addNetwork')}
-                    </Button>
-                </div>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={Network}
+                title={t('networks')}
+                description={t('networksDescription')}
+                className={'justify-between'}
+            >
+                <Button type="button" size="sm" variant="outline" onClick={() => append('')}>
+                    <Plus />
+                    {t('addNetwork')}
+                </Button>
+            </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
                     <p className="text-muted-foreground py-8 text-center text-sm">

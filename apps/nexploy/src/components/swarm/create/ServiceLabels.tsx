@@ -2,17 +2,12 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { Plus, Trash2 } from 'lucide-react';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Plus, Tags, Trash2 } from 'lucide-react';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 
 export function ServiceLabels() {
     const t = useTranslations('swarm.createService');
@@ -24,23 +19,22 @@ export function ServiceLabels() {
 
     return (
         <Card>
-            <CardHeader>
-                <div className="flex justify-between">
-                    <div className={'flex flex-col gap-2'}>
-                        <CardTitle>{t('labels')}</CardTitle>
-                        <CardDescription>{t('labelsDescription')}</CardDescription>
-                    </div>
-                    <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => append({ key: '', value: '' })}
-                    >
-                        <Plus />
-                        {t('addLabel')}
-                    </Button>
-                </div>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={Tags}
+                title={t('labels')}
+                description={t('labelsDescription')}
+                className={'justify-between'}
+            >
+                <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => append({ key: '', value: '' })}
+                >
+                    <Plus />
+                    {t('addLabel')}
+                </Button>
+            </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
                     <p className="text-muted-foreground py-8 text-center text-sm">

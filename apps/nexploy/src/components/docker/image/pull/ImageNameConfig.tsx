@@ -13,7 +13,7 @@ import {
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
-import { Tag } from 'lucide-react';
+import { Settings } from 'lucide-react';
 
 export function ImageNameConfig() {
     const t = useTranslations('docker.pullImagePage');
@@ -22,7 +22,7 @@ export function ImageNameConfig() {
     return (
         <Card>
             <CardHeaderWithIcon
-                icon={Tag}
+                icon={Settings}
                 title={t('configuration')}
                 description={t('configDescription')}
             />

@@ -42,7 +42,7 @@ export default async function RepositoriesPage() {
                         <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
                             <FolderGit2 className="text-primary size-7" />
                         </div>
-                        <div className="flex flex-col mt-3.5">
+                        <div className="mt-3.5 flex flex-col">
                             <h1 className="text-3xl font-semibold tracking-tight">{t('title')}</h1>
                             <p className="text-muted-foreground text-sm">
                                 {t('manageRepositories')}
@@ -66,7 +66,7 @@ export default async function RepositoriesPage() {
                                 </EmptyHeader>
                             </Empty>
                         ) : (
-                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
                                 {repositories.map((repository) => {
                                     const lastDeployment = repository.build?.[0];
                                     const Icon = getGitIcon(repository.gitProvider);

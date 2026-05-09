@@ -9,11 +9,11 @@ import {
     Code,
     Cpu,
     Database,
+    LayoutGrid,
     LineChart,
     LucideIcon,
     MessageSquare,
     Mountain,
-    Star,
     Terminal,
     Workflow,
 } from 'lucide-react';
@@ -155,7 +155,7 @@ export function PopularImages() {
     return (
         <Card>
             <CardHeaderWithIcon
-                icon={Star}
+                icon={LayoutGrid}
                 title={t('popularImages')}
                 description={t('popularImagesDescription')}
             />

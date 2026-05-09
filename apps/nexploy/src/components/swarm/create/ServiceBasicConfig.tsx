@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import {
     FormControl,
     FormDescription,
@@ -28,8 +22,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import { useImagesStore } from '../../../stores/docker/useImagesStore.ts';
+import { useImagesStore } from '@/stores/docker/useImagesStore.ts';
 import { useMemo } from 'react';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
+import { Settings } from 'lucide-react';
 
 export function ServiceBasicConfig() {
     const t = useTranslations('swarm.createService');
@@ -54,10 +50,11 @@ export function ServiceBasicConfig() {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{t('basicConfig')}</CardTitle>
-                <CardDescription>{t('basicConfigDescription')}</CardDescription>
-            </CardHeader>
+            <CardHeaderWithIcon
+                icon={Settings}
+                title={t('basicConfig')}
+                description={t('basicConfigDescription')}
+            />
             <CardContent className="space-y-4">
                 <FormField
                     control={form.control}
