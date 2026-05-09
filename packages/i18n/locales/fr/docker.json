@@ -631,7 +631,13 @@
         "addNetwork": "Ajouter un réseau",
         "noNetworksConfigured": "Aucun réseau configuré",
         "networkNamePlaceholder": "mon-réseau",
-        "availableNetworks": "Réseaux disponibles"
+        "availableNetworks": "Réseaux disponibles",
+        "labels": "Labels",
+        "labelsDescription": "Métadonnées pour organiser et identifier le conteneur",
+        "addLabel": "Ajouter un label",
+        "labelKeyPlaceholder": "com.example.clé",
+        "labelValuePlaceholder": "valeur",
+        "noLabelsConfigured": "Aucun label configuré"
     },
     "containerCard": {
         "image": "Image :",

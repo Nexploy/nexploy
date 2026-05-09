@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { ExternalLink, Network, Pencil, Plus } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Button } from '@workspace/ui/components/button';
@@ -93,25 +93,22 @@ export function CardExposedPorts() {
 
     return (
         <Card className={'flex flex-1 flex-col'}>
-            <CardHeader>
-                <div className="flex items-center justify-between gap-3">
-                    <CardHeaderWithIcon as={'div'} icon={Network} title={t('title')} />
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                className={'size-9 xl:size-fit'}
-                                icon={Plus}
-                                onClick={handleAddPort}
-                            >
-                                <span className={'hidden xl:flex'}>{t('addPort')}</span>
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent className={'flex xl:hidden'}>
-                            <span>{t('addPort')}</span>
-                        </TooltipContent>
-                    </Tooltip>
-                </div>
-            </CardHeader>
+            <CardHeaderWithIcon icon={Network} title={t('title')} className={'justify-between'}>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button
+                            className={'size-9 xl:size-fit'}
+                            icon={Plus}
+                            onClick={handleAddPort}
+                        >
+                            <span className={'hidden xl:flex'}>{t('addPort')}</span>
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className={'flex xl:hidden'}>
+                        <span>{t('addPort')}</span>
+                    </TooltipContent>
+                </Tooltip>
+            </CardHeaderWithIcon>
             <CardContent className={'flex flex-col overflow-hidden px-0'}>
                 <ScrollAreaWithShadow
                     colorShadow={'from-card via-card/50'}

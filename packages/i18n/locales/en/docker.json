@@ -631,7 +631,13 @@
         "addNetwork": "Add Network",
         "noNetworksConfigured": "No networks configured",
         "networkNamePlaceholder": "my-network",
-        "availableNetworks": "Available networks"
+        "availableNetworks": "Available networks",
+        "labels": "Labels",
+        "labelsDescription": "Metadata to organize and identify the container",
+        "addLabel": "Add Label",
+        "labelKeyPlaceholder": "com.example.key",
+        "labelValuePlaceholder": "value",
+        "noLabelsConfigured": "No labels configured"
     },
     "containerCard": {
         "image": "Image:",

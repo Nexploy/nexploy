@@ -16,6 +16,7 @@ import {
 import { KeyValueInput, KeyValueList } from '@/components/forms/KeyValue';
 import { Button } from '@workspace/ui/components/button';
 import { useKeyValueState } from '@/hooks/useKeyValueState';
+import { Badge } from '@workspace/ui/components/badge.tsx';
 
 export function AdvancedConfig() {
     const t = useTranslations('docker.advancedConfig');
@@ -100,10 +101,10 @@ export function AdvancedConfig() {
                             </FormControl>
                             <FormMessage />
                             <FormDescription>
-                                {t('optionsDescription')}
-                                <code className="bg-muted rounded px-1 py-0.5 text-xs">
+                                {t('optionsDescription')}{' '}
+                                <Badge variant={'secondary'}>
                                     com.docker.network.bridge.name=br0
-                                </code>
+                                </Badge>
                             </FormDescription>
                         </FormItem>
                     )}
@@ -144,10 +145,8 @@ export function AdvancedConfig() {
                             </FormControl>
                             <FormMessage />
                             <FormDescription>
-                                {t('labelsDescription')}
-                                <code className="bg-muted rounded px-1 py-0.5 text-xs">
-                                    env=production
-                                </code>
+                                {t('labelsDescription')}{' '}
+                                <Badge variant={'secondary'}>env=production</Badge>
                             </FormDescription>
                         </FormItem>
                     )}

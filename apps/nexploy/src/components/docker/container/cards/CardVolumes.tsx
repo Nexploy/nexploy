@@ -7,7 +7,6 @@ import { Button } from '@workspace/ui/components/button';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import { VolumeForm } from '@/components/docker/container/forms/VolumeForm';
-import { Badge } from '@workspace/ui/components/badge';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import { VolumeItem } from './VolumeItem';
@@ -39,15 +38,11 @@ export function CardVolumes() {
     const addedVolumes = volumeChanges.filter((change) => change.typeAction === 'add');
     const hasVolumes = (container?.mounts.length ?? 0) > 0 || addedVolumes.length > 0;
 
-    const volumesLength = (container?.mounts.length ?? 0) + addedVolumes.length;
-
     return (
         <Card>
             <CardHeader>
                 <div className="flex items-center justify-between gap-3">
-                    <CardHeaderWithIcon as={'div'} icon={Database} title={t('title')}>
-                        {!!volumesLength && <Badge variant={'secondary'}>{volumesLength}</Badge>}
-                    </CardHeaderWithIcon>
+                    <CardHeaderWithIcon as={'div'} icon={Database} title={t('title')} />
                     <Button
                         className="size-9 md:size-fit"
                         icon={Plus}
@@ -58,7 +53,11 @@ export function CardVolumes() {
                 </div>
             </CardHeader>
             <CardContent className="px-0">
-                {hasVolumes ? (
+                {!hasVolumes ? (
+                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                        {t('noVolumes')}
+                    </div>
+                ) : (
                     <ScrollAreaWithShadow
                         colorShadow="from-card via-card/50"
                         bottomShadow
@@ -83,10 +82,6 @@ export function CardVolumes() {
                             ))}
                         </div>
                     </ScrollAreaWithShadow>
-                ) : (
-                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
-                        {t('noVolumes')}
-                    </div>
                 )}
             </CardContent>
         </Card>

@@ -47,9 +47,7 @@ export function CardDriverGraph() {
 
     return (
         <Card>
-            <CardHeaderWithIcon icon={Database} title={t('storageDriver')}>
-                {!!fields.length && <Badge variant="secondary">{fields.length}</Badge>}
-            </CardHeaderWithIcon>
+            <CardHeaderWithIcon icon={Database} title={t('storageDriver')} />
             <CardContent>
                 <div className="space-y-3">
                     {fields.map(({ label, value }, index) => (

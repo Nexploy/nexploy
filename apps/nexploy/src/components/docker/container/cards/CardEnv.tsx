@@ -8,7 +8,6 @@ import { Button } from '@workspace/ui/components/button';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { EnvForm } from '@/components/docker/container/forms/EnvForm';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
-import { Badge } from '@workspace/ui/components/badge';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import { type EnvVar, EnvVarItem } from './EnvVarItem';
@@ -71,11 +70,7 @@ export function CardEnv() {
         <Card>
             <CardHeader>
                 <div className="flex items-center justify-between gap-3">
-                    <CardHeaderWithIcon as={'div'} icon={Key} title={t('title')}>
-                        <Badge variant={'secondary'}>
-                            {(container?.env.length ?? 0) + addedEnvVars.length}
-                        </Badge>
-                    </CardHeaderWithIcon>
+                    <CardHeaderWithIcon as={'div'} icon={Key} title={t('title')} />
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button
@@ -93,7 +88,11 @@ export function CardEnv() {
                 </div>
             </CardHeader>
             <CardContent className="px-0">
-                {hasEnvVars ? (
+                {!hasEnvVars ? (
+                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                        {t('noVariables')}
+                    </div>
+                ) : (
                     <ScrollAreaWithShadow
                         colorShadow="from-card via-card/50"
                         bottomShadow
@@ -131,10 +130,6 @@ export function CardEnv() {
                             ))}
                         </div>
                     </ScrollAreaWithShadow>
-                ) : (
-                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
-                        {t('noVariables')}
-                    </div>
                 )}
             </CardContent>
         </Card>

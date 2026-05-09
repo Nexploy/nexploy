@@ -17,6 +17,7 @@ import { ContainerPorts } from '@/components/docker/containers/create/ContainerP
 import { ContainerEnvVars } from '@/components/docker/containers/create/ContainerEnvVars';
 import { ContainerVolumes } from '@/components/docker/containers/create/ContainerVolumes';
 import { ContainerNetworks } from '@/components/docker/containers/create/ContainerNetworks';
+import { ContainerLabels } from '@/components/docker/containers/create/ContainerLabels.tsx';
 
 export default function CreateContainer() {
     const router = useRouter();
@@ -109,6 +110,7 @@ export default function CreateContainer() {
                             <ContainerEnvVars />
                             <ContainerVolumes />
                             <ContainerNetworks />
+                            <ContainerLabels />
                         </div>
                     </ScrollAreaWithShadow>
                 </form>

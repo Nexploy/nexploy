@@ -3,7 +3,6 @@ import { Cpu } from 'lucide-react';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { useTranslations } from 'next-intl';
-import { Badge } from '@workspace/ui/components/badge';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 
 export function CardExecuteId() {
@@ -20,9 +19,7 @@ export function CardExecuteId() {
 
     return (
         <Card>
-            <CardHeaderWithIcon icon={Cpu} title={t('title')}>
-                {!!execIds.length && <Badge variant="secondary">{execIds.length}</Badge>}
-            </CardHeaderWithIcon>
+            <CardHeaderWithIcon icon={Cpu} title={t('title')} />
             <CardContent>
                 {!execIds.length ? (
                     <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">

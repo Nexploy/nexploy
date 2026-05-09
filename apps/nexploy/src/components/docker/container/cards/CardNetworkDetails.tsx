@@ -1,6 +1,5 @@
-import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { Network, Plus } from 'lucide-react';
-import { Badge } from '@workspace/ui/components/badge';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
@@ -42,18 +41,17 @@ export function CardNetworkDetails() {
 
     return (
         <Card>
-            <CardHeader>
-                <div className="flex items-center justify-between gap-3">
-                    <CardHeaderWithIcon as="div" icon={Network} title={t('title')}>
-                        <Badge variant="secondary">{networkCount}</Badge>
-                    </CardHeaderWithIcon>
-                    <Button className="size-9 md:size-fit" icon={Plus} onClick={handleOpenDialog}>
-                        <span className="hidden md:flex">{t('add')}</span>
-                    </Button>
-                </div>
-            </CardHeader>
+            <CardHeaderWithIcon icon={Network} title={t('title')} className={'justify-between'}>
+                <Button className="size-9 md:size-fit" icon={Plus} onClick={handleOpenDialog}>
+                    <span className="hidden md:flex">{t('add')}</span>
+                </Button>
+            </CardHeaderWithIcon>
             <CardContent className="px-0">
-                {networkCount > 0 ? (
+                {!networkCount ? (
+                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                        {t('noNetworks')}
+                    </div>
+                ) : (
                     <ScrollAreaWithShadow
                         colorShadow="from-card via-card/50"
                         bottomShadow
@@ -86,10 +84,6 @@ export function CardNetworkDetails() {
                             ))}
                         </div>
                     </ScrollAreaWithShadow>
-                ) : (
-                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
-                        {t('noNetworks')}
-                    </div>
                 )}
             </CardContent>
         </Card>

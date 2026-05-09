@@ -1,8 +1,7 @@
-import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { Plus, Tags } from 'lucide-react';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import { Badge } from '@workspace/ui/components/badge';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { Button } from '@workspace/ui/components/button';
@@ -65,29 +64,28 @@ export function CardLabels() {
 
     return (
         <Card>
-            <CardHeader>
-                <div className="flex items-center justify-between gap-3">
-                    <CardHeaderWithIcon as="div" icon={Tags} title={t('title')}>
-                        <Badge variant="secondary">{labelCount}</Badge>
-                    </CardHeaderWithIcon>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                className="size-9 md:size-fit"
-                                icon={Plus}
-                                onClick={() => handleOpenDialog('add')}
-                            >
-                                <span className="hidden md:flex">{t('add')}</span>
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent className="flex xl:hidden">
-                            <span>{t('add')}</span>
-                        </TooltipContent>
-                    </Tooltip>
-                </div>
-            </CardHeader>
+            <CardHeaderWithIcon icon={Tags} title={t('title')} className={'justify-between'}>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button
+                            className="size-9 md:size-fit"
+                            icon={Plus}
+                            onClick={() => handleOpenDialog('add')}
+                        >
+                            <span className="hidden md:flex">{t('add')}</span>
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="flex xl:hidden">
+                        <span>{t('add')}</span>
+                    </TooltipContent>
+                </Tooltip>
+            </CardHeaderWithIcon>
             <CardContent className="px-0">
-                {labelCount > 0 ? (
+                {!labelCount ? (
+                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                        {t('noLabels')}
+                    </div>
+                ) : (
                     <ScrollAreaWithShadow
                         colorShadow="from-card via-card/50"
                         bottomShadow
@@ -125,10 +123,6 @@ export function CardLabels() {
                             ))}
                         </div>
                     </ScrollAreaWithShadow>
-                ) : (
-                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
-                        {t('noLabels')}
-                    </div>
                 )}
             </CardContent>
         </Card>

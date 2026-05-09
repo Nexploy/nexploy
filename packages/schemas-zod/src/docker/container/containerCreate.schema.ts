@@ -1,12 +1,17 @@
 import { z } from 'zod';
 
 const portMappingSchema = z.object({
-    hostPort: z.number().min(1).max(65535),
-    containerPort: z.number().min(1).max(65535),
+    hostPort: z.coerce.number().min(1).max(65535),
+    containerPort: z.coerce.number().min(1).max(65535),
     protocol: z.enum(['tcp', 'udp', 'sctp']).default('tcp'),
 });
 
 const envVarSchema = z.object({
+    key: z.string(),
+    value: z.string(),
+});
+
+const labelsSchema = z.object({
     key: z.string(),
     value: z.string(),
 });

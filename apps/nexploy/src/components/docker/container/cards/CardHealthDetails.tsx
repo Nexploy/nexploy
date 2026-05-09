@@ -22,9 +22,7 @@ export function CardHealthDetails() {
 
     return (
         <Card>
-            <CardHeaderWithIcon icon={Activity} title={t('title')}>
-                {!!logs.length && <Badge variant="secondary">{logs.length}</Badge>}
-            </CardHeaderWithIcon>
+            <CardHeaderWithIcon icon={Activity} title={t('title')} />
             <CardContent className="px-0">
                 {!logs.length ? (
                     <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">

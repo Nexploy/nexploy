@@ -163,6 +163,7 @@ app.post(
             envVars,
             volumes,
             networks,
+            labels,
             hostname,
             name,
             ports,
@@ -213,6 +214,9 @@ app.post(
                     },
                 ];
             });
+        }
+        if (labels.length > 0) {
+            createOptions.Labels = Object.fromEntries(labels.map((l) => [l.key, l.value]));
         }
         if (envVars.length > 0) {
             createOptions.Env = envVars.map((env) => `${env.key}=${env.value}`);

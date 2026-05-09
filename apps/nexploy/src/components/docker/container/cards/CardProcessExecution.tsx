@@ -1,10 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { Card, CardContent } from '@workspace/ui/components/card';
 import { Settings } from 'lucide-react';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useTranslations } from 'next-intl';
 import { Badge } from '@workspace/ui/components/badge.tsx';
+import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 
 export function CardProcessExecution() {
     const container = useContainerStore((state) => state.container);
@@ -36,14 +37,7 @@ export function CardProcessExecution() {
 
     return (
         <Card>
-            <CardHeader>
-                <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
-                        <Settings className="text-primary size-4" />
-                    </div>
-                    <CardTitle>{t('title')}</CardTitle>
-                </div>
-            </CardHeader>
+            <CardHeaderWithIcon icon={Settings} title={t('title')} />
             <CardContent className={'px-0'}>
                 {!container?.path ? (
                     <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
