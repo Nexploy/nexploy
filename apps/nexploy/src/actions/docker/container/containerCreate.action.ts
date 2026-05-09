@@ -11,7 +11,6 @@ export const onContainerCreateAction = authActionServer
     .inputSchema(containerCreateFormSchema)
     .action(async ({ parsedInput }) => {
         try {
-            console.log(parsedInput);
             return await kyDocker
                 .post(`container/create`, { json: parsedInput, timeout: false })
                 .json<{ id: string }>();

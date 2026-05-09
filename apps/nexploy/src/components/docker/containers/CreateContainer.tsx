@@ -19,11 +19,11 @@ import { ContainerVolumes } from '@/components/docker/containers/create/Containe
 import { ContainerNetworks } from '@/components/docker/containers/create/ContainerNetworks';
 import { ContainerLabels } from '@/components/docker/containers/create/ContainerLabels.tsx';
 
-export default function CreateContainer() {
+export default function CreateContainerPage() {
     const router = useRouter();
     const t = useTranslations('docker.createContainer');
     const searchParams = useSearchParams();
-    const imageFromUrl = searchParams.get('image') || '';
+    const imageFromUrl = searchParams.get('image');
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onContainerCreateAction,
@@ -32,15 +32,8 @@ export default function CreateContainer() {
             formProps: {
                 defaultValues: {
                     name: '',
-                    image: imageFromUrl,
-                    restart: 'unless-stopped' as const,
-                    networks: [],
+                    image: imageFromUrl ?? '',
                     hostname: '',
-                    autoRemove: false,
-                    privileged: false,
-                    ports: [],
-                    envVars: [],
-                    volumes: [],
                 },
             },
             actionProps: {

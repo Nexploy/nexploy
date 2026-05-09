@@ -72,7 +72,7 @@ export function NodeDetailPage({ nodeId }: NodeDetailPageProps) {
                     </div>
                     <div className="mt-5 flex shrink-0 gap-2">
                         <Button asChild variant="outline">
-                            <Link href="/swarm">
+                            <Link href="/swarm?tab=nodes">
                                 <ArrowLeft className="size-4" />
                                 {t('detail.back')}
                             </Link>

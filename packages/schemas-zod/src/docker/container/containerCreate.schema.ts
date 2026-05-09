@@ -33,6 +33,7 @@ export const containerCreateFormSchema = z.object({
     ports: z.array(portMappingSchema).default([]),
     envVars: z.array(envVarSchema).default([]),
     volumes: z.array(volumeMountSchema).default([]),
+    labels: z.array(labelsSchema).default([]),
 });
 
 export type ContainerCreateForm = z.infer<typeof containerCreateFormSchema>;

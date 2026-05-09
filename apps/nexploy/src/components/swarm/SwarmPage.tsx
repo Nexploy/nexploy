@@ -13,10 +13,18 @@ import { ServicesTable } from './ServicesTable';
 import { LeaveSwarmDialog } from './LeaveSwarmDialog';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
+
+const VALID_TABS = ['overview', 'nodes', 'services'] as const;
+type TabValue = (typeof VALID_TABS)[number];
 
 export function SwarmPage() {
     const { isSwarmActive, swarmInfo, nodes, services } = useSwarmStore();
     const t = useTranslations('swarm');
+    const [tab, setTab] = useQueryState(
+        'tab',
+        parseAsStringLiteral(VALID_TABS).withDefault('overview'),
+    );
 
     return (
         <div className="flex h-full flex-1 flex-col gap-5">
@@ -46,7 +54,7 @@ export function SwarmPage() {
             </div>
 
             {isSwarmActive ? (
-                <Tabs defaultValue="overview" className="flex flex-1 flex-col overflow-hidden">
+                <Tabs value={tab} onValueChange={(v) => setTab(v as TabValue)} className="flex flex-1 flex-col overflow-hidden">
                     <TabsList className="mx-5 w-fit">
                         <TabsTrigger value="overview" className="flex items-center gap-2">
                             <LayoutDashboard className="size-4" />

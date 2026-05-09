@@ -1,9 +1,6 @@
 'use client';
 
-import {
-    initializeEnvironmentStore,
-    useEnvironmentStore,
-} from '@/stores/environment/useEnvironmentStore';
+import { initializeEnvironmentStore, useEnvironmentStore, } from '@/stores/environment/useEnvironmentStore';
 import { useEffect } from 'react';
 import {
     DropdownMenu,
@@ -14,14 +11,8 @@ import {
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 import { Button } from '@workspace/ui/components/button';
-import {
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    useSidebar,
-} from '@workspace/ui/components/sidebar';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar, } from '@workspace/ui/components/sidebar';
 import { Check, ChevronsUpDown, MoreHorizontal, Pencil, Plus, Star, Trash } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { CreateEnvironmentForm } from '@/components/sidebar/environment/CreateEnvironmentForm';
 import { EditEnvironmentForm } from '@/components/sidebar/environment/EditEnvironmentForm';
 import { Environment } from 'generated/client';
@@ -125,21 +116,14 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
         <SidebarMenu className="w-fit">
             <SidebarMenuItem>
                 <DropdownMenu>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <DropdownMenuTrigger asChild>
-                                <SidebarMenuButton className="flex h-10 w-18 cursor-pointer justify-between gap-1 group-data-[state=collapsed]:justify-start group-data-[state=collapsed]:!bg-transparent group-data-[state=collapsed]:p-0!">
-                                    <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg font-semibold">
-                                        {currentEnvironment?.name?.charAt(0).toUpperCase() ?? '?'}
-                                    </div>
-                                    <ChevronsUpDown className="group-data-[state=collapsed]:hidden" />
-                                </SidebarMenuButton>
-                            </DropdownMenuTrigger>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                            {currentEnvironment?.name ?? t('environments')}
-                        </TooltipContent>
-                    </Tooltip>
+                    <DropdownMenuTrigger asChild>
+                        <SidebarMenuButton className="flex h-10 w-18 cursor-pointer justify-between gap-1 group-data-[state=collapsed]:justify-start group-data-[state=collapsed]:!bg-transparent group-data-[state=collapsed]:p-0!">
+                            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg font-semibold">
+                                {currentEnvironment?.name?.charAt(0).toUpperCase() ?? '?'}
+                            </div>
+                            <ChevronsUpDown className="group-data-[state=collapsed]:hidden" />
+                        </SidebarMenuButton>
+                    </DropdownMenuTrigger>
                     <DropdownMenuContent
                         className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
                         align="start"

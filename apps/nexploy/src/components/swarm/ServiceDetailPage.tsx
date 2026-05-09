@@ -85,7 +85,7 @@ export function ServiceDetailPage({ serviceId }: ServiceDetailPageProps) {
                     </div>
                     <div className="mt-5 flex shrink-0 gap-2">
                         <Button asChild variant="outline">
-                            <Link href="/swarm">
+                            <Link href="/swarm?tab=services">
                                 <ArrowLeft className="size-4" />
                                 {t('detail.back')}
                             </Link>
