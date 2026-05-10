@@ -104,6 +104,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                             </FormLabel>
                             <FormControl>
                                 <Input
+                                    {...field}
                                     type="number"
                                     placeholder="8080"
                                     min={1}
@@ -128,6 +129,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                             <FormLabel>{t('port.containerPort')}</FormLabel>
                             <FormControl>
                                 <Input
+                                    {...field}
                                     type="number"
                                     placeholder="80"
                                     min={1}

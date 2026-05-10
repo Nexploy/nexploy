@@ -1,11 +1,11 @@
 import { DropdownActionTool } from '@workspace/typescript-interface/commun';
 import { Scaling, Trash2 } from 'lucide-react';
-import { onRemoveServiceAction } from '@/actions/docker/swarm/removeService.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
 import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
 import { ScaleServiceForm } from '@/components/swarm/ScaleServiceForm';
+import { onRemoveServicesAction } from '@/actions/docker/swarm/removeServices.action.ts';
 
 interface UseServiceActionsProps {
     service: SwarmService;
@@ -46,7 +46,9 @@ export function useServiceActions({ service }: UseServiceActionsProps): Dropdown
                     description: t('removeServiceConfirmDescription', { name: service.name }),
                     onAction: async () => {
                         try {
-                            const result = await onRemoveServiceAction({ id: service.id });
+                            const result = await onRemoveServicesAction({
+                                serviceIds: [service.id],
+                            });
                             resolve(result);
                         } catch (error) {
                             reject(error);

@@ -3,6 +3,7 @@ import { docker } from '@/utils/dockerClient';
 import { route } from '@/utils/route';
 import {
     createServiceSchema,
+    removeServicesSchema,
     scaleServiceSchema,
     serviceIdParamSchema,
 } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
@@ -161,6 +162,17 @@ app.delete(
 
         const service = docker.getService(id);
         await service.remove();
+
+        return { success: true };
+    }),
+);
+
+app.delete(
+    '/',
+    route({ json: removeServicesSchema }, async (c) => {
+        const { serviceIds } = c.req.valid('json');
+
+        await Promise.all(serviceIds.map((id) => docker.getService(id).remove()));
 
         return { success: true };
     }),

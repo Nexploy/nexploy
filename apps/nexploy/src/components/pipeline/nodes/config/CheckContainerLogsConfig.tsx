@@ -176,7 +176,7 @@ export function CheckContainerLogsConfig() {
                                 {...field}
                                 type="number"
                                 min={1}
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
                             />
                         </FormControl>
                         <FormMessage className="text-xs" />

@@ -50,6 +50,7 @@ export function ScaleServiceForm({ service }: ScaleServiceFormProps) {
                                     {...field}
                                     type="number"
                                     min={0}
+                                    onChange={(e) => field.onChange(Number(e.target.value))}
                                     disabled={action.isPending}
                                 />
                             </FormControl>

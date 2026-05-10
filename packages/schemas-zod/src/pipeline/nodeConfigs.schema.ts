@@ -274,7 +274,7 @@ export const updateServiceConfigSchema = z.object({
 
 export const scaleServiceConfigSchema = z.object({
     serviceName: refable(z.string().min(1, 'Service name is required')).default(''),
-    replicas: z.number().min(0).default(1),
+    replicas: z.number().min(1).default(1),
 });
 
 const createServicePortSchema = z.object({
@@ -292,7 +292,7 @@ export const createServiceConfigSchema = z.object({
     serviceName: refable(z.string().min(1, 'Service name is required')).default(''),
     imageName: refable(z.string().min(1, 'Image name is required')).default(''),
     mode: z.enum(['replicated', 'global']).default('replicated'),
-    replicas: z.coerce.number().int().min(1).default(1),
+    replicas: z.number().min(1).default(1),
     portsSource: refable(z.array(createServicePortSchema)).optional(),
     ports: z.array(createServicePortSchema).default([]),
     envVarsSource: refable(z.array(createServiceEnvVarSchema)).optional(),

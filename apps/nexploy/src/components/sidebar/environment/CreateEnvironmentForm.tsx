@@ -201,9 +201,9 @@ export function CreateEnvironmentForm() {
                                         <FormLabel>{t('port')}</FormLabel>
                                         <FormControl>
                                             <Input
+                                                {...field}
                                                 type="number"
                                                 placeholder={t('portPlaceholder')}
-                                                {...field}
                                                 onChange={(e) =>
                                                     field.onChange(e.target.valueAsNumber)
                                                 }

@@ -77,7 +77,7 @@ export const createServiceFormSchema = z.object({
     name: z.string().min(1),
     image: z.string().min(1),
     mode: z.enum(['replicated', 'global']).default('replicated'),
-    replicas: z.coerce.number().int().min(1).default(1),
+    replicas: z.number().min(1).default(1),
     ports: z
         .array(
             z.object({
@@ -117,8 +117,6 @@ export const createServiceFormSchema = z.object({
     updateOrder: z.enum(['stop-first', 'start-first']).optional(),
 });
 
-export type CreateServiceForm = z.infer<typeof createServiceFormSchema>;
-
-export const removeServiceSchema = z.object({
-    force: z.boolean().optional().default(false),
+export const removeServicesSchema = z.object({
+    serviceIds: z.array(z.string()),
 });

@@ -8,14 +8,7 @@ import { toast } from 'sonner';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -272,11 +265,17 @@ export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
                                     <FormLabel>{t('atMinute')}</FormLabel>
                                     <FormControl>
                                         <Input
+                                            {...field}
                                             type="number"
                                             min={0}
                                             max={59}
-                                            {...field}
-                                            onChange={(e) => field.onChange(Number(e.target.value))}
+                                            onChange={(e) =>
+                                                field.onChange(
+                                                    isNaN(e.target.valueAsNumber)
+                                                        ? 0
+                                                        : e.target.valueAsNumber,
+                                                )
+                                            }
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -341,12 +340,16 @@ export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
                                             ) : (
                                                 <FormControl>
                                                     <Input
+                                                        {...field}
                                                         type="number"
                                                         min={0}
                                                         max={23}
-                                                        {...field}
                                                         onChange={(e) =>
-                                                            field.onChange(Number(e.target.value))
+                                                            field.onChange(
+                                                                isNaN(e.target.valueAsNumber)
+                                                                    ? 0
+                                                                    : e.target.valueAsNumber,
+                                                            )
                                                         }
                                                     />
                                                 </FormControl>
@@ -364,12 +367,16 @@ export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
                                         <FormLabel>{t('scheduledMinute')}</FormLabel>
                                         <FormControl>
                                             <Input
+                                                {...field}
                                                 type="number"
                                                 min={0}
                                                 max={59}
-                                                {...field}
                                                 onChange={(e) =>
-                                                    field.onChange(Number(e.target.value))
+                                                    field.onChange(
+                                                        isNaN(e.target.valueAsNumber)
+                                                            ? 0
+                                                            : e.target.valueAsNumber,
+                                                    )
                                                 }
                                             />
                                         </FormControl>

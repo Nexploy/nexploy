@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
+import { Checkbox } from '@workspace/ui/components/checkbox';
 import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
 import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
 import { ServiceDropdownActions } from './ServiceDropdownActions';
@@ -34,6 +35,33 @@ export function getColumnsSwarmServices(
     getRunningTasksCount: (serviceId: string) => number,
 ): ColumnDef<SwarmService>[] {
     return [
+        {
+            id: 'select',
+            size: 28,
+            header: ({ table }) => {
+                const rows = table.getRowModel().rows;
+                const allSelected = rows.length > 0 && rows.every((row) => row.getIsSelected());
+                const someSelected = rows.some((row) => row.getIsSelected());
+                return (
+                    <Checkbox
+                        checked={allSelected || (someSelected && 'indeterminate')}
+                        onCheckedChange={(value) => {
+                            rows.forEach((row) => row.toggleSelected(!!value));
+                        }}
+                        aria-label="Select all"
+                    />
+                );
+            },
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label="Select row"
+                />
+            ),
+            enableSorting: false,
+            enableHiding: false,
+        },
         {
             accessorKey: 'name',
             header: ({ column }) => (

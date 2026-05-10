@@ -17,11 +17,3 @@ export const containerPortSchema = z
     });
 
 export type ContainerPortForm = z.input<typeof containerPortSchema>;
-
-export const currentPortSchema = z.object({
-    currentContainerPort: z.number().int().min(1).max(65535).optional().nullable(),
-    currentHostPort: z.number().int().positive().min(1).max(65535),
-    currentProtocol: z.enum(['tcp', 'udp', 'sctp']).optional(),
-});
-
-export const bindCurrentPort: [currentPort: typeof currentPortSchema] = [currentPortSchema];

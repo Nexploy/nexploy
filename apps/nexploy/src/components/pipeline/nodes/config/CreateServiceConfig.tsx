@@ -153,7 +153,13 @@ export function CreateServiceConfig() {
                                     {...field}
                                     type="number"
                                     min={1}
-                                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                                    onChange={(e) =>
+                                        field.onChange(
+                                            isNaN(e.target.valueAsNumber)
+                                                ? 1
+                                                : e.target.valueAsNumber,
+                                        )
+                                    }
                                 />
                             </FormControl>
                             <FormMessage className="text-xs" />
@@ -208,7 +214,6 @@ export function CreateServiceConfig() {
                                                     {...field}
                                                     type="number"
                                                     placeholder={tDocker('hostPort')}
-                                                    onChange={(e) => field.onChange(e.target.value)}
                                                 />
                                             </FormControl>
                                             <FormMessage className="text-xs" />

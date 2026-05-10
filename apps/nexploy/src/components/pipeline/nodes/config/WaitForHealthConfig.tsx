@@ -45,8 +45,11 @@ export function WaitForHealthConfig() {
                                 {...field}
                                 type="number"
                                 min={1}
-                                onChange={(e) => field.onChange(Number(e.target.value))}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
+                                onChange={(e) =>
+                                    field.onChange(
+                                        isNaN(e.target.valueAsNumber) ? 1 : e.target.valueAsNumber,
+                                    )
+                                }
                             />
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -64,8 +67,11 @@ export function WaitForHealthConfig() {
                                 {...field}
                                 type="number"
                                 min={1}
-                                onChange={(e) => field.onChange(Number(e.target.value))}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
+                                onChange={(e) =>
+                                    field.onChange(
+                                        isNaN(e.target.valueAsNumber) ? 1 : e.target.valueAsNumber,
+                                    )
+                                }
                             />
                         </FormControl>
                         <FormMessage className="text-xs" />

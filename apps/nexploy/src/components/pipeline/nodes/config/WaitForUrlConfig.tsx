@@ -78,7 +78,7 @@ export function WaitForUrlConfig() {
                             <Input
                                 {...field}
                                 type="number"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
                                 className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>
@@ -97,7 +97,7 @@ export function WaitForUrlConfig() {
                                 {...field}
                                 type="number"
                                 min={1}
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
                                 className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>
@@ -116,7 +116,7 @@ export function WaitForUrlConfig() {
                                 {...field}
                                 type="number"
                                 min={1}
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
                                 className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>

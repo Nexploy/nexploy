@@ -7,6 +7,7 @@ import {
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
+    RowSelectionState,
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
@@ -44,6 +45,7 @@ import { useSwarmStore } from '@/stores/docker/useSwarmStore';
 import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
 import { getColumnsSwarmServices } from './ColumnsSwarmServices';
+import { ServiceTableActions } from './ServiceTableActions';
 
 const globalFilterFn: FilterFn<SwarmService> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -67,6 +69,7 @@ export function ServicesTable() {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState('');
     const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
+    const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
     const getRunningTasksCount = useMemo(
         () => (serviceId: string) =>
@@ -81,13 +84,17 @@ export function ServicesTable() {
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
         onGlobalFilterChange: setGlobalFilter,
+        onRowSelectionChange: setRowSelection,
         globalFilterFn,
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         initialState: { pagination: { pageSize: PAGE_SIZE_DEFAULT } },
-        state: { sorting, globalFilter },
+        state: { sorting, globalFilter, rowSelection },
     });
+
+    const selectedIds = Object.keys(rowSelection);
+    const selectedServices = services.filter((s) => selectedIds.includes(s.id));
 
     const isLoading = services.length === 0 && !lastUpdate;
     const isEmpty = services.length === 0 && !!lastUpdate;
@@ -112,12 +119,16 @@ export function ServicesTable() {
 
     return (
         <div className="mx-5 space-y-3">
-            <div className="pt-1">
+            <div className="flex items-center justify-between gap-3 pt-1">
                 <Input
                     className="w-1/5 shadow-xs"
                     placeholder={tCommon('searchPlaceholder')}
                     value={globalFilter}
                     onChange={(e) => setGlobalFilter(e.target.value)}
+                />
+                <ServiceTableActions
+                    selectedServices={selectedServices}
+                    onResetSelection={() => table.resetRowSelection()}
                 />
             </div>
 
@@ -173,7 +184,7 @@ export function ServicesTable() {
                         {!isLoading &&
                             !noMatch &&
                             table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id} className="h-12">
+                                <TableRow key={row.id} className="h-12" data-state={row.getIsSelected() && 'selected'}>
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id} className="overflow-hidden">
                                             {flexRender(

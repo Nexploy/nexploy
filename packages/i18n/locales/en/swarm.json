@@ -107,6 +107,8 @@
     "serviceRemovedSuccess": "Service {name} removed",
     "removeServiceConfirmTitle": "Remove Service",
     "removeServiceConfirmDescription": "Are you sure you want to remove service {name}? All tasks will be stopped and removed.",
+    "removeServices": "Remove Services",
+    "confirmRemoveServices": "Are you sure you want to remove {count} service(s)? All their tasks will be stopped and removed.",
     "serviceActions": "Service Actions",
     "updateService": "Update Image",
     "tasks": "Tasks",
