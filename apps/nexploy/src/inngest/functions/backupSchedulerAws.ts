@@ -2,8 +2,7 @@ import { inngest } from '@/inngest/client';
 import { getNextRunAt, markScheduleRan } from '@/services/backupSchedule.service';
 import { getAwsCredentials } from '@/services/aws.service';
 import { kyDocker, KyDockerOptions } from '@/lib/api/kyDocker';
-import { kyS3 } from '@/lib/api/kyS3';
-import { tokenAwsStorage } from '@/lib/storage/token-aws-storage';
+import { createS3Client, putS3Object } from '@/lib/aws/s3';
 
 export const backupSchedulerAwsFunction = inngest.createFunction(
     {
@@ -39,17 +38,8 @@ export const backupSchedulerAwsFunction = inngest.createFunction(
                 .arrayBuffer();
 
             const objectKey = `${volumeName}-${Date.now()}.tar.gz`;
-            const url = `https://${bucket}.s3.${creds.region}.amazonaws.com/${objectKey}`;
-
-            await tokenAwsStorage.run(creds, () =>
-                kyS3.put(url, {
-                    body: new Uint8Array(buffer),
-                    headers: {
-                        'Content-Type': 'application/gzip',
-                        'Content-Length': String(buffer.byteLength),
-                    },
-                }),
-            );
+            const s3 = createS3Client(creds);
+            await putS3Object(s3, bucket, objectKey, new Uint8Array(buffer), 'application/gzip');
 
             await markScheduleRan(id);
 

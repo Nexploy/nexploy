@@ -7,8 +7,13 @@ export const fetcherApi = async <T>({ url, disableToast }: FetcherApiOptions): P
     const res = await fetch(url);
 
     if (!res.ok) {
-        if (!disableToast) toast.error(clientT('toasts.fetchError'));
-        throw new Error(clientT('toasts.fetchError'));
+        let errorMessage = clientT('toasts.fetchError');
+        try {
+            const body = await res.json();
+            if (body?.error) errorMessage = body.error;
+        } catch {}
+        if (!disableToast) toast.error(errorMessage);
+        throw new Error(errorMessage);
     }
 
     return (await res.json()) as Promise<T>;

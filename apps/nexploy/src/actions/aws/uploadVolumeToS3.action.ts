@@ -4,8 +4,7 @@ import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { uploadVolumeToS3Schema } from '@workspace/schemas-zod/aws/aws.schema';
 import { getAwsCredentials } from '@/services/aws.service';
 import { kyDocker } from '@/lib/api/kyDocker';
-import { kyS3 } from '@/lib/api/kyS3';
-import { tokenAwsStorage } from '@/lib/storage/token-aws-storage';
+import { createS3Client, putS3Object } from '@/lib/aws/s3';
 import { setToastServer } from '@/lib/toastServer';
 
 export const uploadVolumeToS3Action = authActionServer
@@ -20,17 +19,8 @@ export const uploadVolumeToS3Action = authActionServer
                 .arrayBuffer();
 
             const objectKey = `${volumeName}-${Date.now()}.tar.gz`;
-            const url = `https://${bucket}.s3.${creds.region}.amazonaws.com/${objectKey}`;
-
-            await tokenAwsStorage.run(creds, () =>
-                kyS3.put(url, {
-                    body: new Uint8Array(buffer),
-                    headers: {
-                        'Content-Type': 'application/gzip',
-                        'Content-Length': String(buffer.byteLength),
-                    },
-                }),
-            );
+            const s3 = createS3Client(creds);
+            await putS3Object(s3, bucket, objectKey, new Uint8Array(buffer), 'application/gzip');
             return { objectKey };
         } catch (error: any) {
             if (error instanceof Error) {

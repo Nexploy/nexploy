@@ -1,15 +1,13 @@
-import { Database, Download, HardDrive } from 'lucide-react';
+import { Database, HardDrive } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { getTranslations } from 'next-intl/server';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
-import { Button } from '@workspace/ui/components/button';
 import { formatBytes } from '@/utils/formatBytes';
 import { getAllAwsAccounts } from '@/services/aws.service';
 import { getBackupSchedulesForVolumes } from '@/services/backupSchedule.service';
 import { VolumeS3Button } from '@/components/admin/backups/VolumeS3Button';
 import { SchedulesAccordion } from '@/components/admin/backups/SchedulesAccordion';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 export default async function BackupsPage() {
     const [t, volumes, awsAccounts] = await Promise.all([
@@ -75,19 +73,6 @@ export default async function BackupsPage() {
                                             volumeName={volume.name}
                                             awsAccounts={awsAccounts}
                                         />
-                                        <Tooltip>
-                                            <TooltipTrigger>
-                                                <Button variant="outline" size="icon" asChild>
-                                                    <a
-                                                        href={`/api/backup/download?volume=${encodeURIComponent(volume.name)}`}
-                                                        download
-                                                    >
-                                                        <Download className="size-4" />
-                                                    </a>
-                                                </Button>
-                                            </TooltipTrigger>
-                                            <TooltipContent>{t('downloadBackup')}</TooltipContent>
-                                        </Tooltip>
                                     </div>
                                 </div>
                             ))}

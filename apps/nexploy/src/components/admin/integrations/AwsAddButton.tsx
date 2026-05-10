@@ -16,7 +16,6 @@ export function AwsAddButton() {
             closeOnBackground: true,
             title: t('addTitle'),
             description: t('addDescription'),
-            props: { className: 'sm:max-w-[425px]' },
             content: <AwsAddForm />,
         });
     };

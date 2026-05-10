@@ -113,12 +113,7 @@ export function AwsAddForm() {
                 />
 
                 <DialogFooter>
-                    <Button
-                        type="submit"
-                        disabled={isSubmitting}
-                        isLoading={isSubmitting}
-                        className="w-full"
-                    >
+                    <Button type="submit" disabled={isSubmitting} isLoading={isSubmitting}>
                         {t('add')}
                     </Button>
                 </DialogFooter>

@@ -1,4 +1,8 @@
-import { extractGitHubRepo, updateGitProviderToken, getGitProviderToken } from '@/services/git/git.service';
+import {
+    extractGitHubRepo,
+    getGitProviderToken,
+    updateGitProviderToken,
+} from '@/services/git/git.service';
 import { GitLabCommit, GitProviderToken } from '@workspace/typescript-interface/git/git';
 import { kyGitlab } from '@/lib/api/kyGitlab';
 import dayjs from 'dayjs';
@@ -25,12 +29,8 @@ export async function getValidToken(
                 return await refreshGitLabToken(token, userId, gitAccountId);
             } else if (provider === 'github') {
                 return await refreshGitHubToken(token, userId, gitAccountId);
-            } else {
-                throw new Error(`Unknown provider: ${provider}`);
             }
         } catch {
-            // Rotating refresh tokens can be consumed by a concurrent process (race condition).
-            // Re-read from DB — if another process already refreshed successfully, use that token.
             const freshToken = await getGitProviderToken(provider, {
                 gitAccountId,
                 requestedUserId: userId,

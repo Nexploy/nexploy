@@ -82,7 +82,8 @@
         "deleteConfirmDescription": "Are you sure you want to remove \"{name}\"? This action cannot be undone.",
         "deleteConfirmAction": "Remove",
         "configured": "Configured",
-        "instanceCount": "{count, plural, =0 {No accounts} one {# account} other {# accounts}}"
+        "instanceCount": "{count, plural, =0 {No accounts} one {# account} other {# accounts}}",
+        "verificationFailed": "Invalid AWS credentials. Check your Access Key ID, Secret Access Key, and region."
     },
     "cloudflare": {
         "title": "Cloudflare",

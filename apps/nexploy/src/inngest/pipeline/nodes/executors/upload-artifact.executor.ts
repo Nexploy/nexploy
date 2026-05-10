@@ -8,8 +8,7 @@ import {
 } from '@/types/pipeline.type';
 import { uploadArtifactConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { safeResolvePath } from '@workspace/shared/pathSafety';
-import { kyS3 } from '@/lib/api/kyS3';
-import { tokenAwsStorage } from '@/lib/storage/token-aws-storage';
+import { createS3Client, putS3Object } from '@/lib/aws/s3';
 import { z } from 'zod';
 
 export class UploadArtifactExecutor
@@ -36,15 +35,11 @@ export class UploadArtifactExecutor
 
         const credentials = { accessKeyId: accessKey, secretAccessKey: secretKey, region };
         const protocol = useSSL ? 'https' : 'http';
-        const host = endpoint.replace(/^https?:\/\//, '');
+        const endpointUrl = `${protocol}://${endpoint.replace(/^https?:\/\//, '')}`;
+        const s3 = createS3Client(credentials, endpointUrl);
 
         const uploadS3 = (objectKey: string, fileBuffer: Buffer) =>
-            tokenAwsStorage.run(credentials, () =>
-                kyS3.put(`${protocol}://${host}/${bucket}/${objectKey}`, {
-                    body: new Uint8Array(fileBuffer),
-                    headers: { 'Content-Type': 'application/octet-stream' },
-                }),
-            );
+            putS3Object(s3, bucket, objectKey, fileBuffer, 'application/octet-stream');
 
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         const base = workDir ?? process.cwd();
