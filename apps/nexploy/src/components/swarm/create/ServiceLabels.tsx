@@ -14,7 +14,7 @@ export function ServiceLabels() {
     const form = useFormContext();
     const { fields, append, remove } = useFieldArray({
         control: form.control,
-        name: 'labelsList',
+        name: 'labels',
     });
 
     return (
@@ -46,7 +46,7 @@ export function ServiceLabels() {
                             <div key={field.id} className="flex items-center gap-3">
                                 <FormField
                                     control={form.control}
-                                    name={`labelsList.${index}.key`}
+                                    name={`labels.${index}.key`}
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
@@ -63,7 +63,7 @@ export function ServiceLabels() {
                                 <span className="text-muted-foreground">=</span>
                                 <FormField
                                     control={form.control}
-                                    name={`labelsList.${index}.value`}
+                                    name={`labels.${index}.value`}
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>

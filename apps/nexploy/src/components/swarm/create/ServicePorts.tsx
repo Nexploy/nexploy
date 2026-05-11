@@ -37,8 +37,8 @@ export function ServicePorts() {
                     variant="outline"
                     onClick={() =>
                         append({
-                            published: 80,
-                            target: 80,
+                            published: '',
+                            target: '',
                             protocol: 'tcp',
                             publishMode: 'ingress',
                         })
@@ -67,10 +67,11 @@ export function ServicePorts() {
                                                     {...field}
                                                     type="number"
                                                     placeholder={t('publishedPort')}
-                                                    className="font-mono"
                                                     onChange={(e) =>
                                                         field.onChange(
-                                                            parseInt(e.target.value, 10) || 0,
+                                                            e.target.value === ''
+                                                                ? ''
+                                                                : Number(e.target.value),
                                                         )
                                                     }
                                                 />
@@ -90,10 +91,11 @@ export function ServicePorts() {
                                                     {...field}
                                                     type="number"
                                                     placeholder={t('targetPort')}
-                                                    className="font-mono"
                                                     onChange={(e) =>
                                                         field.onChange(
-                                                            parseInt(e.target.value, 10) || 0,
+                                                            e.target.value === ''
+                                                                ? ''
+                                                                : Number(e.target.value),
                                                         )
                                                     }
                                                 />

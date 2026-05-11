@@ -26,7 +26,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
-import { useImagesStore } from '../../../../stores/docker/useImagesStore.ts';
+import { useImagesStore } from '@/stores/docker/useImagesStore.ts';
 import { useMemo } from 'react';
 
 export function ContainerBasicConfig() {

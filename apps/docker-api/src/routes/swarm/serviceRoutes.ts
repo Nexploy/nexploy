@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
 import { route } from '@/utils/route';
 import {
-    createServiceSchema,
+    createServiceFormSchema,
     removeServicesSchema,
     scaleServiceSchema,
     serviceIdParamSchema,
@@ -10,43 +10,93 @@ import {
 
 const app = new Hono();
 
+function parseDelayToNanoseconds(delay: string): number {
+    const match = delay.trim().match(/^(\d+(?:\.\d+)?)(ns|us|ms|s|m|h)$/);
+    if (!match) return 0;
+    const value = parseFloat(match[1]!);
+    const unit = match[2]!;
+    const multipliers: Record<string, number> = {
+        ns: 1,
+        us: 1_000,
+        ms: 1_000_000,
+        s: 1_000_000_000,
+        m: 60_000_000_000,
+        h: 3_600_000_000_000,
+    };
+    return Math.round(value * (multipliers[unit] ?? 0));
+}
+
 app.post(
     '/',
-    route({ json: createServiceSchema }, async (c) => {
+    route({ json: createServiceFormSchema }, async (c) => {
         const {
             name,
             image,
             mode,
             replicas,
             ports,
-            env,
+            envVars,
             networks,
-            constraints,
             labels,
+            constraints,
             command,
             workDir,
             user,
             mounts,
-            resourceLimits,
-            resourceReservations,
-            restartPolicy,
-            updateConfig,
+            cpuLimit,
+            memoryLimit,
+            cpuReservation,
+            memoryReservation,
+            restartCondition,
+            restartMaxAttempts,
+            updateParallelism,
+            updateDelay,
+            updateFailureAction,
+            updateOrder,
         } = c.req.valid('json');
+
+        const env = envVars.filter((e) => e.key).map((e) => `${e.key}=${e.value}`);
+        const labelsRecord = labels.length
+            ? Object.fromEntries(labels.map((l) => [l.key, l.value]))
+            : undefined;
+
+        const resourceLimits =
+            cpuLimit || memoryLimit
+                ? {
+                      nanoCPUs: cpuLimit ? Math.round(parseFloat(cpuLimit) * 1e9) : undefined,
+                      memoryBytes: memoryLimit
+                          ? parseInt(memoryLimit, 10) * 1024 * 1024
+                          : undefined,
+                  }
+                : undefined;
+
+        const resourceReservations =
+            cpuReservation || memoryReservation
+                ? {
+                      nanoCPUs: cpuReservation
+                          ? Math.round(parseFloat(cpuReservation) * 1e9)
+                          : undefined,
+                      memoryBytes: memoryReservation
+                          ? parseInt(memoryReservation, 10) * 1024 * 1024
+                          : undefined,
+                  }
+                : undefined;
 
         const containerSpec: Record<string, unknown> = {
             Image: image,
-            ...(env && env.length > 0 ? { Env: env } : {}),
-            ...(command && command.length > 0 ? { Command: command } : {}),
+            ...(env.length > 0 ? { Env: env } : {}),
+            ...(command?.trim() ? { Command: command.trim().split(/\s+/) } : {}),
             ...(workDir ? { Dir: workDir } : {}),
             ...(user ? { User: user } : {}),
         };
 
-        if (mounts && mounts.length > 0) {
-            containerSpec['Mounts'] = mounts.map((m) => ({
-                Type: m.type ?? 'bind',
+        const filteredMounts = mounts.filter((m) => m.target);
+        if (filteredMounts.length > 0) {
+            containerSpec['Mounts'] = filteredMounts.map((m) => ({
+                Type: m.type,
                 Source: m.source ?? '',
                 Target: m.target,
-                ReadOnly: m.readOnly ?? false,
+                ReadOnly: m.readOnly,
             }));
         }
 
@@ -77,51 +127,52 @@ app.post(
             taskTemplate['Resources'] = resources;
         }
 
-        if (restartPolicy?.condition) {
+        if (restartCondition) {
             taskTemplate['RestartPolicy'] = {
-                Condition: restartPolicy.condition,
-                ...(restartPolicy.maxAttempts !== undefined
-                    ? { MaxAttempts: restartPolicy.maxAttempts }
+                Condition: restartCondition,
+                ...(restartMaxAttempts !== undefined
+                    ? { MaxAttempts: restartMaxAttempts }
                     : {}),
             };
         }
 
-        if (constraints && constraints.length > 0) {
-            taskTemplate['Placement'] = { Constraints: constraints };
+        const filteredConstraints = constraints.filter(Boolean);
+        if (filteredConstraints.length > 0) {
+            taskTemplate['Placement'] = { Constraints: filteredConstraints };
         }
+
+        const hasUpdateConfig =
+            updateParallelism !== undefined || updateDelay || updateFailureAction || updateOrder;
 
         const serviceSpec: Record<string, unknown> = {
             Name: name,
             TaskTemplate: taskTemplate,
-            Mode: mode === 'global' ? { Global: {} } : { Replicated: { Replicas: replicas ?? 1 } },
-            ...(labels ? { Labels: labels } : {}),
+            Mode: mode === 'global' ? { Global: {} } : { Replicated: { Replicas: replicas } },
+            ...(labelsRecord ? { Labels: labelsRecord } : {}),
         };
 
-        if (networks && networks.length > 0) {
-            serviceSpec['Networks'] = networks.map((n) => ({ Target: n }));
+        const filteredNetworks = networks.filter(Boolean);
+        if (filteredNetworks.length > 0) {
+            serviceSpec['Networks'] = filteredNetworks.map((n) => ({ Target: n }));
         }
 
-        if (ports && ports.length > 0) {
+        if (ports.length > 0) {
             serviceSpec['EndpointSpec'] = {
                 Ports: ports.map((p) => ({
-                    Protocol: p.protocol ?? 'tcp',
+                    Protocol: p.protocol,
                     TargetPort: p.target,
                     PublishedPort: p.published,
-                    PublishMode: p.publishMode ?? 'ingress',
+                    PublishMode: p.publishMode,
                 })),
             };
         }
 
-        if (updateConfig) {
+        if (hasUpdateConfig) {
             serviceSpec['UpdateConfig'] = {
-                ...(updateConfig.parallelism !== undefined
-                    ? { Parallelism: updateConfig.parallelism }
-                    : {}),
-                ...(updateConfig.delay !== undefined ? { Delay: updateConfig.delay } : {}),
-                ...(updateConfig.failureAction
-                    ? { FailureAction: updateConfig.failureAction }
-                    : {}),
-                ...(updateConfig.order ? { Order: updateConfig.order } : {}),
+                ...(updateParallelism !== undefined ? { Parallelism: updateParallelism } : {}),
+                ...(updateDelay ? { Delay: parseDelayToNanoseconds(updateDelay) } : {}),
+                ...(updateFailureAction ? { FailureAction: updateFailureAction } : {}),
+                ...(updateOrder ? { Order: updateOrder } : {}),
             };
         }
 

@@ -38,7 +38,7 @@ export default function CreateService() {
                     ports: [],
                     envVars: [],
                     networks: [],
-                    labelsList: [],
+                    labels: [],
                     constraints: [],
                     command: '',
                     workDir: '',
