@@ -521,20 +521,6 @@
         "removeContainers": "Remove Containers",
         "confirmRemoveContainers": "Are you sure you want to remove {count} container(s)?"
     },
-    "advancedConfig": {
-        "title": "Advanced Configuration",
-        "description": "Additional options and metadata",
-        "driverOptions": "Driver Options",
-        "addOption": "Add option",
-        "optionsAdded": "Options added:",
-        "optionKeyPlaceholder": "Key (e.g., com.docker.network.bridge.name)",
-        "optionValuePlaceholder": "Value (e.g., docker0)",
-        "optionsDescription": "Driver-specific options. Examples:",
-        "labels": "Labels",
-        "addLabel": "Add label",
-        "labelsAdded": "Labels added:",
-        "labelsDescription": "Metadata to organize and identify the network. Examples:"
-    },
     "forms": {
         "key": "Key",
         "value": "Value",
@@ -743,15 +729,13 @@
             "n8n": "Workflow automation platform"
         }
     },
-    "networkScope": {
-        "scope": "Scope",
-        "selectScope": "Select a scope",
-        "scopeDescription": "The scope of the network (local, global, or swarm)"
-    },
     "createNetworkPage": {
         "driver": "Driver",
         "selectDriver": "Select a driver",
         "driverDescription": "The type of network to create",
+        "scope": "Scope",
+        "selectScope": "Select a scope",
+        "scopeDescription": "The scope of the network (local, global, or swarm)",
         "title": "New Network",
         "description": "Create a new Docker network",
         "back": "Back",
@@ -807,7 +791,21 @@
             "local": "Local",
             "global": "Global",
             "swarm": "Swarm"
-        }
+        },
+        "driverOptions": "Driver Options",
+        "driverOptionsCardDescription": "Configure driver-specific options for this network",
+        "addOption": "Add option",
+        "noOptionsConfigured": "No options configured",
+        "optionKeyPlaceholder": "Key (e.g., com.docker.network.bridge.name)",
+        "optionValuePlaceholder": "Value (e.g., docker0)",
+        "labels": "Labels",
+        "labelsCardDescription": "Add metadata to organize and identify this network",
+        "addLabel": "Add label",
+        "noLabelsConfigured": "No labels configured",
+        "labelKeyPlaceholder": "Key (e.g., env)",
+        "labelValuePlaceholder": "Value (e.g., production)",
+        "addIpConfig": "Add IP configuration",
+        "noIpConfigurationsConfigured": "No IP configurations"
     },
     "createVolumePage": {
         "title": "New Volume",

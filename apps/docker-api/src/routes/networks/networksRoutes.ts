@@ -29,7 +29,15 @@ app.get(
 app.post(
     '/create',
     route({ json: networkCreateSchema }, async (c) => {
-        const { name, driver = 'bridge', ...options } = c.req.valid('json');
+        const { name, driver = 'bridge', options: rawOptions, labels: rawLabels, ...rest } =
+            c.req.valid('json');
+
+        const options = rawOptions.length
+            ? Object.fromEntries(rawOptions.map((o) => [o.key, o.value]))
+            : undefined;
+        const labels = rawLabels.length
+            ? Object.fromEntries(rawLabels.map((l) => [l.key, l.value]))
+            : undefined;
 
         try {
             const info = (await docker.getNetwork(name).inspect()) as { Id: string };
@@ -38,7 +46,13 @@ app.post(
             if (err.statusCode !== 404) throw err;
         }
 
-        const network = await docker.createNetwork({ Name: name, Driver: driver, ...options });
+        const network = await docker.createNetwork({
+            Name: name,
+            Driver: driver,
+            ...rest,
+            Options: options,
+            Labels: labels,
+        });
         return { id: network.id, name, alreadyExisted: false };
     }),
 );

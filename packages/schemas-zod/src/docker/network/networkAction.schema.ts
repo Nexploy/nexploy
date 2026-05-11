@@ -1,19 +1,25 @@
 import { z } from 'zod';
 
+const networkOptionSchema = z.object({
+    key: z.string().min(1, { error: 'Key is required' }),
+    value: z.string().min(1, { error: 'Value is required' }),
+});
+
+const networkLabelSchema = z.object({
+    key: z.string().min(1, { error: 'Key is required' }),
+    value: z.string().min(1, { error: 'Value is required' }),
+});
+
+const ipamConfigItemSchema = z.object({
+    subnet: z.string().optional(),
+    ipRange: z.string().optional(),
+    gateway: z.string().optional(),
+});
+
 const IPAMSchema = z
     .object({
         driver: z.string().optional(),
-        config: z
-            .array(
-                z.object({
-                    subnet: z.string().optional(),
-                    ipRange: z.string().optional(),
-                    gateway: z.string().optional(),
-                    auxAddress: z.record(z.string(), z.string()).optional(),
-                }),
-            )
-            .optional(),
-        options: z.record(z.string(), z.string()).optional(),
+        config: z.array(ipamConfigItemSchema).default([]),
     })
     .optional();
 
@@ -34,8 +40,8 @@ export const networkCreateSchema = z.object({
             network: z.string().optional(),
         })
         .optional(),
-    options: z.record(z.string(), z.string()).default({}).optional(),
-    labels: z.record(z.string(), z.string()).default({}).optional(),
+    options: z.array(networkOptionSchema).default([]),
+    labels: z.array(networkLabelSchema).default([]),
 });
 
 export type NetworkCreateForm = z.infer<typeof networkCreateSchema>;

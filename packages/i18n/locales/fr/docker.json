@@ -521,20 +521,6 @@
         "removeContainers": "Supprimer les conteneurs",
         "confirmRemoveContainers": "Êtes-vous sûr de vouloir supprimer {count} conteneur(s) ?"
     },
-    "advancedConfig": {
-        "title": "Configuration avancée",
-        "description": "Options et métadonnées supplémentaires",
-        "driverOptions": "Options du driver",
-        "addOption": "Ajouter option",
-        "optionsAdded": "Options ajoutées :",
-        "optionKeyPlaceholder": "Clé (ex: com.docker.network.bridge.name)",
-        "optionValuePlaceholder": "Valeur (ex: docker0)",
-        "optionsDescription": "Options spécifiques au driver. Exemples :",
-        "labels": "Labels",
-        "addLabel": "Ajouter label",
-        "labelsAdded": "Labels ajoutés :",
-        "labelsDescription": "Métadonnées pour organiser et identifier le réseau. Exemples :"
-    },
     "forms": {
         "key": "Clé",
         "value": "Valeur",
@@ -743,15 +729,13 @@
             "n8n": "Plateforme d'automatisation de workflows"
         }
     },
-    "networkScope": {
-        "scope": "Scope",
-        "selectScope": "Sélectionner un scope",
-        "scopeDescription": "La portée du réseau (local, global ou swarm)"
-    },
     "createNetworkPage": {
         "driver": "Driver",
         "selectDriver": "Sélectionner un driver",
         "driverDescription": "Le type de réseau à créer",
+        "scope": "Scope",
+        "selectScope": "Sélectionner un scope",
+        "scopeDescription": "La portée du réseau (local, global ou swarm)",
         "title": "Nouveau réseau",
         "description": "Créer un nouveau réseau Docker",
         "back": "Retour",
@@ -807,7 +791,21 @@
             "local": "Local",
             "global": "Global",
             "swarm": "Swarm"
-        }
+        },
+        "driverOptions": "Options du driver",
+        "driverOptionsCardDescription": "Configurez les options spécifiques au driver pour ce réseau",
+        "addOption": "Ajouter une option",
+        "noOptionsConfigured": "Aucune option configurée",
+        "optionKeyPlaceholder": "Clé (ex: com.docker.network.bridge.name)",
+        "optionValuePlaceholder": "Valeur (ex: docker0)",
+        "labels": "Labels",
+        "labelsCardDescription": "Ajoutez des métadonnées pour organiser et identifier ce réseau",
+        "addLabel": "Ajouter un label",
+        "noLabelsConfigured": "Aucun label configuré",
+        "labelKeyPlaceholder": "Clé (ex: env)",
+        "labelValuePlaceholder": "Valeur (ex: production)",
+        "addIpConfig": "Ajouter une configuration IP",
+        "noIpConfigurationsConfigured": "Aucune configuration IP"
     },
     "createVolumePage": {
         "title": "Nouveau volume",
