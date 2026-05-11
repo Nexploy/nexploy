@@ -14,10 +14,21 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
-import { VolumeDriverSelect } from '@/components/docker/volume/VolumeDriverSelect';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@workspace/ui/components/select.tsx';
+import { VOLUME_DRIVERS } from '@/lib/constants/docker.ts';
 
 export function VolumeBasicConfig() {
     const t = useTranslations('docker.createVolumePage');
+    const tDrivers = useTranslations('docker.volumeDrivers');
+
     const form = useFormContext();
 
     return (
@@ -42,7 +53,34 @@ export function VolumeBasicConfig() {
                         </FormItem>
                     )}
                 />
-                <VolumeDriverSelect />
+                <FormField
+                    control={form.control}
+                    name="driver"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('driver')}</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                    <SelectTrigger className="min-w-30">
+                                        <SelectValue placeholder={t('selectDriver')} />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>{t('driver')}</SelectLabel>
+                                        {VOLUME_DRIVERS.map((driver) => (
+                                            <SelectItem key={driver} value={driver}>
+                                                {tDrivers(driver)}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            <FormDescription>{t('driverDescription')}</FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
             </CardContent>
         </Card>
     );

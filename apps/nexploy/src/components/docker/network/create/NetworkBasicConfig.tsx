@@ -15,7 +15,6 @@ import {
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { CheckboxField } from '@/components/forms/CheckboxField';
-import { NetworkScopeSelect } from '@/components/docker/network/NetworkScopeSelect';
 import {
     Select,
     SelectContent,
@@ -25,7 +24,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select.tsx';
-import { NETWORK_DRIVERS } from '@/lib/constants/docker.ts';
+import { NETWORK_DRIVERS, NETWORK_SCOPES } from '@/lib/constants/docker.ts';
 
 export function NetworkBasicConfig() {
     const t = useTranslations('docker.createNetworkPage');
@@ -90,7 +89,34 @@ export function NetworkBasicConfig() {
                     )}
                 />
 
-                <NetworkScopeSelect />
+                <FormField
+                    control={form.control}
+                    name="scope"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('scope')}</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={t('selectScope')} />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>{t('scope')}</SelectLabel>
+                                        {NETWORK_SCOPES.map((scope) => (
+                                            <SelectItem key={scope} value={scope}>
+                                                {t(`scopes.${scope}`)}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            <FormDescription>{t('scopeDescription')}</FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
                 <div className="space-y-4 pt-2">
                     <CheckboxField

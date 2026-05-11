@@ -109,7 +109,6 @@
     "removeServiceConfirmDescription": "Êtes-vous sûr de vouloir supprimer le service {name} ? Toutes les tâches seront arrêtées et supprimées.",
     "removeServices": "Supprimer les services",
     "confirmRemoveServices": "Êtes-vous sûr de vouloir supprimer {count} service(s) ? Toutes leurs tâches seront arrêtées et supprimées.",
-    "serviceActions": "Actions du service",
     "updateService": "Mettre à jour l'image",
     "tasks": "Tâches",
     "tasksRunning": "{running}/{total} en cours",

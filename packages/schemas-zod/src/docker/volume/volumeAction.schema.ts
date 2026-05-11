@@ -2,18 +2,30 @@ import { z } from 'zod';
 
 export const volumeActionsSchema = z.object({
     action: z.enum(['delete', 'prune']),
-    volumeNames: z.array(z.string()),
+    volumeNames: z.array(z.string()).min(1, { error: 'At least one volume name is required' }),
+});
+
+const driverOptSchema = z.object({
+    key: z.string().min(1, { error: 'Key is required' }),
+    value: z.string().min(1, { error: 'Value is required' }),
+});
+
+const volumeLabelSchema = z.object({
+    key: z.string().min(1, { error: 'Key is required' }),
+    value: z.string().min(1, { error: 'Value is required' }),
 });
 
 export const volumeCreateSchema = z.object({
-    name: z.string().min(1),
+    name: z.string().min(1, {
+        error: 'Volume name is required',
+    }),
     driver: z.string().optional(),
-    driverOpts: z.record(z.string(), z.string()).optional(),
-    labels: z.record(z.string(), z.string()).optional(),
+    driverOpts: z.array(driverOptSchema).default([]),
+    labels: z.array(volumeLabelSchema).default([]),
 });
 
 export const volumeDeleteSchema = z.object({
-    volumeNames: z.array(z.string()).min(1),
+    volumeNames: z.array(z.string()).min(1, { error: 'At least one volume name is required' }),
 });
 
 export const volumeNameParamSchema = z.object({
@@ -21,24 +33,8 @@ export const volumeNameParamSchema = z.object({
 });
 
 export const volumeDeleteQuerySchema = z.object({
-    force: z.string().optional().transform((v) => v === 'true'),
+    force: z
+        .string()
+        .optional()
+        .transform((v) => v === 'true'),
 });
-
-const cacheKeySchema = z.string().regex(/^[\w\-]+$/).optional();
-
-export const cacheRestoreSchema = z.object({
-    volumeName: z.string().min(1),
-    cachePath: z.string().min(1),
-    workDir: z.string().min(1),
-    cacheKey: cacheKeySchema,
-});
-
-export const cacheSaveSchema = z.object({
-    volumeName: z.string().min(1),
-    sourcePath: z.string().min(1),
-    workDir: z.string().min(1),
-    cacheKey: cacheKeySchema,
-});
-
-export type VolumeActions = z.infer<typeof volumeActionsSchema>;
-export type VolumeCreate = z.infer<typeof volumeCreateSchema>;

@@ -1,40 +1,21 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useFormContext } from 'react-hook-form';
+import { useFieldArray, useFormContext } from 'react-hook-form';
+import { Plus, Tags, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
-import {
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
-import { Plus, Tags } from 'lucide-react';
-import { useKeyValueState } from '@/hooks/useKeyValueState';
-import { KeyValueInput, KeyValueList } from '@/components/forms/KeyValue';
+import { Input } from '@workspace/ui/components/input';
 
 export function VolumeLabels() {
     const t = useTranslations('docker.createVolumePage');
     const form = useFormContext();
-    const state = useKeyValueState();
-
-    const handleAdd = () => {
-        if (state.key.trim() && state.value.trim()) {
-            const current = form.getValues('labels') || {};
-            form.setValue('labels', { ...current, [state.key.trim()]: state.value.trim() });
-            state.reset();
-        }
-    };
-
-    const handleRemove = (key: string) => {
-        const current = form.getValues('labels') || {};
-        const { [key]: _, ...rest } = current;
-        form.setValue('labels', rest);
-    };
+    const { fields, append, remove } = useFieldArray({
+        control: form.control,
+        name: 'labels',
+    });
 
     return (
         <Card>
@@ -42,60 +23,71 @@ export function VolumeLabels() {
                 icon={Tags}
                 title={t('labels')}
                 description={t('labelsCardDescription')}
-            />
+            >
+                <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="ml-auto"
+                    onClick={() => append({ key: '', value: '' })}
+                >
+                    <Plus />
+                    {t('addLabel')}
+                </Button>
+            </CardHeaderWithIcon>
             <CardContent>
-                <FormField
-                    control={form.control}
-                    name="labels"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel className="sr-only">{t('labels')}</FormLabel>
-                            <FormControl>
-                                <div className="space-y-3">
-                                    <div className="flex gap-2">
-                                        <KeyValueInput
-                                            keyValue={state.key}
-                                            value={state.value}
-                                            onKeyChange={state.setKey}
-                                            onValueChange={state.setValue}
-                                            keyPlaceholder={t('keyPlaceholder')}
-                                            valuePlaceholder={t('valuePlaceholder')}
-                                        />
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="icon"
-                                            onClick={handleAdd}
-                                            disabled={!state.key.trim() || !state.value.trim()}
-                                        >
-                                            <Plus className="size-4" />
-                                        </Button>
-                                    </div>
-                                    <KeyValueList
-                                        items={field.value}
-                                        onRemove={handleRemove}
-                                        title={t('labelsAdded')}
-                                    />
-                                </div>
-                            </FormControl>
-                            <FormMessage />
-                            <FormDescription>
-                                {t('labelsDescription')}
-                                <code className="bg-muted rounded px-1 py-0.5 text-xs">
-                                    env=production
-                                </code>
-                                ,
-                                <code className="bg-muted rounded px-1 py-0.5 text-xs">
-                                    app=backend
-                                </code>
-                                ,
-                                <code className="bg-muted rounded px-1 py-0.5 text-xs">
-                                    team=devops
-                                </code>
-                            </FormDescription>
-                        </FormItem>
-                    )}
-                />
+                {fields.length === 0 ? (
+                    <p className="text-muted-foreground py-8 text-center text-sm">
+                        {t('noLabelsConfigured')}
+                    </p>
+                ) : (
+                    <div className="space-y-3">
+                        {fields.map((field, index) => (
+                            <div key={field.id} className="flex gap-3">
+                                <FormField
+                                    control={form.control}
+                                    name={`labels.${index}.key`}
+                                    render={({ field }) => (
+                                        <FormItem className="flex-1">
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    placeholder={t('keyPlaceholder')}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <span className="text-muted-foreground pt-1">=</span>
+                                <FormField
+                                    control={form.control}
+                                    name={`labels.${index}.value`}
+                                    render={({ field }) => (
+                                        <FormItem className="flex-1">
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    placeholder={t('valuePlaceholder')}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button
+                                    type="button"
+                                    variant="destructiveGhost"
+                                    size="icon"
+                                    className="self-start"
+                                    onClick={() => remove(index)}
+                                >
+                                    <Trash2 />
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </CardContent>
         </Card>
     );

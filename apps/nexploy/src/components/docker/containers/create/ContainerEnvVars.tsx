@@ -40,7 +40,7 @@ export function ContainerEnvVars() {
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
-                            <div key={field.id} className="flex items-center gap-3">
+                            <div key={field.id} className="flex gap-3">
                                 <FormField
                                     control={form.control}
                                     name={`envVars.${index}.key`}
@@ -48,15 +48,15 @@ export function ContainerEnvVars() {
                                         <FormItem className="flex-1">
                                             <FormControl>
                                                 <Input
-                                                    placeholder={t('keyPlaceholder')}
                                                     {...field}
+                                                    placeholder={t('keyPlaceholder')}
                                                 />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
-                                <span className="text-muted-foreground">=</span>
+                                <span className="text-muted-foreground pt-1">=</span>
                                 <FormField
                                     control={form.control}
                                     name={`envVars.${index}.value`}
@@ -64,8 +64,8 @@ export function ContainerEnvVars() {
                                         <FormItem className="flex-1">
                                             <FormControl>
                                                 <Input
-                                                    placeholder={t('valuePlaceholder')}
                                                     {...field}
+                                                    placeholder={t('valuePlaceholder')}
                                                 />
                                             </FormControl>
                                             <FormMessage />

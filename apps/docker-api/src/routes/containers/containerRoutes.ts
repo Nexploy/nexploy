@@ -192,13 +192,11 @@ app.post(
         }
 
         if (networks.length > 0) {
-            createOptions.HostConfig.NetworkMode = networks[0];
-            if (networks.length > 1) {
-                createOptions.NetworkingConfig = {
-                    EndpointsConfig: Object.fromEntries(networks.map((net) => [net, {}])),
-                };
-            }
+            createOptions.NetworkingConfig = {
+                EndpointsConfig: Object.fromEntries(networks.map((net) => [net.name, {}])),
+            };
         }
+
         if (ports.length > 0) {
             createOptions.ExposedPorts = {};
             createOptions.HostConfig.PortBindings = {};

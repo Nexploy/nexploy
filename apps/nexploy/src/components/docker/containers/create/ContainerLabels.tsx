@@ -40,7 +40,7 @@ export function ContainerLabels() {
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
-                            <div key={field.id} className="flex items-center gap-3">
+                            <div key={field.id} className="flex gap-3">
                                 <FormField
                                     control={form.control}
                                     name={`labels.${index}.key`}
@@ -56,7 +56,7 @@ export function ContainerLabels() {
                                         </FormItem>
                                     )}
                                 />
-                                <span className="text-muted-foreground">=</span>
+                                <span className="text-muted-foreground pt-1">=</span>
                                 <FormField
                                     control={form.control}
                                     name={`labels.${index}.value`}
@@ -76,6 +76,7 @@ export function ContainerLabels() {
                                     type="button"
                                     variant="destructiveGhost"
                                     size="icon"
+                                    className={'self-start'}
                                     onClick={() => remove(index)}
                                 >
                                     <Trash2 />

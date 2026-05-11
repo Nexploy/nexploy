@@ -802,12 +802,12 @@
             "overlay": "Réseau multi-hôtes pour Docker Swarm",
             "macvlan": "Attribue une adresse MAC aux conteneurs",
             "none": "Aucune connectivité réseau"
+        },
+        "scopes": {
+            "local": "Local",
+            "global": "Global",
+            "swarm": "Swarm"
         }
-    },
-    "volumeDriver": {
-        "driver": "Driver",
-        "selectDriver": "Sélectionner un driver",
-        "driverDescription": "Le driver de stockage pour ce volume"
     },
     "createVolumePage": {
         "title": "Nouveau volume",
@@ -822,14 +822,21 @@
         "volumeName": "Nom du volume",
         "volumeNamePlaceholder": "mon-volume",
         "volumeNameDescription": "Un nom unique pour identifier le volume (ex: postgres-data, app-logs)",
+        "driver": "Driver",
+        "selectDriver": "Sélectionner un driver",
+        "driverDescription": "Le driver de stockage à utiliser pour ce volume",
         "driverOptions": "Options du driver",
         "driverOptionsCardDescription": "Configurez les options de montage et de stockage spécifiques au driver",
         "keyPlaceholder": "Clé (ex: type)",
         "valuePlaceholder": "Valeur (ex: nfs)",
         "optionsAdded": "Options ajoutées :",
+        "addOption": "Ajouter une option",
+        "noDriverOptionsConfigured": "Aucune option de driver configurée",
         "driverOptionsDescription": "Options spécifiques au driver. Exemples :",
         "labels": "Labels",
         "labelsCardDescription": "Ajoutez des métadonnées pour organiser et identifier ce volume",
+        "addLabel": "Ajouter un label",
+        "noLabelsConfigured": "Aucun label configuré",
         "labelsAdded": "Labels ajoutés :",
         "labelsDescription": "Métadonnées pour organiser et identifier le volume. Exemples :"
     },
@@ -865,11 +872,6 @@
         "serviceCreated": "Service {name} créé",
         "serviceRemoved": "Service {name} supprimé",
         "taskFailed": "Tâche {id} échouée : {error}"
-    },
-    "scopes": {
-        "local": "Local",
-        "global": "Global",
-        "swarm": "Swarm"
     },
     "stack": {
         "title": "stack",

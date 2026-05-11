@@ -31,7 +31,7 @@ export function ContainerNetworks() {
                     size="sm"
                     variant="outline"
                     className="ml-auto"
-                    onClick={() => append('')}
+                    onClick={() => append({ name: '' })}
                 >
                     <Plus />
                     {t('addNetwork')}
@@ -48,7 +48,7 @@ export function ContainerNetworks() {
                             <div key={field.id} className="flex items-center gap-3">
                                 <FormField
                                     control={form.control}
-                                    name={`networks.${index}`}
+                                    name={`networks.${index}.name`}
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
@@ -69,6 +69,7 @@ export function ContainerNetworks() {
                                     type="button"
                                     variant="destructiveGhost"
                                     size="icon"
+                                    className={'self-start'}
                                     onClick={() => remove(index)}
                                 >
                                     <Trash2 />

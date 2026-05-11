@@ -1,40 +1,21 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useFormContext } from 'react-hook-form';
+import { useFieldArray, useFormContext } from 'react-hook-form';
+import { Cpu, Plus, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
-import {
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
-import { Cpu, Plus } from 'lucide-react';
-import { useKeyValueState } from '@/hooks/useKeyValueState';
-import { KeyValueInput, KeyValueList } from '@/components/forms/KeyValue';
+import { Input } from '@workspace/ui/components/input';
 
 export function VolumeDriverOptions() {
     const t = useTranslations('docker.createVolumePage');
     const form = useFormContext();
-    const state = useKeyValueState();
-
-    const handleAdd = () => {
-        if (state.key.trim() && state.value.trim()) {
-            const current = form.getValues('driverOpts') || {};
-            form.setValue('driverOpts', { ...current, [state.key.trim()]: state.value.trim() });
-            state.reset();
-        }
-    };
-
-    const handleRemove = (key: string) => {
-        const current = form.getValues('driverOpts') || {};
-        const { [key]: _, ...rest } = current;
-        form.setValue('driverOpts', rest);
-    };
+    const { fields, append, remove } = useFieldArray({
+        control: form.control,
+        name: 'driverOpts',
+    });
 
     return (
         <Card>
@@ -42,60 +23,71 @@ export function VolumeDriverOptions() {
                 icon={Cpu}
                 title={t('driverOptions')}
                 description={t('driverOptionsCardDescription')}
-            />
+            >
+                <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="ml-auto"
+                    onClick={() => append({ key: '', value: '' })}
+                >
+                    <Plus />
+                    {t('addOption')}
+                </Button>
+            </CardHeaderWithIcon>
             <CardContent>
-                <FormField
-                    control={form.control}
-                    name="driverOpts"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel className="sr-only">{t('driverOptions')}</FormLabel>
-                            <FormControl>
-                                <div className="space-y-3">
-                                    <div className="flex gap-2">
-                                        <KeyValueInput
-                                            keyValue={state.key}
-                                            value={state.value}
-                                            onKeyChange={state.setKey}
-                                            onValueChange={state.setValue}
-                                            keyPlaceholder={t('keyPlaceholder')}
-                                            valuePlaceholder={t('valuePlaceholder')}
-                                        />
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="icon"
-                                            onClick={handleAdd}
-                                            disabled={!state.key.trim() || !state.value.trim()}
-                                        >
-                                            <Plus className="size-4" />
-                                        </Button>
-                                    </div>
-                                    <KeyValueList
-                                        items={field.value}
-                                        onRemove={handleRemove}
-                                        title={t('optionsAdded')}
-                                    />
-                                </div>
-                            </FormControl>
-                            <FormMessage />
-                            <FormDescription>
-                                {t('driverOptionsDescription')}
-                                <code className="bg-muted rounded px-1 py-0.5 text-xs">
-                                    type=nfs
-                                </code>
-                                ,
-                                <code className="bg-muted rounded px-1 py-0.5 text-xs">
-                                    o=addr=192.168.1.1
-                                </code>
-                                ,
-                                <code className="bg-muted rounded px-1 py-0.5 text-xs">
-                                    device=/path/to/dir
-                                </code>
-                            </FormDescription>
-                        </FormItem>
-                    )}
-                />
+                {fields.length === 0 ? (
+                    <p className="text-muted-foreground py-8 text-center text-sm">
+                        {t('noDriverOptionsConfigured')}
+                    </p>
+                ) : (
+                    <div className="space-y-3">
+                        {fields.map((field, index) => (
+                            <div key={field.id} className="flex gap-3">
+                                <FormField
+                                    control={form.control}
+                                    name={`driverOpts.${index}.key`}
+                                    render={({ field }) => (
+                                        <FormItem className="flex-1">
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    placeholder={t('keyPlaceholder')}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <span className="text-muted-foreground pt-1">=</span>
+                                <FormField
+                                    control={form.control}
+                                    name={`driverOpts.${index}.value`}
+                                    render={({ field }) => (
+                                        <FormItem className="flex-1">
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    placeholder={t('valuePlaceholder')}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button
+                                    type="button"
+                                    variant="destructiveGhost"
+                                    size="icon"
+                                    className="self-start"
+                                    onClick={() => remove(index)}
+                                >
+                                    <Trash2 />
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </CardContent>
         </Card>
     );

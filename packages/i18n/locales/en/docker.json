@@ -802,12 +802,12 @@
             "overlay": "Multi-host network for Docker Swarm",
             "macvlan": "Assigns a MAC address to containers",
             "none": "No network connectivity"
+        },
+        "scopes": {
+            "local": "Local",
+            "global": "Global",
+            "swarm": "Swarm"
         }
-    },
-    "volumeDriver": {
-        "driver": "Driver",
-        "selectDriver": "Select a driver",
-        "driverDescription": "The storage driver for this volume"
     },
     "createVolumePage": {
         "title": "New Volume",
@@ -822,14 +822,21 @@
         "volumeName": "Volume name",
         "volumeNamePlaceholder": "my-volume",
         "volumeNameDescription": "A unique name to identify the volume (e.g., postgres-data, app-logs)",
+        "driver": "Driver",
+        "selectDriver": "Select a driver",
+        "driverDescription": "The storage driver to use for this volume",
         "driverOptions": "Driver options",
         "driverOptionsCardDescription": "Configure driver-specific mount and storage options",
         "keyPlaceholder": "Key (e.g., type)",
         "valuePlaceholder": "Value (e.g., nfs)",
         "optionsAdded": "Options added:",
+        "addOption": "Add option",
+        "noDriverOptionsConfigured": "No driver options configured",
         "driverOptionsDescription": "Driver-specific options. Examples:",
         "labels": "Labels",
         "labelsCardDescription": "Add metadata to organize and identify this volume",
+        "addLabel": "Add label",
+        "noLabelsConfigured": "No labels configured",
         "labelsAdded": "Labels added:",
         "labelsDescription": "Metadata to organize and identify the volume. Examples:"
     },
@@ -865,11 +872,6 @@
         "serviceCreated": "Service {name} created",
         "serviceRemoved": "Service {name} removed",
         "taskFailed": "Task {id} failed: {error}"
-    },
-    "scopes": {
-        "local": "Local",
-        "global": "Global",
-        "swarm": "Swarm"
     },
     "stack": {
         "title": "stack",

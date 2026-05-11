@@ -2,7 +2,6 @@ import { Fragment } from 'react';
 import {
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
     DropdownMenuSeparator,
 } from '@workspace/ui/components/dropdown-menu';
 import { useTranslations } from 'next-intl';
@@ -19,8 +18,6 @@ export function ServiceDropdownActions({ service }: ServiceDropdownActionsProps)
 
     return (
         <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{t('serviceActions')}</DropdownMenuLabel>
-            <DropdownMenuSeparator />
             {tools.map((tool, index) => (
                 <Fragment key={index}>
                     {tool.separator && <DropdownMenuSeparator />}

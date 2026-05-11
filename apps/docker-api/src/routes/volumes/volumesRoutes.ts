@@ -3,13 +3,12 @@ import { HttpError, route } from '@/utils/route';
 import { Hono } from 'hono';
 import { volumesStateManager } from '@/managers/list/volumesStateManager';
 import {
-    cacheRestoreSchema,
-    cacheSaveSchema,
     volumeCreateSchema,
     volumeDeleteQuerySchema,
     volumeDeleteSchema,
     volumeNameParamSchema,
 } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
+import { cacheRestoreSchema, cacheSaveSchema, } from '@workspace/schemas-zod/docker/volume/volumeCache.schema';
 import { restoreCache, saveCache } from '@/services/cacheService';
 import { deleteVolumes } from '@/services/volumeService';
 
@@ -50,11 +49,20 @@ app.post(
             if (err.statusCode !== 404) throw err;
         }
 
+        const toRecord = (entries: { key: string; value: string }[]) =>
+            entries.length > 0
+                ? Object.fromEntries(
+                      entries
+                          .filter((e) => e.key.trim())
+                          .map((e) => [e.key.trim(), e.value.trim()]),
+                  )
+                : undefined;
+
         await docker.createVolume({
             Name: name,
             Driver: driver,
-            DriverOpts: driverOpts,
-            Labels: labels,
+            DriverOpts: toRecord(driverOpts),
+            Labels: toRecord(labels),
         });
 
         return { volumeName: name };

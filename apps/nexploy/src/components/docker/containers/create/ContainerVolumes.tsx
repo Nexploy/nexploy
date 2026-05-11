@@ -49,7 +49,7 @@ export function ContainerVolumes() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input placeholder={t('hostPath')} {...field} />
+                                                <Input {...field} placeholder={t('hostPath')} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -75,9 +75,9 @@ export function ContainerVolumes() {
                                     control={form.control}
                                     name={`volumes.${index}.readOnly`}
                                     render={({ field }) => (
-                                        <FormItem>
+                                        <FormItem className={'self-start pt-2.5'}>
                                             <FormControl>
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex gap-2">
                                                     <Switch
                                                         checked={field.value}
                                                         onCheckedChange={field.onChange}
@@ -94,6 +94,7 @@ export function ContainerVolumes() {
                                     type="button"
                                     variant="destructiveGhost"
                                     size="icon"
+                                    className={'self-start'}
                                     onClick={() => remove(index)}
                                 >
                                     <Trash2 />
