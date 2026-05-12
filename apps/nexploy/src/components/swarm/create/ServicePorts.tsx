@@ -67,13 +67,6 @@ export function ServicePorts() {
                                                     {...field}
                                                     type="number"
                                                     placeholder={t('publishedPort')}
-                                                    onChange={(e) =>
-                                                        field.onChange(
-                                                            e.target.value === ''
-                                                                ? ''
-                                                                : Number(e.target.value),
-                                                        )
-                                                    }
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -91,13 +84,6 @@ export function ServicePorts() {
                                                     {...field}
                                                     type="number"
                                                     placeholder={t('targetPort')}
-                                                    onChange={(e) =>
-                                                        field.onChange(
-                                                            e.target.value === ''
-                                                                ? ''
-                                                                : Number(e.target.value),
-                                                        )
-                                                    }
                                                 />
                                             </FormControl>
                                             <FormMessage />

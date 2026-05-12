@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -149,18 +143,7 @@ export function CreateServiceConfig() {
                         <FormItem>
                             <FormLabel>{t('createServiceReplicas')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    {...field}
-                                    type="number"
-                                    min={1}
-                                    onChange={(e) =>
-                                        field.onChange(
-                                            isNaN(e.target.valueAsNumber)
-                                                ? 1
-                                                : e.target.valueAsNumber,
-                                        )
-                                    }
-                                />
+                                <Input {...field} type="number" />
                             </FormControl>
                             <FormMessage className="text-xs" />
                         </FormItem>
@@ -355,8 +338,6 @@ export function CreateServiceConfig() {
                     </div>
                 )}
             </div>
-
-            {/* Networks */}
             <div className="space-y-2">
                 <div className="flex items-center justify-between">
                     <FormLabel>{t('createServiceNetworks')}</FormLabel>
@@ -405,8 +386,6 @@ export function CreateServiceConfig() {
                     </div>
                 )}
             </div>
-
-            {/* Constraints */}
             <div className="space-y-2">
                 <div className="flex items-center justify-between">
                     <FormLabel>{t('createServiceConstraints')}</FormLabel>

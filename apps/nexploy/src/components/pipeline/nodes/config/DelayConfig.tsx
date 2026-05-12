@@ -24,12 +24,7 @@ export function DelayConfig() {
                     <FormItem>
                         <FormLabel>{t('delaySeconds')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                type="number"
-                                min={1}
-                                onChange={(e) => field.onChange(Number(e.target.value))}
-                            />
+                            <Input {...field} type="number" min={1} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

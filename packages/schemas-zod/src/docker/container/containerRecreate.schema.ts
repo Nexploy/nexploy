@@ -10,8 +10,6 @@ const portMappingSchema = z.object({
     currentType: z.enum(['tcp', 'udp', 'sctp']).optional(),
 });
 
-export type PortForm = z.infer<typeof portMappingSchema>;
-
 const envVarMappingSchema = z.object({
     typeAction: z.enum(['add', 'delete', 'edit']),
     key: z.string().optional(),
@@ -19,8 +17,6 @@ const envVarMappingSchema = z.object({
     currentKey: z.string().optional(),
     currentValue: z.string().optional(),
 });
-
-export type EnvVarForm = z.infer<typeof envVarMappingSchema>;
 
 const volumeMappingSchema = z.object({
     typeAction: z.enum(['add', 'delete', 'edit']),
@@ -32,15 +28,11 @@ const volumeMappingSchema = z.object({
     currentReadOnly: z.boolean().optional(),
 });
 
-export type VolumeForm = z.infer<typeof volumeMappingSchema>;
-
 const networkMappingSchema = z.object({
     typeAction: z.enum(['add', 'delete', 'edit']),
     name: z.string().optional(),
     currentName: z.string().optional(),
 });
-
-export type NetworkForm = z.infer<typeof networkMappingSchema>;
 
 export const ContainerRecreateFormSchema = z.object({
     containerId: z.string(),

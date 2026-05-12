@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
 const networkOptionSchema = z.object({
-    key: z.string().min(1, { error: 'Key is required' }),
-    value: z.string().min(1, { error: 'Value is required' }),
+    key: z.string().min(1, 'Key is required'),
+    value: z.string().min(1, 'Value is required'),
 });
 
 const networkLabelSchema = z.object({
-    key: z.string().min(1, { error: 'Key is required' }),
-    value: z.string().min(1, { error: 'Value is required' }),
+    key: z.string().min(1, 'Key is required'),
+    value: z.string().min(1, 'Value is required'),
 });
 
 const ipamConfigItemSchema = z.object({

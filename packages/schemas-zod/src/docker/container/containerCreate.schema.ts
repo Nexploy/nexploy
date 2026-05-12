@@ -1,18 +1,14 @@
 import { z } from 'zod';
 
 const portMappingSchema = z.object({
-    hostPort: z
-        .number({
-            error: 'Host port is required',
-        })
-        .min(1)
-        .max(65535),
-    containerPort: z
-        .number({
-            error: 'Container port is required',
-        })
-        .min(1)
-        .max(65535),
+    hostPort: z.coerce
+        .number()
+        .min(1, 'Port must be between 1 and 65535')
+        .max(65535, 'Port must be between 1 and 65535'),
+    containerPort: z.coerce
+        .number()
+        .min(1, 'Port must be between 1 and 65535')
+        .max(65535, 'Port must be between 1 and 65535'),
     protocol: z.enum(['tcp', 'udp', 'sctp']).default('tcp'),
 });
 

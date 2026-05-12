@@ -40,12 +40,7 @@ export function ScaleServiceConfig() {
                     <FormItem>
                         <FormLabel>{t('serviceReplicas')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                type="number"
-                                min={0}
-                                onChange={(e) => field.onChange(Number(e.target.value))}
-                            />
+                            <Input {...field} type="number" min={0} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

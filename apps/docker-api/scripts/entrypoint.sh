@@ -1,7 +1,6 @@
 #!/bin/sh
 set -e
 
-# Fetch API key from nexploy internal endpoint
 if [ -z "$NEXPLOY_API_KEY" ]; then
     echo "Fetching API key from nexploy..."
 

@@ -47,7 +47,6 @@ export function WaitForPortConfig() {
                                 min={1}
                                 max={65535}
                                 placeholder="3000"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
                                 className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>
@@ -66,7 +65,6 @@ export function WaitForPortConfig() {
                                 {...field}
                                 type="number"
                                 min={1}
-                                onChange={(e) => field.onChange(Number(e.target.value))}
                                 className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>
@@ -85,7 +83,6 @@ export function WaitForPortConfig() {
                                 {...field}
                                 type="number"
                                 min={1}
-                                onChange={(e) => field.onChange(Number(e.target.value))}
                                 className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>

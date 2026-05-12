@@ -60,13 +60,6 @@ export function ContainerPorts() {
                                                     {...field}
                                                     type="number"
                                                     placeholder={t('hostPort')}
-                                                    onChange={(e) =>
-                                                        field.onChange(
-                                                            e.target.value === ''
-                                                                ? ''
-                                                                : Number(e.target.value),
-                                                        )
-                                                    }
                                                 />
                                             </FormControl>
                                             <FormMessage />

@@ -16,7 +16,7 @@ export interface PortFormProps {
 
 export type ContainerPorts = {
     privatePort: number;
-    publicPort?: number;
+    publicPort: number;
     hostIps: string[];
     type: PortType;
 };

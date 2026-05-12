@@ -41,16 +41,7 @@ export function WaitForHealthConfig() {
                     <FormItem>
                         <FormLabel>{t('timeoutSeconds')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                type="number"
-                                min={1}
-                                onChange={(e) =>
-                                    field.onChange(
-                                        isNaN(e.target.valueAsNumber) ? 1 : e.target.valueAsNumber,
-                                    )
-                                }
-                            />
+                            <Input {...field} type="number" min={1} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -63,16 +54,7 @@ export function WaitForHealthConfig() {
                     <FormItem>
                         <FormLabel>{t('intervalSeconds')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                type="number"
-                                min={1}
-                                onChange={(e) =>
-                                    field.onChange(
-                                        isNaN(e.target.valueAsNumber) ? 1 : e.target.valueAsNumber,
-                                    )
-                                }
-                            />
+                            <Input {...field} type="number" min={1} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

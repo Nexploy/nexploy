@@ -150,11 +150,7 @@ export function HttpRequestConfig() {
                     <FormItem>
                         <FormLabel>{t('expectedStatus')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                type="number"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
-                            />
+                            <Input {...field} type="number" />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

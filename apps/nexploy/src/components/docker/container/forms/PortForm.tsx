@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { type Resolver, useForm } from 'react-hook-form';
 import {
     Form,
     FormControl,
@@ -38,10 +38,10 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
     const tCommon = useTranslations('common');
 
     const form = useForm<ContainerPortForm>({
-        resolver: zodResolver(containerPortSchema),
+        resolver: zodResolver(containerPortSchema) as Resolver<ContainerPortForm>,
         defaultValues: {
-            privatePort: defaultPort?.privatePort ?? undefined,
-            publicPort: defaultPort?.publicPort ?? undefined,
+            privatePort: defaultPort?.privatePort ?? 80,
+            publicPort: defaultPort?.publicPort ?? 8080,
             type: defaultPort?.type ?? 'tcp',
         },
     });
@@ -54,7 +54,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                 typeAction: 'add',
                 publicPort,
                 privatePort,
-                type: data.type,
+                type,
             });
         } else if (mode === 'edit') {
             const referencePort = originalPort ?? defaultPort;
@@ -103,15 +103,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                                 </span>
                             </FormLabel>
                             <FormControl>
-                                <Input
-                                    {...field}
-                                    type="number"
-                                    placeholder="8080"
-                                    min={1}
-                                    max={65535}
-                                    value={field.value ?? ''}
-                                    onChange={(e) => field.onChange(parseInt(e.target.value) || '')}
-                                />
+                                <Input {...field} type="number" placeholder="8080" />
                             </FormControl>
                             <FormDescription className="text-xs">
                                 {t('port.hostPortDescription')}
@@ -128,15 +120,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                         <FormItem>
                             <FormLabel>{t('port.containerPort')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    {...field}
-                                    type="number"
-                                    placeholder="80"
-                                    min={1}
-                                    max={65535}
-                                    value={field.value ?? ''}
-                                    onChange={(e) => field.onChange(parseInt(e.target.value) || '')}
-                                />
+                                <Input {...field} type="number" placeholder="80" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -184,7 +168,6 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                             <Button variant="outline">{t('cancel')}</Button>
                         </DialogClose>
                         <Button
-                            className="flex-1 sm:flex-0"
                             type="submit"
                             disabled={!form.formState.isDirty}
                             icon={mode === 'add' ? Plus : Save}

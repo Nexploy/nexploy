@@ -114,13 +114,7 @@ export function SonarqubeScanConfig() {
                         <FormItem>
                             <FormLabel>{t('sonarqubePort')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    {...field}
-                                    type="number"
-                                    min={1}
-                                    max={65535}
-                                    onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
-                                />
+                                <Input {...field} type="number" min={1} max={65535} />
                             </FormControl>
                             <FormMessage className="text-xs" />
                         </FormItem>
@@ -197,12 +191,7 @@ export function SonarqubeScanConfig() {
                     <FormItem>
                         <FormLabel>{t('timeoutSeconds')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                type="number"
-                                min={30}
-                                onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
-                            />
+                            <Input {...field} type="number" min={30} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

@@ -84,8 +84,14 @@ export const removeContainerConfigSchema = z.object({
 });
 
 const createContainerPortSchema = z.object({
-    hostPort: z.string(),
-    containerPort: z.string(),
+    hostPort: z.coerce
+        .number()
+        .min(1, 'Port must be between 1 and 65535')
+        .max(65535, 'Port must be between 1 and 65535'),
+    containerPort: z.coerce
+        .number()
+        .min(1, 'Port must be between 1 and 65535')
+        .max(65535, 'Port must be between 1 and 65535'),
     protocol: z.enum(['tcp', 'udp']).default('tcp'),
 });
 
@@ -129,27 +135,35 @@ export const createVolumeConfigSchema = z.object({
 
 export const waitForHealthConfigSchema = z.object({
     containerName: z.string().min(1, 'Container name is required').default(''),
-    timeout: z.number().default(60),
-    interval: z.number().default(5),
+    timeout: z.coerce.number().default(60),
+    interval: z.coerce.number().default(5),
 });
 
 export const waitForUrlConfigSchema = z.object({
     url: z.string().min(1, 'URL is required').default(''),
-    expectedStatus: z.number().default(200),
-    timeout: z.number().default(60),
-    interval: z.number().default(5),
+    expectedStatus: z.coerce
+        .number()
+        .min(100, 'Status code must be between 100 and 599')
+        .max(599, 'Status code must be between 100 and 599')
+        .default(200),
+    timeout: z.coerce.number().default(60),
+    interval: z.coerce.number().default(5),
     method: z.enum(['GET', 'POST', 'HEAD']).default('GET'),
 });
 
 export const waitForPortConfigSchema = z.object({
     host: z.string().min(1, 'Host is required').default(''),
-    port: z.number().min(1).max(65535).default(80),
-    timeout: z.number().default(60),
-    interval: z.number().default(3),
+    port: z.coerce
+        .number()
+        .min(1, 'Port must be between 1 and 65535')
+        .max(65535, 'Port must be between 1 and 65535')
+        .default(80),
+    timeout: z.coerce.number().default(60),
+    interval: z.coerce.number().default(3),
 });
 
 export const delayConfigSchema = z.object({
-    seconds: z.number().min(1).default(5),
+    seconds: z.coerce.number().min(1, 'Delay must be at least 1 second').default(5),
 });
 
 export const conditionConfigSchema = z.object({
@@ -179,7 +193,11 @@ export const httpRequestConfigSchema = z.object({
         .array(z.object({ id: z.string(), key: z.string(), value: refable(z.string()) }))
         .default([]),
     body: refable(z.string()).optional(),
-    expectedStatus: z.number().default(200),
+    expectedStatus: z.coerce
+        .number()
+        .min(100, 'Status code must be between 100 and 599')
+        .max(599, 'Status code must be between 100 and 599')
+        .default(200),
     continueOnError: z.boolean().default(false),
 });
 
@@ -274,12 +292,18 @@ export const updateServiceConfigSchema = z.object({
 
 export const scaleServiceConfigSchema = z.object({
     serviceName: refable(z.string().min(1, 'Service name is required')).default(''),
-    replicas: z.number().min(1).default(1),
+    replicas: z.coerce.number().min(1, 'Replicas must be at least 1').default(1),
 });
 
 const createServicePortSchema = z.object({
-    publishedPort: z.coerce.number().min(1).max(65535),
-    targetPort: z.coerce.number().min(1).max(65535),
+    publishedPort: z.coerce
+        .number()
+        .min(1, 'Port must be between 1 and 65535')
+        .max(65535, 'Port must be between 1 and 65535'),
+    targetPort: z.coerce
+        .number()
+        .min(1, 'Port must be between 1 and 65535')
+        .max(65535, 'Port must be between 1 and 65535'),
     protocol: z.enum(['tcp', 'udp']).default('tcp'),
 });
 
@@ -292,7 +316,7 @@ export const createServiceConfigSchema = z.object({
     serviceName: refable(z.string().min(1, 'Service name is required')).default(''),
     imageName: refable(z.string().min(1, 'Image name is required')).default(''),
     mode: z.enum(['replicated', 'global']).default('replicated'),
-    replicas: z.number().min(1).default(1),
+    replicas: z.coerce.number().min(1, 'Replicas must be at least 1').default(1),
     portsSource: refable(z.array(createServicePortSchema)).optional(),
     ports: z.array(createServicePortSchema).default([]),
     envVarsSource: refable(z.array(createServiceEnvVarSchema)).optional(),
@@ -307,7 +331,7 @@ export const checkContainerLogsConfigSchema = z.object({
     containerId: refable(z.string().min(1, 'Container is required')).default(''),
     pattern: refable(z.string().min(1, 'Pattern is required')).default(''),
     since: refable(z.string()).default(''),
-    timeout: z.number().default(30),
+    timeout: z.coerce.number().min(1, 'Timeout must be at least 1 second').default(30),
     failIfFound: z.boolean().default(false),
 });
 
@@ -389,11 +413,15 @@ export const sonarqubeScanConfigSchema = z.object({
     sources: z.string().default('.'),
     exclusions: z.string().optional(),
     qualityGate: z.boolean().default(true),
-    timeoutSeconds: z.number().default(300),
+    timeoutSeconds: z.coerce.number().default(300),
     serverUrl: z.string().default('https://sonarcloud.io'),
     organization: z.string().optional(),
     sonarqubeVersion: z.string().default('community'),
-    sonarqubePort: z.number().default(9000),
+    sonarqubePort: z.coerce
+        .number()
+        .min(1, 'Host Port must be between 1 and 65535')
+        .max(65535, 'Host Port must be between 1 and 65535')
+        .default(9000),
 });
 
 // ─── Secrets ─────────────────────────────────────────────────────────────────
