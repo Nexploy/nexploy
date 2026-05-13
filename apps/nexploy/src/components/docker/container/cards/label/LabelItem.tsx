@@ -10,7 +10,7 @@ interface LabelItemProps {
     isDeleted: boolean;
     isNew?: boolean;
     displayLabel: Label;
-    onEdit: (label: Label, originalLabel?: Label) => void;
+    onEdit?: (label: Label, originalLabel?: Label) => void;
 }
 
 export function LabelItem({
@@ -35,11 +35,10 @@ export function LabelItem({
             <div className="flex min-w-0 flex-1 items-center gap-1">
                 <code className="flex items-center gap-2 text-sm leading-none">
                     <span className="text-primary shrink-0 truncate text-xs font-semibold">
-                        {displayLabel.key}
+                        {displayLabel.key}:
                     </span>
                 </code>
-                <span className={'text-muted-foreground text-xs'}>:</span>
-                <span className="text-muted-foreground text-xs break-all">
+                <span className="text-xs break-all">
                     {displayLabel.value ? (
                         displayLabel.value
                     ) : (
@@ -48,19 +47,21 @@ export function LabelItem({
                 </span>
                 {statusIndicator}
             </div>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-6 w-6 shrink-0"
-                        onClick={() => onEdit(displayLabel, isNew ? undefined : label)}
-                    >
-                        <Pencil />
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent>{t('edit')}</TooltipContent>
-            </Tooltip>
+            {onEdit && (
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-6 w-6 shrink-0"
+                            onClick={() => onEdit(displayLabel, isNew ? undefined : label)}
+                        >
+                            <Pencil />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{t('edit')}</TooltipContent>
+                </Tooltip>
+            )}
         </div>
     );
 }

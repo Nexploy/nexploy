@@ -12,6 +12,7 @@ import { LabelForm } from '@/components/docker/container/forms/LabelForm';
 import { Label } from '@workspace/typescript-interface/docker/docker.label';
 import { LabelItem } from '@/components/docker/container/cards/label/LabelItem';
 import { useTranslations } from 'next-intl';
+import { useIsSwarmContainer } from '@/hooks/useIsSwarmContainer';
 
 export function CardLabels() {
     const t = useTranslations('docker.labels');
@@ -20,6 +21,7 @@ export function CardLabels() {
 
     const { openDialog } = useConfirmationDialogStore();
     const labelChanges = useContainerChangesStore((state) => state.labelChanges);
+    const isSwarmContainer = useIsSwarmContainer();
 
     const handleOpenDialog = (mode: 'add' | 'edit', label?: Label, originalLabel?: Label) => {
         openDialog({
@@ -65,20 +67,22 @@ export function CardLabels() {
     return (
         <Card>
             <CardHeaderWithIcon icon={Tags} title={t('title')} className={'justify-between'}>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button
-                            className="size-9 md:size-fit"
-                            icon={Plus}
-                            onClick={() => handleOpenDialog('add')}
-                        >
-                            <span className="hidden md:flex">{t('add')}</span>
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent className="flex xl:hidden">
-                        <span>{t('add')}</span>
-                    </TooltipContent>
-                </Tooltip>
+                {!isSwarmContainer && (
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                className="size-9 md:size-fit"
+                                icon={Plus}
+                                onClick={() => handleOpenDialog('add')}
+                            >
+                                <span className="hidden md:flex">{t('add')}</span>
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="flex xl:hidden">
+                            <span>{t('add')}</span>
+                        </TooltipContent>
+                    </Tooltip>
+                )}
             </CardHeaderWithIcon>
             <CardContent className="px-0">
                 {!labelCount ? (
@@ -105,7 +109,7 @@ export function CardLabels() {
                                         isEdited={isEdited}
                                         isDeleted={isDeleted}
                                         displayLabel={displayLabel}
-                                        onEdit={handleOpenDialog.bind(null, 'edit')}
+                                        onEdit={isSwarmContainer ? undefined : handleOpenDialog.bind(null, 'edit')}
                                     />
                                 );
                             })}
@@ -118,7 +122,7 @@ export function CardLabels() {
                                     isDeleted={false}
                                     isNew
                                     displayLabel={{ key: key!, value: value! }}
-                                    onEdit={handleOpenDialog.bind(null, 'edit')}
+                                    onEdit={isSwarmContainer ? undefined : handleOpenDialog.bind(null, 'edit')}
                                 />
                             ))}
                         </div>

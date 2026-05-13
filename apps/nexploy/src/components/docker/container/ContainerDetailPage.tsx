@@ -1,13 +1,6 @@
 'use client';
 
-import {
-    Activity,
-    Container as IconContainer,
-    FileText,
-    Globe,
-    PencilLine,
-    Terminal,
-} from 'lucide-react';
+import { Activity, Container as IconContainer, FileText, Globe, PencilLine, Terminal, } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { CardInfoDetail } from '@/components/docker/container/cards/CardInfoDetail';
@@ -43,6 +36,8 @@ import { RenameContainerForm } from '@/components/docker/container/forms/RenameC
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
 import { NotFoundSSE } from '@/components/shared/NotFoundSSE';
 import Link from 'next/link';
+import { useIsSwarmContainer } from '@/hooks/useIsSwarmContainer';
+import { Badge } from '@workspace/ui/components/badge.tsx';
 
 export function ContainerDetailPage() {
     const container = useContainerStore((state) => state.container);
@@ -51,6 +46,7 @@ export function ContainerDetailPage() {
 
     const t = useTranslations('docker.containerDetail');
     const { openDialog } = useConfirmationDialogStore();
+    const isSwarmContainer = useIsSwarmContainer();
 
     const handleRename = () => {
         if (!container) return;
@@ -96,6 +92,10 @@ export function ContainerDetailPage() {
                     <div className="mt-3.5 flex flex-1 flex-col">
                         {isConnecting ? (
                             <Skeleton className="h-9 w-40" />
+                        ) : isSwarmContainer ? (
+                            <h1 className="text-3xl font-semibold tracking-tight break-all">
+                                {container?.name}
+                            </h1>
                         ) : (
                             <button
                                 type="button"
@@ -110,7 +110,17 @@ export function ContainerDetailPage() {
                                 <PencilLine className={'size-4'} />
                             </button>
                         )}
-                        <p className="text-muted-foreground text-sm">{t('description')}</p>
+                        <div className={'flex items-center gap-2'}>
+                            <p className="text-muted-foreground text-sm">{t('description')}</p>
+                            {isSwarmContainer && (
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Badge variant="secondary">{t('swarmManagedBadge')}</Badge>
+                                    </TooltipTrigger>
+                                    <TooltipContent>{t('swarmManagedDescription')}</TooltipContent>
+                                </Tooltip>
+                            )}
+                        </div>
                     </div>
                     <ApplyChangesButtonForm />
                 </div>

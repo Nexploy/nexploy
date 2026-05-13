@@ -11,6 +11,7 @@ import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStor
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import { type EnvVar, EnvVarItem } from './EnvVarItem';
+import { useIsSwarmContainer } from '@/hooks/useIsSwarmContainer';
 
 function parseEnvString(envString: string): EnvVar {
     const [key, ...valueParts] = envString.split('=');
@@ -23,6 +24,7 @@ export function CardEnv() {
 
     const { openDialog } = useConfirmationDialogStore();
     const envVarChanges = useContainerChangesStore((state) => state.envVarChanges);
+    const isSwarmContainer = useIsSwarmContainer();
     const t = useTranslations('docker.containerEnv');
 
     const handleOpenDialog = (mode: 'add' | 'edit', envVar?: EnvVar, originalEnvVar?: EnvVar) => {
@@ -71,20 +73,22 @@ export function CardEnv() {
             <CardHeader>
                 <div className="flex items-center justify-between gap-3">
                     <CardHeaderWithIcon as={'div'} icon={Key} title={t('title')} />
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                className="size-9 md:size-fit"
-                                icon={Plus}
-                                onClick={() => handleOpenDialog('add')}
-                            >
-                                <span className="hidden md:flex">{t('addVariable')}</span>
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent className="flex xl:hidden">
-                            <span>{t('addVariable')}</span>
-                        </TooltipContent>
-                    </Tooltip>
+                    {!isSwarmContainer && (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    className="size-9 md:size-fit"
+                                    icon={Plus}
+                                    onClick={() => handleOpenDialog('add')}
+                                >
+                                    <span className="hidden md:flex">{t('addVariable')}</span>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className="flex xl:hidden">
+                                <span>{t('addVariable')}</span>
+                            </TooltipContent>
+                        </Tooltip>
+                    )}
                 </div>
             </CardHeader>
             <CardContent className="px-0">
@@ -112,7 +116,7 @@ export function CardEnv() {
                                         isEdited={isEdited}
                                         isDeleted={isDeleted}
                                         displayEnvVar={displayEnvVar}
-                                        onEdit={handleOpenDialog.bind(null, 'edit')}
+                                        onEdit={isSwarmContainer ? undefined : handleOpenDialog.bind(null, 'edit')}
                                     />
                                 );
                             })}
@@ -125,7 +129,7 @@ export function CardEnv() {
                                     isDeleted={false}
                                     isNew
                                     displayEnvVar={{ key: key!, value: value! }}
-                                    onEdit={handleOpenDialog.bind(null, 'edit')}
+                                    onEdit={isSwarmContainer ? undefined : handleOpenDialog.bind(null, 'edit')}
                                 />
                             ))}
                         </div>

@@ -20,14 +20,14 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Button } from '@workspace/ui/components/button';
-import {
-    ContainerPortForm,
-    containerPortSchema,
-} from '@workspace/schemas-zod/docker/container/containerPort.schema';
+import { containerPortSchema } from '@workspace/schemas-zod/docker/container/containerPort.schema';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { DialogClose, DialogFooter } from '@workspace/ui/components/dialog';
 import { Plus, Save, Trash } from 'lucide-react';
-import { PortFormProps } from '@workspace/typescript-interface/docker/docker.port';
+import {
+    ContainerPortForm,
+    PortFormProps,
+} from '@workspace/typescript-interface/docker/docker.port';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import { useTranslations } from 'next-intl';
 
@@ -40,14 +40,16 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
     const form = useForm<ContainerPortForm>({
         resolver: zodResolver(containerPortSchema) as Resolver<ContainerPortForm>,
         defaultValues: {
-            privatePort: defaultPort?.privatePort ?? 80,
-            publicPort: defaultPort?.publicPort ?? 8080,
+            privatePort: defaultPort?.privatePort ?? '',
+            publicPort: defaultPort?.publicPort ?? '',
             type: defaultPort?.type ?? 'tcp',
         },
     });
 
     const onSubmit = (data: ContainerPortForm) => {
         const { publicPort, privatePort, type } = containerPortSchema.parse(data);
+
+        console.log(publicPort, privatePort, type);
 
         if (mode === 'add') {
             onPortChange({

@@ -197,9 +197,9 @@ export function getColumnsDockerContainers(
                                 variant={'secondary'}
                                 className={'max-w-full justify-start'}
                             >
-                                <span className={'truncate'}>
-                                    {p.publicPort} → {p.privatePort}/{p.type}
-                                </span>
+                                <code className={'truncate'}>
+                                    {p.publicPort !== 0 ? p.publicPort : '—'} → {p.privatePort}{' '}
+                                </code>
                             </Badge>
                         ))}
                         {ports.length > 2 && (

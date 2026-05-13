@@ -7,6 +7,7 @@ import { onContainerRecreateAction } from '@/actions/docker/container/containerR
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
+import { useIsSwarmContainer } from '@/hooks/useIsSwarmContainer';
 
 export function ApplyChangesButtonForm() {
     const t = useTranslations('common');
@@ -19,6 +20,7 @@ export function ApplyChangesButtonForm() {
         resetAllChanges,
     } = useContainerChangesStore();
     const containerId = useContainerStore((state) => state.container?.id);
+    const isSwarmContainer = useIsSwarmContainer();
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
@@ -42,7 +44,7 @@ export function ApplyChangesButtonForm() {
         }
     };
 
-    if (!hasChanges()) return null;
+    if (isSwarmContainer || !hasChanges()) return null;
 
     return (
         <Button

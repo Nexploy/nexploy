@@ -10,6 +10,7 @@ import { VolumeForm } from '@/components/docker/container/forms/VolumeForm';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import { VolumeItem } from './VolumeItem';
+import { useIsSwarmContainer } from '@/hooks/useIsSwarmContainer';
 
 export function CardVolumes() {
     const container = useContainerStore((state) => state.container);
@@ -17,6 +18,7 @@ export function CardVolumes() {
 
     const { openDialog } = useConfirmationDialogStore();
     const { volumeChanges } = useContainerChangesStore();
+    const isSwarmContainer = useIsSwarmContainer();
     const t = useTranslations('docker.containerVolumes');
 
     const handleOpenDialog = () => {
@@ -43,13 +45,15 @@ export function CardVolumes() {
             <CardHeader>
                 <div className="flex items-center justify-between gap-3">
                     <CardHeaderWithIcon as={'div'} icon={Database} title={t('title')} />
-                    <Button
-                        className="size-9 md:size-fit"
-                        icon={Plus}
-                        onClick={() => handleOpenDialog()}
-                    >
-                        <span className="hidden md:flex">{t('addVolume')}</span>
-                    </Button>
+                    {!isSwarmContainer && (
+                        <Button
+                            className="size-9 md:size-fit"
+                            icon={Plus}
+                            onClick={() => handleOpenDialog()}
+                        >
+                            <span className="hidden md:flex">{t('addVolume')}</span>
+                        </Button>
+                    )}
                 </div>
             </CardHeader>
             <CardContent className="px-0">

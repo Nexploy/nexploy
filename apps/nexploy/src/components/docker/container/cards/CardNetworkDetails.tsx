@@ -10,6 +10,7 @@ import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStor
 import { NetworkForm } from '@/components/docker/container/forms/NetworkForm';
 import { useTranslations } from 'next-intl';
 import { NetworkItem } from './NetworkItem';
+import { useIsSwarmContainer } from '@/hooks/useIsSwarmContainer';
 
 export function CardNetworkDetails() {
     const container = useContainerStore((state) => state.container);
@@ -17,6 +18,7 @@ export function CardNetworkDetails() {
 
     const { openDialog } = useConfirmationDialogStore();
     const networkChanges = useContainerChangesStore((state) => state.networkChanges);
+    const isSwarmContainer = useIsSwarmContainer();
     const t = useTranslations('docker.containerNetworks');
 
     const handleOpenDialog = () => {
@@ -42,9 +44,11 @@ export function CardNetworkDetails() {
     return (
         <Card>
             <CardHeaderWithIcon icon={Network} title={t('title')} className={'justify-between'}>
-                <Button className="size-9 md:size-fit" icon={Plus} onClick={handleOpenDialog}>
-                    <span className="hidden md:flex">{t('add')}</span>
-                </Button>
+                {!isSwarmContainer && (
+                    <Button className="size-9 md:size-fit" icon={Plus} onClick={handleOpenDialog}>
+                        <span className="hidden md:flex">{t('add')}</span>
+                    </Button>
+                )}
             </CardHeaderWithIcon>
             <CardContent className="px-0">
                 {!networkCount ? (

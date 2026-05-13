@@ -16,7 +16,9 @@
         "renameDescription": "Enter a new name for this container.",
         "notFoundTitle": "Container not found",
         "notFoundDescription": "This container no longer exists or has been removed.",
-        "backToContainers": "Back to containers"
+        "backToContainers": "Back to containers",
+        "swarmManagedBadge": "Managed by Swarm",
+        "swarmManagedDescription": "This container is managed by Docker Swarm. To modify it, use the Swarm services interface."
     },
     "renameContainer": {
         "nameLabel": "Container Name",
@@ -316,7 +318,6 @@
         "editDescription": "The container must be stopped to edit a port. It will be recreated with the new configuration.",
         "addPort": "Add port",
         "edit": "Edit",
-        "openPort": "Open port {port}",
         "noPorts": "No exposed ports"
     },
     "containerVolumes": {

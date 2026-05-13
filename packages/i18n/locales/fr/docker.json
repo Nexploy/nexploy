@@ -16,7 +16,9 @@
         "renameDescription": "Entrez un nouveau nom pour ce conteneur.",
         "notFoundTitle": "Conteneur introuvable",
         "notFoundDescription": "Ce conteneur n'existe plus ou a été supprimé.",
-        "backToContainers": "Retour aux conteneurs"
+        "backToContainers": "Retour aux conteneurs",
+        "swarmManagedBadge": "Géré par Swarm",
+        "swarmManagedDescription": "Ce conteneur est géré par Docker Swarm. Pour le modifier, utilisez l'interface des services Swarm."
     },
     "renameContainer": {
         "nameLabel": "Nom du conteneur",
@@ -316,7 +318,6 @@
         "editDescription": "Le conteneur doit être arrêté pour modifier un port. Il sera recréé avec la nouvelle configuration.",
         "addPort": "Ajouter un port",
         "edit": "Modifier",
-        "openPort": "Ouvrir le port {port}",
         "noPorts": "Aucun port exposé"
     },
     "containerVolumes": {

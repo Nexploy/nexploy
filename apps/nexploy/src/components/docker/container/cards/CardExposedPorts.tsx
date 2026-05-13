@@ -14,6 +14,7 @@ import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
+import { useIsSwarmContainer } from '@/hooks/useIsSwarmContainer';
 
 function getPortUrl(port: number) {
     const environment = useEnvironmentStore.getState().getSelectedEnvironment();
@@ -28,6 +29,7 @@ export function CardExposedPorts() {
 
     const { openDialog } = useConfirmationDialogStore();
     const portChanges = useContainerChangesStore((state) => state.portChanges);
+    const isSwarmContainer = useIsSwarmContainer();
     const t = useTranslations('docker.containerPorts');
 
     const handleAddPort = () =>
@@ -91,20 +93,22 @@ export function CardExposedPorts() {
     return (
         <Card className={'flex flex-1 flex-col'}>
             <CardHeaderWithIcon icon={Network} title={t('title')} className={'justify-between'}>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button
-                            className={'size-9 xl:size-fit'}
-                            icon={Plus}
-                            onClick={handleAddPort}
-                        >
-                            <span className={'hidden xl:flex'}>{t('addPort')}</span>
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent className={'flex xl:hidden'}>
-                        <span>{t('addPort')}</span>
-                    </TooltipContent>
-                </Tooltip>
+                {!isSwarmContainer && (
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                className={'size-9 xl:size-fit'}
+                                icon={Plus}
+                                onClick={handleAddPort}
+                            >
+                                <span className={'hidden xl:flex'}>{t('addPort')}</span>
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className={'flex xl:hidden'}>
+                            <span>{t('addPort')}</span>
+                        </TooltipContent>
+                    </Tooltip>
+                )}
             </CardHeaderWithIcon>
             <CardContent className={'flex flex-col overflow-hidden px-0'}>
                 <ScrollAreaWithShadow
@@ -155,28 +159,29 @@ export function CardExposedPorts() {
                                                     <span className="text-destructive">-</span>
                                                 )}
                                             </code>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Button
-                                                        size="icon"
-                                                        variant="ghost"
-                                                        className="h-6 w-6"
-                                                        onClick={() =>
-                                                            handleEditPort(displayPort, port)
-                                                        }
-                                                    >
-                                                        <Pencil />
-                                                    </Button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>{t('edit')}</TooltipContent>
-                                            </Tooltip>
+                                            {!isSwarmContainer && (
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button
+                                                            size="icon"
+                                                            variant="ghost"
+                                                            className="h-6 w-6"
+                                                            onClick={() =>
+                                                                handleEditPort(displayPort, port)
+                                                            }
+                                                        >
+                                                            <Pencil />
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>{t('edit')}</TooltipContent>
+                                                </Tooltip>
+                                            )}
                                         </div>
                                     );
                                 })}
 
                                 {addedPorts.map((change, idx) => {
-                                    const effectivePublicPort =
-                                        change.publicPort ?? change.privatePort!;
+                                    const hasPublicPort = change.publicPort != null;
 
                                     return (
                                         <div
@@ -184,24 +189,21 @@ export function CardExposedPorts() {
                                             className="group bg-muted/60 relative flex items-center justify-between gap-2 rounded-md px-3 py-2"
                                         >
                                             <code className="flex items-center gap-2 text-sm leading-none">
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <a
-                                                            href={getPortUrl(effectivePublicPort)}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="text-primary inline-flex items-center gap-1 font-semibold hover:underline"
-                                                        >
-                                                            {effectivePublicPort}
-                                                            <ExternalLink className="h-3 w-3" />
-                                                        </a>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent>
-                                                        {t('openPort', {
-                                                            port: effectivePublicPort,
-                                                        })}
-                                                    </TooltipContent>
-                                                </Tooltip>
+                                                {hasPublicPort ? (
+                                                    <a
+                                                        href={getPortUrl(change.publicPort!)}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-primary inline-flex items-center gap-1 font-semibold hover:underline"
+                                                    >
+                                                        {change.publicPort}
+                                                        <ExternalLink className="h-3 w-3" />
+                                                    </a>
+                                                ) : (
+                                                    <span className="text-muted-foreground font-semibold">
+                                                        —
+                                                    </span>
+                                                )}
                                                 <span className="text-muted-foreground">→</span>
                                                 <span>{change.privatePort}</span>
                                                 <span className="text-muted-foreground">
@@ -237,7 +239,9 @@ export function CardExposedPorts() {
                             </div>
                         ) : (
                             <div className="mb-16 flex flex-1 items-center justify-center">
-                                <p className="text-muted-foreground text-center">{t('noPorts')}</p>
+                                <p className="text-muted-foreground text-center text-sm">
+                                    {t('noPorts')}
+                                </p>
                             </div>
                         )}
                     </div>

@@ -3,6 +3,7 @@ import { Button } from '@workspace/ui/components/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { useTranslations } from 'next-intl';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
+import { useIsSwarmContainer } from '@/hooks/useIsSwarmContainer';
 
 export interface NetworkItemProps {
     networkName: string;
@@ -21,6 +22,7 @@ export interface NetworkItemProps {
 export function NetworkItem({ networkName, networkInfo, isNew }: NetworkItemProps) {
     const t = useTranslations('docker.containerNetworks');
     const { networkChanges, onNetworkChange } = useContainerChangesStore();
+    const isSwarmContainer = useIsSwarmContainer();
 
     const isDeleted = networkChanges.some(
         (change) => change.typeAction === 'delete' && change.currentName === networkName,
@@ -44,7 +46,7 @@ export function NetworkItem({ networkName, networkInfo, isNew }: NetworkItemProp
                     </span>
                     {statusIndicator}
                 </div>
-                {isDeleted ? (
+                {!isSwarmContainer && (isDeleted ? (
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button
@@ -72,7 +74,7 @@ export function NetworkItem({ networkName, networkInfo, isNew }: NetworkItemProp
                         </TooltipTrigger>
                         <TooltipContent>{t('disconnect')}</TooltipContent>
                     </Tooltip>
-                )}
+                ))}
             </div>
             {networkInfo && (
                 <div className="grid grid-cols-2 gap-3 text-xs">

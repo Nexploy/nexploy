@@ -11,10 +11,17 @@ export interface EnvVarItemProps {
     isDeleted: boolean;
     isNew?: boolean;
     displayEnvVar: EnvVar;
-    onEdit: (envVar: EnvVar, originalEnvVar?: EnvVar) => void;
+    onEdit?: (envVar: EnvVar, originalEnvVar?: EnvVar) => void;
 }
 
-export function EnvVarItem({ env, isEdited, isDeleted, isNew, displayEnvVar, onEdit }: EnvVarItemProps) {
+export function EnvVarItem({
+    env,
+    isEdited,
+    isDeleted,
+    isNew,
+    displayEnvVar,
+    onEdit,
+}: EnvVarItemProps) {
     const t = useTranslations('docker.containerEnv');
     const statusIndicator = isNew ? (
         <span className="text-green-500">+</span>
@@ -30,22 +37,30 @@ export function EnvVarItem({ env, isEdited, isDeleted, isNew, displayEnvVar, onE
                 <span className="text-primary shrink-0 text-xs font-semibold">
                     {displayEnvVar.key}:
                 </span>
-                <span className="text-xs break-all">{displayEnvVar.value || t('empty')}</span>
+                <span className="text-xs break-all">
+                    {displayEnvVar.value ? (
+                        displayEnvVar.value
+                    ) : (
+                        <span className="text-muted-foreground italic">{t('empty')}</span>
+                    )}
+                </span>
                 {statusIndicator}
             </code>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-6 w-6"
-                        onClick={() => onEdit(displayEnvVar, isNew ? undefined : env)}
-                    >
-                        <Pencil />
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent>{t('edit')}</TooltipContent>
-            </Tooltip>
+            {onEdit && (
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-6 w-6"
+                            onClick={() => onEdit(displayEnvVar, isNew ? undefined : env)}
+                        >
+                            <Pencil />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{t('edit')}</TooltipContent>
+                </Tooltip>
+            )}
         </div>
     );
 }
