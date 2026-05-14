@@ -49,7 +49,7 @@ export function CardVolumes() {
                         <Button
                             className="size-9 md:size-fit"
                             icon={Plus}
-                            onClick={() => handleOpenDialog()}
+                            onClick={handleOpenDialog}
                         >
                             <span className="hidden md:flex">{t('addVolume')}</span>
                         </Button>

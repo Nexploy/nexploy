@@ -24,6 +24,7 @@ export function CardEnv() {
 
     const { openDialog } = useConfirmationDialogStore();
     const envVarChanges = useContainerChangesStore((state) => state.envVarChanges);
+    const onEnvVarChange = useContainerChangesStore((state) => state.onEnvVarChange);
     const isSwarmContainer = useIsSwarmContainer();
     const t = useTranslations('docker.containerEnv');
 
@@ -117,6 +118,7 @@ export function CardEnv() {
                                         isDeleted={isDeleted}
                                         displayEnvVar={displayEnvVar}
                                         onEdit={isSwarmContainer ? undefined : handleOpenDialog.bind(null, 'edit')}
+                                        onCancelDelete={isSwarmContainer ? undefined : () => onEnvVarChange({ typeAction: 'add', key: env.key, value: env.value, currentKey: env.key })}
                                     />
                                 );
                             })}

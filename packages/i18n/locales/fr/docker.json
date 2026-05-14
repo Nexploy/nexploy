@@ -308,6 +308,8 @@
         "noVariables": "Aucune variable d'environnement",
         "addVariable": "Ajouter une variable",
         "edit": "Modifier",
+        "delete": "Supprimer",
+        "cancelDelete": "Annuler la suppression",
         "empty": "(vide)"
     },
     "containerPorts": {
@@ -318,6 +320,8 @@
         "editDescription": "Le conteneur doit être arrêté pour modifier un port. Il sera recréé avec la nouvelle configuration.",
         "addPort": "Ajouter un port",
         "edit": "Modifier",
+        "delete": "Supprimer",
+        "cancelDelete": "Annuler la suppression",
         "noPorts": "Aucun port exposé"
     },
     "containerVolumes": {
@@ -848,6 +852,8 @@
         "add": "Ajouter",
         "noLabels": "Aucun label",
         "edit": "Modifier",
+        "delete": "Supprimer",
+        "cancelDelete": "Annuler la suppression",
         "empty": "(vide)"
     },
     "toasts": {

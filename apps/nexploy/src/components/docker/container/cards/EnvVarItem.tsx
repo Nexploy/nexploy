@@ -1,4 +1,4 @@
-import { Pencil } from 'lucide-react';
+import { Pencil, X } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
@@ -12,6 +12,7 @@ export interface EnvVarItemProps {
     isNew?: boolean;
     displayEnvVar: EnvVar;
     onEdit?: (envVar: EnvVar, originalEnvVar?: EnvVar) => void;
+    onCancelDelete?: () => void;
 }
 
 export function EnvVarItem({
@@ -21,6 +22,7 @@ export function EnvVarItem({
     isNew,
     displayEnvVar,
     onEdit,
+    onCancelDelete,
 }: EnvVarItemProps) {
     const t = useTranslations('docker.containerEnv');
     const statusIndicator = isNew ? (
@@ -46,21 +48,39 @@ export function EnvVarItem({
                 </span>
                 {statusIndicator}
             </code>
-            {onEdit && (
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-6 w-6"
-                            onClick={() => onEdit(displayEnvVar, isNew ? undefined : env)}
-                        >
-                            <Pencil />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>{t('edit')}</TooltipContent>
-                </Tooltip>
-            )}
+            <div className="flex shrink-0 gap-1">
+                {isDeleted && onCancelDelete ? (
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-6 w-6"
+                                onClick={onCancelDelete}
+                            >
+                                <X />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>{t('cancelDelete')}</TooltipContent>
+                    </Tooltip>
+                ) : (
+                    onEdit && (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-6 w-6"
+                                    onClick={() => onEdit(displayEnvVar, isNew ? undefined : env)}
+                                >
+                                    <Pencil />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{t('edit')}</TooltipContent>
+                        </Tooltip>
+                    )
+                )}
+            </div>
         </div>
     );
 }

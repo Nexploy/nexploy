@@ -308,6 +308,8 @@
         "noVariables": "No environment variables",
         "addVariable": "Add variable",
         "edit": "Edit",
+        "delete": "Delete",
+        "cancelDelete": "Cancel delete",
         "empty": "(empty)"
     },
     "containerPorts": {
@@ -318,6 +320,8 @@
         "editDescription": "The container must be stopped to edit a port. It will be recreated with the new configuration.",
         "addPort": "Add port",
         "edit": "Edit",
+        "delete": "Delete",
+        "cancelDelete": "Cancel delete",
         "noPorts": "No exposed ports"
     },
     "containerVolumes": {
@@ -848,6 +852,8 @@
         "add": "Add",
         "noLabels": "No labels",
         "edit": "Edit",
+        "delete": "Delete",
+        "cancelDelete": "Cancel delete",
         "empty": "(empty)"
     },
     "toasts": {

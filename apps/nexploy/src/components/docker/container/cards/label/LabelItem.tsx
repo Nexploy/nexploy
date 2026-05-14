@@ -1,6 +1,6 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Button } from '@workspace/ui/components/button';
-import { Pencil } from 'lucide-react';
+import { Pencil, X } from 'lucide-react';
 import { Label } from '@workspace/typescript-interface/docker/docker.label';
 import { useTranslations } from 'next-intl';
 
@@ -11,6 +11,7 @@ interface LabelItemProps {
     isNew?: boolean;
     displayLabel: Label;
     onEdit?: (label: Label, originalLabel?: Label) => void;
+    onCancelDelete?: () => void;
 }
 
 export function LabelItem({
@@ -20,6 +21,7 @@ export function LabelItem({
     isNew,
     displayLabel,
     onEdit,
+    onCancelDelete,
 }: LabelItemProps) {
     const t = useTranslations('docker.labels');
     const statusIndicator = isNew ? (
@@ -47,21 +49,39 @@ export function LabelItem({
                 </span>
                 {statusIndicator}
             </div>
-            {onEdit && (
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-6 w-6 shrink-0"
-                            onClick={() => onEdit(displayLabel, isNew ? undefined : label)}
-                        >
-                            <Pencil />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>{t('edit')}</TooltipContent>
-                </Tooltip>
-            )}
+            <div className="flex shrink-0 gap-1">
+                {isDeleted && onCancelDelete ? (
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-6 w-6 shrink-0"
+                                onClick={onCancelDelete}
+                            >
+                                <X />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>{t('cancelDelete')}</TooltipContent>
+                    </Tooltip>
+                ) : (
+                    onEdit && (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-6 w-6 shrink-0"
+                                    onClick={() => onEdit(displayLabel, isNew ? undefined : label)}
+                                >
+                                    <Pencil />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{t('edit')}</TooltipContent>
+                        </Tooltip>
+                    )
+                )}
+            </div>
         </div>
     );
 }

@@ -13,7 +13,6 @@ import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { DialogClose, DialogFooter } from '@workspace/ui/components/dialog';
-import { Plus } from 'lucide-react';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import {
     ContainerVolumeForm,
@@ -111,7 +110,6 @@ export function VolumeForm() {
                             className="flex-1 sm:flex-0"
                             type="submit"
                             disabled={!form.formState.isDirty}
-                            icon={Plus}
                         >
                             {t('add')}
                         </Button>

@@ -74,6 +74,11 @@ export const useContainerChangesStore = create<ContainerChangesStore>((set, get)
                     return { portChanges };
                 }
 
+                if (existing?.typeAction === 'delete' && change.typeAction === 'add') {
+                    portChanges.splice(existingIndex, 1);
+                    return { portChanges };
+                }
+
                 if (existing?.typeAction === 'delete' && change.typeAction === 'edit') {
                     portChanges[existingIndex] = {
                         typeAction: 'edit',
@@ -145,6 +150,11 @@ export const useContainerChangesStore = create<ContainerChangesStore>((set, get)
                         currentKey: existing?.currentKey,
                         currentValue: existing?.currentValue,
                     };
+                    return { envVarChanges };
+                }
+
+                if (existing?.typeAction === 'delete' && change.typeAction === 'add') {
+                    envVarChanges.splice(existingIndex, 1);
                     return { envVarChanges };
                 }
 
@@ -260,6 +270,11 @@ export const useContainerChangesStore = create<ContainerChangesStore>((set, get)
                     return { networkChanges };
                 }
 
+                if (existing?.typeAction === 'delete' && change.typeAction === 'add') {
+                    networkChanges.splice(existingIndex, 1);
+                    return { networkChanges };
+                }
+
                 if (existing?.typeAction === 'delete' && change.typeAction === 'edit') {
                     networkChanges[existingIndex] = {
                         typeAction: 'edit',
@@ -327,6 +342,11 @@ export const useContainerChangesStore = create<ContainerChangesStore>((set, get)
                         currentKey: existing?.currentKey,
                         currentValue: existing?.currentValue,
                     };
+                    return { labelChanges };
+                }
+
+                if (existing?.typeAction === 'delete' && change.typeAction === 'add') {
+                    labelChanges.splice(existingIndex, 1);
                     return { labelChanges };
                 }
 

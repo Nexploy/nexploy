@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@workspace/ui/components/card';
-import { ExternalLink, Network, Pencil, Plus } from 'lucide-react';
+import { ExternalLink, Network, Pencil, Plus, X } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Button } from '@workspace/ui/components/button';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
@@ -29,6 +29,7 @@ export function CardExposedPorts() {
 
     const { openDialog } = useConfirmationDialogStore();
     const portChanges = useContainerChangesStore((state) => state.portChanges);
+    const onPortChange = useContainerChangesStore((state) => state.onPortChange);
     const isSwarmContainer = useIsSwarmContainer();
     const t = useTranslations('docker.containerPorts');
 
@@ -160,21 +161,47 @@ export function CardExposedPorts() {
                                                 )}
                                             </code>
                                             {!isSwarmContainer && (
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <Button
-                                                            size="icon"
-                                                            variant="ghost"
-                                                            className="h-6 w-6"
-                                                            onClick={() =>
-                                                                handleEditPort(displayPort, port)
-                                                            }
-                                                        >
-                                                            <Pencil />
-                                                        </Button>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent>{t('edit')}</TooltipContent>
-                                                </Tooltip>
+                                                isDeleted ? (
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Button
+                                                                size="icon"
+                                                                variant="ghost"
+                                                                className="h-6 w-6"
+                                                                onClick={() =>
+                                                                    onPortChange({
+                                                                        typeAction: 'add',
+                                                                        publicPort: port.publicPort,
+                                                                        privatePort: port.privatePort,
+                                                                        type: port.type,
+                                                                        currentPublicPort: port.publicPort,
+                                                                        currentPrivatePort: port.privatePort,
+                                                                        currentType: port.type,
+                                                                    })
+                                                                }
+                                                            >
+                                                                <X />
+                                                            </Button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>{t('cancelDelete')}</TooltipContent>
+                                                    </Tooltip>
+                                                ) : (
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Button
+                                                                size="icon"
+                                                                variant="ghost"
+                                                                className="h-6 w-6"
+                                                                onClick={() =>
+                                                                    handleEditPort(displayPort, port)
+                                                                }
+                                                            >
+                                                                <Pencil />
+                                                            </Button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>{t('edit')}</TooltipContent>
+                                                    </Tooltip>
+                                                )
                                             )}
                                         </div>
                                     );

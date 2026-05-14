@@ -21,6 +21,7 @@ export function CardLabels() {
 
     const { openDialog } = useConfirmationDialogStore();
     const labelChanges = useContainerChangesStore((state) => state.labelChanges);
+    const onLabelChange = useContainerChangesStore((state) => state.onLabelChange);
     const isSwarmContainer = useIsSwarmContainer();
 
     const handleOpenDialog = (mode: 'add' | 'edit', label?: Label, originalLabel?: Label) => {
@@ -110,6 +111,7 @@ export function CardLabels() {
                                         isDeleted={isDeleted}
                                         displayLabel={displayLabel}
                                         onEdit={isSwarmContainer ? undefined : handleOpenDialog.bind(null, 'edit')}
+                                        onCancelDelete={isSwarmContainer ? undefined : () => onLabelChange({ typeAction: 'add', key: label.key, value: label.value, currentKey: label.key })}
                                     />
                                 );
                             })}
