@@ -62,10 +62,10 @@ app.post(
         }
 
         const network = await docker.createNetwork({
-            Name: name,
-            Driver: driver,
             ...rest,
             ...operatorFields,
+            Name: name,
+            Driver: driver,
             ConfigFrom: configFrom,
             Options: options,
             Labels: labels,

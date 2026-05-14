@@ -33,7 +33,7 @@ export const networkCreateSchema = z.object({
     ipam: IPAMSchema,
     internal: z.boolean().default(false).optional(),
     attachable: z.boolean().default(false).optional(),
-    ingress: z.boolean().optional(),
+    ingress: z.boolean().default(false).optional(),
     configOnly: z.boolean().optional(),
     configFrom: z.object({
         network: z.string().optional(),

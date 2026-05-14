@@ -33,6 +33,7 @@ export default function CreateNetworkPage() {
                     checkDuplicate: true,
                     internal: false,
                     attachable: false,
+                    ingress: false,
                     enableIPv4: true,
                     enableIPv6: false,
                     ipam: { driver: '', config: [] },
