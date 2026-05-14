@@ -29,8 +29,18 @@ app.get(
 app.post(
     '/create',
     route({ json: networkCreateSchema }, async (c) => {
-        const { name, driver = 'bridge', options: rawOptions, labels: rawLabels, ...rest } =
-            c.req.valid('json');
+        const {
+            name,
+            driver,
+            options: rawOptions,
+            labels: rawLabels,
+            configFrom: rawConfigFrom,
+            scope,
+            internal,
+            attachable,
+            ingress,
+            ...rest
+        } = c.req.valid('json');
 
         const options = rawOptions.length
             ? Object.fromEntries(rawOptions.map((o) => [o.key, o.value]))
@@ -38,6 +48,11 @@ app.post(
         const labels = rawLabels.length
             ? Object.fromEntries(rawLabels.map((l) => [l.key, l.value]))
             : undefined;
+        const configFrom = rawConfigFrom?.network ? { Network: rawConfigFrom.network } : undefined;
+
+        const operatorFields = rest.configOnly
+            ? {}
+            : { Scope: scope, Internal: internal, Attachable: attachable, Ingress: ingress };
 
         try {
             const info = (await docker.getNetwork(name).inspect()) as { Id: string };
@@ -50,6 +65,8 @@ app.post(
             Name: name,
             Driver: driver,
             ...rest,
+            ...operatorFields,
+            ConfigFrom: configFrom,
             Options: options,
             Labels: labels,
         });

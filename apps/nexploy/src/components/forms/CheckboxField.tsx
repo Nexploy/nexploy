@@ -20,7 +20,7 @@ export function CheckboxField({ control, name, label, description }: CheckboxFie
             control={control}
             name={name}
             render={({ field }) => (
-                <FormItem className="flex flex-row items-start gap-3">
+                <FormItem className="flex flex-row">
                     <FormControl>
                         <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>

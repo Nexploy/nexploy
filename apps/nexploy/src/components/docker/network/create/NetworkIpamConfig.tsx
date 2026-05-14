@@ -69,18 +69,10 @@ export function NetworkIpamConfig() {
                                 key={field.id}
                                 className="bg-muted/40 space-y-3 rounded-lg border p-4"
                             >
-                                <div className="flex items-center justify-between">
+                                <div className="flex justify-between">
                                     <span className="text-sm font-semibold">
                                         {t('configuration')} {index + 1}
                                     </span>
-                                    <Button
-                                        type="button"
-                                        variant="destructiveGhost"
-                                        size="icon"
-                                        onClick={() => remove(index)}
-                                    >
-                                        <Trash2 />
-                                    </Button>
                                 </div>
                                 <div className="flex gap-2">
                                     <FormField
@@ -130,6 +122,13 @@ export function NetworkIpamConfig() {
                                                 <FormMessage />
                                             </FormItem>
                                         )}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="destructiveGhost"
+                                        size="icon"
+                                        icon={Trash2}
+                                        onClick={() => remove(index)}
                                     />
                                 </div>
                             </div>

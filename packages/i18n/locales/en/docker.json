@@ -779,7 +779,8 @@
         "configFromExisting": "Configuration from existing network",
         "configFromExistingDescription": "Create this network based on an existing network's configuration",
         "sourceNetworkName": "Source network name",
-        "sourceNetworkPlaceholder": "existing-network",
+        "sourceNetworkPlaceholder": "Select a config-only network",
+        "sourceNetworkEmpty": "No config-only networks available",
         "sourceNetworkDescription": "The name of the network to copy configuration from",
         "drivers": {
             "bridge": "Isolated network on a single Docker host",

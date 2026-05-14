@@ -210,6 +210,7 @@ export class NetworksStateManager extends BaseStateManager {
             labels: network.Labels || {},
             created: network.Created ? dayjs(network.Created).unix() : dayjs().unix(),
             enableIPv6: network.EnableIPv6 || false,
+            configOnly: network.ConfigOnly || false,
             timestamp: Date.now(),
         };
     }

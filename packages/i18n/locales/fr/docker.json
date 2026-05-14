@@ -779,7 +779,8 @@
         "configFromExisting": "Configuration depuis un réseau existant",
         "configFromExistingDescription": "Créez ce réseau basé sur la configuration d'un réseau existant",
         "sourceNetworkName": "Nom du réseau source",
-        "sourceNetworkPlaceholder": "réseau-existant",
+        "sourceNetworkPlaceholder": "Sélectionner un réseau config-only",
+        "sourceNetworkEmpty": "Aucun réseau config-only disponible",
         "sourceNetworkDescription": "Le nom du réseau dont copier la configuration",
         "drivers": {
             "bridge": "Réseau isolé sur un seul hôte Docker",

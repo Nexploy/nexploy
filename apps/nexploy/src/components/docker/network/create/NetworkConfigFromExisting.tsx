@@ -13,11 +13,21 @@ import {
     FormLabel,
     FormMessage,
 } from '@workspace/ui/components/form';
-import { Input } from '@workspace/ui/components/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@workspace/ui/components/select';
+import { useNetworksStore } from '@/stores/docker/useNetworksStore.ts';
 
 export function NetworkConfigFromExisting() {
     const t = useTranslations('docker.createNetworkPage');
     const form = useFormContext();
+
+    const networks = useNetworksStore((state) => state.networks);
+    const configOnlyNetworks = networks.filter((net) => net.configOnly);
 
     return (
         <Card>
@@ -33,9 +43,26 @@ export function NetworkConfigFromExisting() {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>{t('sourceNetworkName')}</FormLabel>
-                            <FormControl>
-                                <Input {...field} placeholder={t('sourceNetworkPlaceholder')} />
-                            </FormControl>
+                            <Select {...field}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={t('sourceNetworkPlaceholder')} />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {configOnlyNetworks.length === 0 ? (
+                                        <p className="text-muted-foreground text-center text-sm">
+                                            {t('sourceNetworkEmpty')}
+                                        </p>
+                                    ) : (
+                                        configOnlyNetworks.map((net) => (
+                                            <SelectItem key={net.id} value={net.name}>
+                                                {net.name}
+                                            </SelectItem>
+                                        ))
+                                    )}
+                                </SelectContent>
+                            </Select>
                             <FormMessage />
                             <FormDescription>{t('sourceNetworkDescription')}</FormDescription>
                         </FormItem>

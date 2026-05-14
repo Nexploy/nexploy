@@ -14,6 +14,7 @@ export interface Network {
     labels: Record<string, string>;
     created: number;
     enableIPv6: boolean;
+    configOnly: boolean;
     timestamp: number;
 }
 

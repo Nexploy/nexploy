@@ -11,9 +11,9 @@ const networkLabelSchema = z.object({
 });
 
 const ipamConfigItemSchema = z.object({
-    subnet: z.string().optional(),
-    ipRange: z.string().optional(),
-    gateway: z.string().optional(),
+    subnet: z.string().min(1, 'Subnet is required'),
+    ipRange: z.string().min(1, 'IP Range is required'),
+    gateway: z.string().min(1, 'Gateway is required'),
 });
 
 const IPAMSchema = z
@@ -26,8 +26,8 @@ const IPAMSchema = z
 export const networkCreateSchema = z.object({
     name: z.string().min(1, 'Network name is required.').max(255, 'Network name is too long.'),
     checkDuplicate: z.boolean().optional(),
-    driver: z.string().optional(),
-    scope: z.string().optional(),
+    driver: z.string().default('bridge'),
+    scope: z.string().default('local'),
     enableIPv4: z.boolean().optional(),
     enableIPv6: z.boolean().optional(),
     ipam: IPAMSchema,
@@ -35,16 +35,12 @@ export const networkCreateSchema = z.object({
     attachable: z.boolean().default(false).optional(),
     ingress: z.boolean().optional(),
     configOnly: z.boolean().optional(),
-    configFrom: z
-        .object({
-            network: z.string().optional(),
-        })
-        .optional(),
+    configFrom: z.object({
+        network: z.string().optional(),
+    }),
     options: z.array(networkOptionSchema).default([]),
     labels: z.array(networkLabelSchema).default([]),
 });
-
-export type NetworkCreateForm = z.infer<typeof networkCreateSchema>;
 
 export const networkActionsSchema = z.object({
     networkIds: z.array(z.string()),

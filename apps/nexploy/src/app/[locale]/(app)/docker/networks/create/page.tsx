@@ -29,6 +29,7 @@ export default function CreateNetworkPage() {
                 defaultValues: {
                     name: '',
                     driver: 'bridge',
+                    scope: 'local',
                     checkDuplicate: true,
                     internal: false,
                     attachable: false,
@@ -41,7 +42,12 @@ export default function CreateNetworkPage() {
             },
             actionProps: {
                 onExecute: ({ input }) => {
-                    toast.loading(t('creatingNetwork', { name: input.name }));
+                    toast.loading(t('creatingNetwork', { name: input.name }), {
+                        id: 'network-create',
+                    });
+                },
+                onError: () => {
+                    toast.dismiss('network-create');
                 },
                 onSuccess: () => {
                     toast.dismiss();
