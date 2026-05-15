@@ -36,9 +36,10 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
     const { onPortChange } = useContainerChangesStore();
     const t = useTranslations('docker.forms');
     const tCommon = useTranslations('common');
+    const tValidation = useTranslations('validation');
 
     const form = useForm<ContainerPortForm>({
-        resolver: zodResolver(containerPortSchema) as Resolver<ContainerPortForm>,
+        resolver: zodResolver(containerPortSchema(tValidation)) as Resolver<ContainerPortForm>,
         defaultValues: {
             privatePort: defaultPort?.privatePort ?? '',
             publicPort: defaultPort?.publicPort ?? '',
@@ -47,7 +48,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
     });
 
     const onSubmit = (data: ContainerPortForm) => {
-        const { publicPort, privatePort, type } = containerPortSchema.parse(data);
+        const { publicPort, privatePort, type } = containerPortSchema(tValidation).parse(data);
 
         console.log(publicPort, privatePort, type);
 

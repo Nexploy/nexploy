@@ -1,46 +1,51 @@
 import { z } from 'zod';
 
-const networkOptionSchema = z.object({
-    key: z.string().min(1, 'Key is required'),
-    value: z.string().min(1, 'Value is required'),
-});
+const networkOptionSchema = (t: any) =>
+    z.object({
+        key: z.string().min(1, t('fieldRequired', { field: t('fieldNames.key') })),
+        value: z.string().min(1, t('fieldRequired', { field: t('fieldNames.value') })),
+    });
 
-const networkLabelSchema = z.object({
-    key: z.string().min(1, 'Key is required'),
-    value: z.string().min(1, 'Value is required'),
-});
+const networkLabelSchema = (t: any) =>
+    z.object({
+        key: z.string().min(1, t('fieldRequired', { field: t('fieldNames.key') })),
+        value: z.string().min(1, t('fieldRequired', { field: t('fieldNames.value') })),
+    });
 
-const ipamConfigItemSchema = z.object({
-    subnet: z.string().min(1, 'Subnet is required'),
-    ipRange: z.string().min(1, 'IP Range is required'),
-    gateway: z.string().min(1, 'Gateway is required'),
-});
+const ipamConfigItemSchema = (t: any) =>
+    z.object({
+        subnet: z.string().min(1, t('fieldRequired', { field: t('fieldNames.subnet') })),
+        ipRange: z.string().min(1, t('fieldRequired', { field: t('fieldNames.ipRange') })),
+        gateway: z.string().min(1, t('fieldRequired', { field: t('fieldNames.gateway') })),
+    });
 
-const IPAMSchema = z
-    .object({
-        driver: z.string().optional(),
-        config: z.array(ipamConfigItemSchema).default([]),
-    })
-    .optional();
+const IPAMSchema = (t: any) =>
+    z
+        .object({
+            driver: z.string().optional(),
+            config: z.array(ipamConfigItemSchema(t)).default([]),
+        })
+        .optional();
 
-export const networkCreateSchema = z.object({
-    name: z.string().min(1, 'Network name is required.').max(255, 'Network name is too long.'),
-    checkDuplicate: z.boolean().optional(),
-    driver: z.string().default('bridge'),
-    scope: z.string().default('local'),
-    enableIPv4: z.boolean().optional(),
-    enableIPv6: z.boolean().optional(),
-    ipam: IPAMSchema,
-    internal: z.boolean().default(false).optional(),
-    attachable: z.boolean().default(false).optional(),
-    ingress: z.boolean().default(false).optional(),
-    configOnly: z.boolean().optional(),
-    configFrom: z.object({
-        network: z.string().optional(),
-    }),
-    options: z.array(networkOptionSchema).default([]),
-    labels: z.array(networkLabelSchema).default([]),
-});
+export const networkCreateSchema = (t: any) =>
+    z.object({
+        name: z.string().min(1, t('fieldRequired', { field: t('fieldNames.name') })).max(255, t('tooLong')),
+        checkDuplicate: z.boolean().optional(),
+        driver: z.string().default('bridge'),
+        scope: z.string().default('local'),
+        enableIPv4: z.boolean().optional(),
+        enableIPv6: z.boolean().optional(),
+        ipam: IPAMSchema(t),
+        internal: z.boolean().default(false).optional(),
+        attachable: z.boolean().default(false).optional(),
+        ingress: z.boolean().default(false).optional(),
+        configOnly: z.boolean().optional(),
+        configFrom: z.object({
+            network: z.string().optional(),
+        }),
+        options: z.array(networkOptionSchema(t)).default([]),
+        labels: z.array(networkLabelSchema(t)).default([]),
+    });
 
 export const networkActionsSchema = z.object({
     networkIds: z.array(z.string()),

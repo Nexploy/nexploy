@@ -15,10 +15,11 @@ import { useTranslations } from 'next-intl';
 export function CloudflareConnectForm() {
     const { closeDialog } = useConfirmationDialogStore();
     const t = useTranslations('integrations.cloudflare');
+    const tValidation = useTranslations('validation');
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         connectCloudflareAction,
-        zodResolver(cloudflareConnectSchema),
+        zodResolver(cloudflareConnectSchema(tValidation)),
         {
             formProps: {
                 defaultValues: {

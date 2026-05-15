@@ -7,14 +7,7 @@ import { createRegistryAction } from '@/actions/registry/createRegistry.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -22,18 +15,17 @@ import { toast } from 'sonner';
 export function CreateRegistryForm() {
     const t = useTranslations('admin.registry');
     const tCommon = useTranslations('common');
+    const tValidation = useTranslations('validation');
     const { closeDialog } = useConfirmationDialogStore();
 
     const { form, handleSubmitWithAction } = useHookFormAction(
         createRegistryAction,
-        zodResolver(createRegistrySchema),
+        zodResolver(createRegistrySchema(tValidation)),
         {
             formProps: {
                 defaultValues: {
                     name: '',
                     url: '',
-                    username: '',
-                    password: '',
                 },
             },
             actionProps: {
@@ -106,6 +98,8 @@ export function CreateRegistryForm() {
                                     placeholder={t('usernamePlaceholder')}
                                     disabled={isSubmitting}
                                     {...field}
+                                    value={field.value ?? ''}
+                                    onChange={e => field.onChange(e.target.value === '' ? undefined : e.target.value)}
                                 />
                             </FormControl>
                             <FormMessage />
@@ -130,6 +124,8 @@ export function CreateRegistryForm() {
                                     type="password"
                                     placeholder={t('passwordPlaceholder')}
                                     disabled={isSubmitting}
+                                    value={field.value ?? ''}
+                                    onChange={e => field.onChange(e.target.value === '' ? undefined : e.target.value)}
                                 />
                             </FormControl>
                             <p className="text-muted-foreground text-xs">
@@ -141,12 +137,7 @@ export function CreateRegistryForm() {
                 />
 
                 <DialogFooter>
-                    <Button
-                        type="submit"
-                        disabled={isSubmitting}
-                        isLoading={isSubmitting}
-                        className="w-full"
-                    >
+                    <Button type="submit" disabled={isSubmitting} isLoading={isSubmitting}>
                         {t('create')}
                     </Button>
                 </DialogFooter>

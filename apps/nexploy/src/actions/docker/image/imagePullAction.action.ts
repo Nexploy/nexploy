@@ -6,10 +6,16 @@ import { imagePullSchema } from '@workspace/schemas-zod/docker/image/imagePullAc
 import { setToastServer } from '@/lib/toastServer';
 import { HTTPError } from 'ky';
 import { getRegistryWithPassword } from '@/services/registry.service';
+import { getTranslations } from 'next-intl/server';
+
+async function getImagePullSchema() {
+    const t = await getTranslations('validation');
+    return imagePullSchema(t);
+}
 
 export const onImagePullAction = authActionServer
     .use(requirePermission('docker', 'manage'))
-    .inputSchema(imagePullSchema)
+    .inputSchema(getImagePullSchema)
     .action(async ({ parsedInput: { imageName, registryId } }) => {
         let auth: { username: string; password: string; serveraddress: string } | undefined;
 

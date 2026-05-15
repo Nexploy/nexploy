@@ -4,10 +4,16 @@ import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { updateEnvVariables } from '@/services/repository.service';
 import { envVariableSchema } from '@workspace/schemas-zod/repository/envVariable.schema';
+import { getTranslations } from 'next-intl/server';
+
+async function getEnvVariableSchema() {
+    const t = await getTranslations('validation');
+    return envVariableSchema(t);
+}
 
 export const onEnvVariableAction = authActionServer
     .use(requirePermission('repository', 'update'))
-    .inputSchema(envVariableSchema)
+    .inputSchema(getEnvVariableSchema)
     .action(async ({ parsedInput, ctx }) => {
         const { repositoryId, envVariables, deleteIds } = parsedInput;
 

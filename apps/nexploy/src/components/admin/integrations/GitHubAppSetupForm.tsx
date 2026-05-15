@@ -46,11 +46,12 @@ export function GitHubAppSetupForm() {
     const { closeDialog } = useConfirmationDialogStore();
     const t = useTranslations('integrations.oauth.guide.github');
     const tOAuth = useTranslations('integrations.oauth');
+    const tValidation = useTranslations('validation');
 
     const appUrl = window.location.origin;
 
     const form = useForm<GitHubSetupValues>({
-        resolver: zodResolver(githubSetupSchema),
+        resolver: zodResolver(githubSetupSchema(tValidation)),
         defaultValues: {
             displayName: '',
             forOrg: false,

@@ -10,7 +10,7 @@ export type TypeTwoFactorAuthSchema = z.infer<ReturnType<typeof twoFactorAuthSch
 
 export const twoFactorAuthCodeSchema = (t: any) =>
     z.object({
-        code: z.string().min(1, t('required')),
+        code: z.string().min(1, t('fieldRequired', { field: t('fieldNames.code') })),
         trustDevice: z.boolean().default(false),
     });
 

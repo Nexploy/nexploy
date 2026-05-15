@@ -16,9 +16,9 @@ export const setupFormSchema = (t: any) =>
             password: password(t),
             confirmPassword: z
                 .string({
-                    error: t('required'),
+                    error: t('fieldRequired', { field: t('fieldNames.confirmPassword') }),
                 })
-                .min(1, { message: t('required') }),
+                .min(1, { message: t('fieldRequired', { field: t('fieldNames.confirmPassword') }) }),
         })
         .refine((data) => data.password === data.confirmPassword, {
             message: t('passwordsMustMatch'),
@@ -39,15 +39,15 @@ export const changePasswordFormSchema = (t: any) =>
         .object({
             currentPassword: z
                 .string({
-                    error: t('required'),
+                    error: t('fieldRequired', { field: t('fieldNames.currentPassword') }),
                 })
-                .min(1, { message: t('required') }),
+                .min(1, { message: t('fieldRequired', { field: t('fieldNames.currentPassword') }) }),
             newPassword: password(t),
             confirmPassword: z
                 .string({
-                    error: t('required'),
+                    error: t('fieldRequired', { field: t('fieldNames.confirmPassword') }),
                 })
-                .min(1, { message: t('required') }),
+                .min(1, { message: t('fieldRequired', { field: t('fieldNames.confirmPassword') }) }),
         })
         .refine((data) => data.newPassword === data.confirmPassword, {
             message: t('passwordsMustMatch'),
@@ -62,11 +62,7 @@ export const createUserFormSchema = (t: any) =>
             name: name(t),
             email: email(t),
             password: password(t),
-            confirmPassword: z
-                .string({
-                    error: t('required'),
-                })
-                .min(1, { message: t('required') }),
+            confirmPassword: z.string().min(1, { message: t('passwordsMustMatch') }),
             role: z.enum(['admin', 'readWrite', 'read'] as Role[]),
         })
         .refine((data) => data.password === data.confirmPassword, {

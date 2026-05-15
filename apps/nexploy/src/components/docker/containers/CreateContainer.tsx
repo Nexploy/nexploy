@@ -22,12 +22,13 @@ import { ContainerLabels } from '@/components/docker/containers/create/Container
 export default function CreateContainerPage() {
     const router = useRouter();
     const t = useTranslations('docker.createContainer');
+    const tValidation = useTranslations('validation');
     const searchParams = useSearchParams();
     const imageFromUrl = searchParams.get('image');
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onContainerCreateAction,
-        zodResolver(containerCreateFormSchema),
+        zodResolver(containerCreateFormSchema(tValidation)),
         {
             formProps: {
                 defaultValues: {

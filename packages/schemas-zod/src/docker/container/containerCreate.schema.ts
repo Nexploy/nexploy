@@ -1,63 +1,55 @@
 import { z } from 'zod';
 
-const portMappingSchema = z.object({
-    hostPort: z.coerce
-        .number()
-        .min(1, 'Port must be between 1 and 65535')
-        .max(65535, 'Port must be between 1 and 65535'),
-    containerPort: z.coerce
-        .number()
-        .min(1, 'Port must be between 1 and 65535')
-        .max(65535, 'Port must be between 1 and 65535'),
-    protocol: z.enum(['tcp', 'udp', 'sctp']).default('tcp'),
-});
+const portMappingSchema = (t: any) =>
+    z.object({
+        hostPort: z.coerce
+            .number()
+            .min(1, t('portRange'))
+            .max(65535, t('portRange')),
+        containerPort: z.coerce
+            .number()
+            .min(1, t('portRange'))
+            .max(65535, t('portRange')),
+        protocol: z.enum(['tcp', 'udp', 'sctp']).default('tcp'),
+    });
 
-const envVarSchema = z.object({
-    key: z.string().min(1, {
-        error: 'Environment variable key is required',
-    }),
-    value: z.string().min(1, {
-        error: 'Environment variable value is required',
-    }),
-});
+const envVarSchema = (t: any) =>
+    z.object({
+        key: z.string().min(1, t('fieldRequired', { field: t('fieldNames.key') })),
+        value: z.string().min(1, t('fieldRequired', { field: t('fieldNames.value') })),
+    });
 
-const labelsSchema = z.object({
-    key: z.string().min(1, {
-        error: 'Label key is required',
-    }),
-    value: z.string().min(1, {
-        error: 'Label value is required',
-    }),
-});
+const labelsSchema = (t: any) =>
+    z.object({
+        key: z.string().min(1, t('fieldRequired', { field: t('fieldNames.key') })),
+        value: z.string().min(1, t('fieldRequired', { field: t('fieldNames.value') })),
+    });
 
-const volumeMountSchema = z.object({
-    hostPath: z.string().min(1, {
-        error: 'Host path is required',
-    }),
-    containerPath: z.string().min(1, {
-        error: 'Container path is required',
-    }),
-    readOnly: z.boolean().default(false),
-});
+const volumeMountSchema = (t: any) =>
+    z.object({
+        hostPath: z.string().min(1, t('fieldRequired', { field: t('fieldNames.hostPath') })),
+        containerPath: z.string().min(1, t('fieldRequired', { field: t('fieldNames.containerPath') })),
+        readOnly: z.boolean().default(false),
+    });
 
-const networkSchema = z.object({
-    name: z.string().min(1, {
-        error: 'Network name is required',
-    }),
-});
+const networkSchema = (t: any) =>
+    z.object({
+        name: z.string().min(1, t('fieldRequired', { field: t('fieldNames.network') })),
+    });
 
-export const containerCreateFormSchema = z.object({
-    name: z.string().optional(),
-    image: z.string().min(1, 'Image is required'),
-    restart: z.enum(['no', 'always', 'on-failure', 'unless-stopped']).default('unless-stopped'),
-    networks: z.array(networkSchema).default([]),
-    hostname: z.string().optional(),
-    autoRemove: z.boolean().default(false),
-    privileged: z.boolean().default(false),
-    ports: z.array(portMappingSchema).default([]),
-    envVars: z.array(envVarSchema).default([]),
-    volumes: z.array(volumeMountSchema).default([]),
-    labels: z.array(labelsSchema).default([]),
-});
+export const containerCreateFormSchema = (t: any) =>
+    z.object({
+        name: z.string().optional(),
+        image: z.string().min(1, t('fieldRequired', { field: t('fieldNames.image') })),
+        restart: z.enum(['no', 'always', 'on-failure', 'unless-stopped']).default('unless-stopped'),
+        networks: z.array(networkSchema(t)).default([]),
+        hostname: z.string().optional(),
+        autoRemove: z.boolean().default(false),
+        privileged: z.boolean().default(false),
+        ports: z.array(portMappingSchema(t)).default([]),
+        envVars: z.array(envVarSchema(t)).default([]),
+        volumes: z.array(volumeMountSchema(t)).default([]),
+        labels: z.array(labelsSchema(t)).default([]),
+    });
 
-export type ContainerCreateForm = z.infer<typeof containerCreateFormSchema>;
+export type ContainerCreateForm = z.infer<ReturnType<typeof containerCreateFormSchema>>;

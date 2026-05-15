@@ -32,9 +32,10 @@ export function LabelForm({ mode, defaultLabel, originalLabel }: LabelFormProps)
     const { closeDialog } = useConfirmationDialogStore();
     const { onLabelChange } = useContainerChangesStore();
     const t = useTranslations('docker.forms');
+    const tValidation = useTranslations('validation');
 
     const form = useForm<ContainerLabelForm>({
-        resolver: zodResolver(containerLabelSchema),
+        resolver: zodResolver(containerLabelSchema(tValidation)),
         defaultValues: {
             key: defaultLabel?.key ?? '',
             value: defaultLabel?.value ?? '',

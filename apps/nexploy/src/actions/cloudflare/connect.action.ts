@@ -7,10 +7,16 @@ import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 import { revalidatePath } from 'next/cache';
 import { getPublicIp } from '@/lib/network/getPublicIp.ts';
+import { getTranslations } from 'next-intl/server';
+
+async function getCloudflareConnectSchema() {
+    const t = await getTranslations('validation');
+    return cloudflareConnectSchema(t);
+}
 
 export const connectCloudflareAction = authActionServer
     .use(requirePermission('gitProvider', 'create'))
-    .inputSchema(cloudflareConnectSchema)
+    .inputSchema(getCloudflareConnectSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {
             const { displayName, apiToken } = parsedInput;

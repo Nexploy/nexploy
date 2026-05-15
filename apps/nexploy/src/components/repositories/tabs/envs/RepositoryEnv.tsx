@@ -33,12 +33,13 @@ export function RepositoryEnv({
 }: RepositoryEnvTabProps) {
     const router = useRouter();
     const t = useTranslations('repository.settings.envVars');
+    const tValidation = useTranslations('validation');
     const [showValues, setShowValues] = useState<Record<string, boolean>>({});
     const bottomRef = useRef<HTMLDivElement>(null);
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onEnvVariableAction,
-        zodResolver(envVariableSchema),
+        zodResolver(envVariableSchema(tValidation)),
         {
             formProps: {
                 defaultValues: {

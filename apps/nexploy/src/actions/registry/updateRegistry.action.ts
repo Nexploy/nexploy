@@ -7,10 +7,16 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { decrypt } from '@/lib/encryption';
 import { setToastServer } from '@/lib/toastServer';
 import { revalidatePath } from 'next/cache';
+import { getTranslations } from 'next-intl/server';
+
+async function getUpdateRegistrySchema() {
+    const t = await getTranslations('validation');
+    return updateRegistrySchema(t);
+}
 
 export const updateRegistryAction = authActionServer
     .use(requirePermission('registry', 'update'))
-    .inputSchema(updateRegistrySchema)
+    .inputSchema(getUpdateRegistrySchema)
     .action(async ({ parsedInput }) => {
         let passwordToLogin = parsedInput.password;
         if (!passwordToLogin) {

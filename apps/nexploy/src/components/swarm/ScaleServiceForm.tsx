@@ -18,11 +18,12 @@ interface ScaleServiceFormProps {
 
 export function ScaleServiceForm({ service }: ScaleServiceFormProps) {
     const t = useTranslations('swarm');
+    const tValidation = useTranslations('validation');
     const closeDialog = useConfirmationDialogStore((state) => state.closeDialog);
 
     const { form, handleSubmitWithAction, action } = useHookFormAction(
         onScaleServiceAction,
-        zodResolver(scaleServiceFormSchema),
+        zodResolver(scaleServiceFormSchema(tValidation)),
         {
             formProps: {
                 defaultValues: {

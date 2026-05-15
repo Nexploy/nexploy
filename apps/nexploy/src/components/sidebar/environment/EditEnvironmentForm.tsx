@@ -39,10 +39,11 @@ interface EditEnvironmentFormProps {
 export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
     const { onSuccess } = useConfirmationDialogStore();
     const t = useTranslations('docker.environmentForm');
+    const tValidation = useTranslations('validation');
 
     const { form, handleSubmitWithAction } = useHookFormAction(
         updateEnvironmentAction,
-        zodResolver(environmentSchema),
+        zodResolver(environmentSchema(tValidation)),
         {
             formProps: {
                 defaultValues: {

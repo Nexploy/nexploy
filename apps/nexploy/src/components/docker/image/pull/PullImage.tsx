@@ -23,12 +23,13 @@ interface PullImageProps {
 
 export function PullImage({ registries }: PullImageProps) {
     const t = useTranslations('docker.pullImagePage');
+    const tValidation = useTranslations('validation');
     const router = useRouter();
     const searchParams = useSearchParams();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onImagePullAction,
-        zodResolver(imagePullSchema),
+        zodResolver(imagePullSchema(tValidation)),
         {
             formProps: {
                 defaultValues: {

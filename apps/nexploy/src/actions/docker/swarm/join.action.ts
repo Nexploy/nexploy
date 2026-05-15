@@ -5,10 +5,16 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 import { swarmJoinSchema } from '@workspace/schemas-zod/docker/swarm/join.schema';
+import { getTranslations } from 'next-intl/server';
+
+async function getSwarmJoinSchema() {
+    const t = await getTranslations('validation');
+    return swarmJoinSchema(t);
+}
 
 export const onSwarmJoinAction = authActionServer
     .use(requirePermission('docker', 'manage'))
-    .inputSchema(swarmJoinSchema)
+    .inputSchema(getSwarmJoinSchema)
     .action(async ({ parsedInput }) => {
         try {
             return await kyDocker.post(`swarm/join`, { json: parsedInput }).json();

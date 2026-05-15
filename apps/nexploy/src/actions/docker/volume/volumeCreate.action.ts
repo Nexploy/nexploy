@@ -7,9 +7,14 @@ import { volumeCreateSchema } from '@workspace/schemas-zod/docker/volume/volumeA
 import { setToastServer } from '@/lib/toastServer';
 import { getTranslations } from 'next-intl/server';
 
+async function getVolumeCreateSchema() {
+    const t = await getTranslations('validation');
+    return volumeCreateSchema(t);
+}
+
 export const onVolumeCreateAction = authActionServer
     .use(requirePermission('docker', 'manage'))
-    .inputSchema(volumeCreateSchema)
+    .inputSchema(getVolumeCreateSchema)
     .action(async ({ parsedInput }) => {
         try {
             const response = await kyDocker.post('volumes/create', { json: parsedInput }).json();
