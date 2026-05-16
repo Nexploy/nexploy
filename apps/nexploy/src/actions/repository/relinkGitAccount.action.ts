@@ -25,5 +25,6 @@ export const relinkGitAccountAction = authActionServer
                     message: isNotAccessible ? t('repoNotAccessible') : error.message,
                 });
             }
+            throw error;
         }
     });

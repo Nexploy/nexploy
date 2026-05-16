@@ -1,10 +1,6 @@
 import { prisma } from '@/../prisma/prisma';
 import { getUserSession } from '@/services/auth/auth.service';
-import {
-    GitBranch,
-    GitProviderToken,
-    GitRepository,
-} from '@workspace/typescript-interface/git/git';
+import { GitBranch, GitProviderToken, GitRepository, } from '@workspace/typescript-interface/git/git';
 import { getValidToken } from '@/services/api/gitProvider.service';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { kyGitlab } from '@/lib/api/kyGitlab';
@@ -35,7 +31,10 @@ export function extractGitLabRepo(repositoryUrl: string): {
     repo: string;
 } {
     const url = new URL(repositoryUrl);
-    const parts = url.pathname.replace(/\.git$/, '').split('/').filter(Boolean);
+    const parts = url.pathname
+        .replace(/\.git$/, '')
+        .split('/')
+        .filter(Boolean);
     if (parts.length < 2) throw new Error(`Invalid GitLab repository URL: ${repositoryUrl}`);
     const repo = parts[parts.length - 1]!;
     const owner = parts.slice(0, -1).join('/');
@@ -274,7 +273,10 @@ export async function verifyRepoAccessFromAccount(
     gitAccountId: string,
     userId: string,
 ): Promise<GitRepository> {
-    const oldToken = await getGitProviderToken(gitProvider, { gitAccountId, requestedUserId: userId });
+    const oldToken = await getGitProviderToken(gitProvider, {
+        gitAccountId,
+        requestedUserId: userId,
+    });
     const token = await getValidToken(oldToken, gitProvider, userId, gitAccountId);
 
     switch (gitProvider) {

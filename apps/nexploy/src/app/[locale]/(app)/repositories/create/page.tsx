@@ -14,11 +14,12 @@ import { useTranslations } from 'next-intl';
 
 export default function AddRepositoryPage() {
     const t = useTranslations('repository.create');
+    const tValidation = useTranslations('validation');
     const router = useRouter();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onRepositoryCreateAction,
-        zodResolver(repositoryCreateFormSchema),
+        zodResolver(repositoryCreateFormSchema(tValidation)),
         {
             actionProps: {
                 onSuccess: ({ data }) => {
@@ -38,9 +39,7 @@ export default function AddRepositoryPage() {
                         <FolderGit2 className="text-primary size-7" />
                     </div>
                     <div className="mt-3.5 flex flex-col">
-                        <h1 className="text-3xl font-semibold tracking-tight">
-                            {t('title')}
-                        </h1>
+                        <h1 className="text-3xl font-semibold tracking-tight">{t('title')}</h1>
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
                 </div>

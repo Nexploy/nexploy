@@ -48,6 +48,9 @@
         "code": "Code",
         "password": "Password",
         "currentPassword": "Current password",
-        "confirmPassword": "Confirm password"
+        "confirmPassword": "Confirm password",
+        "gitAccount": "Git account",
+        "repository": "Repository",
+        "branch": "Branch"
     }
 }
