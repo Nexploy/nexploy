@@ -42,6 +42,8 @@
         "subnet": "Sous-réseau",
         "ipRange": "Plage IP",
         "gateway": "Passerelle",
+        "source": "Source",
+        "constraint": "Contrainte",
         "target": "Cible",
         "joinToken": "Jeton de jonction",
         "host": "Hôte",

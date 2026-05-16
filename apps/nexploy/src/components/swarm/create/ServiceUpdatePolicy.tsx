@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations, useTranslations as useT } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import {
@@ -26,7 +26,6 @@ import { RefreshCw } from 'lucide-react';
 
 export function ServiceUpdatePolicy() {
     const t = useTranslations('swarm.createService');
-    const tCommon = useT('common');
     const form = useFormContext();
 
     return (
@@ -43,22 +42,16 @@ export function ServiceUpdatePolicy() {
                         name="updateParallelism"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>
-                                    {t('parallelism')}
-                                    <span className="text-muted-foreground text-xs">
-                                        {tCommon('optional')}
-                                    </span>
-                                </FormLabel>
+                                <FormLabel>{t('parallelism')}</FormLabel>
                                 <FormControl>
                                     <Input
                                         type="number"
                                         min={0}
-                                        placeholder="1"
                                         {...field}
                                         onChange={(e) =>
                                             field.onChange(
                                                 e.target.value === ''
-                                                    ? undefined
+                                                    ? 1
                                                     : parseInt(e.target.value, 10),
                                             )
                                         }
@@ -75,15 +68,9 @@ export function ServiceUpdatePolicy() {
                         name="updateDelay"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>
-                                    {t('updateDelay')}
-                                    <span className="text-muted-foreground text-xs">
-                                        {tCommon('optional')}
-                                    </span>
-                                </FormLabel>
+                                <FormLabel>{t('updateDelay')}</FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder={t('updateDelayPlaceholder')}
                                         className="font-mono"
                                         {...field}
                                     />
@@ -99,16 +86,11 @@ export function ServiceUpdatePolicy() {
                         name="updateFailureAction"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>
-                                    {t('failureAction')}
-                                    <span className="text-muted-foreground text-xs">
-                                        {tCommon('optional')}
-                                    </span>
-                                </FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                                <FormLabel>{t('failureAction')}</FormLabel>
+                                <Select onValueChange={field.onChange} value={field.value}>
                                     <FormControl>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="-" />
+                                            <SelectValue />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
@@ -136,16 +118,11 @@ export function ServiceUpdatePolicy() {
                         name="updateOrder"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>
-                                    {t('updateOrder')}
-                                    <span className="text-muted-foreground text-xs">
-                                        {tCommon('optional')}
-                                    </span>
-                                </FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                                <FormLabel>{t('updateOrder')}</FormLabel>
+                                <Select onValueChange={field.onChange} value={field.value}>
                                     <FormControl>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="-" />
+                                            <SelectValue />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
@@ -179,19 +156,11 @@ export function ServiceUpdatePolicy() {
                             name="restartCondition"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>
-                                        {t('restartCondition')}
-                                        <span className="text-muted-foreground text-xs">
-                                            {tCommon('optional')}
-                                        </span>
-                                    </FormLabel>
-                                    <Select
-                                        onValueChange={field.onChange}
-                                        value={field.value ?? ''}
-                                    >
+                                    <FormLabel>{t('restartCondition')}</FormLabel>
+                                    <Select onValueChange={field.onChange} value={field.value}>
                                         <FormControl>
                                             <SelectTrigger>
-                                                <SelectValue placeholder="-" />
+                                                <SelectValue />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
@@ -219,22 +188,16 @@ export function ServiceUpdatePolicy() {
                             name="restartMaxAttempts"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>
-                                        {t('maxAttempts')}
-                                        <span className="text-muted-foreground text-xs">
-                                            {tCommon('optional')}
-                                        </span>
-                                    </FormLabel>
+                                    <FormLabel>{t('maxAttempts')}</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"
                                             min={0}
-                                            placeholder="0"
                                             {...field}
                                             onChange={(e) =>
                                                 field.onChange(
                                                     e.target.value === ''
-                                                        ? undefined
+                                                        ? 0
                                                         : parseInt(e.target.value, 10),
                                                 )
                                             }

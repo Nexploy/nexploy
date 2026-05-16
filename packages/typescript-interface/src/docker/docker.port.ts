@@ -1,7 +1,7 @@
 export type PortType = 'tcp' | 'udp' | 'sctp';
 
 export type ContainerPortForm = {
-    publicPort: string | number | undefined;
+    publicPort?: string | number;
     privatePort: string | number;
     type: PortType;
 };
@@ -22,7 +22,7 @@ export interface PortFormProps {
 
 export type ContainerPorts = {
     privatePort: number;
-    publicPort: number;
+    publicPort?: number;
     hostIps: string[];
     type: PortType;
 };

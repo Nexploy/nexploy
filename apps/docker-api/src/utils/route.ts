@@ -1,8 +1,11 @@
 import { zValidator } from '@hono/zod-validator';
+import { createTranslator } from '@workspace/i18n';
 import type { Context, MiddlewareHandler, ValidationTargets } from 'hono';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
 import type {
     AnySchema,
+    AnySchemaOrFactory,
+    SchemaFactory,
     HandleOpts,
     SchemaRecord,
     TypedContext,
@@ -43,6 +46,20 @@ function resolveError(err: unknown): ResolvedError {
 
 function clientMessage(resolved: ResolvedError): string {
     return resolved.status >= 500 ? 'Internal server error' : resolved.message;
+}
+
+function getValidationT(c: Context) {
+    const acceptLanguage = c.req.header('Accept-Language');
+    const locale = acceptLanguage?.split(',')[0]?.split('-')[0] ?? 'en';
+    return createTranslator(locale, 'validation');
+}
+
+function makeValidator(target: keyof ValidationTargets, schema: AnySchema): MiddlewareHandler {
+    return zValidator(target, schema, (result, c) => {
+        if (!result.success) {
+            return c.json({ message: 'Validation failed' }, 400 as ContentfulStatusCode);
+        }
+    }) as unknown as MiddlewareHandler;
 }
 
 const DEFAULT_TIMEOUT_MS = 120_000;
@@ -98,23 +115,34 @@ export function route<S extends SchemaRecord>(
     const schemas = schemasOrFn;
     const fn = fnOrOpts as (c: TypedContext<S>) => Promise<unknown>;
 
-    const validators = (Object.entries(schemas) as [keyof ValidationTargets, AnySchema][])
-        .filter(([, schema]) => schema != null)
-        .map(([target, schema]) =>
-            zValidator(target, schema, (result, c) => {
-                if (!result.success) {
-                    return c.json({ message: 'Validation failed' }, 400 as ContentfulStatusCode);
-                }
-            }),
-        );
+    const entries = (
+        Object.entries(schemas) as [keyof ValidationTargets, AnySchemaOrFactory][]
+    ).filter(([, schema]) => schema != null);
+
+    const staticValidators = entries
+        .filter(([, s]) => typeof s !== 'function')
+        .map(([target, schema]) => makeValidator(target, schema as AnySchema));
+
+    const factoryEntries = entries.filter(([, s]) => typeof s === 'function') as [
+        keyof ValidationTargets,
+        SchemaFactory,
+    ][];
 
     return async (c, next) => {
-        for (const validator of validators) {
-            const response = await (validator as unknown as MiddlewareHandler)(c, async () => {});
-            if (response instanceof Response) {
-                return response;
+        for (const validator of staticValidators) {
+            const response = await validator(c, async () => {});
+            if (response instanceof Response) return response;
+        }
+
+        if (factoryEntries.length > 0) {
+            const t = getValidationT(c);
+            for (const [target, factory] of factoryEntries) {
+                const validator = makeValidator(target, factory(t));
+                const response = await validator(c, async () => {});
+                if (response instanceof Response) return response;
             }
         }
+
         return makeHandler(fn as (c: Context) => Promise<unknown>, opts)(c, next);
     };
 }

@@ -43,7 +43,7 @@ export function ServiceLabels() {
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
-                            <div key={field.id} className="flex items-center gap-3">
+                            <div key={field.id} className="flex gap-3">
                                 <FormField
                                     control={form.control}
                                     name={`labels.${index}.key`}
@@ -60,7 +60,7 @@ export function ServiceLabels() {
                                         </FormItem>
                                     )}
                                 />
-                                <span className="text-muted-foreground">=</span>
+                                <span className="text-muted-foreground pt-1">=</span>
                                 <FormField
                                     control={form.control}
                                     name={`labels.${index}.value`}

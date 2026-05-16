@@ -291,6 +291,7 @@ export const updateServiceConfigSchema = z.object({
 });
 
 export const scaleServiceConfigSchema = z.object({
+    serviceId: z.string().min(1, 'Service ID is required').default(''),
     serviceName: refable(z.string().min(1, 'Service name is required')).default(''),
     replicas: z.coerce.number().min(1, 'Replicas must be at least 1').default(1),
 });

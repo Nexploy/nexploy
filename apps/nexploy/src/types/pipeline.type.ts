@@ -28,6 +28,7 @@ export interface NodeExecutionContext<TConfig = Record<string, unknown>> {
     logger: PipelineLogger;
     reporter: PipelineReporter;
     abortSignal: AbortSignal;
+    pipelineHasFailed: boolean;
 }
 
 export interface NodeExecutionResult {
@@ -39,6 +40,7 @@ export interface NodeExecutionResult {
 export interface INodeExecutor<TConfig = Record<string, unknown>> {
     readonly type: string;
     readonly configSchema?: z.ZodType<TConfig>;
+    readonly runsOnPipelineFailure?: boolean;
     execute(ctx: NodeExecutionContext<TConfig>): Promise<NodeExecutionResult>;
 }
 

@@ -42,6 +42,8 @@
         "subnet": "Subnet",
         "ipRange": "IP range",
         "gateway": "Gateway",
+        "source": "Source",
+        "constraint": "Constraint",
         "target": "Target",
         "joinToken": "Join token",
         "host": "Host",

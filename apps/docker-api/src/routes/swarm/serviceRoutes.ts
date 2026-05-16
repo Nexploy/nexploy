@@ -130,9 +130,7 @@ app.post(
         if (restartCondition) {
             taskTemplate['RestartPolicy'] = {
                 Condition: restartCondition,
-                ...(restartMaxAttempts !== undefined
-                    ? { MaxAttempts: restartMaxAttempts }
-                    : {}),
+                ...(restartMaxAttempts !== undefined ? { MaxAttempts: restartMaxAttempts } : {}),
             };
         }
 

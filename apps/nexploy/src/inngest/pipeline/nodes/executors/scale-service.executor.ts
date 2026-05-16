@@ -14,6 +14,7 @@ export class ScaleServiceExecutor implements INodeExecutor {
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
+        const serviceId = nodeConfig.serviceId;
         const serviceName = nodeConfig.serviceName;
         const replicas = nodeConfig.replicas;
 
@@ -31,7 +32,7 @@ export class ScaleServiceExecutor implements INodeExecutor {
 
         try {
             await kyDocker
-                .patch(`swarm/services/${encodeURIComponent(serviceName)}/scale`, {
+                .post(`swarm/services/${serviceId}/scale`, {
                     json: { replicas },
                     signal: abortSignal,
                     environmentId,

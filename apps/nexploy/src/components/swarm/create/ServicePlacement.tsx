@@ -38,7 +38,7 @@ export function ServicePlacement() {
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
-                            <div key={field.id} className="flex items-center gap-3">
+                            <div key={field.id} className="flex gap-3">
                                 <FormField
                                     control={form.control}
                                     name={`constraints.${index}`}

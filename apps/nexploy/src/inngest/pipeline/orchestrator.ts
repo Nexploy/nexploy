@@ -8,7 +8,6 @@ import {
     type InngestStepRunner,
     type InputNodeInfo,
     type NodeExecutionContext,
-    type NodeExecutionResult,
     type NodeOutputData,
     type NodeOutputStore,
     type PipelineLogger,
@@ -80,6 +79,9 @@ export class PipelineOrchestrator {
         const cancellationWatcher = this.startCancellationWatcher(buildId, abortController);
         const branchSkippedNodeIds = new Set<string>();
 
+        let pipelineHasFailed = false;
+        let pipelineFailureError: Error | undefined;
+
         try {
             await inngestStep.run('pipeline-init', async () => {
                 await setStatusBuild('BUILDING');
@@ -89,6 +91,18 @@ export class PipelineOrchestrator {
                 const executor = getNodeExecutor(node.data.type);
                 if (!executor) {
                     throw new Error(`Unknown node type: "${node.data.type}"`);
+                }
+
+                if (pipelineHasFailed && !executor.runsOnPipelineFailure) {
+                    await this.runSkippedNode(
+                        node,
+                        'pipeline failed',
+                        inngestStep,
+                        reporter,
+                        logger,
+                        allOutputs,
+                    );
+                    continue;
                 }
 
                 const inputNodeIds = getParentNodeIds(node.id, graph.edges);
@@ -164,11 +178,9 @@ export class PipelineOrchestrator {
                             await logger.error(node.id, msg);
                         }
                     });
-                    await setStatusBuild('FAILED');
-                    return {
-                        success: false,
-                        error: refWarnings.join('\n'),
-                    };
+                    pipelineHasFailed = true;
+                    pipelineFailureError = new Error(refWarnings.join('\n'));
+                    continue;
                 }
 
                 if (executor.configSchema) {
@@ -181,17 +193,19 @@ export class PipelineOrchestrator {
                                 `${node.data.type}: Node is not configured — ${validation.error.issues.map((i) => i.message).join(', ')}`,
                             );
                         });
-                        await setStatusBuild('FAILED');
-                        return {
-                            success: false,
-                            error: `Node ${node.data.type} is not configured`,
-                        };
+                        pipelineHasFailed = true;
+                        pipelineFailureError = new Error(
+                            `Node ${node.data.type} is not configured`,
+                        );
+                        continue;
                     }
                 }
 
                 try {
-                    const nodeResult = await inngestStep.run(`node-${node.id}`, async () => {
-                        await setStatusBuild('BUILDING');
+                    const stepResult = await inngestStep.run(`node-${node.id}`, async () => {
+                        if (!pipelineHasFailed) {
+                            await setStatusBuild('BUILDING');
+                        }
                         await reporter.markRunning(node.id);
 
                         if (abortController.signal.aborted) {
@@ -211,6 +225,7 @@ export class PipelineOrchestrator {
                             logger,
                             reporter,
                             abortSignal: abortController.signal,
+                            pipelineHasFailed,
                         };
 
                         try {
@@ -220,7 +235,12 @@ export class PipelineOrchestrator {
                             } else {
                                 await reporter.markCompleted(node.id);
                             }
-                            return execResult;
+                            return {
+                                ok: true,
+                                output: execResult.output ?? {},
+                                skipped: execResult.skipped,
+                                skippedBranchTargets: execResult.skippedBranchTargets,
+                            };
                         } catch (execError) {
                             if (execError instanceof Error && execError.name === 'AbortError') {
                                 throw execError;
@@ -229,11 +249,24 @@ export class PipelineOrchestrator {
                                 execError instanceof Error ? execError.message : String(execError);
                             await logger.error(node.id, message);
                             await reporter.markFailed(node.id);
-                            throw new NonRetriableError(message, { cause: execError });
+                            return { ok: false, error: message };
                         }
                     });
 
-                    const result = nodeResult as NodeExecutionResult;
+                    const result = stepResult as {
+                        ok: boolean;
+                        output?: NodeOutputData;
+                        error?: string;
+                        skipped?: boolean;
+                        skippedBranchTargets?: string[];
+                    };
+
+                    if (!result.ok) {
+                        pipelineHasFailed = true;
+                        pipelineFailureError = new Error(result.error ?? 'Node failed');
+                        continue;
+                    }
+
                     allOutputs.set(node.id, result.output ?? {});
 
                     for (const targetId of result.skippedBranchTargets ?? []) {
@@ -243,9 +276,16 @@ export class PipelineOrchestrator {
                     if (nodeError instanceof Error && nodeError.name === 'AbortError') {
                         throw nodeError;
                     }
-                    await setStatusBuild('FAILED');
-                    throw nodeError;
+                    pipelineHasFailed = true;
+                    pipelineFailureError =
+                        nodeError instanceof Error ? nodeError : new Error(String(nodeError));
                 }
+            }
+
+            if (pipelineHasFailed) {
+                throw new NonRetriableError(pipelineFailureError?.message ?? 'Pipeline failed', {
+                    cause: pipelineFailureError,
+                });
             }
 
             await inngestStep.run('pipeline-complete', async () => {

@@ -5,17 +5,33 @@ import { z } from 'zod';
 export class SendNotificationExecutor implements INodeExecutor {
     readonly type = 'send-notification';
     readonly configSchema = sendNotificationConfigSchema;
+    readonly runsOnPipelineFailure = true;
 
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof sendNotificationConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { logger, nodeId, nodeConfig, abortSignal } = ctx;
+        const { logger, nodeId, nodeConfig, abortSignal, pipelineHasFailed } = ctx;
 
-        const webhookUrl = nodeConfig.webhookUrl;
-        const customMessage = nodeConfig.message;
+        const { webhookUrl, message: customMessage, triggerOn } = nodeConfig;
+
+        const pipelineStatus = pipelineHasFailed ? 'failure' : 'success';
+
+        const shouldSend =
+            triggerOn.includes('always') ||
+            (triggerOn.includes('success') && !pipelineHasFailed) ||
+            (triggerOn.includes('failure') && pipelineHasFailed);
+
+        if (!shouldSend) {
+            await logger.info(
+                nodeId,
+                `Notification skipped (triggerOn: [${triggerOn.join(', ')}], pipeline status: ${pipelineStatus})`,
+            );
+            return { output: { sent: false }, skipped: true };
+        }
 
         const payload = {
             message: customMessage,
+            pipelineStatus,
             timestamp: new Date().toISOString(),
         };
 

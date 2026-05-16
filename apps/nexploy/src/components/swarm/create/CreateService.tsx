@@ -49,6 +49,12 @@ export default function CreateService() {
                     memoryLimit: '',
                     cpuReservation: '',
                     memoryReservation: '',
+                    restartCondition: 'any',
+                    restartMaxAttempts: 0,
+                    updateParallelism: 1,
+                    updateDelay: '0s',
+                    updateFailureAction: 'pause',
+                    updateOrder: 'stop-first',
                 },
             },
             actionProps: {

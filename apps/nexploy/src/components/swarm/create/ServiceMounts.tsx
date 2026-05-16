@@ -53,7 +53,7 @@ export function ServiceMounts() {
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
-                            <div key={field.id} className="flex items-center gap-3">
+                            <div key={field.id} className="flex gap-3">
                                 <FormField
                                     control={form.control}
                                     name={`mounts.${index}.type`}
@@ -104,7 +104,7 @@ export function ServiceMounts() {
                                         </FormItem>
                                     )}
                                 />
-                                <span className="text-muted-foreground">→</span>
+                                <span className="text-muted-foreground pt-1.5">→</span>
                                 <FormField
                                     control={form.control}
                                     name={`mounts.${index}.target`}
@@ -127,7 +127,7 @@ export function ServiceMounts() {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex gap-2 self-start pt-2">
                                                     <Switch
                                                         checked={field.value}
                                                         onCheckedChange={field.onChange}

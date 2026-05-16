@@ -1,4 +1,4 @@
-import type { SwarmService, SwarmTask } from '../../docker/swarm/swarm.types';
+import type { SwarmService, SwarmTask } from '../../docker/swarm';
 
 export interface ServiceDetailState {
     serviceId: string | null;
