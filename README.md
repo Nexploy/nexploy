@@ -26,7 +26,6 @@
 - **In-browser Terminal** — WebSocket-powered Docker container terminal
 - **Two-Factor Authentication** — TOTP-based 2FA with backup codes
 - **Multi-language** — English and French via `next-intl`
-- **Desktop App** — Electron app sharing the same UI
 
 ## Tech Stack
 
@@ -79,8 +78,7 @@ pnpm dev
 nexploy/
 ├── apps/
 │   ├── nexploy/             # Next.js app — UI, server actions, orchestration
-│   ├── docker-api/          # Hono.js API — Docker operations
-│   └── desktop/             # Electron desktop app
+│   └── docker-api/          # Hono.js API — Docker operations
 ├── packages/
 │   ├── ui/                  # Shared shadcn/ui components
 │   ├── schemas-zod/         # Zod validation schemas
@@ -126,7 +124,6 @@ A single SSE connection multiplexes multiple channels (containers, images, build
 pnpm dev                                # Start all apps
 pnpm dev:nexploy                        # Next.js only (port 3000)
 pnpm dev:docker-api                     # Docker API only (port 3300)
-pnpm dev:desktop                        # Electron app (port 3001)
 
 # Build
 pnpm build                              # Build all apps
