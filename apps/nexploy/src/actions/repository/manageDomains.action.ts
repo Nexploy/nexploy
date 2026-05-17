@@ -6,16 +6,10 @@ import { repositoryIdSchema } from '@workspace/schemas-zod/bind/repositoryId.sch
 import { getDomainsFromTraefikConfig } from '@/services/traefik.service';
 import { applyDomainOperations, classifyDomainOperations } from '@/services/domain.service';
 import { setToastServer } from '@/lib/toastServer.ts';
-import { getTranslations } from 'next-intl/server';
-
-async function getDomainsFormSchema() {
-    const t = await getTranslations('validation');
-    return domainsFormSchema(t);
-}
 
 export const manageDomains = authActionServer
     .use(requirePermission('repository', 'update'))
-    .inputSchema(getDomainsFormSchema)
+    .inputSchema(domainsFormSchema)
     .bindArgsSchemas(repositoryIdSchema)
     .action(async ({ parsedInput, bindArgsParsedInputs: [repositoryId] }) => {
         try {

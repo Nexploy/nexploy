@@ -43,12 +43,11 @@ interface MirrorImageSectionProps {
 
 export function MirrorImageSection({ registries }: MirrorImageSectionProps) {
     const t = useTranslations('admin.registry');
-    const tValidation = useTranslations('validation');
     const [privateSource, setPrivateSource] = useState(false);
 
     const { form, handleSubmitWithAction, resetFormAndAction } = useHookFormAction(
         mirrorImageAction,
-        zodResolver(mirrorImageSchema(tValidation)),
+        zodResolver(mirrorImageSchema),
         {
             formProps: {
                 defaultValues: {

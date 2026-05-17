@@ -16,12 +16,11 @@ import { VolumeLabels } from '@/components/docker/volume/create/VolumeLabels';
 
 export default function CreateVolume() {
     const t = useTranslations('docker.createVolumePage');
-    const tValidation = useTranslations('validation');
     const router = useRouter();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onVolumeCreateAction,
-        zodResolver(volumeCreateSchema(tValidation)),
+        zodResolver(volumeCreateSchema),
         {
             formProps: {
                 defaultValues: {

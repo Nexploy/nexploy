@@ -1,17 +1,15 @@
 import { z } from 'zod';
 import { password } from './common.schema';
 
-export const twoFactorAuthSchema = (t: any) =>
-    z.object({
-        password: password(t),
-    });
+export const twoFactorAuthSchema = z.object({
+    password,
+});
 
-export type TypeTwoFactorAuthSchema = z.infer<ReturnType<typeof twoFactorAuthSchema>>;
+export type TypeTwoFactorAuthSchema = z.infer<typeof twoFactorAuthSchema>;
 
-export const twoFactorAuthCodeSchema = (t: any) =>
-    z.object({
-        code: z.string().min(1, t('fieldRequired', { field: t('fieldNames.code') })),
-        trustDevice: z.boolean().default(false),
-    });
+export const twoFactorAuthCodeSchema = z.object({
+    code: z.string().min(1, 'Code is required'),
+    trustDevice: z.boolean().default(false),
+});
 
-export type TypeTwoFactorAuthCodeSchema = z.infer<ReturnType<typeof twoFactorAuthCodeSchema>>;
+export type TypeTwoFactorAuthCodeSchema = z.infer<typeof twoFactorAuthCodeSchema>;

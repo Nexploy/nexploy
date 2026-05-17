@@ -36,10 +36,9 @@ export function NetworkForm() {
     const networks = useNetworksStore((state) => state.networks);
     const container = useContainerStore((state) => state.container);
     const t = useTranslations('docker.forms');
-    const tValidation = useTranslations('validation');
 
     const form = useForm<ContainerNetworkForm>({
-        resolver: zodResolver(containerNetworkSchema(tValidation)),
+        resolver: zodResolver(containerNetworkSchema),
         defaultValues: {
             networkName: '',
         },

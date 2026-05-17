@@ -24,11 +24,10 @@ import { ServiceUpdatePolicy } from './ServiceUpdatePolicy';
 export default function CreateService() {
     const router = useRouter();
     const t = useTranslations('swarm.createService');
-    const tValidation = useTranslations('validation');
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onCreateServiceAction,
-        zodResolver(createServiceFormSchema(tValidation)),
+        zodResolver(createServiceFormSchema),
         {
             formProps: {
                 defaultValues: {

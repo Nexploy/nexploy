@@ -5,16 +5,10 @@ import { mirrorImageSchema } from '@workspace/schemas-zod/registry/mirrorImage.s
 import { kyDocker } from '@/lib/api/kyDocker';
 import { getRegistryWithPassword } from '@/services/registry.service';
 import { setToastServer } from '@/lib/toastServer';
-import { getTranslations } from 'next-intl/server';
-
-async function getMirrorImageSchema() {
-    const t = await getTranslations('validation');
-    return mirrorImageSchema(t);
-}
 
 export const mirrorImageAction = authActionServer
     .use(requirePermission('registry', 'create'))
-    .inputSchema(getMirrorImageSchema)
+    .inputSchema(mirrorImageSchema)
     .action(async ({ parsedInput }) => {
         const { sourceImage, sourceUsername, sourcePassword, targetRegistryId } = parsedInput;
 

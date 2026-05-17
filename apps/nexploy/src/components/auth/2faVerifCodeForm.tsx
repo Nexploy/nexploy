@@ -17,13 +17,12 @@ interface TwoFactoVerifCodeFormProps {
 }
 
 export function TwoFactorVerifCodeForm({ onSuccess }: TwoFactoVerifCodeFormProps) {
-    const tValidation = useTranslations('validation');
     const t = useTranslations('auth.twoFactor');
     const router = useRouter();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         twoFactorAuthVerifCodeAction,
-        zodResolver(twoFactorAuthCodeSchema(tValidation)),
+        zodResolver(twoFactorAuthCodeSchema),
         {
             formProps: {
                 defaultValues: {

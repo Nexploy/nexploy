@@ -5,16 +5,10 @@ import { HTTPError } from 'ky';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { setToastServer } from '@/lib/toastServer';
 import { kyDocker } from '@/lib/api/kyDocker';
-import { getTranslations } from 'next-intl/server';
-
-async function getContainerCreateFormSchema() {
-    const t = await getTranslations('validation');
-    return containerCreateFormSchema(t);
-}
 
 export const onContainerCreateAction = authActionServer
     .use(requirePermission('docker', 'manage'))
-    .inputSchema(getContainerCreateFormSchema)
+    .inputSchema(containerCreateFormSchema)
     .action(async ({ parsedInput }) => {
         try {
             return await kyDocker

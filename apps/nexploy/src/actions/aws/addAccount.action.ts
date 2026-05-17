@@ -6,16 +6,10 @@ import { saveAwsAccount } from '@/services/aws.service';
 import { verifyAwsCredentials } from '@/lib/aws/s3';
 import { revalidatePath } from 'next/cache';
 import { setToastServer } from '@/lib/toastServer';
-import { getTranslations } from 'next-intl/server';
-
-async function getAwsAddAccountSchema() {
-    const t = await getTranslations('validation');
-    return awsAddAccountSchema(t);
-}
 
 export const addAwsAccountAction = authActionServer
     .use(requirePermission('gitProvider', 'create'))
-    .inputSchema(getAwsAddAccountSchema)
+    .inputSchema(awsAddAccountSchema)
     .action(async ({ parsedInput }) => {
         try {
             const { displayName, accessKeyId, secretAccessKey, region } = parsedInput;

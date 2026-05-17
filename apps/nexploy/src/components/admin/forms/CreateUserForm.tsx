@@ -30,13 +30,12 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { toast } from 'sonner';
 
 export function CreateUserForm() {
-    const tValidation = useTranslations('validation');
     const t = useTranslations('admin');
     const { closeDialog } = useConfirmationDialogStore();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onCreateUserAction,
-        zodResolver(createUserFormSchema(tValidation)),
+        zodResolver(createUserFormSchema),
         {
             formProps: {
                 defaultValues: {

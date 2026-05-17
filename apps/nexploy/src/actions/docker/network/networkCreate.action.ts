@@ -7,14 +7,9 @@ import { networkCreateSchema } from '@workspace/schemas-zod/docker/network/netwo
 import { HTTPError } from 'ky';
 import { getTranslations } from 'next-intl/server';
 
-async function getNetworkCreateSchema() {
-    const t = await getTranslations('validation');
-    return networkCreateSchema(t);
-}
-
 export const onNetworkCreateAction = authActionServer
     .use(requirePermission('docker', 'manage'))
-    .inputSchema(getNetworkCreateSchema)
+    .inputSchema(networkCreateSchema)
     .action(async ({ parsedInput }) => {
         try {
             const response = await kyDocker.post('networks/create', { json: parsedInput }).json();

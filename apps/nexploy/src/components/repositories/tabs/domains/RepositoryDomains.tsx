@@ -49,13 +49,12 @@ export function RepositoryDomains({
 }: RepositoryDomainsProps) {
     const router = useRouter();
     const t = useTranslations('repository.settings.domains');
-    const tValidation = useTranslations('validation');
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
     const bindManageDomains = manageDomains.bind(null, repositoryId);
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         bindManageDomains,
-        zodResolver(domainsFormSchema(tValidation)),
+        zodResolver(domainsFormSchema),
         {
             formProps: {
                 defaultValues: {

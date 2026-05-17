@@ -19,12 +19,11 @@ import { useTranslations } from 'next-intl';
 
 export default function CreateNetworkPage() {
     const t = useTranslations('docker.createNetworkPage');
-    const tValidation = useTranslations('validation');
     const router = useRouter();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onNetworkCreateAction,
-        zodResolver(networkCreateSchema(tValidation)),
+        zodResolver(networkCreateSchema),
         {
             formProps: {
                 defaultValues: {

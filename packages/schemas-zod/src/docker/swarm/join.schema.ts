@@ -1,11 +1,10 @@
 import { z } from 'zod';
 
-export const swarmJoinSchema = (t: any) =>
-    z.object({
-        joinToken: z.string().min(1, t('fieldRequired', { field: t('fieldNames.joinToken') })),
-        remoteAddrs: z.array(z.string().min(1)).min(1, t('atLeastOne')),
-        advertiseAddr: z.string().min(1).optional(),
-        listenAddr: z.string().optional(),
-    });
+export const swarmJoinSchema = z.object({
+    joinToken: z.string().min(1, 'Join token is required'),
+    remoteAddrs: z.array(z.string().min(1)).min(1, 'At least one item is required'),
+    advertiseAddr: z.string().min(1).optional(),
+    listenAddr: z.string().optional(),
+});
 
-export type SwarmJoinInput = z.infer<ReturnType<typeof swarmJoinSchema>>;
+export type SwarmJoinInput = z.infer<typeof swarmJoinSchema>;

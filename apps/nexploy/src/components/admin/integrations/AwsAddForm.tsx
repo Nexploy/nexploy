@@ -22,11 +22,10 @@ import { useTranslations } from 'next-intl';
 export function AwsAddForm() {
     const { closeDialog } = useConfirmationDialogStore();
     const t = useTranslations('integrations.aws');
-    const tValidation = useTranslations('validation');
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         addAwsAccountAction,
-        zodResolver(awsAddAccountSchema(tValidation)),
+        zodResolver(awsAddAccountSchema),
         {
             formProps: {
                 defaultValues: {

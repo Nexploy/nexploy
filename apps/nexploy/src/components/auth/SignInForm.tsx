@@ -24,12 +24,11 @@ import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
 
 export function SignInForm() {
-    const t = useTranslations('validation');
     const tAuth = useTranslations('auth.signIn');
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onSignInAction,
-        zodResolver(signInFormSchema(t)),
+        zodResolver(signInFormSchema),
         {
             formProps: {
                 defaultValues: {

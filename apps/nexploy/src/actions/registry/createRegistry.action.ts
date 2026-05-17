@@ -6,16 +6,10 @@ import { createRegistry } from '@/services/registry.service';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { setToastServer } from '@/lib/toastServer';
 import { revalidatePath } from 'next/cache';
-import { getTranslations } from 'next-intl/server';
-
-async function getCreateRegistrySchema() {
-    const t = await getTranslations('validation');
-    return createRegistrySchema(t);
-}
 
 export const createRegistryAction = authActionServer
     .use(requirePermission('registry', 'create'))
-    .inputSchema(getCreateRegistrySchema)
+    .inputSchema(createRegistrySchema)
     .action(async ({ parsedInput }) => {
         try {
             if (parsedInput.username && parsedInput.password) {

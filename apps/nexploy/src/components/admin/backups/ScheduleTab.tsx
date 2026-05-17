@@ -45,14 +45,13 @@ interface ScheduleTabProps {
 
 export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
     const t = useTranslations('admin');
-    const tValidation = useTranslations('validation');
     const [is12h, setIs12h] = useState(false);
 
     const { closeDialog } = useConfirmationDialogStore();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         createBackupScheduleAction,
-        zodResolver(createBackupScheduleSchema(tValidation)),
+        zodResolver(createBackupScheduleSchema),
         {
             formProps: {
                 defaultValues: {

@@ -5,16 +5,10 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 import { createServiceFormSchema } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
-import { getTranslations } from 'next-intl/server';
-
-async function getCreateServiceFormSchema() {
-    const t = await getTranslations('validation');
-    return createServiceFormSchema(t);
-}
 
 export const onCreateServiceAction = authActionServer
     .use(requirePermission('docker', 'manage'))
-    .inputSchema(getCreateServiceFormSchema)
+    .inputSchema(createServiceFormSchema)
     .action(async ({ parsedInput }) => {
         try {
             return await kyDocker

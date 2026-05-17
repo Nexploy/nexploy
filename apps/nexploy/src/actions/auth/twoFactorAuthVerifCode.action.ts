@@ -2,17 +2,11 @@
 
 import { actionServer } from '@/lib/api/safe-action';
 import { verifCode } from '@/services/auth/twoFactorAuth.service';
-import { getTranslations } from 'next-intl/server';
 import { twoFactorAuthCodeSchema } from '@workspace/schemas-zod/auth/twoFactorAuth.schema';
 import { setToastServer } from '@/lib/toastServer';
 
-async function getTwoFactorAuthVerifTotpSchema() {
-    const t = await getTranslations('validation');
-    return twoFactorAuthCodeSchema(t);
-}
-
 export const twoFactorAuthVerifCodeAction = actionServer
-    .inputSchema(getTwoFactorAuthVerifTotpSchema)
+    .inputSchema(twoFactorAuthCodeSchema)
     .action(async ({ parsedInput }) => {
         try {
             return await verifCode(parsedInput);

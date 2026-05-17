@@ -22,13 +22,12 @@ import { gitlabSetupSchema } from '@workspace/schemas-zod/git/gitlabSetup.schema
 export function GitlabAppSetupForm() {
     const { closeDialog } = useConfirmationDialogStore();
     const t = useTranslations('integrations.oauth');
-    const tValidation = useTranslations('validation');
 
     const appUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
     const { form, handleSubmitWithAction, action } = useHookFormAction(
         saveGitLabProviderAction,
-        zodResolver(gitlabSetupSchema(tValidation)),
+        zodResolver(gitlabSetupSchema),
         {
             formProps: {
                 defaultValues: {

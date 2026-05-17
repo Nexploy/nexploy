@@ -4,16 +4,10 @@ import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { createEnvironment } from '@/services/environment/environment.service';
 import { environmentSchema } from '@workspace/schemas-zod/docker/environment/environment.schema';
-import { getTranslations } from 'next-intl/server';
-
-async function getEnvironmentSchema() {
-    const t = await getTranslations('validation');
-    return environmentSchema(t);
-}
 
 export const createEnvironmentAction = authActionServer
     .use(requirePermission('environment', 'create'))
-    .inputSchema(getEnvironmentSchema)
+    .inputSchema(environmentSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {
             return await createEnvironment(parsedInput, ctx.session.user.id);

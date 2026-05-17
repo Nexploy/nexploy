@@ -14,12 +14,11 @@ import { useTranslations } from 'next-intl';
 
 export default function AddRepositoryPage() {
     const t = useTranslations('repository.create');
-    const tValidation = useTranslations('validation');
     const router = useRouter();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onRepositoryCreateAction,
-        zodResolver(repositoryCreateFormSchema(tValidation)),
+        zodResolver(repositoryCreateFormSchema),
         {
             actionProps: {
                 onSuccess: ({ data }) => {

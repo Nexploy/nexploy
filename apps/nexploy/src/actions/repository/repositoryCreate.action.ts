@@ -4,16 +4,10 @@ import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { repositoryCreateFormSchema } from '@workspace/schemas-zod/repository/repositoryCreate.schema';
 import { setToastServer } from '@/lib/toastServer';
 import { createRepository } from '@/services/repository.service';
-import { getTranslations } from 'next-intl/server';
-
-async function getRepositoryCreateSchema() {
-    const t = await getTranslations('validation');
-    return repositoryCreateFormSchema(t);
-}
 
 export const onRepositoryCreateAction = authActionServer
     .use(requirePermission('repository', 'create'))
-    .inputSchema(getRepositoryCreateSchema)
+    .inputSchema(repositoryCreateFormSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {
             return await createRepository(parsedInput, ctx);

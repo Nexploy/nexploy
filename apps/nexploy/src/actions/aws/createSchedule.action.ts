@@ -6,16 +6,10 @@ import { createBackupSchedule } from '@/services/backupSchedule.service';
 import { inngest } from '@/inngest/client';
 import { revalidatePath } from 'next/cache';
 import { setToastServer } from '@/lib/toastServer';
-import { getTranslations } from 'next-intl/server';
-
-async function getCreateBackupScheduleSchema() {
-    const t = await getTranslations('validation');
-    return createBackupScheduleSchema(t);
-}
 
 export const createBackupScheduleAction = authActionServer
     .use(requirePermission('backup', 'create'))
-    .inputSchema(getCreateBackupScheduleSchema)
+    .inputSchema(createBackupScheduleSchema)
     .action(async ({ parsedInput }) => {
         try {
             const {

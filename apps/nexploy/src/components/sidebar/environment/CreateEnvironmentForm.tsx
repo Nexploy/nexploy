@@ -33,11 +33,10 @@ export function CreateEnvironmentForm() {
     const { onSuccess } = useConfirmationDialogStore();
     const t = useTranslations('docker.environmentForm');
     const tCommon = useTranslations('common');
-    const tValidation = useTranslations('validation');
 
     const { form, handleSubmitWithAction } = useHookFormAction(
         createEnvironmentAction,
-        zodResolver(environmentSchema(tValidation)),
+        zodResolver(environmentSchema),
         {
             formProps: {
                 defaultValues: {

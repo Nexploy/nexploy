@@ -15,12 +15,11 @@ import { toast } from 'sonner';
 export function CreateRegistryForm() {
     const t = useTranslations('admin.registry');
     const tCommon = useTranslations('common');
-    const tValidation = useTranslations('validation');
     const { closeDialog } = useConfirmationDialogStore();
 
     const { form, handleSubmitWithAction } = useHookFormAction(
         createRegistryAction,
-        zodResolver(createRegistrySchema(tValidation)),
+        zodResolver(createRegistrySchema),
         {
             formProps: {
                 defaultValues: {

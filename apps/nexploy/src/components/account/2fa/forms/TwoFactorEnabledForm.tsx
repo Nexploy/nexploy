@@ -19,13 +19,12 @@ import {
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 
 export function TwoFactorEnabledForm() {
-    const tValidation = useTranslations('validation');
     const t = useTranslations('account.twoFactor');
     const { onSuccess } = useConfirmationDialogStore();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onTwoFactorAuthEnableAction,
-        zodResolver(twoFactorAuthSchema(tValidation)),
+        zodResolver(twoFactorAuthSchema),
         {
             formProps: {
                 defaultValues: {

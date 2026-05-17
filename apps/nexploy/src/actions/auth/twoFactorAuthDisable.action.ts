@@ -3,16 +3,10 @@
 import { authActionServer } from '@/lib/api/safe-action';
 import { disable2FA } from '@/services/auth/twoFactorAuth.service';
 import { twoFactorAuthSchema } from '@workspace/schemas-zod/auth/twoFactorAuth.schema';
-import { getTranslations } from 'next-intl/server';
 import { setToastServer } from '@/lib/toastServer';
 
-async function getTwoFactorAuthDisableSchema() {
-    const t = await getTranslations('validation');
-    return twoFactorAuthSchema(t);
-}
-
 export const onTwoFactorAuthDisableAction = authActionServer
-    .inputSchema(getTwoFactorAuthDisableSchema)
+    .inputSchema(twoFactorAuthSchema)
     .action(async ({ parsedInput }) => {
         try {
             return await disable2FA(parsedInput);

@@ -28,13 +28,12 @@ interface ProfileInfoFormProps {
 }
 
 export function ProfileInfoForm({ user }: ProfileInfoFormProps) {
-    const tValidation = useTranslations('validation');
     const t = useTranslations('account.profileInfo');
     const router = useRouter();
 
     const { form, handleSubmitWithAction } = useHookFormAction(
         onChangeUsernameAction,
-        zodResolver(changeUsernameFormSchema(tValidation)),
+        zodResolver(changeUsernameFormSchema),
         {
             formProps: {
                 defaultValues: {

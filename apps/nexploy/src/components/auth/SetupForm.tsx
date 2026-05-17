@@ -26,12 +26,11 @@ import { Shield } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 export function SetupForm() {
-    const tValidation = useTranslations('validation');
     const tAuth = useTranslations('auth');
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onSetupAction,
-        zodResolver(setupFormSchema(tValidation)),
+        zodResolver(setupFormSchema),
         {
             formProps: {
                 defaultValues: {

@@ -1,19 +1,13 @@
 import { z } from 'zod';
 
-export const password = (t: any) =>
-    z
-        .string({
-            error: t('fieldRequired', { field: t('fieldNames.password') }),
-        })
-        .min(8, { message: t('passwordMin', { min: 8 }) })
-        .max(30, { message: t('passwordMax', { max: 30 }) });
+export const password = z
+    .string({ error: 'Password is required' })
+    .min(8, { message: 'Password must be at least 8 characters' })
+    .max(30, { message: 'Password cannot exceed 30 characters' });
 
-export const email = (t: any) => z.email({ message: t('invalidEmail') });
+export const email = z.email({ message: 'Invalid email address' });
 
-export const name = (t: any) =>
-    z
-        .string({
-            error: t('fieldRequired', { field: t('fieldNames.name') }),
-        })
-        .min(2, { message: t('nameMin', { min: 2 }) })
-        .max(50, { message: t('nameMax', { max: 50 }) });
+export const name = z
+    .string({ error: 'Name is required' })
+    .min(2, { message: 'Name must be at least 2 characters' })
+    .max(50, { message: 'Name cannot exceed 50 characters' });

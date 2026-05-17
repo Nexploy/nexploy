@@ -26,10 +26,9 @@ export function VolumeForm() {
     const { closeDialog } = useConfirmationDialogStore();
     const { onVolumeChange } = useContainerChangesStore();
     const t = useTranslations('docker.forms');
-    const tValidation = useTranslations('validation');
 
     const form = useForm<ContainerVolumeForm>({
-        resolver: zodResolver(containerVolumeSchema(tValidation)),
+        resolver: zodResolver(containerVolumeSchema),
         defaultValues: {
             hostPath: '',
             containerPath: '',

@@ -25,13 +25,12 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 
 export function ChangePasswordForm() {
     const [isLoading, setIsLoading] = useState(false);
-    const tValidation = useTranslations('validation');
     const t = useTranslations('account.password');
     const tCommon = useTranslations('common');
     const closeDialog = useConfirmationDialogStore((state) => state.closeDialog);
 
     const form = useForm<TypeChangePasswordFormSchema>({
-        resolver: zodResolver(changePasswordFormSchema(tValidation)),
+        resolver: zodResolver(changePasswordFormSchema),
         defaultValues: {
             currentPassword: '',
             newPassword: '',

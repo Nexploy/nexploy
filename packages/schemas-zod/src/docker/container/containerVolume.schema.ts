@@ -1,10 +1,9 @@
 import { z } from 'zod';
 
-export const containerVolumeSchema = (t: any) =>
-    z.object({
-        hostPath: z.string().min(1, t('fieldRequired', { field: t('fieldNames.hostPath') })),
-        containerPath: z.string().min(1, t('fieldRequired', { field: t('fieldNames.containerPath') })),
-        readOnly: z.boolean(),
-    });
+export const containerVolumeSchema = z.object({
+    hostPath: z.string().min(1, 'Host path is required'),
+    containerPath: z.string().min(1, 'Container path is required'),
+    readOnly: z.boolean(),
+});
 
-export type ContainerVolumeForm = z.infer<ReturnType<typeof containerVolumeSchema>>;
+export type ContainerVolumeForm = z.infer<typeof containerVolumeSchema>;

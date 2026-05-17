@@ -13,14 +13,13 @@ import { DialogFooter } from '@workspace/ui/components/dialog';
 import { useRouter } from 'next/navigation';
 
 export function TwoFactorDisableForm() {
-    const tValidation = useTranslations('validation');
     const t = useTranslations('account.twoFactor');
     const { closeDialog } = useConfirmationDialogStore();
     const router = useRouter();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onTwoFactorAuthDisableAction,
-        zodResolver(twoFactorAuthSchema(tValidation)),
+        zodResolver(twoFactorAuthSchema),
         {
             formProps: {
                 defaultValues: {

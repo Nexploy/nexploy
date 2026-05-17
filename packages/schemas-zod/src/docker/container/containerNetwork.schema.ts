@@ -1,8 +1,7 @@
 import { z } from 'zod';
 
-export const containerNetworkSchema = (t: any) =>
-    z.object({
-        networkName: z.string().min(1, t('fieldRequired', { field: t('fieldNames.network') })),
-    });
+export const containerNetworkSchema = z.object({
+    networkName: z.string().min(1, 'Network is required'),
+});
 
-export type ContainerNetworkForm = z.infer<ReturnType<typeof containerNetworkSchema>>;
+export type ContainerNetworkForm = z.infer<typeof containerNetworkSchema>;

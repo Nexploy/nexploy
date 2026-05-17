@@ -27,11 +27,10 @@ export function EditRegistryForm({ registry }: EditRegistryFormProps) {
     const { onSuccess } = useConfirmationDialogStore();
     const t = useTranslations('admin.registry');
     const tCommon = useTranslations('common');
-    const tValidation = useTranslations('validation');
 
     const { form, handleSubmitWithAction } = useHookFormAction(
         updateRegistryAction,
-        zodResolver(updateRegistrySchema(tValidation)),
+        zodResolver(updateRegistrySchema),
         {
             formProps: {
                 defaultValues: {
