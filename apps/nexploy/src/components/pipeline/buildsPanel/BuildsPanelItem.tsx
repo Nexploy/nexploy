@@ -1,12 +1,12 @@
 'use client';
 
 import dayjs from 'dayjs';
-import { Button } from '@workspace/ui/components/button';
+import { Button, buttonVariants } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
 import { StatusProps } from '@workspace/ui/components/kibo-ui/status';
 import { useInngestSubscription } from '@inngest/realtime/hooks';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { type CommitInfo, type NodeRunStatus } from '@/types/pipeline.type';
 import { Build, BuildStatus } from 'generated/client';
@@ -14,6 +14,8 @@ import { isBuildLive } from '@/utils/buildStatus';
 import { StatusLive } from '@/components/shared/StatusLive';
 import { cn } from '@workspace/ui/lib/utils';
 import { Skeleton } from '@workspace/ui/components/skeleton';
+import { Square } from 'lucide-react';
+import { onCancelBuild } from '@/actions/repository/builds/cancelBuild.action';
 
 export const STATUS_PIPELINE: Record<BuildStatus, StatusProps['status']> = {
     QUEUED: 'waiting',
@@ -35,6 +37,7 @@ export function BuildsPanelItem({ build, isSelected, locale, onSelect }: BuildsP
     const setNodeStatuses = usePipelineEditorStore((s) => s.setNodeStatuses);
     const processedCountRef = useRef(0);
     const prevIsSelectedRef = useRef(isSelected);
+    const [isCancelling, setIsCancelling] = useState(false);
 
     const refreshToken = useCallback(async () => {
         const result = await onGetTokenBuildIdAction({
@@ -83,12 +86,26 @@ export function BuildsPanelItem({ build, isSelected, locale, onSelect }: BuildsP
     const commitHash = liveCommitInfo?.commitHash ?? build.commitHash;
     const commitMessage = liveCommitInfo?.commitMessage ?? build.commitMessage;
 
+    const handleCancel = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIsCancelling(true);
+        try {
+            await onCancelBuild({ buildId: build.id });
+        } finally {
+            setIsCancelling(false);
+        }
+    };
+
     return (
-        <Button
-            variant={isSelected ? 'default' : 'secondary'}
-            size="sm"
+        <div
+            role="button"
+            tabIndex={0}
             onClick={() => onSelect(isSelected ? null : build.id)}
-            className="h-auto flex-col items-start gap-0.5 px-2.5 py-1.5 duration-0"
+            onKeyDown={(e) => e.key === 'Enter' && onSelect(isSelected ? null : build.id)}
+            className={cn(
+                buttonVariants({ variant: isSelected ? 'default' : 'secondary', size: 'sm' }),
+                'relative h-auto cursor-pointer flex-col items-start gap-0.5 px-2.5 py-1.5 duration-0',
+            )}
         >
             <div className="flex w-full items-center gap-1">
                 <StatusLive
@@ -118,6 +135,17 @@ export function BuildsPanelItem({ build, isSelected, locale, onSelect }: BuildsP
                     </span>
                 )
             )}
-        </Button>
+            {isLive && (
+                <Button
+                    variant="destructiveGhost"
+                    size="icon"
+                    disabled={isCancelling}
+                    onClick={handleCancel}
+                    className="absolute right-0.5 bottom-0.5 h-5 w-5 rounded-sm"
+                >
+                    <Square />
+                </Button>
+            )}
+        </div>
     );
 }

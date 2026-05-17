@@ -23,18 +23,6 @@ import { getBuildStatus } from '@/services/repository/build.service';
 export { createPipelineLogger } from './utils';
 
 export class PipelineOrchestrator {
-    private startCancellationWatcher(
-        buildId: string,
-        abortController: AbortController,
-        intervalMs = 2000,
-    ): NodeJS.Timeout {
-        return setInterval(async () => {
-            if (abortController.signal.aborted) return;
-            const status = await getBuildStatus(buildId);
-            if (status === 'CANCELLED') abortController.abort();
-        }, intervalMs);
-    }
-
     private async runSkippedNode(
         node: PipelineNode,
         reason: string,
@@ -76,7 +64,6 @@ export class PipelineOrchestrator {
         const regularNodes = sorted.filter((n) => n.data.isEndNode !== true);
         const executionOrder = [...regularNodes, ...endNodes];
 
-        const cancellationWatcher = this.startCancellationWatcher(buildId, abortController);
         const branchSkippedNodeIds = new Set<string>();
 
         let pipelineHasFailed = false;
@@ -203,53 +190,65 @@ export class PipelineOrchestrator {
 
                 try {
                     const stepResult = await inngestStep.run(`node-${node.id}`, async () => {
-                        if (!pipelineHasFailed) {
-                            await setStatusBuild('BUILDING');
-                        }
-                        await reporter.markRunning(node.id);
-
-                        if (abortController.signal.aborted) {
-                            throw new DOMException('Build cancelled', 'AbortError');
-                        }
-
-                        const ctx: NodeExecutionContext = {
-                            buildId,
-                            buildConfig: config,
-                            nodeId: node.id,
-                            nodeConfig: resolvedConfig,
-                            inputNodes,
-                            inputOutputs,
-                            allOutputs,
-                            nodes: graph.nodes,
-                            edges: graph.edges,
-                            logger,
-                            reporter,
-                            abortSignal: abortController.signal,
-                            pipelineHasFailed,
-                        };
+                        const cancellationWatcher = setInterval(async () => {
+                            if (abortController.signal.aborted) return;
+                            const status = await getBuildStatus(buildId);
+                            if (status === 'CANCELLED') abortController.abort();
+                        }, 2000);
 
                         try {
-                            const execResult = await executor.execute(ctx);
-                            if (execResult.skipped) {
-                                await reporter.markSkipped(node.id);
-                            } else {
-                                await reporter.markCompleted(node.id);
+                            if (!pipelineHasFailed) {
+                                await setStatusBuild('BUILDING');
                             }
-                            return {
-                                ok: true,
-                                output: execResult.output ?? {},
-                                skipped: execResult.skipped,
-                                skippedBranchTargets: execResult.skippedBranchTargets,
+                            await reporter.markRunning(node.id);
+
+                            if (abortController.signal.aborted) {
+                                throw new DOMException('Build cancelled', 'AbortError');
+                            }
+
+                            const ctx: NodeExecutionContext = {
+                                buildId,
+                                buildConfig: config,
+                                nodeId: node.id,
+                                nodeConfig: resolvedConfig,
+                                inputNodes,
+                                inputOutputs,
+                                allOutputs,
+                                nodes: graph.nodes,
+                                edges: graph.edges,
+                                logger,
+                                reporter,
+                                abortSignal: abortController.signal,
+                                pipelineHasFailed,
                             };
-                        } catch (execError) {
-                            if (execError instanceof Error && execError.name === 'AbortError') {
-                                throw execError;
+
+                            try {
+                                const execResult = await executor.execute(ctx);
+                                if (execResult.skipped) {
+                                    await reporter.markSkipped(node.id);
+                                } else {
+                                    await reporter.markCompleted(node.id);
+                                }
+                                return {
+                                    ok: true,
+                                    output: execResult.output ?? {},
+                                    skipped: execResult.skipped,
+                                    skippedBranchTargets: execResult.skippedBranchTargets,
+                                };
+                            } catch (execError) {
+                                if (execError instanceof Error && execError.name === 'AbortError') {
+                                    throw execError;
+                                }
+                                const message =
+                                    execError instanceof Error
+                                        ? execError.message
+                                        : String(execError);
+                                await logger.error(node.id, message);
+                                await reporter.markFailed(node.id);
+                                return { ok: false, error: message };
                             }
-                            const message =
-                                execError instanceof Error ? execError.message : String(execError);
-                            await logger.error(node.id, message);
-                            await reporter.markFailed(node.id);
-                            return { ok: false, error: message };
+                        } finally {
+                            clearInterval(cancellationWatcher);
                         }
                     });
 
@@ -318,8 +317,6 @@ export class PipelineOrchestrator {
             }
 
             throw error;
-        } finally {
-            clearInterval(cancellationWatcher);
         }
     }
 }

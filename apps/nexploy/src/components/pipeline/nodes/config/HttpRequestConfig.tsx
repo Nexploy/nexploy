@@ -82,11 +82,14 @@ export function HttpRequestConfig() {
                         <FormField
                             control={form.control}
                             name={`headers.${index}.key`}
-                            render={({ field: f }) => (
+                            render={({ field }) => (
                                 <FormItem className="flex-1">
                                     <FormControl>
-                                        <Input {...f} placeholder={t('varKey')} />
+                                        <RefAware value={field.value} onChange={field.onChange}>
+                                            <Input {...field} placeholder={t('varKey')} />
+                                        </RefAware>
                                     </FormControl>
+                                    <FormMessage className="text-xs" />
                                 </FormItem>
                             )}
                         />
@@ -100,6 +103,7 @@ export function HttpRequestConfig() {
                                             <Input {...field} placeholder={t('varValue')} />
                                         </RefAware>
                                     </FormControl>
+                                    <FormMessage className="text-xs" />
                                 </FormItem>
                             )}
                         />

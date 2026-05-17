@@ -190,7 +190,13 @@ export const httpRequestConfigSchema = z.object({
     url: refable(z.url()).default(''),
     method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD']).default('POST'),
     headers: z
-        .array(z.object({ id: z.string(), key: z.string(), value: refable(z.string()) }))
+        .array(
+            z.object({
+                id: z.string(),
+                key: refable(z.string().min(1, 'Header key is required')),
+                value: refable(z.string().min(1, 'Header value is required')),
+            }),
+        )
         .default([]),
     body: refable(z.string()).optional(),
     expectedStatus: z.coerce
