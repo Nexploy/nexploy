@@ -18,7 +18,7 @@ import {
 import { formatErrorDetails, getParentNodeIds, resolveNodeConfig } from './utils';
 import { analyzeGraph } from '@/inngest/pipeline/utils/graphQueries';
 import { getNodeExecutor } from '@/inngest/pipeline/nodes/registry';
-import { getBuildStatus } from '@/services/repository/build.service';
+import { getBuildStatus, getNodeStatus } from '@/services/repository/build.service';
 
 export { createPipelineLogger } from './utils';
 
@@ -190,10 +190,29 @@ export class PipelineOrchestrator {
 
                 try {
                     const stepResult = await inngestStep.run(`node-${node.id}`, async () => {
+                        // Per-node skip controller — aborted when user skips this node.
+                        const nodeSkipController = new AbortController();
+                        // Combined controller passed to executors: aborts on build cancel OR node skip.
+                        const nodeAbortController = new AbortController();
+                        const abortNode = () => {
+                            if (!nodeAbortController.signal.aborted) nodeAbortController.abort();
+                        };
+                        abortController.signal.addEventListener('abort', abortNode, { once: true });
+                        nodeSkipController.signal.addEventListener('abort', abortNode, {
+                            once: true,
+                        });
+
                         const cancellationWatcher = setInterval(async () => {
                             if (abortController.signal.aborted) return;
                             const status = await getBuildStatus(buildId);
-                            if (status === 'CANCELLED') abortController.abort();
+                            if (status === 'CANCELLED') {
+                                abortController.abort();
+                                return;
+                            }
+                            if (!nodeSkipController.signal.aborted) {
+                                const nodeStatus = await getNodeStatus(buildId, node.id);
+                                if (nodeStatus === 'skipped') nodeSkipController.abort();
+                            }
                         }, 2000);
 
                         try {
@@ -218,26 +237,46 @@ export class PipelineOrchestrator {
                                 edges: graph.edges,
                                 logger,
                                 reporter,
-                                abortSignal: abortController.signal,
+                                // Combined signal: executors abort immediately on build cancel or node skip.
+                                abortSignal: nodeAbortController.signal,
                                 pipelineHasFailed,
                             };
 
                             try {
                                 const execResult = await executor.execute(ctx);
+                                if (nodeSkipController.signal.aborted) {
+                                    return { ok: true, output: {}, skipped: true };
+                                }
                                 if (execResult.skipped) {
                                     await reporter.markSkipped(node.id);
-                                } else {
-                                    await reporter.markCompleted(node.id);
+                                    return {
+                                        ok: true,
+                                        output: {},
+                                        skipped: true,
+                                        skippedBranchTargets: execResult.skippedBranchTargets,
+                                    };
                                 }
+                                await reporter.markCompleted(node.id);
                                 return {
                                     ok: true,
                                     output: execResult.output ?? {},
-                                    skipped: execResult.skipped,
+                                    skipped: false,
                                     skippedBranchTargets: execResult.skippedBranchTargets,
                                 };
                             } catch (execError) {
                                 if (execError instanceof Error && execError.name === 'AbortError') {
+                                    // If node skip triggered the abort (not build cancel), treat as skipped.
+                                    if (
+                                        nodeSkipController.signal.aborted &&
+                                        !abortController.signal.aborted
+                                    ) {
+                                        return { ok: true, output: {}, skipped: true };
+                                    }
                                     throw execError;
+                                }
+                                // Non-abort error during a skip — still treat as skipped.
+                                if (nodeSkipController.signal.aborted) {
+                                    return { ok: true, output: {}, skipped: true };
                                 }
                                 const message =
                                     execError instanceof Error

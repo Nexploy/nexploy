@@ -11,6 +11,8 @@ import {
 } from '@workspace/ui/components/dialog';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import { SkipForward } from 'lucide-react';
 import { usePipelineContext } from '@/contexts/PipelineContext';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { useTranslations } from 'next-intl';
@@ -21,6 +23,7 @@ import { AvailableInputsPanel } from '@/components/pipeline/nodes/nodeConfigPane
 import { NodeOutputsPanel } from '@/components/pipeline/nodes/nodeConfigPanel/NodeOutputsPanel';
 import { RefValidationProvider } from '@/contexts/RefValidationContext';
 import { cn } from '@workspace/ui/lib/utils';
+import { onSkipNode } from '@/actions/repository/builds/skipNode.action';
 
 export function NodeConfigDialog() {
     const tPipeline = useTranslations('repository.pipeline');
@@ -62,22 +65,45 @@ export function NodeConfigDialog() {
                             <DialogTitle
                                 className={cn(
                                     'flex flex-col gap-2 text-sm leading-none',
-                                    isViewing && 'flex-row',
+                                    isViewing && 'flex-row items-center',
                                 )}
                             >
-                                {tPipeline(`nodes.${nodeType}.name`)}
-                                {isViewing ? (
-                                    <span className="text-muted-foreground text-xs font-normal">
-                                        ({tConfig('viewOnly')})
-                                    </span>
-                                ) : (
-                                    nodeDesc && (
+                                <div className={'flex flex-col gap-2'}>
+                                    <div className={'flex items-center gap-1'}>
+                                        <span>{tPipeline(`nodes.${nodeType}.name`)}</span>
+                                        {isViewing && (
+                                            <span className="text-muted-foreground text-xs font-normal">
+                                                ({tConfig('viewOnly')})
+                                            </span>
+                                        )}
+                                    </div>
+                                    {nodeDesc && (
                                         <span
                                             className={'text-muted-foreground text-xs leading-none'}
                                         >
                                             {tPipeline(`nodes.${nodeType}.description`)}
                                         </span>
-                                    )
+                                    )}
+                                </div>
+                                {nodeStatuses[node.id] === 'running' && activeBuildId && (
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                variant={'destructive'}
+                                                size="sm"
+                                                className="ml-2 size-7"
+                                                onClick={() =>
+                                                    onSkipNode({
+                                                        buildId: activeBuildId,
+                                                        nodeId: node.id,
+                                                    })
+                                                }
+                                            >
+                                                <SkipForward className={'size-3'} />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>{tPipeline('skipNode')}</TooltipContent>
+                                    </Tooltip>
                                 )}
                             </DialogTitle>
                         </DialogHeader>

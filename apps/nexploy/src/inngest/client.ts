@@ -15,6 +15,12 @@ type Events = {
             buildId: string;
         };
     };
+    'node/skip': {
+        data: {
+            buildId: string;
+            nodeId: string;
+        };
+    };
     'backup/schedule.start': { data: BackupScheduleStartEvent };
     'backup/schedule.cancel': {
         data: {

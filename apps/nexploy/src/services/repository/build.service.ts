@@ -111,6 +111,19 @@ export async function updateBuildGitInfo(
     }
 }
 
+export async function getNodeStatus(buildId: string, nodeId: string): Promise<string | null> {
+    try {
+        const build = await prisma.build.findUnique({
+            where: { id: buildId },
+            select: { nodeStatuses: true },
+        });
+        const statuses = (build?.nodeStatuses as Record<string, string>) ?? {};
+        return statuses[nodeId] ?? null;
+    } catch {
+        throw new Error('Failed to get node status');
+    }
+}
+
 export async function getBuildStatus(buildId: string): Promise<BuildStatus | null> {
     try {
         const build = await prisma.build.findUnique({
@@ -233,6 +246,42 @@ export async function cancelBuildRepository(buildId: string) {
     ]);
 
     await inngest.send({ name: 'build/cancel', data: { buildId } });
+}
+
+export async function skipNodeRepository(buildId: string, nodeId: string) {
+    const build = await prisma.build.findUnique({
+        where: { id: buildId },
+        select: { status: true, nodeStatuses: true },
+    });
+    if (!build) throw new Error('Build not found');
+    if (build.status !== 'BUILDING') throw new Error('Build is not running');
+
+    const current = (build.nodeStatuses as Record<string, string>) ?? {};
+    if (current[nodeId] !== 'running') throw new Error('Node is not currently running');
+
+    await updateNodeStatus(buildId, nodeId, 'skipped');
+
+    const logEntry: BuildLogEntry = {
+        buildId,
+        level: 'INFO',
+        step: nodeId,
+        message: 'Node skipped by user',
+        createdAt: new Date(),
+    };
+    await createLog(logEntry);
+
+    const buildChannel = createBuildChannel(buildId);
+    const publishSafe = async (payload: Parameters<typeof inngest.realtime.publish>[0]) => {
+        try {
+            await inngest.realtime.publish(payload);
+        } catch {
+            /* ignore */
+        }
+    };
+
+    await publishSafe(buildChannel['log']({ log: logEntry }));
+    await publishSafe(buildChannel['node-status']({ nodeId, nodeStatus: 'skipped' }));
+    await inngest.send({ name: 'node/skip', data: { buildId, nodeId } });
 }
 
 export async function getAllBuilds(repositoryId: string) {

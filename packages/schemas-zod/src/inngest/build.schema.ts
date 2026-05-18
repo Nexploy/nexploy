@@ -15,6 +15,11 @@ export const cancelBuildSchema = z.object({
     buildId: z.cuid(),
 });
 
+export const skipNodeSchema = z.object({
+    buildId: z.cuid(),
+    nodeId: z.string(),
+});
+
 export const deployVersionSchema = z.object({
     imageTag: z.string(),
     repositoryId: z.cuid(),

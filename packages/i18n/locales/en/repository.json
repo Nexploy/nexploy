@@ -365,6 +365,7 @@
         "exitBuildEsc": "Press Esc to exit",
         "viewingBuild": "Viewing build #{number}",
         "stopBuild": "Stop build",
+        "skipNode": "Skip this node",
         "nodeStatus": {
             "running": "Running",
             "completed": "Completed",
