@@ -42,7 +42,7 @@ export function RemoveContainerConfig() {
 
                 return (
                     <FormItem>
-                        <FormLabel>{t('containerId')}</FormLabel>
+                        <FormLabel>{t('container')}</FormLabel>
                         <FormControl>
                             <RefAware
                                 className={'truncate'}

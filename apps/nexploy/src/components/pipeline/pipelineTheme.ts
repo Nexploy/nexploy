@@ -170,7 +170,6 @@ const NODE_CATEGORY: Record<string, string> = {
     'delete-network': 'utility',
     'delete-volume': 'utility',
     // Files & Artifacts
-    'upload-artifact': 'files',
     'download-file': 'files',
     // Database
     'backup-volume-s3': 'database',
@@ -246,7 +245,6 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'delete-network': Trash2,
     'delete-volume': Trash2,
     // Files & Artifacts
-    'upload-artifact': Upload,
     'download-file': Download,
     // Database
     'backup-volume-s3': CloudBackup,

@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -36,7 +42,7 @@ export function RestartContainerConfig() {
 
                 return (
                     <FormItem>
-                        <FormLabel>{t('containerId')}</FormLabel>
+                        <FormLabel>{t('container')}</FormLabel>
                         <FormControl>
                             <RefAware
                                 className={'truncate'}

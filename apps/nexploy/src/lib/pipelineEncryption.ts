@@ -5,8 +5,7 @@ const ENCRYPTED_NODE_FIELDS: Record<string, string[]> = {
     'set-env-vars': ['vars[].value'],
     'send-notification': ['webhookUrl'],
     'update-commit-status': ['token'],
-    'upload-artifact': ['accessKey', 'secretKey'],
-    'run-migration': ['databaseUrl'],
+'run-migration': ['databaseUrl'],
     'git-clone-extra': ['token'],
     'http-request': ['headers[].value'],
 };

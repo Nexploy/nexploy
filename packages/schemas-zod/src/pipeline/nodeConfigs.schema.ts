@@ -134,9 +134,9 @@ export const createVolumeConfigSchema = z.object({
 // ─── Flow Control ───────────────────────────────────────────────────────────
 
 export const waitForHealthConfigSchema = z.object({
-    containerName: z.string().min(1, 'Container name is required').default(''),
-    timeout: z.coerce.number().default(60),
-    interval: z.coerce.number().default(5),
+    containerId: refable(z.string().min(1, 'Container is required')),
+    timeout: z.coerce.number().min(1, 'Timeout must be positive').default(60),
+    interval: z.coerce.number().min(1, 'Interval must be positive').default(5),
 });
 
 export const waitForUrlConfigSchema = z.object({
@@ -146,20 +146,20 @@ export const waitForUrlConfigSchema = z.object({
         .min(100, 'Status code must be between 100 and 599')
         .max(599, 'Status code must be between 100 and 599')
         .default(200),
-    timeout: z.coerce.number().default(60),
-    interval: z.coerce.number().default(5),
+    timeout: z.coerce.number().min(1, 'Timeout must be positive').default(60),
+    interval: z.coerce.number().min(1, 'Interval must be positive').default(5),
     method: z.enum(['GET', 'POST', 'HEAD']).default('GET'),
 });
 
 export const waitForPortConfigSchema = z.object({
-    host: z.string().min(1, 'Host is required').default(''),
+    containerId: refable(z.string().min(1, 'Container is required')),
     port: z.coerce
         .number()
         .min(1, 'Port must be between 1 and 65535')
         .max(65535, 'Port must be between 1 and 65535')
         .default(80),
-    timeout: z.coerce.number().default(60),
-    interval: z.coerce.number().default(3),
+    timeout: z.coerce.number().min(1, 'Timeout must be positive').default(60),
+    interval: z.coerce.number().min(1, 'Interval must be positive').default(3),
 });
 
 export const delayConfigSchema = z.object({
@@ -249,17 +249,6 @@ export const deleteVolumeConfigSchema = z.object({
 });
 
 // ─── Files & Artifacts ───────────────────────────────────────────────────────
-
-export const uploadArtifactConfigSchema = z.object({
-    endpoint: z.string().min(1, 'Endpoint is required').default(''),
-    bucket: z.string().min(1, 'Bucket name is required').default(''),
-    accessKey: z.string().min(1, 'Access key is required').default(''),
-    secretKey: z.string().min(1, 'Secret key is required').default(''),
-    region: z.string().default('us-east-1'),
-    sourcePath: relativePath('Source path').default(''),
-    destinationPath: z.string().min(1, 'Destination path is required').default(''),
-    useSSL: z.boolean().default(true),
-});
 
 export const downloadFileConfigSchema = z.object({
     url: refable(z.string().min(1, 'URL is required')).default(''),

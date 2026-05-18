@@ -589,17 +589,13 @@
                 "name": "Mettre à jour un service",
                 "description": "Met à jour un service Docker Swarm vers une nouvelle image"
             },
-            "upload-artifact": {
-                "name": "Uploader un artefact",
-                "description": "Uploade un fichier ou un dossier vers S3 ou MinIO"
-            },
             "wait-for-health": {
                 "name": "Attendre le healthcheck",
                 "description": "Attend qu'un conteneur Docker passe son healthcheck"
             },
             "wait-for-port": {
-                "name": "Attendre un port",
-                "description": "Vérifie par TCP qu'un port est ouvert sur l'hôte donné"
+                "name": "Attendre un port de conteneur",
+                "description": "Vérifie par TCP qu'un port est ouvert sur le conteneur donné"
             },
             "wait-for-url": {
                 "name": "Attendre une URL",

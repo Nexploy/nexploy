@@ -42,7 +42,7 @@ export function StartContainerConfig() {
 
                 return (
                     <FormItem>
-                        <FormLabel>{t('containerId')}</FormLabel>
+                        <FormLabel>{t('container')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
                                 <Select
@@ -51,7 +51,9 @@ export function StartContainerConfig() {
                                     disabled={isLoading}
                                 >
                                     <SelectTrigger
-                                        className={'overflow-hidden !pl-0 data-[placeholder]:!pl-3'}
+                                        className={
+                                            'w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3'
+                                        }
                                     >
                                         {isLoading ? (
                                             <span className="text-muted-foreground flex items-center gap-2 pl-2">

@@ -26,7 +26,17 @@ export const waitForUrlManifest: NodeManifest = {
     configSchema: waitForUrlConfigSchema,
     configPanel: WaitForUrlConfig,
     inputFields: [
-        { key: 'url', labelKey: 'pipeline.inputs.url', descriptionKey: 'pipeline.inputs.desc_url', type: 'input' },
-        { key: 'status', labelKey: 'pipeline.inputs.httpStatus', descriptionKey: 'pipeline.inputs.desc_httpStatus', type: 'input' },
+        {
+            key: 'url',
+            labelKey: 'pipeline.inputs.url',
+            descriptionKey: 'pipeline.inputs.desc_url',
+            type: 'input',
+        },
+        {
+            key: 'status',
+            labelKey: 'pipeline.inputs.httpStatus',
+            descriptionKey: 'pipeline.inputs.desc_httpStatus',
+            type: 'input',
+        },
     ],
 };

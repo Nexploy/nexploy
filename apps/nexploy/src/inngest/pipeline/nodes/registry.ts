@@ -31,7 +31,6 @@ import { updateCommitStatusExecutor } from './executors/update-commit-status.exe
 import { tagImageExecutor } from './executors/tag-image.executor';
 import { scanImageExecutor } from './executors/scan-image.executor';
 import { pruneImagesExecutor } from './executors/prune-images.executor';
-import { uploadArtifactExecutor } from './executors/upload-artifact.executor';
 import { downloadFileExecutor } from './executors/download-file.executor';
 import { backupVolumeS3Executor } from './executors/backup-volume-s3.executor';
 import { createServiceExecutor } from './executors/create-service.executor';
@@ -102,7 +101,6 @@ const executors: INodeExecutor[] = [
     deleteNetworkExecutor,
     deleteVolumeExecutor,
     // Files & Artifacts
-    uploadArtifactExecutor,
     downloadFileExecutor,
     // Database
     backupVolumeS3Executor,

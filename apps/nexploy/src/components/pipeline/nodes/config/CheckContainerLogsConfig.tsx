@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
 import {
@@ -15,7 +21,12 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select.tsx';
 import { AlertTriangle, Info, Loader2 } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from '@workspace/ui/components/tooltip';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@workspace/ui/components/tooltip';
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
 import { useEnvironmentContainers } from '@/hooks/sse/useEnvironmentContainers.ts';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware.tsx';
@@ -40,7 +51,7 @@ export function CheckContainerLogsConfig() {
 
                     return (
                         <FormItem>
-                            <FormLabel>{t('containerId')}</FormLabel>
+                            <FormLabel>{t('container')}</FormLabel>
                             <FormControl>
                                 <RefAware value={field.value} onChange={field.onChange}>
                                     <Select

@@ -36,7 +36,7 @@ export function StopContainerConfig() {
 
                 return (
                     <FormItem>
-                        <FormLabel>{t('containerId')}</FormLabel>
+                        <FormLabel>{t('container')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
                                 <Select

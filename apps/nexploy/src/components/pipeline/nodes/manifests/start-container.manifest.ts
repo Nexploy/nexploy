@@ -26,6 +26,11 @@ export const startContainerManifest: NodeManifest = {
     configSchema: startContainerConfigSchema,
     configPanel: StartContainerConfig,
     inputFields: [
-        { key: 'containerId', labelKey: 'pipeline.inputs.containerId', descriptionKey: 'pipeline.inputs.desc_containerId', type: 'input' },
+        {
+            key: 'containerId',
+            labelKey: 'pipeline.inputs.containerId',
+            descriptionKey: 'pipeline.inputs.desc_containerId',
+            type: 'input',
+        },
     ],
 };

@@ -33,11 +33,7 @@ export function WaitForUrlConfig() {
                     <FormItem>
                         <FormLabel>{t('url')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder="https://example.com/health"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} placeholder="https://example.com/health" />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -75,11 +71,7 @@ export function WaitForUrlConfig() {
                     <FormItem>
                         <FormLabel>{t('expectedStatus')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                type="number"
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} type="number" />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -92,12 +84,7 @@ export function WaitForUrlConfig() {
                     <FormItem>
                         <FormLabel>{t('timeoutSeconds')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                type="number"
-                                min={1}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} type="number" min={1} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -110,12 +97,7 @@ export function WaitForUrlConfig() {
                     <FormItem>
                         <FormLabel>{t('intervalSeconds')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                type="number"
-                                min={1}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} type="number" min={1} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

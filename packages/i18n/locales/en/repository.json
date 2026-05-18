@@ -503,8 +503,8 @@
                 "description": "Poll a URL until it returns the expected HTTP status"
             },
             "wait-for-port": {
-                "name": "Wait for Port",
-                "description": "TCP check until a port is open on the given host"
+                "name": "Wait for Container Port",
+                "description": "TCP check until a port is open on the given container"
             },
             "delay": {
                 "name": "Delay",
@@ -551,10 +551,6 @@
             "delete-volume": {
                 "name": "Delete Volume",
                 "description": "Delete a Docker volume by name"
-            },
-            "upload-artifact": {
-                "name": "Upload Artifact",
-                "description": "Upload a file or folder to S3 or MinIO"
             },
             "download-file": {
                 "name": "Download File",
