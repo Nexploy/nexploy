@@ -27,7 +27,6 @@ export const tagImageManifest: NodeManifest = {
     configPanel: TagImageConfig,
     inputFields: [
         { key: 'sourceImage', labelKey: 'pipeline.inputs.sourceImage', descriptionKey: 'pipeline.inputs.desc_sourceImage', type: 'input' },
-        { key: 'sourceTag', labelKey: 'pipeline.inputs.sourceTag', descriptionKey: 'pipeline.inputs.desc_sourceTag', type: 'input' },
         { key: 'targetTag', labelKey: 'pipeline.inputs.targetTag', descriptionKey: 'pipeline.inputs.desc_targetTag', type: 'input' },
         { key: 'taggedImage', labelKey: 'pipeline.inputs.taggedImage', descriptionKey: 'pipeline.inputs.desc_taggedImage', type: 'input' },
     ],

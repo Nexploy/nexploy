@@ -1,4 +1,4 @@
-import { kyGithubApi, kyGithubPublic, KyGithubOptions } from '@/lib/api/kyGithub';
+import { kyGithubApi, KyGithubOptions, kyGithubPublic } from '@/lib/api/kyGithub';
 import { GithubRepo } from '@workspace/typescript-interface/git/repository/github.repository';
 import { GithubBranch } from '@workspace/typescript-interface/git/branch/github.branch';
 import {
@@ -191,19 +191,29 @@ export async function githubUpdateCommitStatus(
     repo: string,
     sha: string,
     state: 'pending' | 'success' | 'failure' | 'error',
-    options?: { description?: string; targetUrl?: string; context?: string },
+    options: { description?: string; context: string },
 ): Promise<void> {
-    await kyGithubApi.post(`repos/${owner}/${repo}/statuses/${sha}`, {
-        token,
-        headers: {
-            Accept: 'application/vnd.github+json',
-            'X-GitHub-Api-Version': '2022-11-28',
-        },
-        json: {
-            state,
-            ...(options?.description && { description: options.description }),
-            ...(options?.targetUrl && { target_url: options.targetUrl }),
-            context: options?.context ?? 'nexploy/pipeline',
-        },
-    } as KyGithubOptions);
+    try {
+        await kyGithubApi.post(`repos/${owner}/${repo}/statuses/${sha}`, {
+            token,
+            headers: {
+                Accept: 'application/vnd.github+json',
+                'X-GitHub-Api-Version': '2022-11-28',
+            },
+            json: {
+                state,
+                ...(options?.description && { description: options.description }),
+                context: options.context,
+            },
+        } as KyGithubOptions);
+    } catch (error: unknown) {
+        const status = (error as { response?: { status?: number } })?.response?.status;
+        if (status === 403) {
+            throw new Error(
+                'GitHub returned 403: the GitHub App is missing the "Commit statuses: Read & write" permission. ' +
+                'Go to your GitHub App settings → Permissions & events → Commit statuses → Read & write, then reinstall the app.',
+            );
+        }
+        throw error;
+    }
 }

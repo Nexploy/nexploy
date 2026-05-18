@@ -66,3 +66,8 @@ export const createServiceFormSchema = z.object({
 export const removeServicesSchema = z.object({
     serviceIds: z.array(z.string()),
 });
+
+export const updateServiceImageSchema = z.object({
+    image: z.string().min(1, 'Image is required'),
+    forceUpdate: z.boolean().default(false),
+});

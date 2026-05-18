@@ -16,6 +16,7 @@ import {
 } from '@workspace/ui/components/form';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
+import { CheckIcon } from 'lucide-react';
 import {
     githubSetupSchema,
     type GitHubSetupValues,
@@ -36,6 +37,7 @@ function buildManifest(appUrl: string) {
             contents: 'read',
             metadata: 'read',
             administration: 'read',
+            statuses: 'write',
         },
         default_events: ['push'],
     };
@@ -129,6 +131,25 @@ export function GitHubAppSetupForm() {
                         )}
                     />
                 )}
+
+                <div className="space-y-1.5 rounded-md border p-3">
+                    <p className="text-muted-foreground text-xs font-medium">
+                        {t('permissionsTitle')}
+                    </p>
+                    {(
+                        [
+                            'permContents',
+                            'permMetadata',
+                            'permAdministration',
+                            'permStatuses',
+                        ] as const
+                    ).map((key) => (
+                        <div key={key} className="flex items-center gap-2 text-xs">
+                            <CheckIcon className="size-3 shrink-0 text-green-500" />
+                            <span>{t(key)}</span>
+                        </div>
+                    ))}
+                </div>
 
                 <form ref={manifestFormRef} action={target} method="post">
                     <input type="hidden" name="manifest" value={manifestJson} />

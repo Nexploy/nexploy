@@ -1,11 +1,8 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { tagImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { z } from 'zod';
 
 export class TagImageExecutor implements INodeExecutor {
@@ -13,39 +10,40 @@ export class TagImageExecutor implements INodeExecutor {
     readonly configSchema = tagImageConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<z.infer<typeof tagImageConfigSchema>>,
+        ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof tagImageConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
-        const sourceImage = nodeConfig.sourceImage;
-        const sourceTag = nodeConfig.sourceTag;
-        const targetTag = nodeConfig.targetTag;
+        const sourceImage = nodeConfig.sourceImage.trim();
+        const targetTag = nodeConfig.targetTag.trim();
 
-        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
-        const source = `${sourceImage}:${sourceTag}`;
+        const environmentId = getFromClosestAncestor<string>(
+            allOutputs,
+            edges,
+            nodeId,
+            'environmentId',
+        );
 
-        await logger.info(nodeId, `Tagging image ${source} → ${sourceImage}:${targetTag}`);
+        const colonIndex = sourceImage.lastIndexOf(':');
+        const repo = colonIndex !== -1 ? sourceImage.slice(0, colonIndex) : sourceImage;
+
+        await logger.info(nodeId, `Tagging image ${sourceImage} → ${repo}:${targetTag}`);
 
         try {
             await kyDocker
-                .post('images/tag', {
-                    json: {
-                        sourceImage,
-                        sourceTag,
-                        targetTag,
-                    },
+                .post(`images/${encodeURIComponent(sourceImage)}/tag`, {
+                    json: { repo, tag: targetTag },
                     signal: abortSignal,
                     environmentId,
                 } as KyDockerOptions)
                 .json();
 
-            await logger.info(nodeId, `Image tagged as ${sourceImage}:${targetTag}`);
+            await logger.info(nodeId, `Image tagged as ${repo}:${targetTag}`);
             return {
                 output: {
                     sourceImage,
-                    sourceTag,
                     targetTag,
-                    taggedImage: `${sourceImage}:${targetTag}`,
+                    taggedImage: `${repo}:${targetTag}`,
                 },
             };
         } catch (error) {

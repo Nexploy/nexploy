@@ -6,6 +6,7 @@ import {
     removeServicesSchema,
     scaleServiceSchema,
     serviceIdParamSchema,
+    updateServiceImageSchema,
 } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
 
 const app = new Hono();
@@ -177,6 +178,32 @@ app.post(
         const result = await docker.createService(serviceSpec);
 
         return { success: true, id: result.ID };
+    }),
+);
+
+app.patch(
+    '/:id',
+    route({ param: serviceIdParamSchema, json: updateServiceImageSchema }, async (c) => {
+        const { id } = c.req.valid('param');
+        const { image, forceUpdate } = c.req.valid('json');
+
+        const service = docker.getService(id);
+        const serviceInfo = await service.inspect();
+
+        await service.update({
+            version: serviceInfo.Version.Index,
+            ...serviceInfo.Spec,
+            TaskTemplate: {
+                ...serviceInfo.Spec.TaskTemplate,
+                ContainerSpec: {
+                    ...serviceInfo.Spec.TaskTemplate.ContainerSpec,
+                    Image: image,
+                },
+                ...(forceUpdate ? { ForceUpdate: (serviceInfo.Spec.TaskTemplate.ForceUpdate ?? 0) + 1 } : {}),
+            },
+        });
+
+        return { success: true };
     }),
 );
 

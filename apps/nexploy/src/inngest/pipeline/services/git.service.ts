@@ -239,7 +239,7 @@ class GitService {
         try {
             const hash = await this.exec('git', ['log', '-1', '--format=%H'], { cwd: workDir });
             const message = await this.exec('git', ['log', '-1', '--format=%s'], { cwd: workDir });
-            return { hash: hash.substring(0, 8), message };
+            return { hash: hash.trim(), message: message.trim() };
         } catch {
             return null;
         }

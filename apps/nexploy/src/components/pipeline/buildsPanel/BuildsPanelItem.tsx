@@ -120,7 +120,9 @@ export function BuildsPanelItem({ build, isSelected, locale, onSelect }: BuildsP
                 {isLive && !commitHash ? (
                     <Skeleton className="h-3 w-14" />
                 ) : (
-                    commitHash && <span className="font-mono text-xs">{commitHash}</span>
+                    commitHash && (
+                        <span className="font-mono text-xs">{commitHash.substring(0, 10)}…</span>
+                    )
                 )}
                 <span className="ml-auto pl-2 text-xs">
                     {dayjs(build.createdAt).locale(locale).fromNow(true)}

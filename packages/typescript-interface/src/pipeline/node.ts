@@ -61,7 +61,6 @@ export type NodeId =
     | 'delete-network'
     | 'delete-volume'
     // Files & Artifacts
-    | 'template-file'
     | 'upload-artifact'
     | 'download-file'
     // Database

@@ -47,7 +47,12 @@
                 "organization": "Installer sur une organisation",
                 "organizationPlaceholder": "Nom de l'organisation",
                 "existingApp": "Vous avez déjà une GitHub App ?",
-                "createApp": "Créer la GitHub App"
+                "createApp": "Créer la GitHub App",
+                "permissionsTitle": "Permissions demandées",
+                "permContents": "Contents : Lecture",
+                "permMetadata": "Metadata : Lecture",
+                "permAdministration": "Administration : Lecture",
+                "permStatuses": "Commit statuses : Lecture & écriture"
             },
             "gitlab": {
                 "step1": "Allez sur GitLab → Préférences → Applications → Nouvelle application",

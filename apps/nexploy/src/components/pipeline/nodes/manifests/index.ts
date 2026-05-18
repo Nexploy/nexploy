@@ -31,7 +31,6 @@ import { updateCommitStatusManifest } from './update-commit-status.manifest';
 import { tagImageManifest } from './tag-image.manifest';
 import { scanImageManifest } from './scan-image.manifest';
 import { pruneImagesManifest } from './prune-images.manifest';
-import { templateFileManifest } from './template-file.manifest';
 import { uploadArtifactManifest } from './upload-artifact.manifest';
 import { downloadFileManifest } from './download-file.manifest';
 import { backupVolumeS3Manifest } from './backup-volume-s3.manifest';
@@ -102,7 +101,6 @@ export const allBuiltinManifests: NodeManifest[] = [
     deleteNetworkManifest,
     deleteVolumeManifest,
     // Files & Artifacts
-    templateFileManifest,
     uploadArtifactManifest,
     downloadFileManifest,
     // Database

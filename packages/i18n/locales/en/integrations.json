@@ -47,7 +47,12 @@
                 "organization": "Install on an organization",
                 "organizationPlaceholder": "Organization name",
                 "existingApp": "Already have a GitHub App?",
-                "createApp": "Create GitHub App"
+                "createApp": "Create GitHub App",
+                "permissionsTitle": "Permissions requested",
+                "permContents": "Contents: Read",
+                "permMetadata": "Metadata: Read",
+                "permAdministration": "Administration: Read",
+                "permStatuses": "Commit statuses: Read & write"
             },
             "gitlab": {
                 "step1": "Go to GitLab → Preferences → Applications → New application",

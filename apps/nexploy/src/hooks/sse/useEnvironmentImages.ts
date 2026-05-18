@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { Image, ImageEvent } from '@workspace/typescript-interface/docker/docker.image';
-import { useImagesStore } from '../../stores/docker/useImagesStore';
+import { useImagesStore } from '@/stores/docker/useImagesStore.ts';
 import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
 export function useEnvironmentImages(): {

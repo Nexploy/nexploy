@@ -10,6 +10,7 @@ import {
     FormMessage,
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
+import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 import {
     Select,
     SelectContent,
@@ -26,82 +27,6 @@ export function UpdateCommitStatusConfig() {
 
     return (
         <div className="space-y-4">
-            <FormField
-                control={form.control}
-                name="provider"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('commitStatusProvider')}</FormLabel>
-                        <Select value={field.value} onValueChange={field.onChange}>
-                            <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue />
-                                </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>{t('commitStatusProvider')}</SelectLabel>
-                                    <SelectItem value="github">GitHub</SelectItem>
-                                    <SelectItem value="gitlab">GitLab</SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-            />
-            <FormField
-                control={form.control}
-                name="token"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('commitStatusToken')}</FormLabel>
-                        <FormControl>
-                            <Input {...field} type="password" placeholder="ghp_..." />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-            />
-            <FormField
-                control={form.control}
-                name="owner"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('commitStatusOwner')}</FormLabel>
-                        <FormControl>
-                            <Input {...field} placeholder="my-org" />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-            />
-            <FormField
-                control={form.control}
-                name="repo"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('commitStatusRepo')}</FormLabel>
-                        <FormControl>
-                            <Input {...field} placeholder="my-repo" />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-            />
-            <FormField
-                control={form.control}
-                name="sha"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('commitStatusSha')}</FormLabel>
-                        <FormControl>
-                            <Input {...field} placeholder="abc1234..." />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-            />
             <FormField
                 control={form.control}
                 name="state"
@@ -130,15 +55,32 @@ export function UpdateCommitStatusConfig() {
             />
             <FormField
                 control={form.control}
+                name="context"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>{t('commitStatusContext')}</FormLabel>
+                        <FormControl>
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input {...field} placeholder="nexploy/pipeline" />
+                            </RefAware>
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
                 name="description"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>{t('commitStatusDescription')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder={t('commitStatusDescriptionPlaceholder')}
-                            />
+                            <RefAware value={field.value} onChange={field.onChange}>
+                                <Input
+                                    {...field}
+                                    placeholder={t('commitStatusDescriptionPlaceholder')}
+                                />
+                            </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

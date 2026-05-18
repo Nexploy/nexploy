@@ -67,15 +67,14 @@ export async function gitlabUpdateCommitStatus(
     repo: string,
     sha: string,
     state: 'pending' | 'success' | 'failure' | 'error',
-    options?: { description?: string; targetUrl?: string; context?: string },
+    options: { description?: string; context: string },
 ): Promise<void> {
     const encodedProject = encodeURIComponent(`${owner}/${repo}`);
     await kyGitlab(baseUrl, token).post(`v4/projects/${encodedProject}/statuses/${sha}`, {
         json: {
             state: GITLAB_STATE_MAP[state],
             ...(options?.description && { description: options.description }),
-            ...(options?.targetUrl && { target_url: options.targetUrl }),
-            name: options?.context ?? 'nexploy/pipeline',
+            name: options.context,
         },
     });
 }

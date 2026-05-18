@@ -208,23 +208,16 @@ export const httpRequestConfigSchema = z.object({
 });
 
 export const updateCommitStatusConfigSchema = z.object({
-    provider: z.enum(['github', 'gitlab']).default('github'),
-    token: z.string().min(1, 'Token is required').default(''),
-    owner: z.string().min(1, 'Owner is required').default(''),
-    repo: z.string().min(1, 'Repository is required').default(''),
-    sha: z.string().min(1, 'SHA is required').default(''),
     state: z.enum(['pending', 'success', 'failure', 'error']).default('pending'),
-    description: z.string().optional(),
-    targetUrl: z.string().optional(),
-    baseUrl: z.string().default('https://gitlab.com'),
+    context: refable(z.string().default('nexploy/pipeline')),
+    description: refable(z.string()).default(''),
 });
 
 // ─── Image Management ────────────────────────────────────────────────────────
 
 export const tagImageConfigSchema = z.object({
-    sourceImage: z.string().min(1, 'Source image is required').default(''),
-    sourceTag: z.string().default('latest'),
-    targetTag: z.string().min(1, 'Target tag is required').default(''),
+    sourceImage: refable(z.string().min(1, 'Source image is required')).default(''),
+    targetTag: refable(z.string().min(1, 'Target tag is required')).default(''),
 });
 
 export const scanImageConfigSchema = z.object({
@@ -257,11 +250,6 @@ export const deleteVolumeConfigSchema = z.object({
 
 // ─── Files & Artifacts ───────────────────────────────────────────────────────
 
-export const templateFileConfigSchema = z.object({
-    inputPath: relativePath('Input path').default(''),
-    outputPath: relativePath('Output path').default(''),
-});
-
 export const uploadArtifactConfigSchema = z.object({
     endpoint: z.string().min(1, 'Endpoint is required').default(''),
     bucket: z.string().min(1, 'Bucket name is required').default(''),
@@ -290,9 +278,9 @@ export const backupVolumeS3ConfigSchema = z.object({
 // ─── Docker Swarm ─────────────────────────────────────────────────────────────
 
 export const updateServiceConfigSchema = z.object({
-    serviceName: z.string().min(1, 'Service name is required').default(''),
-    image: z.string().min(1, 'Image is required').default(''),
-    tag: z.string().default('latest'),
+    serviceId: z.string().min(1, 'Service ID is required').default(''),
+    serviceName: refable(z.string().min(1, 'Service name is required')).default(''),
+    image: refable(z.string().min(1, 'Image is required')).default(''),
     forceUpdate: z.boolean().default(false),
 });
 

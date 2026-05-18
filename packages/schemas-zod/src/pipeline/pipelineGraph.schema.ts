@@ -41,7 +41,6 @@ export const nodeTypeSchema = z.enum([
     'delete-network',
     'delete-volume',
     // Files & Artifacts
-    'template-file',
     'upload-artifact',
     'download-file',
     // Database
