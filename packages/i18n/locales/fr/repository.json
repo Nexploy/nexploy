@@ -363,7 +363,6 @@
         "exitBuildEsc": "Appuyer sur Esc pour quitter",
         "viewingBuild": "Aperçu du build #{number}",
         "stopBuild": "Arrêter le build",
-        "skipNode": "Passer ce nœud",
         "nodeStatus": {
             "running": "En cours",
             "completed": "Terminé",

@@ -1,19 +1,16 @@
 'use client';
 
 import React from 'react';
-import { Power, Settings, SkipForward, Trash2 } from 'lucide-react';
+import { Power, Settings, Trash2 } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { useReactFlow } from '@xyflow/react';
-import { usePipelineActions, usePipelineState } from '@/contexts/PipelineContext';
+import { usePipelineActions } from '@/contexts/PipelineContext';
 import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
 import { CATEGORY_BG } from '@/components/pipeline/pipelineTheme';
 import { InputHandle } from '@/components/pipeline/nodes/handles/InputHandle';
 import { OutputHandle } from '@/components/pipeline/nodes/handles/OutputHandle';
 import { AttachmentHandle } from '@/components/pipeline/nodes/handles/AttachmentHandle';
-import { onSkipNode } from '@/actions/repository/builds/skipNode.action';
-import { useTranslations } from 'next-intl';
 
 interface NodeWrapperProps {
     id: string;
@@ -25,11 +22,8 @@ interface NodeWrapperProps {
 export function NodeWrapper({ id, data, className, children }: NodeWrapperProps) {
     const handleColor = CATEGORY_BG[data.definition.category]!;
     const isAttachNode = data.definition.type === 'attach-node';
-    const t = useTranslations('repository.pipeline');
-
     const { deleteElements, getNodes } = useReactFlow();
     const { triggerAutoSave, setNodes, openDialogSettingNode } = usePipelineActions();
-    const { activeBuild, nodeStatuses } = usePipelineState();
 
     const getTargetIds = () => {
         const selectedIds = getNodes()
@@ -76,23 +70,6 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
                         'scale-75 opacity-0 transition-all duration-150 group-hover:scale-100 group-hover:opacity-100',
                     )}
                 >
-                    {nodeStatuses[id] === 'running' && activeBuild && (
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        onSkipNode({ buildId: activeBuild.id, nodeId: id });
-                                    }}
-                                    className="text-muted-foreground hover:text-foreground size-6"
-                                >
-                                    <SkipForward className="size-3" />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>{t('skipNode')}</TooltipContent>
-                        </Tooltip>
-                    )}
                     <Button
                         variant="ghost"
                         onClick={() => openDialogSettingNode(id)}
