@@ -18,7 +18,7 @@ import {
 import { formatErrorDetails, getParentNodeIds, resolveNodeConfig } from './utils';
 import { analyzeGraph } from '@/inngest/pipeline/utils/graphQueries';
 import { getNodeExecutor } from '@/inngest/pipeline/nodes/registry';
-import { getBuildStatus, getNodeStatus } from '@/services/repository/build.service';
+import { getBuildStatus } from '@/services/repository/build.service';
 
 export { createPipelineLogger } from './utils';
 

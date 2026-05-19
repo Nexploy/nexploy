@@ -2,7 +2,6 @@
 
 import dayjs from 'dayjs';
 import { Button, buttonVariants } from '@workspace/ui/components/button';
-import { Separator } from '@workspace/ui/components/separator';
 import { StatusProps } from '@workspace/ui/components/kibo-ui/status';
 import { useInngestSubscription } from '@inngest/realtime/hooks';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
@@ -116,14 +115,6 @@ export function BuildsPanelItem({ build, isSelected, locale, onSelect }: BuildsP
                 />
                 <span className="text-xs font-medium">#{build.number}</span>
                 <span className="text-xs font-medium">{branch}</span>
-                <Separator orientation={'vertical'} className="!h-3" />
-                {isLive && !commitHash ? (
-                    <Skeleton className="h-3 w-14" />
-                ) : (
-                    commitHash && (
-                        <span className="font-mono text-xs">{commitHash.substring(0, 10)}…</span>
-                    )
-                )}
                 <span className="ml-auto pl-2 text-xs">
                     {dayjs(build.createdAt).locale(locale).fromNow(true)}
                 </span>
@@ -132,7 +123,7 @@ export function BuildsPanelItem({ build, isSelected, locale, onSelect }: BuildsP
                 <Skeleton className="h-2.5 w-32" />
             ) : (
                 commitMessage && (
-                    <span className={cn('max-w-[200px] truncate text-left text-xs')}>
+                    <span className={cn('max-w-[220px] truncate text-left text-xs')}>
                         {commitMessage}
                     </span>
                 )
