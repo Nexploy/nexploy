@@ -1,5 +1,5 @@
 import { getPipelineConfig } from '@/services/pipeline.service';
-import { getBuilds } from '@/services/repository.service';
+import { BUILDS_PAGE_SIZE, getBuildsPage } from '@/services/repository/build.service';
 import { PipelineEditorPage } from '@/components/pipeline/PipelineEditorPage';
 
 interface RepositoryPipelineTabProps {
@@ -7,10 +7,16 @@ interface RepositoryPipelineTabProps {
 }
 
 export async function RepositoryPipelineTab({ repositoryId }: RepositoryPipelineTabProps) {
-    const [graph, builds] = await Promise.all([
+    const [graph, initialBuilds] = await Promise.all([
         getPipelineConfig(repositoryId),
-        getBuilds(repositoryId),
+        getBuildsPage(repositoryId, undefined, BUILDS_PAGE_SIZE),
     ]);
 
-    return <PipelineEditorPage initialGraph={graph ?? { nodes: [], edges: [] }} builds={builds} />;
+    return (
+        <PipelineEditorPage
+            initialGraph={graph ?? { nodes: [], edges: [] }}
+            initialBuilds={initialBuilds}
+            initialHasMore={initialBuilds.length === BUILDS_PAGE_SIZE}
+        />
+    );
 }

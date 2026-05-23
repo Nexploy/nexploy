@@ -4,6 +4,11 @@ export const idParamSchema = z.object({
     id: z.string().min(1),
 });
 
+export const buildsQuerySchema = z.object({
+    cursor: z.string().optional(),
+    take: z.coerce.number().int().positive().max(100).default(20),
+});
+
 export const repositoryIdParamSchema = z.object({
     repositoryId: z.string().min(1),
 });

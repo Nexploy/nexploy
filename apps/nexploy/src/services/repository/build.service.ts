@@ -246,6 +246,25 @@ export async function getAllBuilds(repositoryId: string) {
     }
 }
 
+export const BUILDS_PAGE_SIZE = 20;
+
+export async function getBuildsPage(
+    repositoryId: string,
+    cursor?: string,
+    take = BUILDS_PAGE_SIZE,
+) {
+    try {
+        return await prisma.build.findMany({
+            where: { repositoryId },
+            orderBy: { createdAt: 'desc' },
+            take,
+            ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+        });
+    } catch {
+        throw new Error('Failed to get builds page');
+    }
+}
+
 export async function getAllEnvsBuild(repositoryId: string) {
     try {
         const envs = await prisma.envVariable.findMany({ where: { repositoryId } });

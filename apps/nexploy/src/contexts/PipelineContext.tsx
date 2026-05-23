@@ -12,6 +12,7 @@ import {
 import useSWR from 'swr';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { fetcherApi } from '@/lib/api/fetcherApi';
+import { useBuildsInfinite } from '@/hooks/useBuildsInfinite';
 import {
     addEdge,
     type Connection,
@@ -54,6 +55,9 @@ interface PipelineStateContextValue {
     isSaving: boolean;
     activeBuild?: Build;
     builds: Build[];
+    hasMoreBuilds: boolean;
+    isLoadingMoreBuilds: boolean;
+    loadMoreBuilds: () => void;
     nodeStatuses: Record<string, NodeRunStatus>;
     canUndo: boolean;
     canRedo: boolean;
@@ -69,15 +73,24 @@ const PipelineStateContext = createContext<PipelineStateContextValue | null>(nul
 
 export function PipelineProvider({
     initialGraph,
-    builds = [],
+    initialBuilds = [],
+    initialHasMore = false,
     children,
 }: {
     initialGraph: PipelineGraph;
-    builds?: Build[];
+    initialBuilds?: Build[];
+    initialHasMore?: boolean;
     children: ReactNode;
 }) {
     const { repositoryId } = useParams<{ repositoryId: string }>();
     const { nodes: initialNodes, edges: initialEdges } = graphToFlow(initialGraph);
+
+    const {
+        builds,
+        hasMore: hasMoreBuilds,
+        isLoadingMore: isLoadingMoreBuilds,
+        loadMore: loadMoreBuilds,
+    } = useBuildsInfinite(repositoryId, initialBuilds, initialHasMore);
 
     const isUndoRedoRef = useRef(false);
     const committedVersionRef = useRef(0);
@@ -335,6 +348,9 @@ export function PipelineProvider({
             isViewingBuild,
             isSaving,
             builds,
+            hasMoreBuilds,
+            isLoadingMoreBuilds,
+            loadMoreBuilds,
             activeBuild,
             nodeStatuses,
             canUndo,
@@ -351,6 +367,9 @@ export function PipelineProvider({
             isViewingBuild,
             isSaving,
             builds,
+            hasMoreBuilds,
+            isLoadingMoreBuilds,
+            loadMoreBuilds,
             activeBuild,
             nodeStatuses,
             canUndo,

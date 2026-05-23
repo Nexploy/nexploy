@@ -6,13 +6,22 @@ import { Build } from 'generated/client';
 
 interface PipelineEditorPageProps {
     initialGraph: PipelineGraph;
-    builds: Build[];
+    initialBuilds: Build[];
+    initialHasMore: boolean;
 }
 
-export function PipelineEditorPage({ initialGraph, builds }: PipelineEditorPageProps) {
+export function PipelineEditorPage({
+    initialGraph,
+    initialBuilds,
+    initialHasMore,
+}: PipelineEditorPageProps) {
     return (
         <ReactFlowProvider>
-            <PipelineProvider initialGraph={initialGraph} builds={builds}>
+            <PipelineProvider
+                initialGraph={initialGraph}
+                initialBuilds={initialBuilds}
+                initialHasMore={initialHasMore}
+            >
                 <PipelineEditor />
             </PipelineProvider>
         </ReactFlowProvider>

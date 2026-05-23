@@ -1,5 +1,5 @@
-import { RepositoryBuild } from '@/components/repositories/tabs/builds/RepositoryBuild';
-import { getAllBuilds } from '@/services/repository/build.service';
+import { BuildsHistoryList } from '@/components/repositories/tabs/builds/BuildsHistoryList';
+import { BUILDS_PAGE_SIZE, getBuildsPage } from '@/services/repository/build.service';
 import { getTranslations } from 'next-intl/server';
 
 interface RepositoryOverviewTabProps {
@@ -7,27 +7,19 @@ interface RepositoryOverviewTabProps {
 }
 
 export async function RepositoryBuildsTab({ repositoryId }: RepositoryOverviewTabProps) {
-    const [builds, t] = await Promise.all([
-        getAllBuilds(repositoryId),
+    const [initialBuilds, t] = await Promise.all([
+        getBuildsPage(repositoryId, undefined, BUILDS_PAGE_SIZE),
         getTranslations('repository.builds'),
     ]);
 
     return (
         <div className="flex flex-col gap-2 px-5">
             <h2 className="text-xl font-semibold">{t('history')}</h2>
-            {builds.length === 0 ? (
-                <div className="rounded-md border">
-                    <div className="text-muted-foreground p-8 text-center text-sm">
-                        {t('noBuilds')}
-                    </div>
-                </div>
-            ) : (
-                <div className="flex flex-col divide-y rounded-md border">
-                    {builds.map((build) => (
-                        <RepositoryBuild key={build.id} repositoryId={repositoryId} build={build} />
-                    ))}
-                </div>
-            )}
+            <BuildsHistoryList
+                repositoryId={repositoryId}
+                initialBuilds={initialBuilds}
+                initialHasMore={initialBuilds.length === BUILDS_PAGE_SIZE}
+            />
         </div>
     );
 }
