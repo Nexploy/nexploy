@@ -1,5 +1,6 @@
 import { getPipelineConfig } from '@/services/pipeline.service';
-import { BUILDS_PAGE_SIZE, getBuildsPage } from '@/services/repository/build.service';
+import { getBuildsPage } from '@/services/repository/build.service';
+import { BUILDS_PAGE_SIZE } from '@/lib/constants';
 import { PipelineEditorPage } from '@/components/pipeline/PipelineEditorPage';
 
 interface RepositoryPipelineTabProps {

@@ -1,9 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import useSWRInfinite from 'swr/infinite';
 import { Build } from 'generated/client';
-import { fetcherApi } from '@/lib/api/fetcherApi.ts';
-
-const PAGE_SIZE = 20;
+import { fetcherApi } from '@/lib/api/fetcherApi';
+import { BUILDS_PAGE_SIZE } from '@/lib/constants';
 
 type BuildsPage = { builds: Build[]; nextCursor: string | null };
 
@@ -28,8 +27,10 @@ export function useBuildsInfinite(
         (pageIndex: number, previousPageData: BuildsPage | null) => {
             if (previousPageData && !previousPageData.nextCursor) return null;
             if (pageIndex === 0)
-                return `/api/repositories/${repositoryId}/builds?take=${PAGE_SIZE}`;
-            return `/api/repositories/${repositoryId}/builds?take=${PAGE_SIZE}&cursor=${previousPageData!.nextCursor}`;
+                return { url: `/api/repositories/${repositoryId}/builds?take=${BUILDS_PAGE_SIZE}` };
+            return {
+                url: `/api/repositories/${repositoryId}/builds?take=${BUILDS_PAGE_SIZE}&cursor=${previousPageData!.nextCursor}`,
+            };
         },
         [repositoryId],
     );

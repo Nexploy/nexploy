@@ -5,6 +5,7 @@ import {
     repositoryIdParamSchema,
 } from '@workspace/schemas-zod/api/params.schema';
 import { getBuildsPage } from '@/services/repository/build.service';
+import { BUILDS_PAGE_SIZE } from '@/lib/constants';
 
 export const GET = route
     .use(authRouteServer)
@@ -17,7 +18,7 @@ export const GET = route
 
         const builds = await getBuildsPage(repositoryId, cursor, take);
         const lastBuild = builds[builds.length - 1];
-        const nextCursor = builds.length === take && lastBuild ? lastBuild.id : null;
+        const nextCursor = builds.length === BUILDS_PAGE_SIZE && lastBuild ? lastBuild.id : null;
 
         return NextResponse.json({ builds, nextCursor });
     });

@@ -1,5 +1,6 @@
 import { BuildsHistoryList } from '@/components/repositories/tabs/builds/BuildsHistoryList';
-import { BUILDS_PAGE_SIZE, getBuildsPage } from '@/services/repository/build.service';
+import { getBuildsPage } from '@/services/repository/build.service';
+import { BUILDS_PAGE_SIZE } from '@/lib/constants';
 import { getTranslations } from 'next-intl/server';
 
 interface RepositoryOverviewTabProps {

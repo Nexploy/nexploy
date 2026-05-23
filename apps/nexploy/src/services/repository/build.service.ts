@@ -235,23 +235,10 @@ export async function cancelBuildRepository(buildId: string) {
     await inngest.send({ name: 'build/cancel', data: { buildId } });
 }
 
-export async function getAllBuilds(repositoryId: string) {
-    try {
-        return await prisma.build.findMany({
-            where: { repositoryId },
-            orderBy: { createdAt: 'desc' },
-        });
-    } catch {
-        throw new Error('Failed to get builds');
-    }
-}
-
-export const BUILDS_PAGE_SIZE = 20;
-
 export async function getBuildsPage(
     repositoryId: string,
     cursor?: string,
-    take = BUILDS_PAGE_SIZE,
+    take = 20,
 ) {
     try {
         return await prisma.build.findMany({
