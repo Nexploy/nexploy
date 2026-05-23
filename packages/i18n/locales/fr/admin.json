@@ -160,6 +160,13 @@
     "buildWorkersUpdated": "Workers de build mis à jour avec succès",
     "buildWorkersUpdateFailed": "Échec de la mise à jour des workers de build",
     "save": "Enregistrer",
+    "ssl": {
+        "title": "Certificats SSL",
+        "description": "Gérer les certificats SSL/TLS pour vos domaines",
+        "noCertificates": "Aucun certificat SSL configuré.",
+        "noResults": "Aucun certificat ne correspond à votre recherche.",
+        "perPage": "Certificats par page"
+    },
     "registry": {
         "title": "Registres Docker",
         "description": "Gérer les registres Docker utilisés pour pousser les images",

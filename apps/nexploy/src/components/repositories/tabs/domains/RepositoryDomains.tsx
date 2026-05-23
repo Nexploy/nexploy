@@ -11,8 +11,9 @@ import {
     CollapsibleTrigger,
 } from '@workspace/ui/components/collapsible';
 import { Form } from '@workspace/ui/components/form';
-import { ChevronDown, Cloud, Globe, Loader2, Lock, Plus, Save, Trash2 } from 'lucide-react';
+import { ChevronDown, Cloud, Globe, Lock, Plus, Trash2 } from 'lucide-react';
 import { manageDomains } from '@/actions/repository/manageDomains.action';
+import { deleteDomain } from '@/actions/repository/deleteDomain.action';
 import { cn } from '@workspace/ui/lib/utils';
 import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
 import { domainsFormSchema } from '@workspace/schemas-zod/repository/domain.schema';
@@ -23,11 +24,20 @@ import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import type { CloudflareAccountInfo } from '@workspace/typescript-interface/cloudflare/cloudflare';
+import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+
+interface CertOption {
+    id: string;
+    name: string;
+    type: 'LETS_ENCRYPT' | 'CUSTOM';
+    domain: string;
+}
 
 interface RepositoryDomainsProps {
     repositoryId: string;
     domainsConfig: Domain[];
     cloudflareAccounts: CloudflareAccountInfo[];
+    certificates: CertOption[];
 }
 
 const DEFAULT_NEW_DOMAIN: Partial<Domain> = {
@@ -37,6 +47,7 @@ const DEFAULT_NEW_DOMAIN: Partial<Domain> = {
     stripPath: false,
     containerPort: 3000,
     https: false,
+    certificateId: undefined,
     environmentId: undefined,
     cloudflareZoneId: undefined,
     cloudflareZoneName: undefined,
@@ -46,12 +57,16 @@ export function RepositoryDomains({
     repositoryId,
     domainsConfig,
     cloudflareAccounts,
+    certificates,
 }: RepositoryDomainsProps) {
     const router = useRouter();
     const t = useTranslations('repository.settings.domains');
+    const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
     const bindManageDomains = manageDomains.bind(null, repositoryId);
+    const bindDeleteDomain = deleteDomain.bind(null, repositoryId);
+
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         bindManageDomains,
         zodResolver(domainsFormSchema),
@@ -78,7 +93,6 @@ export function RepositoryDomains({
 
     const isSubmitting = action.status === 'executing';
     const domains = form.watch('domains');
-    const deletedIds = form.watch('deletedIds');
 
     const handleAddNew = () => {
         const currentDomains = form.getValues('domains');
@@ -87,18 +101,8 @@ export function RepositoryDomains({
         });
     };
 
-    const handleRemove = (index: number) => {
+    const handleRemoveNew = (index: number) => {
         const currentDomains = form.getValues('domains');
-        const domain = currentDomains[index];
-
-        if (!domain) return;
-
-        if (domain.id) {
-            const deleted = new Set(form.getValues('deletedIds') ?? []);
-            deleted.add(domain.id);
-            form.setValue('deletedIds', Array.from(deleted), { shouldDirty: true });
-        }
-
         form.setValue(
             'domains',
             currentDomains.filter((_, i) => i !== index),
@@ -106,21 +110,29 @@ export function RepositoryDomains({
         );
     };
 
-    const handleUndoDelete = (id: string) => {
-        const deleted = new Set(form.getValues('deletedIds') ?? []);
-        deleted.delete(id);
-        form.setValue('deletedIds', Array.from(deleted), { shouldDirty: true });
-
-        const originalDomain = domainsConfig.find((d) => d.id === id);
-        if (!originalDomain) return;
-
-        const currentDomains = form.getValues('domains');
-        const originalIndex = domainsConfig.findIndex((d) => d.id === id);
-
-        const newDomains = [...currentDomains];
-        newDomains.splice(originalIndex, 0, originalDomain);
-
-        form.setValue('domains', newDomains, { shouldDirty: true });
+    const confirmRemoveExisting = (domain: Domain, index: number) => {
+        const host = domain.host || t('newDomain');
+        openAlertDialog({
+            title: t('removeTitle'),
+            description: t('removeDescription', { host }),
+            cancelLabel: t('cancel'),
+            actionLabel: t('remove'),
+            onAction: async () => {
+                const result = await bindDeleteDomain({ domainId: domain.id! });
+                if (result?.serverError) {
+                    toast.error(result.serverError);
+                    return;
+                }
+                const currentDomains = form.getValues('domains');
+                form.setValue(
+                    'domains',
+                    currentDomains.filter((_, i) => i !== index),
+                    { shouldDirty: false },
+                );
+                toast.success(t('removeSuccess'));
+                router.refresh();
+            },
+        });
     };
 
     const toggleExpanded = (index: number) => {
@@ -136,16 +148,12 @@ export function RepositoryDomains({
         });
     };
 
-    const deletedIdsSet = new Set(deletedIds);
-    const activeDomains = domains.filter((d) => !d.id || !deletedIdsSet.has(d.id));
-    const deletedDomains = domainsConfig.filter((d) => d.id && deletedIdsSet.has(d.id));
-
-    const hasNewDomains = activeDomains.some((d) => !d.id);
-    const newDomainsValid = activeDomains
+    const hasNewDomains = domains.some((d) => !d.id);
+    const newDomainsValid = domains
         .filter((d) => !d.id)
         .every((d) => d.host && d.host.trim() !== '');
 
-    const hasEditedDomains = activeDomains
+    const hasEditedDomains = domains
         .filter((d) => !!d.id)
         .some((d) => {
             const original = domainsConfig.find((o) => o.id === d.id);
@@ -157,13 +165,13 @@ export function RepositoryDomains({
                 d.stripPath !== original.stripPath ||
                 d.containerPort !== original.containerPort ||
                 d.https !== original.https ||
+                d.certificateId !== original.certificateId ||
                 d.environmentId !== original.environmentId ||
                 d.cloudflareZoneId !== original.cloudflareZoneId
             );
         });
 
-    const hasChanges =
-        (hasNewDomains && newDomainsValid) || deletedIdsSet.size > 0 || hasEditedDomains;
+    const hasChanges = (hasNewDomains && newDomainsValid) || hasEditedDomains;
 
     return (
         <Card className="mx-5">
@@ -176,16 +184,14 @@ export function RepositoryDomains({
                         description={t('description')}
                     />
                     <div className="flex gap-2">
-                        {hasChanges && (
-                            <Button
-                                size="sm"
-                                onClick={handleSubmitWithAction}
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? <Loader2 className="animate-spin" /> : <Save />}
-                                {t('save')}
-                            </Button>
-                        )}
+                        <Button
+                            size="sm"
+                            onClick={handleSubmitWithAction}
+                            disabled={isSubmitting || !hasChanges}
+                            isLoading={isSubmitting}
+                        >
+                            {t('save')}
+                        </Button>
                         <Button variant="outline" size="sm" onClick={handleAddNew}>
                             <Plus />
                             {t('add')}
@@ -197,23 +203,20 @@ export function RepositoryDomains({
                 <Form {...form}>
                     <form onSubmit={handleSubmitWithAction}>
                         <div className="space-y-3">
-                            {activeDomains.length === 0 ? (
+                            {domains.length === 0 ? (
                                 <div className="text-muted-foreground py-8 text-center text-sm">
                                     {t('noDomains')}
                                 </div>
                             ) : (
-                                activeDomains.map((domain, displayIndex) => {
-                                    const actualIndex = domains.findIndex((d) => d === domain);
+                                domains.map((domain, index) => {
                                     const isNew = !domain.id;
-                                    const isExpanded = expandedIds.has(`domain-${actualIndex}`);
+                                    const isExpanded = expandedIds.has(`domain-${index}`);
 
                                     return (
                                         <Collapsible
-                                            key={domain.id || `new-${displayIndex}`}
+                                            key={domain.id || `new-${index}`}
                                             open={isExpanded || isNew}
-                                            onOpenChange={() =>
-                                                !isNew && toggleExpanded(actualIndex)
-                                            }
+                                            onOpenChange={() => !isNew && toggleExpanded(index)}
                                         >
                                             <div
                                                 className={cn(
@@ -264,7 +267,10 @@ export function RepositoryDomains({
                                                                     size="icon"
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
-                                                                        handleRemove(actualIndex);
+                                                                        confirmRemoveExisting(
+                                                                            domain as Domain,
+                                                                            index,
+                                                                        );
                                                                     }}
                                                                 >
                                                                     <Trash2 className="text-destructive size-4" />
@@ -288,9 +294,7 @@ export function RepositoryDomains({
                                                             type="button"
                                                             variant="ghost"
                                                             size="icon"
-                                                            onClick={() =>
-                                                                handleRemove(actualIndex)
-                                                            }
+                                                            onClick={() => handleRemoveNew(index)}
                                                         >
                                                             <Trash2 className="text-destructive size-4" />
                                                         </Button>
@@ -299,43 +303,15 @@ export function RepositoryDomains({
                                                 <CollapsibleContent>
                                                     <DomainFields
                                                         form={form}
-                                                        index={actualIndex}
+                                                        index={index}
                                                         cloudflareAccounts={cloudflareAccounts}
+                                                        certificates={certificates}
                                                     />
                                                 </CollapsibleContent>
                                             </div>
                                         </Collapsible>
                                     );
                                 })
-                            )}
-                            {deletedDomains.length > 0 && (
-                                <div className="border-t pt-4">
-                                    <p className="text-muted-foreground mb-2 text-sm">
-                                        {t('pendingDeletion')}
-                                    </p>
-                                    <div className={'flex flex-col gap-2'}>
-                                        {deletedDomains.map((domain) => (
-                                            <div
-                                                key={domain.id}
-                                                className="bg-destructive/10 flex items-center justify-between rounded-md p-3"
-                                            >
-                                                <span className="font-mono text-sm line-through">
-                                                    {domain.host}
-                                                    {domain.path !== '/' && domain.path}
-                                                </span>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() =>
-                                                        domain.id && handleUndoDelete(domain.id)
-                                                    }
-                                                >
-                                                    {t('cancel')}
-                                                </Button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
                             )}
                         </div>
                     </form>

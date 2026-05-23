@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Switch } from '@workspace/ui/components/switch';
 import { Label } from '@workspace/ui/components/label';
+import { toast } from 'sonner';
 
 interface ImageDropdownActionsProps {
     image: Image;
@@ -27,7 +28,10 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
     const imageName = image.name;
 
     const handleAction = async (action: ImageAction) => {
-        await onImageAction({ imageIds: [image.id], action, force: forceRef.current });
+        const result = await onImageAction({ imageIds: [image.id], action, force: forceRef.current });
+        if (result?.serverError) {
+            toast.error(result.serverError);
+        }
     };
 
     const containerTools: ImageTool[] = [

@@ -195,6 +195,9 @@ const NODE_CATEGORY: Record<string, string> = {
     'cherry-pick-commit': 'source',
     'merge-branch': 'source',
     'generate-changelog': 'source',
+    // Domain & SSL
+    'add-domain': 'deploy',
+    'add-ssl-certificate': 'deploy',
 };
 
 export const NODE_BG_MUTED: Record<string, string> = Object.fromEntries(
@@ -270,6 +273,9 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'cherry-pick-commit': GitCommit,
     'merge-branch': GitMerge,
     'generate-changelog': NotepadText,
+    // Domain & SSL
+    'add-domain': Globe,
+    'add-ssl-certificate': ShieldCheck,
 };
 
 export const TEMPLATE_ICONS: Record<string, LucideIcon> = {

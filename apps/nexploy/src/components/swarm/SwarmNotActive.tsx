@@ -55,7 +55,7 @@ export function SwarmNotActive() {
                     {t('initializeSwarm')}
                 </Button>
                 <Button variant="outline" onClick={handleJoinSwarm}>
-                    <UserPlus className="mr-2 size-4" />
+                    <UserPlus />
                     {t('joinSwarm')}
                 </Button>
             </div>

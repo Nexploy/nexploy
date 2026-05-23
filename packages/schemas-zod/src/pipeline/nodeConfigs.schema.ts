@@ -423,3 +423,25 @@ export const fetchSecretsDopplerConfigSchema = z.object({
     project: refable(z.string()).optional(),
     config: refable(z.string()).optional(),
 });
+
+// ─── Domain & SSL ─────────────────────────────────────────────────────────────
+
+export const addDomainConfigSchema = z.object({
+    host: z.string().min(1, 'Host is required').default(''),
+    path: z.string().min(1).default('/'),
+    internalPath: z.string().min(1).default('/'),
+    stripPath: z.boolean().default(false),
+    containerPort: z.coerce.number().int().min(1).max(65535).default(3000),
+    https: z.boolean().default(false),
+    certificateId: z.string().optional(),
+});
+
+export const addSslCertificateConfigSchema = z.object({
+    certType: z.enum(['LETS_ENCRYPT', 'CUSTOM']).default('LETS_ENCRYPT'),
+    name: z.string().min(1, 'Name is required').default(''),
+    domain: z.string().min(1, 'Domain is required').default(''),
+    email: z.string().optional(),
+    agreedToTos: z.boolean().default(false),
+    certificate: z.string().optional(),
+    privateKey: z.string().optional(),
+});

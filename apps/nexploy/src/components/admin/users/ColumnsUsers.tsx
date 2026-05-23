@@ -305,15 +305,15 @@ export const getColumnsUsers = (
                             <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => onBan(user)} disabled={isBanning}>
-                                <Ban className="mr-2 size-4" />
+                                <Ban />
                                 {user.banned ? t('unbanUser') : t('banUser')}
                             </DropdownMenuItem>
                             <DropdownMenuItem
+                                variant={'destructive'}
                                 onClick={() => onDelete(user)}
                                 disabled={isDeleting}
-                                className="text-destructive"
                             >
-                                <Trash2 className="mr-2 size-4" />
+                                <Trash2 />
                                 {t('deleteUser')}
                             </DropdownMenuItem>
                         </DropdownMenuContent>

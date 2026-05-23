@@ -1,0 +1,18 @@
+enum CertType {
+  LETS_ENCRYPT
+  CUSTOM
+}
+
+model SslCertificate {
+  id          String    @id @default(cuid())
+  name        String
+  type        CertType
+  domain      String
+  email       String
+  expiresAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("ssl_certificate")
+}

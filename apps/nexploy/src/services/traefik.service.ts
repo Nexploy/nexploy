@@ -7,6 +7,7 @@ import {
     getContainerPortMappings,
 } from '@/services/docker/container.service';
 import { getEnvironmentById } from '@/services/environment/environment.service';
+import { prisma } from '../../prisma/prisma';
 
 const TRAEFIK_SERVICE_DIR = path.join(process.cwd(), '..', '..', 'infra', 'traefik', 'service');
 
@@ -22,6 +23,18 @@ export async function generateTraefikConfigForRepository(
         await deleteTraefikConfigForRepository(repositoryId);
         return;
     }
+
+    const certIds = domains.map((d) => d.certificateId).filter(Boolean) as string[];
+    const repoCerts = await prisma.sslCertificate.findMany({
+        where: { id: { in: certIds } },
+        select: { id: true, type: true, domain: true },
+    });
+    const certMap = new Map(
+        repoCerts.map((c) => [
+            c.id,
+            { type: c.type as 'LETS_ENCRYPT' | 'CUSTOM', domain: c.domain },
+        ]),
+    );
 
     const projectName = `nexploy-${repositoryId}`;
 
@@ -94,9 +107,17 @@ export async function generateTraefikConfigForRepository(
         }
 
         if (domain.https) {
-            router.tls = {
-                certResolver: 'letsencrypt',
-            };
+            const cert = domain.certificateId ? certMap.get(domain.certificateId) : null;
+            if (cert?.type === 'CUSTOM') {
+                router.tls = {};
+            } else if (cert?.type === 'LETS_ENCRYPT') {
+                router.tls = {
+                    certResolver: 'letsencrypt',
+                    domains: [{ main: domain.host }],
+                };
+            } else {
+                router.tls = {};
+            }
         }
 
         config.http.routers[routerName] = router;
@@ -144,6 +165,7 @@ export async function generateTraefikConfigForRepository(
         config['x-nexploy-domains'][routerName] = {
             containerPort: domain.containerPort,
             environmentId: domain.environmentId,
+            certificateId: domain.certificateId,
             cloudflare: domain.cloudflareZoneId && {
                 credentialId: domain.cloudflareCredentialId,
                 zoneId: domain.cloudflareZoneId,
@@ -211,6 +233,7 @@ export async function getDomainsFromTraefikConfig(repositoryId: string): Promise
                 stripPath: !!middlewares[`strip-${repositoryId}-${hostFromRouter}`],
                 containerPort,
                 https: !!router.tls,
+                certificateId: domainMeta.certificateId ?? undefined,
                 environmentId: domainMeta.environmentId ?? undefined,
                 cloudflareCredentialId: cloudflare?.credentialId,
                 cloudflareZoneId: cloudflare?.zoneId,

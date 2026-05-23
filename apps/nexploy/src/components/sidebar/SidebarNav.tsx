@@ -14,6 +14,7 @@ import {
     Network,
     Plug,
     Send,
+    Shield,
     Users,
     Warehouse,
 } from 'lucide-react';
@@ -77,6 +78,7 @@ const groups: SidebarNavGroup[] = [
             { titleKey: 'integrations', href: '/admin/integrations', icon: Plug },
             { titleKey: 'backups', href: '/admin/backups', icon: Database },
             { titleKey: 'registry', href: '/admin/registry', icon: Warehouse },
+            { titleKey: 'sslCertificates', href: '/admin/ssl-certificates', icon: Shield },
             // { titleKey: 'ai', href: '/admin/ai', icon: Bot },
             // { titleKey: 'tools', href: '/admin/tools', icon: Hammer },
         ],

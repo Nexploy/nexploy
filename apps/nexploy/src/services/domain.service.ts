@@ -198,6 +198,7 @@ function hasChanges(domain: Domain, original: Domain): boolean {
         'stripPath',
         'containerPort',
         'https',
+        'certificateId',
         'cloudflareZoneId',
         'cloudflareZoneName',
     ];

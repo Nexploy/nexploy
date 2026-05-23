@@ -51,6 +51,8 @@ import { generateChangelogManifest } from './generate-changelog.manifest';
 import { deleteImageManifest } from './delete-image.manifest';
 import { deleteNetworkManifest } from './delete-network.manifest';
 import { deleteVolumeManifest } from './delete-volume.manifest';
+import { addDomainManifest } from './add-domain.manifest';
+import { addSslCertificateManifest } from './add-ssl-certificate.manifest';
 
 export const allBuiltinManifests: NodeManifest[] = [
     // Source
@@ -124,4 +126,7 @@ export const allBuiltinManifests: NodeManifest[] = [
     fetchSecretsDopplerManifest,
     // Code Quality
     sonarqubeScanManifest,
+    // Domain & SSL
+    addDomainManifest,
+    addSslCertificateManifest,
 ];

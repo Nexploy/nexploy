@@ -160,6 +160,13 @@
     "buildWorkersUpdated": "Build workers updated successfully",
     "buildWorkersUpdateFailed": "Failed to update build workers",
     "save": "Save",
+    "ssl": {
+        "title": "SSL Certificates",
+        "description": "Manage SSL/TLS certificates for your domains",
+        "noCertificates": "No SSL certificates configured yet.",
+        "noResults": "No certificates match your search.",
+        "perPage": "Certificates per page"
+    },
     "registry": {
         "title": "Docker Registries",
         "description": "Manage Docker registries used to push images",

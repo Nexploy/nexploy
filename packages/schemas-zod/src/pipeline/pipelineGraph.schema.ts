@@ -65,6 +65,9 @@ export const nodeTypeSchema = z.enum([
     'fetch-secrets-doppler',
     // Code Quality
     'sonarqube-scan',
+    // Domain & SSL
+    'add-domain',
+    'add-ssl-certificate',
 ]);
 
 export const pipelineNodeDataSchema = z.object({

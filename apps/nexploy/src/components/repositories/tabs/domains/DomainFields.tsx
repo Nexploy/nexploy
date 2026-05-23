@@ -22,20 +22,31 @@ import { CloudflareDomainSelector } from '@/components/repositories/tabs/domains
 import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 import { useTranslations } from 'next-intl';
 import type { CloudflareAccountInfo } from '@workspace/typescript-interface/cloudflare/cloudflare';
+import { ShieldCheck } from 'lucide-react';
+
+interface CertOption {
+    id: string;
+    name: string;
+    type: 'LETS_ENCRYPT' | 'CUSTOM';
+    domain: string;
+}
 
 interface DomainFieldsProps<T extends FieldValues> {
     form: UseFormReturn<T>;
     index: number;
     cloudflareAccounts: CloudflareAccountInfo[];
+    certificates: CertOption[];
 }
 
 export function DomainFields<T extends FieldValues>({
     form,
     index,
     cloudflareAccounts,
+    certificates,
 }: DomainFieldsProps<T>) {
     const t = useTranslations('repository.settings.domains');
     const cloudflareZoneId = form.watch(`domains.${index}.cloudflareZoneId` as Path<T>);
+    const httpsEnabled = form.watch(`domains.${index}.https` as Path<T>);
     const environments = useEnvironmentStore((s) => s.environments);
 
     return (
@@ -46,7 +57,7 @@ export function DomainFields<T extends FieldValues>({
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>{t('environment')}</FormLabel>
-                        <Select {...field} onValueChange={field.onChange}>
+                        <Select value={field.value ?? ''} onValueChange={field.onChange}>
                             <FormControl>
                                 <SelectTrigger>
                                     <SelectValue placeholder={t('selectEnvironment')} />
@@ -195,7 +206,15 @@ export function DomainFields<T extends FieldValues>({
                             <FormControl>
                                 <Switch
                                     checked={field.value as boolean}
-                                    onCheckedChange={field.onChange}
+                                    onCheckedChange={(checked) => {
+                                        field.onChange(checked);
+                                        if (!checked) {
+                                            form.setValue(
+                                                `domains.${index}.certificateId` as Path<T>,
+                                                undefined as never,
+                                            );
+                                        }
+                                    }}
                                 />
                             </FormControl>
                             <div>
@@ -206,6 +225,48 @@ export function DomainFields<T extends FieldValues>({
                     )}
                 />
             </div>
+
+            {httpsEnabled && (
+                <FormField
+                    control={form.control}
+                    name={`domains.${index}.certificateId` as Path<T>}
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('certificate')}</FormLabel>
+                            <Select
+                                value={field.value ?? ''}
+                                onValueChange={(val) => field.onChange(val || undefined)}
+                            >
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={t('selectCertificate')} />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {certificates.length === 0 ? (
+                                        <div className="text-muted-foreground px-2 py-4 text-center text-sm">
+                                            {t('noCertificates')}
+                                        </div>
+                                    ) : (
+                                        certificates.map((cert) => (
+                                            <SelectItem key={cert.id} value={cert.id}>
+                                                <span className="flex items-center gap-2">
+                                                    <ShieldCheck className="text-primary" />
+                                                    <span>{cert.name}</span>
+                                                    <span className="text-muted-foreground font-mono text-xs">
+                                                        {cert.domain}
+                                                    </span>
+                                                </span>
+                                            </SelectItem>
+                                        ))
+                                    )}
+                                </SelectContent>
+                            </Select>
+                            <FormDescription>{t('certificateDescription')}</FormDescription>
+                        </FormItem>
+                    )}
+                />
+            )}
         </div>
     );
 }

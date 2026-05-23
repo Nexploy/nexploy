@@ -34,7 +34,7 @@ certificatesResolvers:
   letsencrypt:
     acme:
       email: dev@example.com
-      storage: /etc/nexploy/traefik/acme.json
+      storage: /etc/nexploy/traefik/service/acme.json
       caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
       httpChallenge:
         entryPoint: web

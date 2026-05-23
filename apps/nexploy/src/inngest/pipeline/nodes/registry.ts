@@ -51,6 +51,8 @@ import { generateChangelogExecutor } from './executors/generate-changelog.execut
 import { deleteImageExecutor } from './executors/delete-image.executor';
 import { deleteNetworkExecutor } from './executors/delete-network.executor';
 import { deleteVolumeExecutor } from './executors/delete-volume.executor';
+import { addDomainExecutor } from './executors/add-domain.executor';
+import { addSslCertificateExecutor } from './executors/add-ssl-certificate.executor';
 
 const executors: INodeExecutor[] = [
     // Source
@@ -125,6 +127,9 @@ const executors: INodeExecutor[] = [
     fetchSecretsDopplerExecutor,
     // Code Quality
     sonarqubeScanExecutor,
+    // Domain & SSL
+    addDomainExecutor,
+    addSslCertificateExecutor,
 ];
 
 const executorRegistry = new Map(executors.map((e) => [e.type, e]));

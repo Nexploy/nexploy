@@ -111,19 +111,6 @@ export async function updateBuildGitInfo(
     }
 }
 
-export async function getNodeStatus(buildId: string, nodeId: string): Promise<string | null> {
-    try {
-        const build = await prisma.build.findUnique({
-            where: { id: buildId },
-            select: { nodeStatuses: true },
-        });
-        const statuses = (build?.nodeStatuses as Record<string, string>) ?? {};
-        return statuses[nodeId] ?? null;
-    } catch {
-        throw new Error('Failed to get node status');
-    }
-}
-
 export async function getBuildStatus(buildId: string): Promise<BuildStatus | null> {
     try {
         const build = await prisma.build.findUnique({

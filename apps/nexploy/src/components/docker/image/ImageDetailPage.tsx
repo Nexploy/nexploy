@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef } from 'react';
 import { Box, Play, Trash } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useImageStore } from '../../../stores/docker/useImageStore';
@@ -17,6 +18,9 @@ import { TooltipTrigger } from '@radix-ui/react-tooltip';
 import { Tooltip, TooltipContent } from '@workspace/ui/components/tooltip.tsx';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
 import { NotFoundSSE } from '@/components/shared/NotFoundSSE';
+import { Switch } from '@workspace/ui/components/switch';
+import { Label } from '@workspace/ui/components/label';
+import { toast } from 'sonner';
 
 interface ImageDetailPageProps {
     imageId: string;
@@ -31,6 +35,7 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
     const router = useRouter();
+    const forceRef = useRef(false);
 
     const imageName = image?.repoTags?.[0] || image?.name?.[0] || imageId.substring(0, 12);
 
@@ -39,14 +44,45 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
     };
 
     const handleRemove = () => {
+        forceRef.current = false;
         openAlertDialog({
             title: tActions('image.removeTitle'),
-            description: tActions('image.removeDescription', { name: imageName }),
             cancelLabel: tActions('cancel'),
             actionLabel: tActions('remove'),
+            description: (
+                <div className={'space-y-4'}>
+                    <p className="text-muted-foreground text-sm">
+                        {tActions('image.removeDescription', { name: imageName })}
+                    </p>
+                    <Label
+                        htmlFor={'force-delete-image-detail'}
+                        className={
+                            'bg-muted/50 border-destructive flex cursor-pointer items-center justify-between rounded-lg border p-3'
+                        }
+                    >
+                        <div className={'space-y-0.5'}>
+                            <p className={'text-destructive text-sm font-medium'}>
+                                {tActions('image.forceDelete')}
+                            </p>
+                            <p className={'text-xs'}>{tActions('image.forceDeleteDescription')}</p>
+                        </div>
+                        <Switch
+                            id="force-delete-image-detail"
+                            defaultChecked={false}
+                            onCheckedChange={(checked) => (forceRef.current = checked)}
+                        />
+                    </Label>
+                </div>
+            ),
             onAction: async () => {
-                const result = await onImageAction({ imageIds: [imageId], action: 'delete' });
-                if (result?.data?.deleted.includes(imageId)) {
+                const result = await onImageAction({
+                    imageIds: [imageId],
+                    action: 'delete',
+                    force: forceRef.current,
+                });
+                if (result?.serverError) {
+                    toast.error(result.serverError);
+                } else if (result?.data?.deleted.includes(imageId)) {
                     router.push('/docker/images');
                 }
             },
