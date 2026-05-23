@@ -24,6 +24,12 @@ export class AddDomainExecutor implements INodeExecutor {
         const existingDomains = await getDomainsFromTraefikConfig(repositoryId);
         const domainId = `repo-${repositoryId}-${host}`;
 
+        const alreadyExists = existingDomains.some((d) => d.host === host);
+        if (alreadyExists) {
+            await logger.info(nodeId, `Domain already exists, skipping: ${host}`);
+            return { output: { host, domainId, skipped: true }, skipped: true };
+        }
+
         const otherDomains = existingDomains.filter((d) => d.host !== host);
         const newDomain = {
             id: domainId,
