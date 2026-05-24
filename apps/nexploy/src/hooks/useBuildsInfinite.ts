@@ -1,8 +1,9 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import useSWRInfinite from 'swr/infinite';
 import { Build } from 'generated/client';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { BUILDS_PAGE_SIZE } from '@/lib/constants';
+import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 
 type BuildsPage = { builds: Build[]; nextCursor: string | null };
 
@@ -35,11 +36,22 @@ export function useBuildsInfinite(
         [repositoryId],
     );
 
-    const { data, size, setSize, isValidating } = useSWRInfinite<BuildsPage>(getKey, fetcherApi, {
-        fallbackData,
-        revalidateFirstPage: false,
-        revalidateOnFocus: false,
-    });
+    const buildStartTrigger = usePipelineEditorStore((s) => s.buildStartTrigger);
+
+    const { data, size, setSize, isValidating, mutate } = useSWRInfinite<BuildsPage>(
+        getKey,
+        fetcherApi,
+        {
+            fallbackData,
+            revalidateFirstPage: false,
+            revalidateOnFocus: false,
+        },
+    );
+
+    useEffect(() => {
+        if (buildStartTrigger === 0) return;
+        mutate();
+    }, [buildStartTrigger]);
 
     const builds = useMemo(
         () => data?.flatMap((page) => page.builds) ?? initialBuilds,

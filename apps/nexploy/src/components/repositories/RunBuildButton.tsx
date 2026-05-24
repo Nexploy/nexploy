@@ -17,11 +17,13 @@ interface DeployButtonProps extends ComponentProps<typeof Button> {
 export function RunBuildButton({ repositoryId, showText = true, ...props }: DeployButtonProps) {
     const t = useTranslations('repository.builds');
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
+    const triggerBuildRefresh = usePipelineEditorStore((s) => s.triggerBuildRefresh);
 
     const { execute, isPending } = useAction(onStartBuild, {
         onSuccess: ({ data }) => {
             toast.success(t('startSuccess', { number: data?.numberBuild }));
             if (data) setActiveBuildId(data.id);
+            triggerBuildRefresh();
         },
     });
 

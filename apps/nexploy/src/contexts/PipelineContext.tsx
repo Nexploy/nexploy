@@ -85,13 +85,6 @@ export function PipelineProvider({
     const { repositoryId } = useParams<{ repositoryId: string }>();
     const { nodes: initialNodes, edges: initialEdges } = graphToFlow(initialGraph);
 
-    const {
-        builds,
-        hasMore: hasMoreBuilds,
-        isLoadingMore: isLoadingMoreBuilds,
-        loadMore: loadMoreBuilds,
-    } = useBuildsInfinite(repositoryId, initialBuilds, initialHasMore);
-
     const isUndoRedoRef = useRef(false);
     const committedVersionRef = useRef(0);
 
@@ -131,6 +124,13 @@ export function PipelineProvider({
             onSuccess: (buildData) => setNodeStatuses(buildData?.nodeStatuses),
         },
     );
+
+    const {
+        builds,
+        hasMore: hasMoreBuilds,
+        isLoadingMore: isLoadingMoreBuilds,
+        loadMore: loadMoreBuilds,
+    } = useBuildsInfinite(repositoryId, initialBuilds, initialHasMore);
 
     const activeBuild = builds.find((b) => b.id === activeBuildId);
     const isViewingBuild = !!activeBuild?.pipelineSnapshot;

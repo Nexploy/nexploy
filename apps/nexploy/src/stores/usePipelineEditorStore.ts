@@ -18,6 +18,8 @@ interface PipelineEditorStore {
             | ((prev: Record<string, NodeRunStatus>) => Record<string, NodeRunStatus>),
     ) => void;
     setHoveredEdgeId: (id: string | null) => void;
+    buildStartTrigger: number;
+    triggerBuildRefresh: () => void;
     reset: () => void;
 }
 
@@ -29,6 +31,7 @@ const INITIAL_STATE = {
     builds: [],
     nodeStatuses: {} as Record<string, NodeRunStatus>,
     hoveredEdgeId: null,
+    buildStartTrigger: 0,
 };
 
 export const usePipelineEditorStore = create<PipelineEditorStore>((set, get) => ({
@@ -46,6 +49,7 @@ export const usePipelineEditorStore = create<PipelineEditorStore>((set, get) => 
             saveVersion: typeof updater === 'function' ? updater(s.saveVersion) : updater,
         })),
     setActiveBuildId: (activeBuildId) => set({ activeBuildId }),
+    triggerBuildRefresh: () => set((s) => ({ buildStartTrigger: s.buildStartTrigger + 1 })),
     setHoveredEdgeId: (hoveredEdgeId) => {
         if (get().hoveredEdgeId === hoveredEdgeId) return;
         set({ hoveredEdgeId });
