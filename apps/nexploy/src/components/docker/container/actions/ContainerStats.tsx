@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { Activity, Download } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import * as React from 'react';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { SSEProvider } from '@/providers/SSEProviders';
 import { useContainerStatsStore } from '@/stores/docker/useContainerStatsStore';
@@ -67,6 +67,10 @@ export function ContainerStats({ children }: ContainerStatsProps) {
     const handleClose = () => {
         setOpen(false);
     };
+
+    useEffect(() => {
+        if (!container) setOpen(false);
+    }, [container]);
 
     const chartData = useMemo(
         () =>
@@ -226,7 +230,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                 >
                     <SSEProvider
                         connections={['stats']}
-                        params={{ stats: { containerId: container!.id, refreshRate } }}
+                        params={{ stats: { containerId: container?.id ?? '', refreshRate } }}
                     >
                         <DialogHeader className="flex flex-row items-center justify-between border-b p-2 pl-3">
                             <div className="flex flex-row items-center gap-2">

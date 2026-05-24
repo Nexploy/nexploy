@@ -50,7 +50,7 @@ export function CardInfoContainer() {
                         {container?.image}
                     </div>
                     <p className="text-muted-foreground truncate text-xs">
-                        {`${t('version')} ${container!.image.split(':')[1] || 'latest'}`}
+                        {`${t('version')} ${container?.image.split(':')[1] || 'latest'}`}
                     </p>
                 </Link>
             ),
@@ -58,13 +58,13 @@ export function CardInfoContainer() {
         {
             title: t('ports'),
             icon: Network,
-            content: container!.network.ports.length,
-            description: container!.network.ports.length ? t('exposedPorts') : t('noExposedPorts'),
+            content: container?.network.ports.length,
+            description: container?.network.ports.length ? t('exposedPorts') : t('noExposedPorts'),
         },
         {
             title: t('env'),
             icon: Key,
-            content: container!.env.length,
+            content: container?.env.length,
             description: t('envVariables'),
         },
     ];

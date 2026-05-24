@@ -35,7 +35,7 @@ export function ContainerActionButtons() {
                 <Button
                     className={'sm:w-9 xl:w-fit'}
                     onClick={() => handleActionClick(action)}
-                    disabled={action.disabledStates.includes(container!.state)}
+                    disabled={!container || action.disabledStates.includes(container.state)}
                     variant={action.variant}
                 >
                     <action.icon />

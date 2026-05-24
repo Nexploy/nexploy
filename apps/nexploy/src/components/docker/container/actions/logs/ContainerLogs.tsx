@@ -56,6 +56,10 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
     };
 
     useEffect(() => {
+        if (!container) setOpen(false);
+    }, [container]);
+
+    useEffect(() => {
         const logsContainer = logsContainerRef.current;
         if (!logsContainer || !open) return;
 
@@ -107,7 +111,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                 >
                     <SSEProvider
                         connections={['logs']}
-                        params={{ logs: { containerId: container!.id, tail: 50 } }}
+                        params={{ logs: { containerId: container?.id ?? '', tail: 50 } }}
                     >
                         <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 p-2 pl-3">
                             <div className={'flex items-center gap-2'}>
