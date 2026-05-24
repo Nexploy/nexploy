@@ -969,8 +969,6 @@
       "addDomainInternalPath": "Chemin interne",
       "addDomainHttps": "Activer HTTPS",
       "addDomainStripPath": "Supprimer le préfixe de chemin",
-      "addDomainCertificateId": "ID du certificat",
-      "addDomainCertificateIdPlaceholder": "Laisser vide pour TLS par défaut",
       "sslCertType": "Type de certificat",
       "sslCustom": "Personnalisé",
       "sslName": "Nom",

@@ -2,19 +2,34 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from '@workspace/ui/components/select';
+import { ShieldCheck } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import useSWR from 'swr';
+import { fetcherApi } from '@/lib/api/fetcherApi';
+
+interface CertOption {
+    id: string;
+    name: string;
+    type: 'LETS_ENCRYPT' | 'CUSTOM';
+    domain: string;
+}
 
 export function AddDomainConfig() {
     const t = useTranslations('repository.pipeline.config');
+    const tDomains = useTranslations('repository.settings.domains');
     const form = useFormContext();
+    const params = useParams<{ repositoryId: string }>();
+
+    const httpsEnabled = form.watch('https');
+
+    const { data: certificates = [] } = useSWR<CertOption[]>(
+        httpsEnabled ? { url: '/api/ssl-certificates' } : null,
+        fetcherApi,
+    );
 
     return (
         <div className="space-y-4">
@@ -78,7 +93,15 @@ export function AddDomainConfig() {
                 render={({ field }) => (
                     <FormItem className="flex items-center gap-3">
                         <FormControl>
-                            <Switch checked={field.value} onCheckedChange={field.onChange} />
+                            <Switch
+                                checked={field.value}
+                                onCheckedChange={(checked) => {
+                                    field.onChange(checked);
+                                    if (!checked) {
+                                        form.setValue('certificateId', undefined);
+                                    }
+                                }}
+                            />
                         </FormControl>
                         <FormLabel className="cursor-pointer font-normal">
                             {t('addDomainHttps')}
@@ -102,24 +125,47 @@ export function AddDomainConfig() {
                     </FormItem>
                 )}
             />
-            <FormField
-                control={form.control}
-                name="certificateId"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>{t('addDomainCertificateId')}</FormLabel>
-                        <FormControl>
-                            <Input
-                                {...field}
+            {httpsEnabled && (
+                <FormField
+                    control={form.control}
+                    name="certificateId"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{tDomains('certificate')}</FormLabel>
+                            <Select
                                 value={field.value ?? ''}
-                                placeholder={t('addDomainCertificateIdPlaceholder')}
-                                className="font-mono text-xs"
-                            />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-            />
+                                onValueChange={(val) => field.onChange(val || undefined)}
+                            >
+                                <FormControl>
+                                    <SelectTrigger className={'w-full'}>
+                                        <SelectValue placeholder={tDomains('selectCertificate')} />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {certificates.length === 0 ? (
+                                        <div className="text-muted-foreground px-2 py-4 text-center text-sm">
+                                            {tDomains('noCertificates')}
+                                        </div>
+                                    ) : (
+                                        certificates.map((cert) => (
+                                            <SelectItem key={cert.id} value={cert.id}>
+                                                <span className="flex items-center gap-2">
+                                                    <ShieldCheck className="text-primary" />
+                                                    <span>{cert.name}</span>
+                                                    <span className="text-muted-foreground font-mono text-xs">
+                                                        {cert.domain}
+                                                    </span>
+                                                </span>
+                                            </SelectItem>
+                                        ))
+                                    )}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage className="text-xs" />
+                        </FormItem>
+                    )}
+                />
+            )}
         </div>
     );
 }

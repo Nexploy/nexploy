@@ -967,8 +967,6 @@
       "addDomainInternalPath": "Internal Path",
       "addDomainHttps": "Enable HTTPS",
       "addDomainStripPath": "Strip Path Prefix",
-      "addDomainCertificateId": "Certificate ID",
-      "addDomainCertificateIdPlaceholder": "Leave empty for default TLS",
       "sslCertType": "Certificate Type",
       "sslCustom": "Custom",
       "sslName": "Name",
