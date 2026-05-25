@@ -133,7 +133,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                             <h1 className="line-clamp-1 text-base leading-snug font-semibold break-all">
                                 {stackName}
                             </h1>
-                            <div className="text-muted-foreground flex items-center gap-2 text-xs">
+                            <div className="text-muted-foreground flex items-center gap-1 text-xs">
                                 <span>
                                     {containers.length} {t('container')}
                                 </span>
