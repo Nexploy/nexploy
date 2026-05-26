@@ -2,9 +2,13 @@
 
 import { cn } from '@workspace/ui/lib/utils';
 import { CATEGORY_BORDER, CATEGORY_HEX } from '@/components/pipeline/pipelineTheme';
-import { AlertCircle, Ban, CheckCircle2, CircleX } from 'lucide-react';
 import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
 import { PropsWithChildren } from 'react';
+import { AnimatedCircleX } from '@/components/pipeline/nodes/animations/AnimatedCircleX.tsx';
+import { AnimatedBan } from '@/components/pipeline/nodes/animations/AnimatedBan.tsx';
+import { AnimatedAlertCircle } from '@/components/pipeline/nodes/animations/AnimatedAlertCircle.tsx';
+import { AnimatedCheckCircle } from '@/components/pipeline/nodes/animations/AnimatedCheckCircle.tsx';
+import { AnimatedNodeSpinner } from '@/components/pipeline/nodes/animations/AnimatedNodeSpinner.tsx';
 
 interface NodeAnimationProps {
     data: NodeData;
@@ -36,6 +40,12 @@ export function NodeAnimation({
             : 'rounded-full';
 
     const iconRounded = square ? 'rounded-xl' : 'rounded-full';
+
+    const cornerClass = cn(
+        'bg-card absolute size-4 rounded-full',
+        square ? 'top-1 right-1' : 'top-[11px] right-[11px]',
+        isEndNode && 'top-1 left-1',
+    );
 
     const icon = (
         <div
@@ -75,6 +85,14 @@ export function NodeAnimation({
                 >
                     {icon}
                     {children}
+                    <AnimatedNodeSpinner
+                        categoryHex={categoryHex!}
+                        className={cn(
+                            'absolute',
+                            square ? 'top-1 right-1' : 'top-[11px] right-[11px]',
+                            isEndNode && 'top-1 left-1',
+                        )}
+                    />
                 </div>
             </div>
         );
@@ -104,42 +122,10 @@ export function NodeAnimation({
                     'border-border',
             )}
         >
-            {data.status === 'completed' && (
-                <CheckCircle2
-                    className={cn(
-                        'bg-card absolute size-4 rounded-full text-green-500',
-                        square ? 'top-1 right-1' : 'top-[11px] right-[11px]',
-                        isEndNode && 'top-1 left-1',
-                    )}
-                />
-            )}
-            {data.status === 'failed' && (
-                <CircleX
-                    className={cn(
-                        'bg-card absolute size-4 rounded-full text-red-500',
-                        square ? 'top-1 right-1' : 'top-[11px] right-[11px]',
-                        isEndNode && 'top-1 left-1',
-                    )}
-                />
-            )}
-            {data.status === 'cancelled' && (
-                <Ban
-                    className={cn(
-                        'bg-card absolute size-4 rounded-full text-red-500',
-                        square ? 'top-1 right-1' : 'top-[11px] right-[11px]',
-                        isEndNode && 'top-1 left-1',
-                    )}
-                />
-            )}
-            {data.status === 'not-configured' && (
-                <AlertCircle
-                    className={cn(
-                        'bg-card absolute size-4 rounded-full text-yellow-500',
-                        square ? 'top-1 right-1' : 'top-[11px] right-[11px]',
-                        isEndNode && 'top-1 left-1',
-                    )}
-                />
-            )}
+            {data.status === 'completed' && <AnimatedCheckCircle className={cornerClass} />}
+            {data.status === 'failed' && <AnimatedCircleX className={cornerClass} />}
+            {data.status === 'cancelled' && <AnimatedBan className={cornerClass} />}
+            {data.status === 'not-configured' && <AnimatedAlertCircle className={cornerClass} />}
             {icon}
             {children}
         </div>

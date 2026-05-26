@@ -9,7 +9,6 @@ import { AccountMenu } from '@/components/sidebar/AccountMenu';
 import { NexployLogo } from '@/components/sidebar/NexployLogo';
 import { SidebarNav } from '@/components/sidebar/SidebarNav';
 import { Environment } from '@/components/sidebar/environment/Environment';
-import { UpdateBanner } from '@/components/sidebar/UpdateBanner';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 
 interface AppSidebarProps {
@@ -49,7 +48,7 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
                 </ScrollAreaWithShadow>
             </SidebarContent>
             <SidebarFooter>
-                <UpdateBanner />
+                {/*<UpdateBanner />*/}
                 <AccountMenu />
             </SidebarFooter>
         </Sidebar>

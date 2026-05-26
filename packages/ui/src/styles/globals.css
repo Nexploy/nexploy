@@ -282,6 +282,9 @@
 @theme {
     --animate-collapsible-down: collapsible-down 0.1s ease-out;
     --animate-collapsible-up: collapsible-up 0.1s ease-out;
+    --animate-node-pop-in: node-pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    --animate-node-fade-in: node-fade-in 0.2s ease-out both;
+    --animate-node-spinner: spin 1.2s linear infinite;
 
     @keyframes collapsible-down {
         from {
@@ -302,6 +305,21 @@
             height: 0;
             opacity: 0;
         }
+    }
+
+    @keyframes node-draw-path {
+        from { stroke-dashoffset: var(--path-length, 50); }
+        to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes node-pop-in {
+        from { opacity: 0; transform: scale(0); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes node-fade-in {
+        from { opacity: 0; transform: scale(0.5); }
+        to { opacity: 1; transform: scale(1); }
     }
 }
 
