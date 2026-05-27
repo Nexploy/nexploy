@@ -20,19 +20,15 @@ export function IntegrationsAddButtons({ provider }: IntegrationsAddButtonsProps
         switch (provider) {
             case 'github':
                 openDialog({
-                    closeOnBackground: true,
                     title: tOAuth('configureTitle', { provider: t('github.title') }),
                     description: tOAuth('guide.github.manifestDescription'),
-                    props: { className: 'sm:max-w-lg' },
                     content: <GitHubAppSetupForm />,
                 });
                 break;
             case 'gitlab':
                 openDialog({
-                    closeOnBackground: true,
                     title: tOAuth('configureTitle', { provider: t('gitlab.title') }),
                     description: tOAuth('configureDescription', { provider: t('gitlab.title') }),
-                    props: { className: 'sm:max-w-[425px]' },
                     content: <GitlabAppSetupForm />,
                 });
                 break;

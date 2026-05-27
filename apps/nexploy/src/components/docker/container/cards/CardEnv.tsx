@@ -30,12 +30,8 @@ export function CardEnv() {
 
     const handleOpenDialog = (mode: 'add' | 'edit', envVar?: EnvVar, originalEnvVar?: EnvVar) => {
         openDialog({
-            closeOnBackground: true,
             title: mode === 'add' ? t('addTitle') : t('editTitle'),
             description: mode === 'add' ? t('addDescription') : t('editDescription'),
-            props: {
-                className: 'sm:max-w-[425px]',
-            },
             content: <EnvForm mode={mode} defaultEnvVar={envVar} originalEnvVar={originalEnvVar} />,
         });
     };
@@ -117,8 +113,22 @@ export function CardEnv() {
                                         isEdited={isEdited}
                                         isDeleted={isDeleted}
                                         displayEnvVar={displayEnvVar}
-                                        onEdit={isSwarmContainer ? undefined : handleOpenDialog.bind(null, 'edit')}
-                                        onCancelDelete={isSwarmContainer ? undefined : () => onEnvVarChange({ typeAction: 'add', key: env.key, value: env.value, currentKey: env.key })}
+                                        onEdit={
+                                            isSwarmContainer
+                                                ? undefined
+                                                : handleOpenDialog.bind(null, 'edit')
+                                        }
+                                        onCancelDelete={
+                                            isSwarmContainer
+                                                ? undefined
+                                                : () =>
+                                                      onEnvVarChange({
+                                                          typeAction: 'add',
+                                                          key: env.key,
+                                                          value: env.value,
+                                                          currentKey: env.key,
+                                                      })
+                                        }
                                     />
                                 );
                             })}
@@ -131,7 +141,11 @@ export function CardEnv() {
                                     isDeleted={false}
                                     isNew
                                     displayEnvVar={{ key: key!, value: value! }}
-                                    onEdit={isSwarmContainer ? undefined : handleOpenDialog.bind(null, 'edit')}
+                                    onEdit={
+                                        isSwarmContainer
+                                            ? undefined
+                                            : handleOpenDialog.bind(null, 'edit')
+                                    }
                                 />
                             ))}
                         </div>

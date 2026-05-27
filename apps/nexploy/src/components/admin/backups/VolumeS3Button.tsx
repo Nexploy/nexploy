@@ -19,7 +19,6 @@ export function VolumeS3Button({ volumeName, awsAccounts }: VolumeS3ButtonProps)
 
     const handleClick = () => {
         openDialog({
-            closeOnBackground: true,
             title: t('uploadToS3'),
             description: volumeName,
             props: { className: 'sm:max-w-[480px]' },

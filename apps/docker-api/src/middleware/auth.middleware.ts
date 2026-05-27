@@ -28,7 +28,6 @@ export async function authMiddleware(c: Context, next: Next) {
     await next();
 }
 
-// Runs the full loop regardless of length to prevent timing-based length oracle attacks.
 function constantTimeCompare(a: string, b: string): boolean {
     const maxLen = Math.max(a.length, b.length);
     let result = a.length ^ b.length;

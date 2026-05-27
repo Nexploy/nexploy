@@ -43,9 +43,15 @@ RUN pnpm add -g esbuild && esbuild apps/docker-api/src/index.ts \
     --external:pino \
     --external:pino-pretty
 
+# ---- Docker CLI ----
+FROM docker:27-cli AS docker-cli
+
 # ---- Runner ----
 FROM node:20-alpine AS runner
 WORKDIR /app
+
+COPY --from=docker-cli /usr/local/bin/docker /usr/local/bin/docker
+COPY --from=docker-cli /usr/local/libexec/docker/cli-plugins/docker-compose /usr/local/libexec/docker/cli-plugins/docker-compose
 
 ENV NODE_ENV=production
 ENV PORT=3300

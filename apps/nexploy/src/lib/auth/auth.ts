@@ -6,10 +6,17 @@ import { admin, twoFactor } from 'better-auth/plugins';
 import { apiKey } from '@better-auth/api-key';
 import { permission } from '@/lib/auth/permissions';
 
+const extraTrustedOrigins = process.env.TRUSTED_ORIGINS
+    ? process.env.TRUSTED_ORIGINS.split(',')
+          .map((o) => o.trim())
+          .filter(Boolean)
+    : [];
+
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: 'postgresql',
     }),
+    trustedOrigins: extraTrustedOrigins,
     account: {
         accountLinking: {
             enabled: true,

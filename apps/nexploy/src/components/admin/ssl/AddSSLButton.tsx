@@ -22,7 +22,6 @@ export function AddSSLButton() {
     function openLetsEncrypt() {
         openDialog({
             title: tSsl('addLetsEncrypt'),
-            closeOnBackground: false,
             content: (
                 <LetsEncryptCertForm
                     onClose={() => {
@@ -37,7 +36,6 @@ export function AddSSLButton() {
     function openCustom() {
         openDialog({
             title: tSsl('addCustom'),
-            closeOnBackground: false,
             content: (
                 <CustomCertForm
                     onClose={() => {

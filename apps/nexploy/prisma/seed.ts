@@ -23,7 +23,7 @@ async function seedEnvironment() {
             socketPath: '/var/run/docker.sock',
             isDefault: true,
             isActive: true,
-            userId: DOCKER_API_USER_ID,
+            userId: null,
             description: 'Default local Docker environment using Unix socket',
         },
     });
@@ -32,14 +32,9 @@ async function seedEnvironment() {
 }
 
 async function seedDockerApiKey() {
-    const existingKey = await prisma.apikey.findFirst({
+    await prisma.apikey.deleteMany({
         where: { name: DOCKER_API_KEY_NAME },
     });
-
-    if (existingKey) {
-        console.log('Docker API key already exists');
-        return;
-    }
 
     let systemUser = await prisma.user.findUnique({
         where: { id: DOCKER_API_USER_ID },
@@ -86,8 +81,8 @@ async function main() {
     console.log('Seeding database...');
     console.log('');
 
-    await seedEnvironment();
     await seedDockerApiKey();
+    await seedEnvironment();
 
     console.log('Seeding completed!');
 }

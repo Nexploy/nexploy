@@ -35,7 +35,6 @@ export function CardExposedPorts() {
 
     const handleAddPort = () =>
         openDialog({
-            closeOnBackground: true,
             title: t('addTitle'),
             description: t('addDescription'),
             content: <PortForm mode="add" />,
@@ -46,7 +45,6 @@ export function CardExposedPorts() {
         originalPort?: PortFormProps['defaultPort'],
     ) =>
         openDialog({
-            closeOnBackground: true,
             title: t('editTitle'),
             description: t('editDescription'),
             props: {
@@ -160,8 +158,8 @@ export function CardExposedPorts() {
                                                     <span className="text-destructive">-</span>
                                                 )}
                                             </code>
-                                            {!isSwarmContainer && (
-                                                isDeleted ? (
+                                            {!isSwarmContainer &&
+                                                (isDeleted ? (
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <Button
@@ -172,10 +170,13 @@ export function CardExposedPorts() {
                                                                     onPortChange({
                                                                         typeAction: 'add',
                                                                         publicPort: port.publicPort,
-                                                                        privatePort: port.privatePort,
+                                                                        privatePort:
+                                                                            port.privatePort,
                                                                         type: port.type,
-                                                                        currentPublicPort: port.publicPort,
-                                                                        currentPrivatePort: port.privatePort,
+                                                                        currentPublicPort:
+                                                                            port.publicPort,
+                                                                        currentPrivatePort:
+                                                                            port.privatePort,
                                                                         currentType: port.type,
                                                                     })
                                                                 }
@@ -183,7 +184,9 @@ export function CardExposedPorts() {
                                                                 <X />
                                                             </Button>
                                                         </TooltipTrigger>
-                                                        <TooltipContent>{t('cancelDelete')}</TooltipContent>
+                                                        <TooltipContent>
+                                                            {t('cancelDelete')}
+                                                        </TooltipContent>
                                                     </Tooltip>
                                                 ) : (
                                                     <Tooltip>
@@ -193,7 +196,10 @@ export function CardExposedPorts() {
                                                                 variant="ghost"
                                                                 className="h-6 w-6"
                                                                 onClick={() =>
-                                                                    handleEditPort(displayPort, port)
+                                                                    handleEditPort(
+                                                                        displayPort,
+                                                                        port,
+                                                                    )
                                                                 }
                                                             >
                                                                 <Pencil />
@@ -201,8 +207,7 @@ export function CardExposedPorts() {
                                                         </TooltipTrigger>
                                                         <TooltipContent>{t('edit')}</TooltipContent>
                                                     </Tooltip>
-                                                )
-                                            )}
+                                                ))}
                                         </div>
                                     );
                                 })}

@@ -6,6 +6,7 @@ import fs from 'fs';
 const rootPackage = JSON.parse(fs.readFileSync(path.resolve(__dirname, './package.json'), 'utf-8'));
 
 const nextConfig: NextConfig = {
+    output: 'standalone',
     env: {
         appVersion: rootPackage.version,
     },

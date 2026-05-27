@@ -26,7 +26,6 @@ export function CardLabels() {
 
     const handleOpenDialog = (mode: 'add' | 'edit', label?: Label, originalLabel?: Label) => {
         openDialog({
-            closeOnBackground: true,
             title: mode === 'add' ? t('addLabel') : t('editLabel'),
             description: t('containerMustBeStopped'),
             props: {
@@ -110,8 +109,22 @@ export function CardLabels() {
                                         isEdited={isEdited}
                                         isDeleted={isDeleted}
                                         displayLabel={displayLabel}
-                                        onEdit={isSwarmContainer ? undefined : handleOpenDialog.bind(null, 'edit')}
-                                        onCancelDelete={isSwarmContainer ? undefined : () => onLabelChange({ typeAction: 'add', key: label.key, value: label.value, currentKey: label.key })}
+                                        onEdit={
+                                            isSwarmContainer
+                                                ? undefined
+                                                : handleOpenDialog.bind(null, 'edit')
+                                        }
+                                        onCancelDelete={
+                                            isSwarmContainer
+                                                ? undefined
+                                                : () =>
+                                                      onLabelChange({
+                                                          typeAction: 'add',
+                                                          key: label.key,
+                                                          value: label.value,
+                                                          currentKey: label.key,
+                                                      })
+                                        }
                                     />
                                 );
                             })}
@@ -124,7 +137,11 @@ export function CardLabels() {
                                     isDeleted={false}
                                     isNew
                                     displayLabel={{ key: key!, value: value! }}
-                                    onEdit={isSwarmContainer ? undefined : handleOpenDialog.bind(null, 'edit')}
+                                    onEdit={
+                                        isSwarmContainer
+                                            ? undefined
+                                            : handleOpenDialog.bind(null, 'edit')
+                                    }
                                 />
                             ))}
                         </div>

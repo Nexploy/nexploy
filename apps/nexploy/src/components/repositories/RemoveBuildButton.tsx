@@ -8,6 +8,7 @@ import { onRemoveBuild } from '@/actions/repository/builds/removeBuild.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
 import { useTranslations } from 'next-intl';
+import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 
 interface RemoveBuildButtonProps extends ComponentProps<typeof Button> {
     buildId: string;
@@ -26,6 +27,7 @@ export function RemoveBuildButton({
     const tCommon = useTranslations('common');
 
     const { executeAsync } = useAction(onRemoveBuild);
+    const triggerBuildDelete = usePipelineEditorStore((s) => s.triggerBuildDelete);
 
     const handleRemove = () => {
         openAlertDialog({
@@ -35,6 +37,8 @@ export function RemoveBuildButton({
             actionLabel: tCommon('delete'),
             onAction: async () => {
                 await executeAsync({ buildId });
+                triggerBuildDelete();
+                onSuccess?.();
             },
         });
     };

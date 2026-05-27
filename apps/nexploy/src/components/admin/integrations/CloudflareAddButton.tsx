@@ -13,7 +13,6 @@ export function CloudflareAddButton() {
     const handleAdd = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         openDialog({
-            closeOnBackground: true,
             title: t('addTitle'),
             description: t('addDescription'),
             props: { className: 'sm:max-w-[425px]' },

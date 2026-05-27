@@ -1,7 +1,8 @@
 import { spawn } from 'child_process';
 import dayjs from 'dayjs';
-import { access, mkdir, mkdtemp, rm, writeFile } from 'fs/promises';
+import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
+import { kyDocker } from '@/lib/api/kyDocker';
 import os from 'os';
 import { BuildConfig } from '@workspace/typescript-interface/repository/build';
 import { GitProviderToken } from '@workspace/typescript-interface/git/git';
@@ -271,9 +272,8 @@ class GitService {
     }
 
     async validateComposeSyntax(workDir: string, composePath: string): Promise<void> {
-        await this.exec('docker', ['compose', '-f', composePath, 'config', '--quiet'], {
-            cwd: workDir,
-        });
+        const content = await readFile(join(workDir, composePath), 'utf-8');
+        await kyDocker.post('composes/validate-syntax', { json: { content } });
     }
 
     async validateDockerfile(workDir: string, dockerfilePath?: string): Promise<void> {

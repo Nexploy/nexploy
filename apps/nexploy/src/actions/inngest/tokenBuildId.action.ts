@@ -12,10 +12,13 @@ export const onGetTokenBuildIdAction = authActionServer
     .inputSchema(tokenBuildIdSchema)
     .action(async ({ parsedInput: { buildId, topics } }) => {
         try {
-            return await getSubscriptionToken(inngest, {
+            const token = await getSubscriptionToken(inngest, {
                 channel: `build:${buildId}`,
                 topics,
             });
+            // Inject the public nexploy URL so the browser WebSocket connects through
+            // nexploy's /v1/realtime/ proxy instead of trying to reach Inngest cloud.
+            return { ...token, app: { apiBaseUrl: process.env.BETTER_AUTH_URL } } as typeof token;
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({

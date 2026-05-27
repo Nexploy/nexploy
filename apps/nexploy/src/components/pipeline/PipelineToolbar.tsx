@@ -13,7 +13,7 @@ import { StatusLive } from '@/components/shared/StatusLive';
 import { StopBuildToolbar } from '@/components/pipeline/StopBuildToolbar.tsx';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 
-const mod = /Mac|iPhone|iPad/i.test(navigator.userAgent) ? '⌘' : 'Ctrl';
+const mod = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/i.test(navigator.userAgent) ? '⌘' : 'Ctrl';
 
 export function PipelineToolbar() {
     const t = useTranslations('repository.pipeline');

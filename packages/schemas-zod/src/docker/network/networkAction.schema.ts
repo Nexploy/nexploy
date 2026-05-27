@@ -35,9 +35,11 @@ export const networkCreateSchema = z.object({
     attachable: z.boolean().default(false).optional(),
     ingress: z.boolean().default(false).optional(),
     configOnly: z.boolean().optional(),
-    configFrom: z.object({
-        network: z.string().optional(),
-    }),
+    configFrom: z
+        .object({
+            network: z.string().optional(),
+        })
+        .optional(),
     options: z.array(networkOptionSchema).default([]),
     labels: z.array(networkLabelSchema).default([]),
 });

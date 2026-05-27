@@ -20,7 +20,16 @@ if [ -n "$API_KEY" ]; then
     echo "$API_KEY" > /tmp/nexploy-api-key
     chown nextjs:nodejs /tmp/nexploy-api-key
     echo "API key stored internally."
+    # Export so the Next.js server process can use it for docker-api calls
+    export DOCKER_API_KEY="$API_KEY"
+else
+    echo "ERROR: Failed to extract API key from seed output."
+    exit 1
 fi
+
+# ---- Ensure deployer workdir is writable by nextjs ----
+mkdir -p /tmp/deployer
+chown nextjs:nodejs /tmp/deployer
 
 # ---- Start server as nextjs user ----
 echo "Starting Next.js server..."

@@ -23,7 +23,6 @@ export function CardNetworkDetails() {
 
     const handleOpenDialog = () => {
         openDialog({
-            closeOnBackground: true,
             title: t('addTitle'),
             description: t('addDescription'),
             props: {

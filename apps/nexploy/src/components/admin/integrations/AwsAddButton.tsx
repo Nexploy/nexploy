@@ -13,7 +13,6 @@ export function AwsAddButton() {
     const handleAdd = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         openDialog({
-            closeOnBackground: true,
             title: t('addTitle'),
             description: t('addDescription'),
             content: <AwsAddForm />,

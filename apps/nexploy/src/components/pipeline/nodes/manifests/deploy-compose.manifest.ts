@@ -26,6 +26,11 @@ export const deployComposeManifest: NodeManifest = {
     configSchema: composeFileConfigSchema,
     configPanel: DeployComposeConfig,
     inputFields: [
-        { key: 'projectName', labelKey: 'pipeline.inputs.projectName', descriptionKey: 'pipeline.inputs.desc_projectName', type: 'input' },
+        {
+            key: 'projectName',
+            labelKey: 'pipeline.inputs.projectName',
+            descriptionKey: 'pipeline.inputs.desc_projectName',
+            type: 'input',
+        },
     ],
 };

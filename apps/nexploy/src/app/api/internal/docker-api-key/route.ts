@@ -7,7 +7,7 @@ const KEY_FILE = '/tmp/nexploy-api-key';
 
 export const GET = route.handler(async (request: Request) => {
     const secret = request.headers.get('x-internal-secret');
-    const expected = process.env.INTERNAL_SECRET ?? '';
+    const expected = process.env.ENCRYPTION_KEY ?? '';
 
     if (!secret || !expected || !timingSafeEqual(secret, expected)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

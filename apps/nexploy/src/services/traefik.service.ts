@@ -55,8 +55,9 @@ export async function generateTraefikConfigForRepository(
     };
 
     for (const domain of domains) {
-        const routerName = `repo-${repositoryId}-${domain.host}`;
-        const serviceName = `svc-${repositoryId}-${domain.host}`;
+        const sanitizedHost = domain.host.replace(/\./g, '-');
+        const routerName = `repo-${repositoryId}-${sanitizedHost}`;
+        const serviceName = `svc-${repositoryId}-${sanitizedHost}`;
 
         const env = domain.environmentId ? await getEnvironmentById(domain.environmentId) : null;
         const isRemote = env?.connectionType === 'TCP' || env?.connectionType === 'TCP_TLS';
@@ -71,7 +72,7 @@ export async function generateTraefikConfigForRepository(
         const middlewares: string[] = [];
 
         if (domain.stripPath && domain.path !== '/') {
-            const stripMiddlewareName = `strip-${repositoryId}-${domain.host}`;
+            const stripMiddlewareName = `strip-${repositoryId}-${sanitizedHost}`;
             middlewares.push(stripMiddlewareName);
 
             config.http.middlewares[stripMiddlewareName] = {
@@ -86,7 +87,7 @@ export async function generateTraefikConfigForRepository(
             domain.internalPath !== '/' &&
             domain.internalPath !== domain.path
         ) {
-            const addPrefixMiddlewareName = `addprefix-${repositoryId}-${domain.host}`;
+            const addPrefixMiddlewareName = `addprefix-${repositoryId}-${sanitizedHost}`;
             middlewares.push(addPrefixMiddlewareName);
 
             config.http.middlewares[addPrefixMiddlewareName] = {

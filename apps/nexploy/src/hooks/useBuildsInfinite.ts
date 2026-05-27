@@ -37,6 +37,7 @@ export function useBuildsInfinite(
     );
 
     const buildStartTrigger = usePipelineEditorStore((s) => s.buildStartTrigger);
+    const buildDeleteTrigger = usePipelineEditorStore((s) => s.buildDeleteTrigger);
 
     const { data, size, setSize, isValidating, mutate } = useSWRInfinite<BuildsPage>(
         getKey,
@@ -52,6 +53,11 @@ export function useBuildsInfinite(
         if (buildStartTrigger === 0) return;
         mutate();
     }, [buildStartTrigger]);
+
+    useEffect(() => {
+        if (buildDeleteTrigger === 0) return;
+        mutate();
+    }, [buildDeleteTrigger]);
 
     const builds = useMemo(
         () => data?.flatMap((page) => page.builds) ?? initialBuilds,

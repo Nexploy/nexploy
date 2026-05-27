@@ -1,26 +1,29 @@
+import 'dotenv/config';
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { createProxyMiddleware, Options } from 'http-proxy-middleware';
 import next from 'next';
 import { terminalSchema } from '@workspace/schemas-zod/websocket/terminal.schema';
 import { Socket } from 'net';
 import { attachSchema } from '@workspace/schemas-zod/websocket/attach.schema';
+import type { MatchResult, WSRouteConfig } from '@workspace/typescript-interface/websocket';
 
 const dev = process.env.NODE_ENV !== 'production';
 
-const hostname = '0.0.0.0';
-const port = 3000;
+const port = parseInt(process.env.NEXPLOY_PORT || '3000', 10);
+const nextHostname = dev ? '0.0.0.0' : 'localhost';
 
 const app = next({
     dev,
-    hostname,
+    hostname: nextHostname,
     port,
     turbopack: dev,
+    conf: dev ? undefined : { output: 'standalone' },
 });
 
 const handle = app.getRequestHandler();
 
 const proxyOptions: Options = {
-    target: process.env.DOCKER_API_URL || 'http://localhost:3300',
+    target: process.env.DOCKER_API_URL,
     changeOrigin: true,
     ws: true,
     on: {
@@ -41,19 +44,16 @@ const proxyOptions: Options = {
 
 const proxy = createProxyMiddleware(proxyOptions);
 
-interface WSRouteConfig {
-    prefix: string;
-    params: string[];
-    paramSpecs: Record<string, { optional: boolean; default?: string }>;
-    zodSchema: any | null;
-    transform: (params: Record<string, string>) => string;
-}
-
-interface MatchResult {
-    matched: boolean;
-    url?: string;
-    original?: string;
-}
+const inngestProxy = createProxyMiddleware({
+    target: process.env.INNGEST_BASE_URL,
+    changeOrigin: true,
+    ws: true,
+    on: {
+        error: (err) => {
+            console.error('❌ Inngest proxy error:', err.message);
+        },
+    },
+});
 
 const WS_ROUTE_CONFIGS: WSRouteConfig[] = [
     {
@@ -147,6 +147,12 @@ app.prepare().then(() => {
         try {
             if (dev && pathname?.startsWith('/_next/webpack-hmr')) return;
 
+            if (pathname?.startsWith('/v1/realtime/')) {
+                console.log('🔌 Proxying Inngest realtime WS:', pathname);
+                inngestProxy.upgrade(req, socket, head);
+                return;
+            }
+
             const result = matchAndTransformWsUrl(pathname!);
             if (result.matched) {
                 const queryString = parsedUrl.search;
@@ -170,8 +176,8 @@ app.prepare().then(() => {
         process.exit(1);
     });
 
-    server.listen(port, hostname, () => {
-        console.log(`🚀 Next.js:  http://${hostname}:${port}`);
+    server.listen(port, '0.0.0.0', () => {
+        console.log(`🚀 Next.js:  http://0.0.0.0:${port}`);
         console.log(`🔌 WS Proxy configured routes`);
         console.log(`⚡ Mode: ${dev ? 'Development (Turbopack)' : 'Production'}`);
     });
