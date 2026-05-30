@@ -67,7 +67,7 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
                     className="flex items-start gap-2"
                 >
                     <Status
-                        className="max-w-full justify-start border-0 text-sm"
+                        className="justify-start border-0 text-sm"
                         status={isBuiltin ? 'maintenance' : 'online'}
                         variant="outline"
                     >
@@ -84,9 +84,7 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
                             </TooltipContent>
                         </Tooltip>
 
-                        <StatusLabel className="min-w-0 truncate text-current hover:underline">
-                            {name}
-                        </StatusLabel>
+                        <StatusLabel className="text-current hover:underline">{name}</StatusLabel>
                     </Status>
                 </Link>
             );
@@ -106,8 +104,8 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
         cell: ({ row }) => {
             const driver = row.original.driver;
             return (
-                <Badge variant="secondary" className="max-w-full justify-start truncate text-xs">
-                    <span className={'truncate'}>{driver}</span>
+                <Badge variant="secondary" className="text-xs">
+                    {driver}
                 </Badge>
             );
         },
@@ -119,8 +117,8 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
             const scope = row.original.scope;
 
             return (
-                <Badge variant="outline" className="max-w-full justify-start text-xs">
-                    <span className={'truncate'}>{scope}</span>
+                <Badge variant="outline" className="text-xs">
+                    {scope}
                 </Badge>
             );
         },
@@ -130,11 +128,7 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
         header: t('networkId'),
         cell: ({ row }) => {
             const networkId = row.original.id;
-            return (
-                <div className="flex">
-                    <code className="text-muted-foreground truncate">{networkId}</code>
-                </div>
-            );
+            return <Badge variant={'secondary'}>{networkId.slice(0, 20)}…</Badge>;
         },
     },
     {
@@ -154,11 +148,8 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
             const count = containers?.length || 0;
 
             return (
-                <Badge
-                    className="max-w-full justify-start truncate text-xs"
-                    variant={count > 0 ? 'default' : 'secondary'}
-                >
-                    <span className={'truncate'}>{count}</span>
+                <Badge className="text-xs" variant={count > 0 ? 'default' : 'secondary'}>
+                    {count}
                 </Badge>
             );
         },
@@ -178,7 +169,7 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
             const created = row.original.created;
             const date = dayjs.unix(created).format('DD/MM/YYYY');
 
-            return <div className="text-muted-foreground truncate">{date}</div>;
+            return <div className="text-muted-foreground">{date}</div>;
         },
     },
     {

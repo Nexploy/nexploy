@@ -1,15 +1,11 @@
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
-} from '@workspace/ui/components/sidebar';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, } from '@workspace/ui/components/sidebar';
 import Link from 'next/link';
 import { AccountMenu } from '@/components/sidebar/AccountMenu';
 import { NexployLogo } from '@/components/sidebar/NexployLogo';
 import { SidebarNav } from '@/components/sidebar/SidebarNav';
 import { Environment } from '@/components/sidebar/environment/Environment';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
+import { UpdateBanner } from '@/components/sidebar/UpdateBanner.tsx';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset';
@@ -48,7 +44,7 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
                 </ScrollAreaWithShadow>
             </SidebarContent>
             <SidebarFooter>
-                {/*<UpdateBanner />*/}
+                <UpdateBanner />
                 <AccountMenu />
             </SidebarFooter>
         </Sidebar>

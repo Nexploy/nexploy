@@ -14,11 +14,12 @@ export const onCreateUserAction = actionServer
             revalidatePath('/admin/users');
 
             return user;
-        } catch (error: any) {
-            if (error instanceof Error) {
+        } catch (err: any) {
+            if (err instanceof Error) {
                 return returnValidationErrors(createUserFormSchema, {
-                    _errors: [error.message],
+                    _errors: [err.message],
                 });
             }
+            throw err;
         }
     });

@@ -14,9 +14,6 @@ import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfir
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
 import { NotFoundSSE } from '@/components/shared/NotFoundSSE';
 import * as React from 'react';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip.tsx';
-import { StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
-import { cn } from '@workspace/ui/lib/utils.ts';
 
 interface VolumeDetailPageProps {
     volumeName: string;
@@ -74,28 +71,9 @@ export function VolumeDetailPage({ volumeName }: VolumeDetailPageProps) {
                         {isConnecting ? (
                             <Skeleton className="h-9 w-40" />
                         ) : (
-                            <div
-                                className={cn(
-                                    'group flex items-center gap-2',
-                                    volumeUsed ? 'online' : 'offline',
-                                )}
-                            >
-                                <h1 className="text-3xl font-semibold tracking-tight break-all">
-                                    {volumeName}
-                                </h1>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <StatusIndicator />
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        {volumeUsed ? (
-                                            <p>{t('volumeUsed')}</p>
-                                        ) : (
-                                            <p>{t('volumeUnused')}</p>
-                                        )}
-                                    </TooltipContent>
-                                </Tooltip>
-                            </div>
+                            <h1 className="text-3xl font-semibold tracking-tight break-all">
+                                {volumeName}
+                            </h1>
                         )}
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>

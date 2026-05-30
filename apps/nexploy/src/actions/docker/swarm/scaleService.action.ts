@@ -11,12 +11,11 @@ export const onScaleServiceAction = authActionServer
     .inputSchema(scaleServiceFormSchema)
     .action(async ({ parsedInput: { id, replicas } }) => {
         try {
-            return await kyDocker
-                .post(`swarm/services/${id}/scale`, { json: { replicas } })
-                .json();
+            return await kyDocker.post(`swarm/services/${id}/scale`, { json: { replicas } }).json();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({ type: 'error', message: err.message as string });
             }
+            throw err;
         }
     });

@@ -19,5 +19,6 @@ export const onContainerRenameAction = authActionServer
                     message: err.message as string,
                 });
             }
+            throw err;
         }
     });

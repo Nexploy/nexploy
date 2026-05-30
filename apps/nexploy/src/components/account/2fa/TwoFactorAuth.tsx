@@ -66,7 +66,7 @@ export function TwoFactorAuth({ user }: TwoFactorAuthProps) {
                                             className="flex-1 rounded-r-none font-mono text-sm"
                                         />
                                         <CopyButton
-                                            textToCopy={secretKey}
+                                            text={secretKey}
                                             className="rounded-l-none border-l-0 !text-xs"
                                             size={'icon'}
                                             variant={'ghost'}

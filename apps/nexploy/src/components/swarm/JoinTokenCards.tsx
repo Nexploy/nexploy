@@ -53,7 +53,7 @@ export function JoinTokenCards() {
                         <CopyButton
                             className={'size-8'}
                             size={'icon'}
-                            textToCopy={getJoinCommand(swarmInfo.joinTokens.worker)}
+                            text={getJoinCommand(swarmInfo.joinTokens.worker)}
                         />
                     </div>
                 </CardHeader>
@@ -89,7 +89,7 @@ export function JoinTokenCards() {
                         <CopyButton
                             className={'size-8'}
                             size={'icon'}
-                            textToCopy={getJoinCommand(swarmInfo.joinTokens.manager)}
+                            text={getJoinCommand(swarmInfo.joinTokens.manager)}
                         />
                     </div>
                 </CardHeader>

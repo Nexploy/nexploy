@@ -8,6 +8,7 @@ import { getUserSession } from '@/services/auth/auth.service';
 import { ReactNode } from 'react';
 import { InsetPanel } from '@/components/layout/InsetPanel';
 import { cn } from '@workspace/ui/lib/utils';
+import { AIPanelContainer } from '@/components/ai/AIPanelContainer';
 
 export default async function DockerLayout({
     children,
@@ -30,9 +31,7 @@ export default async function DockerLayout({
                         <InsetPanel className={cn('flex-1')}>
                             <SSEProvider>{children}</SSEProvider>
                         </InsetPanel>
-                        {/*<InsetPanel className={'ml-2 w-80'}>*/}
-                        {/*    <SidebarAI />*/}
-                        {/*</InsetPanel>*/}
+                        <AIPanelContainer />
                     </main>
                 </div>
             </SidebarProvider>

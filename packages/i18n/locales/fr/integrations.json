@@ -4,17 +4,14 @@
     "gitProviders": "Fournisseurs Git",
     "cloudInfrastructure": "Cloud & Infrastructure",
     "github": {
-        "title": "GitHub",
-        "description": "Connectez votre compte GitHub pour déployer vos dépôts"
+        "title": "GitHub"
     },
     "gitlab": {
-        "title": "GitLab",
-        "description": "Connectez votre compte GitLab pour déployer vos dépôts"
+        "title": "GitLab"
     },
     "oauth": {
         "title": "Fournisseurs Git",
         "description": "Configurez les intégrations Git pour que les utilisateurs puissent connecter leurs dépôts",
-        "providerDescription": "Intégration {provider} pour l'accès aux dépôts",
         "configured": "Configuré",
         "notConfigured": "Non configuré",
         "clientId": "Client ID",
@@ -33,20 +30,15 @@
         "deleteConfirmDescription": "Êtes-vous sûr de vouloir supprimer \"{name}\" ? Cette action est irréversible.",
         "deleteConfirmAction": "Supprimer",
         "noProvidersAvailable": "Aucun fournisseur Git n'a encore été configuré par l'administrateur.",
-        "connectFailed": "Échec de la connexion au fournisseur Git. Veuillez réessayer.",
-        "stateExpired": "La demande de connexion a expiré. Veuillez réessayer.",
         "connectedSuccess": "Fournisseur Git connecté avec succès.",
-        "disconnectedSuccess": "Fournisseur Git déconnecté avec succès.",
         "addGithub": "Ajouter GitHub",
         "addGitlab": "Ajouter GitLab",
         "instanceCount": "{count, plural, =0 {Aucune instance} one {# instance} other {# instances}}",
-        "noInstances": "Aucune instance configurée",
         "guide": {
             "github": {
                 "manifestDescription": "Créez une GitHub App pour permettre aux utilisateurs de connecter leurs dépôts. L'application sera automatiquement configurée avec les bonnes permissions.",
                 "organization": "Installer sur une organisation",
                 "organizationPlaceholder": "Nom de l'organisation",
-                "existingApp": "Vous avez déjà une GitHub App ?",
                 "createApp": "Créer la GitHub App",
                 "permissionsTitle": "Permissions demandées",
                 "permContents": "Contents : Lecture",
@@ -87,8 +79,7 @@
         "deleteConfirmDescription": "Êtes-vous sûr de vouloir supprimer \"{name}\" ? Cette action est irréversible.",
         "deleteConfirmAction": "Supprimer",
         "configured": "Configuré",
-        "instanceCount": "{count, plural, =0 {Aucun compte} one {# compte} other {# comptes}}",
-        "verificationFailed": "Identifiants AWS invalides. Vérifiez votre Access Key ID, Secret Access Key et la région."
+        "instanceCount": "{count, plural, =0 {Aucun compte} one {# compte} other {# comptes}}"
     },
     "cloudflare": {
         "title": "Cloudflare",
@@ -100,38 +91,22 @@
         "permissionZoneRead": "Zone.Zone: Read",
         "permissionDnsEdit": "Zone.DNS: Edit",
         "connectedSuccess": "Compte Cloudflare ajouté avec succès",
-        "disconnectedSuccess": "Compte Cloudflare supprimé",
         "addedSuccess": "Compte Cloudflare ajouté avec succès",
         "addFailed": "Échec de l'ajout du compte Cloudflare",
         "deletedSuccess": "Compte Cloudflare supprimé",
         "deleteConfirmTitle": "Supprimer le compte Cloudflare",
         "deleteConfirmDescription": "Êtes-vous sûr de vouloir supprimer \"{name}\" ? Cette action est irréversible.",
         "deleteConfirmAction": "Supprimer",
-        "ipDetected": "IP détectée : {ip}",
-        "ipDetectionFailed": "Échec de la détection automatique de l'IP",
         "addTitle": "Ajouter un compte Cloudflare",
         "addDescription": "Entrez votre API Token Cloudflare avec les permissions suivantes :",
-        "connectTitle": "Ajouter un compte Cloudflare",
-        "connectDescription": "Entrez votre API Token Cloudflare avec les permissions suivantes :",
         "addAccount": "Ajouter un compte",
         "add": "Ajouter",
         "configured": "Configuré",
         "instanceCount": "{count, plural, =0 {Aucun compte} one {# compte} other {# comptes}}",
-        "serverIp": "IP publique du serveur",
-        "serverIpPlaceholder": "xxx.xxx.xxx.xxx",
-        "serverIpDescription": "Utilisée pour créer les enregistrements DNS de type A",
-        "detect": "Détecter",
         "connect": "Connecter"
     },
     "connect": "Connecter",
     "disconnect": "Déconnecter",
     "connected": "Connecté",
-    "notConnected": "Non connecté",
-    "connecting": "Connexion...",
-    "disconnecting": "Déconnexion...",
-    "configure": "Configurer",
-    "viewDetails": "Voir les détails",
-    "lastSync": "Dernière synchronisation",
-    "syncNow": "Synchroniser",
-    "syncing": "Synchronisation..."
+    "connecting": "Connexion..."
 }

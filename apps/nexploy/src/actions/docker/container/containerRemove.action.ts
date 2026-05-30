@@ -19,5 +19,6 @@ export const onContainerRemoveAction = authActionServer
                     message: err.message as string,
                 });
             }
+            throw err;
         }
     });

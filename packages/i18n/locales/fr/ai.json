@@ -1,16 +1,44 @@
 {
+    "admin": {
+        "title": "IA",
+        "description": "Configurez les intégrations IA et l'accès externe au serveur MCP",
+        "models": {
+            "title": "Modèles",
+            "description": "Configurez les clés API des fournisseurs IA",
+            "apiKey": "Clé API",
+            "apiKeyPlaceholder": "sk-…",
+            "saveSuccess": "Configuration enregistrée",
+            "saveFailed": "Impossible d'enregistrer la configuration"
+        },
+        "mcp": {
+            "title": "Serveur MCP",
+            "description": "Le serveur Model Context Protocol permet aux outils externes (Cursor, Claude Desktop, etc.) d'interagir avec votre infrastructure Nexploy.",
+            "endpoint": "Point d'entrée MCP",
+            "endpointDescription": "Utilisez cette URL dans la configuration de votre client MCP.",
+            "generateKey": "Générer une clé API",
+            "keyNameLabel": "Nom de la clé",
+            "keyNamePlaceholder": "ex. Cursor, Claude Desktop…",
+            "generatedWarning": "Copiez cette clé maintenant — elle ne sera plus affichée.",
+            "copyKey": "Copier",
+            "noKeys": "Aucune clé API. Générez-en une pour connecter un client MCP externe.",
+            "keyName": "Clé",
+            "createdAt": "Créée le",
+            "expiresAt": "Expire le",
+            "never": "Jamais",
+            "revokeKey": "Révoquer",
+            "confirmRevoke": "Voulez-vous vraiment révoquer cette clé API ? Les outils externes l'utilisant perdront l'accès.",
+            "keyCreatedSuccess": "Clé API générée",
+            "keyRevokedSuccess": "Clé API révoquée",
+            "keyRevokedFailed": "Impossible de révoquer la clé API",
+            "keyCreatedFailed": "Impossible de générer la clé API"
+        }
+    },
     "commandGroups": {
         "navigation": "Navigation",
         "containers": "Conteneurs",
         "images": "Images",
         "volumes": "Volumes",
-        "stacks": "Stacks",
-        "repositories": "Dépôts",
-        "general": "Général"
-    },
-    "errors": {
-        "failedToProcess": "Impossible de traiter votre demande",
-        "tryAgain": "Veuillez réessayer"
+        "stacks": "Stacks"
     },
     "command": {
         "searchPlaceholder": "Tapez une commande ou recherchez...",
@@ -29,11 +57,87 @@
         "openTerminal": "Ouvrir le terminal"
     },
     "chat": {
-        "backToCommands": "Retour aux commandes",
+        "newChat": "Nouveau chat",
         "stopGenerating": "Arrêter la génération",
-        "helpMessage": "Comment puis-je vous aider avec votre infrastructure Docker aujourd'hui ?",
-        "helpExample": "Essayez : « Créer un conteneur redis nommé cache »",
-        "inputPlaceholder": "Décrivez ce que vous souhaitez faire...",
-        "thinking": "Réflexion..."
+        "inputPlaceholder": "Posez une question...",
+        "thinking": "Réflexion...",
+        "keyboardHint": "Entrée pour envoyer · Maj+Entrée pour nouvelle ligne",
+        "selectModel": "Sélectionner un modèle",
+        "modelSelector": {
+            "title": "Sélectionner un modèle",
+            "search": "Rechercher des modèles…",
+            "noResults": "Aucun modèle ne correspond à votre recherche.",
+            "loading": "Chargement des modèles…"
+        }
+    },
+    "context": {
+        "suggestions": {
+            "containers": {
+                "listStopped": "Lister les conteneurs arrêtés",
+                "createPostgres": "Créer un conteneur postgres",
+                "showLogs": "Voir les logs d'un conteneur",
+                "restartFailing": "Redémarrer les conteneurs en échec",
+                "cleanupStopped": "Supprimer tous les conteneurs arrêtés"
+            },
+            "images": {
+                "pullNginx": "Puller la dernière image nginx",
+                "pullPostgres": "Puller postgres:latest",
+                "listUnused": "Lister les images inutilisées",
+                "buildCustom": "Comment créer une image personnalisée ?"
+            },
+            "volumes": {
+                "createVolume": "Créer un nouveau volume",
+                "listVolumes": "Lister tous les volumes",
+                "inspectVolume": "Inspecter un volume"
+            },
+            "networks": {
+                "createBridge": "Créer un réseau bridge",
+                "listNetworks": "Lister tous les réseaux",
+                "connectContainer": "Connecter un conteneur à un réseau"
+            },
+            "repositories": {
+                "listRepos": "Lister tous mes dépôts",
+                "showFailed": "Quel dépôt a échoué récemment ?",
+                "triggerBuild": "Déclencher un build",
+                "showStatus": "Afficher le statut des déploiements"
+            },
+            "pipeline": {
+                "addLintStep": "Ajouter un test de lint avant le build",
+                "deployStaging": "Déployer uniquement sur staging",
+                "addNotification": "Ajouter une étape de notification Slack",
+                "createPreview": "Créer un environnement de preview",
+                "saveBuildLogs": "Sauvegarder les logs du build"
+            },
+            "repository": {
+                "triggerBuild": "Déclencher un nouveau build",
+                "showBuildLogs": "Voir les logs du dernier build",
+                "changeBranch": "Comment changer la branche de build ?",
+                "rollback": "Revenir à la version précédente",
+                "envVars": "Gérer les variables d'environnement"
+            },
+            "build": {
+                "showLogs": "Voir les logs du build",
+                "redeploy": "Redéployer ce build",
+                "debugFailed": "Pourquoi ce build a-t-il échoué ?",
+                "comparePrevious": "Comparer avec le build précédent"
+            },
+            "monitoring": {
+                "cpuUsage": "Afficher l'utilisation CPU",
+                "memoryUsage": "Afficher l'utilisation mémoire",
+                "logsAlert": "Configurer des alertes de logs"
+            },
+            "swarm": {
+                "listNodes": "Lister les nœuds du swarm",
+                "listServices": "Lister les services swarm",
+                "deployService": "Déployer un nouveau service"
+            },
+            "default": {
+                "listContainers": "Lister tous les conteneurs",
+                "listRepositories": "Lister les dépôts",
+                "showStopped": "Conteneurs arrêtés",
+                "listImages": "Lister les images",
+                "triggerBuild": "Déclencher un build"
+            }
+        }
     }
 }

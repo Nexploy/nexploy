@@ -16,5 +16,6 @@ export const onSwarmJoinAction = authActionServer
             if (err instanceof HTTPError) {
                 await setToastServer({ type: 'error', message: err.message as string });
             }
+            throw err;
         }
     });

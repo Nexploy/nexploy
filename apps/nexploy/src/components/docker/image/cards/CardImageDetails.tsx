@@ -34,7 +34,7 @@ export function CardImageDetails() {
                                 <div className="flex items-center gap-2">
                                     <code className="block truncate text-xs">{image.id}</code>
                                     <CopyButton
-                                        textToCopy={image.id}
+                                        text={image.id}
                                         className="size-6"
                                         size="icon"
                                         variant="ghost"

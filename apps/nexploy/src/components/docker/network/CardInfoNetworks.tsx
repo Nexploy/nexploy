@@ -68,7 +68,7 @@ export function CardInfoNetworks() {
                 ) : (
                     <Card key={index} className="flex flex-col justify-between gap-0 py-6">
                         <CardHeader className="flex flex-1 flex-row justify-between space-y-0">
-                            <CardTitle className="flex h-14 text-sm font-medium">
+                            <CardTitle className="h-14 truncate text-sm font-medium">
                                 {info.title}
                             </CardTitle>
                             <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
@@ -76,7 +76,7 @@ export function CardInfoNetworks() {
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-semibold">{info.content}</div>
+                            <div className="truncate text-2xl font-semibold">{info.content}</div>
                             <p className="text-muted-foreground truncate text-xs">
                                 {info.description}
                             </p>

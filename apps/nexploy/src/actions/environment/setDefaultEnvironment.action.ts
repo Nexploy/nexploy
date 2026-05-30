@@ -11,13 +11,13 @@ export const setDefaultEnvironmentAction = authActionServer
     .action(async ({ parsedInput }) => {
         try {
             return await setDefaultEnvironmentById(parsedInput.environmentId);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
+        } catch (err: unknown) {
+            if (err instanceof Error) {
                 await setToastServer({
                     type: 'error',
-                    message: error.message,
+                    message: err.message,
                 });
             }
-            throw error;
+            throw err;
         }
     });

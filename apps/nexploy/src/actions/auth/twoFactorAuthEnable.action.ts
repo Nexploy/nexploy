@@ -17,5 +17,6 @@ export const onTwoFactorAuthEnableAction = authActionServer
                     message: err.message,
                 });
             }
+            throw err;
         }
     });

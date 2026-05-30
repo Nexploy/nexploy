@@ -18,13 +18,13 @@ export const deleteBackupScheduleAction = authActionServer
                 data: { id: parsedInput.id },
             });
             revalidatePath('/admin/backups');
-        } catch (error: any) {
-            if (error instanceof Error) {
+        } catch (err: any) {
+            if (err instanceof Error) {
                 await setToastServer({
                     type: 'error',
-                    message: error.message,
+                    message: err.message,
                 });
             }
-            throw error;
+            throw err;
         }
     });

@@ -8,10 +8,6 @@ export const containerIdOrNameParamSchema = z.object({
     idOrName: z.string().min(1),
 });
 
-export const containerNameParamSchema = z.object({
-    name: z.string().min(1),
-});
-
 export const containerLogsQuerySchema = z.object({
     tail: z.string().optional(),
     since: z.string().optional(),
@@ -50,4 +46,23 @@ export const containerExecBodySchema = z.object({
         })
         .optional(),
     user: z.string().optional(),
+});
+
+export const mcpListContainersSchema = z.object({
+    filter: z.enum(['all', 'running', 'stopped']).optional(),
+});
+
+export const mcpContainerActionSchema = z.object({
+    idOrName: z.string().describe('Container name or ID (partial OK)'),
+    action: z.enum(['start', 'stop', 'restart', 'remove']),
+});
+
+export const mcpGetContainerLogsSchema = z.object({
+    idOrName: z.string().describe('Container name or ID'),
+    tail: z.number().optional().default(50).describe('Number of lines (default 50)'),
+});
+
+export const mcpExecInContainerSchema = z.object({
+    idOrName: z.string().describe('Container name or ID'),
+    command: z.string().describe('Shell command to run (e.g. "ls /app")'),
 });

@@ -25,3 +25,8 @@ export const deleteVersionSchema = z.object({
     imageTag: z.string(),
     repositoryId: z.cuid(),
 });
+
+export const mcpTriggerBuildSchema = z.object({
+    repositoryId: z.string().describe('Repository ID (use listRepositories to find it)'),
+    branch: z.string().optional().describe('Branch to build (uses default if omitted)'),
+});

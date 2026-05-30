@@ -37,7 +37,7 @@ export function CardNetworkDetails() {
                             <div className="flex items-center gap-2">
                                 <code className="block truncate text-xs">{n.id}</code>
                                 <CopyButton
-                                    textToCopy={n.id}
+                                    text={n.id}
                                     className="size-6"
                                     size="icon"
                                     variant="ghost"

@@ -104,7 +104,7 @@ export function ServiceDetailInfo() {
                                     </div>
                                     {field.hasCopy && (
                                         <CopyButton
-                                            textToCopy={field.copyText ?? ''}
+                                            text={field.copyText ?? ''}
                                             className="size-6 shrink-0"
                                             size="icon"
                                             variant="ghost"

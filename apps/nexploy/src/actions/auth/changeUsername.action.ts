@@ -10,11 +10,12 @@ export const onChangeUsernameAction = actionServer
     .action(async ({ parsedInput }) => {
         try {
             await changeUsername(parsedInput);
-        } catch (error: any) {
-            if (error instanceof Error) {
+        } catch (err: any) {
+            if (err instanceof Error) {
                 return returnValidationErrors(changeUsernameFormSchema, {
-                    _errors: [error.message],
+                    _errors: [err.message],
                 });
             }
+            throw err;
         }
     });

@@ -109,7 +109,7 @@ export function CardInfoDetail() {
                                     </div>
                                     {field.hasCopy && (
                                         <CopyButton
-                                            textToCopy={field.value as string}
+                                            text={field.value as string}
                                             className="size-6 shrink-0"
                                             size="icon"
                                             variant="ghost"

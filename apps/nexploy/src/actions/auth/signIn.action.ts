@@ -13,12 +13,13 @@ export const onSignInAction = actionServer
         try {
             await signInUser(email, password);
             redirect('/repositories', RedirectType.replace);
-        } catch (error: any) {
-            if (isRedirectError(error)) throw error;
-            if (error instanceof Error) {
+        } catch (err: any) {
+            if (isRedirectError(err)) throw err;
+            if (err instanceof Error) {
                 return returnValidationErrors(signInFormSchema, {
-                    _errors: [error.message],
+                    _errors: [err.message],
                 });
             }
+            throw err;
         }
     });

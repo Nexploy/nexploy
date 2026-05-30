@@ -10,13 +10,13 @@ export const twoFactorAuthVerifCodeAction = actionServer
     .action(async ({ parsedInput }) => {
         try {
             return await verifCode(parsedInput);
-        } catch (error: any) {
-            if (error instanceof Error) {
+        } catch (err: any) {
+            if (err instanceof Error) {
                 await setToastServer({
                     type: 'error',
-                    message: error.message,
+                    message: err.message,
                 });
             }
-            throw error;
+            throw err;
         }
     });

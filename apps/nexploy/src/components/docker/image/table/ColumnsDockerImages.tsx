@@ -99,7 +99,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                             />
                         </Button>
                         <Status
-                            className="max-w-full justify-start border-0 text-sm"
+                            className="justify-start border-0 text-sm"
                             status={containersUsed ? 'online' : 'offline'}
                             variant="outline"
                         >
@@ -115,8 +115,8 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                                     )}
                                 </TooltipContent>
                             </Tooltip>
-                            <StatusLabel className="min-w-0 truncate text-current">
-                                {nameJoin}
+                            <StatusLabel className="text-current">
+                                {nameJoin.slice(0, 20)}…
                             </StatusLabel>
                         </Status>
                     </div>
@@ -126,11 +126,11 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             return (
                 <Link
                     href={`/docker/images/${row.original.id}`}
-                    className="flex items-start gap-2 hover:opacity-80"
+                    className="flex items-start gap-2"
                     style={{ paddingLeft: depth > 0 ? `${depth * 24 + 8}px` : undefined }}
                 >
                     <Status
-                        className="max-w-full justify-start border-0 text-sm"
+                        className="justify-start border-0 text-sm"
                         status={containersUsed ? 'online' : 'offline'}
                         variant="outline"
                     >
@@ -147,7 +147,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                             </TooltipContent>
                         </Tooltip>
 
-                        <StatusLabel className="min-w-0 truncate text-current hover:underline">
+                        <StatusLabel className="text-current hover:underline">
                             {nameJoin}
                         </StatusLabel>
                     </Status>
@@ -171,19 +171,13 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             if (isGroup) {
                 const tags = row.original.tag || [];
                 return (
-                    <Badge variant="outline" className="max-w-full justify-start">
-                        <span className={'truncate'}>
-                            {tags.length} {t('versions')}
-                        </span>
+                    <Badge variant="outline">
+                        {tags.length} {t('versions')}
                     </Badge>
                 );
             }
             const tag = row.original.tag;
-            return (
-                <Badge variant="secondary" className="max-w-full justify-start">
-                    <span className={'truncate'}>{tag.join(' → ')}</span>
-                </Badge>
-            );
+            return <Badge variant="secondary">{tag.join(' → ')}</Badge>;
         },
     },
     {
@@ -195,11 +189,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                 return <span className="text-muted-foreground text-sm">—</span>;
             }
 
-            return (
-                <Badge variant={'secondary'} className={'max-w-full justify-start'}>
-                    <span className={'truncate'}>{row.original.id}</span>
-                </Badge>
-            );
+            return <Badge variant={'secondary'}>{row.original.id.slice(0, 20)}…</Badge>;
         },
     },
     {
@@ -217,7 +207,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             const created = row.original.created;
             const date = dayjs(created).format('DD/MM/YYYY');
 
-            return <div className="text-muted-foreground truncate">{date}</div>;
+            return <div className="text-muted-foreground">{date}</div>;
         },
     },
     {
@@ -233,7 +223,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
         ),
         cell: ({ row }) => {
             const size = row.original.size;
-            return <div className="truncate text-sm">{formatBytes(size)}</div>;
+            return <div className="text-sm">{formatBytes(size)}</div>;
         },
     },
     {

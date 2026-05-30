@@ -10,12 +10,13 @@ export const onTwoFactorAuthDisableAction = authActionServer
     .action(async ({ parsedInput }) => {
         try {
             return await disable2FA(parsedInput);
-        } catch (error: any) {
-            if (error instanceof Error) {
+        } catch (err: any) {
+            if (err instanceof Error) {
                 await setToastServer({
                     type: 'error',
-                    message: error.message,
+                    message: err.message,
                 });
             }
+            throw err;
         }
     });

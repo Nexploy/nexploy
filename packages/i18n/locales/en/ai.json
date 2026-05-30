@@ -1,16 +1,44 @@
 {
+    "admin": {
+        "title": "AI",
+        "description": "Configure AI integrations and external access to the MCP server",
+        "models": {
+            "title": "Models",
+            "description": "Configure AI provider API keys",
+            "apiKey": "API Key",
+            "apiKeyPlaceholder": "sk-…",
+            "saveSuccess": "Configuration saved",
+            "saveFailed": "Failed to save configuration"
+        },
+        "mcp": {
+            "title": "MCP Server",
+            "description": "The Model Context Protocol server lets external tools (Cursor, Claude Desktop, etc.) interact with your Nexploy infrastructure.",
+            "endpoint": "MCP Endpoint",
+            "endpointDescription": "Use this URL in your MCP client configuration.",
+            "generateKey": "Generate API Key",
+            "keyNameLabel": "Key name",
+            "keyNamePlaceholder": "e.g. Cursor, Claude Desktop…",
+            "generatedWarning": "Copy this key now — it will not be shown again.",
+            "copyKey": "Copy",
+            "noKeys": "No API keys yet. Generate one to connect an external MCP client.",
+            "keyName": "Key",
+            "createdAt": "Created",
+            "expiresAt": "Expires",
+            "never": "Never",
+            "revokeKey": "Revoke",
+            "confirmRevoke": "Are you sure you want to revoke this API key? External tools using it will lose access.",
+            "keyCreatedSuccess": "API key generated",
+            "keyRevokedSuccess": "API key revoked",
+            "keyRevokedFailed": "Failed to revoke API key",
+            "keyCreatedFailed": "Failed to generate API key"
+        }
+    },
     "commandGroups": {
         "navigation": "Navigation",
         "containers": "Containers",
         "images": "Images",
         "volumes": "Volumes",
-        "stacks": "Stacks",
-        "repositories": "Repositories",
-        "general": "General"
-    },
-    "errors": {
-        "failedToProcess": "Failed to process your request",
-        "tryAgain": "Please try again"
+        "stacks": "Stacks"
     },
     "command": {
         "searchPlaceholder": "Type a command or search...",
@@ -29,11 +57,87 @@
         "openTerminal": "Open terminal"
     },
     "chat": {
-        "backToCommands": "Back to Commands",
+        "newChat": "New chat",
         "stopGenerating": "Stop generating",
-        "helpMessage": "How can I help you with your Docker infrastructure today?",
-        "helpExample": "Try: \"Create a redis container named cache\"",
-        "inputPlaceholder": "Describe what you want to do...",
-        "thinking": "Thinking..."
+        "inputPlaceholder": "Ask anything...",
+        "thinking": "Thinking...",
+        "keyboardHint": "Enter to send · Shift+Enter for new line",
+        "selectModel": "Select model",
+        "modelSelector": {
+            "title": "Select a model",
+            "search": "Search models…",
+            "noResults": "No models match your search.",
+            "loading": "Loading models…"
+        }
+    },
+    "context": {
+        "suggestions": {
+            "containers": {
+                "listStopped": "List stopped containers",
+                "createPostgres": "Create a postgres container",
+                "showLogs": "Show container logs",
+                "restartFailing": "Restart failing containers",
+                "cleanupStopped": "Remove all stopped containers"
+            },
+            "images": {
+                "pullNginx": "Pull latest nginx image",
+                "pullPostgres": "Pull postgres:latest",
+                "listUnused": "List unused images",
+                "buildCustom": "How to build a custom image?"
+            },
+            "volumes": {
+                "createVolume": "Create a new volume",
+                "listVolumes": "List all volumes",
+                "inspectVolume": "Inspect a volume"
+            },
+            "networks": {
+                "createBridge": "Create a bridge network",
+                "listNetworks": "List all networks",
+                "connectContainer": "Connect a container to a network"
+            },
+            "repositories": {
+                "listRepos": "List all my repositories",
+                "showFailed": "Which repository failed recently?",
+                "triggerBuild": "Trigger a build",
+                "showStatus": "Show deployment status"
+            },
+            "pipeline": {
+                "addLintStep": "Add a lint step before the build",
+                "deployStaging": "Deploy only to staging",
+                "addNotification": "Add a Slack notification step",
+                "createPreview": "Create a preview environment",
+                "saveBuildLogs": "Save build logs"
+            },
+            "repository": {
+                "triggerBuild": "Trigger a new build",
+                "showBuildLogs": "Show last build logs",
+                "changeBranch": "How to change the build branch?",
+                "rollback": "Rollback to previous version",
+                "envVars": "Manage environment variables"
+            },
+            "build": {
+                "showLogs": "Show build logs",
+                "redeploy": "Redeploy this build",
+                "debugFailed": "Why did this build fail?",
+                "comparePrevious": "Compare with previous build"
+            },
+            "monitoring": {
+                "cpuUsage": "Show CPU usage",
+                "memoryUsage": "Show memory usage",
+                "logsAlert": "Set up log alerts"
+            },
+            "swarm": {
+                "listNodes": "List swarm nodes",
+                "listServices": "List swarm services",
+                "deployService": "Deploy a new service"
+            },
+            "default": {
+                "listContainers": "List all containers",
+                "listRepositories": "List repositories",
+                "showStopped": "Show stopped containers",
+                "listImages": "List images",
+                "triggerBuild": "Trigger a build"
+            }
+        }
     }
 }

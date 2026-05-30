@@ -13,13 +13,13 @@ export const disconnectCloudflareAction = authActionServer
         try {
             await removeCloudflareCredential(parsedInput.id);
             revalidatePath('/integrations');
-        } catch (error: any) {
-            if (error instanceof Error) {
+        } catch (err: any) {
+            if (err instanceof Error) {
                 await setToastServer({
                     type: 'error',
-                    message: error.message,
+                    message: err.message,
                 });
             }
-            throw error;
+            throw err;
         }
     });

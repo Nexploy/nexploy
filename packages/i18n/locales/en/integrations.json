@@ -4,17 +4,14 @@
     "gitProviders": "Git Providers",
     "cloudInfrastructure": "Cloud & Infrastructure",
     "github": {
-        "title": "GitHub",
-        "description": "Connect your GitHub account to deploy repositories"
+        "title": "GitHub"
     },
     "gitlab": {
-        "title": "GitLab",
-        "description": "Connect your GitLab account to deploy repositories"
+        "title": "GitLab"
     },
     "oauth": {
         "title": "Git Providers",
         "description": "Configure Git provider integrations so users can connect their repositories",
-        "providerDescription": "{provider} integration for repository access",
         "configured": "Configured",
         "notConfigured": "Not configured",
         "clientId": "Client ID",
@@ -33,20 +30,15 @@
         "deleteConfirmDescription": "Are you sure you want to remove \"{name}\"? This action cannot be undone.",
         "deleteConfirmAction": "Remove",
         "noProvidersAvailable": "No Git providers have been configured by the administrator yet.",
-        "connectFailed": "Failed to connect to the Git provider. Please try again.",
-        "stateExpired": "The connection request has expired. Please try again.",
         "connectedSuccess": "Git provider connected successfully.",
-        "disconnectedSuccess": "Git provider disconnected successfully.",
         "addGithub": "Add GitHub",
         "addGitlab": "Add GitLab",
         "instanceCount": "{count, plural, =0 {No instances} one {# instance} other {# instances}}",
-        "noInstances": "No instances configured",
         "guide": {
             "github": {
                 "manifestDescription": "Create a GitHub App to let users connect their repositories. The app will be automatically configured with the right permissions.",
                 "organization": "Install on an organization",
                 "organizationPlaceholder": "Organization name",
-                "existingApp": "Already have a GitHub App?",
                 "createApp": "Create GitHub App",
                 "permissionsTitle": "Permissions requested",
                 "permContents": "Contents: Read",
@@ -87,8 +79,7 @@
         "deleteConfirmDescription": "Are you sure you want to remove \"{name}\"? This action cannot be undone.",
         "deleteConfirmAction": "Remove",
         "configured": "Configured",
-        "instanceCount": "{count, plural, =0 {No accounts} one {# account} other {# accounts}}",
-        "verificationFailed": "Invalid AWS credentials. Check your Access Key ID, Secret Access Key, and region."
+        "instanceCount": "{count, plural, =0 {No accounts} one {# account} other {# accounts}}"
     },
     "cloudflare": {
         "title": "Cloudflare",
@@ -100,38 +91,22 @@
         "permissionZoneRead": "Zone.Zone: Read",
         "permissionDnsEdit": "Zone.DNS: Edit",
         "connectedSuccess": "Cloudflare account added successfully",
-        "disconnectedSuccess": "Cloudflare account removed",
         "addedSuccess": "Cloudflare account added successfully",
         "addFailed": "Failed to add Cloudflare account",
         "deletedSuccess": "Cloudflare account removed",
         "deleteConfirmTitle": "Remove Cloudflare account",
         "deleteConfirmDescription": "Are you sure you want to remove \"{name}\"? This action cannot be undone.",
         "deleteConfirmAction": "Remove",
-        "ipDetected": "IP detected: {ip}",
-        "ipDetectionFailed": "Automatic IP detection failed",
         "addTitle": "Add Cloudflare Account",
         "addDescription": "Enter your Cloudflare API Token with the following permissions:",
-        "connectTitle": "Add Cloudflare Account",
-        "connectDescription": "Enter your Cloudflare API Token with the following permissions:",
         "addAccount": "Add Account",
         "add": "Add",
         "configured": "Configured",
         "instanceCount": "{count, plural, =0 {No accounts} one {# account} other {# accounts}}",
-        "serverIp": "Server Public IP",
-        "serverIpPlaceholder": "xxx.xxx.xxx.xxx",
-        "serverIpDescription": "Used to create A-type DNS records",
-        "detect": "Detect",
         "connect": "Connect"
     },
     "connect": "Connect",
     "disconnect": "Disconnect",
     "connected": "Connected",
-    "notConnected": "Not connected",
-    "connecting": "Connecting...",
-    "disconnecting": "Disconnecting...",
-    "configure": "Configure",
-    "viewDetails": "View Details",
-    "lastSync": "Last sync",
-    "syncNow": "Sync Now",
-    "syncing": "Syncing..."
+    "connecting": "Connecting..."
 }

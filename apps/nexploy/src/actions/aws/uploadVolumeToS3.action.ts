@@ -22,13 +22,13 @@ export const uploadVolumeToS3Action = authActionServer
             const s3 = createS3Client(creds);
             await putS3Object(s3, bucket, objectKey, new Uint8Array(buffer), 'application/gzip');
             return { objectKey };
-        } catch (error: any) {
-            if (error instanceof Error) {
+        } catch (err: any) {
+            if (err instanceof Error) {
                 await setToastServer({
                     type: 'error',
-                    message: error.message,
+                    message: err.message,
                 });
             }
-            throw error;
+            throw err;
         }
     });

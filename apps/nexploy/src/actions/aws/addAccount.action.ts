@@ -16,13 +16,13 @@ export const addAwsAccountAction = authActionServer
             await verifyAwsCredentials({ accessKeyId, secretAccessKey, region });
             await saveAwsAccount(displayName, accessKeyId, secretAccessKey, region);
             revalidatePath('/admin/integrations');
-        } catch (error: any) {
-            if (error instanceof Error) {
+        } catch (err: any) {
+            if (err instanceof Error) {
                 await setToastServer({
                     type: 'error',
-                    message: error.message,
+                    message: err.message,
                 });
             }
-            throw error;
+            throw err;
         }
     });

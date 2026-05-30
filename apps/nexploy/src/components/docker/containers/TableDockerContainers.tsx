@@ -116,20 +116,12 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
             </div>
 
             <div className="bg-card overflow-hidden rounded-md border shadow-sm">
-                <Table className={'table-fixed'}>
+                <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((hg) => (
                             <TableRow key={hg.id}>
                                 {hg.headers.map((header) => (
-                                    <TableHead
-                                        key={header.id}
-                                        className="overflow-hidden"
-                                        style={
-                                            header.column.getSize() !== 150
-                                                ? { width: header.column.getSize() }
-                                                : undefined
-                                        }
-                                    >
+                                    <TableHead key={header.id}>
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(
@@ -185,7 +177,7 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
                                     data-state={row.getIsSelected() && 'selected'}
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id} className="overflow-hidden">
+                                        <TableCell key={cell.id}>
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext(),

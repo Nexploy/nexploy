@@ -56,7 +56,7 @@ export function CardVolumeDetails() {
                                         {volume.mountpoint}
                                     </code>
                                     <CopyButton
-                                        textToCopy={volume.mountpoint}
+                                        text={volume.mountpoint}
                                         className="size-6 shrink-0"
                                         size="icon"
                                         variant="ghost"
@@ -96,9 +96,7 @@ export function CardVolumeDetails() {
                                     {t('refCount')}
                                 </TableCell>
                                 <TableCell className="max-w-0 truncate">
-                                    <Badge variant="secondary">
-                                        {volume.usageData.RefCount}
-                                    </Badge>
+                                    <Badge variant="secondary">{volume.usageData.RefCount}</Badge>
                                 </TableCell>
                             </TableRow>
                         )}

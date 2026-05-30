@@ -11,8 +11,10 @@ import {
 import { Button } from '@workspace/ui/components/button';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { isValidElement } from 'react';
+import { useTranslations } from 'next-intl';
 
 export function AlertConfirmationDialog() {
+    const tCommon = useTranslations('common');
     const {
         isOpen,
         title,
@@ -26,6 +28,9 @@ export function AlertConfirmationDialog() {
         onCancel,
         closeAlertDialog,
     } = useAlertConfirmationDialogStore();
+
+    const resolvedCancelLabel = cancelLabel ?? tCommon('cancel');
+    const resolvedActionLabel = actionLabel ?? tCommon('confirm');
 
     return (
         <AlertDialog open={isOpen} onOpenChange={closeAlertDialog}>
@@ -56,7 +61,7 @@ export function AlertConfirmationDialog() {
                                 }
                             }}
                         >
-                            {cancelLabel}
+                            {resolvedCancelLabel}
                         </Button>
                     )}
                     {!disableActionButton && (
@@ -79,7 +84,7 @@ export function AlertConfirmationDialog() {
                                 }
                             }}
                         >
-                            {actionLabel}
+                            {resolvedActionLabel}
                         </Button>
                     )}
                 </AlertDialogFooter>

@@ -27,5 +27,6 @@ export const onInitSwarmAction = authActionServer
                     message: err.message as string,
                 });
             }
+            throw err;
         }
     });

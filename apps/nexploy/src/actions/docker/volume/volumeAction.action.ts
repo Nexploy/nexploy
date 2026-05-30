@@ -38,5 +38,6 @@ export const onVolumeAction = authActionServer
                 const body = await err.response.json<{ message: string }>();
                 await setToastServer({ type: 'error', message: body.message ?? err.message });
             }
+            throw err;
         }
     });

@@ -60,10 +60,10 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
             return (
                 <Link
                     href={`/docker/volumes/${encodeURIComponent(name)}`}
-                    className="flex items-start gap-2 hover:opacity-80"
+                    className="flex w-fit items-start gap-2"
                 >
                     <Status
-                        className={'max-w-full border-0 text-sm'}
+                        className={'border-0 text-sm'}
                         status={volumeUsed ? 'online' : 'offline'}
                         variant="outline"
                     >
@@ -76,9 +76,7 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
                             </TooltipContent>
                         </Tooltip>
 
-                        <StatusLabel className="truncate font-medium text-current hover:underline">
-                            {name}
-                        </StatusLabel>
+                        <StatusLabel className="text-current hover:underline">{name}</StatusLabel>
                     </Status>
                 </Link>
             );
@@ -98,8 +96,8 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
         cell: ({ row }) => {
             const driver = row.original.driver;
             return (
-                <Badge variant="secondary" className="max-w-full justify-start text-xs">
-                    <span className={'truncate'}>{driver}</span>
+                <Badge variant="secondary" className="text-xs">
+                    {driver}
                 </Badge>
             );
         },
@@ -109,11 +107,7 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
         header: t('mountpoint'),
         cell: ({ row }) => {
             const mountpoint = row.original.mountpoint;
-            return (
-                <div className="flex">
-                    <code className="text-muted-foreground truncate">{mountpoint}</code>
-                </div>
-            );
+            return <Badge variant={'secondary'}>{mountpoint.slice(0, 40)}…</Badge>;
         },
     },
     {
@@ -131,7 +125,7 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
             const createdAt = row.original.createdAt;
             const date = dayjs(createdAt).format('DD/MM/YYYY HH:mm');
 
-            return <div className="text-muted-foreground truncate">{date}</div>;
+            return <div className="text-muted-foreground">{date}</div>;
         },
     },
     {
@@ -149,7 +143,7 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
             const usageData = row.original.usageData;
             const size = usageData?.Size || 0;
 
-            return <div className="truncate">{formatBytes(size)}</div>;
+            return <div>{formatBytes(size)}</div>;
         },
     },
     {

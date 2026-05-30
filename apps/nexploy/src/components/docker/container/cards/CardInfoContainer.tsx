@@ -74,7 +74,7 @@ export function CardInfoContainer() {
             {containerInfoCards.map((info, index) => (
                 <Card key={index} className="flex flex-col justify-between gap-0 py-6">
                     <CardHeader className="flex flex-row justify-between space-y-0">
-                        <CardTitle className="flex h-14 text-sm font-medium">
+                        <CardTitle className="h-14 truncate text-sm font-medium">
                             {info.title}
                         </CardTitle>
                         <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">

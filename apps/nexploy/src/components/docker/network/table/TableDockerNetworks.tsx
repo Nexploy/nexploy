@@ -163,20 +163,12 @@ export function TableDockerNetworks() {
                 </div>
             </div>
             <div className="bg-card overflow-hidden rounded-md border shadow-sm">
-                <Table className={'table-fixed'}>
+                <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead
-                                        key={header.id}
-                                        className="overflow-hidden"
-                                        style={
-                                            header.column.getSize() !== 150
-                                                ? { width: header.column.getSize() }
-                                                : undefined
-                                        }
-                                    >
+                                    <TableHead key={header.id}>
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(

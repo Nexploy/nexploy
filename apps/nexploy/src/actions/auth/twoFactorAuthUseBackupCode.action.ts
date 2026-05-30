@@ -17,5 +17,6 @@ export const twoFactorAuthUseBackupCodeAction = actionServer
                     message: err.message,
                 });
             }
+            throw err;
         }
     });

@@ -1,0 +1,18 @@
+model AIConfig {
+  id String @id @default(cuid())
+
+  providers Provider
+  apiKey    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("ai_config")
+}
+
+enum Provider {
+  OPENAI
+  ANTHROPIC
+  GOOGLE
+  OPENROUTER
+}

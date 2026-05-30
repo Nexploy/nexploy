@@ -16,9 +16,7 @@ export const onGetTokenBuildIdAction = authActionServer
                 channel: `build:${buildId}`,
                 topics,
             });
-            // Inject the public nexploy URL so the browser WebSocket connects through
-            // nexploy's /v1/realtime/ proxy instead of trying to reach Inngest cloud.
-            return { ...token, app: { apiBaseUrl: process.env.BETTER_AUTH_URL } } as typeof token;
+            return { ...token, app: { apiBaseUrl: process.env.NEXPLOY_URL } };
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({
@@ -26,5 +24,6 @@ export const onGetTokenBuildIdAction = authActionServer
                     message: err.message as string,
                 });
             }
+            throw err;
         }
     });

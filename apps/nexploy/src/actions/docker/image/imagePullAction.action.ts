@@ -35,5 +35,6 @@ export const onImagePullAction = authActionServer
                     message: err.message as string,
                 });
             }
+            throw err;
         }
     });

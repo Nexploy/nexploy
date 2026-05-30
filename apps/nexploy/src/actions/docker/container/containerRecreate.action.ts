@@ -21,6 +21,6 @@ export const onContainerRecreateAction = authActionServer
                     message: err.message as string,
                 });
             }
-            return null;
+            throw err;
         }
     });

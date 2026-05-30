@@ -26,5 +26,6 @@ export const connectCloudflareAction = authActionServer
                     message: err.message as string,
                 });
             }
+            throw err;
         }
     });

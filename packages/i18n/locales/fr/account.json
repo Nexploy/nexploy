@@ -3,7 +3,6 @@
     "description": "Gérez votre profil utilisateur et préférences",
     "profile": "Profil",
     "security": "Sécurité",
-    "preferences": "Préférences",
     "profileInfo": {
         "title": "Informations du profil",
         "description": "Gérez vos informations personnelles et les détails de votre compte",
@@ -24,7 +23,6 @@
         "description": "Gérez la sécurité de votre compte et vos préférences d'authentification",
         "password": "Mot de passe",
         "passwordDescription": "Modifiez votre mot de passe pour sécuriser votre compte",
-        "lastChanged": "Modifié il y a {days} jours",
         "change": "Modifier"
     },
     "integrations": {
@@ -47,7 +45,6 @@
         "newPassword": "Nouveau mot de passe",
         "confirmPassword": "Confirmer le mot de passe",
         "changePassword": "Changer le mot de passe",
-        "changing": "Changement...",
         "passwordChanged": "Mot de passe changé avec succès",
         "changeFailed": "Échec du changement de mot de passe"
     },
@@ -66,36 +63,21 @@
         "disableTitle": "Désactiver l'authentification à deux facteurs",
         "disableDescription": "Êtes-vous sûr de vouloir désactiver l'authentification à deux facteurs ? Votre compte sera moins sécurisé.",
         "disableButton": "Désactiver la 2FA",
-        "enabling": "Activation...",
-        "disabling": "Désactivation...",
-        "scanQrCode": "Scannez ce QR code avec votre application d'authentification",
         "cantScan": "Impossible de scanner ? Vous pouvez entrer manuellement la clé secrète dans votre application",
         "verifTotp": "Vérification TOTP",
         "verifTotpDescription": "Scannez le QR code avec votre application d'authentification pour terminer la configuration.",
         "enterVerificationCode": "Entrez le code de vérification :",
-        "enterCode": "Entrez le code de vérification",
-        "codePlaceholder": "000000",
-        "verify": "Vérifier",
-        "verifying": "Vérification...",
         "backupCodes": "Codes de secours",
         "backupCodesDescription": "Conservez ces codes de secours dans un endroit sûr. Chaque code ne peut être utilisé qu'une seule fois.",
-        "regenerateBackupCodes": "Régénérer les codes de secours",
         "downloadCodes": "Télécharger les codes",
         "close": "Fermer",
         "useBackupCode": "Utiliser un code de secours",
-        "enterBackupCode": "Entrer le code de secours",
-        "backupCodePlaceholder": "XXXX-XXXX",
-        "enterPassword": "Entrez votre mot de passe",
         "password": "Mot de passe",
         "passwordPlaceholder": "Entrez votre mot de passe"
     },
     "alerts": {
-        "title": "Alertes et notifications",
         "dockerAlerts": "Alertes Docker",
-        "containerStatusChanges": "Changements de statut des conteneurs",
-        "buildNotifications": "Notifications de build",
-        "emailNotifications": "Notifications par email",
-        "enableEmailNotifications": "Activer les notifications par email"
+        "containerStatusChanges": "Changements de statut des conteneurs"
     },
     "language": {
         "title": "Langue",
@@ -113,24 +95,9 @@
         "title": "Zone de danger",
         "description": "Actions irréversibles et destructives",
         "signOut": "Se déconnecter",
-        "signOutDescription": "Terminer votre session actuelle et retourner à la page de connexion",
         "confirmSignOut": "Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à votre compte.",
         "logOut": "Déconnexion",
-        "clearAllSessions": "Effacer toutes les sessions",
-        "clearAllSessionsDescription": "Se déconnecter de tous les appareils sauf celui-ci",
         "clear": "Effacer",
-        "deleteAccount": "Supprimer le compte",
-        "deleteAccountDescription": "Supprimer définitivement votre compte et toutes les données associées",
-        "confirmDelete": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
-        "deleting": "Suppression..."
-    },
-    "sessions": {
-        "title": "Sessions actives",
-        "currentSession": "Session actuelle",
-        "lastActive": "Dernière activité",
-        "revokeSession": "Révoquer",
-        "revokeAllSessions": "Révoquer toutes les sessions",
-        "sessionRevoked": "Session révoquée",
-        "allSessionsRevoked": "Toutes les sessions révoquées"
+        "confirmDelete": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible."
     }
 }

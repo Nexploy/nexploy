@@ -49,7 +49,11 @@ export function RepositoryTabs({ children }: RepositoryTabsProps) {
             onValueChange={(value) => setTab(value as TabValue)}
             className="flex flex-1 flex-col overflow-hidden"
         >
-            <div className={'mx-5 flex flex-col justify-between gap-1 lg:flex-row lg:gap-2'}>
+            <div
+                className={
+                    'mx-5 flex flex-col flex-wrap justify-between gap-1 lg:flex-row lg:gap-2'
+                }
+            >
                 <div className={'flex gap-2'}>
                     <TabsList className="mb-2">
                         <TabsTrigger value="pipeline">

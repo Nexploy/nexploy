@@ -14,6 +14,7 @@ import { StackActionsCell } from './StackActionsCell';
 import { ContainersDropdownActions } from './ContainersDropdownActions';
 import { containerDisplayState } from '@/utils/containerDisplayState';
 import type { TranslationFunction } from '@workspace/typescript-interface/commun';
+import * as React from 'react';
 
 export function getColumnsDockerContainers(
     t: TranslationFunction,
@@ -78,7 +79,7 @@ export function getColumnsDockerContainers(
             cell: ({ row }) => {
                 if (row.original.isGroup) {
                     return (
-                        <div className="flex min-w-0 items-center gap-1.5">
+                        <div className="flex w-fit items-center gap-1.5">
                             <Button
                                 variant="ghost"
                                 size="icon"
@@ -95,7 +96,7 @@ export function getColumnsDockerContainers(
                             <div className="bg-primary/10 flex size-7 shrink-0 items-center justify-center rounded-md">
                                 <Layers className="text-primary size-4" />
                             </div>
-                            <span className="min-w-0 flex-1 truncate">
+                            <span className="max-w-40 flex-1 truncate">
                                 {row.original.stackName}
                             </span>
                             <Badge variant="secondary" className="shrink-0 text-xs">
@@ -109,7 +110,7 @@ export function getColumnsDockerContainers(
                         href={`/docker/containers/${row.original.id}`}
                         className="flex hover:underline"
                     >
-                        <span className="truncate">{row.original.name}</span>
+                        <span>{row.original.name}</span>
                     </Link>
                 );
             },
@@ -130,12 +131,12 @@ export function getColumnsDockerContainers(
                     const allRunning = row.original.runningCount === row.original.totalCount;
                     return (
                         <Status
-                            className="max-w-full justify-start overflow-hidden border-0 text-sm"
+                            className="justify-start border-0 text-sm"
                             status={allRunning ? 'online' : 'offline'}
                             variant="outline"
                         >
                             <StatusIndicator />
-                            <StatusLabel className="min-w-0 truncate text-sm">
+                            <StatusLabel className="text-sm">
                                 {allRunning ? tCommon('up') : tCommon('down')}
                             </StatusLabel>
                         </Status>
@@ -143,14 +144,12 @@ export function getColumnsDockerContainers(
                 }
                 return (
                     <Status
-                        className={'max-w-full justify-start border-0 text-sm'}
+                        className={'justify-start border-0 text-sm'}
                         status={containerDisplayState[row.original.state!] ?? 'offline'}
                         variant="outline"
                     >
                         <StatusIndicator />
-                        <StatusLabel className={'min-w-0 truncate text-sm'}>
-                            {row.original.status}
-                        </StatusLabel>
+                        <StatusLabel className={'text-sm'}>{row.original.status}</StatusLabel>
                     </Status>
                 );
             },
@@ -170,11 +169,7 @@ export function getColumnsDockerContainers(
                 if (row.original.isGroup) {
                     return <span className="text-muted-foreground text-sm">—</span>;
                 }
-                return (
-                    <Badge variant={'secondary'} className={'max-w-full justify-start'}>
-                        <span className={'truncate'}>{row.original.image}</span>
-                    </Badge>
-                );
+                return <Badge variant={'secondary'}>{row.original.image?.slice(0, 20)}…</Badge>;
             },
         },
         {
@@ -190,24 +185,17 @@ export function getColumnsDockerContainers(
                     return <span className="text-muted-foreground text-sm">—</span>;
                 }
                 return (
-                    <div className="flex flex-wrap gap-1 truncate">
+                    <div className="flex flex-wrap gap-1">
                         {ports.slice(0, 2).map((p, i) => (
-                            <Badge
-                                key={i}
-                                variant={'secondary'}
-                                className={'max-w-full justify-start'}
-                            >
-                                <code className={'truncate'}>
-                                    {p.publicPort !== 0 ? p.publicPort : '—'} → {p.privatePort}{' '}
+                            <Badge key={i} variant={'secondary'}>
+                                <code>
+                                    {p.publicPort !== 0 ? p.publicPort : '—'} → {p.privatePort}
                                 </code>
                             </Badge>
                         ))}
                         {ports.length > 2 && (
-                            <Badge
-                                variant="secondary"
-                                className={'max-w-full justify-start text-xs'}
-                            >
-                                <span className={'truncate'}>+{ports.length - 2}</span>
+                            <Badge variant="secondary" className="text-xs">
+                                +{ports.length - 2}
                             </Badge>
                         )}
                     </div>

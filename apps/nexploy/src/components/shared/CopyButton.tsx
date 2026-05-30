@@ -6,30 +6,18 @@ import { Button, buttonVariants } from '@workspace/ui/components/button';
 import { type VariantProps } from 'class-variance-authority';
 
 interface CopyButtonProps extends ComponentProps<'button'> {
-    textToCopy: string;
+    text: string;
 }
 
 export default function CopyButton({
-    textToCopy,
+    text,
     ...props
 }: CopyButtonProps & VariantProps<typeof buttonVariants>) {
     const [copied, setCopied] = useState(false);
 
     const handleCopy = async () => {
         try {
-            if (navigator.clipboard?.writeText) {
-                await navigator.clipboard.writeText(textToCopy);
-            } else {
-                const textarea = document.createElement('textarea');
-                textarea.value = textToCopy;
-                textarea.style.position = 'fixed';
-                textarea.style.opacity = '0';
-                document.body.appendChild(textarea);
-                textarea.focus();
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-            }
+            await navigator.clipboard.writeText(text);
             setCopied(true);
             setTimeout(() => {
                 setCopied(false);

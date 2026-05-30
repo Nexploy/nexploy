@@ -13,12 +13,13 @@ export const onSetupAction = actionServer
         try {
             await setupAdminAccount(parsedInput);
             redirect('/', RedirectType.replace);
-        } catch (error: any) {
-            if (isRedirectError(error)) throw error;
-            if (error instanceof Error) {
+        } catch (err: any) {
+            if (isRedirectError(err)) throw err;
+            if (err instanceof Error) {
                 return returnValidationErrors(setupFormSchema, {
-                    _errors: [error.message],
+                    _errors: [err.message],
                 });
             }
+            throw err;
         }
     });

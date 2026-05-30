@@ -13,6 +13,9 @@
         "check-types": "turbo run check-types"
     },
     "dependencies": {
+        "@ai-sdk/anthropic": "^3.0.81",
+        "@ai-sdk/google": "^3.0.80",
+        "@ai-sdk/mcp": "^1.0.44",
         "@ai-sdk/openai": "^3.0.29",
         "@ai-sdk/react": "^3.0.88",
         "@aws-sdk/client-s3": "^3.1045.0",
@@ -27,7 +30,9 @@
         "@hookform/resolvers": "^5.2.2",
         "@icons-pack/react-simple-icons": "^13.13.0",
         "@inngest/realtime": "^0.4.6",
+        "@modelcontextprotocol/sdk": "^1.29.0",
         "@next-safe-action/adapter-react-hook-form": "^2.0.0",
+        "@openrouter/ai-sdk-provider": "^2.9.0",
         "@prisma/adapter-pg": "^7.5.0",
         "@prisma/client": "^7.5.0",
         "@prisma/client-runtime-utils": "^7.5.0",

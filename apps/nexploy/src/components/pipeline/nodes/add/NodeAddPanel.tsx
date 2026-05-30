@@ -97,7 +97,7 @@ export function NodeAddPanel() {
         <div
             className={cn(
                 'bg-sidebar flex shrink-0 flex-col overflow-hidden transition-all duration-200',
-                open ? 'w-[20%] border-l' : 'w-0',
+                open ? 'w-[30%] border-l' : 'w-0',
             )}
         >
             <span className="border-b p-3 text-[10px] font-semibold tracking-widest uppercase">
@@ -189,7 +189,7 @@ export function NodeAddPanel() {
                                     onClick={() => openCategory(category)}
                                     className="border-border bg-card hover:bg-muted flex cursor-pointer items-center gap-2 rounded-lg border px-1.5 py-1.5 transition-all"
                                 >
-                                    <div className={'flex flex-1 items-center gap-2'}>
+                                    <div className={'flex min-w-0 flex-1 items-center gap-2'}>
                                         {(() => {
                                             const Icon = CATEGORY_ICONS[category] ?? Wrench;
                                             return (

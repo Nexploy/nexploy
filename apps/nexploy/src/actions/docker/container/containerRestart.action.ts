@@ -19,5 +19,6 @@ export const onContainerRestartAction = authActionServer
                     message: err.message as string,
                 });
             }
+            throw err;
         }
     });
