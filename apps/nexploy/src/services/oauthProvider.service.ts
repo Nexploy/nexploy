@@ -62,35 +62,6 @@ export async function getGitProvidersByType(provider: string): Promise<GitProvid
     }
 }
 
-export async function getGitProviderInfo(id: string): Promise<GitProviderInfo | null> {
-    try {
-        const record = await prisma.gitProvider.findUnique({
-            where: { id },
-            select: { id: true, displayName: true, clientId: true, appName: true, enabled: true },
-        });
-
-        if (!record || !record.enabled || !record.clientId) {
-            return null;
-        }
-
-        const decryptedClientId = decrypt(record.clientId);
-        const masked =
-            decryptedClientId.length > 8
-                ? decryptedClientId.slice(0, 4) + '...' + decryptedClientId.slice(-4)
-                : '****';
-
-        return {
-            id: record.id,
-            displayName: record.displayName,
-            isConfigured: true,
-            appName: record.appName ?? undefined,
-            maskedClientId: masked,
-        };
-    } catch (error: unknown) {
-        throw new Error('Failed to get git provider info');
-    }
-}
-
 export async function getAllGitProviders(): Promise<{
     github: GitProviderInfo[];
     gitlab: GitProviderInfo[];

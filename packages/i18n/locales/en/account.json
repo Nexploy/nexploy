@@ -76,8 +76,14 @@
         "passwordPlaceholder": "Enter your password"
     },
     "alerts": {
-        "dockerAlerts": "Docker Alerts",
-        "containerStatusChanges": "Container status changes"
+        "containerAlerts": "Container Alerts",
+        "containerStatusChanges": "Get notified when containers start, stop, or crash",
+        "imageAlerts": "Image Alerts",
+        "imageStatusChanges": "Get notified when images are pulled, built, or removed",
+        "volumeAlerts": "Volume Alerts",
+        "volumeStatusChanges": "Get notified when volumes are created or deleted",
+        "buildAlerts": "Build Alerts",
+        "buildStatusChanges": "Get notified when builds complete or fail"
     },
     "language": {
         "title": "Language",

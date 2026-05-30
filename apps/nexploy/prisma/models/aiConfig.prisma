@@ -15,4 +15,8 @@ enum Provider {
   ANTHROPIC
   GOOGLE
   OPENROUTER
+  MISTRAL
+  GROQ
+  PERPLEXITY
+  GROK
 }

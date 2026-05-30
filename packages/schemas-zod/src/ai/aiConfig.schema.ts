@@ -1,8 +1,17 @@
 import { z } from 'zod';
 
-export const providerSchema = z.enum(['OPENAI', 'ANTHROPIC', 'GOOGLE', 'OPENROUTER']);
+export const providerSchema = z.enum([
+    'OPENAI',
+    'ANTHROPIC',
+    'GOOGLE',
+    'OPENROUTER',
+    'MISTRAL',
+    'GROQ',
+    'PERPLEXITY',
+    'GROK',
+]);
 
-export const upsertProviderApiKeySchema = z.object({
+export const addProviderApiKeySchema = z.object({
     provider: providerSchema,
-    apiKey: z.string().min(1).nullable(),
+    apiKey: z.string().min(1),
 });

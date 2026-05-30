@@ -1,15 +1,15 @@
 'use server';
 
 import { authActionServer } from '@/lib/api/safe-action';
-import { upsertProviderApiKeySchema } from '@workspace/schemas-zod/ai/aiConfig.schema';
-import { upsertProviderApiKey } from '@/services/aiConfig.service';
+import { addProviderApiKeySchema } from '@workspace/schemas-zod/ai/aiConfig.schema';
+import { addProviderApiKey } from '@/services/aiConfig.service';
 import { setToastServer } from '@/lib/toastServer.ts';
 
-export const updateAiConfigAction = authActionServer
-    .inputSchema(upsertProviderApiKeySchema)
+export const addAiConfigAction = authActionServer
+    .inputSchema(addProviderApiKeySchema)
     .action(async ({ parsedInput }) => {
         try {
-            return await upsertProviderApiKey(parsedInput.provider, parsedInput.apiKey);
+            return await addProviderApiKey(parsedInput.provider, parsedInput.apiKey);
         } catch (err: any) {
             if (err instanceof Error) {
                 await setToastServer({

@@ -76,8 +76,14 @@
         "passwordPlaceholder": "Entrez votre mot de passe"
     },
     "alerts": {
-        "dockerAlerts": "Alertes Docker",
-        "containerStatusChanges": "Changements de statut des conteneurs"
+        "containerAlerts": "Alertes conteneurs",
+        "containerStatusChanges": "Recevoir une notification quand les conteneurs démarrent, s'arrêtent ou plantent",
+        "imageAlerts": "Alertes images",
+        "imageStatusChanges": "Recevoir une notification quand des images sont téléchargées, construites ou supprimées",
+        "volumeAlerts": "Alertes volumes",
+        "volumeStatusChanges": "Recevoir une notification quand des volumes sont créés ou supprimés",
+        "buildAlerts": "Alertes builds",
+        "buildStatusChanges": "Recevoir une notification quand les builds se terminent ou échouent"
     },
     "language": {
         "title": "Langue",

@@ -53,9 +53,6 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.68.0(react@19.2.3))
-      '@icons-pack/react-simple-icons':
-        specifier: ^13.13.0
-        version: 13.13.0(react@19.2.3)
       '@inngest/realtime':
         specifier: ^0.4.6
         version: 0.4.6(@opentelemetry/core@2.2.0(@opentelemetry/api@1.9.0))(encoding@0.1.13)(express@5.2.1)(hono@4.12.14)(next@16.2.3(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@5.9.3)(zod@4.3.6)
@@ -146,6 +143,9 @@ importers:
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@thesvg/react':
+        specifier: ^3.0.10
+        version: 3.0.10(react@19.2.3)
       '@types/byline':
         specifier: ^4.2.36
         version: 4.2.36
@@ -1481,12 +1481,6 @@ packages:
   '@humanwhocodes/retry@0.4.3':
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
-
-  '@icons-pack/react-simple-icons@13.13.0':
-    resolution: {integrity: sha512-B5HhQMIpcSH4z8IZ8HFhD59CboHceKYMpPC9kAwGyKntvPdyJJv26DLu4Z1wAjcCLyrJhf11tMhiQGom9Rxb9g==}
-    engines: {node: '>=24', pnpm: '>=10'}
-    peerDependencies:
-      react: ^16.13 || ^17 || ^18 || ^19
 
   '@img/colour@1.0.0':
     resolution: {integrity: sha512-A5P/LfWGFSl6nsckYtjw9da+19jB8hkJ6ACTGcDfEJ0aE+l2n2El7dsVM7UVHZQ9s2lmYMWlrS21YLy2IR1LUw==}
@@ -3890,6 +3884,12 @@ packages:
   '@tanstack/table-core@8.21.3':
     resolution: {integrity: sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==}
     engines: {node: '>=12'}
+
+  '@thesvg/react@3.0.10':
+    resolution: {integrity: sha512-k/yVStPwcX18N0l65fnTCVEWkfyMWNX6Qx5mKmQ4zm+oVl3D934T43+dlvOMAPDUoKaDoH+2hFOM5Oc8mfpuMg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      react: '>=18'
 
   '@traceloop/ai-semantic-conventions@0.20.0':
     resolution: {integrity: sha512-bvivhZU6U8TW4TKktYnjdTi+7GE4WxI8epaGjawalSKDunmxaA+4UVFQ+4tSCBvp2Scby+gnYNaTZSrtABfOlQ==}
@@ -8478,10 +8478,6 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@icons-pack/react-simple-icons@13.13.0(react@19.2.3)':
-    dependencies:
-      react: 19.2.3
-
   '@img/colour@1.0.0':
     optional: true
 
@@ -11070,6 +11066,10 @@ snapshots:
       react-dom: 19.2.3(react@19.2.3)
 
   '@tanstack/table-core@8.21.3': {}
+
+  '@thesvg/react@3.0.10(react@19.2.3)':
+    dependencies:
+      react: 19.2.3
 
   '@traceloop/ai-semantic-conventions@0.20.0':
     dependencies:

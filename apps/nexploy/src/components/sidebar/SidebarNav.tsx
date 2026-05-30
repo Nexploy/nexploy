@@ -83,8 +83,8 @@ const groups: SidebarNavGroup[] = [
                 href: '/admin/ai',
                 icon: Bot,
                 children: [
-                    { titleKey: 'mcp', icon: Network, href: '/admin/ai' },
                     { titleKey: 'models', icon: Cpu, href: '/admin/ai/models' },
+                    { titleKey: 'mcp', icon: Network, href: '/admin/ai' },
                 ],
             },
             { titleKey: 'backups', href: '/admin/backups', icon: Database },

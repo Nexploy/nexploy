@@ -1,15 +1,23 @@
-/** Prisma enum values */
-export type Provider = 'OPENAI' | 'ANTHROPIC' | 'GOOGLE' | 'OPENROUTER';
+export type Provider =
+    | 'OPENAI'
+    | 'ANTHROPIC'
+    | 'GOOGLE'
+    | 'OPENROUTER'
+    | 'MISTRAL'
+    | 'GROQ'
+    | 'PERPLEXITY'
+    | 'GROK';
 
-/** Lowercase alias used in URL params and chat body */
-export type AIProvider = 'openai' | 'anthropic' | 'google' | 'openrouter';
-
-export interface AIConfigRow {
-    id: string;
-    providers: Provider;
-    apiKey: string | null; // decrypted
-    createdAt: Date;
-    updatedAt: Date;
+export interface ProviderCardConfig {
+    provider: Provider;
+    label: string;
+    color: string;
+    icon: {
+        fileName: string;
+        className?: string;
+    };
+    hasKey: boolean;
+    keyUrl: string;
 }
 
 export interface ModelOption {
@@ -18,17 +26,7 @@ export interface ModelOption {
 }
 
 export interface SelectedModel {
-    provider: AIProvider;
+    provider: Provider;
     modelId: string;
     label: string;
-}
-
-export type Capability = 'vision' | 'tools' | 'fast' | 'web';
-
-export function toProvider(param: AIProvider): Provider {
-    return param.toUpperCase() as Provider;
-}
-
-export function toAIProvider(provider: Provider): AIProvider {
-    return provider.toLowerCase() as AIProvider;
 }

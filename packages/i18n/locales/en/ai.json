@@ -7,8 +7,17 @@
             "description": "Configure AI provider API keys",
             "apiKey": "API Key",
             "apiKeyPlaceholder": "sk-…",
+            "statusConfigured": "Configured",
+            "statusNotConfigured": "Not configured",
+            "changeKey": "Change key",
+            "getApiKey": "Get API key",
             "saveSuccess": "Configuration saved",
-            "saveFailed": "Failed to save configuration"
+            "saveFailed": "Failed to save configuration",
+            "deleteSuccess": "API key deleted",
+            "deleteFailed": "Failed to delete API key",
+            "deleteConfirmTitle": "Delete API key",
+            "deleteConfirmDescription": "Are you sure you want to delete the {provider} API key? This action cannot be undone.",
+            "deleteConfirmAction": "Delete"
         },
         "mcp": {
             "title": "MCP Server",

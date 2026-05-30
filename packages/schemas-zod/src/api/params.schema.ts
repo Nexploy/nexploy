@@ -23,3 +23,16 @@ export const buildNodeParamSchema = z.object({
     buildId: z.string().min(1),
     nodeId: z.string().min(1),
 });
+
+export const providerParamSchema = z.object({
+    provider: z.enum([
+        'OPENAI',
+        'ANTHROPIC',
+        'GOOGLE',
+        'OPENROUTER',
+        'MISTRAL',
+        'GROQ',
+        'PERPLEXITY',
+        'GROK',
+    ]),
+});

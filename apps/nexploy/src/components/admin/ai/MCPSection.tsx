@@ -4,14 +4,13 @@ import { useRouter } from 'next/navigation';
 import { useAction } from 'next-safe-action/hooks';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
-import { Copy } from 'lucide-react';
-import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Separator } from '@workspace/ui/components/separator';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { deleteMcpApiKeyAction } from '@/actions/admin/ai/deleteMcpApiKey.action.ts';
 import { MCPKeyCard } from '@/components/admin/ai/MCPKeyCard.tsx';
 import type { McpApiKey } from '@workspace/typescript-interface/ai/mcpApiKey';
+import CopyButton from '@/components/shared/CopyButton.tsx';
 
 interface MCPSectionProps {
     mcpUrl: string;
@@ -49,15 +48,9 @@ export function MCPSection({ mcpUrl, keys }: MCPSectionProps) {
                     </span>
                 </div>
                 <Separator />
-                <div className="flex gap-2 p-4">
-                    <Input readOnly value={mcpUrl} className="font-mono text-sm" />
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        icon={Copy}
-                        title={t('copyKey')}
-                        onClick={() => navigator.clipboard.writeText(mcpUrl)}
-                    />
+                <div className="bg-muted/40 flex gap-2 p-4">
+                    <Input readOnly value={mcpUrl} className="font-mono" />
+                    <CopyButton variant="outline" size="icon" text={mcpUrl} />
                 </div>
             </div>
 

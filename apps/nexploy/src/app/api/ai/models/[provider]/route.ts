@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { authRouteServer, route } from '@/lib/api/nextRoute';
 import { getProviderApiKey } from '@/services/aiConfig.service';
 import type { ModelOption } from '@workspace/typescript-interface/ai/aiConfig';
+import { providerParamSchema } from '@workspace/schemas-zod/api/params.schema';
 
 async function fetchOpenAIModels(apiKey: string): Promise<ModelOption[]> {
     const res = await fetch('https://api.openai.com/v1/models', {
@@ -60,38 +61,97 @@ async function fetchOpenRouterModels(apiKey: string): Promise<ModelOption[]> {
     }));
 }
 
-export const GET = route.use(authRouteServer).handler(async (_req, { params }) => {
-    const { provider } = await (params as Promise<{ provider: string }>);
-    const providerUpper = provider.toUpperCase() as
-        | 'OPENAI'
-        | 'ANTHROPIC'
-        | 'GOOGLE'
-        | 'OPENROUTER';
+async function fetchMistralModels(apiKey: string): Promise<ModelOption[]> {
+    const res = await fetch('https://api.mistral.ai/v1/models', {
+        headers: { Authorization: `Bearer ${apiKey}` },
+        next: { revalidate: 3600 },
+    });
+    if (!res.ok) throw new Error(`Mistral: ${res.status}`);
+    const json = await res.json();
+    return (json.data as { id: string }[])
+        .filter(({ id }) => !id.includes('embed'))
+        .sort((a, b) => a.id.localeCompare(b.id))
+        .map(({ id }) => ({ value: id, label: id }));
+}
 
-    const apiKey = await getProviderApiKey(providerUpper);
-    if (!apiKey) return NextResponse.json({ models: [] });
+async function fetchGroqModels(apiKey: string): Promise<ModelOption[]> {
+    const res = await fetch('https://api.groq.com/openai/v1/models', {
+        headers: { Authorization: `Bearer ${apiKey}` },
+        next: { revalidate: 3600 },
+    });
+    if (!res.ok) throw new Error(`Groq: ${res.status}`);
+    const json = await res.json();
+    return (json.data as { id: string }[])
+        .sort((a, b) => a.id.localeCompare(b.id))
+        .map(({ id }) => ({ value: id, label: id }));
+}
 
-    try {
-        let models: ModelOption[] = [];
-        switch (provider) {
-            case 'openai':
-                models = await fetchOpenAIModels(apiKey);
-                break;
-            case 'anthropic':
-                models = await fetchAnthropicModels(apiKey);
-                break;
-            case 'google':
-                models = await fetchGoogleModels(apiKey);
-                break;
-            case 'openrouter':
-                models = await fetchOpenRouterModels(apiKey);
-                break;
-            default:
-                return NextResponse.json({ error: 'Unknown provider' }, { status: 400 });
+async function fetchPerplexityModels(apiKey: string): Promise<ModelOption[]> {
+    const res = await fetch('https://api.perplexity.ai/models', {
+        headers: { Authorization: `Bearer ${apiKey}` },
+        next: { revalidate: 3600 },
+    });
+    if (!res.ok) throw new Error(`Perplexity: ${res.status}`);
+    const json = await res.json();
+    return (json.data as { id: string }[])
+        .sort((a, b) => a.id.localeCompare(b.id))
+        .map(({ id }) => ({ value: id, label: id }));
+}
+
+async function fetchGrokModels(apiKey: string): Promise<ModelOption[]> {
+    const res = await fetch('https://api.x.ai/v1/models', {
+        headers: { Authorization: `Bearer ${apiKey}` },
+        next: { revalidate: 3600 },
+    });
+    if (!res.ok) throw new Error(`Grok: ${res.status}`);
+    const json = await res.json();
+    return (json.data as { id: string }[])
+        .sort((a, b) => a.id.localeCompare(b.id))
+        .map(({ id }) => ({ value: id, label: id }));
+}
+
+export const GET = route
+    .use(authRouteServer)
+    .params(providerParamSchema)
+    .handler(async (_req, { params }) => {
+        const { provider } = params;
+
+        const apiKey = await getProviderApiKey(provider);
+        if (!apiKey) return NextResponse.json({ models: [] });
+
+        try {
+            let models: ModelOption[] = [];
+            switch (provider) {
+                case 'OPENAI':
+                    models = await fetchOpenAIModels(apiKey);
+                    break;
+                case 'ANTHROPIC':
+                    models = await fetchAnthropicModels(apiKey);
+                    break;
+                case 'GOOGLE':
+                    models = await fetchGoogleModels(apiKey);
+                    break;
+                case 'OPENROUTER':
+                    models = await fetchOpenRouterModels(apiKey);
+                    break;
+                case 'MISTRAL':
+                    models = await fetchMistralModels(apiKey);
+                    break;
+                case 'GROQ':
+                    models = await fetchGroqModels(apiKey);
+                    break;
+                case 'PERPLEXITY':
+                    models = await fetchPerplexityModels(apiKey);
+                    break;
+                case 'GROK':
+                    models = await fetchGrokModels(apiKey);
+                    break;
+                default:
+                    return NextResponse.json({ error: 'Unknown provider' }, { status: 400 });
+            }
+            return NextResponse.json({ models });
+        } catch (err) {
+            const message = err instanceof Error ? err.message : 'Unknown error';
+            return NextResponse.json({ error: message, models: [] }, { status: 502 });
         }
-        return NextResponse.json({ models });
-    } catch (err) {
-        const message = err instanceof Error ? err.message : 'Unknown error';
-        return NextResponse.json({ error: message, models: [] }, { status: 502 });
-    }
-});
+    });

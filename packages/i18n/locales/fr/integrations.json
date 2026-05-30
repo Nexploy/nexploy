@@ -4,10 +4,12 @@
     "gitProviders": "Fournisseurs Git",
     "cloudInfrastructure": "Cloud & Infrastructure",
     "github": {
-        "title": "GitHub"
+        "title": "GitHub",
+        "description": "Connectez votre compte GitHub pour déployer des dépôts"
     },
     "gitlab": {
-        "title": "GitLab"
+        "title": "GitLab",
+        "description": "Connectez votre compte GitLab pour déployer des dépôts"
     },
     "oauth": {
         "title": "Fournisseurs Git",

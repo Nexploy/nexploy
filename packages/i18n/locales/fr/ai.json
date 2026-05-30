@@ -7,8 +7,17 @@
             "description": "Configurez les clés API des fournisseurs IA",
             "apiKey": "Clé API",
             "apiKeyPlaceholder": "sk-…",
+            "statusConfigured": "Configuré",
+            "statusNotConfigured": "Non configuré",
+            "changeKey": "Changer la clé",
+            "getApiKey": "Obtenir une clé API",
             "saveSuccess": "Configuration enregistrée",
-            "saveFailed": "Impossible d'enregistrer la configuration"
+            "saveFailed": "Impossible d'enregistrer la configuration",
+            "deleteSuccess": "Clé API supprimée",
+            "deleteFailed": "Impossible de supprimer la clé API",
+            "deleteConfirmTitle": "Supprimer la clé API",
+            "deleteConfirmDescription": "Êtes-vous sûr de vouloir supprimer la clé API {provider} ? Cette action est irréversible.",
+            "deleteConfirmAction": "Supprimer"
         },
         "mcp": {
             "title": "Serveur MCP",

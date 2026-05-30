@@ -3,7 +3,7 @@ import { Bell, Globe, Plug, Shield } from 'lucide-react';
 import { TwoFactorAuth } from '@/components/account/2fa/TwoFactorAuth';
 import { ProfileInfoForm } from '@/components/account/2fa/forms/ProfileInfoForm';
 import { LanguageSwitcher } from '@/components/account/LanguageSwitcher';
-import { NotificationSwitch } from '@/components/account/NotificationSwitch';
+import { NotificationPreferences } from '@/components/account/NotificationPreferences';
 import { ChangePassword } from '@/components/account/ChangePassword';
 import { getUserSession } from '@/services/auth/auth.service';
 import { Label } from '@workspace/ui/components/label';
@@ -51,10 +51,7 @@ export async function AccountDetailsSection() {
                     description={t('notifications.description')}
                 />
                 <CardContent className="space-y-4">
-                    <NotificationSwitch
-                        label={t('alerts.dockerAlerts')}
-                        description={t('alerts.containerStatusChanges')}
-                    />
+                    <NotificationPreferences />
                 </CardContent>
             </Card>
 

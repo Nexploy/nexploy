@@ -1,6 +1,6 @@
 export interface GitAccountSummary {
     id: string;
-    provider: string;
+    provider: 'github' | 'gitlab';
     providerAccountId: string;
     providerUsername: string | null;
     gitProviderId: string;
