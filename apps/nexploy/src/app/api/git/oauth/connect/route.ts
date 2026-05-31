@@ -37,10 +37,10 @@ export const GET = route
 
             let authUrl: string;
 
-            if (gitProvider.provider === 'github') {
+            if (gitProvider.provider === 'GITHUB') {
                 const params = new URLSearchParams({ state });
                 authUrl = `${gitProvider.baseUrl}/apps/${gitProvider.appName}/installations/new?${params.toString()}`;
-            } else {
+            } else if (gitProvider.provider === 'GITLAB') {
                 const params = new URLSearchParams({
                     client_id: clientId,
                     redirect_uri: redirectUri,
@@ -49,6 +49,8 @@ export const GET = route
                     scope: 'api read_api read_repository',
                 });
                 authUrl = `${gitProvider.baseUrl}/oauth/authorize?${params.toString()}`;
+            } else {
+                return NextResponse.json({ error: 'Unsupported provider' }, { status: 400 });
             }
 
             return NextResponse.redirect(authUrl);

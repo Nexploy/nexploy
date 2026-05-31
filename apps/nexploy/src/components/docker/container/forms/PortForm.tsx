@@ -49,8 +49,6 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
     const onSubmit = (data: ContainerPortForm) => {
         const { publicPort, privatePort, type } = containerPortSchema.parse(data);
 
-        console.log(publicPort, privatePort, type);
-
         if (mode === 'add') {
             onPortChange({
                 typeAction: 'add',

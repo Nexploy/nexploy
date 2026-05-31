@@ -6,7 +6,6 @@ import { RepositoryDomainsTab } from '@/components/repositories/tabs/domains/Rep
 import { RepositorySettingsTab } from '@/components/repositories/tabs/settings/RepositorySettingsTab';
 import { RepositoryVersionsTab } from '@/components/repositories/tabs/versions/RepositoryVersionsTab';
 import { ExternalLink } from 'lucide-react';
-import { getGitIcon } from '@/utils/getGitIcon';
 import { RepositoryBuildsTab } from '@/components/repositories/tabs/builds/RepositoryBuildsTab';
 import { RepositoryPipelineTab } from '@/components/repositories/tabs/pipeline/RepositoryPipelineTab';
 import { getRepositorieById } from '@/services/repository.service';
@@ -16,6 +15,7 @@ import Link from 'next/link';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
 import { Separator } from '@workspace/ui/components/separator';
 import { ReassociateGitAccountDialog } from '@/components/repositories/reassociateGitAccount/ReassociateGitAccountDialog';
+import { PROVIDER_ICONS } from '@/components/git/providerIcons.tsx';
 
 interface RepositoryIdPageProps {
     params: Promise<{
@@ -31,7 +31,7 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
     if (!repository) notFound();
 
     const hostname = getHostname(repository.gitAccount?.gitProvider?.baseUrl);
-    const GitIcon = getGitIcon(repository.gitProvider);
+    const ProviderIcon = PROVIDER_ICONS[repository.gitProvider];
 
     return (
         <BreadcrumbProvider segments={{ repositoryId: repository.name }}>
@@ -45,7 +45,7 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                     <div className="flex items-start justify-between gap-2 px-5">
                         <div className="flex gap-3">
                             <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                                <GitIcon className="text-primary size-7" />
+                                <ProviderIcon className="[&_path]:fill-primary size-7" />
                             </div>
                             <div className="mt-3.5 flex flex-col">
                                 <Link

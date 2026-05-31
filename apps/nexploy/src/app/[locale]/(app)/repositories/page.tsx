@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
-import { Folder, FolderGit2 } from 'lucide-react';
-import { getGitIcon } from '@/utils/getGitIcon';
+import { FolderGit2 } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import {
     Empty,
@@ -25,6 +24,7 @@ import { getTranslations } from 'next-intl/server';
 import { capitalizeFirstLetter } from '@/utils/capitalize';
 import { getHostname } from '@/utils/url';
 import { Separator } from '@workspace/ui/components/separator';
+import { PROVIDER_ICONS } from '@/components/git/providerIcons.tsx';
 
 export const metadata: Metadata = {
     title: 'Repositories',
@@ -57,7 +57,7 @@ export default async function RepositoriesPage() {
                             <Empty className={'mt-24'}>
                                 <EmptyHeader>
                                     <EmptyMedia variant="icon" className="bg-primary/10">
-                                        <Folder className="text-primary" />
+                                        <FolderGit2 className="text-primary" />
                                     </EmptyMedia>
                                     <EmptyTitle>{t('noRepositories')}</EmptyTitle>
                                     <EmptyDescription>
@@ -69,7 +69,7 @@ export default async function RepositoriesPage() {
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
                                 {repositories.map((repository) => {
                                     const lastDeployment = repository.build?.[0];
-                                    const Icon = getGitIcon(repository.gitProvider);
+                                    const ProviderIcon = PROVIDER_ICONS[repository.gitProvider];
 
                                     const hostname = getHostname(
                                         repository.gitAccount?.gitProvider?.baseUrl,
@@ -84,7 +84,7 @@ export default async function RepositoriesPage() {
                                                 <CardHeader className="flex flex-row items-start justify-between px-4">
                                                     <div className="flex w-full items-center gap-3">
                                                         <div className="bg-secondary/50 text-secondary-foreground ring-border group-hover:bg-primary/10 group-hover:text-primary group-has-[button:hover]:bg-secondary/50 group-has-[button:hover]:text-secondary-foreground mt-4 flex size-10 items-center justify-center rounded-full ring-1 transition-colors">
-                                                            <Icon className="size-5" />
+                                                            <ProviderIcon className="size-5 [&_path]:fill-current" />
                                                         </div>
                                                         <div className="mt-3 flex min-w-0 flex-1 flex-col">
                                                             <CardTitle className="truncate text-base font-semibold">

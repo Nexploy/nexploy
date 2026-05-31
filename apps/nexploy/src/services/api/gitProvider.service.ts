@@ -7,15 +7,13 @@ import { GitLabCommit, GitProviderToken } from '@workspace/typescript-interface/
 import { kyGitlab } from '@/lib/api/kyGitlab';
 import dayjs from 'dayjs';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
-import {
-    getGitProviderCredentials,
-    getGitProviderCredentialsByAccountId,
-} from '@/services/oauthProvider.service';
+import { getGitProviderCredentials } from '@/services/oauthProvider.service';
 import { githubGetCommit, githubRefreshAccessToken } from '@/lib/api/github.api';
+import { GitProviderType } from 'generated/client';
 
 export async function getValidToken(
     token: GitProviderToken,
-    provider: string,
+    provider: GitProviderType,
     userId: string,
     gitAccountId?: string,
 ): Promise<GitProviderToken> {
@@ -25,9 +23,9 @@ export async function getValidToken(
 
     if (dayjs(token.accessTokenExpiresAt).isBefore(dayjs())) {
         try {
-            if (provider === 'gitlab') {
+            if (provider === 'GITLAB') {
                 return await refreshGitLabToken(token, userId, gitAccountId);
-            } else if (provider === 'github') {
+            } else if (provider === 'GITHUB') {
                 return await refreshGitHubToken(token, userId, gitAccountId);
             }
         } catch {
@@ -171,10 +169,7 @@ async function refreshGitLabToken(
         throw new Error('No refresh token available for GitLab');
     }
 
-    const gitlabCreds = gitAccountId
-        ? ((await getGitProviderCredentialsByAccountId(gitAccountId)) ??
-          (await getGitProviderCredentials('gitlab')))
-        : await getGitProviderCredentials('gitlab');
+    const gitlabCreds = await getGitProviderCredentials('GITLAB', gitAccountId);
     const clientId = gitlabCreds?.clientId;
     const clientSecret = gitlabCreds?.clientSecret;
 
@@ -221,7 +216,7 @@ async function refreshGitLabToken(
             : null,
     };
 
-    await updateGitProviderToken('gitlab', userId, newToken, gitAccountId);
+    await updateGitProviderToken('GITLAB', userId, newToken, gitAccountId);
 
     return newToken;
 }
@@ -235,10 +230,7 @@ async function refreshGitHubToken(
         throw new Error('No refresh token available for GitHub');
     }
 
-    const githubCreds = gitAccountId
-        ? ((await getGitProviderCredentialsByAccountId(gitAccountId)) ??
-          (await getGitProviderCredentials('github')))
-        : await getGitProviderCredentials('github');
+    const githubCreds = await getGitProviderCredentials('GITHUB', gitAccountId);
     if (!githubCreds) {
         throw new Error('GitHub provider not configured');
     }
@@ -261,7 +253,7 @@ async function refreshGitHubToken(
         accessTokenExpiresAt: expiresAt,
     };
 
-    await updateGitProviderToken('github', userId, newToken, gitAccountId);
+    await updateGitProviderToken('GITHUB', userId, newToken, gitAccountId);
 
     return newToken;
 }

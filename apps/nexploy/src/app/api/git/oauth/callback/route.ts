@@ -56,7 +56,7 @@ export const GET = route
                 let providerAccountId: string;
                 let providerUsername: string | null = null;
 
-                if (payload.provider === 'github') {
+                if (payload.provider === 'GITHUB') {
                     const tokenData = await githubExchangeCodeForToken(
                         code,
                         clientId,
@@ -80,7 +80,7 @@ export const GET = route
 
                     providerAccountId = String(userData.id);
                     providerUsername = userData.login;
-                } else {
+                } else if (gitProvider.provider === 'GITLAB') {
                     const body = new URLSearchParams({
                         client_id: clientId,
                         client_secret: clientSecret,
@@ -113,6 +113,8 @@ export const GET = route
 
                     providerAccountId = String(userData.id);
                     providerUsername = userData.username;
+                } else {
+                    return NextResponse.redirect(`${accountUrl}?error=unsupported_provider`);
                 }
 
                 await prisma.gitAccount.upsert({

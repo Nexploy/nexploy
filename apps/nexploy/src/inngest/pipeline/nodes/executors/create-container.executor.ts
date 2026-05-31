@@ -34,12 +34,6 @@ export class CreateContainerExecutor implements INodeExecutor {
             [NEXPLOY_LABELS.buildId]: buildConfig.buildId,
         };
 
-        console.log({
-            ports: [...(nodeConfig.portsSource ?? []), ...nodeConfig.ports],
-            envVars: [...(nodeConfig.envVarsSource ?? []), ...nodeConfig.envVars],
-            volumes: [...(nodeConfig.volumesSource ?? []), ...nodeConfig.volumes],
-        });
-
         try {
             const result = await kyDocker
                 .post('container/create', {

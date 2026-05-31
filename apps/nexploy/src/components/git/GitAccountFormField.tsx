@@ -23,7 +23,7 @@ import {
 } from '@workspace/ui/components/form';
 import { Badge } from '@workspace/ui/components/badge';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import { providerIcons } from '@/components/git/providerIcons';
+import { PROVIDER_ICONS } from '@/components/git/providerIcons';
 import { getHostname } from '@/utils/url';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { GitAccountSummary } from '@workspace/typescript-interface/git/git';
@@ -77,10 +77,11 @@ export function GitAccountFormField({
                                 {accounts.map((account) => {
                                     const isOrg = account.gitProvider.ownerType === 'Organization';
                                     const hostname = getHostname(account.gitProvider.baseUrl);
+                                    const ProviderIcon = PROVIDER_ICONS[account.provider];
                                     return (
                                         <SelectItem key={account.id} value={account.id}>
                                             <span className="flex items-center gap-2">
-                                                {providerIcons[account.provider]}
+                                                <ProviderIcon className="size-5" />
                                                 <span>
                                                     {account.providerUsername ??
                                                         account.providerAccountId}

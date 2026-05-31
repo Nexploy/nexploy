@@ -1,17 +1,18 @@
 import { decrypt, encrypt } from '@/lib/encryption';
+import { GitProviderType } from 'generated/client';
 
 const STATE_EXPIRY_MS = 10 * 60 * 1000;
 
 interface OAuthStatePayload {
     userId: string;
-    provider: string;
+    provider: GitProviderType;
     gitProviderId: string;
     expiresAt: number;
 }
 
 export function generateOAuthState(params: {
     userId: string;
-    provider: string;
+    provider: GitProviderType;
     gitProviderId: string;
 }): string {
     const payload: OAuthStatePayload = {

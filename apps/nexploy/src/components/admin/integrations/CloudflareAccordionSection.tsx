@@ -1,15 +1,10 @@
 import { type CloudflareAccountInfo } from '@workspace/typescript-interface/cloudflare/cloudflare';
-import { Cloud } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from '@workspace/ui/components/accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from '@workspace/ui/components/accordion';
 import { CloudflareAddButton } from '@/components/admin/integrations/CloudflareAddButton';
 import { CloudflareInstanceCard } from '@/components/admin/integrations/CloudflareInstanceCard';
 import { cn } from '@workspace/ui/lib/utils';
+import { Cloudflare } from '@thesvg/react';
 
 interface CloudflareAccordionSectionProps {
     accounts: CloudflareAccountInfo[];
@@ -35,7 +30,7 @@ export async function CloudflareAccordionSection({ accounts }: CloudflareAccordi
                 >
                     <div className="flex min-w-0 flex-1 items-center gap-3">
                         <div className="bg-muted flex size-10 items-center justify-center rounded-lg">
-                            <Cloud className="size-5" />
+                            <Cloudflare className="size-5" />
                         </div>
                         <div className="flex min-w-0 flex-col text-left">
                             <span>{t('cloudflare.title')}</span>

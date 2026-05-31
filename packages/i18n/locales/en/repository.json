@@ -265,16 +265,82 @@
         "palette": "Nodes",
         "search": "Search nodes...",
         "searchNoResults": "No nodes match your search",
+        "categories": {
+            "source": "Source",
+            "build": "Build",
+            "deploy": "Deploy",
+            "script": "Scripts",
+            "database": "Database",
+            "flow": "Flow Control",
+            "config": "Configuration",
+            "files": "Files & Cache",
+            "integration": "Integrations",
+            "utility": "Utility"
+        },
         "node": {
             "enable": "Enable node",
             "disable": "Disable node",
             "delete": "Delete node"
         },
-        "nodes": {
-            "condition": {
-                "outputTrue": "True",
-                "outputFalse": "False"
+        "templates": {
+            "title": "Templates",
+            "dockerfile": {
+                "name": "Dockerfile",
+                "description": "Clone, build image and deploy container"
+            },
+            "docker-compose": {
+                "name": "Docker Compose",
+                "description": "Clone, write env and run compose"
             }
+        },
+        "nodes": {
+            "clone-repository": { "name": "Clone Repository" },
+            "webhook-clone": { "name": "Webhook Clone" },
+            "build-docker-image": { "name": "Build Docker Image", "description": "Build a Docker image from a Dockerfile" },
+            "env-vars": { "name": "Environment Variables", "description": "Injects repository environment variables into the pipeline for use by subsequent nodes." },
+            "send-notification": { "name": "Send Notification", "description": "Send a webhook notification" },
+            "deploy-compose": { "name": "Deploy Compose", "description": "Deploy a Docker Compose stack" },
+            "push-to-registry": { "name": "Push an image to a registry", "description": "Push a Docker image to a private or public registry" },
+            "pull-from-registry": { "name": "Pull an image", "description": "Pull a Docker image from Docker Hub or a private registry" },
+            "validate-dockerfile": { "name": "Validate Dockerfile", "description": "Check that the Dockerfile exists and is readable" },
+            "validate-compose": { "name": "Validate Compose", "description": "Check the Docker Compose file syntax" },
+            "set-env-vars": { "name": "Set Env Vars", "description": "Inject additional environment variables into the pipeline. Variables accumulate throughout the pipeline." },
+            "clean-workdir": { "name": "Clean Work Dir", "description": "Removes the cloned repository directory" },
+            "save-version": { "name": "Save Version", "description": "Save the current build as a new version" },
+            "set-environment": { "name": "Set Environment", "description": "Sets the deployment environment for all downstream nodes in this pipeline" },
+            "start-container": { "name": "Start Container", "description": "Start an existing Docker container" },
+            "stop-container": { "name": "Stop Container", "description": "Stop a running Docker container" },
+            "restart-container": { "name": "Restart Container", "description": "Restart a Docker container" },
+            "remove-container": { "name": "Remove Container", "description": "Remove a Docker container" },
+            "create-container": { "name": "Create Container", "description": "Create and start a Docker container from an image" },
+            "create-network": { "name": "Create Network" },
+            "create-volume": { "name": "Create Volume" },
+            "wait-for-health": { "name": "Wait for Health", "description": "Wait until a Docker container passes its healthcheck" },
+            "wait-for-url": { "name": "Wait for URL", "description": "Poll a URL until it returns the expected HTTP status" },
+            "wait-for-port": { "name": "Wait for Container Port", "description": "TCP check until a port is open on the given container" },
+            "delay": { "name": "Delay", "description": "Pause the pipeline for a fixed number of seconds" },
+            "condition": { "name": "Condition", "description": "Gate the pipeline on a value from a previous node output", "outputTrue": "True", "outputFalse": "False" },
+            "run-command-in-container": { "name": "Run Command in Container", "description": "Execute a command inside a running Docker container" },
+            "http-request": { "name": "HTTP Request", "description": "Make an HTTP request to an external URL" },
+            "update-commit-status": { "name": "Update Commit Status", "description": "Update a GitHub or GitLab commit status" },
+            "tag-image": { "name": "Tag Image", "description": "Add a tag to a Docker image" },
+            "scan-image": { "name": "Scan Image", "description": "Security scan a Docker image with Trivy" },
+            "prune-images": { "name": "Prune Images", "description": "Remove unused Docker images to free disk space" },
+            "delete-image": { "name": "Delete Image", "description": "Delete a specific Docker image by name or ID" },
+            "delete-network": { "name": "Delete Network", "description": "Delete a Docker network by name or ID" },
+            "delete-volume": { "name": "Delete Volume", "description": "Delete a Docker volume by name" },
+            "download-file": { "name": "Download File", "description": "Download a file from a URL into the work directory" },
+            "backup-volume-s3": { "name": "Backup Volume to S3", "description": "Archive a Docker volume and upload it to an S3 bucket" },
+            "create-service": { "name": "Create Service", "description": "Create a new Docker Swarm service from an image" },
+            "update-service": { "name": "Update Service", "description": "Update a Docker Swarm service to a new image" },
+            "scale-service": { "name": "Scale Service", "description": "Change the number of replicas for a Swarm service" },
+            "check-container-logs": { "name": "Check Container Logs", "description": "Search container logs for a regex pattern" },
+            "cache-restore": { "name": "Cache Restore", "description": "Restore a build cache from a Docker volume into the work directory" },
+            "cache-save": { "name": "Cache Save", "description": "Save a directory from the work directory into a Docker volume cache" },
+            "git-tag": { "name": "Git Tag", "description": "Create and push a git tag to the remote" },
+            "git-clone-extra": { "name": "Git Clone Extra", "description": "Clone an additional repository into a work directory subdirectory" },
+            "fetch-secrets-vault": { "name": "Vault Secrets", "description": "Fetch secrets from HashiCorp Vault KV engine. Variables accumulate throughout the pipeline." },
+            "fetch-secrets-doppler": { "name": "Doppler Secrets", "description": "Fetch secrets from Doppler. Variables accumulate throughout the pipeline." }
         },
         "config": {
             "webhookStatusConfigured": "Webhook configured",
@@ -524,9 +590,6 @@
             "sslTosLink": "Let's Encrypt Terms of Service",
             "sslCertificate": "Certificate (PEM)",
             "sslPrivateKey": "Private Key"
-        },
-        "templates": {
-            "title": "Templates"
         },
         "availableInputs": "Available inputs",
         "dragHint": "Drag & drop into any compatible inputs to use as value",

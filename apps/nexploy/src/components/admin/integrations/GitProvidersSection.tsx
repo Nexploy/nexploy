@@ -3,7 +3,7 @@ import { GitBranch } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { Accordion } from '@workspace/ui/components/accordion';
 import { GitProviderAccordionItem } from '@/components/admin/integrations/GitProviderAccordionItem';
-import { providerIcons } from '@/components/git/providerIcons.tsx';
+import { PROVIDER_ICONS } from '@/components/git/providerIcons.tsx';
 
 export async function GitProvidersSection() {
     const [t, providers] = await Promise.all([
@@ -24,15 +24,15 @@ export async function GitProvidersSection() {
             >
                 <GitProviderAccordionItem
                     value="github"
-                    icon={providerIcons.github}
+                    icon={<PROVIDER_ICONS.GITHUB className="size-5" />}
                     titleKey="github.title"
-                    instances={providers.github}
+                    instances={providers.filter((p) => p.provider === 'GITHUB')}
                 />
                 <GitProviderAccordionItem
                     value="gitlab"
-                    icon={providerIcons.gitlab}
+                    icon={<PROVIDER_ICONS.GITLAB className="size-5" />}
                     titleKey="gitlab.title"
-                    instances={providers.gitlab}
+                    instances={providers.filter((p) => p.provider === 'GITLAB')}
                 />
             </Accordion>
         </section>

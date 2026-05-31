@@ -399,7 +399,14 @@
         "shellPlaceholder": "auto, sh, bash, ash...",
         "shellLabel": "Commande shell",
         "reconnect": "Reconnecter",
-        "close": "Fermer"
+        "close": "Fermer",
+        "shells": {
+            "auto": "Auto (bash > ash > dash > sh)",
+            "bash": "Bash",
+            "sh": "Shell (sh)",
+            "ash": "Ash (Alpine)",
+            "dash": "Dash (Debian)"
+        }
     },
     "containerAttach": {
         "title": "Attach — {name}",
@@ -651,7 +658,25 @@
         "registryLabel": "Registre",
         "registryNone": "Aucun registre (Docker Hub / public)",
         "popularImages": "Images populaires",
-        "popularImagesDescription": "Sélectionnez une image parmi nos suggestions"
+        "popularImagesDescription": "Sélectionnez une image parmi nos suggestions",
+        "images": {
+            "postgres": "Base de données relationnelle open source",
+            "redis": "Base de données en mémoire pour caching et messagerie",
+            "mongo": "Base de données NoSQL orientée documents",
+            "mysql": "Base de données relationnelle populaire",
+            "minio": "Stockage objet compatible S3",
+            "rabbitmq": "Système de messagerie et broker AMQP",
+            "kibana": "Interface d'analyse et visualisation pour Elasticsearch",
+            "grafana": "Plateforme de surveillance et tableaux de bord",
+            "prometheus": "Système de monitoring et d'alerte pour applications",
+            "node": "Environnement d'exécution JavaScript côté serveur",
+            "python": "Langage de programmation polyvalent",
+            "golang": "Langage compilé rapide pour backend et systèmes",
+            "busybox": "Petite suite d'outils Unix pour conteneurs légers",
+            "alpine": "Image Linux minimaliste pour conteneurs",
+            "ubuntu": "Distribution Linux populaire et stable",
+            "n8n": "Plateforme d'automatisation de workflows"
+        }
     },
     "createNetworkPage": {
         "driver": "Driver",
@@ -660,6 +685,11 @@
         "scope": "Scope",
         "selectScope": "Sélectionner un scope",
         "scopeDescription": "La portée du réseau (local, global ou swarm)",
+        "scopes": {
+            "local": "Local",
+            "global": "Global",
+            "swarm": "Swarm"
+        },
         "title": "Nouveau réseau",
         "description": "Créer un nouveau réseau Docker",
         "back": "Retour",

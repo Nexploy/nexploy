@@ -1,8 +1,10 @@
+import { GitProviderType } from 'generated/client';
 import { prisma } from '../../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
 
 export interface GitProviderInfo {
     id: string;
+    provider: GitProviderType;
     displayName: string;
     isConfigured: boolean;
     appName?: string;
@@ -20,19 +22,19 @@ export interface GitProviderCredentials {
     baseUrl?: string;
 }
 
-export async function getGitProvidersByType(provider: string): Promise<GitProviderInfo[]> {
+export async function getAllGitProviders(): Promise<GitProviderInfo[]> {
     try {
         const records = await prisma.gitProvider.findMany({
-            where: { provider, enabled: true },
+            where: { enabled: true },
             select: {
                 id: true,
+                provider: true,
                 displayName: true,
                 clientId: true,
                 appName: true,
                 ownerName: true,
                 ownerType: true,
                 baseUrl: true,
-                enabled: true,
             },
             orderBy: { createdAt: 'asc' },
         });
@@ -45,9 +47,9 @@ export async function getGitProvidersByType(provider: string): Promise<GitProvid
                     decryptedClientId.length > 8
                         ? decryptedClientId.slice(0, 4) + '...' + decryptedClientId.slice(-4)
                         : '****';
-
                 return {
                     id: record.id,
+                    provider: record.provider,
                     displayName: record.displayName,
                     isConfigured: true,
                     appName: record.appName ?? undefined,
@@ -62,25 +64,20 @@ export async function getGitProvidersByType(provider: string): Promise<GitProvid
     }
 }
 
-export async function getAllGitProviders(): Promise<{
-    github: GitProviderInfo[];
-    gitlab: GitProviderInfo[];
-}> {
-    try {
-        const [github, gitlab] = await Promise.all([
-            getGitProvidersByType('github'),
-            getGitProvidersByType('gitlab'),
-        ]);
-        return { github, gitlab };
-    } catch (error: unknown) {
-        throw new Error('Failed to get git providers');
-    }
-}
-
 export async function getGitProviderCredentials(
-    provider: string,
+    provider: GitProviderType,
+    gitAccountId?: string,
 ): Promise<GitProviderCredentials | null> {
     try {
+        if (gitAccountId) {
+            const gitAccount = await prisma.gitAccount.findUnique({
+                where: { id: gitAccountId },
+                select: { gitProviderId: true },
+            });
+            if (!gitAccount) return null;
+            return getGitProviderCredentialsById(gitAccount.gitProviderId);
+        }
+
         const record = await prisma.gitProvider.findFirst({
             where: { provider, enabled: true },
             orderBy: { createdAt: 'asc' },
@@ -102,44 +99,22 @@ export async function getGitProviderCredentials(
     }
 }
 
-export async function getGitProviderCredentialsById(
-    id: string,
-): Promise<GitProviderCredentials | null> {
-    try {
-        const record = await prisma.gitProvider.findUnique({
-            where: { id, enabled: true },
-        });
+async function getGitProviderCredentialsById(id: string): Promise<GitProviderCredentials | null> {
+    const record = await prisma.gitProvider.findUnique({
+        where: { id, enabled: true },
+    });
 
-        if (!record || !record.clientId || !record.clientSecret) {
-            return null;
-        }
-
-        return {
-            clientId: decrypt(record.clientId),
-            clientSecret: decrypt(record.clientSecret),
-            privateKey: record.privateKey ? decrypt(record.privateKey) : undefined,
-            appId: record.appId ?? undefined,
-            baseUrl: record.baseUrl ?? undefined,
-        };
-    } catch (error: unknown) {
-        throw new Error('Failed to get git provider credentials');
+    if (!record || !record.clientId || !record.clientSecret) {
+        return null;
     }
-}
 
-export async function getGitProviderCredentialsByAccountId(
-    gitAccountId: string,
-): Promise<GitProviderCredentials | null> {
-    try {
-        const gitAccount = await prisma.gitAccount.findUnique({
-            where: { id: gitAccountId },
-            select: { gitProviderId: true },
-        });
-
-        if (!gitAccount) return null;
-        return getGitProviderCredentialsById(gitAccount.gitProviderId);
-    } catch (error: unknown) {
-        throw new Error('Failed to get git provider credentials');
-    }
+    return {
+        clientId: decrypt(record.clientId),
+        clientSecret: decrypt(record.clientSecret),
+        privateKey: record.privateKey ? decrypt(record.privateKey) : undefined,
+        appId: record.appId ?? undefined,
+        baseUrl: record.baseUrl ?? undefined,
+    };
 }
 
 export async function saveGitHubApp(data: {
@@ -156,7 +131,7 @@ export async function saveGitHubApp(data: {
     try {
         await prisma.gitProvider.create({
             data: {
-                provider: 'github',
+                provider: 'GITHUB',
                 displayName: data.displayName,
                 appId: data.appId,
                 appName: data.appName,
@@ -182,7 +157,7 @@ export async function saveGitLabProvider(
     try {
         await prisma.gitProvider.create({
             data: {
-                provider: 'gitlab',
+                provider: 'GITLAB',
                 displayName,
                 clientId: encrypt(clientId),
                 clientSecret: encrypt(clientSecret),

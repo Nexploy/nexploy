@@ -1,10 +1,10 @@
 import { type AwsAccountInfo } from '@/services/aws.service';
-import { Cloud } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@workspace/ui/components/accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from '@workspace/ui/components/accordion';
 import { AwsAddButton } from '@/components/admin/integrations/AwsAddButton';
 import { AwsInstanceCard } from '@/components/admin/integrations/AwsInstanceCard';
 import { cn } from '@workspace/ui/lib/utils';
+import { Aws } from '@thesvg/react';
 
 interface AwsAccordionSectionProps {
     awsAccounts: AwsAccountInfo[];
@@ -21,10 +21,7 @@ export async function AwsAccordionSection({ awsAccounts }: AwsAccordionSectionPr
                     position="left"
                     showChevron={hasAwsAccounts}
                     classNameChevron="size-5"
-                    className={cn(
-                        'px-4 hover:no-underline',
-                        hasAwsAccounts && 'cursor-pointer',
-                    )}
+                    className={cn('px-4 hover:no-underline', hasAwsAccounts && 'cursor-pointer')}
                     headerChildren={
                         <div className="pr-4">
                             <AwsAddButton />
@@ -33,7 +30,7 @@ export async function AwsAccordionSection({ awsAccounts }: AwsAccordionSectionPr
                 >
                     <div className="flex min-w-0 flex-1 items-center gap-3">
                         <div className="bg-muted flex size-10 items-center justify-center rounded-lg">
-                            <Cloud className="size-5" />
+                            <Aws className="size-5" />
                         </div>
                         <div className="flex min-w-0 flex-col text-left">
                             <span>{t('aws.title')}</span>

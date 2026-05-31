@@ -61,12 +61,12 @@ export async function setupRepositoryWebhook(
         let webhookId: string | undefined;
 
         await tokenGitStorage.run(token, async () => {
-            if (repo.gitProvider === 'github') {
+            if (repo.gitProvider === 'GITHUB') {
                 const [owner, repoName] = repo.name.split('/');
                 if (!owner || !repoName) throw new Error(`Invalid repository name: ${repo.name}`);
                 const result = await githubCreateWebhook(owner, repoName, webhookUrl, secret);
                 webhookId = String(result.id);
-            } else if (repo.gitProvider === 'gitlab') {
+            } else if (repo.gitProvider === 'GITLAB') {
                 const gitlabBase = repo.gitAccount?.gitProvider?.baseUrl as string;
                 const result = await gitlabCreateWebhook(
                     gitlabBase,
@@ -128,12 +128,12 @@ export async function teardownRepositoryWebhook(repositoryId: string): Promise<v
                 );
 
                 await tokenGitStorage.run(token, async () => {
-                    if (repo.gitProvider === 'github') {
+                    if (repo.gitProvider === 'GITHUB') {
                         const [owner, repoName] = repo.name.split('/');
                         if (!owner || !repoName)
                             throw new Error(`Invalid repository name: ${repo.name}`);
                         await githubDeleteWebhook(owner, repoName, repo.webhookId!);
-                    } else if (repo.gitProvider === 'gitlab') {
+                    } else if (repo.gitProvider === 'GITLAB') {
                         const gitlabBase =
                             repo.gitAccount?.gitProvider?.baseUrl ?? 'https://gitlab.com';
                         await gitlabDeleteWebhook(gitlabBase, repo.gitId, repo.webhookId!);

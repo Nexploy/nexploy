@@ -399,7 +399,14 @@
         "shellPlaceholder": "auto, sh, bash, ash...",
         "shellLabel": "Shell cmd",
         "reconnect": "Reconnect",
-        "close": "Close"
+        "close": "Close",
+        "shells": {
+            "auto": "Auto (bash > ash > dash > sh)",
+            "bash": "Bash",
+            "sh": "Shell (sh)",
+            "ash": "Ash (Alpine)",
+            "dash": "Dash (Debian)"
+        }
     },
     "containerAttach": {
         "title": "Attach — {name}",
@@ -651,7 +658,25 @@
         "registryLabel": "Registry",
         "registryNone": "No registry (Docker Hub / public)",
         "popularImages": "Popular images",
-        "popularImagesDescription": "Select an image from our suggestions"
+        "popularImagesDescription": "Select an image from our suggestions",
+        "images": {
+            "postgres": "Open-source relational database",
+            "redis": "In-memory database for caching and messaging",
+            "mongo": "Document-oriented NoSQL database",
+            "mysql": "Popular relational database",
+            "minio": "S3-compatible object storage",
+            "rabbitmq": "Messaging system and AMQP broker",
+            "kibana": "Analytics and visualization interface for Elasticsearch",
+            "grafana": "Monitoring platform and dashboards",
+            "prometheus": "Monitoring and alerting system for applications",
+            "node": "Server-side JavaScript runtime",
+            "python": "Versatile programming language",
+            "golang": "Fast compiled language for backend and systems",
+            "busybox": "Small suite of Unix tools for lightweight containers",
+            "alpine": "Minimal Linux image for containers",
+            "ubuntu": "Popular and stable Linux distribution",
+            "n8n": "Workflow automation platform"
+        }
     },
     "createNetworkPage": {
         "driver": "Driver",
@@ -660,6 +685,11 @@
         "scope": "Scope",
         "selectScope": "Select a scope",
         "scopeDescription": "The scope of the network (local, global, or swarm)",
+        "scopes": {
+            "local": "Local",
+            "global": "Global",
+            "swarm": "Swarm"
+        },
         "title": "New Network",
         "description": "Create a new Docker network",
         "back": "Back",

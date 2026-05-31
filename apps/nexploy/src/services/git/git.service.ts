@@ -1,10 +1,14 @@
 import { prisma } from '@/../prisma/prisma';
 import { getUserSession } from '@/services/auth/auth.service';
-import { GitBranch, GitProviderToken, GitRepository, } from '@workspace/typescript-interface/git/git';
+import {
+    GitBranch,
+    GitProviderToken,
+    GitRepository,
+} from '@workspace/typescript-interface/git/git';
 import { getValidToken } from '@/services/api/gitProvider.service';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { kyGitlab } from '@/lib/api/kyGitlab';
-import { getGitProviderCredentialsByAccountId } from '@/services/oauthProvider.service';
+import { getGitProviderCredentials } from '@/services/oauthProvider.service';
 import { GitlabRepo } from '@workspace/typescript-interface/git/repository/gitlab.repository';
 import { GitlabBranch } from '@workspace/typescript-interface/git/branch/gitlab.branch';
 import { GithubBranch } from '@workspace/typescript-interface/git/branch/github.branch';
@@ -16,6 +20,7 @@ import {
     githubGetRepositoryBranches,
     githubGetUserInstallations,
 } from '@/lib/api/github.api';
+import { GitProviderType } from 'generated/client';
 
 export function extractGitHubRepo(repositoryUrl: string): { owner: string; repo: string } {
     const match = repositoryUrl.match(/github\.com[\/:]([^\/]+)\/([^\/\.]+)/);
@@ -42,7 +47,7 @@ export function extractGitLabRepo(repositoryUrl: string): {
 }
 
 export async function getGitProviderToken(
-    provider: string,
+    provider: GitProviderType,
     { gitAccountId, requestedUserId }: { gitAccountId?: string; requestedUserId?: string } = {},
 ): Promise<GitProviderToken> {
     const userId = requestedUserId ?? (await getUserSession())?.user.id;
@@ -73,7 +78,7 @@ export async function getGitProviderToken(
 }
 
 export async function getRepositories(
-    provider: string,
+    provider: GitProviderType,
     gitAccountId: string,
     userId: string,
 ): Promise<GitRepository[]> {
@@ -87,7 +92,7 @@ export async function getRepositories(
     const existingGitIds = new Set(existingRepos.map((r) => r.gitId));
 
     switch (provider) {
-        case 'github': {
+        case 'GITHUB': {
             const allRepos = await tokenGitStorage.run(token, async () => {
                 const { installations } = await githubGetUserInstallations();
 
@@ -119,9 +124,9 @@ export async function getRepositories(
                     defaultBranch: repo.default_branch,
                 }));
         }
-        case 'gitlab': {
+        case 'GITLAB': {
             try {
-                const gitlabCreds = await getGitProviderCredentialsByAccountId(gitAccountId);
+                const gitlabCreds = await getGitProviderCredentials('GITLAB', gitAccountId);
                 const gitlabBaseUrl = gitlabCreds?.baseUrl ?? 'https://gitlab.com';
 
                 const repositories = await tokenGitStorage.run(token, async () => {
@@ -155,7 +160,7 @@ export async function getRepositories(
 }
 
 export async function getBranches(
-    provider: 'github' | 'gitlab',
+    provider: GitProviderType,
     repoId: string,
     userId: string,
     gitAccountId: string,
@@ -169,7 +174,7 @@ export async function getBranches(
     const token = await getValidToken(oldToken, provider, userId, gitAccountId);
 
     switch (provider) {
-        case 'github': {
+        case 'GITHUB': {
             try {
                 const branches = await tokenGitStorage.run(token, async () => {
                     return await githubGetRepositoryBranches(owner!, repoName!);
@@ -183,9 +188,9 @@ export async function getBranches(
                 throw new Error('Failed to fetch GitHub branches');
             }
         }
-        case 'gitlab': {
+        case 'GITLAB': {
             try {
-                const gitlabCreds = await getGitProviderCredentialsByAccountId(gitAccountId);
+                const gitlabCreds = await getGitProviderCredentials('GITLAB', gitAccountId);
                 const gitlabBaseUrl = gitlabCreds?.baseUrl ?? 'https://gitlab.com';
 
                 const branches = await tokenGitStorage.run(token, async () => {
@@ -208,7 +213,7 @@ export async function getBranches(
 }
 
 export async function updateGitProviderToken(
-    provider: string,
+    provider: GitProviderType,
     userId: string,
     tokenData: GitProviderToken,
     gitAccountId?: string,
@@ -267,7 +272,7 @@ export async function listGitAccounts(userId: string) {
 }
 
 export async function verifyRepoAccessFromAccount(
-    gitProvider: string,
+    gitProvider: GitProviderType,
     gitId: string,
     repositoryUrl: string,
     gitAccountId: string,
@@ -280,7 +285,7 @@ export async function verifyRepoAccessFromAccount(
     const token = await getValidToken(oldToken, gitProvider, userId, gitAccountId);
 
     switch (gitProvider) {
-        case 'github': {
+        case 'GITHUB': {
             const { owner, repo } = extractGitHubRepo(repositoryUrl);
             try {
                 const repoData = await tokenGitStorage.run(token, async () => {
@@ -303,8 +308,8 @@ export async function verifyRepoAccessFromAccount(
                 throw new Error('REPO_NOT_ACCESSIBLE');
             }
         }
-        case 'gitlab': {
-            const gitlabCreds = await getGitProviderCredentialsByAccountId(gitAccountId);
+        case 'GITLAB': {
+            const gitlabCreds = await getGitProviderCredentials('GITLAB', gitAccountId);
             const gitlabBaseUrl = gitlabCreds?.baseUrl ?? 'https://gitlab.com';
             try {
                 const repoData = await tokenGitStorage.run(token, async () => {

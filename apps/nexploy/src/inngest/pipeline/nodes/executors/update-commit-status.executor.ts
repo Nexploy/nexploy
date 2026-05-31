@@ -48,14 +48,14 @@ export class UpdateCommitStatusExecutor implements INodeExecutor {
 
         const statusOptions = { description, context };
 
-        if (provider === 'github') {
+        if (provider === 'GITHUB') {
             const { owner, repo } = extractGitHubRepo(buildConfig.gitUrl);
             await logger.info(
                 nodeId,
                 `Updating GitHub commit status for ${owner}/${repo}@${sha.slice(0, 8)} → ${state}`,
             );
             await githubUpdateCommitStatus(token, owner, repo, sha, state, statusOptions);
-        } else if (provider === 'gitlab') {
+        } else if (provider === 'GITLAB') {
             const { baseUrl, owner, repo } = extractGitLabRepo(buildConfig.gitUrl);
             await logger.info(
                 nodeId,

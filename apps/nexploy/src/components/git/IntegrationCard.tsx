@@ -14,7 +14,6 @@ import { Badge } from '@workspace/ui/components/badge';
 
 interface IntegrationCardProps {
     gitProviderId: string;
-    provider: string;
     name: string;
     description: string;
     isConnected: boolean;
@@ -50,7 +49,7 @@ export function IntegrationCard({
     return (
         <div className="flex items-center justify-between rounded-lg border p-4">
             <div className="flex items-center gap-3">
-                <div className="bg-muted flex size-10 items-center justify-center rounded-lg">
+                <div className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-lg">
                     {icon}
                 </div>
                 <div className="flex flex-col gap-0.5">

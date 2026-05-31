@@ -4,7 +4,7 @@ model Repository {
 
   repositoryUrl String @unique
 
-  gitProvider  String
+  gitProvider  GitProviderType
   gitId        String      @unique
   gitAccountId String?
   gitAccount   GitAccount? @relation(fields: [gitAccountId], references: [id], onDelete: SetNull)

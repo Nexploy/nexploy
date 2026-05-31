@@ -1,12 +1,12 @@
 import { z } from 'zod';
 
 export const getRepositoriesSchema = z.object({
-    provider: z.enum(['github', 'gitlab']),
+    provider: z.enum(['GITHUB', 'GITLAB']),
     gitAccountId: z.string().min(1),
 });
 
 export const getBranchesSchema = z.object({
-    provider: z.enum(['github', 'gitlab']),
+    provider: z.enum(['GITHUB', 'GITLAB']),
     repoId: z.string().min(1),
     owner: z.string().min(1),
     repoName: z.string().min(1),

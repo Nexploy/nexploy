@@ -24,7 +24,6 @@ import { addAiConfigAction } from '@/actions/admin/ai/addAiConfig.action.ts';
 import { deleteAiConfigAction } from '@/actions/admin/ai/deleteAiConfig.action';
 import { addProviderApiKeySchema } from '@workspace/schemas-zod/ai/aiConfig.schema';
 import type { ProviderCardConfig } from '@workspace/typescript-interface/ai/aiConfig';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useAction } from 'next-safe-action/hooks';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
@@ -108,13 +107,7 @@ export function ModelProviderCard({
                                 color,
                             )}
                         >
-                            <Image
-                                src={`/assets/providers/${icon.fileName}`}
-                                className={cn('inverse size-7 shrink-0', icon.className)}
-                                alt="AI Logo"
-                                width={28}
-                                height={28}
-                            />
+                            {icon}
                         </div>
                         <div className="flex gap-2">
                             <span className="leading-tight font-semibold">{label}</span>

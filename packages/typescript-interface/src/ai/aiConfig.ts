@@ -1,3 +1,5 @@
+import type React from 'react';
+
 export type Provider =
     | 'OPENAI'
     | 'ANTHROPIC'
@@ -12,10 +14,7 @@ export interface ProviderCardConfig {
     provider: Provider;
     label: string;
     color: string;
-    icon: {
-        fileName: string;
-        className?: string;
-    };
+    icon: React.ReactNode;
     hasKey: boolean;
     keyUrl: string;
 }

@@ -1,7 +1,8 @@
 import Github from '@thesvg/react/github';
 import Gitlab from '@thesvg/react/gitlab';
+import { GitProviderType } from 'generated/client';
 
-export const providerIcons: Record<'github' | 'gitlab', React.ReactNode> = {
-    github: <Github className="size-6" />,
-    gitlab: <Gitlab className="size-5" />,
+export const PROVIDER_ICONS: Record<GitProviderType, React.ElementType> = {
+    GITHUB: Github,
+    GITLAB: Gitlab,
 };

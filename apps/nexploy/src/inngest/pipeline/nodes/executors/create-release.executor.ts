@@ -4,7 +4,11 @@ import { createReleaseConfigSchema } from '@workspace/schemas-zod/pipeline/nodeC
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { githubCreateRelease } from '@/lib/api/github.api';
 import { gitlabCreateRelease } from '@/lib/api/gitlab.api';
-import { extractGitHubRepo, extractGitLabRepo, getGitProviderToken, } from '@/services/git/git.service';
+import {
+    extractGitHubRepo,
+    extractGitLabRepo,
+    getGitProviderToken,
+} from '@/services/git/git.service';
 import { getValidToken } from '@/services/api/gitProvider.service';
 import { z } from 'zod';
 
@@ -56,7 +60,7 @@ export class CreateReleaseExecutor implements INodeExecutor {
         let releaseId: string;
         let releaseUrl: string;
 
-        if (provider === 'github') {
+        if (provider === 'GITHUB') {
             const { owner, repo } = extractGitHubRepo(buildConfig.gitUrl);
             const result = await githubCreateRelease(token, owner, repo, {
                 tagName,
@@ -68,7 +72,7 @@ export class CreateReleaseExecutor implements INodeExecutor {
             });
             releaseId = String(result.id);
             releaseUrl = result.html_url;
-        } else {
+        } else if (provider === 'GITLAB') {
             const { baseUrl, owner, repo } = extractGitLabRepo(buildConfig.gitUrl);
             const result = await gitlabCreateRelease(token, baseUrl, owner, repo, {
                 tagName,
@@ -78,6 +82,8 @@ export class CreateReleaseExecutor implements INodeExecutor {
             });
             releaseId = result.tag_name;
             releaseUrl = result._links.self;
+        } else {
+            throw new Error(`Unsupported provider: ${provider}`);
         }
 
         await logger.info(nodeId, `Release created: ${releaseUrl}`);
