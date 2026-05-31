@@ -11,7 +11,7 @@ export function SelectModel() {
     const openModelSelector = useAIPanelStore((s) => s.openModelSelector);
 
     return (
-        <div className="px-2 pt-1">
+        <div className="px-3 pt-1">
             <Button
                 size="sm"
                 variant="outline"

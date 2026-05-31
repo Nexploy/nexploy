@@ -10,13 +10,19 @@ interface PanelHeaderProps {
     onClose: () => void;
 }
 
-export function PanelHeader({ isLoading, hasMessages, onNewChat, onStop, onClose }: PanelHeaderProps) {
+export function PanelHeader({
+    isLoading,
+    hasMessages,
+    onNewChat,
+    onStop,
+    onClose,
+}: PanelHeaderProps) {
     const t = useTranslations('ai.chat');
 
     return (
-        <div className="flex shrink-0 items-center justify-between border-b px-3 py-2.5">
+        <div className="flex shrink-0 items-center justify-between px-3 py-2.5">
             <div className="flex items-center gap-2">
-                <div className="bg-primary/10 flex h-6 w-6 items-center justify-center rounded-full">
+                <div className="bg-primary/10 flex h-6 w-6 items-center justify-center rounded-sm">
                     <Bot className="text-primary h-3.5 w-3.5" />
                 </div>
                 <span className="text-sm font-semibold">Nexploy AI</span>

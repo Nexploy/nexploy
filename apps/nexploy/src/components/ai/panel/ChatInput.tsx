@@ -25,8 +25,8 @@ export function ChatInput({ value, onChange, onSubmit, isLoading }: ChatInputPro
     };
 
     return (
-        <div className="shrink-0 px-2 pb-2">
-            <div className="bg-muted/50 flex items-end rounded-xl rounded-tl-none border">
+        <div className="shrink-0 px-3 pb-2">
+            <div className="bg-muted/40 flex items-end rounded-xl rounded-tl-none border">
                 <Textarea
                     ref={textareaRef}
                     value={value}

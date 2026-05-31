@@ -5,6 +5,7 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useAIPanelStore } from '@/stores/useAIPanelStore';
 import { useAIContext } from '@/hooks/useAIContext';
+import { useHotkeys } from '@/lib/useHotKeys';
 import { InsetPanel } from '@/components/layout/InsetPanel';
 import { PanelHeader } from '@/components/ai/panel/PanelHeader';
 import { Suggestions } from '@/components/ai/panel/Suggestions';
@@ -18,6 +19,7 @@ import { SelectModel } from '@/components/ai/panel/SelectModel.tsx';
 export function ChatAIPanel() {
     const isOpen = useAIPanelStore((s) => s.isOpen);
     const closePanel = useAIPanelStore((s) => s.closePanel);
+    const openPanel = useAIPanelStore((s) => s.openPanel);
     const pendingPrompt = useAIPanelStore((s) => s.pendingPrompt);
     const clearPendingPrompt = useAIPanelStore((s) => s.clearPendingPrompt);
 
@@ -50,6 +52,15 @@ export function ChatAIPanel() {
 
     const isLoading = status === 'submitted' || status === 'streaming';
     const { suggestions } = useAIContext();
+
+    useHotkeys(
+        ['meta+i', 'ctrl+i'],
+        useCallback(() => {
+            if (isOpen) closePanel();
+            else openPanel();
+        }, [isOpen, openPanel, closePanel]),
+        { preventDefault: true },
+    );
 
     useEffect(() => {
         const container = scrollContainerRef.current;
@@ -128,7 +139,7 @@ export function ChatAIPanel() {
                         bottomShadow
                         ref={scrollContainerRef}
                     >
-                        <div className="flex w-full flex-col gap-3 p-3">
+                        <div className="flex w-full flex-col gap-3 px-3">
                             {messages.length === 0 && (
                                 <Suggestions suggestions={suggestions} onSelect={trySendMessage} />
                             )}

@@ -12,8 +12,7 @@ import { cn } from '@workspace/ui/lib/utils';
 import { StatusLive } from '@/components/shared/StatusLive';
 import { StopBuildToolbar } from '@/components/pipeline/StopBuildToolbar.tsx';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
-
-const mod = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/i.test(navigator.userAgent) ? '⌘' : 'Ctrl';
+import { mod } from '@/components/pipeline/utils/modKey';
 
 export function PipelineToolbar() {
     const t = useTranslations('repository.pipeline');
@@ -92,7 +91,7 @@ export function PipelineToolbar() {
                             </TooltipTrigger>
                             <TooltipContent className="flex items-center gap-1.5">
                                 {t('undo')}
-                                <Kbd>{mod} + Z</Kbd>
+                                <Kbd suppressHydrationWarning>{mod}Z</Kbd>
                             </TooltipContent>
                         </Tooltip>
                         <Tooltip>
@@ -128,7 +127,7 @@ export function PipelineToolbar() {
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent className="flex items-center gap-1.5">
-                                {t('shortcutsList.selectAll')} <Kbd>{mod} + A</Kbd>
+                                {t('shortcutsList.selectAll')} <Kbd>{mod}A</Kbd>
                             </TooltipContent>
                         </Tooltip>
                         <Tooltip>
@@ -144,7 +143,8 @@ export function PipelineToolbar() {
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent className="flex items-center gap-1.5">
-                                {t('shortcutsList.duplicate')} <Kbd>{mod} + D</Kbd>
+                                {t('shortcutsList.duplicate')}{' '}
+                                <Kbd suppressHydrationWarning>{mod} + D</Kbd>
                             </TooltipContent>
                         </Tooltip>
 

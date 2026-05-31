@@ -1,6 +1,6 @@
 import { SidebarTrigger } from '@workspace/ui/components/sidebar';
 import { Separator } from '@workspace/ui/components/separator';
-import { AICommand } from '@/components/ai/AICommand';
+import { SearchCommand } from '../ai/SearchCommand';
 import { BreadcrumbPath } from '@/components/header/BreadcrumbPath';
 import { AIPanelToggle } from '@/components/ai/AIPanelToggle';
 
@@ -13,7 +13,7 @@ export function Header() {
                 <BreadcrumbPath />
             </div>
             <div className="flex items-center">
-                <AICommand />
+                <SearchCommand />
                 <AIPanelToggle />
             </div>
         </div>

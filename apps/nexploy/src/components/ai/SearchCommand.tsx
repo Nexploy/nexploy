@@ -29,10 +29,12 @@ import { Kbd } from '@workspace/ui/components/kbd';
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { Dialog, DialogContent } from '@workspace/ui/components/dialog';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useAIPanelStore } from '@/stores/useAIPanelStore';
+import { useHotkeys } from '@/lib/useHotKeys';
+import { mod } from '@/components/pipeline/utils/modKey.ts';
 
-export function AICommand() {
+export function SearchCommand() {
     const [open, setOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const router = useRouter();
@@ -40,17 +42,16 @@ export function AICommand() {
     const tNav = useTranslations('ai.commandGroups');
     const openPanel = useAIPanelStore((s) => s.openPanel);
 
-    useEffect(() => {
-        const down = (e: KeyboardEvent) => {
-            if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-                e.preventDefault();
-                setOpen((prev) => !prev);
-                if (!open) setInputValue('');
-            }
-        };
-        document.addEventListener('keydown', down);
-        return () => document.removeEventListener('keydown', down);
-    }, [open]);
+    useHotkeys(
+        ['meta+k', 'ctrl+k'],
+        useCallback(() => {
+            setOpen((prev) => {
+                if (!prev) setInputValue('');
+                return !prev;
+            });
+        }, []),
+        { preventDefault: true },
+    );
 
     const runCommand = useCallback((command: () => void) => {
         setOpen(false);
@@ -76,7 +77,8 @@ export function AICommand() {
                 className="hover:bg-muted hover:text-foreground text-muted-foreground flex h-8 flex-1 justify-between rounded-r-none !pr-2 text-sm font-normal shadow-none md:flex-none"
             >
                 <span className="truncate">{t('searchPlaceholder')}</span>
-                <Kbd className="px-1">⌘K</Kbd>
+
+                <Kbd>{mod}K</Kbd>
             </Button>
 
             <Dialog open={open} onOpenChange={setOpen}>
