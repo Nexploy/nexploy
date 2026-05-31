@@ -13,6 +13,7 @@ import { ChatInput } from '@/components/ai/panel/ChatInput';
 import { ModelSelectorModal } from '@/components/ai/panel/model-selector/ModelSelectorModal';
 import { cn } from '@workspace/ui/lib/utils';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow.tsx';
+import { SelectModel } from '@/components/ai/panel/SelectModel.tsx';
 
 export function ChatAIPanel() {
     const isOpen = useAIPanelStore((s) => s.isOpen);
@@ -135,6 +136,7 @@ export function ChatAIPanel() {
                             <div ref={messagesEndRef} />
                         </div>
                     </ScrollAreaWithShadow>
+                    <SelectModel />
                     <ChatInput
                         value={input}
                         onChange={setInput}

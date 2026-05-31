@@ -5,9 +5,13 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { cn } from '@workspace/ui/lib/utils';
 
-export function renderMessageText(text: string): React.ReactNode {
+interface MessageRendererProps {
+    text: string;
+}
+
+export function RenderMessageText({ text }: MessageRendererProps) {
     return (
-        <div className="w-full min-w-0 overflow-hidden break-words">
+        <div className="w-full min-w-0 overflow-x-hidden leading-relaxed break-all">
             <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
@@ -53,7 +57,7 @@ export function renderMessageText(text: string): React.ReactNode {
                         }
                         return (
                             <code
-                                className="bg-background/80 rounded px-1 py-0.5 font-mono text-[11px] break-all"
+                                className="bg-background/80 rounded px-1.5 py-0.5 font-mono break-all"
                                 {...props}
                             >
                                 {children}
@@ -66,8 +70,10 @@ export function renderMessageText(text: string): React.ReactNode {
                         </pre>
                     ),
                     table: ({ children }) => (
-                        <div className="my-2 w-full overflow-x-auto">
-                            <table className="w-full border-collapse text-[11px]">{children}</table>
+                        <div className="my-2 min-w-0 overflow-x-auto">
+                            <table className="min-w-full border-collapse text-[11px]">
+                                {children}
+                            </table>
                         </div>
                     ),
                     thead: ({ children }) => (

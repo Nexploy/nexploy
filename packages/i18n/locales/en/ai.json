@@ -71,7 +71,9 @@
             "running": "Running",
             "done": "Done",
             "error": "Error",
-            "pending": "Pending"
+            "pending": "Pending",
+            "partialError": "Partial error",
+            "toolsCount": "{count, plural, one {# tool} other {# tools}}"
         },
         "stopGenerating": "Stop generating",
         "inputPlaceholder": "Ask anything...",
