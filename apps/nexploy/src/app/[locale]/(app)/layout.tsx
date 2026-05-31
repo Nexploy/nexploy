@@ -8,7 +8,7 @@ import { getUserSession } from '@/services/auth/auth.service';
 import { ReactNode } from 'react';
 import { InsetPanel } from '@/components/layout/InsetPanel';
 import { cn } from '@workspace/ui/lib/utils';
-import { ChatAIPanel } from '../../../components/ai/ChatAIPanel';
+import { ChatAIPanel } from '@/components/ai/ChatAIPanel.tsx';
 
 export default async function DockerLayout({
     children,

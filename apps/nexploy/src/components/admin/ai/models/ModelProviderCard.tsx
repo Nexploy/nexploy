@@ -148,7 +148,6 @@ export function ModelProviderCard({
                                                 type="password"
                                                 placeholder={t('apiKeyPlaceholder')}
                                                 disabled={form.formState.isSubmitting}
-                                                autoFocus
                                             />
                                         ) : (
                                             <Input

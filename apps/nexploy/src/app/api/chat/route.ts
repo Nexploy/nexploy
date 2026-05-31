@@ -1,10 +1,20 @@
 import { createOpenAI } from '@ai-sdk/openai';
-import { type LanguageModel, stepCountIs, streamText, type ToolSet } from 'ai';
+import { createAnthropic } from '@ai-sdk/anthropic';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { createOpenRouter } from '@openrouter/ai-sdk-provider';
+import { createMistral } from '@ai-sdk/mistral';
+import { createGroq } from '@ai-sdk/groq';
+import { createPerplexity } from '@ai-sdk/perplexity';
+import { createXai } from '@ai-sdk/xai';
+import { convertToModelMessages, generateId, type LanguageModel, stepCountIs, streamText, type ToolSet, } from 'ai';
 import { createMCPClient } from '@ai-sdk/mcp';
-import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
+import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
+import { NextResponse } from 'next/server';
+import { authRouteServer, route } from '@/lib/api/nextRoute';
 import { chatBodySchema } from '@workspace/schemas-zod/ai/chat.schema';
-import { INTERNAL_API_KEY } from '@/lib/ai/internal-api-key';
+import type { Provider } from '@workspace/typescript-interface/ai/aiConfig';
 import { getProviderApiKey } from '@/services/aiConfig.service';
+import { createNexployMCPServer } from '@/lib/ai/nexploy-mcp-server';
 
 export const maxDuration = 60;
 
@@ -28,97 +38,77 @@ Your role is to help users manage their Docker infrastructure and Nexploy reposi
 - Treat \`execInContainer\` as a privileged operation — only run it when the user explicitly asks to execute a command.
 `;
 
-async function buildModel(provider?: string, modelId?: string): Promise<LanguageModel> {
-    if (provider && modelId) {
-        switch (provider) {
-            case 'openai': {
-                const apiKey = (await getProviderApiKey('OPENAI')) ?? process.env.OPENAI_API_KEY;
-                return createOpenAI({ apiKey })(modelId);
-            }
-            case 'anthropic': {
-                const apiKey = (await getProviderApiKey('ANTHROPIC')) ?? process.env.ANTHROPIC_API_KEY;
-                if (apiKey) {
-                    const { createAnthropic } = await import('@ai-sdk/anthropic');
-                    return createAnthropic({ apiKey })(modelId);
-                }
-                break;
-            }
-            case 'google': {
-                const apiKey = (await getProviderApiKey('GOOGLE')) ?? process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-                if (apiKey) {
-                    const { createGoogleGenerativeAI } = await import('@ai-sdk/google');
-                    return createGoogleGenerativeAI({ apiKey })(modelId);
-                }
-                break;
-            }
-            case 'openrouter': {
-                const apiKey = (await getProviderApiKey('OPENROUTER')) ?? process.env.OPENROUTER_API_KEY;
-                if (apiKey) {
-                    const { createOpenRouter } = await import('@openrouter/ai-sdk-provider');
-                    return createOpenRouter({ apiKey })(modelId);
-                }
-                break;
-            }
-        }
-    }
+async function buildModel(provider: Provider, model: string): Promise<LanguageModel> {
+    const apiKey = await getProviderApiKey(provider);
+    if (!apiKey) throw new Error(`No API key configured for provider: ${provider}`);
 
-    // Fallback: first available key
-    const anthropicKey = await getProviderApiKey('ANTHROPIC');
-    if (anthropicKey) {
-        const { createAnthropic } = await import('@ai-sdk/anthropic');
-        return createAnthropic({ apiKey: anthropicKey })('claude-sonnet-4-6');
+    switch (provider) {
+        case 'OPENAI':
+            return createOpenAI({ apiKey })(model);
+        case 'ANTHROPIC':
+            return createAnthropic({ apiKey })(model);
+        case 'GOOGLE':
+            return createGoogleGenerativeAI({ apiKey })(model);
+        case 'OPENROUTER':
+            return createOpenRouter({ apiKey })(model);
+        case 'MISTRAL':
+            return createMistral({ apiKey })(model);
+        case 'GROQ':
+            return createGroq({ apiKey })(model);
+        case 'PERPLEXITY':
+            return createPerplexity({ apiKey })(model);
+        case 'GROK':
+            return createXai({ apiKey })(model);
     }
-    const googleKey = await getProviderApiKey('GOOGLE');
-    if (googleKey) {
-        const { createGoogleGenerativeAI } = await import('@ai-sdk/google');
-        return createGoogleGenerativeAI({ apiKey: googleKey })('gemini-2.5-flash');
-    }
-    const openrouterKey = await getProviderApiKey('OPENROUTER');
-    if (openrouterKey) {
-        const { createOpenRouter } = await import('@openrouter/ai-sdk-provider');
-        return createOpenRouter({ apiKey: openrouterKey })('openai/gpt-4o');
-    }
-
-    const apiKey = (await getProviderApiKey('OPENAI')) ?? process.env.OPENAI_API_KEY;
-    return createOpenAI({ apiKey })('gpt-4o');
 }
 
 export const POST = route
     .use(authRouteServer)
-    .use(requirePermission('docker', 'manage'))
     .body(chatBodySchema)
-    .handler(async (_, { ctx, body }) => {
-        const { messages, modelId, provider } = body;
+    .handler(async (_req, { ctx, body }) => {
+        const { messages, model, provider } = body;
 
-        const appUrl =
-            process.env.BETTER_AUTH_URL ?? process.env.NEXPLOY_URL ?? 'http://localhost:3000';
-        const mcpUrl = `${appUrl}/api/mcp`;
+        let languageModel: LanguageModel;
+        try {
+            languageModel = await buildModel(provider, model);
+        } catch (err) {
+            const message = err instanceof Error ? err.message : 'Unknown error';
+            return NextResponse.json({ error: message }, { status: 400 });
+        }
 
-        const [model, mcpClient] = await Promise.all([
-            buildModel(provider, modelId),
-            createMCPClient({
-                transport: {
-                    type: 'http',
-                    url: mcpUrl,
-                    headers: {
-                        'x-api-key': INTERNAL_API_KEY,
-                        'x-user-id': ctx.session.user.id,
-                    },
+        try {
+            const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+            const mcpServer = createNexployMCPServer(ctx.session.user.id);
+
+            const [mcpClient] = await Promise.all([
+                createMCPClient({ transport: clientTransport }),
+                mcpServer.connect(serverTransport),
+            ]);
+
+            const tools = (await mcpClient.tools()) as ToolSet;
+
+            const result = streamText({
+                model: languageModel,
+                messages: await convertToModelMessages(messages),
+                system: SYSTEM_PROMPT,
+                tools,
+                stopWhen: stepCountIs(10),
+                onFinish: async () => {
+                    await mcpClient.close();
+                    await mcpServer.close();
                 },
-            }),
-        ]);
+                onError: async () => {
+                    await mcpClient.close();
+                    await mcpServer.close();
+                },
+            });
 
-        const tools = (await mcpClient.tools()) as ToolSet;
-
-        const result = streamText({
-            model,
-            messages,
-            system: SYSTEM_PROMPT,
-            tools,
-            stopWhen: stepCountIs(10),
-            onFinish: async () => { await mcpClient.close(); },
-            onError: async () => { await mcpClient.close(); },
-        });
-
-        return result.toTextStreamResponse();
+            return result.toUIMessageStreamResponse({
+                originalMessages: messages,
+                generateMessageId: generateId,
+            });
+        } catch (err) {
+            const message = err instanceof Error ? err.message : 'Unknown error';
+            return NextResponse.json({ error: message }, { status: 502 });
+        }
     });

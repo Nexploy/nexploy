@@ -80,11 +80,11 @@ const groups: SidebarNavGroup[] = [
             { titleKey: 'integrations', href: '/admin/integrations', icon: Plug },
             {
                 titleKey: 'ai',
-                href: '/admin/ai',
+                href: '/admin/ai/models',
                 icon: Bot,
                 children: [
                     { titleKey: 'models', icon: Cpu, href: '/admin/ai/models' },
-                    { titleKey: 'mcp', icon: Network, href: '/admin/ai' },
+                    { titleKey: 'mcp', icon: Network, href: '/admin/ai/mcp' },
                 ],
             },
             { titleKey: 'backups', href: '/admin/backups', icon: Database },

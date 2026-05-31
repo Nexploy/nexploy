@@ -1,15 +1,6 @@
 import React from 'react';
-import {
-    Bot,
-    Check,
-    Container,
-    GitBranch,
-    Layers,
-    Loader2,
-    Play,
-    Terminal,
-    X,
-} from 'lucide-react';
+import { Bot, Check, Container, GitBranch, Layers, Loader2, Play, Terminal, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
 
 const TOOL_ICONS: Record<string, React.ElementType> = {
@@ -34,6 +25,7 @@ interface ToolCallCardProps {
 }
 
 export function ToolCallCard({ toolName, state, output }: ToolCallCardProps) {
+    const t = useTranslations('ai.chat.toolCall');
     const isRunning = state === 'input-streaming' || state === 'input-available';
     const isDone = state === 'output-available';
     const Icon = TOOL_ICONS[toolName] ?? Bot;
@@ -42,42 +34,82 @@ export function ToolCallCard({ toolName, state, output }: ToolCallCardProps) {
     return (
         <div
             className={cn(
-                'mt-2 flex items-start gap-2 rounded-lg border p-2 text-xs',
+                'mt-2 overflow-hidden rounded-md border text-xs transition-colors',
                 isDone
                     ? success
                         ? 'border-green-500/20 bg-green-500/5'
                         : 'border-red-500/20 bg-red-500/5'
-                    : 'bg-muted/50',
+                    : 'border-border/40 bg-background/40',
             )}
         >
-            <div
-                className={cn(
-                    'mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full',
-                    isDone
-                        ? success
-                            ? 'bg-green-500/20 text-green-600'
-                            : 'bg-red-500/20 text-red-600'
-                        : 'bg-muted text-muted-foreground',
-                )}
-            >
-                {isRunning ? (
-                    <Loader2 className="h-2.5 w-2.5 animate-spin" />
-                ) : isDone && success ? (
-                    <Check className="h-2.5 w-2.5" />
-                ) : isDone && !success ? (
-                    <X className="h-2.5 w-2.5" />
-                ) : (
-                    <Icon className="h-2.5 w-2.5" />
-                )}
+            <div className="flex items-center gap-1 px-2 py-1.5">
+                <div
+                    className={cn(
+                        'flex h-5 w-5 shrink-0 items-center justify-center rounded',
+                        isDone
+                            ? success
+                                ? 'bg-green-500/15 text-green-500'
+                                : 'bg-red-500/15 text-red-500'
+                            : 'bg-muted text-muted-foreground',
+                    )}
+                >
+                    <Icon className="h-3 w-3" />
+                </div>
+                <div className="min-w-0 flex-1">
+                    <span
+                        className={cn(
+                            'font-mono font-medium tracking-tight',
+                            isDone && !success ? 'text-red-500' : 'text-foreground/80',
+                        )}
+                    >
+                        {toolName}
+                    </span>
+                    {isDone && (output?.message || output?.error) && (
+                        <p
+                            className={cn(
+                                'mt-0.5 truncate text-[10px]',
+                                success ? 'text-muted-foreground' : 'text-red-500/70',
+                            )}
+                        >
+                            {output.message ?? output.error}
+                        </p>
+                    )}
+                </div>
+                <div
+                    className={cn(
+                        'flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium',
+                        isRunning && 'bg-primary/10 text-primary',
+                        isDone && success && 'bg-green-500/10 text-green-600',
+                        isDone && !success && 'bg-red-500/10 text-red-500',
+                        !isRunning && !isDone && 'bg-muted text-muted-foreground',
+                    )}
+                >
+                    {isRunning ? (
+                        <>
+                            <Loader2 className="h-2.5 w-2.5 animate-spin" />
+                            {t('running')}
+                        </>
+                    ) : isDone && success ? (
+                        <>
+                            <Check className="h-2.5 w-2.5" />
+                            {t('done')}
+                        </>
+                    ) : isDone && !success ? (
+                        <>
+                            <X className="h-2.5 w-2.5" />
+                            {t('error')}
+                        </>
+                    ) : (
+                        t('pending')
+                    )}
+                </div>
             </div>
-            <div className="min-w-0 flex-1">
-                <span className="text-muted-foreground font-medium">{toolName}</span>
-                {isDone && (output?.message || output?.error) && (
-                    <p className={cn('mt-0.5', success ? 'text-foreground/70' : 'text-red-600/80')}>
-                        {output.message || output.error}
-                    </p>
-                )}
-            </div>
+
+            {isRunning && (
+                <div className="bg-border/30 h-px w-full overflow-hidden">
+                    <div className="bg-primary/50 h-full w-1/2 animate-pulse" />
+                </div>
+            )}
         </div>
     );
 }

@@ -6,16 +6,19 @@ import { CommandGroup, CommandItem } from '@workspace/ui/components/command';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { cn } from '@workspace/ui/lib/utils';
 import { fetcherApi } from '@/lib/api/fetcherApi';
-import type { ModelOption, Provider, SelectedModel, } from '@workspace/typescript-interface/ai/aiConfig';
+import type { ModelOption, Provider } from '@workspace/typescript-interface/ai/aiConfig';
+import { useAIPanelStore } from '@/stores/useAIPanelStore';
 
 interface ProviderGroupProps {
     provider: Provider;
     label: string;
-    selected: SelectedModel | null;
-    onSelect: (m: SelectedModel) => void;
 }
 
-export function ProviderGroup({ provider, label, selected, onSelect }: ProviderGroupProps) {
+export function ProviderGroup({ provider, label }: ProviderGroupProps) {
+    const selected = useAIPanelStore((s) => s.selectedModel);
+    const setSelectedModel = useAIPanelStore((s) => s.setSelectedModel);
+    const closeModelSelector = useAIPanelStore((s) => s.closeModelSelector);
+
     const { data, isLoading } = useSWR<{ models: ModelOption[] }>(
         { url: `/api/ai/models/${provider}` },
         fetcherApi,
@@ -43,9 +46,10 @@ export function ProviderGroup({ provider, label, selected, onSelect }: ProviderG
                           <CommandItem
                               key={m.value}
                               value={`${m.label} ${m.value}`}
-                              onSelect={() =>
-                                  onSelect({ provider, modelId: m.value, label: m.label })
-                              }
+                              onSelect={() => {
+                                  setSelectedModel({ provider, modelId: m.value, label: m.label });
+                                  closeModelSelector();
+                              }}
                               className="gap-3 py-2.5"
                           >
                               <span className="flex-1">{m.label}</span>

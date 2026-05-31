@@ -1,92 +1,94 @@
-import { Bot, Loader2 } from 'lucide-react';
+import { Brain } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
+import { Shimmer } from '@workspace/ui/components/ai-elements/shimmer';
 import { ToolCallCard } from '@/components/ai/panel/ToolCallCard';
-import { renderMessageText } from '@/components/ai/panel/message-renderer';
-import type { DynamicToolUIPart, TextUIPart, UIMessage } from 'ai';
-import CopyButton from '@/components/shared/CopyButton.tsx';
+import type { TextUIPart, UIMessage } from 'ai';
+import { renderMessageText } from '@/components/ai/panel/message-renderer.tsx';
 
 interface ChatMessagesProps {
     messages: UIMessage[];
     isLoading: boolean;
+    error?: Error;
 }
 
-export function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
+function ThinkingBubble() {
     const t = useTranslations('ai.chat');
+    return (
+        <div className="bg-muted flex w-fit items-center gap-2 rounded-xl px-3 py-2">
+            <Brain className="text-muted-foreground h-3.5 w-3.5 shrink-0" />
+            <Shimmer className="text-xs" duration={1.8}>
+                {t('thinking')}
+            </Shimmer>
+        </div>
+    );
+}
+
+function isEmptyAssistantMessage(m: UIMessage): boolean {
+    return (
+        m.role === 'assistant' &&
+        m.parts.every((p) => p.type !== 'text' || !(p as TextUIPart).text?.trim())
+    );
+}
+
+export function ChatMessages({ messages, isLoading, error }: ChatMessagesProps) {
+    const lastMsg = messages[messages.length - 1];
+    const showShimmer =
+        isLoading && (lastMsg?.role === 'user' || (lastMsg && isEmptyAssistantMessage(lastMsg)));
 
     return (
         <>
-            {messages.map((m) => (
-                <div
-                    key={m.id}
-                    className={cn('flex gap-2', m.role === 'user' ? 'flex-row-reverse' : '')}
-                >
-                    <div
-                        className={cn(
-                            'flex h-6 w-6 shrink-0 items-center justify-center rounded-full',
-                            m.role === 'user'
-                                ? 'bg-primary text-primary-foreground'
-                                : 'bg-muted text-muted-foreground',
-                        )}
-                    >
-                        {m.role === 'user' ? (
-                            <span className="text-[10px] font-semibold">U</span>
-                        ) : (
-                            <Bot className="h-3 w-3" />
-                        )}
-                    </div>
+            {messages.map((m) => {
+                if (isLoading && isEmptyAssistantMessage(m) && m === lastMsg) return null;
 
-                    <div
-                        className={cn(
-                            'group relative max-w-[85%] rounded-xl px-2.5 py-2 text-xs',
-                            m.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted',
-                        )}
-                    >
-                        {m.parts.map((part, partIndex) => {
-                            if (part.type === 'text') {
-                                return (
-                                    <div key={`${m.id}-${partIndex}`} className="leading-relaxed">
-                                        {renderMessageText((part as TextUIPart).text)}
-                                    </div>
-                                );
-                            }
-                            if (part.type === 'dynamic-tool') {
-                                const dynPart = part as DynamicToolUIPart;
-                                return (
-                                    <ToolCallCard
-                                        key={dynPart.toolCallId}
-                                        toolName={dynPart.toolName}
-                                        state={dynPart.state}
-                                        output={
-                                            dynPart.state === 'output-available'
-                                                ? (dynPart.output as unknown)
-                                                : undefined
-                                        }
-                                    />
-                                );
-                            }
-                            return null;
-                        })}
-                        {m.role === 'assistant' && (
-                            <CopyButton
-                                text={m.parts
-                                    .filter((p): p is TextUIPart => p.type === 'text')
-                                    .map((p) => p.text)
-                                    .join('')}
-                            />
-                        )}
+                return (
+                    <div key={m.id} className="flex w-full min-w-0">
+                        <div
+                            className={cn(
+                                'group relative min-w-0 rounded-xl px-2.5 py-2 text-xs',
+                                m.role === 'user'
+                                    ? 'bg-primary text-primary-foreground ml-auto max-w-[80%]'
+                                    : 'bg-muted w-full',
+                            )}
+                        >
+                            {m.parts.map((part, partIndex) => {
+                                if (part.type === 'text') {
+                                    return (
+                                        <div
+                                            key={`${m.id}-${partIndex}`}
+                                            className="leading-relaxed"
+                                        >
+                                            {renderMessageText((part as TextUIPart).text)}
+                                        </div>
+                                    );
+                                }
+                                if (part.type === 'dynamic-tool') {
+                                    return (
+                                        <ToolCallCard
+                                            key={part.toolCallId}
+                                            toolName={part.toolName}
+                                            state={part.state}
+                                            output={
+                                                part.state === 'output-available'
+                                                    ? (part.output as unknown)
+                                                    : undefined
+                                            }
+                                        />
+                                    );
+                                }
+                                return null;
+                            })}
+                        </div>
                     </div>
-                </div>
-            ))}
+                );
+            })}
 
-            {isLoading && messages[messages.length - 1]?.role === 'user' && (
+            {showShimmer && <ThinkingBubble />}
+
+            {error && (
                 <div className="flex gap-2">
-                    <div className="bg-muted text-muted-foreground flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                        <Bot className="h-3 w-3" />
-                    </div>
-                    <div className="bg-muted flex items-center gap-2 rounded-xl px-2.5 py-2">
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                        <span className="text-muted-foreground text-xs">{t('thinking')}</span>
+                    <div className="bg-destructive/10 text-destructive rounded-xl px-2.5 py-2 text-xs break-all">
+                        {error.message}
                     </div>
                 </div>
             )}

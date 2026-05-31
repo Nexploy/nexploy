@@ -1,9 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { useAIPanelStore } from '@/stores/useAIPanelStore';
 import { useAIContext } from '@/hooks/useAIContext';
 import { InsetPanel } from '@/components/layout/InsetPanel';
@@ -11,9 +10,9 @@ import { PanelHeader } from '@/components/ai/panel/PanelHeader';
 import { Suggestions } from '@/components/ai/panel/Suggestions';
 import { ChatMessages } from '@/components/ai/panel/ChatMessages';
 import { ChatInput } from '@/components/ai/panel/ChatInput';
-import { ModelSelectorModal } from '@/components/ai/panel/model-selector/ModelSelectorModal.tsx';
-import { SelectedModel } from '@workspace/typescript-interface/ai/aiConfig.ts';
+import { ModelSelectorModal } from '@/components/ai/panel/model-selector/ModelSelectorModal';
 import { cn } from '@workspace/ui/lib/utils';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow.tsx';
 
 export function ChatAIPanel() {
     const isOpen = useAIPanelStore((s) => s.isOpen);
@@ -21,106 +20,128 @@ export function ChatAIPanel() {
     const pendingPrompt = useAIPanelStore((s) => s.pendingPrompt);
     const clearPendingPrompt = useAIPanelStore((s) => s.clearPendingPrompt);
 
-    const [selectedModel, setSelectedModel] = useState<SelectedModel | null>(null);
-    const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
-    const [input, setInput] = useState('');
-    const scrollRef = useRef<HTMLDivElement>(null);
+    const selectedModel = useAIPanelStore((s) => s.selectedModel);
+    const openModelSelector = useAIPanelStore((s) => s.openModelSelector);
 
+    const [input, setInput] = useState('');
+    const [autoScroll, setAutoScroll] = useState(true);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const lastScrollTop = useRef<number>(0);
     const selectedModelRef = useRef(selectedModel);
     selectedModelRef.current = selectedModel;
 
-    const transport = useMemo(
-        () =>
-            new DefaultChatTransport({
-                api: '/api/chat',
-                fetch: async (url, init) => {
-                    const m = selectedModelRef.current;
-                    if (m && init?.body) {
-                        const parsed = JSON.parse(init.body as string);
-                        init = {
-                            ...init,
-                            body: JSON.stringify({
-                                ...parsed,
-                                modelId: m.modelId,
-                                provider: m.provider,
-                            }),
-                        };
-                    }
-                    return fetch(url, init as RequestInit);
+    const { messages, sendMessage, stop, status, setMessages, error } = useChat({
+        transport: new DefaultChatTransport({
+            api: '/api/chat',
+            prepareSendMessagesRequest: ({ messages }) => ({
+                body: {
+                    messages,
+                    model: selectedModelRef.current?.modelId,
+                    provider: selectedModelRef.current?.provider,
                 },
             }),
-        [],
-    );
-
-    const { messages, sendMessage, stop, status, setMessages } = useChat({ transport });
-    const { suggestions } = useAIContext();
+        }),
+        onError: (err) => {
+            console.error('[ChatAIPanel]', err);
+        },
+    });
 
     const isLoading = status === 'submitted' || status === 'streaming';
+    const { suggestions } = useAIContext();
 
-    const scrollToBottom = useCallback(() => {
-        const viewport = scrollRef.current?.querySelector('[data-radix-scroll-area-viewport]');
-        if (viewport) viewport.scrollTop = viewport.scrollHeight;
+    useEffect(() => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
+
+        const handleScroll = () => {
+            const { scrollTop, scrollHeight, clientHeight } = container;
+            const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
+
+            if (distanceFromBottom <= 5) {
+                setAutoScroll(true);
+            } else if (scrollTop < lastScrollTop.current) {
+                setAutoScroll(false);
+            }
+
+            lastScrollTop.current = scrollTop;
+        };
+
+        container.addEventListener('scroll', handleScroll, { passive: true });
+        return () => container.removeEventListener('scroll', handleScroll);
     }, []);
 
     useEffect(() => {
-        scrollToBottom();
-    }, [messages, scrollToBottom]);
+        if (!autoScroll || !messagesEndRef.current) return;
+
+        const rafId = requestAnimationFrame(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'instant', block: 'end' });
+        });
+
+        return () => cancelAnimationFrame(rafId);
+    }, [messages, autoScroll, isLoading]);
+
+    const trySendMessage = useCallback(
+        (text: string) => {
+            if (!selectedModel) {
+                openModelSelector();
+                return;
+            }
+            setAutoScroll(true);
+            sendMessage({ text });
+            setInput('');
+        },
+        [selectedModel, openModelSelector, sendMessage],
+    );
 
     useEffect(() => {
         if (pendingPrompt) {
-            sendMessage({ text: pendingPrompt }).then(() => clearPendingPrompt());
+            trySendMessage(pendingPrompt);
+            clearPendingPrompt();
         }
-    }, [pendingPrompt, sendMessage, clearPendingPrompt]);
+    }, [pendingPrompt, trySendMessage, clearPendingPrompt]);
 
-    const handleSubmit = useCallback(() => {
-        if (!input.trim() || isLoading) return;
-        sendMessage({ text: input }).then(() => setInput(''));
-    }, [input, isLoading, sendMessage]);
+    const handleResetChat = useCallback(() => {
+        stop();
+        setMessages([]);
+    }, [stop, setMessages]);
 
     return (
         <div
             className={cn(
                 'ml-2 shrink-0 overflow-hidden rounded-none shadow-none transition-[width,margin] duration-300 ease-in-out md:rounded-xl md:shadow-sm',
-                isOpen ? 'w-80' : 'ml-0 w-0',
+                isOpen ? 'w-[30%]' : 'ml-0 w-0',
             )}
         >
-            <InsetPanel className="h-full w-80">
+            <InsetPanel className="h-full w-full">
                 <div className="flex h-full flex-col">
                     <PanelHeader
                         isLoading={isLoading}
                         hasMessages={messages.length > 0}
-                        onNewChat={() => {
-                            stop();
-                            setMessages([]);
-                        }}
+                        onNewChat={handleResetChat}
                         onStop={stop}
                         onClose={closePanel}
                     />
-                    <ScrollArea className="flex-1" ref={scrollRef}>
-                        <div className="flex flex-col gap-3 p-3">
+                    <ScrollAreaWithShadow
+                        className="h-full overflow-hidden"
+                        bottomShadow
+                        ref={scrollContainerRef}
+                    >
+                        <div className="flex w-full flex-col gap-3 p-3">
                             {messages.length === 0 && (
-                                <Suggestions
-                                    suggestions={suggestions}
-                                    onSelect={(text) => sendMessage({ text })}
-                                />
+                                <Suggestions suggestions={suggestions} onSelect={trySendMessage} />
                             )}
-                            <ChatMessages messages={messages} isLoading={isLoading} />
+                            <ChatMessages messages={messages} isLoading={isLoading} error={error} />
+                            <div ref={messagesEndRef} />
                         </div>
-                    </ScrollArea>
+                    </ScrollAreaWithShadow>
                     <ChatInput
                         value={input}
                         onChange={setInput}
-                        onSubmit={handleSubmit}
+                        onSubmit={() => trySendMessage(input)}
                         isLoading={isLoading}
-                        selectedModel={selectedModel}
-                        onOpenModelSelector={() => setModelSelectorOpen(true)}
                     />
-                    <ModelSelectorModal
-                        open={modelSelectorOpen}
-                        onOpenChange={setModelSelectorOpen}
-                        selected={selectedModel}
-                        onSelect={setSelectedModel}
-                    />
+                    <ModelSelectorModal />
                 </div>
             </InsetPanel>
         </div>

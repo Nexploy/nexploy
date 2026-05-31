@@ -10,8 +10,9 @@ import {
     CommandList,
 } from '@workspace/ui/components/command';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import type { Provider, SelectedModel } from '@workspace/typescript-interface/ai/aiConfig';
+import type { Provider } from '@workspace/typescript-interface/ai/aiConfig';
 import { fetcherApi } from '@/lib/api/fetcherApi.ts';
+import { useAIPanelStore } from '@/stores/useAIPanelStore';
 import { ProviderGroup } from './ProviderGroup';
 
 const PROVIDER_LABELS: Record<Provider, string> = {
@@ -25,20 +26,10 @@ const PROVIDER_LABELS: Record<Provider, string> = {
     GROK: 'Grok',
 };
 
-interface ModelSelectorModalProps {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    selected: SelectedModel | null;
-    onSelect: (model: SelectedModel) => void;
-}
-
-export function ModelSelectorModal({
-    open,
-    onOpenChange,
-    selected,
-    onSelect,
-}: ModelSelectorModalProps) {
+export function ModelSelectorModal() {
     const t = useTranslations('ai.chat.modelSelector');
+    const modelSelectorOpen = useAIPanelStore((s) => s.modelSelectorOpen);
+    const closeModelSelector = useAIPanelStore((s) => s.closeModelSelector);
 
     const { data, isLoading } = useSWR<{ providers: Provider[] }>(
         { url: '/api/ai/providers' },
@@ -47,13 +38,12 @@ export function ModelSelectorModal({
 
     const providers = data?.providers ?? [];
 
-    function handleSelect(model: SelectedModel) {
-        onSelect(model);
-        onOpenChange(false);
-    }
-
     return (
-        <CommandDialog open={open} onOpenChange={onOpenChange} title={t('title')}>
+        <CommandDialog
+            open={modelSelectorOpen}
+            onOpenChange={(open) => !open && closeModelSelector()}
+            title={t('title')}
+        >
             <CommandInput placeholder={t('search')} />
             <CommandList className="max-h-[55vh]">
                 {isLoading ? (
@@ -76,8 +66,6 @@ export function ModelSelectorModal({
                                 key={provider}
                                 provider={provider}
                                 label={PROVIDER_LABELS[provider]}
-                                selected={selected}
-                                onSelect={handleSelect}
                             />
                         ))}
                     </>

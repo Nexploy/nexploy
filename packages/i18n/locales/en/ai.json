@@ -67,6 +67,12 @@
     },
     "chat": {
         "newChat": "New chat",
+        "toolCall": {
+            "running": "Running",
+            "done": "Done",
+            "error": "Error",
+            "pending": "Pending"
+        },
         "stopGenerating": "Stop generating",
         "inputPlaceholder": "Ask anything...",
         "thinking": "Thinking...",

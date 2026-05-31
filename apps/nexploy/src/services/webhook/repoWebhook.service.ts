@@ -134,8 +134,8 @@ export async function teardownRepositoryWebhook(repositoryId: string): Promise<v
                             throw new Error(`Invalid repository name: ${repo.name}`);
                         await githubDeleteWebhook(owner, repoName, repo.webhookId!);
                     } else if (repo.gitProvider === 'GITLAB') {
-                        const gitlabBase =
-                            repo.gitAccount?.gitProvider?.baseUrl ?? 'https://gitlab.com';
+                        const gitlabBase = repo.gitAccount?.gitProvider?.baseUrl;
+                        if (!gitlabBase) throw new Error('GitLab base URL not found');
                         await gitlabDeleteWebhook(gitlabBase, repo.gitId, repo.webhookId!);
                     }
                 });

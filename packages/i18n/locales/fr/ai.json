@@ -67,6 +67,12 @@
     },
     "chat": {
         "newChat": "Nouveau chat",
+        "toolCall": {
+            "running": "En cours",
+            "done": "Terminé",
+            "error": "Erreur",
+            "pending": "En attente"
+        },
         "stopGenerating": "Arrêter la génération",
         "inputPlaceholder": "Posez une question...",
         "thinking": "Réflexion...",

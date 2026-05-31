@@ -6,27 +6,20 @@ import { Textarea } from '@workspace/ui/components/textarea';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
-import type { SelectedModel } from '@/components/ai/panel/ModelSelectorModal';
+import { useAIPanelStore } from '@/stores/useAIPanelStore';
 
 interface ChatInputProps {
     value: string;
     onChange: (value: string) => void;
     onSubmit: () => void;
     isLoading: boolean;
-    selectedModel: SelectedModel | null;
-    onOpenModelSelector: () => void;
 }
 
-export function ChatInput({
-    value,
-    onChange,
-    onSubmit,
-    isLoading,
-    selectedModel,
-    onOpenModelSelector,
-}: ChatInputProps) {
+export function ChatInput({ value, onChange, onSubmit, isLoading }: ChatInputProps) {
     const t = useTranslations('ai.chat');
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const selectedModel = useAIPanelStore((s) => s.selectedModel);
+    const openModelSelector = useAIPanelStore((s) => s.openModelSelector);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -41,7 +34,7 @@ export function ChatInput({
                 <div className="px-3 pt-2">
                     <button
                         type="button"
-                        onClick={onOpenModelSelector}
+                        onClick={openModelSelector}
                         className={cn(
                             'flex items-center gap-1.5 rounded-md px-2 py-1 text-xs transition-colors',
                             selectedModel
