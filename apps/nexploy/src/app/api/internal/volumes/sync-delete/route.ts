@@ -8,7 +8,7 @@ import { inngest } from '@/inngest/client';
 import { syncVolumeDeleteSchema } from '@workspace/schemas-zod/aws/backupSchedule.schema';
 
 export const POST = route
-    .use(internalApiAuth)
+    .use(internalApiAuth({ service: 'docker-api' }))
     .body(syncVolumeDeleteSchema)
     .handler(async (_, { body }) => {
         const { volumeName } = body;

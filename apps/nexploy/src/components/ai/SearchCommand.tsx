@@ -25,14 +25,12 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@workspace/ui/components/button';
-import { Kbd } from '@workspace/ui/components/kbd';
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { Dialog, DialogContent } from '@workspace/ui/components/dialog';
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 import { useAIPanelStore } from '@/stores/useAIPanelStore';
 import { useHotkeys } from '@/lib/useHotKeys';
-import { mod } from '@/components/pipeline/utils/modKey.ts';
 
 export function SearchCommand() {
     const [open, setOpen] = useState(false);
@@ -77,8 +75,6 @@ export function SearchCommand() {
                 className="hover:bg-muted hover:text-foreground text-muted-foreground flex h-8 flex-1 justify-between rounded-r-none !pr-2 text-sm font-normal shadow-none md:flex-none"
             >
                 <span className="truncate">{t('searchPlaceholder')}</span>
-
-                <Kbd>{mod}K</Kbd>
             </Button>
 
             <Dialog open={open} onOpenChange={setOpen}>

@@ -2,7 +2,7 @@ import { createZodRoute, MiddlewareFunction } from 'next-zod-route';
 import { NextResponse } from 'next/server';
 import { getUserSession } from '@/services/auth/auth.service';
 import { setToastServer } from '@/lib/toastServer';
-import { Session } from '@/lib/auth/auth';
+import { auth, Session } from '@/lib/auth/auth';
 import { type PermissionActions, type PermissionResource, roles } from '@/lib/auth/permissions';
 import { Role } from '@workspace/schemas-zod/auth/permissions';
 
@@ -33,19 +33,34 @@ export const authRouteServer: MiddlewareFunction<
     return next({ ctx: { session } });
 };
 
-export const internalApiAuth: MiddlewareFunction<
-    Record<string, unknown>,
-    Record<string, unknown>
-> = async ({ next, request, ctx }) => {
-    const apiKey = request.headers.get('x-api-key');
-    const expectedKey = process.env.NEXPLOY_API_KEY;
+export function internalApiAuth(
+    expectedMetadata: Record<string, unknown>,
+): MiddlewareFunction<Record<string, unknown>, { userId: string }> {
+    return async ({ next, request }) => {
+        const apiKeyHeader =
+            request.headers.get('x-api-key') ??
+            request.headers.get('authorization')?.replace(/^Bearer\s+/i, '');
 
-    if (!apiKey || !expectedKey || apiKey !== expectedKey) {
-        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
-    }
+        if (!apiKeyHeader) {
+            return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+        }
 
-    return next({ ctx });
-};
+        const result = await auth.api.verifyApiKey({ body: { key: apiKeyHeader } });
+
+        if (!result.valid || !result.key || !result.key.referenceId) {
+            return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+        }
+
+        const metadata = result.key.metadata as Record<string, unknown> | null;
+        for (const [key, value] of Object.entries(expectedMetadata)) {
+            if (metadata?.[key] !== value) {
+                return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+            }
+        }
+
+        return next({ ctx: { userId: result.key.referenceId } });
+    };
+}
 
 export const requirePermission =
     <R extends PermissionResource>(

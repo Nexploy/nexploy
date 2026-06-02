@@ -11,6 +11,7 @@ import { deleteMcpApiKeyAction } from '@/actions/admin/ai/deleteMcpApiKey.action
 import { MCPKeyCard } from '@/components/admin/ai/MCPKeyCard.tsx';
 import type { McpApiKey } from '@workspace/typescript-interface/ai/mcpApiKey';
 import CopyButton from '@/components/shared/CopyButton.tsx';
+import { GenerateMcpKeyButton } from '@/components/admin/ai/GenerateMcpKeyButton.tsx';
 
 interface MCPSectionProps {
     mcpUrl: string;
@@ -55,8 +56,9 @@ export function MCPSection({ mcpUrl, keys }: MCPSectionProps) {
             </div>
 
             <div className="flex flex-col gap-3">
-                <span className="text-muted-foreground px-1 text-sm font-medium">
+                <span className="text-muted-foreground flex items-end justify-between px-1 text-sm font-medium">
                     {t('keyName')}
+                    <GenerateMcpKeyButton />
                 </span>
                 {keys.length === 0 ? (
                     <div className="text-muted-foreground rounded-md border p-8 text-center text-sm">

@@ -3,7 +3,6 @@ import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-
 import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { MCPSection } from '@/components/admin/ai/MCPSection';
-import { GenerateMcpKeyButton } from '@/components/admin/ai/GenerateMcpKeyButton';
 import { auth } from '@/lib/auth/auth';
 import { headers } from 'next/headers';
 import type { McpApiKey } from '@workspace/typescript-interface/ai/mcpApiKey';
@@ -46,7 +45,6 @@ export default async function AIPage() {
                             <p className="text-muted-foreground text-sm">{t('description')}</p>
                         </div>
                     </div>
-                    <GenerateMcpKeyButton />
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="flex flex-col gap-4 px-5 pb-5">

@@ -18,7 +18,7 @@ export function GenerateMcpKeyButton() {
     }
 
     return (
-        <Button className="mt-5" icon={Plus} onClick={handleOpen}>
+        <Button size={'sm'} icon={Plus} onClick={handleOpen}>
             {t('generateKey')}
         </Button>
     );

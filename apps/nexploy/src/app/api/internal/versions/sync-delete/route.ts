@@ -4,7 +4,7 @@ import { syncVersionDeleteSchema } from '@workspace/schemas-zod/repository/versi
 import { deleteVersionsByImageTag } from '@/services/repository/version.service';
 
 export const POST = route
-    .use(internalApiAuth)
+    .use(internalApiAuth({ service: 'docker-api' }))
     .body(syncVersionDeleteSchema)
     .handler(async (_, { body }) => {
         const { repositoryId, imageTag } = body;
