@@ -10,6 +10,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
+import { DialogFooter } from '@workspace/ui/components/dialog';
 import { Button } from '@workspace/ui/components/button';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar, } from '@workspace/ui/components/sidebar';
 import { Check, ChevronsUpDown, MoreHorizontal, Pencil, Plus, Star, Trash } from 'lucide-react';
@@ -89,6 +90,28 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                 closeDialog();
                 router.refresh();
             },
+        });
+    };
+
+    const handleSetAsDefault = (environment: Environment) => {
+        openDialog({
+            title: t('setAsDefault'),
+            description: t('setAsDefaultConfirm', { name: environment.name }),
+            content: (
+                <DialogFooter>
+                    <Button variant="outline" onClick={closeDialog}>
+                        {tCommon('cancel')}
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            execute({ environmentId: environment.id });
+                            closeDialog();
+                        }}
+                    >
+                        {t('setAsDefault')}
+                    </Button>
+                </DialogFooter>
+            ),
         });
     };
 
@@ -174,11 +197,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                                         </DropdownMenuItem>
                                         {!environment.isDefault && (
                                             <DropdownMenuItem
-                                                onClick={() =>
-                                                    execute({
-                                                        environmentId: environment.id,
-                                                    })
-                                                }
+                                                onClick={() => handleSetAsDefault(environment)}
                                             >
                                                 <Star className={'fill-current'} />
                                                 {t('setAsDefault')}

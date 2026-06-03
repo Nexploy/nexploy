@@ -19,23 +19,56 @@ interface ScrollAreaWithShadowProps extends ScrollAreaProps {
     colorShadow?: string;
     thumbColor?: string;
     trackColor?: string;
+    orientation?: 'vertical' | 'horizontal';
 }
 
 export const ScrollAreaWithShadow = forwardRef<
     HTMLDivElement,
     PropsWithChildren<ScrollAreaWithShadowProps>
 >(function ScrollAreaWithShadow(
-    { children, bottomShadow = false, colorShadow = 'background', ...props },
+    {
+        children,
+        bottomShadow = false,
+        colorShadow = 'background',
+        orientation = 'vertical',
+        className,
+        ...props
+    },
     forwardedRef,
 ) {
     const [showTopShadow, setShowTopShadow] = useState(false);
     const [showBottomShadow, setShowBottomShadow] = useState(false);
+    const [showLeftShadow, setShowLeftShadow] = useState(false);
+    const [showRightShadow, setShowRightShadow] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
     const viewportRef = useRef<HTMLDivElement | null>(null);
+    const hScrollRef = useRef<HTMLDivElement>(null);
 
     useImperativeHandle(forwardedRef, () => viewportRef.current as HTMLDivElement, []);
 
     useEffect(() => {
+        if (orientation === 'horizontal') {
+            const el = hScrollRef.current;
+            if (!el) return;
+
+            const handleScroll = () => {
+                const { scrollLeft, scrollWidth, clientWidth } = el;
+                setShowLeftShadow(scrollLeft > 5);
+                setShowRightShadow(scrollLeft + clientWidth < scrollWidth - 5);
+            };
+
+            handleScroll();
+            el.addEventListener('scroll', handleScroll);
+
+            const ro = new ResizeObserver(handleScroll);
+            ro.observe(el);
+
+            return () => {
+                el.removeEventListener('scroll', handleScroll);
+                ro.disconnect();
+            };
+        }
+
         const scrollContainer = scrollRef.current?.querySelector(
             '[data-radix-scroll-area-viewport]',
         ) as HTMLDivElement;
@@ -59,7 +92,29 @@ export const ScrollAreaWithShadow = forwardRef<
         handleScroll();
         scrollContainer.addEventListener('scroll', handleScroll);
         return () => scrollContainer.removeEventListener('scroll', handleScroll);
-    }, [bottomShadow, forwardedRef]);
+    }, [bottomShadow, forwardedRef, orientation]);
+
+    if (orientation === 'horizontal') {
+        return (
+            <div className="relative min-w-0 overflow-hidden">
+                <div
+                    className={cn(
+                        'pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-8 bg-gradient-to-r from-background/80 to-transparent transition-opacity duration-200',
+                        showLeftShadow ? 'opacity-100' : 'opacity-0',
+                    )}
+                />
+                <div
+                    className={cn(
+                        'pointer-events-none absolute top-0 right-0 bottom-0 z-10 w-8 bg-gradient-to-l from-background/80 to-transparent transition-opacity duration-200',
+                        showRightShadow ? 'opacity-100' : 'opacity-0',
+                    )}
+                />
+                <div ref={hScrollRef} className={cn('overflow-x-auto', className)}>
+                    {children}
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="relative flex-1 overflow-hidden">
@@ -81,7 +136,7 @@ export const ScrollAreaWithShadow = forwardRef<
                 />
             )}
 
-            <ScrollArea {...props} ref={scrollRef}>
+            <ScrollArea className={className} {...props} ref={scrollRef}>
                 {children}
             </ScrollArea>
         </div>

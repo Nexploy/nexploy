@@ -11,7 +11,7 @@ interface MessageRendererProps {
 
 export function RenderMessageText({ text }: MessageRendererProps) {
     return (
-        <div className="w-full min-w-0 overflow-x-hidden leading-relaxed break-all">
+        <div className="w-full min-w-0 leading-relaxed">
             <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
@@ -65,17 +65,11 @@ export function RenderMessageText({ text }: MessageRendererProps) {
                         );
                     },
                     pre: ({ children }) => (
-                        <pre className="bg-background/80 my-2 w-full overflow-x-auto rounded border p-2.5 font-mono text-xs leading-relaxed">
+                        <pre className="bg-background/80 my-2 overflow-x-hidden rounded border p-2.5 font-mono text-xs leading-relaxed break-all whitespace-pre-wrap">
                             {children}
                         </pre>
                     ),
-                    table: ({ children }) => (
-                        <div className="my-2 min-w-0 overflow-x-auto">
-                            <table className="min-w-full border-collapse text-[11px]">
-                                {children}
-                            </table>
-                        </div>
-                    ),
+                    table: ({ children }) => <table className="text-[11px]">{children}</table>,
                     thead: ({ children }) => (
                         <thead className="border-border/50 border-b">{children}</thead>
                     ),

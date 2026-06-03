@@ -41,6 +41,7 @@
     "edit": "Modifier",
     "delete": "Supprimer",
     "setAsDefault": "Définir par défaut",
+    "setAsDefaultConfirm": "Définir {name} comme environnement par défaut ? Tous les nouveaux builds et déploiements utiliseront automatiquement cet environnement.",
     "updateAvailable": "Mise à jour disponible",
     "updateDescription": "La version {version} est disponible.",
     "update": "Mettre à jour"
