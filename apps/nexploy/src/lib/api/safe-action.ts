@@ -4,8 +4,7 @@ import { Session } from '@/lib/auth/auth';
 import { redirect } from 'next/navigation';
 import { setToastServer } from '@/lib/toastServer';
 import { getTranslations } from 'next-intl/server';
-import { type PermissionActions, type PermissionResource, roles } from '@/lib/auth/permissions';
-import { Role } from '@workspace/schemas-zod/auth/permissions';
+import { hasPermission, type PermissionActions, type PermissionResource } from '@/lib/auth/permissions';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { isNexployInfrastructureNetworkName } from '@workspace/shared/nexployFilter';
 
@@ -43,15 +42,9 @@ export const requirePermission = <R extends PermissionResource>(
     action: PermissionActions[R],
 ) =>
     createMiddleware<{ ctx: { session: Session } }>().define(async ({ ctx, next }) => {
-        const role = ctx.session.user.role as Role;
-        const roleStatements = (
-            roles[role] as { statements?: Record<string, readonly string[]> } | undefined
-        )?.statements;
-
-        if (!roleStatements?.[resource]?.includes(action as string)) {
+        if (!hasPermission(ctx.session.user.role as string, resource, action as string)) {
             throw new Error(`Forbidden: missing permission ${resource}.${action as string}`);
         }
-
         return next({ ctx });
     });
 

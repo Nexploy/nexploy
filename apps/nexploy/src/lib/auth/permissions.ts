@@ -81,3 +81,7 @@ export const permission = {
         ...roles,
     },
 };
+
+export function hasPermission(role: string, resource: PermissionResource, action: string): boolean {
+    return roles[role as Role]?.statements?.[resource]?.includes(action) ?? false;
+}

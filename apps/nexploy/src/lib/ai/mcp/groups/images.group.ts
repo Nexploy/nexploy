@@ -1,0 +1,152 @@
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { z } from 'zod';
+import {
+    imageDeleteSchema,
+    imagePruneSchema,
+    imageTagBodySchema,
+} from '@workspace/schemas-zod/docker/image/imageAction.schema';
+import { imagePullSchema } from '@workspace/schemas-zod/docker/image/imagePullAction.schema';
+import { kyDocker } from '@/lib/api/kyDocker';
+import { fail, guard, ok } from '../helpers';
+import { ToolContext, ToolGroup } from '../types';
+
+export const imagesGroup: ToolGroup = {
+    name: 'images',
+
+    register(server: McpServer, ctx: ToolContext) {
+        server.registerTool(
+            'listImages',
+            { description: 'List all locally available Docker images.' },
+            async () => {
+                const g = guard(ctx, 'docker', 'read');
+                if (g) return g;
+                try {
+                    const images = await kyDocker.get('images').json<any[]>();
+                    const data = images.map((img) => ({
+                        id: img.id?.replace('sha256:', '').slice(0, 12) ?? img.id,
+                        tags: img.repoTags ?? img.tags ?? [],
+                        size: img.size ? `${Math.round(img.size / 1024 / 1024)}MB` : 'unknown',
+                    }));
+                    return ok(JSON.stringify({ count: images.length, data }));
+                } catch (e: any) {
+                    return fail(e.message);
+                }
+            },
+        );
+
+        server.registerTool(
+            'inspectImage',
+            {
+                description: 'Get full inspection details of a Docker image.',
+                inputSchema: z.object({ id: z.string().describe('Image ID or tag') }).shape,
+            },
+            async ({ id }) => {
+                const g = guard(ctx, 'docker', 'read');
+                if (g) return g;
+                try {
+                    const data = await kyDocker.get(`images/${id}`).json();
+                    return ok(JSON.stringify(data));
+                } catch (e: any) {
+                    return fail(e.message);
+                }
+            },
+        );
+
+        server.registerTool(
+            'pullImage',
+            {
+                description: 'Pull a Docker image from a registry.',
+                inputSchema: imagePullSchema.shape,
+            },
+            async (params) => {
+                const g = guard(ctx, 'docker', 'manage');
+                if (g) return g;
+                try {
+                    await kyDocker.post('images/pull', { json: params }).json();
+                    return ok(`Started pulling \`${params.imageName}\`. This may take a moment.`);
+                } catch (e: any) {
+                    return fail(e.message);
+                }
+            },
+        );
+
+        server.registerTool(
+            'tagImage',
+            {
+                description: 'Add a new tag to an existing Docker image.',
+                inputSchema: z.object({
+                    id: z.string().describe('Source image ID or existing tag'),
+                    repo: imageTagBodySchema.shape.repo,
+                    tag: imageTagBodySchema.shape.tag,
+                }).shape,
+            },
+            async ({ id, repo, tag }) => {
+                const g = guard(ctx, 'docker', 'manage');
+                if (g) return g;
+                try {
+                    await kyDocker.post(`images/${id}/tag`, { json: { repo, tag } }).json();
+                    return ok(`Image tagged as ${repo}:${tag}`);
+                } catch (e: any) {
+                    return fail(e.message);
+                }
+            },
+        );
+
+        server.registerTool(
+            'deleteImages',
+            {
+                description: 'Delete one or more Docker images by ID.',
+                inputSchema: imageDeleteSchema.shape,
+            },
+            async (params) => {
+                const g = guard(ctx, 'docker', 'manage');
+                if (g) return g;
+                try {
+                    await kyDocker.post('images/delete', { json: params }).json();
+                    return ok(`Deleted ${params.imageIds.length} image(s)`);
+                } catch (e: any) {
+                    return fail(e.message);
+                }
+            },
+        );
+
+        server.registerTool(
+            'pruneImages',
+            {
+                description: 'Remove unused Docker images. Requires admin role.',
+                inputSchema: imagePruneSchema.shape,
+            },
+            async (params) => {
+                const g = guard(ctx, 'docker', 'prune');
+                if (g) return g;
+                try {
+                    const result = await kyDocker.post('images/prune', { json: params }).json<any>();
+                    return ok(JSON.stringify(result));
+                } catch (e: any) {
+                    return fail(e.message);
+                }
+            },
+        );
+
+        server.registerTool(
+            'scanImage',
+            {
+                description: 'Scan a Docker image for vulnerabilities using Trivy.',
+                inputSchema: z.object({
+                    image: z.string().describe('Image name and tag'),
+                    severity: z.enum(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']).optional(),
+                }).shape,
+            },
+            async ({ image, severity }) => {
+                const g = guard(ctx, 'docker', 'manage');
+                if (g) return g;
+                try {
+                    const result = await kyDocker.post('images/scan', { json: { image, severity } }).json<any>();
+                    return ok(JSON.stringify(result));
+                } catch (e: any) {
+                    return fail(e.message);
+                }
+            },
+        );
+    },
+};

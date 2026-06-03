@@ -10,6 +10,13 @@ import {
 
 const app = new Hono();
 
+app.get(
+    '/',
+    route(async () => {
+        return swarmStateManager.getAllNodes();
+    }),
+);
+
 app.post(
     '/:id/promote',
     route({ param: nodeIdParamSchema }, async (c) => {

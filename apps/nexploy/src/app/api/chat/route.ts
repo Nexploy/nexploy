@@ -78,7 +78,10 @@ export const POST = route
 
         try {
             const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
-            const mcpServer = createNexployMCPServer(ctx.session.user.id);
+            const mcpServer = createNexployMCPServer(
+                ctx.session.user.id,
+                (ctx.session.user.role as string) ?? 'readWrite',
+            );
 
             const [mcpClient] = await Promise.all([
                 createMCPClient({ transport: clientTransport }),

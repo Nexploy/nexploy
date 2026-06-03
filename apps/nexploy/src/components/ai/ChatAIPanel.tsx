@@ -51,7 +51,7 @@ export function ChatAIPanel() {
     });
 
     const isLoading = status === 'submitted' || status === 'streaming';
-    const { suggestions } = useAIContext();
+    const { categories } = useAIContext();
 
     useHotkeys(
         ['meta+i', 'ctrl+i'],
@@ -141,7 +141,7 @@ export function ChatAIPanel() {
                     >
                         <div className="flex w-full flex-col gap-3 px-3">
                             {messages.length === 0 && (
-                                <Suggestions suggestions={suggestions} onSelect={trySendMessage} />
+                                <Suggestions categories={categories} onSelect={trySendMessage} />
                             )}
                             <ChatMessages messages={messages} isLoading={isLoading} error={error} />
                             <div ref={messagesEndRef} />

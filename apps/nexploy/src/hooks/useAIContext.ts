@@ -1,134 +1,130 @@
 'use client';
 
-import { useParams, usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-export interface AIContext {
+export interface AISuggestionCategory {
+    id: string;
+    label: string;
     suggestions: string[];
 }
 
-function stripLocale(pathname: string) {
-    return pathname.replace(/^\/[a-z]{2}(\/|$)/, '/');
+export interface AIContext {
+    categories: AISuggestionCategory[];
 }
 
-type RouteConfig = {
-    match: (path: string, repositoryId?: string) => boolean;
-    keys: string[];
-};
-
-const ROUTE_CONFIGS: RouteConfig[] = [
+const CATEGORY_KEYS: { id: string; keys: string[] }[] = [
     {
-        match: (path) => path.startsWith('/docker/containers'),
+        id: 'containers',
         keys: [
-            'suggestions.containers.listStopped',
-            'suggestions.containers.createPostgres',
+            'suggestions.containers.listRunning',
             'suggestions.containers.showLogs',
-            'suggestions.containers.restartFailing',
+            'suggestions.containers.execCommand',
             'suggestions.containers.cleanupStopped',
         ],
     },
     {
-        match: (path) => path.startsWith('/docker/images'),
+        id: 'images',
         keys: [
-            'suggestions.images.pullNginx',
-            'suggestions.images.pullPostgres',
-            'suggestions.images.listUnused',
-            'suggestions.images.buildCustom',
+            'suggestions.images.listWithSizes',
+            'suggestions.images.pullImage',
+            'suggestions.images.scanVulnerabilities',
+            'suggestions.images.pruneDangling',
         ],
     },
     {
-        match: (path) => path.startsWith('/docker/volumes'),
+        id: 'volumes',
         keys: [
-            'suggestions.volumes.createVolume',
             'suggestions.volumes.listVolumes',
-            'suggestions.volumes.inspectVolume',
+            'suggestions.volumes.createVolume',
+            'suggestions.volumes.pruneUnused',
         ],
     },
     {
-        match: (path) => path.startsWith('/docker/networks'),
+        id: 'networks',
         keys: [
-            'suggestions.networks.createBridge',
             'suggestions.networks.listNetworks',
-            'suggestions.networks.connectContainer',
+            'suggestions.networks.createBridge',
+            'suggestions.networks.inspectNetwork',
         ],
     },
     {
-        match: (path, repositoryId) => !!repositoryId && path.includes('/pipeline'),
+        id: 'compose',
         keys: [
-            'suggestions.pipeline.addLintStep',
-            'suggestions.pipeline.deployStaging',
-            'suggestions.pipeline.addNotification',
-            'suggestions.pipeline.createPreview',
-            'suggestions.pipeline.saveBuildLogs',
+            'suggestions.compose.listContainers',
+            'suggestions.compose.restartStack',
+            'suggestions.compose.teardownStack',
         ],
     },
     {
-        match: (path, repositoryId) =>
-            !!repositoryId && !!path.match(/\/repositories\/[^/]+\/[^/]+$/),
+        id: 'repositories',
         keys: [
-            'suggestions.build.showLogs',
-            'suggestions.build.redeploy',
-            'suggestions.build.debugFailed',
-            'suggestions.build.comparePrevious',
+            'suggestions.repositories.listWithStatus',
+            'suggestions.repositories.showFailing',
+            'suggestions.repositories.triggerBuild',
+            'suggestions.repositories.showEnvVars',
         ],
     },
     {
-        match: (_path, repositoryId) => !!repositoryId,
+        id: 'repository',
         keys: [
             'suggestions.repository.triggerBuild',
             'suggestions.repository.showBuildLogs',
-            'suggestions.repository.changeBranch',
-            'suggestions.repository.rollback',
-            'suggestions.repository.envVars',
+            'suggestions.repository.cancelBuild',
+            'suggestions.repository.setEnvVar',
         ],
     },
     {
-        match: (path) => path.startsWith('/repositories'),
+        id: 'build',
         keys: [
-            'suggestions.repositories.listRepos',
-            'suggestions.repositories.showFailed',
-            'suggestions.repositories.triggerBuild',
-            'suggestions.repositories.showStatus',
+            'suggestions.build.whyFailed',
+            'suggestions.build.showNodeLogs',
+            'suggestions.build.cancelBuild',
+            'suggestions.build.listBuilds',
         ],
     },
     {
-        match: (path) => path.startsWith('/monitoring'),
+        id: 'ssl',
         keys: [
-            'suggestions.monitoring.cpuUsage',
-            'suggestions.monitoring.memoryUsage',
-            'suggestions.monitoring.logsAlert',
+            'suggestions.ssl.listCertificates',
+            'suggestions.ssl.issueLetsEncrypt',
+            'suggestions.ssl.deleteExpired',
         ],
     },
     {
-        match: (path) => path.startsWith('/swarm'),
+        id: 'registries',
+        keys: [
+            'suggestions.registries.listRegistries',
+            'suggestions.registries.addRegistry',
+            'suggestions.registries.deleteRegistry',
+        ],
+    },
+    {
+        id: 'environments',
+        keys: [
+            'suggestions.environments.listEnvironments',
+            'suggestions.environments.addRemoteHost',
+            'suggestions.environments.setDefault',
+        ],
+    },
+    {
+        id: 'swarm',
         keys: [
             'suggestions.swarm.listNodes',
             'suggestions.swarm.listServices',
-            'suggestions.swarm.deployService',
+            'suggestions.swarm.scaleService',
+            'suggestions.swarm.drainNode',
         ],
     },
 ];
 
-const DEFAULT_KEYS = [
-    'suggestions.default.listContainers',
-    'suggestions.default.listRepositories',
-    'suggestions.default.showStopped',
-    'suggestions.default.listImages',
-    'suggestions.default.triggerBuild',
-];
-
 export function useAIContext(): AIContext {
-    const pathname = usePathname();
-    const params = useParams<{ repositoryId?: string }>();
     const t = useTranslations('ai.context');
 
-    const path = stripLocale(pathname);
-    const repositoryId = params?.repositoryId;
-
-    const config = ROUTE_CONFIGS.find(({ match }) => match(path, repositoryId));
-    const keys = config?.keys ?? DEFAULT_KEYS;
-
     return {
-        suggestions: keys.map((key) => t(key as Parameters<typeof t>[0])),
+        categories: CATEGORY_KEYS.map(({ id, keys }) => ({
+            id,
+            label: t(`suggestions.categories.${id}` as Parameters<typeof t>[0]),
+            suggestions: keys.map((key) => t(key as Parameters<typeof t>[0])),
+        })),
     };
 }

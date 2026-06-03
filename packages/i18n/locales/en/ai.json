@@ -90,70 +90,84 @@
     "context": {
         "suggestions": {
             "containers": {
-                "listStopped": "List stopped containers",
-                "createPostgres": "Create a postgres container",
-                "showLogs": "Show container logs",
-                "restartFailing": "Restart failing containers",
+                "listRunning": "Which containers are currently running?",
+                "showLogs": "Show the logs of a container",
+                "execCommand": "Run a command inside a running container",
                 "cleanupStopped": "Remove all stopped containers"
             },
             "images": {
-                "pullNginx": "Pull latest nginx image",
-                "pullPostgres": "Pull postgres:latest",
-                "listUnused": "List unused images",
-                "buildCustom": "How to build a custom image?"
+                "listWithSizes": "List all images and how much space they use",
+                "pullImage": "Pull an image from a registry",
+                "scanVulnerabilities": "Scan an image for vulnerabilities",
+                "pruneDangling": "Delete all unused images to free disk space"
             },
             "volumes": {
-                "createVolume": "Create a new volume",
                 "listVolumes": "List all volumes",
-                "inspectVolume": "Inspect a volume"
+                "createVolume": "Create a new volume",
+                "pruneUnused": "Delete all volumes not used by any container"
             },
             "networks": {
-                "createBridge": "Create a bridge network",
-                "listNetworks": "List all networks",
-                "connectContainer": "Connect a container to a network"
+                "listNetworks": "List all networks and their drivers",
+                "createBridge": "Create a new bridge network",
+                "inspectNetwork": "Inspect a network and its connected containers"
+            },
+            "compose": {
+                "listContainers": "List containers belonging to a stack",
+                "restartStack": "Restart a compose stack",
+                "teardownStack": "Stop and remove a compose stack"
             },
             "repositories": {
-                "listRepos": "List all my repositories",
-                "showFailed": "Which repository failed recently?",
-                "triggerBuild": "Trigger a build",
-                "showStatus": "Show deployment status"
-            },
-            "pipeline": {
-                "addLintStep": "Add a lint step before the build",
-                "deployStaging": "Deploy only to staging",
-                "addNotification": "Add a Slack notification step",
-                "createPreview": "Create a preview environment",
-                "saveBuildLogs": "Save build logs"
+                "listWithStatus": "List all repositories and their last build status",
+                "showFailing": "Which repositories have a failing build?",
+                "triggerBuild": "Trigger a build for a repository",
+                "showEnvVars": "List environment variables for a repository"
             },
             "repository": {
-                "triggerBuild": "Trigger a new build",
-                "showBuildLogs": "Show last build logs",
-                "changeBranch": "How to change the build branch?",
-                "rollback": "Rollback to previous version",
-                "envVars": "Manage environment variables"
+                "triggerBuild": "Trigger a new build for this repository",
+                "showBuildLogs": "Show the logs of the last build",
+                "cancelBuild": "Cancel the currently running build",
+                "setEnvVar": "Add or update an environment variable"
             },
             "build": {
-                "showLogs": "Show build logs",
-                "redeploy": "Redeploy this build",
-                "debugFailed": "Why did this build fail?",
-                "comparePrevious": "Compare with previous build"
+                "whyFailed": "Why did this build fail?",
+                "showNodeLogs": "Show the logs of a specific pipeline step",
+                "cancelBuild": "Cancel this build",
+                "listBuilds": "List all builds for this repository"
             },
-            "monitoring": {
-                "cpuUsage": "Show CPU usage",
-                "memoryUsage": "Show memory usage",
-                "logsAlert": "Set up log alerts"
+            "ssl": {
+                "listCertificates": "List all SSL certificates and their expiry dates",
+                "issueLetsEncrypt": "Issue a Let's Encrypt certificate for a domain",
+                "deleteExpired": "Delete an expired certificate"
+            },
+            "registries": {
+                "listRegistries": "List all configured registries",
+                "addRegistry": "Add a new container registry",
+                "deleteRegistry": "Remove a registry"
+            },
+            "environments": {
+                "listEnvironments": "List all configured Docker environments",
+                "addRemoteHost": "Add a remote Docker host",
+                "setDefault": "Change the default Docker environment"
             },
             "swarm": {
-                "listNodes": "List swarm nodes",
-                "listServices": "List swarm services",
-                "deployService": "Deploy a new service"
+                "listNodes": "List all swarm nodes and their status",
+                "listServices": "List all swarm services and their replica count",
+                "scaleService": "Change the number of replicas for a service",
+                "drainNode": "Drain a node for maintenance"
             },
-            "default": {
-                "listContainers": "List all containers",
-                "listRepositories": "List repositories",
-                "showStopped": "Show stopped containers",
-                "listImages": "List images",
-                "triggerBuild": "Trigger a build"
+            "categories": {
+                "containers": "Containers",
+                "images": "Images",
+                "volumes": "Volumes",
+                "networks": "Networks",
+                "compose": "Compose",
+                "repositories": "Repositories",
+                "repository": "This Repository",
+                "build": "This Build",
+                "ssl": "SSL Certificates",
+                "registries": "Registries",
+                "environments": "Environments",
+                "swarm": "Swarm"
             }
         }
     }

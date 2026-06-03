@@ -90,70 +90,84 @@
     "context": {
         "suggestions": {
             "containers": {
-                "listStopped": "Lister les conteneurs arrêtés",
-                "createPostgres": "Créer un conteneur postgres",
-                "showLogs": "Voir les logs d'un conteneur",
-                "restartFailing": "Redémarrer les conteneurs en échec",
+                "listRunning": "Quels conteneurs sont actuellement en cours d'exécution ?",
+                "showLogs": "Afficher les logs d'un conteneur",
+                "execCommand": "Exécuter une commande dans un conteneur",
                 "cleanupStopped": "Supprimer tous les conteneurs arrêtés"
             },
             "images": {
-                "pullNginx": "Puller la dernière image nginx",
-                "pullPostgres": "Puller postgres:latest",
-                "listUnused": "Lister les images inutilisées",
-                "buildCustom": "Comment créer une image personnalisée ?"
+                "listWithSizes": "Lister toutes les images et l'espace qu'elles occupent",
+                "pullImage": "Télécharger une image depuis un registre",
+                "scanVulnerabilities": "Scanner une image pour détecter des vulnérabilités",
+                "pruneDangling": "Supprimer toutes les images inutilisées pour libérer de l'espace"
             },
             "volumes": {
-                "createVolume": "Créer un nouveau volume",
                 "listVolumes": "Lister tous les volumes",
-                "inspectVolume": "Inspecter un volume"
+                "createVolume": "Créer un nouveau volume",
+                "pruneUnused": "Supprimer tous les volumes non utilisés par un conteneur"
             },
             "networks": {
-                "createBridge": "Créer un réseau bridge",
-                "listNetworks": "Lister tous les réseaux",
-                "connectContainer": "Connecter un conteneur à un réseau"
+                "listNetworks": "Lister tous les réseaux et leurs drivers",
+                "createBridge": "Créer un nouveau réseau bridge",
+                "inspectNetwork": "Inspecter un réseau et ses conteneurs connectés"
+            },
+            "compose": {
+                "listContainers": "Lister les conteneurs appartenant à un stack",
+                "restartStack": "Redémarrer un stack compose",
+                "teardownStack": "Arrêter et supprimer un stack compose"
             },
             "repositories": {
-                "listRepos": "Lister tous mes dépôts",
-                "showFailed": "Quel dépôt a échoué récemment ?",
-                "triggerBuild": "Déclencher un build",
-                "showStatus": "Afficher le statut des déploiements"
-            },
-            "pipeline": {
-                "addLintStep": "Ajouter un test de lint avant le build",
-                "deployStaging": "Déployer uniquement sur staging",
-                "addNotification": "Ajouter une étape de notification Slack",
-                "createPreview": "Créer un environnement de preview",
-                "saveBuildLogs": "Sauvegarder les logs du build"
+                "listWithStatus": "Lister tous les dépôts et leur dernier statut de build",
+                "showFailing": "Quels dépôts ont un build en échec ?",
+                "triggerBuild": "Déclencher un build pour un dépôt",
+                "showEnvVars": "Lister les variables d'environnement d'un dépôt"
             },
             "repository": {
-                "triggerBuild": "Déclencher un nouveau build",
-                "showBuildLogs": "Voir les logs du dernier build",
-                "changeBranch": "Comment changer la branche de build ?",
-                "rollback": "Revenir à la version précédente",
-                "envVars": "Gérer les variables d'environnement"
+                "triggerBuild": "Déclencher un nouveau build pour ce dépôt",
+                "showBuildLogs": "Afficher les logs du dernier build",
+                "cancelBuild": "Annuler le build en cours",
+                "setEnvVar": "Ajouter ou mettre à jour une variable d'environnement"
             },
             "build": {
-                "showLogs": "Voir les logs du build",
-                "redeploy": "Redéployer ce build",
-                "debugFailed": "Pourquoi ce build a-t-il échoué ?",
-                "comparePrevious": "Comparer avec le build précédent"
+                "whyFailed": "Pourquoi ce build a-t-il échoué ?",
+                "showNodeLogs": "Afficher les logs d'une étape du pipeline",
+                "cancelBuild": "Annuler ce build",
+                "listBuilds": "Lister tous les builds de ce dépôt"
             },
-            "monitoring": {
-                "cpuUsage": "Afficher l'utilisation CPU",
-                "memoryUsage": "Afficher l'utilisation mémoire",
-                "logsAlert": "Configurer des alertes de logs"
+            "ssl": {
+                "listCertificates": "Lister tous les certificats SSL et leurs dates d'expiration",
+                "issueLetsEncrypt": "Émettre un certificat Let's Encrypt pour un domaine",
+                "deleteExpired": "Supprimer un certificat expiré"
+            },
+            "registries": {
+                "listRegistries": "Lister tous les registres configurés",
+                "addRegistry": "Ajouter un nouveau registre de conteneurs",
+                "deleteRegistry": "Supprimer un registre"
+            },
+            "environments": {
+                "listEnvironments": "Lister tous les environnements Docker configurés",
+                "addRemoteHost": "Ajouter un hôte Docker distant",
+                "setDefault": "Changer l'environnement Docker par défaut"
             },
             "swarm": {
-                "listNodes": "Lister les nœuds du swarm",
-                "listServices": "Lister les services swarm",
-                "deployService": "Déployer un nouveau service"
+                "listNodes": "Lister tous les nœuds swarm et leur statut",
+                "listServices": "Lister tous les services swarm et leur nombre de réplicas",
+                "scaleService": "Modifier le nombre de réplicas d'un service",
+                "drainNode": "Mettre un nœud en mode drain pour maintenance"
             },
-            "default": {
-                "listContainers": "Lister tous les conteneurs",
-                "listRepositories": "Lister les dépôts",
-                "showStopped": "Conteneurs arrêtés",
-                "listImages": "Lister les images",
-                "triggerBuild": "Déclencher un build"
+            "categories": {
+                "containers": "Conteneurs",
+                "images": "Images",
+                "volumes": "Volumes",
+                "networks": "Réseaux",
+                "compose": "Compose",
+                "repositories": "Dépôts",
+                "repository": "Ce dépôt",
+                "build": "Ce build",
+                "ssl": "Certificats SSL",
+                "registries": "Registres",
+                "environments": "Environnements",
+                "swarm": "Swarm"
             }
         }
     }

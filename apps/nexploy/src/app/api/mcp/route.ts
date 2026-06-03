@@ -3,7 +3,7 @@ import { createNexployMCPServer } from '@/lib/ai/nexploy-mcp-server';
 import { internalApiAuth, route } from '@/lib/api/nextRoute';
 
 const handler = route.use(internalApiAuth({ purpose: 'mcp' })).handler(async (request, { ctx }) => {
-    const server = createNexployMCPServer(ctx.userId);
+    const server = createNexployMCPServer(ctx.userId, ctx.role);
     const transport = new WebStandardStreamableHTTPServerTransport({
         sessionIdGenerator: undefined,
     });

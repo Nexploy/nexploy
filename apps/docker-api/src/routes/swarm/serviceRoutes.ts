@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
 import { route } from '@/utils/route';
+import { swarmStateManager } from '@/managers/list/swarmStateManager';
 import {
     createServiceFormSchema,
     removeServicesSchema,
@@ -10,6 +11,13 @@ import {
 } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
 
 const app = new Hono();
+
+app.get(
+    '/',
+    route(async () => {
+        return swarmStateManager.getAllServices();
+    }),
+);
 
 function parseDelayToNanoseconds(delay: string): number {
     const match = delay.trim().match(/^(\d+(?:\.\d+)?)(ns|us|ms|s|m|h)$/);
