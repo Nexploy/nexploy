@@ -25,7 +25,7 @@ import { onCreateUserAction } from '@/actions/auth/createUser.action';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createUserFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { Info, Plus } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { toast } from 'sonner';
 
@@ -43,7 +43,7 @@ export function CreateUserForm() {
                     email: '',
                     password: '',
                     confirmPassword: '',
-                    role: 'readWrite',
+                    role: 'read',
                 },
             },
             actionProps: {
@@ -65,7 +65,7 @@ export function CreateUserForm() {
                         <FormItem>
                             <FormLabel>{t('name')}</FormLabel>
                             <FormControl>
-                                <Input placeholder={t('name')} {...field} />
+                                <Input {...field} placeholder={t('name')} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -79,7 +79,7 @@ export function CreateUserForm() {
                         <FormItem>
                             <FormLabel>{t('email')}</FormLabel>
                             <FormControl>
-                                <Input type="email" placeholder={t('email')} {...field} />
+                                <Input {...field} type="email" placeholder={t('email')} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -93,7 +93,7 @@ export function CreateUserForm() {
                         <FormItem>
                             <FormLabel>{t('password')}</FormLabel>
                             <FormControl>
-                                <Input type="password" placeholder={t('password')} {...field} />
+                                <Input {...field} type="password" placeholder={t('password')} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -108,9 +108,9 @@ export function CreateUserForm() {
                             <FormLabel>{t('confirmPassword')}</FormLabel>
                             <FormControl>
                                 <Input
+                                    {...field}
                                     type="password"
                                     placeholder={t('confirmPassword')}
-                                    {...field}
                                 />
                             </FormControl>
                             <FormMessage />
@@ -180,12 +180,7 @@ export function CreateUserForm() {
                 )}
 
                 <div className="flex justify-end gap-2 pt-4">
-                    <Button
-                        icon={Plus}
-                        isLoading={action.isPending}
-                        disabled={action.isPending}
-                        type="submit"
-                    >
+                    <Button isLoading={action.isPending} disabled={action.isPending} type="submit">
                         {t('createUser')}
                     </Button>
                 </div>

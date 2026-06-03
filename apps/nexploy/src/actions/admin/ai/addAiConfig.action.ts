@@ -1,11 +1,12 @@
 'use server';
 
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { addProviderApiKeySchema } from '@workspace/schemas-zod/ai/aiConfig.schema';
 import { addProviderApiKey } from '@/services/aiConfig.service';
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const addAiConfigAction = authActionServer
+    .use(requirePermission('ai', 'manage'))
     .inputSchema(addProviderApiKeySchema)
     .action(async ({ parsedInput }) => {
         try {

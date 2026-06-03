@@ -12,6 +12,7 @@ export type PermissionActions = {
     user: (typeof adminAc.statements.user)[number];
     session: (typeof adminAc.statements.session)[number];
     backup: 'create' | 'read' | 'restore' | 'delete';
+    ai: 'manage';
 };
 
 export type PermissionResource = keyof PermissionActions;
@@ -27,6 +28,7 @@ const statement = {
     gitProvider: ['create', 'update', 'delete'] as const,
     registry: ['create', 'read', 'update', 'delete'] as const,
     backup: ['create', 'read', 'restore', 'delete'] as const,
+    ai: ['manage'] as const,
 } as const;
 
 const ac = createAccessControl(statement);
@@ -49,14 +51,15 @@ const readWrite = ac.newRole({
 
 const admin = ac.newRole({
     ...adminAc.statements,
+    user: [...adminAc.statements.user],
     repository: ['create', 'read', 'update', 'delete', 'deploy'],
     build: ['read', 'cancel', 'delete'],
     environment: ['create', 'read', 'update', 'delete'],
     docker: ['read', 'manage', 'prune'],
     gitProvider: ['create', 'update', 'delete'],
     registry: ['create', 'read', 'update', 'delete'],
-    user: [...adminAc.statements.user],
     backup: ['create', 'read', 'restore', 'delete'],
+    ai: ['manage'],
 });
 
 const system = ac.newRole({

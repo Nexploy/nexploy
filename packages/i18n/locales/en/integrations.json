@@ -62,6 +62,7 @@
     "aws": {
         "title": "Amazon Web Services",
         "description": "Add AWS accounts to enable S3 backups",
+        "tooltip": "Used to store encrypted database and volume backups in Amazon S3. Connect an IAM account with S3 write permissions.",
         "displayName": "Display Name",
         "displayNamePlaceholder": "e.g. Production, Backup",
         "accessKeyIdLabel": "Access Key ID",
@@ -86,6 +87,7 @@
     "cloudflare": {
         "title": "Cloudflare",
         "description": "Manage DNS records and tunnels with Cloudflare",
+        "tooltip": "Used to manage DNS records for your domains. Link a Cloudflare account to enable custom domain routing.",
         "displayName": "Display Name",
         "displayNamePlaceholder": "e.g. Production, Personal",
         "apiTokenLabel": "API Token",

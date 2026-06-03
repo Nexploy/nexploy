@@ -8,7 +8,7 @@ import { revalidatePath } from 'next/cache';
 import { setToastServer } from '@/lib/toastServer';
 
 export const addAwsAccountAction = authActionServer
-    .use(requirePermission('gitProvider', 'create'))
+    .use(requirePermission('backup', 'create'))
     .inputSchema(awsAddAccountSchema)
     .action(async ({ parsedInput }) => {
         try {

@@ -41,6 +41,7 @@ export function useHotkeys(
         const handler = (e: Event) => {
             const event = e as KeyboardEvent;
 
+            if (!event.key) return;
             const raw = event.key.toLowerCase();
             const key = raw === ' ' ? 'space' : raw;
 

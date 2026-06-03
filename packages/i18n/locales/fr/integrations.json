@@ -62,6 +62,7 @@
     "aws": {
         "title": "Amazon Web Services",
         "description": "Ajoutez des comptes AWS pour activer les sauvegardes S3",
+        "tooltip": "Utilisé pour stocker les sauvegardes chiffrées de bases de données et de volumes sur Amazon S3. Connectez un compte IAM avec des permissions d'écriture S3.",
         "displayName": "Nom affiché",
         "displayNamePlaceholder": "ex. Production, Backup",
         "accessKeyIdLabel": "Identifiant de clé d'accès",
@@ -86,6 +87,7 @@
     "cloudflare": {
         "title": "Cloudflare",
         "description": "Gérez les enregistrements DNS et les tunnels avec Cloudflare",
+        "tooltip": "Utilisé pour gérer les enregistrements DNS pour vos domaines. Liez un compte Cloudflare pour activer le routage de domaines personnalisés.",
         "displayName": "Nom affiché",
         "displayNamePlaceholder": "ex. Production, Personnel",
         "apiTokenLabel": "API Token",

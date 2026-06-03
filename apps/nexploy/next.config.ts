@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
     allowedDevOrigins: ['192.168.1.250'],
     reactStrictMode: true,
     transpilePackages: ['@workspace/ui', '@workspace/i18n', '@workspace/shared'],
+    serverExternalPackages: ['better-auth', '@better-auth/kysely-adapter', 'kysely'],
 };
 
 const withNextIntl = createNextIntlPlugin();
