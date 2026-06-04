@@ -17,10 +17,10 @@ export function MCPKeyCard({ k, onRevoke }: MCPKeyCardProps) {
     return (
         <div className="bg-card flex items-center justify-between rounded-xl border p-4 shadow-sm">
             <div className="flex items-center gap-3">
-                <div className="bg-muted flex size-8 items-center justify-center rounded-lg">
-                    <Key className="text-muted-foreground size-4" />
+                <div className="bg-primary/10 flex size-8 items-center justify-center rounded-lg">
+                    <Key className="text-primary size-4" />
                 </div>
-                <div className="flex flex-col gap-0.5">
+                <div className="flex flex-col">
                     <span className="font-mono text-sm font-medium">
                         {k.name ?? k.start ?? '••••••'}
                     </span>

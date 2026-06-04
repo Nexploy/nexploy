@@ -52,9 +52,9 @@ export function IntegrationCard({
                 <div className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-lg">
                     {icon}
                 </div>
-                <div className="flex flex-col gap-0.5">
+                <div className="flex flex-col">
                     <div className="flex items-center gap-2">
-                        <span className="font-medium">{name}</span>
+                        <span>{name}</span>
                         {isOrg ? (
                             <Badge variant="secondary" className="gap-1 text-xs">
                                 <Building2 className="size-3" />

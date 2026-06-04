@@ -4,7 +4,7 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
-import { Power, Server } from 'lucide-react';
+import { Power } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@workspace/ui/components/form';
 import { Switch } from '@workspace/ui/components/switch';
@@ -47,7 +47,7 @@ export function GeneralSettingsCard({ aiEnabled, mcpEnabled }: GeneralSettingsCa
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
-                                        <div className="flex flex-col gap-0.5">
+                                        <div className="flex flex-col">
                                             <span className="text-base">{t('aiEnabled')}</span>
                                             <span className="text-muted-foreground text-xs">
                                                 {t('aiEnabledDescription')}
@@ -59,7 +59,7 @@ export function GeneralSettingsCard({ aiEnabled, mcpEnabled }: GeneralSettingsCa
                                                 disabled={action.isPending}
                                                 onCheckedChange={(checked) => {
                                                     field.onChange(checked);
-                                                    void handleSubmitWithAction();
+                                                    handleSubmitWithAction();
                                                 }}
                                             />
                                         </FormControl>
@@ -74,16 +74,11 @@ export function GeneralSettingsCard({ aiEnabled, mcpEnabled }: GeneralSettingsCa
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="bg-muted flex size-8 shrink-0 items-center justify-center rounded-md">
-                                                <Server className="size-4" />
-                                            </div>
-                                            <div className="flex flex-col gap-0.5">
-                                                <span className="text-base">{t('mcpEnabled')}</span>
-                                                <span className="text-muted-foreground text-xs">
-                                                    {t('mcpEnabledDescription')}
-                                                </span>
-                                            </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-base">{t('mcpEnabled')}</span>
+                                            <span className="text-muted-foreground text-xs">
+                                                {t('mcpEnabledDescription')}
+                                            </span>
                                         </div>
                                         <FormControl>
                                             <Switch
@@ -91,7 +86,7 @@ export function GeneralSettingsCard({ aiEnabled, mcpEnabled }: GeneralSettingsCa
                                                 disabled={action.isPending}
                                                 onCheckedChange={(checked) => {
                                                     field.onChange(checked);
-                                                    void handleSubmitWithAction();
+                                                    handleSubmitWithAction();
                                                 }}
                                             />
                                         </FormControl>

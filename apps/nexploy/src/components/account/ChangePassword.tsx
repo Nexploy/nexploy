@@ -21,11 +21,11 @@ export function ChangePassword() {
 
     return (
         <div className="flex items-center justify-between rounded-md border p-3">
-            <div>
-                <p>{tAccount('securitySettings.password')}</p>
-                <p className="text-muted-foreground text-xs">
+            <div className={'flex flex-col'}>
+                <span>{tAccount('securitySettings.password')}</span>
+                <span className="text-muted-foreground text-xs">
                     {tAccount('securitySettings.passwordDescription')}
-                </p>
+                </span>
             </div>
             <Button onClick={handleChangePassword} variant="outline" size="sm">
                 {tSecurity('change')}

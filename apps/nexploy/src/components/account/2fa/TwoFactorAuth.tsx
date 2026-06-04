@@ -14,7 +14,6 @@ import { TwoFactorVerifCodeForm } from '@/components/auth/2faVerifCodeForm';
 import { DialogTitle } from '@workspace/ui/components/dialog';
 import { Session } from '@/lib/auth/auth';
 import { useTranslations } from 'next-intl';
-import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import * as React from 'react';
 
 interface TwoFactorAuthProps {
@@ -101,16 +100,8 @@ export function TwoFactorAuth({ user }: TwoFactorAuthProps) {
 
     return (
         <div className={'flex items-center justify-between gap-3 rounded-md border p-3'}>
-            <div className={'flex flex-col gap-1'}>
-                <div className={'flex items-center gap-2'}>
-                    <span className="font-medium">{t('title')}</span>
-                    <Status status={isTwoFactorEnabled ? 'online' : 'offline'}>
-                        <StatusIndicator />
-                        <StatusLabel>
-                            {isTwoFactorEnabled ? t('enabled') : t('disabled')}
-                        </StatusLabel>
-                    </Status>
-                </div>
+            <div className={'flex flex-col'}>
+                <span>{t('title')}</span>
                 <span className="text-muted-foreground text-xs">{t('description')}</span>
             </div>
 

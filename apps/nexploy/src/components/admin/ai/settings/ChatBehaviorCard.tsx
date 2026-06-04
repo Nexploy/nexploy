@@ -58,7 +58,7 @@ export function ChatBehaviorCard({
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
-                                        <div className="flex flex-col gap-0.5">
+                                        <div className="flex flex-col">
                                             <span className="text-base">
                                                 {t('requireConfirmation')}
                                             </span>

@@ -1,4 +1,5 @@
 import { inngest } from '@/inngest/client';
+import { BackupScheduleStartEvent } from '@workspace/typescript-interface/aws/backupSchedule';
 import { getNextRunAt, markScheduleRan } from '@/services/backupSchedule.service';
 import { getAwsCredentials } from '@/services/aws.service';
 import { kyDocker, KyDockerOptions } from '@/lib/api/kyDocker';
@@ -7,10 +8,10 @@ import { createS3Client, putS3Object } from '@/lib/aws/s3';
 export const backupSchedulerAwsFunction = inngest.createFunction(
     {
         id: 'backup-schedule-run',
+        triggers: [{ event: 'backup/schedule.start' }],
         retries: 2,
         cancelOn: [{ event: 'backup/schedule.cancel', match: 'data.id' }],
     },
-    { event: 'backup/schedule.start' },
     async ({ event, step }) => {
         const {
             id,
@@ -23,7 +24,7 @@ export const backupSchedulerAwsFunction = inngest.createFunction(
             scheduledMinute = 0,
             scheduledDay,
             nextRunAt,
-        } = event.data;
+        } = event.data as BackupScheduleStartEvent;
 
         await step.sleepUntil('wait-until-scheduled', nextRunAt);
 

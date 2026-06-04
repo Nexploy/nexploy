@@ -25,11 +25,9 @@ export async function AccountDetailsSection() {
                     title={t('securitySettings.title')}
                     description={t('securitySettings.description')}
                 />
-                <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <TwoFactorAuth user={session?.user} />
-                        <ChangePassword />
-                    </div>
+                <CardContent className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                    <TwoFactorAuth user={session?.user} />
+                    <ChangePassword />
                 </CardContent>
             </Card>
 
@@ -39,7 +37,7 @@ export async function AccountDetailsSection() {
                     title={t('integrations.title')}
                     description={t('integrations.description')}
                 />
-                <CardContent className="space-y-4">
+                <CardContent>
                     <AcountIntegrations />
                 </CardContent>
             </Card>
@@ -50,7 +48,7 @@ export async function AccountDetailsSection() {
                     title={t('notifications.title')}
                     description={t('notifications.description')}
                 />
-                <CardContent className="space-y-4">
+                <CardContent>
                     <NotificationPreferences />
                 </CardContent>
             </Card>

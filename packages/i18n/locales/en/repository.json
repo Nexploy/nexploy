@@ -38,7 +38,8 @@
         "confirmDelete": "Are you sure you want to delete this version? The Docker image will be permanently removed.",
         "deleteSuccess": "Version deleted successfully",
         "composeConfigNotFound": "Compose configuration not found for this version",
-        "imageNotFound": "Docker image not found. It may have been deleted. Please rebuild before deploying."
+        "imageNotFound": "Docker image not found. It may have been deleted. Please rebuild before deploying.",
+        "stack": "Stack"
     },
     "builds": {
         "title": "Builds",

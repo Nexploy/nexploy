@@ -2,13 +2,23 @@
 
 import { type CloudflareAccountInfo } from '@workspace/typescript-interface/cloudflare/cloudflare';
 import { useTranslations } from 'next-intl';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from '@workspace/ui/components/accordion';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@workspace/ui/components/accordion';
 import { CloudflareAddButton } from '@/components/admin/integrations/CloudflareAddButton';
 import { CloudflareInstanceCard } from '@/components/admin/integrations/CloudflareInstanceCard';
 import { cn } from '@workspace/ui/lib/utils';
 import { Cloudflare } from '@thesvg/react';
 import { Info } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@workspace/ui/components/tooltip';
 
 interface CloudflareAccordionSectionProps {
     accounts: CloudflareAccountInfo[];

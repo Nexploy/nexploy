@@ -51,16 +51,16 @@ export function ProviderInstanceCard({
 
     return (
         <div className="bg-card flex items-center justify-between rounded-lg border p-4">
-            <div className="flex flex-col gap-0.5">
+            <div className="flex flex-col">
                 <div className="flex items-center gap-2">
-                    <span className="font-medium">{displayName}</span>
+                    <span>{displayName}</span>
                     <Status status={statusMap['connected'].status}>
                         <StatusIndicator />
                         <StatusLabel>{statusText}</StatusLabel>
                     </Status>
                 </div>
                 {maskedClientId && (
-                    <p className="text-muted-foreground text-sm">Client ID: {maskedClientId}</p>
+                    <p className="text-muted-foreground text-xs">Client ID: {maskedClientId}</p>
                 )}
             </div>
 

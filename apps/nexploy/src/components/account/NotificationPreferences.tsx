@@ -18,7 +18,7 @@ export function NotificationPreferences() {
     } = useNotificationStore();
 
     return (
-        <>
+        <div className={'space-y-2'}>
             <NotificationSwitch
                 label={t('alerts.containerAlerts')}
                 description={t('alerts.containerStatusChanges')}
@@ -43,6 +43,6 @@ export function NotificationPreferences() {
                 checked={showBuildToast}
                 onCheckedChange={setShowBuildToast}
             />
-        </>
+        </div>
     );
 }

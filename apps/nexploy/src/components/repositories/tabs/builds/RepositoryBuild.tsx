@@ -92,11 +92,15 @@ export function RepositoryBuild({ repositoryId, build }: BuildLogsProps) {
                             </>
                         )
                     )}
-                    <Separator orientation={'vertical'} className={'!h-3 w-1'} />
-                    <span className="flex shrink-0 items-center gap-1">
-                        <GitBranch className="size-3" />
-                        {branch}
-                    </span>
+                    {branch && (
+                        <>
+                            <Separator orientation={'vertical'} className={'!h-3 w-1'} />
+                            <span className="flex shrink-0 items-center gap-1">
+                                <GitBranch className="size-3" />
+                                {branch}
+                            </span>
+                        </>
+                    )}
                 </div>
             </div>
             {isBuildLive(build.status) ? (

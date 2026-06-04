@@ -44,8 +44,8 @@ export async function GitProviderAccordionItem({
                         {icon}
                     </div>
                     <div className="flex min-w-0 flex-col text-left">
-                        <span>{t(titleKey as any)}</span>
-                        <span className="text-muted-foreground text-xs font-normal">
+                        <span>{t(titleKey)}</span>
+                        <span className="text-muted-foreground text-xs">
                             ({t('oauth.instanceCount', { count: instances.length })})
                         </span>
                     </div>

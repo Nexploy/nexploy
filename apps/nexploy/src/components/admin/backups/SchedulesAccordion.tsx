@@ -3,12 +3,7 @@ import { CalendarClock } from 'lucide-react';
 import dayjs from 'dayjs';
 import { BackupSchedule } from 'generated/client';
 import { Badge } from '@workspace/ui/components/badge';
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from '@workspace/ui/components/accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from '@workspace/ui/components/accordion';
 import { DeleteScheduleButton } from './DeleteScheduleButton';
 
 const frequencyKeys = {
@@ -84,7 +79,7 @@ export async function SchedulesAccordion({ volumeSchedules }: SchedulesAccordion
                                         key={schedule.id}
                                         className="bg-muted/50 flex items-center justify-between rounded-md border px-3 py-2"
                                     >
-                                        <div className="flex flex-col gap-0.5">
+                                        <div className="flex flex-col">
                                             <span className="text-sm font-medium">
                                                 {schedule.bucket}
                                             </span>

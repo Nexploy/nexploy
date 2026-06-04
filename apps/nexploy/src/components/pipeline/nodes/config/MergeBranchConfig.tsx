@@ -59,7 +59,7 @@ export function MergeBranchConfig() {
             name={name}
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel>{t(labelKey as any)}</FormLabel>
+                    <FormLabel>{t(labelKey)}</FormLabel>
                     <FormControl>
                         <Select
                             {...field}
@@ -81,7 +81,7 @@ export function MergeBranchConfig() {
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectLabel>{t(labelKey as any)}</SelectLabel>
+                                    <SelectLabel>{t(labelKey)}</SelectLabel>
                                     {branches?.map((branch) => (
                                         <SelectItem key={branch.name} value={branch.name}>
                                             <div className="flex items-center gap-2">

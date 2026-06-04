@@ -2,9 +2,9 @@ import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { prisma } from '../../../prisma/prisma';
 import { nextCookies } from 'better-auth/next-js';
-import { admin, twoFactor } from 'better-auth/plugins';
+import { admin, mcp, twoFactor } from 'better-auth/plugins';
 import { apiKey } from '@better-auth/api-key';
-import { permission } from '@/lib/auth/permissions';
+import { permission } from '@/lib/auth/permissions.ts';
 
 const extraTrustedOrigins = process.env.TRUSTED_ORIGINS
     ? process.env.TRUSTED_ORIGINS.split(',')
@@ -43,6 +43,14 @@ export const auth = betterAuth({
             enableSessionForAPIKeys: true,
             apiKeyHeaders: ['x-api-key'],
             enableMetadata: true,
+        }),
+        mcp({
+            loginPage: '/signin',
+            oidcConfig: {
+                loginPage: '/signin',
+                accessTokenExpiresIn: 60 * 60 * 24,
+                refreshTokenExpiresIn: 60 * 60 * 24 * 30,
+            },
         }),
         nextCookies(),
     ],

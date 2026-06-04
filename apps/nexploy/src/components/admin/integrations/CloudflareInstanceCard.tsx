@@ -41,14 +41,12 @@ export function CloudflareInstanceCard({ id, displayName }: CloudflareInstanceCa
 
     return (
         <div className="bg-card flex items-center justify-between rounded-lg border p-4">
-            <div className="flex flex-col gap-0.5">
-                <div className="flex items-center gap-2">
-                    <span className="font-medium">{displayName}</span>
-                    <Status status={statusMap['connected'].status}>
-                        <StatusIndicator />
-                        <StatusLabel>{t('configured')}</StatusLabel>
-                    </Status>
-                </div>
+            <div className="flex gap-2">
+                <span>{displayName}</span>
+                <Status status={statusMap['connected'].status}>
+                    <StatusIndicator />
+                    <StatusLabel>{t('configured')}</StatusLabel>
+                </Status>
             </div>
 
             <Button

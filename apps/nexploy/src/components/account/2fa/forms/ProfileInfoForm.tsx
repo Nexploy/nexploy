@@ -54,15 +54,11 @@ export function ProfileInfoForm({ user }: ProfileInfoFormProps) {
 
     return (
         <Card id="profile">
-            <CardHeaderWithIcon
-                icon={User}
-                title={t('title')}
-                description={t('description')}
-            />
+            <CardHeaderWithIcon icon={User} title={t('title')} description={t('description')} />
             <CardContent className="space-y-4">
                 <Form {...form}>
                     <form className={'flex flex-col gap-4'} onSubmit={handleSubmitWithAction}>
-                        <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2">
+                        <div className="grid grid-cols-1 items-start gap-2 md:grid-cols-2">
                             <FormField
                                 control={form.control}
                                 name="newName"
