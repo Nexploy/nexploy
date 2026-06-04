@@ -5,6 +5,7 @@ import { ArrowUp } from 'lucide-react';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow.tsx';
 
 interface ChatInputProps {
     value: string;
@@ -26,16 +27,21 @@ export function ChatInput({ value, onChange, onSubmit, isLoading }: ChatInputPro
 
     return (
         <div className="shrink-0 px-3 pb-2">
-            <div className="bg-muted/40 flex items-end rounded-xl rounded-tl-none border">
-                <Textarea
-                    ref={textareaRef}
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder={t('inputPlaceholder')}
-                    className="max-h-24 resize-none border-0 !bg-transparent shadow-none focus-visible:ring-0"
-                    rows={1}
-                />
+            <div className="bg-card flex items-end rounded-xl rounded-tl-none border">
+                <ScrollAreaWithShadow
+                    colorShadow={'from-card via-card/50'}
+                    viewportClassName="max-h-24"
+                >
+                    <Textarea
+                        ref={textareaRef}
+                        value={value}
+                        onChange={(e) => onChange(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder={t('inputPlaceholder')}
+                        className="resize-none border-0 !bg-transparent shadow-none focus-visible:ring-0"
+                        rows={1}
+                    />
+                </ScrollAreaWithShadow>
                 <Button
                     onClick={onSubmit}
                     size="icon"

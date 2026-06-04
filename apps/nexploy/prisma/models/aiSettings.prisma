@@ -1,0 +1,6 @@
+model AISettings {
+  id                             String  @id @default("singleton")
+  requireDestructiveConfirmation Boolean @default(false)
+
+  @@map("ai_settings")
+}

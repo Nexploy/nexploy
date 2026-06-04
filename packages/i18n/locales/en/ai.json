@@ -2,6 +2,15 @@
     "admin": {
         "title": "AI",
         "description": "Configure AI integrations and external access to the MCP server",
+        "settings": {
+            "title": "Settings",
+            "description": "Configure AI assistant behavior",
+            "chatBehavior": "Chat behavior",
+            "chatBehaviorDescription": "Control how the AI assistant behaves during conversations.",
+            "requireConfirmation": "Require confirmation for destructive actions",
+            "requireConfirmationDescription": "When enabled, the AI will ask for explicit confirmation before executing any delete, remove, stop, or prune operation.",
+            "saveFailed": "Failed to save settings"
+        },
         "models": {
             "title": "Models",
             "description": "Configure AI provider API keys",
@@ -67,6 +76,12 @@
     },
     "chat": {
         "newChat": "New chat",
+        "confirmation": {
+            "title": "Confirm destructive action",
+            "target": "Target",
+            "confirm": "Confirm",
+            "cancel": "Cancel"
+        },
         "toolCall": {
             "running": "Running",
             "done": "Done",

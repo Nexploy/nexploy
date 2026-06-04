@@ -1,9 +1,4 @@
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
-} from '@workspace/ui/components/sidebar';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, } from '@workspace/ui/components/sidebar';
 import Link from 'next/link';
 import { AccountMenu } from '@/components/sidebar/AccountMenu';
 import { SidebarNav } from '@/components/sidebar/SidebarNav';
@@ -19,13 +14,13 @@ interface AppSidebarProps {
 export async function AppSidebar({ variant }: AppSidebarProps) {
     return (
         <Sidebar
-            className="z-50 whitespace-nowrap transition-all duration-300 ease-in-out"
+            className="z-50 px-0 whitespace-nowrap transition-all duration-300 ease-in-out"
             collapsible="icon"
             variant={variant}
         >
             <SidebarHeader
                 className={
-                    'flex flex-row gap-4 overflow-hidden group-data-[state=collapsed]:flex-col'
+                    'mx-2 flex flex-row gap-4 overflow-hidden group-data-[state=collapsed]:flex-col'
                 }
             >
                 <Link href="/" className="flex flex-1 gap-2">
@@ -48,13 +43,13 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
             <SidebarContent className="overflow-hidden">
                 <ScrollAreaWithShadow
                     bottomShadow
-                    className="h-full"
+                    className="h-full px-2"
                     colorShadow={'from-sidebar via-sidebar/50'}
                 >
                     <SidebarNav />
                 </ScrollAreaWithShadow>
             </SidebarContent>
-            <SidebarFooter>
+            <SidebarFooter className={'mx-2'}>
                 <UpdateBanner />
                 <AccountMenu />
             </SidebarFooter>

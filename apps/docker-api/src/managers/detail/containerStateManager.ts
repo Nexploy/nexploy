@@ -244,9 +244,7 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
                 ipAddress: firstNetwork?.IPAddress,
                 gateway: firstNetwork?.Gateway,
                 macAddress: firstNetwork?.MacAddress,
-                bridge: container.NetworkSettings.Bridge,
                 sandboxId: container.NetworkSettings.SandboxID,
-                endpointId: container.NetworkSettings.EndpointID,
                 ports: portsMap,
                 networks: Object.fromEntries(
                     Object.entries(networks).map(([name, n]) => [

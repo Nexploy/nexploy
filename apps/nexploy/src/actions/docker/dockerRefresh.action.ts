@@ -5,11 +5,11 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 import { getTranslations } from 'next-intl/server';
-import { z } from 'zod';
+import { dockerRefreshSchema } from '@workspace/schemas-zod/docker/environment/environment.schema';
 
 export const onDockerRefreshAction = authActionServer
     .use(requirePermission('docker', 'manage'))
-    .inputSchema(z.object({ environmentName: z.string().optional() }))
+    .inputSchema(dockerRefreshSchema)
     .action(async ({ parsedInput: { environmentName } }) => {
         try {
             const [, t] = await Promise.all([

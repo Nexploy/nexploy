@@ -28,6 +28,10 @@ export const domainOperationsSchema = z.object({
     delete: z.array(domainSchema).default([]),
 });
 
+export const deleteDomainSchema = z.object({
+    domainId: z.string(),
+});
+
 export type Domain = z.infer<typeof domainSchema>;
 export type DomainsForm = z.infer<typeof domainsFormSchema>;
 export type DomainOperations = z.infer<typeof domainOperationsSchema>;

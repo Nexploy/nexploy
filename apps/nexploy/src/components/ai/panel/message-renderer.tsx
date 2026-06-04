@@ -69,7 +69,9 @@ export function RenderMessageText({ text }: MessageRendererProps) {
                             {children}
                         </pre>
                     ),
-                    table: ({ children }) => <table className="text-[11px]">{children}</table>,
+                    table: ({ children }) => (
+                        <table className="text-[11px] break-all">{children}</table>
+                    ),
                     thead: ({ children }) => (
                         <thead className="border-border/50 border-b">{children}</thead>
                     ),
@@ -83,7 +85,7 @@ export function RenderMessageText({ text }: MessageRendererProps) {
                     td: ({ children }) => <td className="px-2 py-1 break-words">{children}</td>,
                     hr: () => <hr className="border-border/40 my-2" />,
                     blockquote: ({ children }) => (
-                        <blockquote className="border-border text-muted-foreground my-1.5 border-l-2 pl-2.5">
+                        <blockquote className="border-border text-muted-foreground my-1.5 border-l-2 pl-2.5 break-all">
                             {children}
                         </blockquote>
                     ),
@@ -92,7 +94,7 @@ export function RenderMessageText({ text }: MessageRendererProps) {
                             href={href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="underline underline-offset-2 hover:opacity-80"
+                            className="break-all underline underline-offset-2 hover:opacity-80"
                         >
                             {children}
                         </a>

@@ -17,6 +17,7 @@ import {
     Plug,
     Send,
     Shield,
+    SlidersHorizontal,
     Users,
     Warehouse,
 } from 'lucide-react';
@@ -85,6 +86,7 @@ const groups: SidebarNavGroup[] = [
                 children: [
                     { titleKey: 'models', icon: Cpu, href: '/admin/ai/models' },
                     { titleKey: 'mcp', icon: Network, href: '/admin/ai/mcp' },
+                    { titleKey: 'settings', icon: SlidersHorizontal, href: '/admin/ai/settings' },
                 ],
             },
             { titleKey: 'backups', href: '/admin/backups', icon: Database },

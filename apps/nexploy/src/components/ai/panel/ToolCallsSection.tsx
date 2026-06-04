@@ -17,7 +17,6 @@ export function ToolCallsSection({ tools }: ToolCallsSectionProps) {
     const isAnyRunning = tools.some(
         (p) => p.state === 'input-streaming' || p.state === 'input-available',
     );
-    const allDone = tools.every((p) => p.state === 'output-available');
     const hasError = tools.some(
         (p) =>
             p.state === 'output-available' &&
@@ -31,16 +30,8 @@ export function ToolCallsSection({ tools }: ToolCallsSectionProps) {
     const lastSuccess = lastOutput?.success !== false;
 
     useEffect(() => {
-        if (isAnyRunning) {
-            setIsOpen(true);
-        }
+        if (isAnyRunning) setIsOpen(true);
     }, [isAnyRunning]);
-
-    useEffect(() => {
-        if (!allDone) return;
-        const timer = setTimeout(() => setIsOpen(false), 1000);
-        return () => clearTimeout(timer);
-    }, [allDone]);
 
     if (tools.length === 0) return null;
 

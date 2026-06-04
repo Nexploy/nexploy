@@ -2,6 +2,15 @@
     "admin": {
         "title": "IA",
         "description": "Configurez les intégrations IA et l'accès externe au serveur MCP",
+        "settings": {
+            "title": "Paramètres",
+            "description": "Configurez le comportement de l'assistant IA",
+            "chatBehavior": "Comportement du chat",
+            "chatBehaviorDescription": "Contrôlez le comportement de l'assistant IA pendant les conversations.",
+            "requireConfirmation": "Demander une confirmation pour les actions destructives",
+            "requireConfirmationDescription": "Lorsqu'activé, l'IA demandera une confirmation explicite avant d'exécuter toute opération de suppression, d'arrêt ou de nettoyage.",
+            "saveFailed": "Impossible d'enregistrer les paramètres"
+        },
         "models": {
             "title": "Modèles",
             "description": "Configurez les clés API des fournisseurs IA",
@@ -67,6 +76,12 @@
     },
     "chat": {
         "newChat": "Nouveau chat",
+        "confirmation": {
+            "title": "Confirmer l'action destructive",
+            "target": "Cible",
+            "confirm": "Confirmer",
+            "cancel": "Annuler"
+        },
         "toolCall": {
             "running": "En cours",
             "done": "Terminé",

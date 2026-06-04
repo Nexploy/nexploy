@@ -1,15 +1,11 @@
 'use server';
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
-import { z } from 'zod';
 import { repositoryIdSchema } from '@workspace/schemas-zod/bind/repositoryId.schema';
+import { deleteDomainSchema } from '@workspace/schemas-zod/repository/domain.schema';
 import { getDomainsFromTraefikConfig } from '@/services/traefik.service';
 import { applyDomainOperations } from '@/services/domain.service';
 import { setToastServer } from '@/lib/toastServer.ts';
-
-const deleteDomainSchema = z.object({
-    domainId: z.string(),
-});
 
 export const deleteDomain = authActionServer
     .use(requirePermission('repository', 'update'))

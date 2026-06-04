@@ -1,6 +1,12 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { z } from 'zod';
-import { mcpTriggerBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
+import {
+    cancelBuildSchema,
+    getBuildLogsSchema,
+    listBuildsSchema,
+    mcpTriggerBuildSchema,
+    removeBuildSchema,
+    setMcpEnvVariablesSchema,
+} from '@workspace/schemas-zod/inngest/build.schema';
 import { deleteRepositorySchema } from '@workspace/schemas-zod/repository/settings/deleteRepository.schema';
 import {
     deleteRepository,
@@ -19,39 +25,6 @@ import {
 import { fail, guard, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
-const cancelBuildMcpSchema = z.object({
-    buildId: z.cuid().describe('Build ID to cancel'),
-});
-
-const removeBuildMcpSchema = z.object({
-    buildId: z.cuid().describe('Build ID to remove'),
-});
-
-const listBuildsSchema = z.object({
-    repositoryId: z.cuid().describe('Repository ID'),
-});
-
-const getBuildLogsSchema = z.object({
-    repositoryId: z.cuid().describe('Repository ID'),
-    buildId: z.cuid().describe('Build ID'),
-    nodeId: z.string().describe('Pipeline node ID (e.g. clone-repository, build-docker-image)'),
-});
-
-const setEnvVariablesSchema = z.object({
-    repositoryId: z.cuid().describe('Repository ID'),
-    vars: z
-        .array(
-            z.object({
-                key: z.string().min(1).describe('Variable name'),
-                value: z.string().describe('Variable value'),
-            }),
-        )
-        .describe('Environment variables to set or update'),
-});
-
-const getRepositorySchema = z.object({
-    repositoryId: z.cuid().describe('Repository ID'),
-});
 
 export const repositoriesGroup: ToolGroup = {
     name: 'repositories',
@@ -91,7 +64,7 @@ export const repositoriesGroup: ToolGroup = {
             'getRepository',
             {
                 description: 'Get full details of a repository.',
-                inputSchema: getRepositorySchema.shape,
+                inputSchema: listBuildsSchema.shape,
             },
             async ({ repositoryId }) => {
                 const g = guard(ctx, 'repository', 'read');
@@ -156,7 +129,7 @@ export const repositoriesGroup: ToolGroup = {
             {
                 description:
                     'List all environment variables for a repository (values are decrypted).',
-                inputSchema: getRepositorySchema.shape,
+                inputSchema: listBuildsSchema.shape,
             },
             async ({ repositoryId }) => {
                 const g = guard(ctx, 'repository', 'read');
@@ -198,7 +171,7 @@ export const repositoriesGroup: ToolGroup = {
             'setEnvVariables',
             {
                 description: 'Create or update environment variables for a repository.',
-                inputSchema: setEnvVariablesSchema.shape,
+                inputSchema: setMcpEnvVariablesSchema.shape,
             },
             async ({ repositoryId, vars }) => {
                 const g = guard(ctx, 'repository', 'update');
@@ -238,7 +211,7 @@ export const repositoriesGroup: ToolGroup = {
             'cancelBuild',
             {
                 description: 'Cancel a running build.',
-                inputSchema: cancelBuildMcpSchema.shape,
+                inputSchema: cancelBuildSchema.shape,
             },
             async ({ buildId }) => {
                 const g = guard(ctx, 'build', 'cancel');
@@ -256,7 +229,7 @@ export const repositoriesGroup: ToolGroup = {
             'removeBuild',
             {
                 description: 'Remove a build record from history.',
-                inputSchema: removeBuildMcpSchema.shape,
+                inputSchema: removeBuildSchema.shape,
             },
             async ({ buildId }) => {
                 const g = guard(ctx, 'build', 'delete');

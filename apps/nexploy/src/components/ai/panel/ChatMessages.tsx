@@ -28,10 +28,11 @@ export function ChatMessages({ messages, isLoading, error }: ChatMessagesProps) 
 
     return (
         <>
-            {messages.map((m) => {
-                if (isLoading && isEmptyAssistantMessage(m) && m === lastMsg) return null;
+            {messages.map((message) => {
+                if (isLoading && isEmptyAssistantMessage(message) && message === lastMsg)
+                    return null;
 
-                const toolParts = m.parts
+                const toolParts = message.parts
                     .filter((p) => p.type === 'dynamic-tool')
                     .map(
                         (p) =>
@@ -44,23 +45,28 @@ export function ChatMessages({ messages, isLoading, error }: ChatMessagesProps) 
                             },
                     );
 
-                const textParts = m.parts.filter((p) => p.type === 'text') as TextUIPart[];
+                const textParts = message.parts.filter(
+                    (part) => part.type === 'text',
+                ) as TextUIPart[];
 
                 return (
-                    <div key={m.id} className="flex w-full min-w-0">
+                    <div key={message.id} className="flex w-full min-w-0">
                         <div
                             className={cn(
                                 'group relative min-w-0 rounded-xl px-2.5 py-2 text-xs',
-                                m.role === 'user'
+                                message.role === 'user'
                                     ? 'bg-primary text-primary-foreground ml-auto max-w-[80%]'
                                     : 'bg-muted w-full',
                             )}
                         >
-                            {m.role === 'assistant' && toolParts.length > 0 && (
+                            {message.role === 'assistant' && toolParts.length > 0 && (
                                 <ToolCallsSection tools={toolParts} />
                             )}
                             {textParts.map((part, i) => (
-                                <RenderMessageText key={`${m.id}-text-${i}`} text={part.text} />
+                                <RenderMessageText
+                                    key={`${message.id}-text-${i}`}
+                                    text={part.text}
+                                />
                             ))}
                         </div>
                     </div>

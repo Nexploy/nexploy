@@ -9,6 +9,7 @@ import { repositoriesGroup } from './groups/repositories.group';
 import { registriesGroup } from './groups/registries.group';
 import { sslGroup } from './groups/ssl.group';
 import { environmentsGroup } from './groups/environments.group';
+import { confirmGroup } from './groups/confirm.group';
 
 export const toolGroups: ToolGroup[] = [
     // Docker
@@ -23,4 +24,6 @@ export const toolGroups: ToolGroup[] = [
     registriesGroup,
     sslGroup,
     environmentsGroup,
+    // Confirmation (conditionally registers tools based on ctx.requireConfirmation)
+    confirmGroup,
 ];

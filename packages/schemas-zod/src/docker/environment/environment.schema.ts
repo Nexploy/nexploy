@@ -35,5 +35,9 @@ export const environmentIdSchema = z.object({
     environmentId: z.cuid(),
 });
 
+export const dockerRefreshSchema = z.object({
+    environmentName: z.string().optional(),
+});
+
 export type EnvironmentSchemaType = z.infer<typeof environmentSchema>;
 export type EnvironmentIdType = z.infer<typeof environmentIdSchema>;

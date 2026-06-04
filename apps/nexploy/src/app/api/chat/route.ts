@@ -14,12 +14,22 @@ import { authRouteServer, route } from '@/lib/api/nextRoute';
 import { chatBodySchema } from '@workspace/schemas-zod/ai/chat.schema';
 import type { Provider } from '@workspace/typescript-interface/ai/aiConfig';
 import { getProviderApiKey } from '@/services/aiConfig.service';
+import { getAISettings } from '@/services/aiSettings.service';
 import { createNexployMCPServer } from '@/lib/ai/nexploy-mcp-server';
 
 export const maxDuration = 60;
 
 const SYSTEM_PROMPT = `You are a DevOps assistant integrated into Nexploy, a self-hosted Docker deployment platform.
-Your role is to help users manage their Docker infrastructure and Nexploy repository deployments through natural conversation.
+Your ONLY purpose is to help users manage their Docker infrastructure and Nexploy repository deployments.
+
+## Language
+Always respond in the same language the user wrote in. Apply this to every message including refusals and confirmations.
+
+## Strict scope
+You assist exclusively with topics directly related to Nexploy and the infrastructure it manages.
+If a request has no connection to the user's Docker infrastructure, deployments, or Nexploy platform, refuse it in the user's language by explaining you are a Nexploy DevOps assistant and can only help with their infrastructure.
+
+Do not partially answer off-topic requests. Redirect immediately without over-apologizing.
 
 ## How to use your tools
 - Always call the appropriate tool to fetch live data — never guess or invent resource names, IDs, or statuses.
@@ -77,10 +87,18 @@ export const POST = route
         }
 
         try {
+            const aiSettings = await getAISettings().catch(() => null);
+            const requireConfirmation = aiSettings?.requireDestructiveConfirmation ?? false;
+
+            const confirmationInstruction = requireConfirmation
+                ? `\n\n## Destructive action confirmation\nBefore executing any operation that removes, deletes, stops, or destroys resources, you MUST call the \`requestConfirmation\` tool first. Then clearly describe what you are about to do and ask the user to confirm or cancel — in their language. Accept any affirmative word (yes, oui, ja, sí, да, …) as confirmation and any negative word (no, non, nein, нет, …) as cancellation. Do NOT proceed until the user explicitly responds.`
+                : '';
+
             const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
             const mcpServer = createNexployMCPServer(
                 ctx.session.user.id,
                 (ctx.session.user.role as string) ?? 'readWrite',
+                requireConfirmation,
             );
 
             const [mcpClient] = await Promise.all([
@@ -93,7 +111,7 @@ export const POST = route
             const result = streamText({
                 model: languageModel,
                 messages: await convertToModelMessages(messages),
-                system: SYSTEM_PROMPT,
+                system: SYSTEM_PROMPT + confirmationInstruction,
                 tools,
                 stopWhen: stepCountIs(10),
                 onFinish: async () => {
