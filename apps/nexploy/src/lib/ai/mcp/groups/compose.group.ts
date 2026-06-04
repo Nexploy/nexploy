@@ -13,6 +13,8 @@ export const composeGroup: ToolGroup = {
     name: 'compose',
 
     register(server: McpServer, ctx: ToolContext) {
+        if (ctx.allowComposeGroup === false) return;
+
         server.registerTool(
             'listComposeStacks',
             {

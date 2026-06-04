@@ -30,6 +30,8 @@ export const repositoriesGroup: ToolGroup = {
     name: 'repositories',
 
     register(server: McpServer, ctx: ToolContext) {
+        if (ctx.allowRepositoriesGroup === false) return;
+
         server.registerTool(
             'listRepositories',
             {

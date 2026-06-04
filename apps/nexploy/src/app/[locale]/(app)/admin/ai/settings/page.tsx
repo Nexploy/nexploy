@@ -46,6 +46,14 @@ export default async function AISettingsPage() {
                         <McpPermissionsCard
                             allowExecInContainer={aiSettings.allowExecInContainer}
                             allowSwarmOperations={aiSettings.allowSwarmOperations}
+                            allowImagesGroup={aiSettings.allowImagesGroup}
+                            allowVolumesGroup={aiSettings.allowVolumesGroup}
+                            allowNetworksGroup={aiSettings.allowNetworksGroup}
+                            allowComposeGroup={aiSettings.allowComposeGroup}
+                            allowRepositoriesGroup={aiSettings.allowRepositoriesGroup}
+                            allowRegistriesGroup={aiSettings.allowRegistriesGroup}
+                            allowSslGroup={aiSettings.allowSslGroup}
+                            allowEnvironmentsGroup={aiSettings.allowEnvironmentsGroup}
                         />
                         <CustomPromptCard customSystemPrompt={aiSettings.customSystemPrompt} />
                     </div>

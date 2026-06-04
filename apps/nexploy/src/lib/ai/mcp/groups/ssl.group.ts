@@ -17,6 +17,8 @@ export const sslGroup: ToolGroup = {
     name: 'ssl',
 
     register(server: McpServer, ctx: ToolContext) {
+        if (ctx.allowSslGroup === false) return;
+
         server.registerTool(
             'listSslCertificates',
             { description: "List all SSL certificates (Let's Encrypt and custom)." },

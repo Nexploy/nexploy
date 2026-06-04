@@ -6,6 +6,14 @@ model AISettings {
   maxSteps                       Int     @default(10)
   allowExecInContainer           Boolean @default(true)
   allowSwarmOperations           Boolean @default(true)
+  allowImagesGroup               Boolean @default(true)
+  allowVolumesGroup              Boolean @default(true)
+  allowNetworksGroup             Boolean @default(true)
+  allowComposeGroup              Boolean @default(true)
+  allowRepositoriesGroup         Boolean @default(true)
+  allowRegistriesGroup           Boolean @default(true)
+  allowSslGroup                  Boolean @default(true)
+  allowEnvironmentsGroup         Boolean @default(true)
 
   @@map("ai_settings")
 }

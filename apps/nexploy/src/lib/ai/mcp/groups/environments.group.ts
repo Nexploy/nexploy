@@ -17,6 +17,8 @@ export const environmentsGroup: ToolGroup = {
     name: 'environments',
 
     register(server: McpServer, ctx: ToolContext) {
+        if (ctx.allowEnvironmentsGroup === false) return;
+
         server.registerTool(
             'listEnvironments',
             { description: 'List all configured Docker environments.' },

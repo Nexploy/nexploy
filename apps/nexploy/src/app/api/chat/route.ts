@@ -95,8 +95,6 @@ export const POST = route
 
             const requireConfirmation = aiSettings?.requireDestructiveConfirmation ?? false;
             const maxSteps = aiSettings?.maxSteps ?? 10;
-            const allowExecInContainer = aiSettings?.allowExecInContainer ?? true;
-            const allowSwarmOperations = aiSettings?.allowSwarmOperations ?? true;
 
             const confirmationInstruction = requireConfirmation
                 ? `\n\n## Destructive action confirmation\nBefore executing any operation that removes, deletes, stops, or destroys resources, you MUST call the \`requestConfirmation\` tool first. Then clearly describe what you are about to do and ask the user to confirm or cancel — in their language. Accept any affirmative word (yes, oui, ja, sí, да, …) as confirmation and any negative word (no, non, nein, нет, …) as cancellation. Do NOT proceed until the user explicitly responds.`
@@ -110,9 +108,19 @@ export const POST = route
             const mcpServer = createNexployMCPServer(
                 ctx.session.user.id,
                 (ctx.session.user.role as string) ?? 'readWrite',
-                requireConfirmation,
-                allowExecInContainer,
-                allowSwarmOperations,
+                {
+                    requireConfirmation,
+                    allowExecInContainer: aiSettings?.allowExecInContainer ?? true,
+                    allowSwarmOperations: aiSettings?.allowSwarmOperations ?? true,
+                    allowImagesGroup: aiSettings?.allowImagesGroup ?? true,
+                    allowVolumesGroup: aiSettings?.allowVolumesGroup ?? true,
+                    allowNetworksGroup: aiSettings?.allowNetworksGroup ?? true,
+                    allowComposeGroup: aiSettings?.allowComposeGroup ?? true,
+                    allowRepositoriesGroup: aiSettings?.allowRepositoriesGroup ?? true,
+                    allowRegistriesGroup: aiSettings?.allowRegistriesGroup ?? true,
+                    allowSslGroup: aiSettings?.allowSslGroup ?? true,
+                    allowEnvironmentsGroup: aiSettings?.allowEnvironmentsGroup ?? true,
+                },
             );
 
             const [mcpClient] = await Promise.all([

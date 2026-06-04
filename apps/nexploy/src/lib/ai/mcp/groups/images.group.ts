@@ -14,6 +14,8 @@ export const imagesGroup: ToolGroup = {
     name: 'images',
 
     register(server: McpServer, ctx: ToolContext) {
+        if (ctx.allowImagesGroup === false) return;
+
         server.registerTool(
             'listImages',
             { description: 'List all locally available Docker images.' },

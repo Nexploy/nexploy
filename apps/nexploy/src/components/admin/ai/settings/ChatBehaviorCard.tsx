@@ -6,7 +6,14 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { MessageSquare } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@workspace/ui/components/form';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Switch } from '@workspace/ui/components/switch';
 import { Slider } from '@workspace/ui/components/slider';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
@@ -65,10 +72,11 @@ export function ChatBehaviorCard({
                                                 disabled={action.isPending}
                                                 onCheckedChange={(checked) => {
                                                     field.onChange(checked);
-                                                    void handleSubmitWithAction();
+                                                    handleSubmitWithAction();
                                                 }}
                                             />
                                         </FormControl>
+                                        <FormMessage />
                                     </FormLabel>
                                 </FormItem>
                             )}
@@ -83,37 +91,42 @@ export function ChatBehaviorCard({
                                         <div className="flex justify-between">
                                             <FormLabel className="flex flex-col items-start gap-0.5">
                                                 <span className="text-base">{t('maxSteps')}</span>
-                                                <div className={'flex items-end'}>
-                                                    <span className="text-muted-foreground text-xs">
-                                                        {t('maxStepsDescription')}
-                                                    </span>
-                                                    <span className="text-muted-foreground bg-muted rounded-md px-2 py-0.5 font-mono text-sm tabular-nums">
-                                                        {field.value}
-                                                    </span>
-                                                </div>
+                                                <span className="text-muted-foreground text-xs">
+                                                    {t('maxStepsDescription')}
+                                                </span>
                                             </FormLabel>
                                         </div>
                                         <div className={'flex flex-col gap-2'}>
-                                            <FormControl>
-                                                <Slider
-                                                    {...field}
-                                                    min={1}
-                                                    max={20}
-                                                    step={1}
-                                                    value={[field.value]}
-                                                    disabled={action.isPending}
-                                                    onValueChange={(values) =>
-                                                        field.onChange(values[0] ?? field.value)
-                                                    }
-                                                    onValueCommit={() =>
-                                                        void handleSubmitWithAction()
-                                                    }
-                                                />
-                                            </FormControl>
+                                            <div className="relative">
+                                                <FormControl>
+                                                    <Slider
+                                                        min={1}
+                                                        max={20}
+                                                        step={1}
+                                                        value={[field.value]}
+                                                        disabled={action.isPending}
+                                                        onValueChange={(values) =>
+                                                            field.onChange(values[0] ?? field.value)
+                                                        }
+                                                        onValueCommit={() =>
+                                                            handleSubmitWithAction()
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <span
+                                                    className="text-muted-foreground bg-muted absolute top-full mt-3 -translate-x-1/2 rounded px-1.5 py-0.5 font-mono text-xs"
+                                                    style={{
+                                                        left: `calc(${((field.value - 1) / 19) * 100}% + ${10 - ((field.value - 1) / 19) * 20}px)`,
+                                                    }}
+                                                >
+                                                    {field.value}
+                                                </span>
+                                            </div>
                                             <div className="text-muted-foreground flex justify-between text-xs">
                                                 <span>1</span>
-                                                <span>20</span>
+                                                {field.value !== 20 && <span>20</span>}
                                             </div>
+                                            <FormMessage />
                                         </div>
                                     </div>
                                 </FormItem>

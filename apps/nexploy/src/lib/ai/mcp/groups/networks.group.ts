@@ -12,6 +12,8 @@ export const networksGroup: ToolGroup = {
     name: 'networks',
 
     register(server: McpServer, ctx: ToolContext) {
+        if (ctx.allowNetworksGroup === false) return;
+
         server.registerTool(
             'listNetworks',
             { description: 'List all Docker networks.' },

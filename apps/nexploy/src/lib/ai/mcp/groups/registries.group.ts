@@ -12,6 +12,8 @@ export const registriesGroup: ToolGroup = {
     name: 'registries',
 
     register(server: McpServer, ctx: ToolContext) {
+        if (ctx.allowRegistriesGroup === false) return;
+
         server.registerTool(
             'listRegistries',
             { description: 'List all configured Docker registries.' },

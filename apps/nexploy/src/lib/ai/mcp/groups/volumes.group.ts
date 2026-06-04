@@ -12,6 +12,8 @@ export const volumesGroup: ToolGroup = {
     name: 'volumes',
 
     register(server: McpServer, ctx: ToolContext) {
+        if (ctx.allowVolumesGroup === false) return;
+
         server.registerTool(
             'listVolumes',
             { description: 'List all Docker volumes.' },
