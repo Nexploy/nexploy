@@ -1,20 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { toolGroups } from './mcp';
 import { ToolContext } from './mcp/types';
-
-interface McpServerOptions {
-    requireConfirmation?: boolean;
-    allowExecInContainer?: boolean;
-    allowSwarmOperations?: boolean;
-    allowImagesGroup?: boolean;
-    allowVolumesGroup?: boolean;
-    allowNetworksGroup?: boolean;
-    allowComposeGroup?: boolean;
-    allowRepositoriesGroup?: boolean;
-    allowRegistriesGroup?: boolean;
-    allowSslGroup?: boolean;
-    allowEnvironmentsGroup?: boolean;
-}
+import { McpServerOptions } from '@workspace/typescript-interface/ai/mcp';
 
 export function createNexployMCPServer(
     userId: string,

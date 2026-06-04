@@ -36,25 +36,17 @@ export default async function AISettingsPage() {
 
                 <ScrollAreaWithShadow className="h-full overflow-hidden px-5">
                     <div className="space-y-6 pb-5">
-                        <GeneralSettingsCard aiEnabled={aiSettings.aiEnabled} />
+                        <GeneralSettingsCard
+                            aiEnabled={aiSettings.aiEnabled}
+                            mcpEnabled={aiSettings.mcpEnabled}
+                        />
                         <ChatBehaviorCard
                             requireDestructiveConfirmation={
                                 aiSettings.requireDestructiveConfirmation
                             }
                             maxSteps={aiSettings.maxSteps}
                         />
-                        <McpPermissionsCard
-                            allowExecInContainer={aiSettings.allowExecInContainer}
-                            allowSwarmOperations={aiSettings.allowSwarmOperations}
-                            allowImagesGroup={aiSettings.allowImagesGroup}
-                            allowVolumesGroup={aiSettings.allowVolumesGroup}
-                            allowNetworksGroup={aiSettings.allowNetworksGroup}
-                            allowComposeGroup={aiSettings.allowComposeGroup}
-                            allowRepositoriesGroup={aiSettings.allowRepositoriesGroup}
-                            allowRegistriesGroup={aiSettings.allowRegistriesGroup}
-                            allowSslGroup={aiSettings.allowSslGroup}
-                            allowEnvironmentsGroup={aiSettings.allowEnvironmentsGroup}
-                        />
+                        <McpPermissionsCard {...aiSettings} />
                         <CustomPromptCard customSystemPrompt={aiSettings.customSystemPrompt} />
                     </div>
                 </ScrollAreaWithShadow>

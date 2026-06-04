@@ -2,6 +2,7 @@ model AISettings {
   id                             String  @id @default("singleton")
   requireDestructiveConfirmation Boolean @default(false)
   aiEnabled                      Boolean @default(true)
+  mcpEnabled                     Boolean @default(true)
   customSystemPrompt             String?
   maxSteps                       Int     @default(10)
   allowExecInContainer           Boolean @default(true)

@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const updateAIGeneralSettingsSchema = z.object({
     aiEnabled: z.boolean(),
+    mcpEnabled: z.boolean(),
 });
 
 export const updateAIChatBehaviorSchema = z.object({

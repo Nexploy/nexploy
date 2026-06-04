@@ -1,13 +1,5 @@
 import { prisma } from '../../prisma/prisma';
-
-type AISettingsUpdate = {
-    aiEnabled?: boolean;
-    requireDestructiveConfirmation?: boolean;
-    maxSteps?: number;
-    allowExecInContainer?: boolean;
-    allowSwarmOperations?: boolean;
-    customSystemPrompt?: string | null;
-};
+import type { AISettingsUpdate } from '@workspace/typescript-interface/ai/aiSettings';
 
 export async function getAISettings() {
     return prisma.aISettings.upsert({
@@ -23,9 +15,4 @@ export async function updateAISettingsPart(data: AISettingsUpdate): Promise<void
         create: { id: 'singleton', ...data },
         update: data,
     });
-}
-
-/** @deprecated use updateAISettingsPart */
-export async function updateAISettings(data: AISettingsUpdate): Promise<void> {
-    await updateAISettingsPart(data);
 }

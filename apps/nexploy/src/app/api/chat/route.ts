@@ -6,7 +6,14 @@ import { createMistral } from '@ai-sdk/mistral';
 import { createGroq } from '@ai-sdk/groq';
 import { createPerplexity } from '@ai-sdk/perplexity';
 import { createXai } from '@ai-sdk/xai';
-import { convertToModelMessages, generateId, type LanguageModel, stepCountIs, streamText, type ToolSet, } from 'ai';
+import {
+    convertToModelMessages,
+    generateId,
+    type LanguageModel,
+    stepCountIs,
+    streamText,
+    type ToolSet,
+} from 'ai';
 import { createMCPClient } from '@ai-sdk/mcp';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { NextResponse } from 'next/server';
@@ -87,10 +94,13 @@ export const POST = route
         }
 
         try {
-            const aiSettings = await getAISettings().catch(() => null);
+            const aiSettings = await getAISettings();
 
-            if (aiSettings?.aiEnabled === false) {
-                return NextResponse.json({ error: 'AI assistant is disabled by the administrator.' }, { status: 403 });
+            if (!aiSettings?.aiEnabled) {
+                return NextResponse.json(
+                    { error: 'AI assistant is disabled by the administrator.' },
+                    { status: 403 },
+                );
             }
 
             const requireConfirmation = aiSettings?.requireDestructiveConfirmation ?? false;
@@ -110,16 +120,7 @@ export const POST = route
                 (ctx.session.user.role as string) ?? 'readWrite',
                 {
                     requireConfirmation,
-                    allowExecInContainer: aiSettings?.allowExecInContainer ?? true,
-                    allowSwarmOperations: aiSettings?.allowSwarmOperations ?? true,
-                    allowImagesGroup: aiSettings?.allowImagesGroup ?? true,
-                    allowVolumesGroup: aiSettings?.allowVolumesGroup ?? true,
-                    allowNetworksGroup: aiSettings?.allowNetworksGroup ?? true,
-                    allowComposeGroup: aiSettings?.allowComposeGroup ?? true,
-                    allowRepositoriesGroup: aiSettings?.allowRepositoriesGroup ?? true,
-                    allowRegistriesGroup: aiSettings?.allowRegistriesGroup ?? true,
-                    allowSslGroup: aiSettings?.allowSslGroup ?? true,
-                    allowEnvironmentsGroup: aiSettings?.allowEnvironmentsGroup ?? true,
+                    ...aiSettings,
                 },
             );
 

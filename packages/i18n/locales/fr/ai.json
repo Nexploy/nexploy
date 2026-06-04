@@ -10,6 +10,8 @@
             "generalSectionDescription": "Contrôlez la disponibilité globale de l'assistant IA.",
             "aiEnabled": "Activer l'assistant IA",
             "aiEnabledDescription": "Lorsque désactivé, le panel IA et l'API de chat sont indisponibles pour tous les utilisateurs.",
+            "mcpEnabled": "Activer le serveur MCP",
+            "mcpEnabledDescription": "Lorsque désactivé, l'endpoint MCP externe rejette toutes les requêtes, coupant l'accès à Cursor, Claude Desktop et autres clients MCP.",
             "chatBehavior": "Comportement du chat",
             "chatBehaviorDescription": "Contrôlez le comportement de l'assistant IA pendant les conversations.",
             "requireConfirmation": "Demander une confirmation pour les actions destructives",

@@ -1,5 +1,9 @@
-export interface McpServerOptions {
-    requireConfirmation?: boolean;
+export interface AISettingsUpdate {
+    aiEnabled?: boolean;
+    mcpEnabled?: boolean;
+    requireDestructiveConfirmation?: boolean;
+    maxSteps?: number;
+    customSystemPrompt?: string | null;
     allowExecInContainer?: boolean;
     allowSwarmOperations?: boolean;
     allowImagesGroup?: boolean;
@@ -10,9 +14,4 @@ export interface McpServerOptions {
     allowRegistriesGroup?: boolean;
     allowSslGroup?: boolean;
     allowEnvironmentsGroup?: boolean;
-}
-
-export interface ToolContext extends McpServerOptions {
-    userId: string;
-    role: string;
 }

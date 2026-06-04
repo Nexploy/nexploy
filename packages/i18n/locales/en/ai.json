@@ -10,6 +10,8 @@
             "generalSectionDescription": "Control global availability of the AI assistant.",
             "aiEnabled": "Enable AI assistant",
             "aiEnabledDescription": "When disabled, the AI panel and chat API are unavailable to all users.",
+            "mcpEnabled": "Enable MCP server",
+            "mcpEnabledDescription": "When disabled, the external MCP API endpoint rejects all requests, cutting off Cursor, Claude Desktop and other MCP clients.",
             "chatBehavior": "Chat behavior",
             "chatBehaviorDescription": "Control how the AI assistant behaves during conversations.",
             "requireConfirmation": "Require confirmation for destructive actions",
