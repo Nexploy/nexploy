@@ -7,7 +7,7 @@ export const confirmGroup: ToolGroup = {
     name: 'confirm',
 
     register(server: McpServer, ctx: ToolContext) {
-        if (!ctx.requireConfirmation) return;
+        if (!ctx.requireDestructiveConfirmation) return;
 
         server.registerTool(
             'requestConfirmation',
@@ -17,7 +17,9 @@ export const confirmGroup: ToolGroup = {
                 inputSchema: z.object({
                     action: z
                         .string()
-                        .describe('Clear description of the destructive action you are about to perform'),
+                        .describe(
+                            'Clear description of the destructive action you are about to perform',
+                        ),
                     target: z
                         .string()
                         .describe('The resource name, ID, or identifier that will be affected'),

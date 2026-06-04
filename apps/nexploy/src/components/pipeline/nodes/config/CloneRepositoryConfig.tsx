@@ -122,7 +122,12 @@ export function CloneRepositoryConfig() {
                             </span>
                         </FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder={t('cloneCommitHashPlaceholder')} />
+                            <Input
+                                {...field}
+                                value={field.value ?? ''}
+                                onChange={(e) => field.onChange(e.target.value)}
+                                placeholder={t('cloneCommitHashPlaceholder')}
+                            />
                         </FormControl>
                         <FormDescription>{t('cloneCommitHashDescription')}</FormDescription>
                         <FormMessage />
@@ -135,19 +140,21 @@ export function CloneRepositoryConfig() {
                 name="submodules"
                 render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between gap-4">
-                        <div className={'flex flex-col gap-1'}>
-                            <FormLabel>{t('cloneSubmodules')}</FormLabel>
-                            <FormDescription className={'text-xs'}>
-                                {t('cloneSubmodulesDescription')}
-                            </FormDescription>
-                        </div>
-                        <FormControl>
-                            <Switch
-                                className={'cursor-pointer'}
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                            />
-                        </FormControl>
+                        <FormLabel className={'cursor-pointer'}>
+                            <div className={'flex flex-col gap-1'}>
+                                {t('cloneSubmodules')}
+                                <FormDescription className={'text-xs'}>
+                                    {t('cloneSubmodulesDescription')}
+                                </FormDescription>
+                            </div>
+                            <FormControl>
+                                <Switch
+                                    className={'cursor-pointer'}
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                        </FormLabel>
                     </FormItem>
                 )}
             />

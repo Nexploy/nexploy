@@ -37,5 +37,6 @@
     "empty": "(empty)",
     "toggleMenu": "Toggle menu",
     "up": "Up",
-    "down": "Down"
+    "down": "Down",
+    "forbidden": "You don't have permission to perform this action."
 }

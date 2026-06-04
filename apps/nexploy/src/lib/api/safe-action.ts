@@ -4,7 +4,7 @@ import { Session } from '@/lib/auth/auth';
 import { redirect } from 'next/navigation';
 import { setToastServer } from '@/lib/toastServer';
 import { getTranslations } from 'next-intl/server';
-import { hasPermission, type PermissionActions, type PermissionResource } from '@/lib/auth/permissions';
+import { hasPermission, type PermissionActions, type PermissionResource, } from '@/lib/auth/permissions';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { isNexployInfrastructureNetworkName } from '@workspace/shared/nexployFilter';
 
@@ -42,8 +42,10 @@ export const requirePermission = <R extends PermissionResource>(
     action: PermissionActions[R],
 ) =>
     createMiddleware<{ ctx: { session: Session } }>().define(async ({ ctx, next }) => {
-        if (!hasPermission(ctx.session.user.role as string, resource, action as string)) {
-            throw new Error(`Forbidden: missing permission ${resource}.${action as string}`);
+        if (!hasPermission(ctx.session.user.role as string, resource, action)) {
+            const t = await getTranslations('common');
+            await setToastServer({ type: 'error', message: t('forbidden') });
+            throw new Error(t('forbidden'));
         }
         return next({ ctx });
     });

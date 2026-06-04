@@ -12,18 +12,15 @@ import { environmentsGroup } from './groups/environments.group';
 import { confirmGroup } from './groups/confirm.group';
 
 export const toolGroups: ToolGroup[] = [
-    // Docker
     containersGroup,
     imagesGroup,
     volumesGroup,
     networksGroup,
     composeGroup,
     swarmGroup,
-    // Nexploy
     repositoriesGroup,
     registriesGroup,
     sslGroup,
     environmentsGroup,
-    // Confirmation (conditionally registers tools based on ctx.requireConfirmation)
     confirmGroup,
 ];

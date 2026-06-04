@@ -37,5 +37,6 @@
     "empty": "(vide)",
     "toggleMenu": "Basculer le menu",
     "up": "Actif",
-    "down": "Inactif"
+    "down": "Inactif",
+    "forbidden": "Vous n'avez pas la permission d'effectuer cette action."
 }

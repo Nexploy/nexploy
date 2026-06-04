@@ -1,5 +1,5 @@
 export interface McpServerOptions {
-    requireConfirmation?: boolean;
+    requireDestructiveConfirmation?: boolean;
     allowExecInContainer?: boolean;
     allowSwarmOperations?: boolean;
     allowImagesGroup?: boolean;

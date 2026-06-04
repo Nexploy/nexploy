@@ -26,12 +26,3 @@ export const updateAIMcpPermissionsSchema = z.object({
 export const updateAICustomPromptSchema = z.object({
     customSystemPrompt: z.string().max(4000),
 });
-
-export const updateAISettingsSchema = z.object({
-    requireDestructiveConfirmation: z.boolean(),
-    aiEnabled: z.boolean(),
-    customSystemPrompt: z.string().max(4000).nullable(),
-    maxSteps: z.number().int().min(1).max(20),
-    allowExecInContainer: z.boolean(),
-    allowSwarmOperations: z.boolean(),
-});

@@ -18,20 +18,12 @@ const WWW_AUTH_CHALLENGE = [
     `resource_metadata="${BETTER_AUTH_URL}/.well-known/oauth-protected-resource"`,
 ].join(', ');
 
-const mcpSessions = new Map<string, McpSession>();
+declare global {
+    var mcpSessions: Map<string, McpSession> | undefined;
+}
 
-setInterval(
-    () => {
-        const cutoff = Date.now() - 30 * 60 * 1000;
-        for (const [id, session] of mcpSessions) {
-            if (session.createdAt < cutoff) {
-                session.server.close();
-                mcpSessions.delete(id);
-            }
-        }
-    },
-    5 * 60 * 1000,
-);
+const mcpSessions: Map<string, McpSession> = globalThis.mcpSessions ?? new Map();
+globalThis.mcpSessions = mcpSessions;
 
 async function mcpRouteHandler(request: Request): Promise<Response> {
     const mcpAuthSession = await auth.api.getMcpSession({ headers: request.headers });
@@ -50,9 +42,7 @@ async function mcpRouteHandler(request: Request): Promise<Response> {
 
     if (sessionId) {
         const existing = mcpSessions.get(sessionId);
-        if (existing) {
-            return existing.transport.handleRequest(request);
-        }
+        if (existing) return existing.transport.handleRequest(request);
         return new Response(JSON.stringify({ error: 'Session not found, please reinitialize' }), {
             status: 404,
             headers: { 'Content-Type': 'application/json' },
@@ -84,9 +74,9 @@ async function mcpRouteHandler(request: Request): Promise<Response> {
             mcpSessions.set(id, { server, transport, createdAt: Date.now() });
         },
         onsessionclosed: (id) => {
-            const s = mcpSessions.get(id);
-            if (s) {
-                s.server.close();
+            const session = mcpSessions.get(id);
+            if (session) {
+                session.server.close();
                 mcpSessions.delete(id);
             }
         },
