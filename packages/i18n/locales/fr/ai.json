@@ -5,11 +5,26 @@
         "settings": {
             "title": "Paramètres",
             "description": "Configurez le comportement de l'assistant IA",
+            "saveFailed": "Impossible d'enregistrer les paramètres",
+            "generalSection": "Général",
+            "generalSectionDescription": "Contrôlez la disponibilité globale de l'assistant IA.",
+            "aiEnabled": "Activer l'assistant IA",
+            "aiEnabledDescription": "Lorsque désactivé, le panel IA et l'API de chat sont indisponibles pour tous les utilisateurs.",
             "chatBehavior": "Comportement du chat",
             "chatBehaviorDescription": "Contrôlez le comportement de l'assistant IA pendant les conversations.",
             "requireConfirmation": "Demander une confirmation pour les actions destructives",
             "requireConfirmationDescription": "Lorsqu'activé, l'IA demandera une confirmation explicite avant d'exécuter toute opération de suppression, d'arrêt ou de nettoyage.",
-            "saveFailed": "Impossible d'enregistrer les paramètres"
+            "maxSteps": "Nombre max d'étapes d'outils",
+            "maxStepsDescription": "Nombre maximum d'appels d'outils que l'IA peut enchaîner en une seule réponse. Une valeur faible réduit les coûts ; une valeur élevée permet des tâches plus complexes.",
+            "mcpPermissions": "Permissions des outils MCP",
+            "mcpPermissionsDescription": "Choisissez quels outils privilégiés l'assistant IA est autorisé à utiliser.",
+            "allowExecInContainer": "Autoriser l'exécution dans les conteneurs",
+            "allowExecInContainerDescription": "Autorise l'IA à exécuter des commandes shell arbitraires dans les conteneurs via execInContainer.",
+            "allowSwarmOperations": "Autoriser les opérations Swarm",
+            "allowSwarmOperationsDescription": "Autorise l'IA à lister et gérer les nœuds et services Docker Swarm.",
+            "customPrompt": "Prompt système personnalisé",
+            "customPromptDescription": "Ajoutez des instructions supplémentaires au prompt système de base. Utile pour les règles ou contraintes spécifiques à votre organisation.",
+            "customPromptPlaceholder": "ex. Toujours préfixer les images avec prod- avant de les pousser…"
         },
         "models": {
             "title": "Modèles",

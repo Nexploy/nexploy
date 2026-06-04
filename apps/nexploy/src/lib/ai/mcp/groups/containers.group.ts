@@ -246,7 +246,7 @@ export const containersGroup: ToolGroup = {
             },
         );
 
-        server.registerTool(
+        if (ctx.allowExecInContainer !== false) server.registerTool(
             'execInContainer',
             {
                 description: 'Execute a shell command inside a running container.',

@@ -5,11 +5,26 @@
         "settings": {
             "title": "Settings",
             "description": "Configure AI assistant behavior",
+            "saveFailed": "Failed to save settings",
+            "generalSection": "General",
+            "generalSectionDescription": "Control global availability of the AI assistant.",
+            "aiEnabled": "Enable AI assistant",
+            "aiEnabledDescription": "When disabled, the AI panel and chat API are unavailable to all users.",
             "chatBehavior": "Chat behavior",
             "chatBehaviorDescription": "Control how the AI assistant behaves during conversations.",
             "requireConfirmation": "Require confirmation for destructive actions",
             "requireConfirmationDescription": "When enabled, the AI will ask for explicit confirmation before executing any delete, remove, stop, or prune operation.",
-            "saveFailed": "Failed to save settings"
+            "maxSteps": "Max tool-call steps",
+            "maxStepsDescription": "Maximum number of tool calls the AI can chain in a single response. Lower values reduce cost; higher values allow more complex tasks.",
+            "mcpPermissions": "MCP tool permissions",
+            "mcpPermissionsDescription": "Choose which privileged tools the AI assistant is allowed to use.",
+            "allowExecInContainer": "Allow exec in container",
+            "allowExecInContainerDescription": "Allow the AI to run arbitrary shell commands inside containers via execInContainer.",
+            "allowSwarmOperations": "Allow Swarm operations",
+            "allowSwarmOperationsDescription": "Allow the AI to list and manage Docker Swarm nodes and services.",
+            "customPrompt": "Custom system prompt",
+            "customPromptDescription": "Append additional instructions to the base system prompt. Useful for org-specific rules or constraints.",
+            "customPromptPlaceholder": "e.g. Always tag images with the prefix prod- before pushing…"
         },
         "models": {
             "title": "Models",

@@ -88,17 +88,31 @@ export const POST = route
 
         try {
             const aiSettings = await getAISettings().catch(() => null);
+
+            if (aiSettings?.aiEnabled === false) {
+                return NextResponse.json({ error: 'AI assistant is disabled by the administrator.' }, { status: 403 });
+            }
+
             const requireConfirmation = aiSettings?.requireDestructiveConfirmation ?? false;
+            const maxSteps = aiSettings?.maxSteps ?? 10;
+            const allowExecInContainer = aiSettings?.allowExecInContainer ?? true;
+            const allowSwarmOperations = aiSettings?.allowSwarmOperations ?? true;
 
             const confirmationInstruction = requireConfirmation
                 ? `\n\n## Destructive action confirmation\nBefore executing any operation that removes, deletes, stops, or destroys resources, you MUST call the \`requestConfirmation\` tool first. Then clearly describe what you are about to do and ask the user to confirm or cancel — in their language. Accept any affirmative word (yes, oui, ja, sí, да, …) as confirmation and any negative word (no, non, nein, нет, …) as cancellation. Do NOT proceed until the user explicitly responds.`
                 : '';
+
+            const systemPrompt = aiSettings?.customSystemPrompt
+                ? `${SYSTEM_PROMPT}\n\n## Additional instructions from administrator\n${aiSettings.customSystemPrompt}`
+                : SYSTEM_PROMPT;
 
             const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
             const mcpServer = createNexployMCPServer(
                 ctx.session.user.id,
                 (ctx.session.user.role as string) ?? 'readWrite',
                 requireConfirmation,
+                allowExecInContainer,
+                allowSwarmOperations,
             );
 
             const [mcpClient] = await Promise.all([
@@ -111,9 +125,9 @@ export const POST = route
             const result = streamText({
                 model: languageModel,
                 messages: await convertToModelMessages(messages),
-                system: SYSTEM_PROMPT + confirmationInstruction,
+                system: systemPrompt + confirmationInstruction,
                 tools,
-                stopWhen: stepCountIs(10),
+                stopWhen: stepCountIs(maxSteps),
                 onFinish: async () => {
                     await mcpClient.close();
                     await mcpServer.close();

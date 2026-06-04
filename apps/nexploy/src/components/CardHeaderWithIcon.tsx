@@ -41,7 +41,7 @@ export function CardHeaderWithIcon({
 
     return (
         <Wrapper className={cn('flex items-center gap-2', className)}>
-            <div className={'flex items-center gap-2'}>
+            <div className={'flex items-start gap-2'}>
                 <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
                     <Icon className="text-primary size-5" />
                 </div>

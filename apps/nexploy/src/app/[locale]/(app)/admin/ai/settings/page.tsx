@@ -3,7 +3,10 @@ import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-
 import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { getAISettings } from '@/services/aiSettings.service';
-import { AISettingsSection } from '@/components/admin/ai/AISettingsSection';
+import { GeneralSettingsCard } from '@/components/admin/ai/settings/GeneralSettingsCard.tsx';
+import { ChatBehaviorCard } from '@/components/admin/ai/settings/ChatBehaviorCard.tsx';
+import { McpPermissionsCard } from '@/components/admin/ai/settings/McpPermissionsCard.tsx';
+import { CustomPromptCard } from '@/components/admin/ai/settings/CustomPromptCard.tsx';
 
 export const metadata: Metadata = {
     title: 'AI Settings',
@@ -18,7 +21,7 @@ export default async function AISettingsPage() {
 
     return (
         <div className="flex h-full flex-1 flex-col">
-            <div className="flex flex-col gap-4 overflow-hidden">
+            <div className="flex flex-col gap-5 overflow-hidden">
                 <div className="flex gap-3 px-5">
                     <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
                         <SlidersHorizontal className="text-primary size-7" />
@@ -31,13 +34,20 @@ export default async function AISettingsPage() {
                     </div>
                 </div>
 
-                <ScrollAreaWithShadow className="h-full overflow-hidden">
-                    <div className="flex flex-col gap-3 px-5 pb-5">
-                        <AISettingsSection
+                <ScrollAreaWithShadow className="h-full overflow-hidden px-5">
+                    <div className="space-y-6 pb-5">
+                        <GeneralSettingsCard aiEnabled={aiSettings.aiEnabled} />
+                        <ChatBehaviorCard
                             requireDestructiveConfirmation={
                                 aiSettings.requireDestructiveConfirmation
                             }
+                            maxSteps={aiSettings.maxSteps}
                         />
+                        <McpPermissionsCard
+                            allowExecInContainer={aiSettings.allowExecInContainer}
+                            allowSwarmOperations={aiSettings.allowSwarmOperations}
+                        />
+                        <CustomPromptCard customSystemPrompt={aiSettings.customSystemPrompt} />
                     </div>
                 </ScrollAreaWithShadow>
             </div>

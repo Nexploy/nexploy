@@ -14,6 +14,8 @@ export const swarmGroup: ToolGroup = {
     name: 'swarm',
 
     register(server: McpServer, ctx: ToolContext) {
+        if (ctx.allowSwarmOperations === false) return;
+
         server.registerTool(
             'listSwarmNodes',
             { description: 'List all swarm nodes with their role (manager/worker), availability, and state.' },
