@@ -24,12 +24,30 @@ import { AlertTriangle, Loader2 } from 'lucide-react';
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
 import { isNodeFieldRef } from '@/lib/nodeFieldRef';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { useMemo } from 'react';
 
 export function TagImageConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
     const { images, isLoading } = useEnvironmentImages();
+
+    const imageOptions = useMemo(() => {
+        const seen = new Set<string>();
+        const entries: { value: string; repoTags: string[]; containersUsed: boolean }[] = [];
+        for (const img of images) {
+            const value = img.repoTags.find((t) => !t.startsWith('<none>')) ?? img.id;
+            if (!seen.has(value)) {
+                seen.add(value);
+                entries.push({
+                    value,
+                    repoTags: img.repoTags,
+                    containersUsed: !!img.containersUsed,
+                });
+            }
+        }
+        return entries;
+    }, [images]);
 
     return (
         <div className="space-y-4">
@@ -41,9 +59,10 @@ export function TagImageConfig() {
                         !isLoading &&
                         !!field.value &&
                         !isNodeFieldRef(field.value) &&
-                        !images.find(
-                            (img) =>
-                                img.repoTags.includes(field.value) || img.id === field.value,
+                        !imageOptions.find(
+                            (imageOption) =>
+                                imageOption.value === field.value ||
+                                imageOption.repoTags.includes(field.value),
                         );
 
                     return (
@@ -79,39 +98,39 @@ export function TagImageConfig() {
                                                     <SelectLabel>
                                                         {t('imagesSelectLabel')}
                                                     </SelectLabel>
-                                                    {images.length === 0 ? (
+                                                    {imageOptions.length === 0 ? (
                                                         <span className="text-muted-foreground px-2 py-1.5 text-sm">
                                                             {t('noImagesAvailable')}
                                                         </span>
                                                     ) : (
-                                                        images.map((img) => {
-                                                            const value =
-                                                                img.repoTags.find(
-                                                                    (t) => !t.startsWith('<none>'),
-                                                                ) ?? img.id;
-                                                            return (
-                                                            <SelectItem
-                                                                key={img.id}
-                                                                value={value}
-                                                                className="pl-0"
-                                                            >
-                                                                <Status
-                                                                    className="m-0 w-full rounded-none border-0 p-0 pl-2.5 text-sm"
-                                                                    status={
-                                                                        img.containersUsed
-                                                                            ? 'online'
-                                                                            : 'offline'
-                                                                    }
-                                                                    variant="outline"
+                                                        imageOptions.map(
+                                                            ({
+                                                                value,
+                                                                repoTags,
+                                                                containersUsed,
+                                                            }) => (
+                                                                <SelectItem
+                                                                    key={value}
+                                                                    value={value}
+                                                                    className="pl-0"
                                                                 >
-                                                                    <StatusIndicator className="pl-2" />
-                                                                    <span className="truncate">
-                                                                        {img.repoTags.join(', ')}
-                                                                    </span>
-                                                                </Status>
-                                                            </SelectItem>
-                                                            );
-                                                        })
+                                                                    <Status
+                                                                        className="m-0 w-full rounded-none border-0 p-0 pl-2.5 text-sm"
+                                                                        status={
+                                                                            containersUsed
+                                                                                ? 'online'
+                                                                                : 'offline'
+                                                                        }
+                                                                        variant="outline"
+                                                                    >
+                                                                        <StatusIndicator className="pl-2" />
+                                                                        <span className="truncate">
+                                                                            {repoTags.join(', ')}
+                                                                        </span>
+                                                                    </Status>
+                                                                </SelectItem>
+                                                            ),
+                                                        )
                                                     )}
                                                 </SelectGroup>
                                             </SelectContent>

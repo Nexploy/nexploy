@@ -24,12 +24,18 @@ import { AlertTriangle, Loader2 } from 'lucide-react';
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
 import { isNodeFieldRef } from '@/lib/nodeFieldRef';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { useMemo } from 'react';
 
 export function DeleteImageConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
     const { images, isLoading } = useEnvironmentImages();
+
+    const uniqueImages = useMemo(
+        () => images.filter((img, idx, arr) => arr.findIndex((i) => i.id === img.id) === idx),
+        [images],
+    );
 
     return (
         <div className="space-y-4">
@@ -76,12 +82,12 @@ export function DeleteImageConfig() {
                                                     <SelectLabel>
                                                         {t('imagesSelectLabel')}
                                                     </SelectLabel>
-                                                    {images.length === 0 ? (
+                                                    {uniqueImages.length === 0 ? (
                                                         <span className="text-muted-foreground px-2 py-1.5 text-sm">
                                                             {t('noImagesAvailable')}
                                                         </span>
                                                     ) : (
-                                                        images.map((img) => (
+                                                        uniqueImages.map((img) => (
                                                             <SelectItem
                                                                 key={img.id}
                                                                 value={img.id}

@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Switch } from '@workspace/ui/components/switch';
 import {
     Select,
@@ -26,10 +32,12 @@ export function ScanImageConfig() {
     const { images, isLoading } = useEnvironmentImages();
 
     const imageOptions = useMemo(() => {
+        const seen = new Set<string>();
         const entries: { tag: string; containersUsed: boolean }[] = [];
         for (const img of images) {
             for (const tag of img.repoTags ?? []) {
-                if (tag !== '<none>:<none>') {
+                if (tag !== '<none>:<none>' && !seen.has(tag)) {
+                    seen.add(tag);
                     entries.push({ tag, containersUsed: !!img.containersUsed });
                 }
             }
@@ -47,7 +55,7 @@ export function ScanImageConfig() {
                         const isStale =
                             !isLoading &&
                             !!field.value &&
-                            !imageOptions.find((o) => o.tag === field.value);
+                            !imageOptions.find((imageOption) => imageOption.tag === field.value);
 
                         return (
                             <FormItem className="min-w-0 flex-1">

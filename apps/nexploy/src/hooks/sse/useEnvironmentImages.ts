@@ -44,7 +44,11 @@ export function useEnvironmentImages(): {
                 (e) => {
                     const data: ImageEvent = JSON.parse(e.data);
                     if (!data.image) return;
-                    setImages((prev) => [...prev, data.image!]);
+                    setImages((prev) =>
+                        prev.some((img) => img.id === data.image!.id)
+                            ? prev
+                            : [...prev, data.image!],
+                    );
                 },
                 params,
             ),
