@@ -1,5 +1,4 @@
 import enCommon from './locales/en/common.json';
-import enValidation from './locales/en/validation.json';
 import enAuth from './locales/en/auth.json';
 import enNavigation from './locales/en/navigation.json';
 import enSwarm from './locales/en/swarm.json';
@@ -14,7 +13,6 @@ import enAi from './locales/en/ai.json';
 import enRequests from './locales/en/requests.json';
 
 import frCommon from './locales/fr/common.json';
-import frValidation from './locales/fr/validation.json';
 import frAuth from './locales/fr/auth.json';
 import frNavigation from './locales/fr/navigation.json';
 import frSwarm from './locales/fr/swarm.json';
@@ -31,7 +29,6 @@ import frRequests from './locales/fr/requests.json';
 export const locales = {
     en: {
         common: enCommon,
-        validation: enValidation,
         auth: enAuth,
         navigation: enNavigation,
         swarm: enSwarm,
@@ -47,7 +44,6 @@ export const locales = {
     },
     fr: {
         common: frCommon,
-        validation: frValidation,
         auth: frAuth,
         navigation: frNavigation,
         swarm: frSwarm,

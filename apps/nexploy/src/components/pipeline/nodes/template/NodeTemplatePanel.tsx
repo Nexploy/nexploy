@@ -71,7 +71,7 @@ export function NodeTemplatePanel() {
         <div
             className={cn(
                 'bg-sidebar flex shrink-0 flex-col overflow-hidden transition-all duration-200',
-                open ? 'w-[30%] border-l' : 'w-0',
+                open ? 'w-[25%] border-l' : 'w-0',
             )}
         >
             <span className="border-b p-3 text-[10px] font-semibold tracking-widest uppercase">

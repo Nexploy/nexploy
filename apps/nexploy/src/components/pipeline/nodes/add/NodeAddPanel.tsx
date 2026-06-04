@@ -4,20 +4,11 @@ import { usePipelinePanelStore } from '@/stores/usePipelinePanelStore';
 import { useTranslations } from 'next-intl';
 import { ArrowLeft, ChevronRight, Search, Wrench, X } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
-import {
-    InputGroup,
-    InputGroupAddon,
-    InputGroupButton,
-    InputGroupInput,
-} from '@workspace/ui/components/input-group';
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, } from '@workspace/ui/components/input-group';
 import { useNodeRegistryStore } from '@/stores/useNodeRegistryStore';
 import { NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { NodeItem } from '@/components/pipeline/nodes/add/NodeItem';
-import {
-    CATEGORY_BG_MUTED,
-    CATEGORY_ICONS,
-    CATEGORY_TEXT,
-} from '@/components/pipeline/pipelineTheme';
+import { CATEGORY_BG_MUTED, CATEGORY_ICONS, CATEGORY_TEXT, } from '@/components/pipeline/pipelineTheme';
 import { useReactFlow } from '@xyflow/react';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { getConfigSchema } from '@/components/pipeline/nodeManifestRegistry';
@@ -93,11 +84,13 @@ export function NodeAddPanel() {
         ? definitions.filter((def) => t(`nodes.${def.id}.name`).toLowerCase().includes(searchQuery))
         : [];
 
+    const Icon = activeCategory ? (CATEGORY_ICONS[activeCategory] ?? Wrench) : Wrench;
+
     return (
         <div
             className={cn(
                 'bg-sidebar flex shrink-0 flex-col overflow-hidden transition-all duration-200',
-                open ? 'w-[30%] border-l' : 'w-0',
+                open ? 'w-[25%] border-l' : 'w-0',
             )}
         >
             <span className="border-b p-3 text-[10px] font-semibold tracking-widest uppercase">
@@ -137,20 +130,15 @@ export function NodeAddPanel() {
                             className="hover:bg-muted flex h-12 w-full cursor-pointer items-center gap-2 px-2.5 transition-colors"
                         >
                             <ArrowLeft className="text-muted-foreground size-3.5 shrink-0" />
-                            {(() => {
-                                const Icon = CATEGORY_ICONS[activeCategory] ?? Wrench;
-                                return (
-                                    <div
-                                        className={cn(
-                                            'flex size-7 shrink-0 items-center justify-center rounded-md',
-                                            CATEGORY_BG_MUTED[activeCategory],
-                                            CATEGORY_TEXT[activeCategory],
-                                        )}
-                                    >
-                                        <Icon className="size-3.5" strokeWidth={1.5} />
-                                    </div>
-                                );
-                            })()}
+                            <div
+                                className={cn(
+                                    'flex size-7 shrink-0 items-center justify-center rounded-md',
+                                    CATEGORY_BG_MUTED[activeCategory],
+                                    CATEGORY_TEXT[activeCategory],
+                                )}
+                            >
+                                <Icon className="size-3.5" strokeWidth={1.5} />
+                            </div>
                             <span className="text-foreground text-xs font-medium">
                                 {t(`categories.${activeCategory}`)}
                             </span>

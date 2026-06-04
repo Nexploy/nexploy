@@ -297,51 +297,210 @@
         "nodes": {
             "clone-repository": { "name": "Cloner le dépôt" },
             "webhook-clone": { "name": "Clonage via Webhook" },
-            "build-docker-image": { "name": "Construire l'image Docker", "description": "Construire une image Docker depuis un Dockerfile" },
-            "env-vars": { "name": "Variables d'environnement", "description": "Injecte les variables d'environnement du dépôt dans le pipeline pour les nœuds suivants." },
-            "send-notification": { "name": "Envoyer une notification", "description": "Envoyer une notification webhook" },
-            "deploy-compose": { "name": "Déployer Compose", "description": "Déployer une stack Docker Compose" },
-            "push-to-registry": { "name": "Pousser une image vers un registre", "description": "Pousser une image Docker vers un registre privé ou public" },
-            "pull-from-registry": { "name": "Télécharger une image", "description": "Télécharger une image Docker depuis Docker Hub ou un registre privé" },
-            "validate-dockerfile": { "name": "Valider le Dockerfile", "description": "Vérifier que le Dockerfile existe et est lisible" },
-            "validate-compose": { "name": "Valider Compose", "description": "Vérifier la syntaxe du fichier Docker Compose" },
-            "set-env-vars": { "name": "Définir les variables d'env", "description": "Injecter des variables d'environnement supplémentaires dans le pipeline. Les variables s'accumulent tout au long du pipeline." },
-            "clean-workdir": { "name": "Nettoyer le répertoire de travail", "description": "Supprime le répertoire du dépôt cloné" },
-            "save-version": { "name": "Sauvegarder la version", "description": "Enregistrer le build actuel comme nouvelle version" },
-            "set-environment": { "name": "Définir l'environnement", "description": "Définit l'environnement de déploiement pour tous les nœuds en aval dans ce pipeline" },
-            "start-container": { "name": "Démarrer un conteneur", "description": "Démarrer un conteneur Docker existant" },
-            "stop-container": { "name": "Arrêter un conteneur", "description": "Arrêter un conteneur Docker en cours d'exécution" },
-            "restart-container": { "name": "Redémarrer un conteneur", "description": "Redémarrer un conteneur Docker" },
-            "remove-container": { "name": "Supprimer un conteneur", "description": "Supprimer un conteneur Docker" },
-            "create-container": { "name": "Créer un conteneur", "description": "Créer et démarrer un conteneur Docker à partir d'une image" },
+            "build-docker-image": {
+                "name": "Construire l'image Docker",
+                "description": "Construire une image Docker depuis un Dockerfile"
+            },
+            "env-vars": {
+                "name": "Variables d'environnement",
+                "description": "Injecte les variables d'environnement du dépôt dans le pipeline pour les nœuds suivants."
+            },
+            "send-notification": {
+                "name": "Envoyer une notification",
+                "description": "Envoyer une notification webhook"
+            },
+            "deploy-compose": {
+                "name": "Déployer Compose",
+                "description": "Déployer une stack Docker Compose"
+            },
+            "push-to-registry": {
+                "name": "Pousser une image vers un registre",
+                "description": "Pousser une image Docker vers un registre privé ou public"
+            },
+            "pull-from-registry": {
+                "name": "Télécharger une image",
+                "description": "Télécharger une image Docker depuis Docker Hub ou un registre privé"
+            },
+            "validate-dockerfile": {
+                "name": "Valider le Dockerfile",
+                "description": "Vérifier que le Dockerfile existe et est lisible"
+            },
+            "validate-compose": {
+                "name": "Valider Compose",
+                "description": "Vérifier la syntaxe du fichier Docker Compose"
+            },
+            "set-env-vars": {
+                "name": "Définir les variables d'env",
+                "description": "Injecter des variables d'environnement supplémentaires dans le pipeline. Les variables s'accumulent tout au long du pipeline."
+            },
+            "clean-workdir": {
+                "name": "Nettoyer le répertoire de travail",
+                "description": "Supprime le répertoire du dépôt cloné"
+            },
+            "save-version": {
+                "name": "Sauvegarder la version",
+                "description": "Enregistrer le build actuel comme nouvelle version"
+            },
+            "set-environment": {
+                "name": "Définir l'environnement",
+                "description": "Définit l'environnement de déploiement pour tous les nœuds en aval dans ce pipeline"
+            },
+            "start-container": {
+                "name": "Démarrer un conteneur",
+                "description": "Démarrer un conteneur Docker existant"
+            },
+            "stop-container": {
+                "name": "Arrêter un conteneur",
+                "description": "Arrêter un conteneur Docker en cours d'exécution"
+            },
+            "restart-container": {
+                "name": "Redémarrer un conteneur",
+                "description": "Redémarrer un conteneur Docker"
+            },
+            "remove-container": {
+                "name": "Supprimer un conteneur",
+                "description": "Supprimer un conteneur Docker"
+            },
+            "create-container": {
+                "name": "Créer un conteneur",
+                "description": "Créer et démarrer un conteneur Docker à partir d'une image"
+            },
             "create-network": { "name": "Créer un réseau" },
             "create-volume": { "name": "Créer un volume" },
-            "wait-for-health": { "name": "Attendre le healthcheck", "description": "Attend qu'un conteneur Docker passe son healthcheck" },
-            "wait-for-url": { "name": "Attendre une URL", "description": "Interroge une URL jusqu'à ce qu'elle retourne le statut HTTP attendu" },
-            "wait-for-port": { "name": "Attendre un port de conteneur", "description": "Vérifie par TCP qu'un port est ouvert sur le conteneur donné" },
-            "delay": { "name": "Délai", "description": "Met la pipeline en pause pendant un nombre de secondes fixe" },
-            "condition": { "name": "Condition", "description": "Conditionne la pipeline sur les données de sortie d'un nœud précédent", "outputTrue": "Vrai", "outputFalse": "Faux" },
-            "run-command-in-container": { "name": "Exécuter une commande dans un conteneur", "description": "Exécute une commande dans un conteneur Docker en cours d'exécution" },
-            "http-request": { "name": "Requête HTTP", "description": "Effectue une requête HTTP vers une URL externe" },
-            "update-commit-status": { "name": "Mettre à jour le statut du commit", "description": "Met à jour le statut d'un commit GitHub ou GitLab" },
-            "tag-image": { "name": "Tagger l'image", "description": "Ajoute un tag à une image Docker" },
-            "scan-image": { "name": "Scanner l'image", "description": "Analyse de sécurité d'une image Docker avec Trivy" },
-            "prune-images": { "name": "Nettoyer les images", "description": "Supprime les images Docker inutilisées pour libérer de l'espace disque" },
-            "delete-image": { "name": "Supprimer une image", "description": "Supprime une image Docker spécifique par nom ou identifiant" },
-            "delete-network": { "name": "Supprimer un réseau", "description": "Supprime un réseau Docker par nom ou identifiant" },
-            "delete-volume": { "name": "Supprimer un volume", "description": "Supprime un volume Docker par nom" },
-            "download-file": { "name": "Télécharger un fichier", "description": "Télécharge un fichier depuis une URL dans le répertoire de travail" },
-            "backup-volume-s3": { "name": "Sauvegarder le volume sur S3", "description": "Archive un volume Docker et l'envoie vers un bucket S3" },
-            "create-service": { "name": "Créer un service", "description": "Créer un nouveau service Docker Swarm à partir d'une image" },
-            "update-service": { "name": "Mettre à jour un service", "description": "Met à jour un service Docker Swarm vers une nouvelle image" },
-            "scale-service": { "name": "Mettre à l'échelle un service", "description": "Modifie le nombre de réplicas d'un service Swarm" },
-            "check-container-logs": { "name": "Vérifier les logs du conteneur", "description": "Recherche un pattern regex dans les logs d'un conteneur" },
-            "cache-restore": { "name": "Restaurer le cache", "description": "Restaure un cache de build depuis un volume Docker vers le répertoire de travail" },
-            "cache-save": { "name": "Sauvegarder le cache", "description": "Sauvegarde un répertoire du dossier de travail dans un volume Docker" },
-            "git-tag": { "name": "Tag Git", "description": "Crée et pousse un tag Git vers le dépôt distant" },
-            "git-clone-extra": { "name": "Cloner un dépôt supplémentaire", "description": "Clone un dépôt supplémentaire dans un sous-répertoire du dossier de travail" },
-            "fetch-secrets-vault": { "name": "Secrets Vault", "description": "Récupère les secrets depuis HashiCorp Vault KV. Les variables s'accumulent tout au long du pipeline." },
-            "fetch-secrets-doppler": { "name": "Secrets Doppler", "description": "Récupère les secrets depuis Doppler. Les variables s'accumulent tout au long du pipeline." }
+            "wait-for-health": {
+                "name": "Attendre le healthcheck",
+                "description": "Attend qu'un conteneur Docker passe son healthcheck"
+            },
+            "wait-for-url": {
+                "name": "Attendre une URL",
+                "description": "Interroge une URL jusqu'à ce qu'elle retourne le statut HTTP attendu"
+            },
+            "wait-for-port": {
+                "name": "Attendre un port de conteneur",
+                "description": "Vérifie par TCP qu'un port est ouvert sur le conteneur donné"
+            },
+            "delay": {
+                "name": "Délai",
+                "description": "Met la pipeline en pause pendant un nombre de secondes fixe"
+            },
+            "condition": {
+                "name": "Condition",
+                "description": "Conditionne la pipeline sur les données de sortie d'un nœud précédent",
+                "outputTrue": "Vrai",
+                "outputFalse": "Faux"
+            },
+            "run-command-in-container": {
+                "name": "Exécuter une commande dans un conteneur",
+                "description": "Exécute une commande dans un conteneur Docker en cours d'exécution"
+            },
+            "http-request": {
+                "name": "Requête HTTP",
+                "description": "Effectue une requête HTTP vers une URL externe"
+            },
+            "update-commit-status": {
+                "name": "Mettre à jour le statut du commit",
+                "description": "Met à jour le statut d'un commit GitHub ou GitLab"
+            },
+            "tag-image": {
+                "name": "Tagger l'image",
+                "description": "Ajoute un tag à une image Docker"
+            },
+            "scan-image": {
+                "name": "Scanner l'image",
+                "description": "Analyse de sécurité d'une image Docker avec Trivy"
+            },
+            "prune-images": {
+                "name": "Nettoyer les images",
+                "description": "Supprime les images Docker inutilisées pour libérer de l'espace disque"
+            },
+            "delete-image": {
+                "name": "Supprimer une image",
+                "description": "Supprime une image Docker spécifique par nom ou identifiant"
+            },
+            "delete-network": {
+                "name": "Supprimer un réseau",
+                "description": "Supprime un réseau Docker par nom ou identifiant"
+            },
+            "delete-volume": {
+                "name": "Supprimer un volume",
+                "description": "Supprime un volume Docker par nom"
+            },
+            "download-file": {
+                "name": "Télécharger un fichier",
+                "description": "Télécharge un fichier depuis une URL dans le répertoire de travail"
+            },
+            "backup-volume-s3": {
+                "name": "Sauvegarder le volume sur S3",
+                "description": "Archive un volume Docker et l'envoie vers un bucket S3"
+            },
+            "create-service": {
+                "name": "Créer un service",
+                "description": "Créer un nouveau service Docker Swarm à partir d'une image"
+            },
+            "update-service": {
+                "name": "Mettre à jour un service",
+                "description": "Met à jour un service Docker Swarm vers une nouvelle image"
+            },
+            "scale-service": {
+                "name": "Mettre à l'échelle un service",
+                "description": "Modifie le nombre de réplicas d'un service Swarm"
+            },
+            "check-container-logs": {
+                "name": "Vérifier les logs du conteneur",
+                "description": "Recherche un pattern regex dans les logs d'un conteneur"
+            },
+            "cache-restore": {
+                "name": "Restaurer le cache",
+                "description": "Restaure un cache de build depuis un volume Docker vers le répertoire de travail"
+            },
+            "cache-save": {
+                "name": "Sauvegarder le cache",
+                "description": "Sauvegarde un répertoire du dossier de travail dans un volume Docker"
+            },
+            "git-tag": {
+                "name": "Tag Git",
+                "description": "Crée et pousse un tag Git vers le dépôt distant"
+            },
+            "git-clone-extra": {
+                "name": "Cloner un dépôt supplémentaire",
+                "description": "Clone un dépôt supplémentaire dans un sous-répertoire du dossier de travail"
+            },
+            "fetch-secrets-vault": {
+                "name": "Secrets Vault",
+                "description": "Récupère les secrets depuis HashiCorp Vault KV. Les variables s'accumulent tout au long du pipeline."
+            },
+            "fetch-secrets-doppler": {
+                "name": "Secrets Doppler",
+                "description": "Récupère les secrets depuis Doppler. Les variables s'accumulent tout au long du pipeline."
+            },
+            "sonarqube-scan": {
+                "name": "Analyse SonarQube",
+                "description": "Analyse la qualité du code avec SonarQube ou SonarCloud"
+            },
+            "add-domain": {
+                "name": "Ajouter un domaine",
+                "description": "Ajouter un domaine au dépôt"
+            },
+            "add-ssl-certificate": {
+                "name": "Ajouter un certificat SSL",
+                "description": "Provisionner un certificat SSL pour un domaine"
+            },
+            "cherry-pick-commit": {
+                "name": "Cherry-pick d'un commit",
+                "description": "Appliquer un commit spécifique sur la branche courante"
+            },
+            "create-release": {
+                "name": "Créer une release",
+                "description": "Créer une nouvelle release sur GitHub ou GitLab"
+            },
+            "generate-changelog": {
+                "name": "Générer le changelog",
+                "description": "Générer un changelog à partir de l'historique git"
+            },
+            "merge-branch": {
+                "name": "Fusionner une branche",
+                "description": "Fusionner une branche dans la branche courante"
+            }
         },
         "config": {
             "webhookStatusConfigured": "Webhook configuré",
@@ -518,6 +677,8 @@
             "createServiceAddConstraint": "Ajouter une contrainte",
             "shell": "Shell",
             "targetTag": "Tag cible",
+            "sourceImage": "Image source",
+            "saveError": "Échec de l'enregistrement de la configuration du nœud",
             "timeoutSeconds": "Timeout (secondes)",
             "url": "URL",
             "workdir": "Répertoire de travail",
