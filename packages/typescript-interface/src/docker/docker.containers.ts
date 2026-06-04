@@ -63,6 +63,7 @@ export interface Containers {
     ports: ContainersPorts[];
     state: ContainerState;
     image: string;
+    imageId?: string;
     health?: string;
     exitCode?: number;
     error?: string;
@@ -90,6 +91,7 @@ export interface ContainerTableRow {
     state?: ContainerState;
     status?: string;
     image?: string;
+    imageId?: string;
     ports?: ContainersPorts[];
     subRows?: ContainerTableRow[];
     runningCount?: number;

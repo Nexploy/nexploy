@@ -290,6 +290,7 @@ export class ContainersStateManager extends BaseStateManager {
             name: container.Names?.[0]?.replace(/^\//, '') || 'unknown',
             labels: container.Labels,
             image: container.Image,
+            imageId: container.ImageID,
             status: container.Status,
             ports: Array.from(portsMap.values()),
             state: this.normalizeState(container.State),

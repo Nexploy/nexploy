@@ -13,18 +13,11 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
 import React, { useMemo, useRef, useState } from 'react';
 import { getColumnsTableImages } from '@/components/docker/image/table/ColumnsDockerImages';
 import { useTranslations } from 'next-intl';
-import { useImagesStore } from '../../../../stores/docker/useImagesStore';
+import { useImagesStore } from '@/stores/docker/useImagesStore.ts';
 import { ImageRow } from '@workspace/typescript-interface/docker/docker.image';
 import { groupImagesByRepository, matchesSearch } from './imageTableUtils';
 import { Input } from '@workspace/ui/components/input';
@@ -47,6 +40,7 @@ import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfir
 import { useRouter } from '@/i18n/navigation';
 import { Switch } from '@workspace/ui/components/switch';
 import { Label } from '@workspace/ui/components/label.tsx';
+import { cn } from '@workspace/ui/lib/utils.ts';
 
 const globalFilterFn: FilterFn<ImageRow> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -261,7 +255,7 @@ export function TableDockerImages() {
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
-                                    className={'h-12'}
+                                    className={cn('h-12', row.original.isGroup && 'bg-muted/30')}
                                     data-state={row.getIsSelected() && 'selected'}
                                 >
                                     {row.getVisibleCells().map((cell) => (

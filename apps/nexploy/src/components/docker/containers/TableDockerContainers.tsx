@@ -98,7 +98,6 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
 
     const isShowingAll = pageSize === 'all';
     const isEmpty = !isLoading && containerRows.length === 0;
-    const noMatch = !isLoading && containerRows.length > 0 && table.getRowModel().rows.length === 0;
 
     return (
         <div className="mx-5 space-y-3">
@@ -145,7 +144,7 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
                                 </TableRow>
                             ))}
 
-                        {isEmpty && (
+                        {!isLoading && isEmpty ? (
                             <TableRow>
                                 <TableCell
                                     colSpan={table.getAllColumns().length}
@@ -154,9 +153,7 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
                                     {t('noContainersFound')}
                                 </TableCell>
                             </TableRow>
-                        )}
-
-                        {noMatch && (
+                        ) : !isLoading && table.getRowModel().rows.length === 0 ? (
                             <TableRow>
                                 <TableCell
                                     colSpan={table.getAllColumns().length}
@@ -165,11 +162,7 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
                                     {t('noContainersMatchSearch')}
                                 </TableCell>
                             </TableRow>
-                        )}
-
-                        {!isLoading &&
-                            !isEmpty &&
-                            !noMatch &&
+                        ) : (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
@@ -185,7 +178,8 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
                                         </TableCell>
                                     ))}
                                 </TableRow>
-                            ))}
+                            ))
+                        )}
                     </TableBody>
                 </Table>
             </div>

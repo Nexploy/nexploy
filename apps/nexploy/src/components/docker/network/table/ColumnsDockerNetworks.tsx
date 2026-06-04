@@ -127,8 +127,13 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
         accessorKey: 'id',
         header: t('networkId'),
         cell: ({ row }) => {
-            const networkId = row.original.id;
-            return <Badge variant={'secondary'}>{networkId.slice(0, 20)}…</Badge>;
+            const networkId = row.original.id ?? '';
+
+            return (
+                <Badge variant="secondary">
+                    {networkId.length > 20 ? networkId.slice(0, 20) + '…' : networkId}
+                </Badge>
+            );
         },
     },
     {

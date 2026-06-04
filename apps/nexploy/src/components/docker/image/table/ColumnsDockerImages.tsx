@@ -116,7 +116,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                                 </TooltipContent>
                             </Tooltip>
                             <StatusLabel className="text-current">
-                                {nameJoin.slice(0, 20)}…
+                                {nameJoin.length > 20 ? nameJoin.slice(0, 20) + '…' : nameJoin}
                             </StatusLabel>
                         </Status>
                     </div>
@@ -127,7 +127,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                 <Link
                     href={`/docker/images/${row.original.id}`}
                     className="flex items-start gap-2"
-                    style={{ paddingLeft: depth > 0 ? `${depth * 24 + 8}px` : undefined }}
+                    style={{ paddingLeft: depth > 0 ? `${depth * 24}px` : undefined }}
                 >
                     <Status
                         className="justify-start border-0 text-sm"
@@ -189,7 +189,13 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                 return <span className="text-muted-foreground text-sm">—</span>;
             }
 
-            return <Badge variant={'secondary'}>{row.original.id.slice(0, 20)}…</Badge>;
+            const image = row.original.id ?? '';
+
+            return (
+                <Badge variant="secondary">
+                    {image.length > 20 ? image.slice(0, 20) + '…' : image}
+                </Badge>
+            );
         },
     },
     {

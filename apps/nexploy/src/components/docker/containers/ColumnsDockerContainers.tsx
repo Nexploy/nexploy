@@ -77,7 +77,10 @@ export function getColumnsDockerContainers(
                 </Button>
             ),
             cell: ({ row }) => {
-                if (row.original.isGroup) {
+                const isGroup = row.original.isGroup;
+                const depth = row.depth;
+
+                if (isGroup) {
                     return (
                         <div className="flex w-fit items-center gap-1.5">
                             <Button
@@ -109,6 +112,7 @@ export function getColumnsDockerContainers(
                     <Link
                         href={`/docker/containers/${row.original.id}`}
                         className="flex hover:underline"
+                        style={{ paddingLeft: depth > 0 ? `${depth * 24 + 8}px` : undefined }}
                     >
                         <span>{row.original.name}</span>
                     </Link>
@@ -169,7 +173,26 @@ export function getColumnsDockerContainers(
                 if (row.original.isGroup) {
                     return <span className="text-muted-foreground text-sm">—</span>;
                 }
-                return <Badge variant={'secondary'}>{row.original.image?.slice(0, 20)}…</Badge>;
+
+                const image = row.original.image ?? '';
+                const imageId = row.original.imageId;
+
+                return imageId ? (
+                    <Link
+                        href={`/docker/images/${imageId}`}
+                        className="max-w-full min-w-0 overflow-hidden"
+                    >
+                        <Badge variant="secondary" className={'hover:underline'}>
+                            {image.length > 20 ? image.slice(0, 20) + '…' : image}
+                        </Badge>
+                    </Link>
+                ) : (
+                    <span className="max-w-full min-w-0 overflow-hidden">
+                        <Badge variant="secondary">
+                            {image.length > 20 ? image.slice(0, 20) + '…' : image}
+                        </Badge>
+                    </span>
+                );
             },
         },
         {

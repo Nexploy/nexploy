@@ -106,8 +106,13 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
         accessorKey: 'mountpoint',
         header: t('mountpoint'),
         cell: ({ row }) => {
-            const mountpoint = row.original.mountpoint;
-            return <Badge variant={'secondary'}>{mountpoint.slice(0, 40)}…</Badge>;
+            const mountpoint = row.original.mountpoint ?? '';
+
+            return (
+                <Badge variant="secondary">
+                    {mountpoint.length > 20 ? mountpoint.slice(0, 20) + '…' : mountpoint}
+                </Badge>
+            );
         },
     },
     {

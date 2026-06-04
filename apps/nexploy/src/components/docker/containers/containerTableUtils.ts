@@ -35,6 +35,7 @@ export function buildContainerRows(containers: Containers[]): ContainerTableRow[
                 state: c.state,
                 status: c.status,
                 image: c.image,
+                imageId: c.imageId,
                 ports: c.ports,
             })),
         });
@@ -48,6 +49,7 @@ export function buildContainerRows(containers: Containers[]): ContainerTableRow[
             state: c.state,
             status: c.status,
             image: c.image,
+            imageId: c.imageId,
             ports: c.ports,
         });
     });
