@@ -10,6 +10,7 @@ export interface McpServerOptions {
     allowRegistriesGroup?: boolean;
     allowSslGroup?: boolean;
     allowEnvironmentsGroup?: boolean;
+    allowPipelineGroup?: boolean;
 }
 
 export interface ToolContext extends McpServerOptions {

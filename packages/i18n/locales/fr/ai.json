@@ -206,6 +206,12 @@
                 "scaleService": "Modifier le nombre de réplicas d'un service",
                 "drainNode": "Mettre un nœud en mode drain pour maintenance"
             },
+            "pipeline": {
+                "generate": "Générer un pipeline de déploiement pour ce dépôt",
+                "listNodes": "Quels nœuds de pipeline sont disponibles ?",
+                "analyzeStack": "Analyser la stack de mon dépôt et suggérer un pipeline",
+                "showCurrent": "Afficher la configuration du pipeline actuel"
+            },
             "categories": {
                 "containers": "Conteneurs",
                 "images": "Images",
@@ -218,7 +224,8 @@
                 "ssl": "Certificats SSL",
                 "registries": "Registres",
                 "environments": "Environnements",
-                "swarm": "Swarm"
+                "swarm": "Swarm",
+                "pipeline": "Pipeline"
             }
         }
     }

@@ -206,6 +206,12 @@
                 "scaleService": "Change the number of replicas for a service",
                 "drainNode": "Drain a node for maintenance"
             },
+            "pipeline": {
+                "generate": "Generate a deployment pipeline for this repository",
+                "listNodes": "What pipeline nodes are available?",
+                "analyzeStack": "Analyze my repository's tech stack and suggest a pipeline",
+                "showCurrent": "Show me the current pipeline configuration"
+            },
             "categories": {
                 "containers": "Containers",
                 "images": "Images",
@@ -218,7 +224,8 @@
                 "ssl": "SSL Certificates",
                 "registries": "Registries",
                 "environments": "Environments",
-                "swarm": "Swarm"
+                "swarm": "Swarm",
+                "pipeline": "Pipeline"
             }
         }
     }

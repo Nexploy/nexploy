@@ -371,14 +371,6 @@ export const mergeBranchConfigSchema = z.object({
     push: z.boolean().default(false),
 });
 
-export const generateChangelogConfigSchema = z.object({
-    fromTag: refable(z.string()).default(''),
-    toRef: refable(z.string()).default('HEAD'),
-    outputPath: relativePath('Output path').default('CHANGELOG.md'),
-    format: z.enum(['conventional', 'simple']).default('conventional'),
-    append: z.boolean().default(false),
-});
-
 export const createReleaseConfigSchema = z.object({
     tagName: refable(z.string().min(1, 'Tag name is required')).default(''),
     targetBranch: z.string().default('main'),

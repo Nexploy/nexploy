@@ -47,7 +47,6 @@ import { sonarqubeScanExecutor } from './executors/sonarqube-scan.executor';
 import { createReleaseExecutor } from './executors/create-release.executor';
 import { cherryPickCommitExecutor } from './executors/cherry-pick-commit.executor';
 import { mergeBranchExecutor } from './executors/merge-branch.executor';
-import { generateChangelogExecutor } from './executors/generate-changelog.executor';
 import { deleteImageExecutor } from './executors/delete-image.executor';
 import { deleteNetworkExecutor } from './executors/delete-network.executor';
 import { deleteVolumeExecutor } from './executors/delete-volume.executor';
@@ -121,7 +120,6 @@ const executors: INodeExecutor[] = [
     createReleaseExecutor,
     cherryPickCommitExecutor,
     mergeBranchExecutor,
-    generateChangelogExecutor,
     // Secrets
     fetchSecretsVaultExecutor,
     fetchSecretsDopplerExecutor,

@@ -45,7 +45,6 @@ import {
     Variable,
     Webhook,
     Workflow,
-    NotepadText,
     PackagePlus,
     PackageCheck,
     ScanSearch,
@@ -194,7 +193,6 @@ const NODE_CATEGORY: Record<string, string> = {
     'create-release': 'integration',
     'cherry-pick-commit': 'source',
     'merge-branch': 'source',
-    'generate-changelog': 'source',
     // Domain & SSL
     'add-domain': 'deploy',
     'add-ssl-certificate': 'deploy',
@@ -272,7 +270,6 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'create-release': PackageCheck,
     'cherry-pick-commit': GitCommit,
     'merge-branch': GitMerge,
-    'generate-changelog': NotepadText,
     // Domain & SSL
     'add-domain': Globe,
     'add-ssl-certificate': ShieldCheck,

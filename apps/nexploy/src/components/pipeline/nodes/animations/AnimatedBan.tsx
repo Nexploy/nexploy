@@ -22,9 +22,9 @@ export function AnimatedBan({ className }: AnimatedBanProps) {
             />
             <line
                 x1="3.4"
-                y1="12.6"
+                y1="3.4"
                 x2="12.6"
-                y2="3.4"
+                y2="12.6"
                 stroke="#ef4444"
                 strokeWidth="1.5"
                 strokeLinecap="round"

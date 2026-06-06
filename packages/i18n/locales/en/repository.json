@@ -2,8 +2,11 @@
     "title": "Repositories",
     "noRepositories": "No repositories",
     "noRepositoriesDescription": "Add your repository to get started.",
+    "noRepositoriesMatchSearch": "No repositories match your search.",
     "manageRepositories": "Deploy applications from your Git repositories",
     "addRepository": "Add Repository",
+    "filterByProvider": "Provider",
+    "filterByStatus": "Status",
     "create": {
         "title": "New Repository",
         "description": "Create and deploy a new application from Git",
@@ -487,10 +490,6 @@
                 "name": "Create Release",
                 "description": "Create a new release on GitHub or GitLab"
             },
-            "generate-changelog": {
-                "name": "Generate Changelog",
-                "description": "Generate a changelog from git history"
-            },
             "merge-branch": {
                 "name": "Merge Branch",
                 "description": "Merge a branch into the current branch"
@@ -721,14 +720,6 @@
             "mergeMessage": "Commit Message",
             "mergeMessagePlaceholder": "Merge feature/my-branch into main",
             "mergePush": "Push after merge",
-            "changelogFromTag": "From Tag / Ref",
-            "changelogFromTagPlaceholder": "v1.0.0 (leave empty for all commits)",
-            "changelogToRef": "To Ref",
-            "changelogOutputPath": "Output Path",
-            "changelogFormat": "Format",
-            "changelogFormatConventional": "Conventional Commits",
-            "changelogFormatSimple": "Simple list",
-            "changelogAppend": "Prepend to existing file",
             "addDomainHost": "Domain",
             "addDomainContainerPort": "Container Port",
             "addDomainPath": "Path",
@@ -874,10 +865,6 @@
             "desc_targetBranch": "Branch that was merged into",
             "sourceBranch": "Source branch",
             "desc_sourceBranch": "Branch that was merged from",
-            "changelogPath": "Changelog path",
-            "desc_changelogPath": "Absolute path to the generated CHANGELOG.md file",
-            "changelog": "Changelog content",
-            "desc_changelog": "Raw Markdown content of the generated changelog section",
             "context": "Status name",
             "desc_context": "Name/context of the commit status",
             "description": "Status description",

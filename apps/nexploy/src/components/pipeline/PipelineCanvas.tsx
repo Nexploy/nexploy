@@ -318,7 +318,9 @@ export function PipelineCanvas() {
                         <div className="border-border bg-card flex size-16 items-center justify-center rounded-2xl border">
                             <SquareMousePointer size={28} className={'text-muted-foreground'} />
                         </div>
-                        <p className="text-muted-foreground mx-5 text-sm">{t('empty')}</p>
+                        <p className="text-muted-foreground mx-5 text-center text-sm">
+                            {t('empty')}
+                        </p>
                     </div>
                 )}
             </ReactFlow>

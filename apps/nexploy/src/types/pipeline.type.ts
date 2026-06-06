@@ -41,6 +41,8 @@ export interface INodeExecutor<TConfig = Record<string, unknown>> {
     readonly type: string;
     readonly configSchema?: z.ZodType<TConfig>;
     readonly runsOnPipelineFailure?: boolean;
+    /** When true, the node always runs after its direct parent, even if the pipeline has failed. */
+    readonly isAttachNode?: boolean;
     execute(ctx: NodeExecutionContext<TConfig>): Promise<NodeExecutionResult>;
 }
 

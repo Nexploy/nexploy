@@ -42,7 +42,7 @@ export function ToolCallRow({ tool }: ToolCallRowProps) {
         <div className="flex items-center gap-2 px-1 py-1">
             <div
                 className={cn(
-                    'flex h-4 w-4 shrink-0 items-center justify-center rounded',
+                    'flex h-4 w-4 shrink-0 items-center justify-center rounded-[5px]',
                     isRunning && 'bg-primary/10 text-primary',
                     isDone && success && 'bg-green-500/15 text-green-500',
                     isDone && !success && 'bg-red-500/15 text-red-500',

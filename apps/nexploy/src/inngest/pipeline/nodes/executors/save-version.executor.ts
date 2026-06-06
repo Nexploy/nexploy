@@ -5,6 +5,7 @@ import { getDefaultEnvironment } from '@/services/environment/environment.servic
 
 export class SaveVersionExecutor implements INodeExecutor {
     readonly type = 'save-version';
+    readonly isAttachNode = true;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { buildConfig, logger, nodeId, inputNodes, allOutputs, edges } = ctx;

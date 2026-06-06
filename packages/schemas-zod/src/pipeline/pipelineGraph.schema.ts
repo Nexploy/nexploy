@@ -59,7 +59,6 @@ export const nodeTypeSchema = z.enum([
     'create-release',
     'cherry-pick-commit',
     'merge-branch',
-    'generate-changelog',
     // Secrets
     'fetch-secrets-vault',
     'fetch-secrets-doppler',
@@ -108,3 +107,14 @@ export type SavePipelineInput = z.infer<typeof savePipelineSchema>;
 
 export const saveNodeConfigBindArgsSchemas = [z.cuid(), z.string()] as const;
 export const saveNodeConfigInputSchema = z.record(z.string(), z.unknown());
+
+export const analyzeRepositorySchema = z.object({
+    repositoryId: z.string().min(1).describe('The ID of the repository to analyze'),
+    branch: z.string().optional().describe('Branch to read from (defaults to HEAD)'),
+});
+
+export const savePipelineMcpSchema = z.object({
+    repositoryId: z.string().min(1).describe('The ID of the repository'),
+    nodes: z.array(pipelineNodeSchema).describe('Pipeline nodes'),
+    edges: z.array(pipelineEdgeSchema).describe('Pipeline edges connecting nodes'),
+});

@@ -10,6 +10,7 @@ import { registriesGroup } from './groups/registries.group';
 import { sslGroup } from './groups/ssl.group';
 import { environmentsGroup } from './groups/environments.group';
 import { confirmGroup } from './groups/confirm.group';
+import { pipelineGroup } from './groups/pipeline.group';
 
 export const toolGroups: ToolGroup[] = [
     containersGroup,
@@ -23,4 +24,5 @@ export const toolGroups: ToolGroup[] = [
     sslGroup,
     environmentsGroup,
     confirmGroup,
+    pipelineGroup,
 ];

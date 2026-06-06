@@ -2,8 +2,11 @@
     "title": "Dépôts",
     "noRepositories": "Aucun dépôt",
     "noRepositoriesDescription": "Ajoutez votre dépôt pour commencer.",
+    "noRepositoriesMatchSearch": "Aucun dépôt ne correspond à votre recherche.",
     "manageRepositories": "Déployez vos applications depuis vos dépôts Git",
     "addRepository": "Ajouter un dépôt",
+    "filterByProvider": "Fournisseur",
+    "filterByStatus": "Statut",
     "create": {
         "title": "Nouveau dépôt",
         "description": "Créer et déployer une nouvelle application depuis Git",
@@ -493,10 +496,6 @@
                 "name": "Créer une release",
                 "description": "Créer une nouvelle release sur GitHub ou GitLab"
             },
-            "generate-changelog": {
-                "name": "Générer le changelog",
-                "description": "Générer un changelog à partir de l'historique git"
-            },
             "merge-branch": {
                 "name": "Fusionner une branche",
                 "description": "Fusionner une branche dans la branche courante"
@@ -727,14 +726,6 @@
             "mergeMessage": "Message de commit",
             "mergeMessagePlaceholder": "Merge feature/ma-branche dans main",
             "mergePush": "Pousser après le merge",
-            "changelogFromTag": "Depuis le tag / ref",
-            "changelogFromTagPlaceholder": "v1.0.0 (vide pour tous les commits)",
-            "changelogToRef": "Jusqu'au ref",
-            "changelogOutputPath": "Chemin de sortie",
-            "changelogFormat": "Format",
-            "changelogFormatConventional": "Commits conventionnels",
-            "changelogFormatSimple": "Liste simple",
-            "changelogAppend": "Ajouter au début du fichier existant",
             "addDomainHost": "Domaine",
             "addDomainContainerPort": "Port du conteneur",
             "addDomainPath": "Chemin",
@@ -880,10 +871,6 @@
             "desc_targetBranch": "Branche dans laquelle la fusion a eu lieu",
             "sourceBranch": "Branche source",
             "desc_sourceBranch": "Branche qui a été fusionnée",
-            "changelogPath": "Chemin du changelog",
-            "desc_changelogPath": "Chemin absolu vers le fichier CHANGELOG.md généré",
-            "changelog": "Contenu du changelog",
-            "desc_changelog": "Contenu Markdown brut de la section de changelog générée",
             "context": "Nom du statut",
             "desc_context": "Nom/contexte du statut de commit",
             "description": "Description du statut",

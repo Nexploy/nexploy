@@ -79,7 +79,6 @@ export type NodeId =
     | 'create-release'
     | 'cherry-pick-commit'
     | 'merge-branch'
-    | 'generate-changelog'
     // Secrets
     | 'fetch-secrets-vault'
     | 'fetch-secrets-doppler'

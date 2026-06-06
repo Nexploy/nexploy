@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Check, ChevronDown, Loader2, Wrench, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
@@ -28,10 +28,6 @@ export function ToolCallsSection({ tools }: ToolCallsSectionProps) {
     const lastIsDone = lastTool?.state === 'output-available';
     const lastOutput = lastTool?.output as { success?: boolean } | undefined;
     const lastSuccess = lastOutput?.success !== false;
-
-    useEffect(() => {
-        if (isAnyRunning) setIsOpen(true);
-    }, [isAnyRunning]);
 
     if (tools.length === 0) return null;
 

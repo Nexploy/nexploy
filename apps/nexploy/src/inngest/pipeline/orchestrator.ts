@@ -65,6 +65,7 @@ export class PipelineOrchestrator {
         const executionOrder = [...regularNodes, ...endNodes];
 
         const branchSkippedNodeIds = new Set<string>();
+        const executedNodeIds = new Set<string>();
 
         let pipelineHasFailed = false;
         let pipelineFailureError: Error | undefined;
@@ -81,15 +82,20 @@ export class PipelineOrchestrator {
                 }
 
                 if (pipelineHasFailed && !executor.runsOnPipelineFailure) {
-                    await this.runSkippedNode(
-                        node,
-                        'pipeline failed',
-                        inngestStep,
-                        reporter,
-                        logger,
-                        allOutputs,
-                    );
-                    continue;
+                    const parentIds = getParentNodeIds(node.id, graph.edges);
+                    const parentExecuted =
+                        executor.isAttachNode && parentIds.some((id) => executedNodeIds.has(id));
+                    if (!parentExecuted) {
+                        await this.runSkippedNode(
+                            node,
+                            'pipeline failed',
+                            inngestStep,
+                            reporter,
+                            logger,
+                            allOutputs,
+                        );
+                        continue;
+                    }
                 }
 
                 const inputNodeIds = getParentNodeIds(node.id, graph.edges);
@@ -266,6 +272,8 @@ export class PipelineOrchestrator {
                         skipped?: boolean;
                         skippedBranchTargets?: string[];
                     };
+
+                    executedNodeIds.add(node.id);
 
                     if (!result.ok) {
                         pipelineHasFailed = true;

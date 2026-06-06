@@ -47,7 +47,6 @@ import { sonarqubeScanManifest } from './sonarqube-scan.manifest';
 import { createReleaseManifest } from './create-release.manifest';
 import { cherryPickCommitManifest } from './cherry-pick-commit.manifest';
 import { mergeBranchManifest } from './merge-branch.manifest';
-import { generateChangelogManifest } from './generate-changelog.manifest';
 import { deleteImageManifest } from './delete-image.manifest';
 import { deleteNetworkManifest } from './delete-network.manifest';
 import { deleteVolumeManifest } from './delete-volume.manifest';
@@ -120,7 +119,6 @@ export const allBuiltinManifests: NodeManifest[] = [
     createReleaseManifest,
     cherryPickCommitManifest,
     mergeBranchManifest,
-    generateChangelogManifest,
     // Secrets
     fetchSecretsVaultManifest,
     fetchSecretsDopplerManifest,

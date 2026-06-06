@@ -115,6 +115,15 @@ const CATEGORY_KEYS: { id: string; keys: string[] }[] = [
             'suggestions.swarm.drainNode',
         ],
     },
+    {
+        id: 'pipeline',
+        keys: [
+            'suggestions.pipeline.generate',
+            'suggestions.pipeline.listNodes',
+            'suggestions.pipeline.analyzeStack',
+            'suggestions.pipeline.showCurrent',
+        ],
+    },
 ];
 
 export function useAIContext(): AIContext {
