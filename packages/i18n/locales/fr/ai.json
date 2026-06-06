@@ -126,6 +126,7 @@
             "toolsCount": "{count, plural, one {# outil} other {# outils}}"
         },
         "stopGenerating": "Arrêter la génération",
+        "generationStopped": "Réponse interrompue",
         "inputPlaceholder": "Posez une question...",
         "thinking": "Réflexion...",
         "keyboardHint": "Entrée pour envoyer · Maj+Entrée pour nouvelle ligne",

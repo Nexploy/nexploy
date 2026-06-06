@@ -1,27 +1,29 @@
 'use client';
 
 import { useRef } from 'react';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, Square } from 'lucide-react';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow.tsx';
 
 interface ChatInputProps {
-    value: string;
+    input: string;
     onChange: (value: string) => void;
     onSubmit: () => void;
+    onStop: () => void;
     isLoading: boolean;
 }
 
-export function ChatInput({ value, onChange, onSubmit, isLoading }: ChatInputProps) {
+export function ChatInput({ input, onChange, onSubmit, onStop, isLoading }: ChatInputProps) {
     const t = useTranslations('ai.chat');
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            onSubmit();
+            if (isLoading) onStop();
+            else input.trim() !== '' && onSubmit();
         }
     };
 
@@ -34,7 +36,7 @@ export function ChatInput({ value, onChange, onSubmit, isLoading }: ChatInputPro
                 >
                     <Textarea
                         ref={textareaRef}
-                        value={value}
+                        value={input}
                         onChange={(e) => onChange(e.target.value)}
                         onKeyDown={handleKeyDown}
                         placeholder={t('inputPlaceholder')}
@@ -42,14 +44,23 @@ export function ChatInput({ value, onChange, onSubmit, isLoading }: ChatInputPro
                         rows={1}
                     />
                 </ScrollAreaWithShadow>
-                <Button
-                    onClick={onSubmit}
-                    size="icon"
-                    className="m-2 size-7 shrink-0"
-                    icon={ArrowUp}
-                    isLoading={isLoading}
-                    disabled={isLoading || !value.trim()}
-                />
+                {isLoading ? (
+                    <Button
+                        onClick={onStop}
+                        size="icon"
+                        variant="destructive"
+                        className="m-2 size-7 shrink-0"
+                        icon={Square}
+                    />
+                ) : (
+                    <Button
+                        onClick={onSubmit}
+                        size="icon"
+                        className="m-2 size-7 shrink-0"
+                        icon={ArrowUp}
+                        disabled={!input.trim()}
+                    />
+                )}
             </div>
             <p className="text-muted-foreground mt-1.5 text-center text-[10px]">
                 {t('keyboardHint')}

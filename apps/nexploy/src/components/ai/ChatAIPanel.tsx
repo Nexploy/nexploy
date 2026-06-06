@@ -149,9 +149,10 @@ export function ChatAIPanel() {
                     </ScrollAreaWithShadow>
                     <SelectModel />
                     <ChatInput
-                        value={input}
+                        input={input}
                         onChange={setInput}
                         onSubmit={() => trySendMessage(input)}
+                        onStop={stop}
                         isLoading={isLoading}
                     />
                     <ModelSelectorModal />
