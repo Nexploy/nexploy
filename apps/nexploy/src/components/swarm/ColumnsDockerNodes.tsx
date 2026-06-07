@@ -73,10 +73,10 @@ export const getColumnsTableNodes = (t: TranslationFunction): ColumnDef<SwarmNod
             return (
                 <Link
                     href={`/swarm/nodes/${row.original.id}`}
-                    className="flex min-w-0 items-center gap-1.5 hover:underline"
+                    className="flex items-center gap-1.5 hover:underline"
                 >
                     {managerStatus?.leader && <Crown className="size-4 text-yellow-500" />}
-                    <span className="min-w-0 flex-1 truncate">{hostname}</span>
+                    <span>{hostname}</span>
                 </Link>
             );
         },
@@ -93,11 +93,8 @@ export const getColumnsTableNodes = (t: TranslationFunction): ColumnDef<SwarmNod
             </Button>
         ),
         cell: ({ row }) => (
-            <Badge
-                variant={row.original.role === 'manager' ? 'default' : 'secondary'}
-                className={'max-w-full justify-start'}
-            >
-                <span className={'truncate'}>{row.original.role}</span>
+            <Badge variant={row.original.role === 'manager' ? 'default' : 'secondary'}>
+                {row.original.role}
             </Badge>
         ),
     },
@@ -113,11 +110,8 @@ export const getColumnsTableNodes = (t: TranslationFunction): ColumnDef<SwarmNod
             </Button>
         ),
         cell: ({ row }) => (
-            <Badge
-                variant={getStateBadgeVariant(row.original.state)}
-                className={'max-w-full justify-start'}
-            >
-                <span className={'truncate'}>{row.original.state}</span>
+            <Badge variant={getStateBadgeVariant(row.original.state)}>
+                {row.original.state}
             </Badge>
         ),
     },
@@ -133,11 +127,8 @@ export const getColumnsTableNodes = (t: TranslationFunction): ColumnDef<SwarmNod
             </Button>
         ),
         cell: ({ row }) => (
-            <Badge
-                variant={getAvailabilityBadgeVariant(row.original.availability)}
-                className={'max-w-full justify-start'}
-            >
-                <span className={'truncate'}>{row.original.availability}</span>
+            <Badge variant={getAvailabilityBadgeVariant(row.original.availability)}>
+                {row.original.availability}
             </Badge>
         ),
     },
@@ -145,16 +136,14 @@ export const getColumnsTableNodes = (t: TranslationFunction): ColumnDef<SwarmNod
         accessorKey: 'address',
         header: t('address'),
         cell: ({ row }) => (
-            <div className="text-muted-foreground truncate">{row.original.address || '—'}</div>
+            <div className="text-muted-foreground">{row.original.address || '—'}</div>
         ),
     },
     {
         accessorKey: 'engineVersion',
         header: t('engine'),
         cell: ({ row }) => (
-            <div className="text-muted-foreground truncate">
-                {row.original.engineVersion || '—'}
-            </div>
+            <div className="text-muted-foreground">{row.original.engineVersion || '—'}</div>
         ),
     },
     {
@@ -163,7 +152,7 @@ export const getColumnsTableNodes = (t: TranslationFunction): ColumnDef<SwarmNod
         cell: ({ row }) => {
             const { nanoCPUs, memoryBytes } = row.original.resources;
             return (
-                <div className="text-muted-foreground truncate">
+                <div className="text-muted-foreground">
                     {formatCPUs(nanoCPUs)} CPUs / {formatBytes(memoryBytes)}
                 </div>
             );

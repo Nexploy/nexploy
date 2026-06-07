@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useChat } from '@ai-sdk/react';
+import { type UIMessage, useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useAIPanelStore } from '@/stores/useAIPanelStore';
 import { useAIContext } from '@/hooks/useAIContext';
@@ -15,9 +15,14 @@ import { ModelSelectorModal } from '@/components/ai/panel/model-selector/ModelSe
 import { cn } from '@workspace/ui/lib/utils';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow.tsx';
 import { SelectModel } from '@/components/ai/panel/SelectModel.tsx';
+import { useTranslations } from 'next-intl';
+import { BotOff } from 'lucide-react';
+import { useLocalStorage } from 'usehooks-ts';
 
 export function ChatAIPanel() {
+    const t = useTranslations('ai.chat');
     const isOpen = useAIPanelStore((s) => s.isOpen);
+    const aiEnabled = useAIPanelStore((s) => s.aiEnabled);
     const closePanel = useAIPanelStore((s) => s.closePanel);
     const openPanel = useAIPanelStore((s) => s.openPanel);
     const pendingPrompt = useAIPanelStore((s) => s.pendingPrompt);
@@ -33,6 +38,10 @@ export function ChatAIPanel() {
     const lastScrollTop = useRef<number>(0);
     const selectedModelRef = useRef(selectedModel);
     selectedModelRef.current = selectedModel;
+
+    const [persistedMessages, setPersistedMessages, clearPersistedMessages] = useLocalStorage<
+        UIMessage[]
+    >('ai-chat-messages', []);
 
     const { messages, sendMessage, stop, status, setMessages, error } = useChat({
         transport: new DefaultChatTransport({
@@ -52,6 +61,15 @@ export function ChatAIPanel() {
 
     const isLoading = status === 'submitted' || status === 'streaming';
     const { categories } = useAIContext();
+
+    useEffect(() => {
+        if (persistedMessages.length > 0) setMessages(persistedMessages);
+    }, []);
+
+    useEffect(() => {
+        if (status !== 'ready') return;
+        setPersistedMessages(messages);
+    }, [messages, status, setPersistedMessages]);
 
     useHotkeys(
         ['meta+i', 'ctrl+i'],
@@ -116,7 +134,8 @@ export function ChatAIPanel() {
     const handleResetChat = useCallback(() => {
         stop();
         setMessages([]);
-    }, [stop, setMessages]);
+        clearPersistedMessages();
+    }, [stop, setMessages, clearPersistedMessages]);
 
     return (
         <div
@@ -131,31 +150,53 @@ export function ChatAIPanel() {
                         isLoading={isLoading}
                         hasMessages={messages.length > 0}
                         onNewChat={handleResetChat}
-                        onStop={stop}
                         onClose={closePanel}
                     />
-                    <ScrollAreaWithShadow
-                        className="h-full overflow-hidden"
-                        bottomShadow
-                        ref={scrollContainerRef}
-                    >
-                        <div className="flex w-full flex-col gap-3 px-3">
-                            {messages.length === 0 && (
-                                <Suggestions categories={categories} onSelect={trySendMessage} />
-                            )}
-                            <ChatMessages messages={messages} isLoading={isLoading} error={error} />
-                            <div ref={messagesEndRef} />
+                    {!aiEnabled ? (
+                        <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
+                            <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-full">
+                                <BotOff className="text-muted-foreground h-6 w-6" />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <p className="text-sm font-medium">{t('disabled')}</p>
+                                <p className="text-muted-foreground text-xs">
+                                    {t('disabledDescription')}
+                                </p>
+                            </div>
                         </div>
-                    </ScrollAreaWithShadow>
-                    <SelectModel />
-                    <ChatInput
-                        input={input}
-                        onChange={setInput}
-                        onSubmit={() => trySendMessage(input)}
-                        onStop={stop}
-                        isLoading={isLoading}
-                    />
-                    <ModelSelectorModal />
+                    ) : (
+                        <>
+                            <ScrollAreaWithShadow
+                                className="h-full overflow-hidden"
+                                bottomShadow
+                                ref={scrollContainerRef}
+                            >
+                                <div className="flex w-full flex-col gap-3 px-3">
+                                    {messages.length === 0 && (
+                                        <Suggestions
+                                            categories={categories}
+                                            onSelect={trySendMessage}
+                                        />
+                                    )}
+                                    <ChatMessages
+                                        messages={messages}
+                                        isLoading={isLoading}
+                                        error={error}
+                                    />
+                                    <div ref={messagesEndRef} />
+                                </div>
+                            </ScrollAreaWithShadow>
+                            <SelectModel />
+                            <ChatInput
+                                input={input}
+                                onChange={setInput}
+                                onSubmit={() => trySendMessage(input)}
+                                onStop={stop}
+                                isLoading={isLoading}
+                            />
+                            <ModelSelectorModal />
+                        </>
+                    )}
                 </div>
             </InsetPanel>
         </div>

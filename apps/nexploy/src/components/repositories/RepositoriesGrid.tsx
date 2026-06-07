@@ -3,37 +3,19 @@
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import {
-    Card,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
-import {
-    Empty,
-    EmptyDescription,
-    EmptyHeader,
-    EmptyMedia,
-    EmptyTitle,
-} from '@workspace/ui/components/empty';
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, } from '@workspace/ui/components/empty';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Input } from '@workspace/ui/components/input';
-import {
-    Ban,
-    CheckCircle2,
-    Clock,
-    FolderGit2,
-    Hourglass,
-    Loader2,
-    XCircle,
-} from 'lucide-react';
+import { FolderGit2 } from 'lucide-react';
 import { Separator } from '@workspace/ui/components/separator';
 import { StatusLive } from '@/components/shared/StatusLive';
 import { RunBuildButton } from '@/components/repositories/RunBuildButton';
@@ -42,6 +24,7 @@ import { capitalizeFirstLetter } from '@/utils/capitalize';
 import { getHostname } from '@/utils/url';
 import Github from '@thesvg/react/github';
 import Gitlab from '@thesvg/react/gitlab';
+import { STATUS_PIPELINE } from '@/components/pipeline/buildsPanel/BuildsPanelItem.tsx';
 
 type BuildStatus = 'QUEUED' | 'BUILDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
 type GitProviderType = 'GITHUB' | 'GITLAB';
@@ -59,14 +42,6 @@ type Repository = {
 interface RepositoriesGridProps {
     repositories: Repository[];
 }
-
-const STATUS_ICONS: Record<BuildStatus, React.ReactNode> = {
-    COMPLETED: <CheckCircle2 className="size-3.5 text-green-500" />,
-    BUILDING: <Loader2 className="size-3.5 animate-spin text-yellow-500" />,
-    FAILED: <XCircle className="size-3.5 text-destructive" />,
-    QUEUED: <Clock className="size-3.5 text-muted-foreground" />,
-    CANCELLED: <Ban className="size-3.5 text-destructive" />,
-};
 
 export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
     const t = useTranslations('repository');
@@ -93,7 +68,7 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
 
     return (
         <div className="space-y-4">
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
                 <Input
                     className="w-56 shadow-xs"
                     placeholder={tCommon('searchPlaceholder')}
@@ -101,66 +76,46 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                     onChange={(e) => setSearch(e.target.value)}
                 />
 
-                <div className="flex items-center gap-1.5">
-                    <span className="text-muted-foreground text-sm font-medium">
-                        {t('filterByProvider')}
-                    </span>
+                <div className={'flex gap-3'}>
                     <Select
                         value={providerFilter}
-                        onValueChange={(v) => setProviderFilter(v as GitProviderType | 'all')}
+                        onValueChange={(value: GitProviderType) => setProviderFilter(value)}
                     >
                         <SelectTrigger className="w-36 shadow-xs">
                             <SelectValue placeholder={t('filterByProvider')} />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">
-                                <span className="flex items-center gap-2">
-                                    <Hourglass className="text-muted-foreground size-3.5" />
-                                    {tCommon('all')}
-                                </span>
-                            </SelectItem>
-                            <SelectItem value="GITHUB">
-                                <span className="flex items-center gap-2">
-                                    <Github className="size-3.5 [&_path]:fill-current" />
-                                    GitHub
-                                </span>
-                            </SelectItem>
-                            <SelectItem value="GITLAB">
-                                <span className="flex items-center gap-2">
-                                    <Gitlab className="size-3.5 [&_path]:fill-current" />
-                                    GitLab
-                                </span>
-                            </SelectItem>
+                            <SelectGroup>
+                                <SelectLabel>{t('filterByProvider')}</SelectLabel>
+                                <SelectItem value="all">{tCommon('all')}</SelectItem>
+                                <SelectItem value="GITHUB">
+                                    <span className="flex items-center gap-2">
+                                        <Github className="size-3.5 [&_path]:fill-current" />
+                                        GitHub
+                                    </span>
+                                </SelectItem>
+                                <SelectItem value="GITLAB">
+                                    <span className="flex items-center gap-2">
+                                        <Gitlab className="size-3.5 [&_path]:fill-current" />
+                                        GitLab
+                                    </span>
+                                </SelectItem>
+                            </SelectGroup>
                         </SelectContent>
                     </Select>
-                </div>
 
-                <div className="flex items-center gap-1.5">
-                    <span className="text-muted-foreground text-sm font-medium">
-                        {t('filterByStatus')}
-                    </span>
                     <Select
                         value={statusFilter}
-                        onValueChange={(v) => setStatusFilter(v as BuildStatus | 'all')}
+                        onValueChange={(value: BuildStatus) => setStatusFilter(value)}
                     >
                         <SelectTrigger className="w-40 shadow-xs">
                             <SelectValue placeholder={t('filterByStatus')} />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">
-                                <span className="flex items-center gap-2">
-                                    <Hourglass className="text-muted-foreground size-3.5" />
-                                    {tCommon('all')}
-                                </span>
-                            </SelectItem>
-                            {(
-                                Object.entries(STATUS_ICONS) as [BuildStatus, React.ReactNode][]
-                            ).map(([status, icon]) => (
+                            <SelectItem value="all">{tCommon('all')}</SelectItem>
+                            {Object.entries(STATUS_PIPELINE).map(([status]) => (
                                 <SelectItem key={status} value={status}>
-                                    <span className="flex items-center gap-2">
-                                        {icon}
-                                        {t(`builds.${status.toLowerCase() as 'completed' | 'building' | 'failed' | 'queued' | 'cancelled'}`)}
-                                    </span>
+                                    {t(`builds.${status.toLowerCase()}`)}
                                 </SelectItem>
                             ))}
                         </SelectContent>
@@ -175,7 +130,7 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                             <EmptyMedia variant="icon" className="bg-primary/10">
                                 <FolderGit2 className="text-primary" />
                             </EmptyMedia>
-                            <EmptyTitle>{t('noRepositoriesMatchSearch')}</EmptyTitle>
+                            <EmptyDescription>{t('noRepositoriesMatchSearch')}</EmptyDescription>
                         </EmptyHeader>
                     </Empty>
                 ) : (
@@ -194,9 +149,7 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                     {filtered.map((repository) => {
                         const lastDeployment = repository.build?.[0];
                         const ProviderIcon = PROVIDER_ICONS[repository.gitProvider];
-                        const hostname = getHostname(
-                            repository.gitAccount?.gitProvider?.baseUrl,
-                        );
+                        const hostname = getHostname(repository.gitAccount?.gitProvider?.baseUrl);
 
                         return (
                             <Link href={`/repositories/${repository.id}`} key={repository.id}>

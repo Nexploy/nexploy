@@ -7,12 +7,14 @@ interface AIPanelStore {
     pendingPrompt: string | null;
     selectedModel: SelectedModel | null;
     modelSelectorOpen: boolean;
+    aiEnabled: boolean;
     openPanel: (prompt?: string) => void;
     closePanel: () => void;
     clearPendingPrompt: () => void;
     setSelectedModel: (model: SelectedModel) => void;
     openModelSelector: () => void;
     closeModelSelector: () => void;
+    setAiEnabled: (enabled: boolean) => void;
 }
 
 export const useAIPanelStore = create<AIPanelStore>()(
@@ -22,12 +24,14 @@ export const useAIPanelStore = create<AIPanelStore>()(
             pendingPrompt: null,
             selectedModel: null,
             modelSelectorOpen: false,
+            aiEnabled: true,
             openPanel: (prompt) => set({ isOpen: true, pendingPrompt: prompt ?? null }),
             closePanel: () => set({ isOpen: false }),
             clearPendingPrompt: () => set({ pendingPrompt: null }),
             setSelectedModel: (model) => set({ selectedModel: model }),
             openModelSelector: () => set({ modelSelectorOpen: true }),
             closeModelSelector: () => set({ modelSelectorOpen: false }),
+            setAiEnabled: (enabled) => set({ aiEnabled: enabled }),
         }),
         {
             name: 'ai-panel',

@@ -25,7 +25,7 @@ export const imagesGroup: ToolGroup = {
                 try {
                     const images = await kyDocker.get('images').json<any[]>();
                     const data = images.map((img) => ({
-                        id: img.id?.replace('sha256:', '').slice(0, 12) ?? img.id,
+                        id: img.id,
                         tags: img.repoTags ?? img.tags ?? [],
                         size: img.size ? `${Math.round(img.size / 1024 / 1024)}MB` : 'unknown',
                     }));
@@ -104,8 +104,25 @@ export const imagesGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    await kyDocker.post('images/delete', { json: params }).json();
-                    return ok(`Deleted ${params.imageIds.length} image(s)`);
+                    const result = await kyDocker
+                        .post('images/delete', { json: params })
+                        .json<{ deleted: string[]; skipped: { id: string; name: string; reason: string }[] }>();
+
+                    if (result.deleted.length === 0 && result.skipped.length > 0) {
+                        const reasons = result.skipped
+                            .map((s) => `${s.name}: ${s.reason}`)
+                            .join(', ');
+                        return fail(`No images deleted. Skipped: ${reasons}`);
+                    }
+
+                    const parts: string[] = [];
+                    if (result.deleted.length > 0)
+                        parts.push(`Deleted ${result.deleted.length} image(s)`);
+                    if (result.skipped.length > 0)
+                        parts.push(
+                            `skipped ${result.skipped.length} (${result.skipped.map((s) => s.reason).join(', ')})`,
+                        );
+                    return ok(parts.join(', '));
                 } catch (e: any) {
                     return fail(e.message);
                 }

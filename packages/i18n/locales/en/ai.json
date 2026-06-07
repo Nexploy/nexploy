@@ -111,6 +111,8 @@
     },
     "chat": {
         "newChat": "New chat",
+        "disabled": "AI assistant disabled",
+        "disabledDescription": "The administrator has disabled the AI assistant.",
         "confirmation": {
             "title": "Confirm destructive action",
             "target": "Target",

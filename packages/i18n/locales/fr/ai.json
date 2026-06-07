@@ -111,6 +111,8 @@
     },
     "chat": {
         "newChat": "Nouveau chat",
+        "disabled": "Assistant IA désactivé",
+        "disabledDescription": "L'administrateur a désactivé l'assistant IA.",
         "confirmation": {
             "title": "Confirmer l'action destructive",
             "target": "Cible",

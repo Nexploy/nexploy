@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
@@ -11,6 +12,7 @@ import { Switch } from '@workspace/ui/components/switch';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { updateAIGeneralSettingsSchema } from '@workspace/schemas-zod/ai/aiSettings.schema';
 import { updateAIGeneralSettingsAction } from '@/actions/admin/ai/updateAiGeneralSettings.action';
+import { useAIPanelStore } from '@/stores/useAIPanelStore';
 
 interface GeneralSettingsCardProps {
     aiEnabled: boolean;
@@ -19,6 +21,11 @@ interface GeneralSettingsCardProps {
 
 export function GeneralSettingsCard({ aiEnabled, mcpEnabled }: GeneralSettingsCardProps) {
     const t = useTranslations('ai.admin.settings');
+    const setAiEnabled = useAIPanelStore((s) => s.setAiEnabled);
+
+    useEffect(() => {
+        setAiEnabled(aiEnabled);
+    }, [aiEnabled, setAiEnabled]);
 
     const { form, handleSubmitWithAction, action } = useHookFormAction(
         updateAIGeneralSettingsAction,
@@ -59,6 +66,7 @@ export function GeneralSettingsCard({ aiEnabled, mcpEnabled }: GeneralSettingsCa
                                                 disabled={action.isPending}
                                                 onCheckedChange={(checked) => {
                                                     field.onChange(checked);
+                                                    setAiEnabled(checked);
                                                     handleSubmitWithAction();
                                                 }}
                                             />

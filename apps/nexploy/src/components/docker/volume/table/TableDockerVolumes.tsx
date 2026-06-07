@@ -109,9 +109,9 @@ export function TableDockerVolumes() {
 
     return (
         <div className={'mx-5 space-y-3'}>
-            <div className={'flex justify-between'}>
+            <div className={'flex flex-wrap justify-between gap-3'}>
                 <Input
-                    className={'w-1/5 shadow-xs'}
+                    className={'w-56 shadow-xs'}
                     placeholder={tCommon('searchPlaceholder')}
                     value={globalFilter ?? ''}
                     onChange={(e) => setGlobalFilter(e.target.value)}

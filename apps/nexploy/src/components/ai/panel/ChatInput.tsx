@@ -22,8 +22,7 @@ export function ChatInput({ input, onChange, onSubmit, onStop, isLoading }: Chat
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            if (isLoading) onStop();
-            else input.trim() !== '' && onSubmit();
+            input.trim() !== '' && onSubmit();
         }
     };
 

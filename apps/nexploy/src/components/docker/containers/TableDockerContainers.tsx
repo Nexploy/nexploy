@@ -101,9 +101,9 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
 
     return (
         <div className="mx-5 space-y-3">
-            <div className="flex items-center justify-between gap-3 pt-1">
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
                 <Input
-                    className="w-1/5 shadow-xs"
+                    className="w-56 shadow-xs"
                     placeholder={tCommon('searchPlaceholder')}
                     value={globalFilter}
                     onChange={(e) => setGlobalFilter(e.target.value)}

@@ -3,10 +3,18 @@
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { updateAIGeneralSettingsSchema } from '@workspace/schemas-zod/ai/aiSettings.schema';
 import { updateAISettingsPart } from '@/services/aiSettings.service';
+import { setToastServer } from '@/lib/toastServer';
 
 export const updateAIGeneralSettingsAction = authActionServer
     .use(requirePermission('ai', 'manage'))
     .inputSchema(updateAIGeneralSettingsSchema)
     .action(async ({ parsedInput }) => {
-        await updateAISettingsPart(parsedInput);
+        try {
+            await updateAISettingsPart(parsedInput);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                await setToastServer({ type: 'error', message: error.message });
+            }
+            throw error;
+        }
     });

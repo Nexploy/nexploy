@@ -104,9 +104,9 @@ export function SSLCertificatesTable({ certificates }: SSLCertificatesTableProps
 
     return (
         <div className="space-y-3 pt-1 pb-5">
-            <div className="flex justify-between">
+            <div className="flex flex-wrap justify-between gap-3">
                 <Input
-                    className="w-1/4 shadow-xs"
+                    className="w-56 shadow-xs"
                     placeholder={tCommon('searchPlaceholder')}
                     value={globalFilter}
                     onChange={(e) => setGlobalFilter(e.target.value)}

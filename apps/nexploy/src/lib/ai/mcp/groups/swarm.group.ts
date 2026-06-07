@@ -134,7 +134,7 @@ export const swarmGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    const result = await kyDocker.post('swarm/service', { json: params }).json<any>();
+                    const result = await kyDocker.post('swarm/services', { json: params }).json<any>();
                     return ok(`Service "${params.name}" created (ID: ${result.id?.slice(0, 12) ?? result.id})`);
                 } catch (e: any) {
                     return fail(e.message);
@@ -155,7 +155,7 @@ export const swarmGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    await kyDocker.post(`swarm/service/${id}/scale`, { json: { replicas } }).json();
+                    await kyDocker.post(`swarm/services/${id}/scale`, { json: { replicas } }).json();
                     return ok(`Service "${id}" scaled to ${replicas} replica(s)`);
                 } catch (e: any) {
                     return fail(e.message);
@@ -173,7 +173,7 @@ export const swarmGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    await kyDocker.delete('swarm/service/remove', { json: params }).json();
+                    await kyDocker.delete('swarm/services', { json: params }).json();
                     return ok(`Removed ${params.serviceIds.length} service(s)`);
                 } catch (e: any) {
                     return fail(e.message);

@@ -114,7 +114,7 @@ export function NodesTable() {
         <div className="mx-5 space-y-3">
             <div className="pt-1">
                 <Input
-                    className="w-1/5 shadow-xs"
+                    className="w-56 shadow-xs"
                     placeholder={tCommon('searchPlaceholder')}
                     value={globalFilter}
                     onChange={(e) => setGlobalFilter(e.target.value)}
@@ -122,20 +122,12 @@ export function NodesTable() {
             </div>
 
             <div className="bg-card overflow-hidden rounded-md border shadow-sm">
-                <Table className={'table-fixed'}>
+                <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead
-                                        key={header.id}
-                                        className="overflow-hidden"
-                                        style={
-                                            header.column.getSize() !== 150
-                                                ? { width: header.column.getSize() }
-                                                : undefined
-                                        }
-                                    >
+                                    <TableHead key={header.id}>
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(
@@ -175,7 +167,7 @@ export function NodesTable() {
                             table.getRowModel().rows.map((row) => (
                                 <TableRow key={row.id} className="h-12">
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id} className="overflow-hidden">
+                                        <TableCell key={cell.id}>
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext(),

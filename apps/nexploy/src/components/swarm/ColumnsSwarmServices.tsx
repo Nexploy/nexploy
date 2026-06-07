@@ -21,14 +21,6 @@ function getReplicaBadgeVariant(
     return 'secondary';
 }
 
-function formatImage(image: string): string {
-    const parts = image.split('/');
-    const nameTag = parts[parts.length - 1];
-    if (nameTag && nameTag.length > 40) {
-        return nameTag.slice(0, 37) + '...';
-    }
-    return nameTag || image;
-}
 
 export function getColumnsSwarmServices(
     t: TranslationFunction,
@@ -74,8 +66,8 @@ export function getColumnsSwarmServices(
                 </Button>
             ),
             cell: ({ row }) => (
-                <Link href={`/swarm/services/${row.original.id}`} className="flex hover:underline">
-                    <span className="truncate">{row.original.name}</span>
+                <Link href={`/swarm/services/${row.original.id}`} className="hover:underline">
+                    {row.original.name}
                 </Link>
             ),
         },
@@ -91,8 +83,8 @@ export function getColumnsSwarmServices(
                 </Button>
             ),
             cell: ({ row }) => (
-                <Badge variant="secondary" className="max-w-full justify-start font-mono">
-                    <span className="truncate">{formatImage(row.original.image)}</span>
+                <Badge variant="secondary" className="font-mono">
+                    {row.original.image}
                 </Badge>
             ),
         },
@@ -108,8 +100,8 @@ export function getColumnsSwarmServices(
                 </Button>
             ),
             cell: ({ row }) => (
-                <Badge variant="outline" className="max-w-full justify-start text-xs capitalize">
-                    <span className={'truncate'}>{row.original.mode}</span>
+                <Badge variant="outline" className="text-xs capitalize">
+                    {row.original.mode}
                 </Badge>
             ),
         },
@@ -120,16 +112,11 @@ export function getColumnsSwarmServices(
                 const runningTasks = getRunningTasksCount(row.original.id);
                 if (row.original.mode === 'replicated') {
                     return (
-                        <Badge
-                            className={'max-w-full justify-start'}
-                            variant={getReplicaBadgeVariant(runningTasks, row.original.replicas)}
-                        >
-                            <span className={'truncate'}>
-                                {t('tasksRunning', {
-                                    running: runningTasks,
-                                    total: row.original.replicas,
-                                })}
-                            </span>
+                        <Badge variant={getReplicaBadgeVariant(runningTasks, row.original.replicas)}>
+                            {t('tasksRunning', {
+                                running: runningTasks,
+                                total: row.original.replicas,
+                            })}
                         </Badge>
                     );
                 }
@@ -150,14 +137,8 @@ export function getColumnsSwarmServices(
                 return (
                     <div className="flex flex-wrap gap-1">
                         {ports.slice(0, 3).map((port, i) => (
-                            <Badge
-                                key={i}
-                                variant="secondary"
-                                className={'max-w-full justify-start'}
-                            >
-                                <span className={'truncate'}>
-                                    {port.publishedPort} → {port.targetPort}/{port.protocol}
-                                </span>
+                            <Badge key={i} variant="secondary">
+                                {port.publishedPort} → {port.targetPort}/{port.protocol}
                             </Badge>
                         ))}
                         {ports.length > 3 && (

@@ -146,9 +146,9 @@ export default function RequestsPage() {
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="space-y-3 pt-1 pb-5">
-                        <div className="mx-5 flex justify-between gap-3">
+                        <div className="mx-5 flex flex-wrap justify-between gap-3">
                             <Input
-                                className="w-1/4 shadow-xs"
+                                className="w-56 shadow-xs"
                                 placeholder={t('searchPlaceholder')}
                                 value={searchQuery}
                                 onChange={(e) => handleSearchChange(e.target.value)}
