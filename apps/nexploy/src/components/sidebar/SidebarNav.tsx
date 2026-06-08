@@ -89,6 +89,12 @@ const groups: PermissionedSidebarNavGroup[] = [
                 permission: { resource: 'docker', action: 'manage' },
             },
             { titleKey: 'requests', href: '/requests', icon: Send },
+            {
+                titleKey: 'registry',
+                href: '/admin/registry',
+                icon: Warehouse,
+                permission: { resource: 'registry', action: 'read' },
+            },
         ],
     },
     {
@@ -122,12 +128,6 @@ const groups: PermissionedSidebarNavGroup[] = [
                 href: '/admin/backups',
                 icon: Database,
                 permission: { resource: 'backup', action: 'read' },
-            },
-            {
-                titleKey: 'registry',
-                href: '/admin/registry',
-                icon: Warehouse,
-                permission: { resource: 'registry', action: 'read' },
             },
             {
                 titleKey: 'sslCertificates',
