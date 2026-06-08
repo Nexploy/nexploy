@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { Role } from './permissions.ts';
 import { email, name, password } from './common.schema.ts';
 
 export const signInFormSchema = z.object({
@@ -52,7 +51,7 @@ export const createUserFormSchema = z
         email,
         password,
         confirmPassword: z.string().min(1, { message: 'Passwords must match' }),
-        role: z.enum(['admin', 'readWrite', 'read'] as Role[]),
+        role: z.enum(['admin', 'readWrite', 'read']),
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: 'Passwords must match',

@@ -1,6 +1,7 @@
 import { createAccessControl } from 'better-auth/plugins/access';
 import { adminAc, defaultStatements } from 'better-auth/plugins/admin/access';
-import { Role } from '@workspace/schemas-zod/auth/permissions';
+
+export type Role = 'admin' | 'readWrite' | 'read' | 'system';
 
 export type PermissionActions = {
     repository: 'create' | 'read' | 'update' | 'delete' | 'deploy';

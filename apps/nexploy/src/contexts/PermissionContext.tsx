@@ -1,7 +1,7 @@
 'use client';
 
-import { createContext, useContext, useMemo, ReactNode } from 'react';
-import { Role } from '@workspace/schemas-zod/auth/permissions';
+import { createContext, ReactNode, useContext, useMemo } from 'react';
+import { Role } from '@/lib/auth/permissions';
 
 interface PermissionContextValue {
     role: Role | null;
@@ -23,7 +23,7 @@ export function PermissionProvider({ children, role }: PermissionProviderProps) 
             isAdmin: role === 'admin',
             hasRole: (r: Role) => role === r,
         }),
-        [role]
+        [role],
     );
 
     return <PermissionContext.Provider value={value}>{children}</PermissionContext.Provider>;
