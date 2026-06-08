@@ -8,6 +8,7 @@ import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import { DeleteRepositoryForm } from '@/components/repositories/DeleteRepositoryForm';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore.ts';
+import { usePermissions } from '@/contexts/PermissionContext';
 
 interface DangerZoneProps {
     repository: Repository;
@@ -16,6 +17,8 @@ interface DangerZoneProps {
 export function DangerZone({ repository }: DangerZoneProps) {
     const t = useTranslations('repository.settings.dangerZone');
     const { openDialog } = useConfirmationDialogStore();
+    const { can } = usePermissions();
+    if (!can('repository', 'delete')) return null;
 
     const handleOpenDelete = () => {
         openDialog({

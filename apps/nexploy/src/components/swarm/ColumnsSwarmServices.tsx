@@ -10,6 +10,7 @@ import type { SwarmService } from '@workspace/typescript-interface/docker/swarm'
 import { ServiceDropdownActions } from './ServiceDropdownActions';
 import Link from 'next/link';
 import type { TranslationFunction } from '@workspace/typescript-interface/commun';
+import { Can } from '@/components/permission/Can';
 
 function getReplicaBadgeVariant(
     running: number,
@@ -179,14 +180,16 @@ export function getColumnsSwarmServices(
             size: 100,
             cell: ({ row }) => (
                 <div className="flex justify-end">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="size-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <ServiceDropdownActions service={row.original} />
-                    </DropdownMenu>
+                    <Can resource="docker" action="manage">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                    <MoreHorizontal className="size-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <ServiceDropdownActions service={row.original} />
+                        </DropdownMenu>
+                    </Can>
                 </div>
             ),
         },

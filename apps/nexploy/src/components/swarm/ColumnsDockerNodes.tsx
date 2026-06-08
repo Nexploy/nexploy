@@ -13,6 +13,7 @@ import type {
 } from '@workspace/typescript-interface/docker/swarm';
 import { NodeDropdownActions } from './NodeDropdownActions';
 import type { TranslationFunction } from '@workspace/typescript-interface/commun';
+import { Can } from '@/components/permission/Can';
 import Link from 'next/link';
 
 function formatBytes(bytes: number): string {
@@ -163,14 +164,16 @@ export const getColumnsTableNodes = (t: TranslationFunction): ColumnDef<SwarmNod
         size: 50,
         cell: ({ row }) => (
             <div className="flex justify-end">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <MoreHorizontal />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <NodeDropdownActions node={row.original} />
-                </DropdownMenu>
+                <Can resource="docker" action="manage">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <MoreHorizontal />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <NodeDropdownActions node={row.original} />
+                    </DropdownMenu>
+                </Can>
             </div>
         ),
     },

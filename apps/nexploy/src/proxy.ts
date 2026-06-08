@@ -3,19 +3,32 @@ import { routing } from '@/i18n/routing';
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdminExist } from '@/services/auth/auth.service';
 import { auth } from '@/lib/auth/auth';
+import { hasPermission, PermissionResource } from '@/lib/auth/permissions';
 
 const handleI18nRouting = createMiddleware(routing);
 
 const PUBLIC_ROUTES = ['/signin', '/2fa', '/2fa/backup-codes'];
-
-const ADMIN_ROUTES = ['/admin'];
 
 const SIMPLE_REDIRECTS: Record<string, string> = {
     '/': '/repositories',
     '/docker': '/docker/containers',
 };
 
-async function getRedirectUrl(request: NextRequest): Promise<string | null> {
+const PERMISSION_ROUTES: { path: string; resource: PermissionResource; action: string }[] = [
+    { path: '/repositories/create', resource: 'repository', action: 'create' },
+    { path: '/docker/containers/create', resource: 'docker', action: 'manage' },
+    { path: '/docker/images/pull', resource: 'docker', action: 'manage' },
+    { path: '/docker/volumes/create', resource: 'docker', action: 'manage' },
+    { path: '/docker/networks/create', resource: 'docker', action: 'manage' },
+    { path: '/admin/users', resource: 'user', action: 'ban' },
+    { path: '/admin/integrations', resource: 'gitProvider', action: 'create' },
+    { path: '/admin/ai', resource: 'ai', action: 'manage' },
+    { path: '/admin/backups', resource: 'backup', action: 'read' },
+    { path: '/admin/ssl-certificates', resource: 'repository', action: 'update' },
+    // /admin/registry: registry.read is available to all roles — no restriction
+];
+
+async function getRedirectUrl(request: NextRequest): Promise<string | NextResponse | null> {
     const path = request.nextUrl.pathname;
 
     if (SIMPLE_REDIRECTS[path]) return SIMPLE_REDIRECTS[path];
@@ -27,32 +40,28 @@ async function getRedirectUrl(request: NextRequest): Promise<string | null> {
 
     const setupRoute = path.startsWith('/setup');
     const publicRoute = PUBLIC_ROUTES.some((route) => path.startsWith(route));
-    const adminRoute = ADMIN_ROUTES.some((route) => path.startsWith(route));
 
-    // No admin yet: only /setup is accessible
     if (!hasAdmin) return setupRoute ? null : '/setup';
-
-    // /setup is no longer accessible once admin is created
     if (setupRoute) return '/';
-
-    // No session: only public routes are accessible
     if (!session) return publicRoute ? null : '/signin';
-
-    // Authenticated: public routes redirect to the app
     if (publicRoute) return '/';
 
-    // Admin routes are restricted to admins
-    if (adminRoute && session.user.role !== 'admin') return '/';
+    const role = session.user.role ?? '';
+    for (const route of PERMISSION_ROUTES) {
+        if (path.startsWith(route.path) && !hasPermission(role, route.resource, route.action)) {
+            return NextResponse.rewrite(new URL('/_not-found', request.url));
+        }
+    }
 
     return null;
 }
 
 export default async function middleware(request: NextRequest) {
-    const redirectUrl = await getRedirectUrl(request);
+    const result = await getRedirectUrl(request);
 
-    if (redirectUrl) {
-        return NextResponse.redirect(new URL(redirectUrl, request.url));
-    }
+    if (result instanceof NextResponse) return result;
+
+    if (result) return NextResponse.redirect(new URL(result, request.url));
 
     return handleI18nRouting(request);
 }

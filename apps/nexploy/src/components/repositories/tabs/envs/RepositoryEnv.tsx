@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import { ImportEnv } from './ImportEnv';
+import { usePermissions } from '@/contexts/PermissionContext';
 
 interface EnvVariable {
     id?: string;
@@ -33,6 +34,8 @@ export function RepositoryEnv({
 }: RepositoryEnvTabProps) {
     const router = useRouter();
     const t = useTranslations('repository.settings.envVars');
+    const { can } = usePermissions();
+    const canEdit = can('environment', 'update');
     const [showValues, setShowValues] = useState<Record<string, boolean>>({});
     const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -133,30 +136,32 @@ export function RepositoryEnv({
                         title={t('title')}
                         description={t('description')}
                     />
-                    <div className="flex gap-2">
-                        <ImportEnv
-                            onImport={(vars) => {
-                                const currentEnvs = form.getValues('envVariables');
-                                form.setValue('envVariables', [...currentEnvs, ...vars], {
-                                    shouldDirty: true,
-                                });
-                            }}
-                        />
-                        <Button variant="outline" size="sm" onClick={handleAddNew}>
-                            <Plus />
-                            {t('addVariable')}
-                        </Button>
-                        {hasChanges && (
-                            <Button
-                                size="sm"
-                                onClick={handleSubmitWithAction}
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? <Loader2 className="animate-spin" /> : <Save />}
-                                {t('saveChanges')}
+                    {canEdit && (
+                        <div className="flex gap-2">
+                            <ImportEnv
+                                onImport={(vars) => {
+                                    const currentEnvs = form.getValues('envVariables');
+                                    form.setValue('envVariables', [...currentEnvs, ...vars], {
+                                        shouldDirty: true,
+                                    });
+                                }}
+                            />
+                            <Button variant="outline" size="sm" onClick={handleAddNew}>
+                                <Plus />
+                                {t('addVariable')}
                             </Button>
-                        )}
-                    </div>
+                            {hasChanges && (
+                                <Button
+                                    size="sm"
+                                    onClick={handleSubmitWithAction}
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? <Loader2 className="animate-spin" /> : <Save />}
+                                    {t('saveChanges')}
+                                </Button>
+                            )}
+                        </div>
+                    )}
                 </div>
             </CardHeader>
             <CardContent>
@@ -227,14 +232,16 @@ export function RepositoryEnv({
                                             )}
                                         />
                                     </div>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        type="button"
-                                        onClick={() => handleRemove(index)}
-                                    >
-                                        <Trash2 className="text-destructive size-4" />
-                                    </Button>
+                                    {canEdit && (
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            type="button"
+                                            onClick={() => handleRemove(index)}
+                                        >
+                                            <Trash2 className="text-destructive size-4" />
+                                        </Button>
+                                    )}
                                 </div>
                             ))
                         )}

@@ -13,6 +13,7 @@ import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/drop
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { cn } from '@workspace/ui/lib/utils';
+import { Can } from '@/components/permission/Can';
 import { ImageRow } from '@workspace/typescript-interface/docker/docker.image';
 import Link from 'next/link';
 import type { TranslationFunction } from '@workspace/typescript-interface/commun';
@@ -241,14 +242,16 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                 return null;
             }
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className={'size-8'}>
-                            <MoreVertical />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <ImageDropdownActions image={row.original} />
-                </DropdownMenu>
+                <Can resource="docker" action="manage">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className={'size-8'}>
+                                <MoreVertical />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <ImageDropdownActions image={row.original} />
+                    </DropdownMenu>
+                </Can>
             );
         },
     },

@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { onStartBuild } from '@/actions/repository/builds/startBuild.action';
 import { useTranslations } from 'next-intl';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { usePermissions } from '@/contexts/PermissionContext';
 
 interface DeployButtonProps extends ComponentProps<typeof Button> {
     repositoryId: string;
@@ -15,6 +16,8 @@ interface DeployButtonProps extends ComponentProps<typeof Button> {
 }
 
 export function RunBuildButton({ repositoryId, showText = true, ...props }: DeployButtonProps) {
+    const { can } = usePermissions();
+    if (!can('repository', 'deploy')) return null;
     const t = useTranslations('repository.builds');
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
     const triggerBuildRefresh = usePipelineEditorStore((s) => s.triggerBuildRefresh);

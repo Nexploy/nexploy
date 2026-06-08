@@ -7,6 +7,7 @@ import { TableDockerNetworks } from '@/components/docker/network/table/TableDock
 import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
+import { Can } from '@/components/permission/Can';
 
 export default function NetworksPage() {
     const t = useTranslations('docker.pages.networks');
@@ -26,12 +27,14 @@ export default function NetworksPage() {
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
                 </div>
-                <Button asChild className={'mt-5'}>
-                    <Link href={'/docker/networks/create'}>
-                        <Plus />
-                        {tDocker('createNetwork')}
-                    </Link>
-                </Button>
+                <Can resource="docker" action="manage">
+                    <Button asChild className={'mt-5'}>
+                        <Link href={'/docker/networks/create'}>
+                            <Plus />
+                            {tDocker('createNetwork')}
+                        </Link>
+                    </Button>
+                </Can>
             </div>
 
             <ScrollAreaWithShadow className="h-full overflow-hidden">

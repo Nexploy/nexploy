@@ -7,6 +7,7 @@ import { TableDockerVolumes } from '@/components/docker/volume/table/TableDocker
 import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
+import { Can } from '@/components/permission/Can';
 
 export default function VolumesPage() {
     const t = useTranslations('docker.pages.volumes');
@@ -27,12 +28,14 @@ export default function VolumesPage() {
                             <p className="text-muted-foreground text-sm">{t('description')}</p>
                         </div>
                     </div>
-                    <Button asChild className={'mt-5'}>
-                        <Link href={'/docker/volumes/create'}>
-                            <Plus />
-                            {tDocker('createVolume')}
-                        </Link>
-                    </Button>
+                    <Can resource="docker" action="manage">
+                        <Button asChild className={'mt-5'}>
+                            <Link href={'/docker/volumes/create'}>
+                                <Plus />
+                                {tDocker('createVolume')}
+                            </Link>
+                        </Button>
+                    </Can>
                 </div>
 
                 <ScrollAreaWithShadow className="h-full overflow-hidden">

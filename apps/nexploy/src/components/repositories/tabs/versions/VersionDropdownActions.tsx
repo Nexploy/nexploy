@@ -14,6 +14,7 @@ import { onDeleteVersion } from '@/actions/repository/versions/deleteVersion.act
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { toast } from 'sonner';
 import { Version } from '@workspace/typescript-interface/docker/docker.version';
+import { usePermissions } from '@/contexts/PermissionContext';
 
 interface VersionDropdownActionsProps {
     version: Version;
@@ -23,6 +24,8 @@ interface VersionDropdownActionsProps {
 export function VersionDropdownActions({ version, repositoryId }: VersionDropdownActionsProps) {
     const t = useTranslations('repository.versions');
     const tCommon = useTranslations('common');
+    const { can } = usePermissions();
+    if (!can('build', 'delete')) return null;
 
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const { execute } = useAction(onDeleteVersion, {

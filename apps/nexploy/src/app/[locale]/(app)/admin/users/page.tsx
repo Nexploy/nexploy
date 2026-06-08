@@ -3,6 +3,7 @@ import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-
 import { UsersSection } from '@/components/admin/users/UsersSection';
 import { AddUserButton } from '@/components/admin/users/AddUserButton';
 import { getUserSession } from '@/services/auth/auth.service';
+import { hasPermission } from '@/lib/auth/permissions';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 
 export default async function UsersPage() {
     const [t, session] = await Promise.all([getTranslations('admin'), getUserSession()]);
-    const isAdmin = session?.user.role === 'admin';
+    const canCreateUser = hasPermission(session?.user.role ?? '', 'user', 'create');
 
     return (
         <div className="flex h-full flex-1 flex-col">
@@ -32,7 +33,7 @@ export default async function UsersPage() {
                             </p>
                         </div>
                     </div>
-                    {isAdmin && <AddUserButton />}
+                    {canCreateUser && <AddUserButton />}
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="px-5 pb-5">

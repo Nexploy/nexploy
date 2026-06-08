@@ -1,12 +1,17 @@
 'use client';
 
 import { createContext, ReactNode, useContext, useMemo } from 'react';
-import { Role } from '@/lib/auth/permissions';
+import { hasPermission, PermissionActions, PermissionResource, Role } from '@/lib/auth/permissions';
+
+export type NavPermission = {
+    [R in PermissionResource]: { resource: R; action: PermissionActions[R] };
+}[PermissionResource];
 
 interface PermissionContextValue {
     role: Role | null;
     isAdmin: boolean;
     hasRole: (role: Role) => boolean;
+    can: <R extends PermissionResource>(resource: R, action: PermissionActions[R]) => boolean;
 }
 
 const PermissionContext = createContext<PermissionContextValue | null>(null);
@@ -22,6 +27,8 @@ export function PermissionProvider({ children, role }: PermissionProviderProps) 
             role: (role as Role) ?? null,
             isAdmin: role === 'admin',
             hasRole: (r: Role) => role === r,
+            can: <R extends PermissionResource>(resource: R, action: PermissionActions[R]) =>
+                hasPermission(role ?? '', resource, action as string),
         }),
         [role],
     );

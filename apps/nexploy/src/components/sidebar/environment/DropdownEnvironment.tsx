@@ -24,6 +24,7 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
+import { usePermissions } from '@/contexts/PermissionContext';
 
 interface DropdownEnvironmentProps {
     environments: Environment[];
@@ -49,6 +50,8 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
     const { openAlertDialog } = useAlertConfirmationDialogStore();
     const t = useTranslations('navigation');
     const tCommon = useTranslations('common');
+
+    const { can } = usePermissions();
 
     const { execute } = useAction(setDefaultEnvironmentAction, {
         onSuccess: ({ input }) => {
@@ -177,51 +180,57 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                                         <Check className="size-4" />
                                     )}
                                 </DropdownMenuItem>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="size-7 shrink-0 p-0"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            <MoreHorizontal className="size-4" />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent side={'right'} align="start">
-                                        <DropdownMenuItem
-                                            onClick={() => handleEnvironmentEdit(environment)}
-                                        >
-                                            <Pencil />
-                                            {t('edit')}
-                                        </DropdownMenuItem>
-                                        {!environment.isDefault && (
-                                            <DropdownMenuItem
-                                                onClick={() => handleSetAsDefault(environment)}
+                                {can('environment', 'update') && (
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="size-7 shrink-0 p-0"
+                                                onClick={(e) => e.stopPropagation()}
                                             >
-                                                <Star className={'fill-current'} />
-                                                {t('setAsDefault')}
+                                                <MoreHorizontal className="size-4" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent side={'right'} align="start">
+                                            <DropdownMenuItem
+                                                onClick={() => handleEnvironmentEdit(environment)}
+                                            >
+                                                <Pencil />
+                                                {t('edit')}
                                             </DropdownMenuItem>
-                                        )}
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem
-                                            variant="destructive"
-                                            onClick={() => handleEnvironmentDelete(environment)}
-                                        >
-                                            <Trash />
-                                            {t('delete')}
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                            {!environment.isDefault && (
+                                                <DropdownMenuItem
+                                                    onClick={() => handleSetAsDefault(environment)}
+                                                >
+                                                    <Star className={'fill-current'} />
+                                                    {t('setAsDefault')}
+                                                </DropdownMenuItem>
+                                            )}
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem
+                                                variant="destructive"
+                                                onClick={() => handleEnvironmentDelete(environment)}
+                                            >
+                                                <Trash />
+                                                {t('delete')}
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                )}
                             </div>
                         ))}
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="gap-2 p-2" onClick={handleEnvironmentAdd}>
-                            <div className="bg-background flex size-6 items-center justify-center rounded-md border border-dashed">
-                                <Plus size={14} />
-                            </div>
-                            <span>{t('addEnvironment')}</span>
-                        </DropdownMenuItem>
+                        {can('environment', 'create') && (
+                            <>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className="gap-2 p-2" onClick={handleEnvironmentAdd}>
+                                    <div className="bg-background flex size-6 items-center justify-center rounded-md border border-dashed">
+                                        <Plus size={14} />
+                                    </div>
+                                    <span>{t('addEnvironment')}</span>
+                                </DropdownMenuItem>
+                            </>
+                        )}
                     </DropdownMenuContent>
                 </DropdownMenu>
             </SidebarMenuItem>

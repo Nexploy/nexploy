@@ -10,6 +10,7 @@ import { Network } from '@workspace/typescript-interface/docker/docker.network';
 import dayjs from 'dayjs';
 import { NetworkDropdownActions } from '@/components/docker/network/NetworkDropdownActions';
 import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
+import { Can } from '@/components/permission/Can';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import Link from 'next/link';
@@ -181,14 +182,16 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
         id: 'actions',
         size: 50,
         cell: ({ row }) => (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className={'size-8'}>
-                        <MoreVertical />
-                    </Button>
-                </DropdownMenuTrigger>
-                <NetworkDropdownActions network={row.original} />
-            </DropdownMenu>
+            <Can resource="docker" action="manage">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className={'size-8'}>
+                            <MoreVertical />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <NetworkDropdownActions network={row.original} />
+                </DropdownMenu>
+            </Can>
         ),
     },
 ];

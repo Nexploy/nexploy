@@ -8,6 +8,7 @@ import { useMemo, useTransition } from 'react';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { ContainersDropdownActions } from '@/components/docker/containers/ContainersDropdownActions';
 import Link from 'next/link';
+import { Can } from '@/components/permission/Can';
 import { Containers } from '@workspace/typescript-interface/docker/docker.containers';
 import { containerDisplayState } from '@/utils/containerDisplayState';
 import { Badge } from '@workspace/ui/components/badge';
@@ -36,14 +37,16 @@ export function ContainerCard({ container }: ContainerCardProps) {
                             {container.name}
                         </CardTitle>
                     </div>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" disabled={isPending}>
-                                <MoreVertical />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <ContainersDropdownActions container={container} />
-                    </DropdownMenu>
+                    <Can resource="docker" action="manage">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" disabled={isPending}>
+                                    <MoreVertical />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <ContainersDropdownActions container={container} />
+                        </DropdownMenu>
+                    </Can>
                 </CardHeader>
 
                 <Status

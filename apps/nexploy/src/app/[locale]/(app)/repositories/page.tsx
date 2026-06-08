@@ -5,6 +5,8 @@ import { AddRepository } from '@/components/repositories/AddRepository';
 import { getRepositories } from '@/services/repository.service';
 import { getTranslations } from 'next-intl/server';
 import { RepositoriesGrid } from '@/components/repositories/RepositoriesGrid';
+import { getUserSession } from '@/services/auth/auth.service';
+import { hasPermission } from '@/lib/auth/permissions';
 
 export const metadata: Metadata = {
     title: 'Repositories',
@@ -12,7 +14,12 @@ export const metadata: Metadata = {
 };
 
 export default async function RepositoriesPage() {
-    const [repositories, t] = await Promise.all([getRepositories(), getTranslations('repository')]);
+    const [repositories, t, session] = await Promise.all([
+        getRepositories(),
+        getTranslations('repository'),
+        getUserSession(),
+    ]);
+    const canCreateRepository = hasPermission(session?.user.role ?? '', 'repository', 'create');
 
     return (
         <div className="flex h-full flex-1 flex-col">
@@ -29,7 +36,7 @@ export default async function RepositoriesPage() {
                             </p>
                         </div>
                     </div>
-                    <AddRepository />
+                    {canCreateRepository && <AddRepository />}
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className={'px-5 pt-1 pb-5'}>

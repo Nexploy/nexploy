@@ -12,6 +12,7 @@ import { onContainerRemoveAction } from '@/actions/docker/container/containerRem
 import { ContainerTableRow } from './containerTableUtils';
 import { Badge } from '@workspace/ui/components/badge.tsx';
 import React from 'react';
+import { usePermissions } from '@/contexts/PermissionContext';
 
 interface ContainerTableActionsProps {
     selectedContainers: ContainerTableRow[];
@@ -22,7 +23,9 @@ export function ContainerTableActions({
     selectedContainers,
     onResetSelection,
 }: ContainerTableActionsProps) {
+    const { can } = usePermissions();
     const t = useTranslations('docker.tables');
+    if (!can('docker', 'manage')) return null;
     const tActions = useTranslations('docker.containerActions');
     const tCommon = useTranslations('common');
     const openAlertDialog = useAlertConfirmationDialogStore((s) => s.openAlertDialog);

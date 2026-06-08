@@ -8,6 +8,7 @@ import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfir
 import { onRemoveServicesAction } from '@/actions/docker/swarm/removeServices.action';
 import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
 import { Badge } from '@workspace/ui/components/badge';
+import { usePermissions } from '@/contexts/PermissionContext';
 
 interface ServiceTableActionsProps {
     selectedServices: SwarmService[];
@@ -15,7 +16,9 @@ interface ServiceTableActionsProps {
 }
 
 export function ServiceTableActions({ selectedServices, onResetSelection }: ServiceTableActionsProps) {
+    const { can } = usePermissions();
     const t = useTranslations('swarm');
+    if (!can('docker', 'manage')) return null;
     const tCommon = useTranslations('common');
     const openAlertDialog = useAlertConfirmationDialogStore((s) => s.openAlertDialog);
 

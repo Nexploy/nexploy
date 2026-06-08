@@ -11,6 +11,7 @@ import { formatBytes } from '@/utils/formatBytes';
 import dayjs from 'dayjs';
 import { VolumeDropdownActions } from '@/components/docker/volume/VolumeDropdownActions';
 import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
+import { Can } from '@/components/permission/Can';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import Link from 'next/link';
@@ -155,14 +156,16 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
         id: 'actions',
         size: 50,
         cell: ({ row }) => (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className={'size-8'}>
-                        <MoreVertical />
-                    </Button>
-                </DropdownMenuTrigger>
-                <VolumeDropdownActions volume={row.original} />
-            </DropdownMenu>
+            <Can resource="docker" action="manage">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className={'size-8'}>
+                            <MoreVertical />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <VolumeDropdownActions volume={row.original} />
+                </DropdownMenu>
+            </Can>
         ),
     },
 ];

@@ -16,6 +16,7 @@ import { NodeDetailLabels } from './node/NodeDetailLabels';
 import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
 import { NodeDropdownActions } from './NodeDropdownActions';
 import { NodeDetailStats } from '@/components/swarm/node/NodeDetailStats.tsx';
+import { Can } from '@/components/permission/Can';
 
 interface NodeDetailPageProps {
     nodeId: string;
@@ -77,18 +78,20 @@ export function NodeDetailPage({ nodeId }: NodeDetailPageProps) {
                                 {t('detail.back')}
                             </Link>
                         </Button>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    disabled={isConnecting || !node}
-                                >
-                                    <MoreHorizontal className="size-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            {node && <NodeDropdownActions node={node} />}
-                        </DropdownMenu>
+                        <Can resource="docker" action="manage">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        disabled={isConnecting || !node}
+                                    >
+                                        <MoreHorizontal className="size-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                {node && <NodeDropdownActions node={node} />}
+                            </DropdownMenu>
+                        </Can>
                     </div>
                 </div>
 

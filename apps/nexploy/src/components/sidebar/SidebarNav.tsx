@@ -38,11 +38,20 @@ import {
 } from '@workspace/ui/components/collapsible';
 import Link from 'next/link';
 import { RefreshDocker } from '@/components/sidebar/RefreshDocker';
-import { usePermissions } from '@/contexts/PermissionContext';
-import type { SidebarNavGroup } from '@workspace/typescript-interface/sidebar/sidebarNav';
+import { NavPermission, usePermissions } from '@/contexts/PermissionContext';
+import type { SidebarItem, SidebarNavGroup } from '@workspace/typescript-interface/sidebar/sidebarNav';
 import { useTranslations } from 'next-intl';
 
-const groups: SidebarNavGroup[] = [
+interface PermissionedSidebarItem extends SidebarItem {
+    permission?: NavPermission;
+    children?: PermissionedSidebarItem[];
+}
+
+interface PermissionedSidebarNavGroup extends SidebarNavGroup {
+    children: PermissionedSidebarItem[];
+}
+
+const groups: PermissionedSidebarNavGroup[] = [
     {
         titleKey: 'home',
         children: [
@@ -50,11 +59,13 @@ const groups: SidebarNavGroup[] = [
                 titleKey: 'repositories',
                 href: '/repositories',
                 icon: FolderGit2,
+                permission: { resource: 'repository', action: 'read' },
             },
             {
                 titleKey: 'monitoring',
                 href: '/monitoring',
                 icon: Activity,
+                permission: { resource: 'docker', action: 'read' },
             },
             {
                 titleKey: 'docker',
@@ -62,6 +73,7 @@ const groups: SidebarNavGroup[] = [
                 icon: Box,
                 actionIcon: <RefreshDocker />,
                 enableCollapsible: false,
+                permission: { resource: 'docker', action: 'read' },
                 children: [
                     { titleKey: 'containers', icon: Container, href: '/docker/containers' },
                     { titleKey: 'images', icon: LayoutList, href: '/docker/images' },
@@ -70,37 +82,75 @@ const groups: SidebarNavGroup[] = [
                     { titleKey: 'events', icon: Bug, href: '/docker/events' },
                 ],
             },
-            { titleKey: 'swarm', href: '/swarm', icon: Network },
+            {
+                titleKey: 'swarm',
+                href: '/swarm',
+                icon: Network,
+                permission: { resource: 'docker', action: 'manage' },
+            },
             { titleKey: 'requests', href: '/requests', icon: Send },
         ],
     },
     {
         titleKey: 'admin',
         children: [
-            { titleKey: 'users', href: '/admin/users', icon: Users },
-            { titleKey: 'integrations', href: '/admin/integrations', icon: Plug },
+            {
+                titleKey: 'users',
+                href: '/admin/users',
+                icon: Users,
+                permission: { resource: 'user', action: 'ban' },
+            },
+            {
+                titleKey: 'integrations',
+                href: '/admin/integrations',
+                icon: Plug,
+                permission: { resource: 'gitProvider', action: 'create' },
+            },
             {
                 titleKey: 'ai',
                 href: '/admin/ai/models',
                 icon: Bot,
+                permission: { resource: 'ai', action: 'manage' },
                 children: [
                     { titleKey: 'models', icon: Cpu, href: '/admin/ai/models' },
                     { titleKey: 'mcp', icon: Network, href: '/admin/ai/mcp' },
                     { titleKey: 'settings', icon: SlidersHorizontal, href: '/admin/ai/settings' },
                 ],
             },
-            { titleKey: 'backups', href: '/admin/backups', icon: Database },
-            { titleKey: 'registry', href: '/admin/registry', icon: Warehouse },
-            { titleKey: 'sslCertificates', href: '/admin/ssl-certificates', icon: Shield },
+            {
+                titleKey: 'backups',
+                href: '/admin/backups',
+                icon: Database,
+                permission: { resource: 'backup', action: 'read' },
+            },
+            {
+                titleKey: 'registry',
+                href: '/admin/registry',
+                icon: Warehouse,
+                permission: { resource: 'registry', action: 'read' },
+            },
+            {
+                titleKey: 'sslCertificates',
+                href: '/admin/ssl-certificates',
+                icon: Shield,
+                permission: { resource: 'repository', action: 'update' },
+            },
         ],
     },
 ];
 
 export function SidebarNav() {
     const t = useTranslations('navigation');
-    const { isAdmin } = usePermissions();
+    const { can } = usePermissions();
 
-    const filteredGroups = groups.filter((group) => !(group.titleKey === 'admin' && !isAdmin));
+    const filteredGroups = groups
+        .map((group) => ({
+            ...group,
+            children: group.children.filter(
+                (item) => !item.permission || can(item.permission.resource, item.permission.action),
+            ),
+        }))
+        .filter((group) => group.children.length > 0);
 
     return (
         <>

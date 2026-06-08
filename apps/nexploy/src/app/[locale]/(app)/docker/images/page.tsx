@@ -7,6 +7,7 @@ import { CardInfoImages } from '@/components/docker/image/CardInfoImages';
 import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
+import { Can } from '@/components/permission/Can';
 
 export default function ImagesPage() {
     const t = useTranslations('docker.pages.images');
@@ -24,12 +25,14 @@ export default function ImagesPage() {
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
                 </div>
-                <Button asChild className={'mt-5'}>
-                    <Link href={'/docker/images/pull'}>
-                        <Plus />
-                        {tDocker('pullImage')}
-                    </Link>
-                </Button>
+                <Can resource="docker" action="manage">
+                    <Button asChild className={'mt-5'}>
+                        <Link href={'/docker/images/pull'}>
+                            <Plus />
+                            {tDocker('pullImage')}
+                        </Link>
+                    </Button>
+                </Can>
             </div>
 
             <ScrollAreaWithShadow className="h-full overflow-hidden">

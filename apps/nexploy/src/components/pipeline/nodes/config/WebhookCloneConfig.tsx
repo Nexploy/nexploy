@@ -19,6 +19,7 @@ import { Button } from '@workspace/ui/components/button';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { useAction } from 'next-safe-action/hooks';
 import { setupWebhookAction } from '@/actions/repository/pipeline/setupWebhook.action';
+import { Can } from '@/components/permission/Can';
 
 interface WebhookStatus {
     isConfigured: boolean;
@@ -57,18 +58,20 @@ export function WebhookCloneConfig() {
                                 </p>
                             </div>
                         </div>
-                        <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            icon={RefreshCw}
-                            isLoading={isPending}
-                            disabled={isPending}
-                            onClick={() => execute({ repositoryId: params.repositoryId })}
-                            className="shrink-0 border-yellow-500/40 text-yellow-600 hover:bg-yellow-500/10 hover:text-yellow-700"
-                        >
-                            {t('webhookSetupButton')}
-                        </Button>
+                        <Can resource="repository" action="update">
+                            <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                icon={RefreshCw}
+                                isLoading={isPending}
+                                disabled={isPending}
+                                onClick={() => execute({ repositoryId: params.repositoryId })}
+                                className="shrink-0 border-yellow-500/40 text-yellow-600 hover:bg-yellow-500/10 hover:text-yellow-700"
+                            >
+                                {t('webhookSetupButton')}
+                            </Button>
+                        </Can>
                     </div>
                 )
             )}

@@ -17,6 +17,7 @@ import Link from 'next/link';
 import { Badge } from '@workspace/ui/components/badge.tsx';
 import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
 import { ServiceDropdownActions } from './ServiceDropdownActions';
+import { Can } from '@/components/permission/Can';
 
 interface ServiceDetailPageProps {
     serviceId: string;
@@ -90,18 +91,20 @@ export function ServiceDetailPage({ serviceId }: ServiceDetailPageProps) {
                                 {t('detail.back')}
                             </Link>
                         </Button>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    disabled={isConnecting || !service}
-                                >
-                                    <MoreHorizontal className="size-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            {service && <ServiceDropdownActions service={service} />}
-                        </DropdownMenu>
+                        <Can resource="docker" action="manage">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        disabled={isConnecting || !service}
+                                    >
+                                        <MoreHorizontal className="size-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                {service && <ServiceDropdownActions service={service} />}
+                            </DropdownMenu>
+                        </Can>
                     </div>
                 </div>
 

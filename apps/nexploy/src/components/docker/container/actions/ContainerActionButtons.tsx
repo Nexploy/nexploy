@@ -7,10 +7,13 @@ import { useContainerActions } from '@/hooks/useContainerActions';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import { usePermissions } from '@/contexts/PermissionContext';
 
 export function ContainerActionButtons() {
+    const { can } = usePermissions();
     const container = useContainerStore((state) => state.container);
     const router = useRouter();
+    if (!can('docker', 'manage')) return null;
 
     const containerActions = useContainerActions({
         containerId: container?.id ?? '',

@@ -25,6 +25,7 @@ import { TableDockerContainers } from '@/components/docker/containers/TableDocke
 import { useContainersStore } from '@/stores/docker/useContainersStore';
 import Link from 'next/link';
 import { Button } from '@workspace/ui/components/button';
+import { Can } from '@/components/permission/Can';
 import { useTranslations } from 'next-intl';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { cn } from '@workspace/ui/lib/utils';
@@ -98,12 +99,14 @@ export default function ContainersPage() {
                         )}
                     </div>
                 </div>
-                <Button asChild className={'mt-5'}>
-                    <Link href={'/docker/containers/create'}>
-                        <Plus />
-                        {t('createContainer.create')}
-                    </Link>
-                </Button>
+                <Can resource="docker" action="manage">
+                    <Button asChild className={'mt-5'}>
+                        <Link href={'/docker/containers/create'}>
+                            <Plus />
+                            {t('createContainer.create')}
+                        </Link>
+                    </Button>
+                </Can>
             </div>
 
             {isLoading && (

@@ -45,7 +45,7 @@ import { updateUserRole } from '@/actions/user/updateUserRole.action';
 interface UsersTableProps {
     users: UserRow[];
     currentUserId?: string;
-    isAdmin?: boolean;
+    canManageUsers?: boolean;
 }
 
 const globalFilterFn: FilterFn<UserRow> = (row, _, value) => {
@@ -59,7 +59,7 @@ const globalFilterFn: FilterFn<UserRow> = (row, _, value) => {
     );
 };
 
-export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
+export function UsersTable({ users, currentUserId, canManageUsers }: UsersTableProps) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [rowSelection, setRowSelection] = useState({});
@@ -121,7 +121,7 @@ export function UsersTable({ users, currentUserId, isAdmin }: UsersTableProps) {
         data: users,
         columns: getColumnsUsers(t, {
             currentUserId,
-            isAdmin,
+            isAdmin: canManageUsers,
             isUpdatingRole,
             isDeleting,
             isBanning,

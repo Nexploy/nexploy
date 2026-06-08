@@ -13,6 +13,7 @@ import { ContainerTableRow } from './containerTableUtils';
 import { StackActionsCell } from './StackActionsCell';
 import { ContainersDropdownActions } from './ContainersDropdownActions';
 import { containerDisplayState } from '@/utils/containerDisplayState';
+import { Can } from '@/components/permission/Can';
 import type { TranslationFunction } from '@workspace/typescript-interface/commun';
 import * as React from 'react';
 
@@ -240,14 +241,16 @@ export function getColumnsDockerContainers(
                 }
                 return (
                     <div className="flex justify-end">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className={'size-8'}>
-                                    <MoreVertical />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <ContainersDropdownActions container={row.original} />
-                        </DropdownMenu>
+                        <Can resource="docker" action="manage">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" className={'size-8'}>
+                                        <MoreVertical />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <ContainersDropdownActions container={row.original} />
+                            </DropdownMenu>
+                        </Can>
                     </div>
                 );
             },

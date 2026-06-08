@@ -9,6 +9,7 @@ import { onCancelBuild } from '@/actions/repository/builds/cancelBuild.action';
 import { isBuildLive } from '@/utils/buildStatus';
 import { Button } from '@workspace/ui/components/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import { usePermissions } from '@/contexts/PermissionContext';
 
 const STOPPABLE_STATUSES: BuildStatus[] = ['QUEUED', 'BUILDING'];
 
@@ -19,6 +20,7 @@ interface StopBuildToolbarProps {
 
 export function StopBuildToolbar({ buildId, initialStatus }: StopBuildToolbarProps) {
     const t = useTranslations('repository.pipeline');
+    const { can } = usePermissions();
 
     const isLive = isBuildLive(initialStatus);
 
@@ -35,7 +37,7 @@ export function StopBuildToolbar({ buildId, initialStatus }: StopBuildToolbarPro
 
     const status = (latestData?.data?.buildStatus ?? initialStatus) as BuildStatus;
 
-    if (!STOPPABLE_STATUSES.includes(status)) return null;
+    if (!STOPPABLE_STATUSES.includes(status) || !can('build', 'cancel')) return null;
 
     return (
         <Tooltip>

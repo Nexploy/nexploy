@@ -22,6 +22,7 @@ import { Separator } from '@workspace/ui/components/separator';
 import useSWR from 'swr';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { Card } from '@workspace/ui/components/card.tsx';
+import { Can } from '@/components/permission/Can';
 
 interface RegistryCardProps {
     registry: RegistryInfo;
@@ -96,20 +97,24 @@ export function RegistryCard({ registry }: RegistryCardProps) {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={handleEdit}
-                        icon={Pencil}
-                        title={t('edit')}
-                    />
-                    <Button
-                        variant="destructiveOutline"
-                        size="icon"
-                        onClick={handleDelete}
-                        icon={Trash2}
-                        title={t('delete')}
-                    />
+                    <Can resource="registry" action="update">
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={handleEdit}
+                            icon={Pencil}
+                            title={t('edit')}
+                        />
+                    </Can>
+                    <Can resource="registry" action="delete">
+                        <Button
+                            variant="destructiveOutline"
+                            size="icon"
+                            onClick={handleDelete}
+                            icon={Trash2}
+                            title={t('delete')}
+                        />
+                    </Can>
                 </div>
             </div>
 
