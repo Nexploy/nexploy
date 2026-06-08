@@ -19,6 +19,7 @@ import {
     hasConfigSchema,
 } from '@/components/pipeline/nodeManifestRegistry';
 import { cn } from '@workspace/ui/lib/utils';
+import { usePermissions } from '@/contexts/PermissionContext';
 
 function computeDefaultValues(schema: any, nodeConfig: Record<string, unknown>) {
     const schemaDefaults: Record<string, unknown> = {};
@@ -42,6 +43,8 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
 
     const params = useParams<{ repositoryId: string }>();
     const { handleConfigChange, handleResetPanelNode, isViewingBuild } = usePipelineContext();
+    const { can } = usePermissions();
+    const canEdit = can('repository', 'update');
 
     const nodeType = node.data.nodeType as NodeId;
     const nodeConfig = node.data.config ?? {};
@@ -79,17 +82,17 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
             >
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <fieldset
-                        disabled={isViewingBuild}
+                        disabled={isViewingBuild || !canEdit}
                         className={cn(
                             'grid grid-cols-1 p-4',
-                            isViewingBuild && 'pointer-events-none',
+                            (isViewingBuild || !canEdit) && 'pointer-events-none',
                         )}
                     >
                         {ConfigComponent && <ConfigComponent />}
                     </fieldset>
                 </ScrollAreaWithShadow>
 
-                {!isViewingBuild && hasSchema && (
+                {!isViewingBuild && canEdit && hasSchema && (
                     <DialogFooter className={cn('bg-muted/40 border-t p-4')}>
                         <Button
                             type="button"

@@ -223,6 +223,7 @@ export function PipelineCanvas() {
                 onInit={setRfInstance}
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
+                onNodeDragStop={isViewingBuild ? undefined : triggerAutoSave}
                 onNodeDoubleClick={(_, node) => openDialogSettingNode(node.id)}
                 onPaneClick={handleResetPanelNode}
                 onNodeContextMenu={isViewingBuild ? undefined : onNodeContextMenu}

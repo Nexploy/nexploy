@@ -13,6 +13,7 @@ import { StatusLive } from '@/components/shared/StatusLive';
 import { StopBuildToolbar } from '@/components/pipeline/StopBuildToolbar.tsx';
 import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
 import { mod } from '@/components/pipeline/utils/modKey';
+import { usePermissions } from '@/contexts/PermissionContext';
 
 export function PipelineToolbar() {
     const t = useTranslations('repository.pipeline');
@@ -37,6 +38,8 @@ export function PipelineToolbar() {
     } = usePipelineContext();
 
     const addSelectedNodes = useStore((s) => s.addSelectedNodes);
+    const { can } = usePermissions();
+    const canEdit = can('repository', 'update');
 
     const disabledCount = nodes.filter((n) => n.data.disabled).length;
     const hasSelection = selectedNodeIds.length > 0;
@@ -84,7 +87,7 @@ export function PipelineToolbar() {
                                     size="icon"
                                     className="size-6"
                                     onClick={undo}
-                                    disabled={!canUndo || isViewingBuild}
+                                    disabled={!canUndo || isViewingBuild || !canEdit}
                                 >
                                     <Undo2 className="size-3" />
                                 </Button>
@@ -101,7 +104,7 @@ export function PipelineToolbar() {
                                     size="icon"
                                     className="size-6"
                                     onClick={redo}
-                                    disabled={!canRedo || isViewingBuild}
+                                    disabled={!canRedo || isViewingBuild || !canEdit}
                                 >
                                     <Redo2 className="size-3" />
                                 </Button>
@@ -121,7 +124,7 @@ export function PipelineToolbar() {
                                     size="icon"
                                     className="size-6"
                                     onClick={handleSelectAll}
-                                    disabled={isViewingBuild}
+                                    disabled={isViewingBuild || !canEdit}
                                 >
                                     <SquareDashed className={'size-3'} />
                                 </Button>
@@ -137,7 +140,7 @@ export function PipelineToolbar() {
                                     size="icon"
                                     className="size-6"
                                     onClick={handleDuplicateSelection}
-                                    disabled={!hasSelection || isViewingBuild}
+                                    disabled={!hasSelection || isViewingBuild || !canEdit}
                                 >
                                     <Copy className="size-3" />
                                 </Button>
@@ -155,7 +158,7 @@ export function PipelineToolbar() {
                                     size="icon"
                                     className="size-6"
                                     onClick={handleToggleDisable}
-                                    disabled={!hasSelection || isViewingBuild}
+                                    disabled={!hasSelection || isViewingBuild || !canEdit}
                                 >
                                     <Power className="size-3" />
                                 </Button>
@@ -171,7 +174,7 @@ export function PipelineToolbar() {
                                     size="icon"
                                     className="hover:text-destructive size-6"
                                     onClick={handleDeleteSelection}
-                                    disabled={!hasSelection || isViewingBuild}
+                                    disabled={!hasSelection || isViewingBuild || !canEdit}
                                 >
                                     <Trash2 className="size-3" />
                                 </Button>

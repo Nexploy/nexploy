@@ -6,6 +6,7 @@ import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
 import { useReactFlow } from '@xyflow/react';
 import { usePipelineActions } from '@/contexts/PipelineContext';
+import { usePermissions } from '@/contexts/PermissionContext';
 import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
 import { CATEGORY_BG } from '@/components/pipeline/pipelineTheme';
 import { InputHandle } from '@/components/pipeline/nodes/handles/InputHandle';
@@ -24,6 +25,8 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
     const isAttachNode = data.definition.type === 'attach-node';
     const { deleteElements, getNodes } = useReactFlow();
     const { triggerAutoSave, setNodes, openDialogSettingNode } = usePipelineActions();
+    const { can } = usePermissions();
+    const canEdit = can('repository', 'update');
 
     const getTargetIds = () => {
         const selectedIds = getNodes()
@@ -86,18 +89,20 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
                         'scale-75 opacity-0 transition-all duration-150 group-hover:scale-100 group-hover:opacity-100',
                     )}
                 >
-                    <Button
-                        onClick={handleToggleDisabled}
-                        variant="ghost"
-                        className={cn(
-                            'size-6',
-                            data.disabled
-                                ? 'text-muted-foreground hover:text-foreground'
-                                : 'text-foreground hover:text-muted-foreground',
-                        )}
-                    >
-                        <Power className="size-3" />
-                    </Button>
+                    {canEdit && (
+                        <Button
+                            onClick={handleToggleDisabled}
+                            variant="ghost"
+                            className={cn(
+                                'size-6',
+                                data.disabled
+                                    ? 'text-muted-foreground hover:text-foreground'
+                                    : 'text-foreground hover:text-muted-foreground',
+                            )}
+                        >
+                            <Power className="size-3" />
+                        </Button>
+                    )}
                     <Button
                         variant="ghost"
                         onClick={handleOpenSettingNode}
@@ -110,9 +115,11 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
                     >
                         <Settings className="size-3" />
                     </Button>
-                    <Button onClick={handleDelete} variant="destructiveGhost" className="size-6">
-                        <Trash2 className="size-3" />
-                    </Button>
+                    {canEdit && (
+                        <Button onClick={handleDelete} variant="destructiveGhost" className="size-6">
+                            <Trash2 className="size-3" />
+                        </Button>
+                    )}
                 </div>
             )}
 
