@@ -20,7 +20,7 @@ export function FetchSecretsDopplerConfig() {
                         <FormLabel>{t('dopplerServiceToken')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input {...field} type="password" placeholder="••••••••" />
+                                <Input {...field} type="password" placeholder={t('passwordPlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -35,7 +35,7 @@ export function FetchSecretsDopplerConfig() {
                         <FormLabel>{t('dopplerProject')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input {...field} placeholder="my-project" />
+                                <Input {...field} placeholder={t('dopplerProjectPlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -50,7 +50,7 @@ export function FetchSecretsDopplerConfig() {
                         <FormLabel>{t('dopplerConfig')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input {...field} placeholder="prd" />
+                                <Input {...field} placeholder={t('dopplerConfigPlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />

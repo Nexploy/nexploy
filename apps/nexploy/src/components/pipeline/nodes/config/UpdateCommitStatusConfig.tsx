@@ -61,7 +61,7 @@ export function UpdateCommitStatusConfig() {
                         <FormLabel>{t('commitStatusContext')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input {...field} placeholder="nexploy/pipeline" />
+                                <Input {...field} placeholder={t('commitStatusContextPlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />

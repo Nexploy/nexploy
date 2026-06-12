@@ -25,7 +25,7 @@ export function ValidateComposeConfig() {
                         <FormControl>
                             <Input
                                 {...field}
-                                placeholder="docker-compose.yml"
+                                placeholder={t('composeFileNamePlaceholder')}
                                 className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>

@@ -24,7 +24,7 @@ export function ValidateDockerfileConfig() {
                     <FormControl>
                         <Input
                             {...field}
-                            placeholder="Dockerfile"
+                            placeholder={t('dockerfileNamePlaceholder')}
                             className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                         />
                     </FormControl>

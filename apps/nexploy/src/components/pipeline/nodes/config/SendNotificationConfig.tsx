@@ -58,7 +58,7 @@ export function SendNotificationConfig() {
                             </InfoTooltip>
                         </div>
                         <FormControl>
-                            <Input {...field} placeholder="https://hooks.example.com/…" />
+                            <Input {...field} placeholder={t('webhookUrlPlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

@@ -33,7 +33,7 @@ export function WaitForUrlConfig() {
                     <FormItem>
                         <FormLabel>{t('url')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="https://example.com/health" />
+                            <Input {...field} placeholder={t('healthUrlPlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

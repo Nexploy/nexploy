@@ -152,7 +152,7 @@ export function TagImageConfig() {
                         <FormControl>
                             <Input
                                 {...field}
-                                placeholder="v1.0.0"
+                                placeholder={t('versionTagPlaceholder')}
                                 className="border-border bg-background text-foreground focus:border-primary h-8 font-mono text-xs"
                             />
                         </FormControl>

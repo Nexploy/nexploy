@@ -1,10 +1,14 @@
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, } from '@workspace/ui/components/sidebar';
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarHeader,
+} from '@workspace/ui/components/sidebar';
 import Link from 'next/link';
 import { AccountMenu } from '@/components/sidebar/AccountMenu';
 import { SidebarNav } from '@/components/sidebar/SidebarNav';
 import { Environment } from '@/components/sidebar/environment/Environment';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
-import { UpdateBanner } from '@/components/sidebar/UpdateBanner.tsx';
 import Image from 'next/image';
 
 interface AppSidebarProps {
@@ -50,7 +54,7 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
                 </ScrollAreaWithShadow>
             </SidebarContent>
             <SidebarFooter className={'mx-2'}>
-                <UpdateBanner />
+                {/*<UpdateBanner />*/}
                 <AccountMenu />
             </SidebarFooter>
         </Sidebar>

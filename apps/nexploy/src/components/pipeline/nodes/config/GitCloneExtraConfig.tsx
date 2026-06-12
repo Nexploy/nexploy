@@ -18,7 +18,7 @@ export function GitCloneExtraConfig() {
                     <FormItem>
                         <FormLabel>{t('gitCloneUrl')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="https://github.com/org/repo.git" />
+                            <Input {...field} placeholder={t('gitCloneUrlExtraPlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -48,7 +48,7 @@ export function GitCloneExtraConfig() {
                     <FormItem>
                         <FormLabel>{t('cloneBranch')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="main" />
+                            <Input {...field} placeholder={t('branchNamePlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -61,7 +61,7 @@ export function GitCloneExtraConfig() {
                     <FormItem>
                         <FormLabel>{t('gitCloneTargetDir')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="extra-repo" />
+                            <Input {...field} placeholder={t('gitCloneTargetDirPlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

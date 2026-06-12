@@ -29,7 +29,7 @@ export function FetchSecretsVaultConfig() {
                         <FormLabel>{t('vaultEndpoint')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input {...field} placeholder="https://vault.example.com" />
+                                <Input {...field} placeholder={t('vaultEndpointPlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -44,7 +44,7 @@ export function FetchSecretsVaultConfig() {
                         <FormLabel>{t('vaultToken')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input {...field} type="password" placeholder="••••••••" />
+                                <Input {...field} type="password" placeholder={t('passwordPlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -61,7 +61,7 @@ export function FetchSecretsVaultConfig() {
                             <RefAware value={field.value} onChange={field.onChange}>
                                 <Input
                                     {...field}
-                                    placeholder="SandBox/myapp"
+                                    placeholder={t('vaultSecretPathPlaceholder')}
                                     className="font-mono"
                                 />
                             </RefAware>
@@ -102,7 +102,7 @@ export function FetchSecretsVaultConfig() {
                         <FormLabel>{t('vaultNamespace')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input {...field} placeholder="admin/team-a" />
+                                <Input {...field} placeholder={t('vaultNamespacePlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />

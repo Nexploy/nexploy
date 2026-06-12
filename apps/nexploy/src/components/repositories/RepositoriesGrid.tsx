@@ -91,13 +91,13 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                                 <SelectItem value="GITHUB">
                                     <span className="flex items-center gap-2">
                                         <Github className="size-3.5 [&_path]:fill-current" />
-                                        GitHub
+                                        {t('providers.github')}
                                     </span>
                                 </SelectItem>
                                 <SelectItem value="GITLAB">
                                     <span className="flex items-center gap-2">
                                         <Gitlab className="size-3.5 [&_path]:fill-current" />
-                                        GitLab
+                                        {t('providers.gitlab')}
                                     </span>
                                 </SelectItem>
                             </SelectGroup>
@@ -112,12 +112,15 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                             <SelectValue placeholder={t('filterByStatus')} />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">{tCommon('all')}</SelectItem>
-                            {Object.entries(STATUS_PIPELINE).map(([status]) => (
-                                <SelectItem key={status} value={status}>
-                                    {t(`builds.${status.toLowerCase()}`)}
-                                </SelectItem>
-                            ))}
+                            <SelectGroup>
+                                <SelectLabel>{t('filterByStatus')}</SelectLabel>
+                                <SelectItem value="all">{tCommon('all')}</SelectItem>
+                                {Object.entries(STATUS_PIPELINE).map(([status]) => (
+                                    <SelectItem key={status} value={status}>
+                                        {t(`builds.${status.toLowerCase()}`)}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
                         </SelectContent>
                     </Select>
                 </div>

@@ -40,6 +40,7 @@ export function ModelSelectorModal() {
 
     return (
         <CommandDialog
+            showCloseButton={false}
             open={modelSelectorOpen}
             onOpenChange={(open) => !open && closeModelSelector()}
             title={t('title')}

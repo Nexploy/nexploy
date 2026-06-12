@@ -25,7 +25,7 @@ export function GitTagConfig() {
                     <FormItem>
                         <FormLabel>{t('gitTagName')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="v1.0.0" />
+                            <Input {...field} placeholder={t('versionTagPlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -53,7 +53,7 @@ export function GitTagConfig() {
                     <FormItem>
                         <FormLabel>{t('gitRemote')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="origin" />
+                            <Input {...field} placeholder={t('gitRemotePlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

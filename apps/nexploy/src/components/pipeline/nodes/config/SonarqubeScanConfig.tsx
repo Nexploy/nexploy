@@ -63,7 +63,7 @@ export function SonarqubeScanConfig() {
                         <FormItem>
                             <FormLabel>{t('sonarqubeServerUrl')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder="https://sonarcloud.io" />
+                                <Input {...field} placeholder={t('sonarqubeServerUrlPlaceholder')} />
                             </FormControl>
                             <FormMessage className="text-xs" />
                         </FormItem>
@@ -78,7 +78,7 @@ export function SonarqubeScanConfig() {
                         <FormItem>
                             <FormLabel>{t('sonarqubeOrganization')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder="my-org" />
+                                <Input {...field} placeholder={t('sonarqubeOrgPlaceholder')} />
                             </FormControl>
                             <FormDescription className="text-xs">
                                 {t('sonarqubeOrganizationDescription')}
@@ -96,7 +96,7 @@ export function SonarqubeScanConfig() {
                         <FormItem>
                             <FormLabel>{t('sonarqubeVersion')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder="community" />
+                                <Input {...field} placeholder={t('sonarqubeVersionPlaceholder')} />
                             </FormControl>
                             <FormDescription className="text-xs">
                                 {t('sonarqubeVersionDescription')}
@@ -128,7 +128,7 @@ export function SonarqubeScanConfig() {
                     <FormItem>
                         <FormLabel>{t('sonarqubeProjectKey')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="my-project" />
+                            <Input {...field} placeholder={t('sonarqubeProjectKeyPlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -144,7 +144,7 @@ export function SonarqubeScanConfig() {
                             <Input
                                 {...field}
                                 type="password"
-                                placeholder="••••••••"
+                                placeholder={t('passwordPlaceholder')}
                                 className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>
@@ -162,7 +162,7 @@ export function SonarqubeScanConfig() {
                     <FormItem>
                         <FormLabel>{t('sonarqubeSources')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="." />
+                            <Input {...field} placeholder={t('sonarqubeSourcesPlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -175,7 +175,7 @@ export function SonarqubeScanConfig() {
                     <FormItem>
                         <FormLabel>{t('sonarqubeExclusions')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="**/*.test.ts,**/node_modules/**" />
+                            <Input {...field} placeholder={t('sonarqubeExclusionsPlaceholder')} />
                         </FormControl>
                         <FormDescription className="text-xs">
                             {t('sonarqubeExclusionsDescription')}

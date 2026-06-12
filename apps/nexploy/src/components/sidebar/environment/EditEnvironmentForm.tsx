@@ -166,7 +166,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                                 <FormLabel>{t('socketPath')}</FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="/var/run/docker.sock"
+                                        placeholder={t('socketPathPlaceholder')}
                                         {...field}
                                         disabled={form.formState.isSubmitting}
                                     />
@@ -253,7 +253,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                             form={form}
                             name="tlsCert"
                             label={t('clientCertificate')}
-                            placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
+                            placeholder={t('tlsCertPlaceholder')}
                             disabled={form.formState.isSubmitting}
                             hasExistingValue={!!environment.tlsCert}
                         />
@@ -262,7 +262,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                             form={form}
                             name="tlsKey"
                             label={t('clientKey')}
-                            placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
+                            placeholder={t('tlsKeyPlaceholder')}
                             disabled={form.formState.isSubmitting}
                             hasExistingValue={!!environment.tlsKey}
                         />
@@ -271,7 +271,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                             form={form}
                             name="tlsCa"
                             label={t('caCertificate')}
-                            placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
+                            placeholder={t('tlsCertPlaceholder')}
                             disabled={form.formState.isSubmitting}
                             hasExistingValue={!!environment.tlsCa}
                         />

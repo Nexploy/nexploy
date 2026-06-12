@@ -124,7 +124,7 @@ export function CherryPickCommitConfig() {
                     <FormItem>
                         <FormLabel>{t('gitRemote')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="origin" />
+                            <Input {...field} placeholder={t('gitRemotePlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

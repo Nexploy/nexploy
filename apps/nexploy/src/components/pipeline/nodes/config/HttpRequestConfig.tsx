@@ -41,7 +41,7 @@ export function HttpRequestConfig() {
                         <FormLabel>{t('url')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input {...field} placeholder="https://example.com/webhook" />
+                                <Input {...field} placeholder={t('httpUrlPlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -137,7 +137,7 @@ export function HttpRequestConfig() {
                             <RefAware value={field.value} onChange={field.onChange}>
                                 <Textarea
                                     {...field}
-                                    placeholder='{"key": "value"}'
+                                    placeholder={t('jsonBodyPlaceholder')}
                                     className="border-border bg-background text-foreground focus:border-primary font-mono text-xs"
                                     rows={4}
                                 />

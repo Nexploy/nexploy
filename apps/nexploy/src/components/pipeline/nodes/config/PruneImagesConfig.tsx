@@ -37,7 +37,7 @@ export function PruneImagesConfig() {
                     <FormItem>
                         <FormLabel>{t('pruneOlderThan')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="24h" />
+                            <Input {...field} placeholder={t('pruneOlderThanPlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -50,7 +50,7 @@ export function PruneImagesConfig() {
                     <FormItem>
                         <FormLabel>{t('pruneFilter')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="label=project=myapp" />
+                            <Input {...field} placeholder={t('pruneFilterPlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

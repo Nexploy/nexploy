@@ -18,7 +18,7 @@ export function PanelHeader({ hasMessages, onNewChat, onClose }: PanelHeaderProp
                 <div className="bg-primary/10 flex h-6 w-6 items-center justify-center rounded-sm">
                     <Bot className="text-primary h-3.5 w-3.5" />
                 </div>
-                <span className="text-sm font-semibold">Nexploy AI</span>
+                <span className="text-sm font-semibold">{t('panelTitle')}</span>
             </div>
             {hasMessages && (
                 <Button
@@ -28,7 +28,7 @@ export function PanelHeader({ hasMessages, onNewChat, onClose }: PanelHeaderProp
                     title={t('newChat')}
                 >
                     <MessageSquarePlus className="size-3.5" />
-                    New Chat
+                    {t('newChat')}
                 </Button>
             )}
             <div className="flex items-center gap-1">
@@ -37,7 +37,7 @@ export function PanelHeader({ hasMessages, onNewChat, onClose }: PanelHeaderProp
                     size="icon"
                     className="h-7 w-7"
                     onClick={onClose}
-                    title="Close"
+                    title={t('close')}
                 >
                     <X className="h-3.5 w-3.5" />
                 </Button>

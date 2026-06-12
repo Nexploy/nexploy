@@ -26,7 +26,7 @@ export function DownloadFileConfig() {
                         <FormLabel>{t('url')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input {...field} placeholder="https://example.com/file" />
+                                <Input {...field} placeholder={t('fileUrlPlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -41,7 +41,7 @@ export function DownloadFileConfig() {
                         <FormLabel>{t('downloadDestination')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input {...field} placeholder="downloads/files" />
+                                <Input {...field} placeholder={t('downloadDestinationPlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />

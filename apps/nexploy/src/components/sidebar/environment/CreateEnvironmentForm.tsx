@@ -160,7 +160,7 @@ export function CreateEnvironmentForm() {
                                 <FormLabel>{t('socketPath')}</FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="/var/run/docker.sock"
+                                        placeholder={t('socketPathPlaceholder')}
                                         {...field}
                                         disabled={form.formState.isSubmitting}
                                     />
@@ -232,7 +232,7 @@ export function CreateEnvironmentForm() {
                             form={form}
                             name="tlsCert"
                             label={t('clientCertificate')}
-                            placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
+                            placeholder={t('tlsCertPlaceholder')}
                             disabled={form.formState.isSubmitting}
                         />
 
@@ -240,7 +240,7 @@ export function CreateEnvironmentForm() {
                             form={form}
                             name="tlsKey"
                             label={t('clientKey')}
-                            placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
+                            placeholder={t('tlsKeyPlaceholder')}
                             disabled={form.formState.isSubmitting}
                         />
 
@@ -248,7 +248,7 @@ export function CreateEnvironmentForm() {
                             form={form}
                             name="tlsCa"
                             label={t('caCertificate')}
-                            placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
+                            placeholder={t('tlsCertPlaceholder')}
                             disabled={form.formState.isSubmitting}
                         />
                     </div>

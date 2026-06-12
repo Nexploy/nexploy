@@ -132,7 +132,7 @@ export function ScanImageConfig() {
                         <FormItem className="w-28 shrink-0 self-start">
                             <FormLabel>{t('trivyVersion')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder="canary" />
+                                <Input {...field} placeholder={t('trivyVersionPlaceholder')} />
                             </FormControl>
                         </FormItem>
                     )}

@@ -28,7 +28,7 @@ export function CacheSaveConfig() {
                             <RefAware value={field.value} onChange={field.onChange}>
                                 <Input
                                     {...field}
-                                    placeholder="build-cache"
+                                    placeholder={t('cacheVolumeNamePlaceholder')}
                                     className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                                 />
                             </RefAware>
@@ -47,7 +47,7 @@ export function CacheSaveConfig() {
                             <RefAware value={field.value} onChange={field.onChange}>
                                 <Input
                                     {...field}
-                                    placeholder="node_modules"
+                                    placeholder={t('cachePathPlaceholder')}
                                     className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                                 />
                             </RefAware>

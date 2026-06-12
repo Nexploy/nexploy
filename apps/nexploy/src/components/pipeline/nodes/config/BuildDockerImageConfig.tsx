@@ -19,7 +19,7 @@ export function BuildDockerImageConfig() {
                         <FormLabel>{t('dockerfilePath')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input {...field} placeholder="Dockerfile" />
+                                <Input {...field} placeholder={t('dockerfileNamePlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />

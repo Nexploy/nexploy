@@ -40,7 +40,7 @@ export function AddDomainConfig() {
                     <FormItem>
                         <FormLabel>{t('addDomainHost')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="example.com" className="font-mono" />
+                            <Input {...field} placeholder={t('domainPlaceholder')} className="font-mono" />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -53,7 +53,7 @@ export function AddDomainConfig() {
                     <FormItem>
                         <FormLabel>{t('addDomainContainerPort')}</FormLabel>
                         <FormControl>
-                            <Input {...field} type="number" placeholder="3000" />
+                            <Input {...field} type="number" placeholder={t('portNumberPlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -67,7 +67,7 @@ export function AddDomainConfig() {
                         <FormItem>
                             <FormLabel>{t('addDomainPath')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder="/" className="font-mono" />
+                                <Input {...field} placeholder={t('pathPlaceholder')} className="font-mono" />
                             </FormControl>
                             <FormMessage className="text-xs" />
                         </FormItem>
@@ -80,7 +80,7 @@ export function AddDomainConfig() {
                         <FormItem>
                             <FormLabel>{t('addDomainInternalPath')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder="/" className="font-mono" />
+                                <Input {...field} placeholder={t('pathPlaceholder')} className="font-mono" />
                             </FormControl>
                             <FormMessage className="text-xs" />
                         </FormItem>

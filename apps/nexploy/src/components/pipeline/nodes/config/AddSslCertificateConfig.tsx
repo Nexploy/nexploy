@@ -43,7 +43,7 @@ export function AddSslCertificateConfig() {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                <SelectItem value="LETS_ENCRYPT">{"Let's Encrypt"}</SelectItem>
+                                <SelectItem value="LETS_ENCRYPT">{t('sslLetsEncrypt')}</SelectItem>
                                 <SelectItem value="CUSTOM">{t('sslCustom')}</SelectItem>
                             </SelectContent>
                         </Select>
@@ -71,7 +71,7 @@ export function AddSslCertificateConfig() {
                     <FormItem>
                         <FormLabel>{t('sslDomain')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder="example.com" className="font-mono" />
+                            <Input {...field} placeholder={t('domainPlaceholder')} className="font-mono" />
                         </FormControl>
                         {certType === 'LETS_ENCRYPT' && (
                             <FormDescription className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
@@ -96,7 +96,7 @@ export function AddSslCertificateConfig() {
                                         {...field}
                                         value={field.value ?? ''}
                                         type="email"
-                                        placeholder="you@example.com"
+                                        placeholder={t('emailPlaceholder')}
                                     />
                                 </FormControl>
                                 <FormMessage className="text-xs" />
@@ -144,7 +144,7 @@ export function AddSslCertificateConfig() {
                                     <Textarea
                                         {...field}
                                         value={field.value ?? ''}
-                                        placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
+                                        placeholder={t('tlsCertPlaceholder')}
                                         className="h-28 font-mono text-xs"
                                     />
                                 </FormControl>
@@ -162,7 +162,7 @@ export function AddSslCertificateConfig() {
                                     <Textarea
                                         {...field}
                                         value={field.value ?? ''}
-                                        placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
+                                        placeholder={t('tlsKeyPlaceholder')}
                                         className="h-28 font-mono text-xs"
                                     />
                                 </FormControl>

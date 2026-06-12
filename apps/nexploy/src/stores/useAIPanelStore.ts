@@ -26,7 +26,7 @@ export const useAIPanelStore = create<AIPanelStore>()(
             modelSelectorOpen: false,
             aiEnabled: true,
             openPanel: (prompt) => set({ isOpen: true, pendingPrompt: prompt ?? null }),
-            closePanel: () => set({ isOpen: false }),
+            closePanel: () => set({ isOpen: false, modelSelectorOpen: false }),
             clearPendingPrompt: () => set({ pendingPrompt: null }),
             setSelectedModel: (model) => set({ selectedModel: model }),
             openModelSelector: () => set({ modelSelectorOpen: true }),

@@ -107,9 +107,23 @@
         "removeStopped": "Supprimer les conteneurs arrêtés",
         "viewStacks": "Voir les stacks",
         "settings": "Paramètres",
-        "openTerminal": "Ouvrir le terminal"
+        "openTerminal": "Ouvrir le terminal",
+        "noResults": "Aucun résultat pour « {query} »",
+        "open": "Ouvrir",
+        "navigate": "Naviguer",
+        "startBuild": "Lancer un build",
+        "account": "Compte",
+        "types": {
+            "repository": "Dépôt",
+            "container": "Conteneur",
+            "image": "Image",
+            "volume": "Volume",
+            "network": "Réseau"
+        }
     },
     "chat": {
+        "panelTitle": "Nexploy AI",
+        "close": "Fermer",
         "newChat": "Nouveau chat",
         "disabled": "Assistant IA désactivé",
         "disabledDescription": "L'administrateur a désactivé l'assistant IA.",

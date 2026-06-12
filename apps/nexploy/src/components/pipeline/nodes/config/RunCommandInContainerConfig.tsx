@@ -129,7 +129,7 @@ export function RunCommandInContainerConfig() {
                         <FormLabel>{t('command')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input {...field} placeholder="npm run migrate" />
+                                <Input {...field} placeholder={t('commandPlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -144,7 +144,7 @@ export function RunCommandInContainerConfig() {
                         <FormLabel>{t('workdir')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input {...field} placeholder="/app" />
+                                <Input {...field} placeholder={t('workdirPlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -159,7 +159,7 @@ export function RunCommandInContainerConfig() {
                         <FormLabel>{t('execUser')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input {...field} placeholder="user[:group] or uid[:gid]" />
+                                <Input {...field} placeholder={t('execUserPlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />

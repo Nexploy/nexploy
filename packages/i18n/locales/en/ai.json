@@ -107,9 +107,23 @@
         "removeStopped": "Remove stopped containers",
         "viewStacks": "View stacks",
         "settings": "Settings",
-        "openTerminal": "Open terminal"
+        "openTerminal": "Open terminal",
+        "noResults": "No results for \"{query}\"",
+        "open": "Open",
+        "navigate": "Navigate",
+        "startBuild": "Start Build",
+        "account": "Account",
+        "types": {
+            "repository": "Repository",
+            "container": "Container",
+            "image": "Image",
+            "volume": "Volume",
+            "network": "Network"
+        }
     },
     "chat": {
+        "panelTitle": "Nexploy AI",
+        "close": "Close",
         "newChat": "New chat",
         "disabled": "AI assistant disabled",
         "disabledDescription": "The administrator has disabled the AI assistant.",

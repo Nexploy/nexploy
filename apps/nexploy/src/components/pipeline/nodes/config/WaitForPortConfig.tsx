@@ -126,7 +126,7 @@ export function WaitForPortConfig() {
                                 type="number"
                                 min={1}
                                 max={65535}
-                                placeholder="3000"
+                                placeholder={t('portNumberPlaceholder')}
                                 className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>

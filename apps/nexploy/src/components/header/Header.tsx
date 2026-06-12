@@ -1,8 +1,8 @@
 import { SidebarTrigger } from '@workspace/ui/components/sidebar';
 import { Separator } from '@workspace/ui/components/separator';
-import { SearchCommand } from '../ai/SearchCommand';
 import { BreadcrumbPath } from '@/components/header/BreadcrumbPath';
 import { AIPanelToggle } from '@/components/ai/AIPanelToggle';
+import { SearchCommand } from '@/components/search/SearchCommand.tsx';
 
 export function Header() {
     return (

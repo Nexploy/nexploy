@@ -35,7 +35,7 @@ export function CacheRestoreConfig() {
                                     {...field}
                                     options={volumeOptions}
                                     isLoading={isLoading}
-                                    placeholder="build-cache"
+                                    placeholder={t('cacheVolumeNamePlaceholder')}
                                     heading={t('volumesSelectLabel')}
                                 />
                             </RefAware>
@@ -52,7 +52,7 @@ export function CacheRestoreConfig() {
                         <FormLabel>{t('cachePath')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input {...field} placeholder="node_modules" />
+                                <Input {...field} placeholder={t('cachePathPlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
