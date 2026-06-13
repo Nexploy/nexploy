@@ -173,7 +173,6 @@ function applyTransformations(
 
             switch (transform.strategy) {
                 case 'copy_to_image':
-                    // Remove the volume - files will be in the image
                     break;
 
                 case 'named_volume':
@@ -185,7 +184,6 @@ function applyTransformations(
                     break;
 
                 case 'remove':
-                    // Just remove it
                     break;
             }
         }

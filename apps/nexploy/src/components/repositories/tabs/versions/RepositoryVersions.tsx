@@ -1,12 +1,14 @@
 'use client';
 
 import { useMemo } from 'react';
+import useSWR from 'swr';
 import { Boxes, Clock, Container, GitBranch, GitCommit } from 'lucide-react';
 import dayjs from 'dayjs';
 import { Separator } from '@workspace/ui/components/separator';
 import { Badge } from '@workspace/ui/components/badge';
 import { Version } from '@workspace/typescript-interface/docker/docker.version';
 import { useTranslations } from 'next-intl';
+import { fetcherApi } from '@/lib/api/fetcherApi';
 import { useContainersStore } from '@/stores/docker/useContainersStore';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
 import { VersionDeployButton } from '@/components/repositories/tabs/versions/VersionDeployButton.tsx';
@@ -17,9 +19,19 @@ interface RepositoryVersionsProps {
     versions: Version[];
 }
 
-export function RepositoryVersions({ repositoryId, versions }: RepositoryVersionsProps) {
+export function RepositoryVersions({
+    repositoryId,
+    versions: initialVersions,
+}: RepositoryVersionsProps) {
     const t = useTranslations('repository.versions');
     const tBuilds = useTranslations('repository.builds');
+
+    const { data } = useSWR<{ versions: Version[] }>(
+        { url: `/api/repositories/${repositoryId}/versions` },
+        fetcherApi,
+        { fallbackData: { versions: initialVersions } },
+    );
+    const versions = data?.versions ?? initialVersions;
 
     const containers = useContainersStore((s) => s.containers);
 

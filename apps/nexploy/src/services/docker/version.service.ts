@@ -134,20 +134,17 @@ export async function getVersionsByRepository(repositoryId: string): Promise<Ver
             },
         });
 
-        return versions.map((v) => ({
-            imageTag: v.imageTag,
-            repositoryId: v.repositoryId,
-            buildId: v.imageTag,
-            versionNumber: v.versionNumber,
-            commitHash: v.commitHash ?? undefined,
-            commitMessage: v.commitMessage ?? undefined,
-            branch: v.branch ?? undefined,
-            createdAt: v.createdAt.getTime(),
+        return versions.map((version) => ({
+            ...version,
             imageId: '',
-            imageFullName: `${v.repositoryId}:${v.imageTag}`,
-            environmentId: v.environment?.id ?? undefined,
-            environmentName: v.environment?.name ?? undefined,
-            hasComposeConfig: !!v.composeConfig,
+            buildId: version.imageTag,
+            commitHash: version.commitHash ?? undefined,
+            commitMessage: version.commitMessage ?? undefined,
+            branch: version.branch ?? undefined,
+            imageFullName: `${version.repositoryId}:${version.imageTag}`,
+            environmentId: version.environment?.id ?? undefined,
+            environmentName: version.environment?.name ?? undefined,
+            hasComposeConfig: !!version.composeConfig,
         }));
     } catch {
         return [];

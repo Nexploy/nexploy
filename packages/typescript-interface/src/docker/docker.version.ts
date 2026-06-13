@@ -6,7 +6,7 @@ export interface Version {
     commitHash?: string;
     commitMessage?: string;
     branch?: string;
-    createdAt: number;
+    createdAt: Date;
     imageId: string;
     imageFullName: string;
     environmentId?: string;
