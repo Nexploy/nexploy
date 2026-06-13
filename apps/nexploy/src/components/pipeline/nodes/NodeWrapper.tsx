@@ -5,7 +5,7 @@ import { Power, Settings, Trash2 } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
 import { useReactFlow } from '@xyflow/react';
-import { usePipelineActions } from '@/contexts/PipelineContext';
+import { usePipelineActions } from '@/stores/pipeline/usePipelineStore';
 import { usePermissions } from '@/contexts/PermissionContext';
 import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
 import { CATEGORY_BG } from '@/components/pipeline/pipelineTheme';

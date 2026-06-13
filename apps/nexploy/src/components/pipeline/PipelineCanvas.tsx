@@ -25,8 +25,8 @@ import { GradientEdge } from '@/components/pipeline/edges/GradientEdge';
 import { useDragAndDropFlow } from '@/hooks/useDragAndDropFlow';
 import { useAutoLayout } from '@/hooks/useAutoLayout';
 import { useMinimap } from '@/hooks/useMinimap';
-import { usePipelineContext } from '@/contexts/PipelineContext';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { usePipelineStore } from '@/stores/pipeline/usePipelineStore';
+import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ButtonPanel } from '@/components/pipeline/nodes/ButtonPanel';
 import { useHotkeys } from '@/lib/useHotKeys';
 import { NodeContextMenu, type NodeContextMenuState } from '@/components/pipeline/NodeContextMenu';
@@ -105,7 +105,7 @@ export function PipelineCanvas() {
         redo,
         triggerAutoSave,
         setNodes,
-    } = usePipelineContext();
+    } = usePipelineStore();
 
     const activeBuildIndex = builds.findIndex((b) => b.id === activeBuildId);
     const activeBuildNumber = activeBuildIndex !== -1 ? builds.length - activeBuildIndex : null;

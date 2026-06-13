@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/componen
 import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
 import { Button } from '@workspace/ui/components/button';
 import { Container as IconContainer, MoreVertical } from 'lucide-react';
-import { useMemo, useTransition } from 'react';
+import { useMemo } from 'react';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { ContainersDropdownActions } from '@/components/docker/containers/ContainersDropdownActions';
 import Link from 'next/link';
@@ -21,7 +21,6 @@ interface ContainerCardProps {
 }
 
 export function ContainerCard({ container }: ContainerCardProps) {
-    const [isPending] = useTransition();
     const t = useTranslations('docker.containerCard');
     const autoplayPlugin = useMemo(() => Autoplay({ delay: 3000 }), []);
 
@@ -40,7 +39,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
                     <Can resource="docker" action="manage">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" disabled={isPending}>
+                                <Button variant="ghost" size="sm">
                                     <MoreVertical />
                                 </Button>
                             </DropdownMenuTrigger>

@@ -6,9 +6,10 @@ import { StatusProps } from '@workspace/ui/components/kibo-ui/status';
 import { useInngestSubscription } from '@inngest/realtime/hooks';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { type CommitInfo, type NodeRunStatus } from '@/types/pipeline.type';
-import { Build, BuildStatus } from 'generated/client';
+import { BuildStatus } from 'generated/client';
+import type { PipelineBuild } from '@workspace/typescript-interface/stores/pipelineStore';
 import { isBuildLive } from '@/utils/buildStatus';
 import { StatusLive } from '@/components/shared/StatusLive';
 import { cn } from '@workspace/ui/lib/utils';
@@ -25,7 +26,7 @@ export const STATUS_PIPELINE: Record<BuildStatus, StatusProps['status']> = {
 };
 
 export interface BuildsPanelItemProps {
-    build: Build;
+    build: PipelineBuild;
     isSelected: boolean;
     locale: string;
     onSelect: (id: string | null) => void;

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Clock, GitBranch, GitCommit, Square } from 'lucide-react';
 import dayjs from 'dayjs';
-import { Build } from 'generated/client';
+import type { PipelineBuild } from '@workspace/typescript-interface/stores/pipelineStore';
 import { Separator } from '@workspace/ui/components/separator';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { StatusLive } from '@/components/shared/StatusLive';
@@ -19,7 +19,7 @@ import { useTranslations } from 'next-intl';
 
 interface BuildLogsProps {
     repositoryId: string;
-    build: Build;
+    build: PipelineBuild;
 }
 
 export function RepositoryBuild({ repositoryId, build }: BuildLogsProps) {
@@ -58,7 +58,7 @@ export function RepositoryBuild({ repositoryId, build }: BuildLogsProps) {
     return (
         <Link
             href={`/repositories/${repositoryId}/${build.id}`}
-            className="hover:bg-muted/50 flex cursor-pointer items-center justify-between gap-2 p-3"
+            className="hover:bg-muted/70 bg-card flex cursor-pointer items-center justify-between gap-2 p-3"
         >
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">

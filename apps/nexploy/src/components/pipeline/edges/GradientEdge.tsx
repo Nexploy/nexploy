@@ -14,7 +14,7 @@ import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
 import { CATEGORY_HEX } from '@/components/pipeline/pipelineTheme';
 import { Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 
 export function GradientEdge(props: EdgeProps) {
     const {

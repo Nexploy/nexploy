@@ -1,12 +1,5 @@
 import { create } from 'zustand';
-
-type BreadcrumbOverrides = Record<string, string>;
-
-type BreadcrumbStore = {
-    overrides: BreadcrumbOverrides;
-    setOverrides: (segments: BreadcrumbOverrides) => void;
-    clearOverrides: (keys: string[]) => void;
-};
+import type { BreadcrumbStore } from '@workspace/typescript-interface/stores/breadcrumbStore';
 
 export const useBreadcrumbStore = create<BreadcrumbStore>((set) => ({
     overrides: {},

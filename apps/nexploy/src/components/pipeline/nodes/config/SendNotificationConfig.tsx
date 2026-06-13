@@ -12,12 +12,7 @@ import {
 import { Input } from '@workspace/ui/components/input';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Label } from '@workspace/ui/components/label';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@workspace/ui/components/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Info } from 'lucide-react';
 
 const TRIGGER_OPTIONS = ['success', 'failure', 'always'] as const;
@@ -25,14 +20,12 @@ type TriggerOption = (typeof TRIGGER_OPTIONS)[number];
 
 function InfoTooltip({ children }: { children: React.ReactNode }) {
     return (
-        <TooltipProvider>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Info className="text-muted-foreground hover:text-foreground h-3.5 w-3.5 cursor-help transition-colors" />
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs text-xs">{children}</TooltipContent>
-            </Tooltip>
-        </TooltipProvider>
+        <Tooltip>
+            <TooltipTrigger asChild>
+                <Info className="text-muted-foreground hover:text-foreground h-3.5 w-3.5 cursor-help transition-colors" />
+            </TooltipTrigger>
+            <TooltipContent className="max-w-xs text-xs">{children}</TooltipContent>
+        </Tooltip>
     );
 }
 

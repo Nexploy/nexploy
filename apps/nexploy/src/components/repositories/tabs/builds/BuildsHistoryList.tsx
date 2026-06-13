@@ -46,15 +46,13 @@ export function BuildsHistoryList({
     if (builds.length === 0) {
         return (
             <div className="rounded-md border">
-                <div className="text-muted-foreground p-8 text-center text-sm">
-                    {t('noBuilds')}
-                </div>
+                <div className="text-muted-foreground p-8 text-center text-sm">{t('noBuilds')}</div>
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col divide-y rounded-md border">
+        <div className="flex flex-col divide-y overflow-hidden rounded-md border">
             {builds.map((build) => (
                 <RepositoryBuild key={build.id} repositoryId={repositoryId} build={build} />
             ))}

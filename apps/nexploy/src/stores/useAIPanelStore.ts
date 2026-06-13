@@ -1,21 +1,6 @@
 import { create } from 'zustand/react';
 import { persist } from 'zustand/middleware';
-import type { SelectedModel } from '@workspace/typescript-interface/ai/aiConfig';
-
-interface AIPanelStore {
-    isOpen: boolean;
-    pendingPrompt: string | null;
-    selectedModel: SelectedModel | null;
-    modelSelectorOpen: boolean;
-    aiEnabled: boolean;
-    openPanel: (prompt?: string) => void;
-    closePanel: () => void;
-    clearPendingPrompt: () => void;
-    setSelectedModel: (model: SelectedModel) => void;
-    openModelSelector: () => void;
-    closeModelSelector: () => void;
-    setAiEnabled: (enabled: boolean) => void;
-}
+import type { AIPanelStore } from '@workspace/typescript-interface/stores/aiPanelStore';
 
 export const useAIPanelStore = create<AIPanelStore>()(
     persist(

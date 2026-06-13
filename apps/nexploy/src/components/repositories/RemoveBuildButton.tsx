@@ -8,7 +8,7 @@ import { onRemoveBuild } from '@/actions/repository/builds/removeBuild.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
 import { useTranslations } from 'next-intl';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { usePermissions } from '@/contexts/PermissionContext';
 
 interface RemoveBuildButtonProps extends ComponentProps<typeof Button> {

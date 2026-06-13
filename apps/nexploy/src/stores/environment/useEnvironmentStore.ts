@@ -1,8 +1,8 @@
-import { Environment } from 'generated/client';
 import { create } from 'zustand';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
+import { Environment } from 'generated/client';
 
-interface EnvironmentState {
+export interface EnvironmentState {
     environments: Environment[];
     selectedEnvironmentId: string | null;
     isLoading: boolean;

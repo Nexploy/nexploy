@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
 import {
@@ -21,12 +15,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select.tsx';
 import { AlertTriangle, Info, Loader2 } from 'lucide-react';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@workspace/ui/components/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
 import { useEnvironmentContainers } from '@/hooks/sse/useEnvironmentContainers.ts';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware.tsx';
@@ -145,16 +134,14 @@ export function CheckContainerLogsConfig() {
                     <FormItem>
                         <div className="flex items-center gap-1.5">
                             <FormLabel>{t('logSince')}</FormLabel>
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <Info className="text-muted-foreground h-3.5 w-3.5 cursor-help" />
-                                    </TooltipTrigger>
-                                    <TooltipContent className="max-w-64">
-                                        {t('logSinceTooltip')}
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Info className="text-muted-foreground h-3.5 w-3.5 cursor-help" />
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-64">
+                                    {t('logSinceTooltip')}
+                                </TooltipContent>
+                            </Tooltip>
                         </div>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>

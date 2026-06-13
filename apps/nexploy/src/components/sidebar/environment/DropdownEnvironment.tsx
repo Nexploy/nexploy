@@ -1,6 +1,9 @@
 'use client';
 
-import { initializeEnvironmentStore, useEnvironmentStore, } from '@/stores/environment/useEnvironmentStore';
+import {
+    initializeEnvironmentStore,
+    useEnvironmentStore,
+} from '@/stores/environment/useEnvironmentStore';
 import { useEffect } from 'react';
 import {
     DropdownMenu,
@@ -12,7 +15,12 @@ import {
 } from '@workspace/ui/components/dropdown-menu';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { Button } from '@workspace/ui/components/button';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar, } from '@workspace/ui/components/sidebar';
+import {
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    useSidebar,
+} from '@workspace/ui/components/sidebar';
 import { Check, ChevronsUpDown, MoreHorizontal, Pencil, Plus, Star, Trash } from 'lucide-react';
 import { CreateEnvironmentForm } from '@/components/sidebar/environment/CreateEnvironmentForm';
 import { EditEnvironmentForm } from '@/components/sidebar/environment/EditEnvironmentForm';
@@ -223,7 +231,10 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                         {can('environment', 'create') && (
                             <>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem className="gap-2 p-2" onClick={handleEnvironmentAdd}>
+                                <DropdownMenuItem
+                                    className="gap-2 p-2"
+                                    onClick={handleEnvironmentAdd}
+                                >
                                     <div className="bg-background flex size-6 items-center justify-center rounded-md border border-dashed">
                                         <Plus size={14} />
                                     </div>

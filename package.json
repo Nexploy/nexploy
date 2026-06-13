@@ -34,6 +34,7 @@
         "@hookform/resolvers": "^5.2.2",
         "@inngest/realtime": "^0.4.6",
         "@modelcontextprotocol/sdk": "^1.29.0",
+        "@monaco-editor/react": "^4.7.0",
         "@next-safe-action/adapter-react-hook-form": "^2.0.0",
         "@openrouter/ai-sdk-provider": "^2.9.0",
         "@prisma/adapter-pg": "^7.5.0",

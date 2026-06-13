@@ -1,6 +1,6 @@
 'use client';
 
-import { usePipelinePanelStore } from '@/stores/usePipelinePanelStore';
+import { usePipelinePanelStore } from '@/stores/pipeline/usePipelinePanelStore';
 import { useTranslations } from 'next-intl';
 import { ArrowLeft, ChevronRight, Search, Wrench, X } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
@@ -12,15 +12,15 @@ import { CATEGORY_BG_MUTED, CATEGORY_ICONS, CATEGORY_TEXT, } from '@/components/
 import { useReactFlow } from '@xyflow/react';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { getConfigSchema } from '@/components/pipeline/nodeManifestRegistry';
-import { usePipelineContext } from '@/contexts/PipelineContext';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { usePipelineStore } from '@/stores/pipeline/usePipelineStore';
+import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 
 export function NodeAddPanel() {
     const t = useTranslations('repository.pipeline');
     const definitions = useNodeRegistryStore((s) => s.nodes);
     const { screenToFlowPosition } = useReactFlow();
-    const { setNodes, triggerAutoSave, handleNodeAdded, isViewingBuild } = usePipelineContext();
+    const { setNodes, triggerAutoSave, handleNodeAdded, isViewingBuild } = usePipelineStore();
 
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 

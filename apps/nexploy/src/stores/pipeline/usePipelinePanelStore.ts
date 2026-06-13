@@ -1,19 +1,5 @@
 import { create } from 'zustand';
-
-export type PipelinePanel = 'palette' | 'template' | 'test';
-
-interface PipelinePanelStore {
-    activePanel: PipelinePanel | null;
-    paletteCategory: string | null;
-    paletteSearch: string;
-    openPanel: (panel: PipelinePanel) => void;
-    closePanel: () => void;
-    togglePanel: (panel: PipelinePanel) => void;
-    setPaletteCategory: (category: string | null) => void;
-    setPaletteSearch: (search: string) => void;
-    openPaletteCategory: (category: string) => void;
-    closePalette: () => void;
-}
+import type { PipelinePanelStore } from '@workspace/typescript-interface/stores/pipelinePanelStore';
 
 export const usePipelinePanelStore = create<PipelinePanelStore>((set) => ({
     activePanel: 'palette',

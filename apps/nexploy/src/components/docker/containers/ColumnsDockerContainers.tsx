@@ -15,7 +15,6 @@ import { ContainersDropdownActions } from './ContainersDropdownActions';
 import { containerDisplayState } from '@/utils/containerDisplayState';
 import { Can } from '@/components/permission/Can';
 import type { TranslationFunction } from '@workspace/typescript-interface/commun';
-import * as React from 'react';
 
 export function getColumnsDockerContainers(
     t: TranslationFunction,

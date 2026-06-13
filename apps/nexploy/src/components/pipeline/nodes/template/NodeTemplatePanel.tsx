@@ -2,15 +2,15 @@
 
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
-import { usePipelinePanelStore } from '@/stores/usePipelinePanelStore';
+import { usePipelinePanelStore } from '@/stores/pipeline/usePipelinePanelStore';
 import { PIPELINE_TEMPLATES, PipelineTemplate } from './pipelineTemplates';
 import { TemplateItem } from '@/components/pipeline/nodes/template/TemplateItem';
 import { useReactFlow } from '@xyflow/react';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { getConfigSchema } from '@/components/pipeline/nodeManifestRegistry';
 import { NodeId } from '@workspace/typescript-interface/pipeline/node';
-import { usePipelineContext } from '@/contexts/PipelineContext';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { usePipelineStore } from '@/stores/pipeline/usePipelineStore';
+import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 
 export function NodeTemplatePanel() {
@@ -19,7 +19,7 @@ export function NodeTemplatePanel() {
     const open = activePanel === 'template';
     const { screenToFlowPosition } = useReactFlow();
 
-    const { setNodes, setEdges, triggerAutoSave, isViewingBuild } = usePipelineContext();
+    const { setNodes, setEdges, triggerAutoSave, isViewingBuild } = usePipelineStore();
 
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 

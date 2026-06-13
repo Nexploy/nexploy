@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useReactFlow } from '@xyflow/react';
 import { useFormContext } from 'react-hook-form';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
 import { findClosestEnabledNodes } from '@/helpers/pipeline.helpers';
 import { cn } from '@workspace/ui/lib/utils';

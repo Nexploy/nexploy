@@ -20,6 +20,7 @@ import {
     SlidersHorizontal,
     Users,
     Warehouse,
+    Waypoints,
 } from 'lucide-react';
 import {
     SidebarGroup,
@@ -39,7 +40,10 @@ import {
 import Link from 'next/link';
 import { RefreshDocker } from '@/components/sidebar/RefreshDocker';
 import { NavPermission, usePermissions } from '@/contexts/PermissionContext';
-import type { SidebarItem, SidebarNavGroup } from '@workspace/typescript-interface/sidebar/sidebarNav';
+import type {
+    SidebarItem,
+    SidebarNavGroup,
+} from '@workspace/typescript-interface/sidebar/sidebarNav';
 import { useTranslations } from 'next-intl';
 
 interface PermissionedSidebarItem extends SidebarItem {
@@ -94,6 +98,12 @@ const groups: PermissionedSidebarNavGroup[] = [
                 href: '/admin/registry',
                 icon: Warehouse,
                 permission: { resource: 'registry', action: 'read' },
+            },
+            {
+                titleKey: 'traefik',
+                href: '/admin/traefik',
+                icon: Waypoints,
+                permission: { resource: 'user', action: 'ban' },
             },
         ],
     },

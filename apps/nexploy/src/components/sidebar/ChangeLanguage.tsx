@@ -1,7 +1,6 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { useTransition } from 'react';
 import type { AppLocale } from '@/i18n/routing';
 import { Check, Languages } from 'lucide-react';
 import { locales } from '@workspace/i18n';
@@ -20,18 +19,15 @@ export function ChangeLanguage() {
     const t = useTranslations('account.language');
     const router = useRouter();
     const pathname = usePathname();
-    const [isPending, startTransition] = useTransition();
 
     const handleLocaleChange = (nextLocale: AppLocale) => {
-        startTransition(() => {
-            router.replace(pathname, { locale: nextLocale });
-            router.refresh();
-        });
+        router.replace(pathname, { locale: nextLocale });
+        router.refresh();
     };
 
     return (
         <DropdownMenuSub>
-            <DropdownMenuSubTrigger disabled={isPending}>
+            <DropdownMenuSubTrigger>
                 <Languages className="size-4" />
                 {t('title')}
             </DropdownMenuSubTrigger>
@@ -40,7 +36,6 @@ export function ChangeLanguage() {
                     <DropdownMenuItem
                         key={localeCode}
                         onClick={() => handleLocaleChange(localeCode)}
-                        disabled={isPending}
                         className="flex items-center justify-between gap-2"
                     >
                         <span>{t(localeCode)}</span>

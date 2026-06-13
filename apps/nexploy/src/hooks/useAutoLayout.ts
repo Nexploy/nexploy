@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Position, useReactFlow } from '@xyflow/react';
-import { usePipelineActions } from '@/contexts/PipelineContext';
+import { usePipelineActions } from '@/stores/pipeline/usePipelineStore';
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 
 const H_GAP = 80;

@@ -60,7 +60,7 @@ export function RepositoryVersions({ repositoryId, versions }: RepositoryVersion
         return (
             <div
                 key={`${version.repositoryId}-${version.imageTag}`}
-                className="flex items-center justify-between gap-4 p-3"
+                className="bg-card flex items-center justify-between gap-4 p-3"
             >
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
@@ -135,12 +135,12 @@ export function RepositoryVersions({ repositoryId, versions }: RepositoryVersion
             ) : (
                 <div className="flex flex-col gap-4">
                     {Array.from(groups.entries()).map(([key, group]) => (
-                        <div key={key ?? 'none'} className="flex flex-col gap-1">
+                        <div key={key} className="flex flex-col gap-1">
                             <h3 className="text-muted-foreground px-1 text-sm font-medium">
                                 {group.name}
                             </h3>
-                            <div className="rounded-md border">
-                                <div className="divide-y">{group.versions.map(renderVersion)}</div>
+                            <div className="divide-y overflow-hidden rounded-md border">
+                                {group.versions.map(renderVersion)}
                             </div>
                         </div>
                     ))}

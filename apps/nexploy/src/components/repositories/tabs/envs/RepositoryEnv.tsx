@@ -166,84 +166,88 @@ export function RepositoryEnv({
             </CardHeader>
             <CardContent>
                 <Form {...form}>
-                    <form onSubmit={handleSubmitWithAction} className="space-y-2">
+                    <form onSubmit={handleSubmitWithAction}>
                         {envVariables.length === 0 ? (
                             <div className="text-muted-foreground py-8 text-center text-sm">
                                 {t('noVariables')}
                             </div>
                         ) : (
-                            envVariables.map((env, index) => (
-                                <div key={index} className="flex items-end gap-2">
-                                    <div className="flex-1">
-                                        <FormField
-                                            control={form.control}
-                                            name={`envVariables.${index}.key`}
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormControl>
-                                                        <Input
-                                                            {...field}
-                                                            autoComplete="off"
-                                                            placeholder={t('keyPlaceholder')}
-                                                            className="font-mono"
-                                                        />
-                                                    </FormControl>
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-                                    <div className="flex-1">
-                                        <FormField
-                                            control={form.control}
-                                            name={`envVariables.${index}.value`}
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormControl>
-                                                        <div className="relative">
+                            <div className={'flex flex-col gap-2'}>
+                                {envVariables.map((_, index) => (
+                                    <div key={index} className="flex items-end gap-2">
+                                        <div className="flex-1">
+                                            <FormField
+                                                control={form.control}
+                                                name={`envVariables.${index}.key`}
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormControl>
                                                             <Input
                                                                 {...field}
-                                                                type={
-                                                                    showValues[index]
-                                                                        ? 'text'
-                                                                        : 'password'
-                                                                }
                                                                 autoComplete="off"
-                                                                placeholder={t('valuePlaceholder')}
-                                                                className="pr-10 font-mono"
+                                                                placeholder={t('keyPlaceholder')}
+                                                                className="font-mono"
                                                             />
-                                                            <Button
-                                                                type="button"
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                className="absolute top-1/2 right-1 -translate-y-1/2"
-                                                                onClick={() =>
-                                                                    toggleShowValue(index)
-                                                                }
-                                                            >
-                                                                {showValues[index] ? (
-                                                                    <Eye />
-                                                                ) : (
-                                                                    <EyeOff />
-                                                                )}
-                                                            </Button>
-                                                        </div>
-                                                    </FormControl>
-                                                </FormItem>
-                                            )}
-                                        />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                        <div className="flex-1">
+                                            <FormField
+                                                control={form.control}
+                                                name={`envVariables.${index}.value`}
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormControl>
+                                                            <div className="relative">
+                                                                <Input
+                                                                    {...field}
+                                                                    type={
+                                                                        showValues[index]
+                                                                            ? 'text'
+                                                                            : 'password'
+                                                                    }
+                                                                    autoComplete="off"
+                                                                    placeholder={t(
+                                                                        'valuePlaceholder',
+                                                                    )}
+                                                                    className="pr-10 font-mono"
+                                                                />
+                                                                <Button
+                                                                    type="button"
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    className="absolute top-1/2 right-1 -translate-y-1/2"
+                                                                    onClick={() =>
+                                                                        toggleShowValue(index)
+                                                                    }
+                                                                >
+                                                                    {showValues[index] ? (
+                                                                        <Eye />
+                                                                    ) : (
+                                                                        <EyeOff />
+                                                                    )}
+                                                                </Button>
+                                                            </div>
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                        {canEdit && (
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                type="button"
+                                                onClick={() => handleRemove(index)}
+                                            >
+                                                <Trash2 className="text-destructive size-4" />
+                                            </Button>
+                                        )}
                                     </div>
-                                    {canEdit && (
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            type="button"
-                                            onClick={() => handleRemove(index)}
-                                        >
-                                            <Trash2 className="text-destructive size-4" />
-                                        </Button>
-                                    )}
-                                </div>
-                            ))
+                                ))}
+                            </div>
                         )}
 
                         {deletedEnvs.length > 0 && (

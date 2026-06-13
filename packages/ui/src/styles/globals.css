@@ -308,18 +308,34 @@
     }
 
     @keyframes node-draw-path {
-        from { stroke-dashoffset: var(--path-length, 50); }
-        to { stroke-dashoffset: 0; }
+        from {
+            stroke-dashoffset: var(--path-length, 50);
+        }
+        to {
+            stroke-dashoffset: 0;
+        }
     }
 
     @keyframes node-pop-in {
-        from { opacity: 0; transform: scale(0); }
-        to { opacity: 1; transform: scale(1); }
+        from {
+            opacity: 0;
+            transform: scale(0);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
     }
 
     @keyframes node-fade-in {
-        from { opacity: 0; transform: scale(0.5); }
-        to { opacity: 1; transform: scale(1); }
+        from {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
     }
 }
 
@@ -355,6 +371,10 @@
 
 [data-viewing='true'] .react-flow__edge path {
     cursor: default !important;
+}
+
+.monaco-editor {
+    position: absolute !important;
 }
 
 @layer base {

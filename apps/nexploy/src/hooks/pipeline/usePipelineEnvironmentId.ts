@@ -1,12 +1,12 @@
 'use client';
 
 import { useMemo } from 'react';
-import { usePipelineContext } from '@/contexts/PipelineContext';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { usePipelineStore } from '@/stores/pipeline/usePipelineStore';
+import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { findAncestor } from '@/inngest/pipeline/utils/graphQueries';
 
 export function usePipelineEnvironmentId() {
-    const { nodes, edges } = usePipelineContext();
+    const { nodes, edges } = usePipelineStore();
     const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
 
     return useMemo(() => {

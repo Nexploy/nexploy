@@ -2,13 +2,18 @@
 
 import { type AwsAccountInfo } from '@/services/aws.service';
 import { useTranslations } from 'next-intl';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from '@workspace/ui/components/accordion';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@workspace/ui/components/accordion';
 import { AwsAddButton } from '@/components/admin/integrations/AwsAddButton';
 import { AwsInstanceCard } from '@/components/admin/integrations/AwsInstanceCard';
 import { cn } from '@workspace/ui/lib/utils';
 import { Aws } from '@thesvg/react';
 import { Info } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 interface AwsAccordionSectionProps {
     awsAccounts: AwsAccountInfo[];
@@ -39,16 +44,14 @@ export function AwsAccordionSection({ awsAccounts }: AwsAccordionSectionProps) {
                         <div className="flex min-w-0 flex-col text-left">
                             <div className="flex items-center gap-1.5">
                                 <span>{t('aws.title')}</span>
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <Info className="text-muted-foreground hover:text-foreground size-3.5 cursor-help transition-colors" />
-                                        </TooltipTrigger>
-                                        <TooltipContent className="max-w-64 text-center text-xs">
-                                            {t('aws.tooltip')}
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Info className="text-muted-foreground hover:text-foreground size-3.5 cursor-help transition-colors" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-64 text-center text-xs">
+                                        {t('aws.tooltip')}
+                                    </TooltipContent>
+                                </Tooltip>
                             </div>
                             <span className="text-muted-foreground text-xs font-normal">
                                 ({t('aws.instanceCount', { count: awsAccounts.length })})

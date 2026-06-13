@@ -44,5 +44,6 @@
     "setAsDefaultConfirm": "Set {name} as the default environment? All new builds and deployments will automatically use this environment.",
     "updateAvailable": "Update available",
     "updateDescription": "Version {version} is available.",
-    "update": "Update"
+    "update": "Update",
+    "traefik": "Traefik"
 }

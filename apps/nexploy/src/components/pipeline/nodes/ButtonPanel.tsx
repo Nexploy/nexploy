@@ -1,7 +1,7 @@
 import { Panel } from '@xyflow/react';
 import { Plus, Workflow } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
-import { usePipelinePanelStore } from '@/stores/usePipelinePanelStore';
+import { usePipelinePanelStore } from '@/stores/pipeline/usePipelinePanelStore';
 import { useTranslations } from 'next-intl';
 import { usePermissions } from '@/contexts/PermissionContext';
 

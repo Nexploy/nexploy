@@ -5,11 +5,7 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
 import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from '@workspace/ui/components/collapsible';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger, } from '@workspace/ui/components/collapsible';
 import { Form } from '@workspace/ui/components/form';
 import { ChevronDown, Cloud, Globe, Lock, Plus, Trash2 } from 'lucide-react';
 import { manageDomains } from '@/actions/repository/manageDomains.action';
@@ -202,13 +198,13 @@ export function RepositoryDomains({
             <CardContent>
                 <Form {...form}>
                     <form onSubmit={handleSubmitWithAction}>
-                        <div className="space-y-3">
-                            {domains.length === 0 ? (
-                                <div className="text-muted-foreground py-8 text-center text-sm">
-                                    {t('noDomains')}
-                                </div>
-                            ) : (
-                                domains.map((domain, index) => {
+                        {domains.length === 0 ? (
+                            <div className="text-muted-foreground py-8 text-center text-sm">
+                                {t('noDomains')}
+                            </div>
+                        ) : (
+                            <div className={'flex flex-col gap-4'}>
+                                {domains.map((domain, index) => {
                                     const isNew = !domain.id;
                                     const isExpanded = expandedIds.has(`domain-${index}`);
 
@@ -311,9 +307,9 @@ export function RepositoryDomains({
                                             </div>
                                         </Collapsible>
                                     );
-                                })
-                            )}
-                        </div>
+                                })}
+                            </div>
+                        )}
                     </form>
                 </Form>
             </CardContent>

@@ -1,12 +1,12 @@
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { PipelineEditor } from '@/components/pipeline/PipelineEditor';
-import { PipelineProvider } from '@/contexts/PipelineContext';
+import { PipelineProvider } from '@/providers/PipelineProvider';
 import { ReactFlowProvider } from '@xyflow/react';
-import { Build } from 'generated/client';
+import { PipelineBuild } from '@workspace/typescript-interface/stores/pipelineStore.ts';
 
 interface PipelineEditorPageProps {
     initialGraph: PipelineGraph;
-    initialBuilds: Build[];
+    initialBuilds: PipelineBuild[];
     initialHasMore: boolean;
 }
 

@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import { useTranslations } from 'next-intl';
 import { Power, Trash2 } from 'lucide-react';
-import { usePipelineActions } from '@/contexts/PipelineContext';
+import { usePipelineActions } from '@/stores/pipeline/usePipelineStore';
 import {
     ContextMenu,
     ContextMenuContent,

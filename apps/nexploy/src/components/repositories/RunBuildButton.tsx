@@ -7,7 +7,7 @@ import { ComponentProps, MouseEvent } from 'react';
 import { toast } from 'sonner';
 import { onStartBuild } from '@/actions/repository/builds/startBuild.action';
 import { useTranslations } from 'next-intl';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { usePermissions } from '@/contexts/PermissionContext';
 
 interface DeployButtonProps extends ComponentProps<typeof Button> {

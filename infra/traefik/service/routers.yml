@@ -1,10 +1,9 @@
 http:
   routers:
-
     http-catchall:
       entryPoints:
         - web
-      rule: "HostRegexp(`{host:.+}`)"
+      rule: HostRegexp(`{host:.+}`)
       middlewares:
         - redirect-to-https
       service: noop@internal

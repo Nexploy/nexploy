@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import useSWRInfinite from 'swr/infinite';
-import { Build } from 'generated/client';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { BUILDS_PAGE_SIZE } from '@/lib/constants';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
+import { PipelineBuild } from '@workspace/typescript-interface/stores/pipelineStore';
 
-type BuildsPage = { builds: Build[]; nextCursor: string | null };
+type BuildsPage = { builds: PipelineBuild[]; nextCursor: string | null };
 
 export function useBuildsInfinite(
     repositoryId: string,
-    initialBuilds: Build[],
+    initialBuilds: PipelineBuild[],
     initialHasMore: boolean,
 ) {
     const fallbackData = useMemo<BuildsPage[]>(

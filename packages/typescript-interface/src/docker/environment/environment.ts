@@ -10,3 +10,13 @@ export interface EnvironmentConfig {
     tlsCa?: string;
     isDefault?: boolean;
 }
+
+export interface Environment extends EnvironmentConfig {
+    isActive: boolean;
+    description?: string | null;
+    lastHealthCheck?: Date | null;
+    healthStatus?: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+    userId?: string | null;
+}

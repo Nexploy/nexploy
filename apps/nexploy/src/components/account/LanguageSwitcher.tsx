@@ -11,24 +11,20 @@ import {
 } from '@workspace/ui/components/select';
 import { locales } from '@workspace/i18n';
 import type { AppLocale } from '@/i18n/routing';
-import { useTransition } from 'react';
 
 export function LanguageSwitcher() {
     const locale = useLocale() as AppLocale;
     const router = useRouter();
     const pathname = usePathname();
-    const [isPending, startTransition] = useTransition();
     const t = useTranslations('account.language');
 
     const handleLanguageChange = (newLocale: AppLocale) => {
-        startTransition(() => {
-            router.replace(pathname, { locale: newLocale });
-            router.refresh();
-        });
+        router.replace(pathname, { locale: newLocale });
+        router.refresh();
     };
 
     return (
-        <Select value={locale} onValueChange={handleLanguageChange} disabled={isPending}>
+        <Select value={locale} onValueChange={handleLanguageChange}>
             <SelectTrigger className="w-full">
                 <SelectValue placeholder={t('selectLanguage')} />
             </SelectTrigger>

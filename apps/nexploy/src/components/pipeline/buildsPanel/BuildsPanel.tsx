@@ -6,9 +6,9 @@ import { useEffect, useRef } from 'react';
 import { useLocale } from 'next-intl';
 import { Panel } from '@xyflow/react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
-import { usePipelineContext } from '@/contexts/PipelineContext';
+import { usePipelineStore } from '@/stores/pipeline/usePipelineStore';
 import { BuildsPanelItem } from '@/components/pipeline/buildsPanel/BuildsPanelItem';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { Loader2 } from 'lucide-react';
 
 dayjs.extend(relativeTime);
@@ -16,7 +16,7 @@ dayjs.extend(relativeTime);
 export function BuildsPanel() {
     const locale = useLocale();
 
-    const { builds, hasMoreBuilds, isLoadingMoreBuilds, loadMoreBuilds } = usePipelineContext();
+    const { builds, hasMoreBuilds, isLoadingMoreBuilds, loadMoreBuilds } = usePipelineStore();
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
     const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
     const scrollViewportRef = useRef<HTMLDivElement>(null);

@@ -1,8 +1,18 @@
 'use client';
 
-import { Check, Copy, Loader2, Power, Redo2, Settings, SquareDashed, Trash2, Undo2, } from 'lucide-react';
+import {
+    Check,
+    Copy,
+    Loader2,
+    Power,
+    Redo2,
+    Settings,
+    SquareDashed,
+    Trash2,
+    Undo2,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { usePipelineContext } from '@/contexts/PipelineContext';
+import { usePipelineStore } from '@/stores/pipeline/usePipelineStore';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
@@ -11,7 +21,7 @@ import { useStore } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
 import { StatusLive } from '@/components/shared/StatusLive';
 import { StopBuildToolbar } from '@/components/pipeline/StopBuildToolbar.tsx';
-import { usePipelineEditorStore } from '@/stores/usePipelineEditorStore';
+import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { mod } from '@/components/pipeline/utils/modKey';
 import { usePermissions } from '@/contexts/PermissionContext';
 
@@ -35,7 +45,7 @@ export function PipelineToolbar() {
         triggerAutoSave,
         activeBuild,
         isViewingBuild,
-    } = usePipelineContext();
+    } = usePipelineStore();
 
     const addSelectedNodes = useStore((s) => s.addSelectedNodes);
     const { can } = usePermissions();
