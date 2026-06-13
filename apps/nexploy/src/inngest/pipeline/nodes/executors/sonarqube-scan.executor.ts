@@ -32,6 +32,9 @@ export class SonarqubeScanExecutor implements INodeExecutor {
             sources,
             exclusions,
             qualityGate,
+            enforceMinScore,
+            scoreMetric,
+            minScore,
             timeoutSeconds,
             serverUrl,
             organization,
@@ -57,6 +60,9 @@ export class SonarqubeScanExecutor implements INodeExecutor {
             sources,
             exclusions,
             qualityGate,
+            enforceMinScore,
+            scoreMetric,
+            minScore,
             timeoutSeconds,
             logger,
             abortSignal,
@@ -86,6 +92,9 @@ export class SonarqubeScanExecutor implements INodeExecutor {
         sources: string;
         exclusions: string | undefined;
         qualityGate: boolean;
+        enforceMinScore: boolean;
+        scoreMetric: string;
+        minScore: number;
         timeoutSeconds: number;
         serverUrl: string;
         organization: string | undefined;
@@ -101,6 +110,9 @@ export class SonarqubeScanExecutor implements INodeExecutor {
             sources,
             exclusions,
             qualityGate,
+            enforceMinScore,
+            scoreMetric,
+            minScore,
             timeoutSeconds,
             serverUrl,
             organization,
@@ -159,7 +171,25 @@ export class SonarqubeScanExecutor implements INodeExecutor {
             await logger.info(nodeId, 'Quality gate passed');
         }
 
-        return { output: { qualityGatePassed, projectKey } };
+        const scoreResult = enforceMinScore
+            ? await this.enforceMinScore(
+                  serverUrl,
+                  projectKey,
+                  token,
+                  scoreMetric,
+                  minScore,
+                  logger,
+                  nodeId,
+              )
+            : undefined;
+
+        return {
+            output: {
+                qualityGatePassed,
+                projectKey,
+                ...(scoreResult ? { score: scoreResult.value, scoreMetric } : {}),
+            },
+        };
     }
 
     private async runLocal(opts: {
@@ -171,6 +201,9 @@ export class SonarqubeScanExecutor implements INodeExecutor {
         sources: string;
         exclusions: string | undefined;
         qualityGate: boolean;
+        enforceMinScore: boolean;
+        scoreMetric: string;
+        minScore: number;
         timeoutSeconds: number;
         sonarqubeVersion: string;
         sonarqubePort: number;
@@ -186,6 +219,9 @@ export class SonarqubeScanExecutor implements INodeExecutor {
             sources,
             exclusions,
             qualityGate,
+            enforceMinScore,
+            scoreMetric,
+            minScore,
             timeoutSeconds,
             sonarqubeVersion,
             sonarqubePort,
@@ -333,7 +369,25 @@ export class SonarqubeScanExecutor implements INodeExecutor {
             await logger.info(nodeId, 'Quality gate passed');
         }
 
-        return { output: { qualityGatePassed, projectKey } };
+        const scoreResult = enforceMinScore
+            ? await this.enforceMinScore(
+                  localServerUrl,
+                  projectKey,
+                  scanToken,
+                  scoreMetric,
+                  minScore,
+                  logger,
+                  nodeId,
+              )
+            : undefined;
+
+        return {
+            output: {
+                qualityGatePassed,
+                projectKey,
+                ...(scoreResult ? { score: scoreResult.value, scoreMetric } : {}),
+            },
+        };
     }
 
     private async generateLocalToken(serverUrl: string): Promise<string> {
@@ -407,6 +461,56 @@ export class SonarqubeScanExecutor implements INodeExecutor {
             );
             return true;
         }
+    }
+
+    private async enforceMinScore(
+        serverUrl: string,
+        projectKey: string,
+        token: string,
+        metric: string,
+        minScore: number,
+        logger: NodeExecutionContext<Config>['logger'],
+        nodeId: string,
+    ): Promise<{ value: number }> {
+        await logger.info(nodeId, `Checking minimum score (${metric} >= ${minScore})...`);
+
+        await new Promise((r) => setTimeout(r, 5000));
+
+        const auth = Buffer.from(`${token}:`).toString('base64');
+        const url = `${serverUrl}/api/measures/component?component=${encodeURIComponent(projectKey)}&metricKeys=${encodeURIComponent(metric)}`;
+
+        const res = await fetch(url, {
+            headers: { Authorization: `Basic ${auth}` },
+            signal: AbortSignal.timeout(15000),
+        });
+        if (!res.ok) {
+            throw new Error(`Could not fetch ${metric} from SonarQube (HTTP ${res.status})`);
+        }
+
+        const data = (await res.json()) as {
+            component?: { measures?: { metric: string; value?: string }[] };
+        };
+        const measure = data.component?.measures?.find((m) => m.metric === metric);
+        const rawValue = measure?.value;
+
+        if (rawValue === undefined) {
+            throw new Error(
+                `Metric "${metric}" is not available for project ${projectKey}. ` +
+                    `Make sure the analysis produces this measure (e.g. coverage requires a coverage report).`,
+            );
+        }
+
+        const value = Number(rawValue);
+        await logger.info(nodeId, `${metric} = ${value} (required >= ${minScore})`);
+
+        if (Number.isNaN(value) || value < minScore) {
+            throw new Error(
+                `Score check failed: ${metric} = ${rawValue} is below the required minimum of ${minScore}`,
+            );
+        }
+
+        await logger.info(nodeId, 'Minimum score requirement met');
+        return { value };
     }
 }
 

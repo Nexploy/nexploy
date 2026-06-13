@@ -38,5 +38,11 @@ export const sonarqubeScanManifest: NodeManifest = {
             descriptionKey: 'pipeline.inputs.desc_projectKey',
             type: 'input',
         },
+        {
+            key: 'score',
+            labelKey: 'pipeline.inputs.score',
+            descriptionKey: 'pipeline.inputs.desc_score',
+            type: 'input',
+        },
     ],
 };

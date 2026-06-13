@@ -21,11 +21,25 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Switch } from '@workspace/ui/components/switch';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import { Info } from 'lucide-react';
+
+function InfoTooltip({ children }: { children: React.ReactNode }) {
+    return (
+        <Tooltip>
+            <TooltipTrigger asChild>
+                <Info className="text-muted-foreground hover:text-foreground h-3.5 w-3.5 cursor-help transition-colors" />
+            </TooltipTrigger>
+            <TooltipContent className="max-w-xs text-xs">{children}</TooltipContent>
+        </Tooltip>
+    );
+}
 
 export function SonarqubeScanConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
     const mode = form.watch('mode');
+    const enforceMinScore = form.watch('enforceMinScore');
 
     return (
         <div className="space-y-4">
@@ -126,7 +140,10 @@ export function SonarqubeScanConfig() {
                 name="projectKey"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('sonarqubeProjectKey')}</FormLabel>
+                        <div className="flex items-center gap-1.5">
+                            <FormLabel>{t('sonarqubeProjectKey')}</FormLabel>
+                            <InfoTooltip>{t('sonarqubeProjectKeyTooltip')}</InfoTooltip>
+                        </div>
                         <FormControl>
                             <Input {...field} placeholder={t('sonarqubeProjectKeyPlaceholder')} />
                         </FormControl>
@@ -214,6 +231,74 @@ export function SonarqubeScanConfig() {
                     </FormItem>
                 )}
             />
+            <FormField
+                control={form.control}
+                name="enforceMinScore"
+                render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between gap-2">
+                        <div>
+                            <FormLabel>{t('sonarqubeEnforceMinScore')}</FormLabel>
+                            <FormDescription className="text-xs">
+                                {t('sonarqubeEnforceMinScoreDescription')}
+                            </FormDescription>
+                        </div>
+                        <FormControl>
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                    </FormItem>
+                )}
+            />
+            {enforceMinScore && (
+                <FormField
+                    control={form.control}
+                    name="scoreMetric"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('sonarqubeScoreMetric')}</FormLabel>
+                            <Select value={field.value} onValueChange={field.onChange}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>{t('sonarqubeScoreMetric')}</SelectLabel>
+                                        <SelectItem value="coverage">
+                                            {t('sonarqubeScoreMetricCoverage')}
+                                        </SelectItem>
+                                        <SelectItem value="line_coverage">
+                                            {t('sonarqubeScoreMetricLineCoverage')}
+                                        </SelectItem>
+                                        <SelectItem value="branch_coverage">
+                                            {t('sonarqubeScoreMetricBranchCoverage')}
+                                        </SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            <FormMessage className="text-xs" />
+                        </FormItem>
+                    )}
+                />
+            )}
+            {enforceMinScore && (
+                <FormField
+                    control={form.control}
+                    name="minScore"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('sonarqubeMinScore')}</FormLabel>
+                            <FormControl>
+                                <Input {...field} type="number" min={0} max={100} />
+                            </FormControl>
+                            <FormDescription className="text-xs">
+                                {t('sonarqubeMinScoreDescription')}
+                            </FormDescription>
+                            <FormMessage className="text-xs" />
+                        </FormItem>
+                    )}
+                />
+            )}
         </div>
     );
 }

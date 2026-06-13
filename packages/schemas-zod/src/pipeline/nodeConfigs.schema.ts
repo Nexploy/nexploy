@@ -389,6 +389,15 @@ export const sonarqubeScanConfigSchema = z.object({
     sources: z.string().default('.'),
     exclusions: z.string().optional(),
     qualityGate: z.boolean().default(true),
+    enforceMinScore: z.boolean().default(false),
+    scoreMetric: z
+        .enum(['coverage', 'line_coverage', 'branch_coverage'])
+        .default('coverage'),
+    minScore: z.coerce
+        .number()
+        .min(0, 'Minimum score must be between 0 and 100')
+        .max(100, 'Minimum score must be between 0 and 100')
+        .default(80),
     timeoutSeconds: z.coerce.number().default(300),
     serverUrl: z.string().default('https://sonarcloud.io'),
     organization: z.string().optional(),

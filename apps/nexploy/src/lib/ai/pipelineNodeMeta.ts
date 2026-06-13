@@ -134,9 +134,10 @@ export const NODE_META_MAP: Record<string, NodeMeta> = {
     'sonarqube-scan': {
         schema: sonarqubeScanConfigSchema,
         category: 'build',
-        description: 'Runs a SonarQube code quality analysis.',
+        description:
+            'Runs a SonarQube code quality analysis. Can fail the pipeline on the quality gate and/or when a metric (e.g. coverage) is below a required minimum score.',
         consumesFromUpstream: ['workDir'],
-        outputs: [],
+        outputs: ['qualityGatePassed', 'projectKey', 'score'],
     },
     'deploy-compose': {
         schema: composeFileConfigSchema,
