@@ -9,7 +9,7 @@ import { useReactFlow } from '@xyflow/react';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { getConfigSchema } from '@/components/pipeline/nodeManifestRegistry';
 import { NodeId } from '@workspace/typescript-interface/pipeline/node';
-import { usePipelineStore } from '@/stores/pipeline/usePipelineStore';
+import { usePipelineActions, useIsViewingBuild } from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 
@@ -19,7 +19,8 @@ export function NodeTemplatePanel() {
     const open = activePanel === 'template';
     const { screenToFlowPosition } = useReactFlow();
 
-    const { setNodes, setEdges, triggerAutoSave, isViewingBuild } = usePipelineStore();
+    const { setNodes, setEdges, triggerAutoSave } = usePipelineActions();
+    const isViewingBuild = useIsViewingBuild();
 
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 

@@ -4,8 +4,6 @@ import { CheckCircle2, CircleDashed, Loader2, XCircle } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import type { ContainerState } from '@workspace/typescript-interface/docker/docker.container';
 
-// ── Shared types ──────────────────────────────────────────────────────────────
-
 export type BuildStatus =
     | 'QUEUED'
     | 'BUILDING'
@@ -49,8 +47,6 @@ export function StateDot({ state }: { state: ContainerState }) {
         />
     );
 }
-
-// ── BuildStatusIcon ───────────────────────────────────────────────────────────
 
 export function BuildStatusIcon({ status }: { status: BuildStatus }) {
     if (status === 'COMPLETED')

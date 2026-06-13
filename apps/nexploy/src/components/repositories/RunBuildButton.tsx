@@ -17,7 +17,7 @@ interface DeployButtonProps extends ComponentProps<typeof Button> {
 
 export function RunBuildButton({ repositoryId, showText = true, ...props }: DeployButtonProps) {
     const { can } = usePermissions();
-    if (!can('repository', 'deploy')) return null;
+
     const t = useTranslations('repository.builds');
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
     const triggerBuildRefresh = usePipelineEditorStore((s) => s.triggerBuildRefresh);
@@ -34,6 +34,8 @@ export function RunBuildButton({ repositoryId, showText = true, ...props }: Depl
         e.preventDefault();
         execute({ repositoryId });
     };
+
+    if (!can('repository', 'deploy')) return null;
 
     return (
         <Button {...props} onClick={(e) => handleDeploy(e)} disabled={isPending}>

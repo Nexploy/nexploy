@@ -15,12 +15,14 @@ import {
     type PipelineResult,
     type PipelineStatus,
 } from '@/types/pipeline.type';
-import { formatErrorDetails, getParentNodeIds, resolveNodeConfig } from './utils';
+import { formatErrorDetails, resolveNodeConfig } from './utils';
 import { analyzeGraph } from '@/inngest/pipeline/utils/graphQueries';
 import { getNodeExecutor } from '@/inngest/pipeline/nodes/registry';
 import { getBuildStatus } from '@/services/repository/build.service';
 
 export { createPipelineLogger } from './utils';
+
+const CANCELLATION_POLL_INTERVAL_MS = 5000;
 
 export class PipelineOrchestrator {
     private async runSkippedNode(
@@ -35,6 +37,7 @@ export class PipelineOrchestrator {
         await inngestStep.run(`node-${node.id}`, async () => {
             await reporter.markSkipped(node.id);
             await logger.info(node.id, `${node.data.type} : Node skipped (${reason})`);
+            await logger.flush();
         });
         allOutputs.set(node.id, output);
     }
@@ -54,11 +57,17 @@ export class PipelineOrchestrator {
 
         let sorted: PipelineNode[];
         let reachableNodeIds: Set<string>;
+        let parentsMap: Map<string, string[]>;
+        let nodeMap: Map<string, PipelineNode>;
         try {
-            ({ sorted, reachableNodeIds } = analyzeGraph(graph, config.triggerSource));
+            ({ sorted, reachableNodeIds, parentsMap, nodeMap } = analyzeGraph(
+                graph,
+                config.triggerSource,
+            ));
         } catch (err) {
             throw new Error(`Invalid pipeline graph: ${err instanceof Error ? err.message : err}`);
         }
+        const parentsOf = (id: string): string[] => parentsMap.get(id) ?? [];
 
         const endNodes = sorted.filter((n) => n.data.isEndNode === true);
         const regularNodes = sorted.filter((n) => n.data.isEndNode !== true);
@@ -82,7 +91,7 @@ export class PipelineOrchestrator {
                 }
 
                 if (pipelineHasFailed && !executor.runsOnPipelineFailure) {
-                    const parentIds = getParentNodeIds(node.id, graph.edges);
+                    const parentIds = parentsOf(node.id);
                     const parentExecuted =
                         executor.isAttachNode && parentIds.some((id) => executedNodeIds.has(id));
                     if (!parentExecuted) {
@@ -98,13 +107,13 @@ export class PipelineOrchestrator {
                     }
                 }
 
-                const inputNodeIds = getParentNodeIds(node.id, graph.edges);
+                const inputNodeIds = parentsOf(node.id);
                 const inputOutputs: NodeOutputData[] = inputNodeIds
                     .map((id) => allOutputs.get(id))
                     .filter((o): o is NodeOutputData => o !== undefined);
                 const inputNodes: InputNodeInfo[] = inputNodeIds
                     .map((id) => {
-                        const inputNode = graph.nodes.find((n) => n.id === id);
+                        const inputNode = nodeMap.get(id);
                         if (!inputNode?.data.type) return null;
                         return { id, type: inputNode.data.type as string };
                     })
@@ -145,7 +154,7 @@ export class PipelineOrchestrator {
                 }
 
                 if (executor.isAttachNode) {
-                    const parentIds = getParentNodeIds(node.id, graph.edges);
+                    const parentIds = parentsOf(node.id);
                     const parentWasExecuted = parentIds.some((id) => executedNodeIds.has(id));
                     if (!parentWasExecuted) {
                         await this.runSkippedNode(
@@ -186,6 +195,7 @@ export class PipelineOrchestrator {
                         for (const msg of refWarnings) {
                             await logger.error(node.id, msg);
                         }
+                        await logger.flush();
                     });
                     pipelineHasFailed = true;
                     pipelineFailureError = new Error(refWarnings.join('\n'));
@@ -201,6 +211,7 @@ export class PipelineOrchestrator {
                                 node.id,
                                 `${node.data.type}: Node is not configured — ${validation.error.issues.map((i) => i.message).join(', ')}`,
                             );
+                            await logger.flush();
                         });
                         pipelineHasFailed = true;
                         pipelineFailureError = new Error(
@@ -218,12 +229,9 @@ export class PipelineOrchestrator {
                             if (status === 'CANCELLED') {
                                 abortController.abort();
                             }
-                        }, 2000);
+                        }, CANCELLATION_POLL_INTERVAL_MS);
 
                         try {
-                            if (!pipelineHasFailed) {
-                                await setStatusBuild('BUILDING');
-                            }
                             await reporter.markRunning(node.id);
 
                             if (abortController.signal.aborted) {
@@ -278,6 +286,7 @@ export class PipelineOrchestrator {
                             }
                         } finally {
                             clearInterval(cancellationWatcher);
+                            await logger.flush();
                         }
                     });
 
@@ -341,6 +350,7 @@ export class PipelineOrchestrator {
                 const errorDetails = formatErrorDetails(error);
                 await logger.error('error-details', errorDetails);
             }
+            await logger.flush();
             try {
                 await setStatusBuild('FAILED');
             } catch {

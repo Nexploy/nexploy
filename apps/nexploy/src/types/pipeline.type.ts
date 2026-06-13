@@ -41,7 +41,6 @@ export interface INodeExecutor<TConfig = Record<string, unknown>> {
     readonly type: string;
     readonly configSchema?: z.ZodType<TConfig>;
     readonly runsOnPipelineFailure?: boolean;
-    /** When true, the node always runs after its direct parent, even if the pipeline has failed. */
     readonly isAttachNode?: boolean;
     execute(ctx: NodeExecutionContext<TConfig>): Promise<NodeExecutionResult>;
 }
@@ -52,6 +51,7 @@ export interface PipelineLogger {
     info(step: string, message: string): Promise<void>;
     warn(step: string, message: string): Promise<void>;
     error(step: string, message: string): Promise<void>;
+    flush(): Promise<void>;
 }
 
 export type { NodeRunStatus } from '@workspace/typescript-interface/pipeline/node';

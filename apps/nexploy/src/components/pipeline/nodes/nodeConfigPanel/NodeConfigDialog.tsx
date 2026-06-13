@@ -11,7 +11,7 @@ import {
 } from '@workspace/ui/components/dialog';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
-import { usePipelineStore } from '@/stores/pipeline/usePipelineStore';
+import { usePipelineActions, usePipelineDisplay } from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { useTranslations } from 'next-intl';
 import { type NodeData, type NodeId } from '@workspace/typescript-interface/pipeline/node';
@@ -27,8 +27,8 @@ export function NodeConfigDialog() {
     const tConfig = useTranslations('repository.pipeline.config');
     const tCommon = useTranslations('common');
 
-    const { nodes, displayNodes, handleResetPanelNode, isViewingBuild, nodeStatuses } =
-        usePipelineStore();
+    const { nodes, displayNodes, isViewingBuild, nodeStatuses } = usePipelineDisplay();
+    const { handleResetPanelNode } = usePipelineActions();
     const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
     const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
 

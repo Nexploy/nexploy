@@ -39,6 +39,8 @@ export function createPipelineStore({
         canUndo: false,
         canRedo: false,
         repositoryId,
+        buildOverlays: {},
+        buildNodeStatuses: {},
 
         setNodes: (updater) =>
             set((s) => ({ nodes: typeof updater === 'function' ? updater(s.nodes) : updater })),
@@ -165,6 +167,21 @@ export function createPipelineStore({
             editor.setPanelNodeId(null);
             get().triggerAutoSave();
         },
+
+        patchBuildOverlay: (buildId, partial) =>
+            set((s) => ({
+                buildOverlays: {
+                    ...s.buildOverlays,
+                    [buildId]: { ...s.buildOverlays[buildId], ...partial },
+                },
+            })),
+
+        setBuildNodeStatuses: (buildId, updater) =>
+            set((s) => {
+                const prev = s.buildNodeStatuses[buildId] ?? {};
+                const next = typeof updater === 'function' ? updater(prev) : { ...prev, ...updater };
+                return { buildNodeStatuses: { ...s.buildNodeStatuses, [buildId]: next } };
+            }),
 
         _commit: (snapshot) => {
             historyStack = historyStack.slice(0, historyPointer + 1);

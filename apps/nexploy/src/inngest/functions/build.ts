@@ -3,11 +3,12 @@ import type { Realtime } from 'inngest';
 import { BuildConfig, BuildLogEntry } from '@workspace/typescript-interface/repository/build';
 import { inngest } from '@/inngest/client';
 import { updateNodeStatus, updateStatusBuild } from '@/services/repository/build.service';
-import { createLog } from '@/services/repository/log.service';
+import { createLogsBatch } from '@/services/repository/log.service';
 import { LogLevel, PipelineReporter, PipelineStatus } from '@/types/pipeline.type';
 import { createPipelineLogger, pipelineOrchestrator } from '@/inngest/pipeline/orchestrator';
 import { getPipelineConfig } from '@/services/pipeline.service';
 import { createBuildChannel } from '@/inngest/channels/build.channel';
+import { BuildStatus } from 'generated/client';
 
 export const buildFunction = inngest.createFunction(
     {
@@ -22,6 +23,20 @@ export const buildFunction = inngest.createFunction(
         {
             const buildChannel = createBuildChannel(buildId);
 
+            const LOG_FLUSH_THRESHOLD = 25;
+            let logBuffer: BuildLogEntry[] = [];
+
+            const flushLogs = async () => {
+                if (logBuffer.length === 0) return;
+                const batch = logBuffer;
+                logBuffer = [];
+                try {
+                    await createLogsBatch(batch);
+                } catch {
+                    /* ignore */
+                }
+            };
+
             const publishLog = async (stepName: string, message: string, level: LogLevel) => {
                 const log: BuildLogEntry = {
                     level,
@@ -30,12 +45,13 @@ export const buildFunction = inngest.createFunction(
                     step: stepName,
                     message,
                 };
-                await createLog(log);
+                logBuffer.push(log);
                 try {
                     await inngest.realtime.publish(buildChannel.log, { log });
                 } catch {
                     /* ignore */
                 }
+                if (logBuffer.length >= LOG_FLUSH_THRESHOLD) await flushLogs();
             };
 
             const publishSafe = async <T>(ref: Realtime.TopicRef<T>, data: T): Promise<void> => {
@@ -51,55 +67,25 @@ export const buildFunction = inngest.createFunction(
                 await publishSafe(buildChannel['build-status'], { buildStatus: status });
             };
 
+            const mark = async (nodeId: string, nodeStatus: string, buildStatus?: BuildStatus) =>
+                Promise.all([
+                    updateNodeStatus(buildId, nodeId, nodeStatus, buildStatus),
+                    publishSafe(buildChannel['node-status'], { nodeId, nodeStatus }),
+                ]).then(() => undefined);
+
             const reporter: PipelineReporter = {
-                async markRunning(nodeId) {
-                    await updateNodeStatus(buildId, nodeId, 'running');
-                    await publishSafe(buildChannel['node-status'], {
-                        nodeId,
-                        nodeStatus: 'running',
-                    });
-                },
-                async markCompleted(nodeId) {
-                    await updateNodeStatus(buildId, nodeId, 'completed');
-                    await publishSafe(buildChannel['node-status'], {
-                        nodeId,
-                        nodeStatus: 'completed',
-                    });
-                },
-                async markSkipped(nodeId) {
-                    await updateNodeStatus(buildId, nodeId, 'skipped');
-                    await publishSafe(buildChannel['node-status'], {
-                        nodeId,
-                        nodeStatus: 'skipped',
-                    });
-                },
-                async markFailed(nodeId) {
-                    await updateNodeStatus(buildId, nodeId, 'failed', 'FAILED');
-                    await publishSafe(buildChannel['node-status'], {
-                        nodeId,
-                        nodeStatus: 'failed',
-                    });
-                },
-                async markCancelled(nodeId) {
-                    await updateNodeStatus(buildId, nodeId, 'cancelled');
-                    await publishSafe(buildChannel['node-status'], {
-                        nodeId,
-                        nodeStatus: 'cancelled',
-                    });
-                },
-                async markNotConfigured(nodeId) {
-                    await updateNodeStatus(buildId, nodeId, 'not-configured');
-                    await publishSafe(buildChannel['node-status'], {
-                        nodeId,
-                        nodeStatus: 'not-configured',
-                    });
-                },
+                markRunning: (nodeId) => mark(nodeId, 'running'),
+                markCompleted: (nodeId) => mark(nodeId, 'completed'),
+                markSkipped: (nodeId) => mark(nodeId, 'skipped'),
+                markFailed: (nodeId) => mark(nodeId, 'failed', 'FAILED'),
+                markCancelled: (nodeId) => mark(nodeId, 'cancelled'),
+                markNotConfigured: (nodeId) => mark(nodeId, 'not-configured'),
                 async publishCommitInfo(data) {
                     await publishSafe(buildChannel['commit-info'], data);
                 },
             };
 
-            const logger = createPipelineLogger(publishLog);
+            const logger = createPipelineLogger(publishLog, flushLogs);
 
             const graph = await getPipelineConfig(config.repositoryId);
 

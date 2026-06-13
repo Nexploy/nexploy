@@ -8,6 +8,8 @@ import { Edge, Node } from '@xyflow/react';
 export interface GraphAnalysis {
     sorted: PipelineNode[];
     reachableNodeIds: Set<string>;
+    parentsMap: Map<string, string[]>;
+    nodeMap: Map<string, PipelineNode>;
 }
 
 export function analyzeGraph(
@@ -74,7 +76,7 @@ export function analyzeGraph(
         }
     }
 
-    return { sorted, reachableNodeIds };
+    return { sorted, reachableNodeIds, parentsMap: reverse, nodeMap };
 }
 
 function bfsAncestors(

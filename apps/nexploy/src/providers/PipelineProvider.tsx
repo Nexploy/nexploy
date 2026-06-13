@@ -11,6 +11,8 @@ import type { NodeRunStatus } from '@/types/pipeline.type';
 import type { PipelineBuild } from '@workspace/typescript-interface/stores/pipelineStore';
 import { createPipelineStore, type PipelineStore } from '@/stores/pipeline/createPipelineStore';
 import { PipelineContext } from '@/contexts/PipelineContext';
+import { BuildTracker } from '@/components/pipeline/buildsPanel/BuildTracker';
+import { isBuildLive } from '@/utils/buildStatus';
 
 export function PipelineProvider({
     initialGraph,
@@ -51,18 +53,37 @@ export function PipelineProvider({
     }, [builds, hasMore, isLoadingMore, loadMore, store]);
 
     const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
-    const setNodeStatuses = usePipelineEditorStore((s) => s.setNodeStatuses);
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 
     useSWR<{ nodeStatuses: Record<string, NodeRunStatus> }>(
         activeBuildId ? { url: `/api/repositories/${repositoryId}/builds/${activeBuildId}` } : null,
         fetcherApi,
-        { onSuccess: (data) => setNodeStatuses(data?.nodeStatuses ?? {}) },
+        {
+            onSuccess: (data) =>
+                store.getState().setBuildNodeStatuses(activeBuildId!, (prev) => ({
+                    ...(data?.nodeStatuses ?? {}),
+                    ...prev,
+                })),
+        },
     );
 
     useEffect(() => {
         return () => setActiveBuildId(null);
     }, []);
 
-    return <PipelineContext.Provider value={store}>{children}</PipelineContext.Provider>;
+    return (
+        <PipelineContext.Provider value={store}>
+            {builds.map(
+                (build) =>
+                    isBuildLive(build.status) && (
+                        <BuildTracker
+                            key={build.id}
+                            buildId={build.id}
+                            initialStatus={build.status}
+                        />
+                    ),
+            )}
+            {children}
+        </PipelineContext.Provider>
+    );
 }

@@ -32,6 +32,13 @@ export interface PipelineActionsContextValue {
     redo: () => void;
     handleDuplicateSelection: () => void;
     handleDeleteSelection: () => void;
+    patchBuildOverlay: (buildId: string, partial: Partial<PipelineBuild>) => void;
+    setBuildNodeStatuses: (
+        buildId: string,
+        updater:
+            | Record<string, NodeRunStatus>
+            | ((prev: Record<string, NodeRunStatus>) => Record<string, NodeRunStatus>),
+    ) => void;
 }
 
 export interface PipelineStateContextValue {
@@ -64,6 +71,8 @@ export interface PipelineStoreState {
     canUndo: boolean;
     canRedo: boolean;
     repositoryId: string;
+    buildOverlays: Record<string, Partial<PipelineBuild>>;
+    buildNodeStatuses: Record<string, Record<string, NodeRunStatus>>;
 
     setNodes: (nodes: Node[] | ((prev: Node[]) => Node[])) => void;
     setEdges: (edges: Edge[] | ((prev: Edge[]) => Edge[])) => void;
@@ -80,6 +89,13 @@ export interface PipelineStoreState {
     redo: () => void;
     handleDuplicateSelection: () => void;
     handleDeleteSelection: () => void;
+    patchBuildOverlay: (buildId: string, partial: Partial<PipelineBuild>) => void;
+    setBuildNodeStatuses: (
+        buildId: string,
+        updater:
+            | Record<string, NodeRunStatus>
+            | ((prev: Record<string, NodeRunStatus>) => Record<string, NodeRunStatus>),
+    ) => void;
 
     _commit: (snapshot: Snapshot) => void;
     _save: () => Promise<void>;

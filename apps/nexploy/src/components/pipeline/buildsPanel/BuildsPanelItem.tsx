@@ -1,28 +1,15 @@
 'use client';
 
+import { memo } from 'react';
 import dayjs from 'dayjs';
 import { buttonVariants } from '@workspace/ui/components/button';
-import { StatusProps } from '@workspace/ui/components/kibo-ui/status';
-import { useInngestSubscription } from '@inngest/realtime/hooks';
-import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
-import { useCallback, useEffect, useRef } from 'react';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
-import { type CommitInfo, type NodeRunStatus } from '@/types/pipeline.type';
-import { BuildStatus } from 'generated/client';
 import type { PipelineBuild } from '@workspace/typescript-interface/stores/pipelineStore';
 import { isBuildLive } from '@/utils/buildStatus';
-import { StatusLive } from '@/components/shared/StatusLive';
+import { StatusView } from '@/components/shared/StatusView';
 import { cn } from '@workspace/ui/lib/utils';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { StopBuildToolbar } from '@/components/pipeline/StopBuildToolbar.tsx';
-
-export const STATUS_PIPELINE: Record<BuildStatus, StatusProps['status']> = {
-    QUEUED: 'waiting',
-    BUILDING: 'degraded',
-    COMPLETED: 'maintenance',
-    FAILED: 'offline',
-    CANCELLED: 'offline',
-};
 
 export interface BuildsPanelItemProps {
     build: PipelineBuild;
@@ -30,60 +17,14 @@ export interface BuildsPanelItemProps {
     locale: string;
 }
 
-export function BuildsPanelItem({ build, isSelected, locale }: BuildsPanelItemProps) {
+export const BuildsPanelItem = memo(function BuildsPanelItem({
+    build,
+    isSelected,
+    locale,
+}: BuildsPanelItemProps) {
     const isLive = isBuildLive(build.status);
 
-    const setNodeStatuses = usePipelineEditorStore((s) => s.setNodeStatuses);
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
-
-    const processedCountRef = useRef(0);
-    const prevIsSelectedRef = useRef(isSelected);
-
-    const refreshToken = useCallback(async () => {
-        const result = await onGetTokenBuildIdAction({
-            buildId: build.id,
-            topics: ['node-status', 'commit-info'],
-        });
-        return result?.data ?? null;
-    }, [build.id]);
-
-    const { data: liveEvents } = useInngestSubscription({
-        enabled: isLive,
-        refreshToken,
-    });
-
-    useEffect(() => {
-        const justSelected = isSelected && !prevIsSelectedRef.current;
-        prevIsSelectedRef.current = isSelected;
-
-        if (justSelected) {
-            processedCountRef.current = liveEvents.length;
-            return;
-        }
-
-        if (!isSelected) return;
-
-        const newEvents = liveEvents.slice(processedCountRef.current);
-        processedCountRef.current = liveEvents.length;
-        if (newEvents.length === 0) return;
-
-        const updates: Record<string, NodeRunStatus> = {};
-        for (const event of newEvents) {
-            if (event.topic === 'node-status' && event.data?.nodeId) {
-                updates[event.data.nodeId as string] = event.data.nodeStatus as NodeRunStatus;
-            }
-        }
-        if (Object.keys(updates).length > 0) {
-            setNodeStatuses((prev) => ({ ...prev, ...updates }));
-        }
-    }, [liveEvents, isSelected]);
-
-    const liveCommitInfo = liveEvents.findLast((e) => e.topic === 'commit-info')?.data as
-        | CommitInfo
-        | undefined;
-
-    const branch = liveCommitInfo?.branch ?? build.branch;
-    const commitMessage = liveCommitInfo?.commitMessage ?? build.commitMessage;
 
     return (
         <div
@@ -96,28 +37,23 @@ export function BuildsPanelItem({ build, isSelected, locale }: BuildsPanelItemPr
             )}
         >
             <div className="flex w-full items-center gap-1">
-                <StatusLive
-                    key={build.id}
-                    displayType={'dot'}
-                    buildId={build.id}
-                    initialStatus={build.status}
-                />
+                <StatusView status={build.status} displayType="dot" />
                 <span className="text-xs font-medium">#{build.number}</span>
-                <span className="text-xs font-medium">{branch}</span>
+                <span className="text-xs font-medium">{build.branch}</span>
                 <span className="ml-auto pl-2 text-xs">
                     {dayjs(build.createdAt).locale(locale).fromNow(true)}
                 </span>
             </div>
-            {isLive && !commitMessage ? (
+            {isLive && !build.commitMessage ? (
                 <Skeleton className="h-2.5 w-32" />
             ) : (
-                commitMessage && (
+                build.commitMessage && (
                     <span className={cn('max-w-[220px] truncate text-left text-xs')}>
-                        {commitMessage}
+                        {build.commitMessage}
                     </span>
                 )
             )}
-            <StopBuildToolbar buildId={build.id} initialStatus={build.status} />
+            <StopBuildToolbar buildId={build.id} status={build.status} />
         </div>
     );
-}
+});

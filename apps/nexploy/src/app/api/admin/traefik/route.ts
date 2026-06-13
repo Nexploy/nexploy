@@ -33,9 +33,7 @@ export const POST = route
         try {
             await fs.access(filePath);
             return NextResponse.json({ message: 'File already exists' }, { status: 409 });
-        } catch {
-            // file doesn't exist, good
-        }
+        } catch {}
 
         await fs.mkdir(TRAEFIK_SERVICE_DIR, { recursive: true });
         await fs.writeFile(filePath, content ?? '', 'utf-8');

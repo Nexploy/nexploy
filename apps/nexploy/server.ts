@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { createProxyMiddleware, Options } from 'http-proxy-middleware';
+import { existsSync, readdirSync, rmSync, statSync } from 'fs';
+import { join } from 'path';
 import next from 'next';
 import { terminalSchema } from '@workspace/schemas-zod/websocket/terminal.schema';
 import { Socket } from 'net';
@@ -21,6 +23,39 @@ const app = next({
 });
 
 const handle = app.getRequestHandler();
+
+const MAX_TURBOPACK_CACHE_GB = Number(process.env.MAX_TURBOPACK_CACHE_GB ?? 3);
+const TURBOPACK_CACHE_DIR = join(import.meta.dirname, '.next', 'dev', 'cache', 'turbopack');
+
+function dirSizeBytes(dir: string): number {
+    let total = 0;
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        const full = join(dir, entry.name);
+        try {
+            if (entry.isDirectory()) {
+                total += dirSizeBytes(full);
+            } else if (entry.isFile()) {
+                total += statSync(full).size;
+            }
+        } catch {}
+    }
+    return total;
+}
+
+function pruneTurbopackCache(): void {
+    if (!dev || !existsSync(TURBOPACK_CACHE_DIR)) return;
+    try {
+        const sizeGb = dirSizeBytes(TURBOPACK_CACHE_DIR) / 1024 ** 3;
+        if (sizeGb > MAX_TURBOPACK_CACHE_GB) {
+            console.warn(
+                `🧹 Turbopack cache is ${sizeGb.toFixed(1)}GB (> ${MAX_TURBOPACK_CACHE_GB}GB), clearing it…`,
+            );
+            rmSync(TURBOPACK_CACHE_DIR, { recursive: true, force: true });
+        }
+    } catch (err) {
+        console.error('⚠️ Failed to inspect/prune Turbopack cache:', err);
+    }
+}
 
 const proxyOptions: Options = {
     target: process.env.DOCKER_API_URL,
@@ -118,9 +153,18 @@ function matchAndTransformWsUrl(pathname: string): MatchResult {
     return { matched: false };
 }
 
+pruneTurbopackCache();
+
 app.prepare().then(() => {
+    const HEAP_SOFT_LIMIT_MB = Number(process.env.HEAP_SOFT_LIMIT_MB ?? 1400);
     if (typeof (global as any).gc === 'function') {
-        setInterval(() => (global as any).gc(), 30_000);
+        const timer = setInterval(() => {
+            const heapUsedMb = process.memoryUsage().heapUsed / 1024 / 1024;
+            if (heapUsedMb > HEAP_SOFT_LIMIT_MB) {
+                (global as any).gc();
+            }
+        }, 15_000);
+        timer.unref();
     }
 
     const openSockets = new Set<Socket>();

@@ -1,5 +1,4 @@
 import { type NodeFieldRef } from '@workspace/typescript-interface/pipeline/nodeFieldRef';
-import { type PipelineEdge } from '@workspace/typescript-interface/pipeline/node';
 import { type LogLevel, type NodeOutputStore } from '@/types/pipeline.type';
 import { isNodeFieldRef } from '@/lib/nodeFieldRef';
 
@@ -26,9 +25,6 @@ export function formatErrorDetails(error: unknown): string {
     return lines.join('\n');
 }
 
-export function getParentNodeIds(nodeId: string, edges: PipelineEdge[]): string[] {
-    return edges.filter((edge) => edge.target === nodeId).map((edge) => edge.source);
-}
 function resolveFieldValue(
     value: unknown,
     allOutputs: NodeOutputStore,
@@ -99,6 +95,7 @@ export function resolveNodeConfig(
 
 export function createPipelineLogger(
     publishLog: (step: string, message: string, level: LogLevel) => Promise<void>,
+    flush: () => Promise<void> = async () => {},
 ) {
     return {
         log: publishLog,
@@ -106,5 +103,6 @@ export function createPipelineLogger(
         info: (step: string, message: string) => publishLog(step, message, 'INFO'),
         warn: (step: string, message: string) => publishLog(step, message, 'WARN'),
         error: (step: string, message: string) => publishLog(step, message, 'ERROR'),
+        flush,
     };
 }

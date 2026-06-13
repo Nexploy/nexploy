@@ -1,16 +1,32 @@
 'use client';
 
-import { Check, Copy, Loader2, Power, Redo2, Settings, SquareDashed, Trash2, Undo2, } from 'lucide-react';
+import {
+    Check,
+    Copy,
+    Loader2,
+    Power,
+    Redo2,
+    Settings,
+    SquareDashed,
+    Trash2,
+    Undo2,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { usePipelineStore } from '@/stores/pipeline/usePipelineStore';
+import {
+    useIsViewingBuild,
+    usePipelineActions,
+    usePipelineBuilds,
+    usePipelineGraph,
+    usePipelineSaveState,
+} from '@/stores/pipeline/usePipelineStore';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Kbd } from '@workspace/ui/components/kbd';
 import { useStore } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
-import { StatusLive } from '@/components/shared/StatusLive';
 import { StopBuildToolbar } from '@/components/pipeline/StopBuildToolbar.tsx';
+import { StatusView } from '@/components/shared/StatusView';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { mod } from '@/components/pipeline/utils/modKey';
 import { usePermissions } from '@/contexts/PermissionContext';
@@ -21,22 +37,18 @@ export function PipelineToolbar() {
     const selectedNodeIds = usePipelineEditorStore((s) => s.selectedNodeIds);
 
     const {
-        isSaving,
-        nodes,
         undo,
         redo,
-        canUndo,
-        canRedo,
         handleDeleteSelection,
         handleDuplicateSelection,
         openDialogSettingNode,
         setNodes,
         triggerAutoSave,
-        activeBuild,
-        isViewingBuild,
-    } = usePipelineStore();
-
-    console.log(activeBuild);
+    } = usePipelineActions();
+    const { nodes } = usePipelineGraph();
+    const { isSaving, canUndo, canRedo } = usePipelineSaveState();
+    const { activeBuild } = usePipelineBuilds();
+    const isViewingBuild = useIsViewingBuild();
 
     const addSelectedNodes = useStore((s) => s.addSelectedNodes);
     const { can } = usePermissions();
@@ -210,13 +222,10 @@ export function PipelineToolbar() {
                     <div className="flex items-center gap-1.5">
                         <Separator orientation="vertical" className="!h-4" />
                         <div key={activeBuild.id} className="flex items-center gap-1.5">
-                            <StatusLive
-                                buildId={activeBuild.id}
-                                initialStatus={activeBuild.status}
-                            />
+                            <StatusView status={activeBuild.status} />
                             <StopBuildToolbar
                                 buildId={activeBuild.id}
-                                initialStatus={activeBuild.status}
+                                status={activeBuild.status}
                             />
                         </div>
                     </div>

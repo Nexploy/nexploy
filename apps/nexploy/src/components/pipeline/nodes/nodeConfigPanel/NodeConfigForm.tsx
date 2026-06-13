@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { type Node } from '@xyflow/react';
-import { usePipelineStore } from '@/stores/pipeline/usePipelineStore';
+import { usePipelineActions, useIsViewingBuild } from '@/stores/pipeline/usePipelineStore';
 import { Button } from '@workspace/ui/components/button';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { Form } from '@workspace/ui/components/form';
@@ -42,7 +42,8 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
     const tCommon = useTranslations('common');
 
     const params = useParams<{ repositoryId: string }>();
-    const { handleConfigChange, handleResetPanelNode, isViewingBuild } = usePipelineStore();
+    const { handleConfigChange, handleResetPanelNode } = usePipelineActions();
+    const isViewingBuild = useIsViewingBuild();
     const { can } = usePermissions();
     const canEdit = can('repository', 'update');
 

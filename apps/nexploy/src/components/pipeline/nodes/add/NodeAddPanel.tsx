@@ -12,7 +12,7 @@ import { CATEGORY_BG_MUTED, CATEGORY_ICONS, CATEGORY_TEXT, } from '@/components/
 import { useReactFlow } from '@xyflow/react';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { getConfigSchema } from '@/components/pipeline/nodeManifestRegistry';
-import { usePipelineStore } from '@/stores/pipeline/usePipelineStore';
+import { usePipelineActions, useIsViewingBuild } from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 
@@ -20,7 +20,8 @@ export function NodeAddPanel() {
     const t = useTranslations('repository.pipeline');
     const definitions = useNodeRegistryStore((s) => s.nodes);
     const { screenToFlowPosition } = useReactFlow();
-    const { setNodes, triggerAutoSave, handleNodeAdded, isViewingBuild } = usePipelineStore();
+    const { setNodes, triggerAutoSave, handleNodeAdded } = usePipelineActions();
+    const isViewingBuild = useIsViewingBuild();
 
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 

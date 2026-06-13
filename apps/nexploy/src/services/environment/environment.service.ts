@@ -234,9 +234,7 @@ export async function updateEnvironment(environmentData: EnvironmentSchemaType) 
     if (environmentData.isDefault) {
         try {
             await kyDocker.post(`environments/${environmentData.id}/set-default`);
-        } catch {
-            // Non-fatal: DB is source of truth. docker-api will use correct default on restart.
-        }
+        } catch {}
     }
 
     return environment;

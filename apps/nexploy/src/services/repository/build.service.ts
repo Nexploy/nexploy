@@ -236,11 +236,7 @@ export async function cancelBuildRepository(buildId: string) {
     await inngest.send({ name: 'build/cancel', data: { buildId } });
 }
 
-export async function getBuildsPage(
-    repositoryId: string,
-    cursor?: string,
-    take = 20,
-) {
+export async function getBuildsPage(repositoryId: string, cursor?: string, take = 20) {
     try {
         return await prisma.build.findMany({
             where: { repositoryId },
