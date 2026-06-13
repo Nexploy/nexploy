@@ -1,16 +1,6 @@
 'use client';
 
-import {
-    Check,
-    Copy,
-    Loader2,
-    Power,
-    Redo2,
-    Settings,
-    SquareDashed,
-    Trash2,
-    Undo2,
-} from 'lucide-react';
+import { Check, Copy, Loader2, Power, Redo2, Settings, SquareDashed, Trash2, Undo2, } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { usePipelineStore } from '@/stores/pipeline/usePipelineStore';
 import { Button } from '@workspace/ui/components/button';
@@ -28,7 +18,6 @@ import { usePermissions } from '@/contexts/PermissionContext';
 export function PipelineToolbar() {
     const t = useTranslations('repository.pipeline');
 
-    const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
     const selectedNodeIds = usePipelineEditorStore((s) => s.selectedNodeIds);
 
     const {
@@ -46,6 +35,8 @@ export function PipelineToolbar() {
         activeBuild,
         isViewingBuild,
     } = usePipelineStore();
+
+    console.log(activeBuild);
 
     const addSelectedNodes = useStore((s) => s.addSelectedNodes);
     const { can } = usePermissions();
@@ -218,13 +209,13 @@ export function PipelineToolbar() {
                 {activeBuild && (
                     <div className="flex items-center gap-1.5">
                         <Separator orientation="vertical" className="!h-4" />
-                        <div key={activeBuildId} className="flex items-center gap-1.5">
+                        <div key={activeBuild.id} className="flex items-center gap-1.5">
                             <StatusLive
-                                buildId={activeBuildId}
+                                buildId={activeBuild.id}
                                 initialStatus={activeBuild.status}
                             />
                             <StopBuildToolbar
-                                buildId={activeBuildId!}
+                                buildId={activeBuild.id}
                                 initialStatus={activeBuild.status}
                             />
                         </div>

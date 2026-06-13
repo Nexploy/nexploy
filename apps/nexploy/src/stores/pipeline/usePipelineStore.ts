@@ -9,7 +9,6 @@ import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore
 import { usePipelineStoreInstance } from '@/contexts/PipelineContext';
 import type {
     PipelineActionsContextValue,
-    PipelineStateContextValue,
     PipelineStoreValue,
 } from '@workspace/typescript-interface/stores/pipelineStore';
 
@@ -90,8 +89,4 @@ export function usePipelineActions(): PipelineActionsContextValue {
             handleDeleteSelection: s.handleDeleteSelection,
         })),
     );
-}
-
-export function usePipelineState(): PipelineStateContextValue {
-    return usePipelineStore();
 }

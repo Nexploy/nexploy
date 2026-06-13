@@ -144,6 +144,22 @@ export class PipelineOrchestrator {
                     continue;
                 }
 
+                if (executor.isAttachNode) {
+                    const parentIds = getParentNodeIds(node.id, graph.edges);
+                    const parentWasExecuted = parentIds.some((id) => executedNodeIds.has(id));
+                    if (!parentWasExecuted) {
+                        await this.runSkippedNode(
+                            node,
+                            'parent node disabled or not executed',
+                            inngestStep,
+                            reporter,
+                            logger,
+                            allOutputs,
+                        );
+                        continue;
+                    }
+                }
+
                 if (node.data.disabled) {
                     const mergedInputs = Object.assign({}, ...inputOutputs);
                     await this.runSkippedNode(

@@ -1,7 +1,15 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { AlertTriangle, FileCode2, GitCompare, Loader2, Trash2, WandSparkles } from 'lucide-react';
+import {
+    AlertTriangle,
+    Check,
+    FileCode2,
+    GitCompare,
+    Loader2,
+    Trash2,
+    WandSparkles,
+} from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
 import { Separator } from '@workspace/ui/components/separator';
@@ -9,6 +17,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { DiffEditor, Editor } from '@monaco-editor/react';
 import { useTheme } from '@wrksz/themes/client';
 import { useTraefikConfigStore } from '@/stores/admin/useTraefikConfigStore';
+import { cn } from '@workspace/ui/lib/utils.ts';
 
 const EDITOR_OPTIONS = {
     minimap: { enabled: false },
@@ -32,7 +41,7 @@ export function TraefikEditorPanel() {
         selectedFile,
         fileContent,
         savedContent,
-        isDirty,
+        isSaving,
         isDiffMode,
         yamlError,
         contentLoading,
@@ -44,14 +53,29 @@ export function TraefikEditorPanel() {
 
     return (
         <div className="flex min-w-0 flex-1 flex-col">
-            <div className="border-border flex items-center justify-between gap-2 border-b px-3 py-1.5">
+            <div className="border-border flex h-9 items-center justify-between gap-2 border-b px-3">
                 <div className="flex min-w-0 items-center gap-2">
                     <FileCode2 className="text-muted-foreground size-4 shrink-0" />
                     <span className="min-w-0 truncate text-sm font-medium">{selectedFile}</span>
-                    {isDirty() && (
-                        <Badge variant="secondary" className="shrink-0 text-xs">
-                            {t('modified')}
-                        </Badge>
+                    {selectedFile && (
+                        <div
+                            className={cn(
+                                'text-muted-foreground flex items-center gap-1.5 text-xs transition-opacity duration-300',
+                                isSaving ? 'opacity-100' : 'opacity-40',
+                            )}
+                        >
+                            {isSaving ? (
+                                <>
+                                    <Loader2 className="size-3 animate-spin" />
+                                    {t('saving')}
+                                </>
+                            ) : (
+                                <>
+                                    <Check className="size-3" />
+                                    {t('saved')}
+                                </>
+                            )}
+                        </div>
                     )}
                     {yamlError && (
                         <Badge variant="destructive" className="shrink-0 text-xs">

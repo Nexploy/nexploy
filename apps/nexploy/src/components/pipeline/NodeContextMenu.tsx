@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import { useTranslations } from 'next-intl';
-import { Power, Trash2 } from 'lucide-react';
+import { Power, Settings, Trash2 } from 'lucide-react';
 import { usePipelineActions } from '@/stores/pipeline/usePipelineStore';
 import {
     ContextMenu,
@@ -27,7 +27,7 @@ interface NodeContextMenuProps {
 export function NodeContextMenu({ menu, onClose }: NodeContextMenuProps) {
     const t = useTranslations('repository.pipeline');
     const { deleteElements, getNodes } = useReactFlow();
-    const { triggerAutoSave, setNodes } = usePipelineActions();
+    const { triggerAutoSave, setNodes, openDialogSettingNode } = usePipelineActions();
     const triggerRef = useRef<HTMLSpanElement>(null);
 
     useEffect(() => {
@@ -69,16 +69,25 @@ export function NodeContextMenu({ menu, onClose }: NodeContextMenuProps) {
         onClose();
     };
 
+    const handleOpenSettingNode = () => {
+        openDialogSettingNode(menu.nodeId);
+        onClose();
+    };
+
     return (
         <ContextMenu onOpenChange={(open) => !open && onClose()}>
             <ContextMenuTrigger ref={triggerRef} />
             <ContextMenuContent onCloseAutoFocus={(e) => e.preventDefault()}>
-                <ContextMenuItem onClick={handleToggleDisabled}>
+                <ContextMenuItem className={'text-xs'} onClick={handleToggleDisabled}>
                     <Power className="size-3" />
                     {disabled ? t('node.enable') : t('node.disable')}
                 </ContextMenuItem>
+                <ContextMenuItem className={'text-xs'} onClick={handleOpenSettingNode}>
+                    <Settings className="size-3" />
+                    {t('node.setting')}
+                </ContextMenuItem>
                 <ContextMenuSeparator />
-                <ContextMenuItem onClick={handleDelete} variant="destructive">
+                <ContextMenuItem className={'text-xs'} onClick={handleDelete} variant="destructive">
                     <Trash2 className="size-3" />
                     {t('node.delete')}
                 </ContextMenuItem>

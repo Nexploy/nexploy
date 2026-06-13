@@ -14,7 +14,7 @@ import { usePermissions } from '@/contexts/PermissionContext';
 const STOPPABLE_STATUSES: BuildStatus[] = ['QUEUED', 'BUILDING'];
 
 interface StopBuildToolbarProps {
-    buildId: string;
+    buildId: string | null;
     initialStatus: BuildStatus;
 }
 
@@ -24,15 +24,18 @@ export function StopBuildToolbar({ buildId, initialStatus }: StopBuildToolbarPro
 
     const isLive = isBuildLive(initialStatus);
 
+    const refreshToken = async () => {
+        if (!buildId) return null;
+        const result = await onGetTokenBuildIdAction({
+            buildId,
+            topics: ['build-status'],
+        });
+        return result?.data ?? null;
+    };
+
     const { latestData } = useInngestSubscription({
         enabled: isLive,
-        refreshToken: async () => {
-            const result = await onGetTokenBuildIdAction({
-                buildId,
-                topics: ['build-status'],
-            });
-            return result?.data ?? null;
-        },
+        refreshToken,
     });
 
     const status = (latestData?.data?.buildStatus ?? initialStatus) as BuildStatus;
@@ -46,7 +49,7 @@ export function StopBuildToolbar({ buildId, initialStatus }: StopBuildToolbarPro
                     variant="outline"
                     size="icon"
                     className="hover:border-destructive hover:text-destructive size-6"
-                    onClick={() => onCancelBuild({ buildId })}
+                    onClick={() => buildId && onCancelBuild({ buildId })}
                 >
                     <Square className="size-3" />
                 </Button>

@@ -17,7 +17,6 @@ export function BuildsPanel() {
     const locale = useLocale();
 
     const { builds, hasMoreBuilds, isLoadingMoreBuilds, loadMoreBuilds } = usePipelineStore();
-    const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
     const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
     const scrollViewportRef = useRef<HTMLDivElement>(null);
 
@@ -56,7 +55,6 @@ export function BuildsPanel() {
                             build={build}
                             isSelected={build.id === activeBuildId}
                             locale={locale}
-                            onSelect={setActiveBuildId}
                         />
                     ))}
                     {isLoadingMoreBuilds && (

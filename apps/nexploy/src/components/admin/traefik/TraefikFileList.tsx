@@ -14,7 +14,7 @@ export function TraefikFileList() {
 
     return (
         <div className="border-border flex w-[20%] min-w-[150px] shrink-0 flex-col border-r">
-            <div className="border-border flex items-center justify-between border-b px-3 py-2">
+            <div className="border-border flex h-9 items-center justify-between border-b px-3">
                 <span className="text-muted-foreground text-xs">{t('files')}</span>
             </div>
             <ScrollAreaWithShadow className="flex-1">

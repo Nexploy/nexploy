@@ -1,11 +1,11 @@
 'use client';
 
 import dayjs from 'dayjs';
-import { Button, buttonVariants } from '@workspace/ui/components/button';
+import { buttonVariants } from '@workspace/ui/components/button';
 import { StatusProps } from '@workspace/ui/components/kibo-ui/status';
 import { useInngestSubscription } from '@inngest/realtime/hooks';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { type CommitInfo, type NodeRunStatus } from '@/types/pipeline.type';
 import { BuildStatus } from 'generated/client';
@@ -14,8 +14,7 @@ import { isBuildLive } from '@/utils/buildStatus';
 import { StatusLive } from '@/components/shared/StatusLive';
 import { cn } from '@workspace/ui/lib/utils';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import { Square } from 'lucide-react';
-import { onCancelBuild } from '@/actions/repository/builds/cancelBuild.action';
+import { StopBuildToolbar } from '@/components/pipeline/StopBuildToolbar.tsx';
 
 export const STATUS_PIPELINE: Record<BuildStatus, StatusProps['status']> = {
     QUEUED: 'waiting',
@@ -29,15 +28,16 @@ export interface BuildsPanelItemProps {
     build: PipelineBuild;
     isSelected: boolean;
     locale: string;
-    onSelect: (id: string | null) => void;
 }
 
-export function BuildsPanelItem({ build, isSelected, locale, onSelect }: BuildsPanelItemProps) {
+export function BuildsPanelItem({ build, isSelected, locale }: BuildsPanelItemProps) {
     const isLive = isBuildLive(build.status);
+
     const setNodeStatuses = usePipelineEditorStore((s) => s.setNodeStatuses);
+    const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
+
     const processedCountRef = useRef(0);
     const prevIsSelectedRef = useRef(isSelected);
-    const [isCancelling, setIsCancelling] = useState(false);
 
     const refreshToken = useCallback(async () => {
         const result = await onGetTokenBuildIdAction({
@@ -83,25 +83,13 @@ export function BuildsPanelItem({ build, isSelected, locale, onSelect }: BuildsP
         | undefined;
 
     const branch = liveCommitInfo?.branch ?? build.branch;
-    const commitHash = liveCommitInfo?.commitHash ?? build.commitHash;
     const commitMessage = liveCommitInfo?.commitMessage ?? build.commitMessage;
-
-    const handleCancel = async (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setIsCancelling(true);
-        try {
-            await onCancelBuild({ buildId: build.id });
-        } finally {
-            setIsCancelling(false);
-        }
-    };
 
     return (
         <div
             role="button"
-            tabIndex={0}
-            onClick={() => onSelect(isSelected ? null : build.id)}
-            onKeyDown={(e) => e.key === 'Enter' && onSelect(isSelected ? null : build.id)}
+            onClick={() => setActiveBuildId(isSelected ? null : build.id)}
+            onKeyDown={(e) => e.key === 'Enter' && setActiveBuildId(isSelected ? null : build.id)}
             className={cn(
                 buttonVariants({ variant: isSelected ? 'default' : 'secondary', size: 'sm' }),
                 'relative h-auto cursor-pointer flex-col items-start gap-0.5 px-2.5 py-1.5 duration-0',
@@ -129,17 +117,7 @@ export function BuildsPanelItem({ build, isSelected, locale, onSelect }: BuildsP
                     </span>
                 )
             )}
-            {isLive && (
-                <Button
-                    variant="destructiveGhost"
-                    size="icon"
-                    disabled={isCancelling}
-                    onClick={handleCancel}
-                    className="absolute right-0.5 bottom-0.5 h-5 w-5 rounded-sm"
-                >
-                    <Square />
-                </Button>
-            )}
+            <StopBuildToolbar buildId={build.id} initialStatus={build.status} />
         </div>
     );
 }

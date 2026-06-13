@@ -1,9 +1,8 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Check, FilePlus2, Loader2, Waypoints } from 'lucide-react';
+import { FilePlus2, Waypoints } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
-import { cn } from '@workspace/ui/lib/utils';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useTraefikConfigStore } from '@/stores/admin/useTraefikConfigStore';
 import { TraefikFileList } from './TraefikFileList';
@@ -13,7 +12,7 @@ import { TraefikNewFileDialog } from './TraefikNewFileDialog';
 export function TraefikConfigPage() {
     const t = useTranslations('admin.traefik');
     const { openDialog, closeDialog } = useConfirmationDialogStore();
-    const { selectedFile, isSaving, afterNewFile } = useTraefikConfigStore();
+    const { selectedFile, afterNewFile } = useTraefikConfigStore();
 
     const handleNewFile = () => {
         openDialog({
@@ -43,26 +42,6 @@ export function TraefikConfigPage() {
                         </div>
                     </div>
                     <div className="mt-5 flex shrink-0 items-center gap-3">
-                        {selectedFile && (
-                            <div
-                                className={cn(
-                                    'text-muted-foreground flex items-center gap-1.5 text-xs transition-opacity duration-300',
-                                    isSaving ? 'opacity-100' : 'opacity-40',
-                                )}
-                            >
-                                {isSaving ? (
-                                    <>
-                                        <Loader2 className="size-3 animate-spin" />
-                                        {t('saving')}
-                                    </>
-                                ) : (
-                                    <>
-                                        <Check className="size-3" />
-                                        {t('saved')}
-                                    </>
-                                )}
-                            </div>
-                        )}
                         <Button variant="outline" size="sm" onClick={handleNewFile}>
                             <FilePlus2 className="size-4" />
                             {t('newFile')}
