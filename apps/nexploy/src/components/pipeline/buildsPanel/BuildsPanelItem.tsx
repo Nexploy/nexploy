@@ -44,16 +44,18 @@ export const BuildsPanelItem = memo(function BuildsPanelItem({
                     {dayjs(build.createdAt).locale(locale).fromNow(true)}
                 </span>
             </div>
-            {isLive && !build.commitMessage ? (
-                <Skeleton className="h-2.5 w-32" />
-            ) : (
-                build.commitMessage && (
-                    <span className={cn('max-w-[220px] truncate text-left text-xs')}>
-                        {build.commitMessage}
-                    </span>
-                )
-            )}
-            <StopBuildToolbar buildId={build.id} status={build.status} />
+            <div className={'flex max-w-[220px] items-center gap-1'}>
+                {isLive && !build.commitMessage ? (
+                    <Skeleton className="h-2.5 w-32" />
+                ) : (
+                    build.commitMessage && (
+                        <span className={cn('truncate text-left text-xs')}>
+                            {build.commitMessage}
+                        </span>
+                    )
+                )}
+                <StopBuildToolbar buildId={build.id} status={build.status} />
+            </div>
         </div>
     );
 });

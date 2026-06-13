@@ -17,7 +17,10 @@ export default async function BuildPage({ params }: BuildPageProps) {
 
     return (
         <BreadcrumbProvider
-            segments={{ repositoryId: build.repository.name, buildId: build.branch ?? build.id }}
+            segments={{
+                repositoryId: build.repository.name,
+                buildId: build.commitMessage ?? build.id,
+            }}
         >
             <BuildLogs build={build} />
         </BreadcrumbProvider>

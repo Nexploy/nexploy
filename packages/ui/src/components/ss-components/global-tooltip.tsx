@@ -186,7 +186,7 @@ function TooltipProvider({
         (data: TooltipData) => {
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-            if (currentTooltip !== null) {
+            if (currentTooltip) {
                 setCurrentTooltip(data);
 
                 return;

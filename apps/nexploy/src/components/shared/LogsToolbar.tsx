@@ -14,6 +14,7 @@ interface LogsToolbarProps {
     onDownload: () => void;
     autoScroll: boolean;
     onAutoScrollToggle: () => void;
+    sizeButton?: 'sm' | 'lg' | 'default' | 'xs' | 'icon' | null | undefined;
 }
 
 export function LogsToolbar({
@@ -24,6 +25,7 @@ export function LogsToolbar({
     onDownload,
     autoScroll,
     onAutoScrollToggle,
+    sizeButton = 'sm',
 }: LogsToolbarProps) {
     const t = useTranslations('repository.builds.logs');
 
@@ -41,13 +43,13 @@ export function LogsToolbar({
                 />
             </div>
             {hasLogs && (
-                <Button size="sm" onClick={onDownload}>
+                <Button size={sizeButton} onClick={onDownload}>
                     <Download />
                     {t('download')}
                 </Button>
             )}
             <Button
-                size="sm"
+                size={sizeButton}
                 icon={autoScroll ? ArrowDown : ArrowUp}
                 variant={autoScroll ? 'default' : 'white'}
                 onClick={onAutoScrollToggle}

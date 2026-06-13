@@ -32,7 +32,7 @@ export function TemplateItem({
             draggable
             onDragStart={onDragStart}
             onClick={onClick}
-            className="border-border bg-card hover:border-accent hover:bg-muted flex cursor-grab flex-col gap-3 overflow-hidden rounded-lg border p-3 transition-all active:cursor-grabbing active:opacity-60"
+            className="border-border bg-card hover:border-foreground/15 hover:bg-muted flex cursor-grab flex-col gap-3 overflow-hidden rounded-lg border p-3 active:cursor-grabbing active:opacity-60"
         >
             <div className="flex gap-2.5">
                 <div className="bg-primary/10 text-primary flex size-8 shrink-0 items-center justify-center rounded-md">

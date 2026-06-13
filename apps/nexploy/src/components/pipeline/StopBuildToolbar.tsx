@@ -7,6 +7,8 @@ import { onCancelBuild } from '@/actions/repository/builds/cancelBuild.action';
 import { Button } from '@workspace/ui/components/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { usePermissions } from '@/contexts/PermissionContext';
+import * as React from 'react';
+import { cn } from '@workspace/ui/lib/utils.ts';
 
 const STOPPABLE_STATUSES: BuildStatus[] = ['QUEUED', 'BUILDING'];
 
@@ -15,7 +17,11 @@ interface StopBuildToolbarProps {
     status: BuildStatus;
 }
 
-export function StopBuildToolbar({ buildId, status }: StopBuildToolbarProps) {
+export function StopBuildToolbar({
+    buildId,
+    status,
+    ...props
+}: StopBuildToolbarProps & React.ComponentProps<'button'>) {
     const t = useTranslations('repository.pipeline');
     const { can } = usePermissions();
 
@@ -25,10 +31,17 @@ export function StopBuildToolbar({ buildId, status }: StopBuildToolbarProps) {
         <Tooltip>
             <TooltipTrigger asChild>
                 <Button
+                    {...props}
                     variant="outline"
                     size="icon"
-                    className="hover:border-destructive hover:text-destructive size-6"
-                    onClick={() => buildId && onCancelBuild({ buildId })}
+                    className={cn(
+                        'hover:border-destructive hover:text-destructive size-6',
+                        props.className,
+                    )}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        buildId && onCancelBuild({ buildId });
+                    }}
                 >
                     <Square className="size-3" />
                 </Button>

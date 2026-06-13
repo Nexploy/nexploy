@@ -7,11 +7,13 @@ import { cn } from '@workspace/ui/lib/utils';
 export function NodeItem({
     def,
     label,
+    description,
     onDragStart,
     onClick,
 }: {
     def: NodeDefinition;
     label: string;
+    description?: string;
     onDragStart: (e: React.DragEvent, nodeType: NodeId) => void;
     onClick?: () => void;
 }) {
@@ -22,17 +24,25 @@ export function NodeItem({
             draggable
             onDragStart={(e) => onDragStart(e, def.id)}
             onClick={onClick}
-            className="border-border bg-card hover:bg-muted flex cursor-grab items-center gap-2.5 rounded-lg border px-1.5 py-1.5 transition-all active:cursor-grabbing active:opacity-60"
+            className="border-border bg-card hover:border-foreground/15 hover:bg-muted relative flex cursor-grab items-center gap-2.5 rounded-lg border p-2 active:cursor-grabbing active:opacity-60"
         >
             <div
                 className={cn(
-                    'flex size-7 shrink-0 items-center justify-center rounded-md',
+                    'flex size-8 shrink-0 items-center justify-center self-start rounded-md',
                     def.metadata.color,
                 )}
             >
-                <Icon className="size-3.5" strokeWidth={1.5} />
+                <Icon className="size-4" strokeWidth={1.5} />
             </div>
-            <span className="text-foreground text-xs font-medium">{label}</span>
+
+            <div className="flex flex-col gap-1">
+                <span className="text-foreground block text-xs font-medium">{label}</span>
+                {description && (
+                    <span className="text-muted-foreground block text-[11px] leading-snug">
+                        {description}
+                    </span>
+                )}
+            </div>
         </div>
     );
 }

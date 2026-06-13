@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
+import { LayoutTemplate } from 'lucide-react';
 import { usePipelinePanelStore } from '@/stores/pipeline/usePipelinePanelStore';
 import { PIPELINE_TEMPLATES, PipelineTemplate } from './pipelineTemplates';
 import { TemplateItem } from '@/components/pipeline/nodes/template/TemplateItem';
@@ -75,9 +76,14 @@ export function NodeTemplatePanel() {
                 open ? 'w-[25%] border-l' : 'w-0',
             )}
         >
-            <span className="border-b p-3 text-[10px] font-semibold tracking-widest uppercase">
-                {t('templates.title')}
-            </span>
+            <div className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
+                <div className="bg-primary/10 text-primary flex size-6 shrink-0 items-center justify-center rounded-md">
+                    <LayoutTemplate className="size-3.5" />
+                </div>
+                <span className="text-foreground truncate text-xs font-semibold">
+                    {t('templates.title')}
+                </span>
+            </div>
 
             <ScrollAreaWithShadow
                 bottomShadow

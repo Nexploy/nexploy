@@ -10,8 +10,6 @@ import { BuildLogsViewer } from '@/components/repositories/tabs/builds/logs/Buil
 import { useRouter } from 'next/navigation';
 import { getRepositorieBuildLogs } from '@/services/repository.service';
 import { useBuildActions } from '@/hooks/useBuildActions';
-import { useCallback } from 'react';
-import { type CommitInfo } from '@/types/pipeline.type';
 import { isBuildLive } from '@/utils/buildStatus';
 
 interface BuildLogsProps {
@@ -20,19 +18,18 @@ interface BuildLogsProps {
 
 export function BuildLogs({ build }: BuildLogsProps) {
     const router = useRouter();
-    const refreshToken = useCallback(async () => {
-        const result = await onGetTokenBuildIdAction({
-            buildId: build.id,
-            topics: ['log', 'commit-info'],
-        });
-        return result?.data ?? null;
-    }, [build.id]);
 
-    const { latestData, data } = useInngestSubscription({ refreshToken });
+    const { latestData, data } = useInngestSubscription({
+        refreshToken: async () => {
+            const result = await onGetTokenBuildIdAction({
+                buildId: build.id,
+                topics: ['log', 'commit-info'],
+            });
+            return result?.data ?? null;
+        },
+    });
 
-    const liveCommitInfo = data.findLast((e) => e.topic === 'commit-info')?.data as
-        | CommitInfo
-        | undefined;
+    const liveCommitInfo = data.findLast((e) => e.topic === 'commit-info')?.data;
 
     const branch = liveCommitInfo?.branch ?? build.branch;
     const commitHash = liveCommitInfo?.commitHash ?? build.commitHash;

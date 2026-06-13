@@ -25,11 +25,7 @@ import { GradientEdge } from '@/components/pipeline/edges/GradientEdge';
 import { useDragAndDropFlow } from '@/hooks/useDragAndDropFlow';
 import { useAutoLayout } from '@/hooks/useAutoLayout';
 import { useMinimap } from '@/hooks/useMinimap';
-import {
-    usePipelineActions,
-    usePipelineBuilds,
-    usePipelineDisplay,
-} from '@/stores/pipeline/usePipelineStore';
+import { usePipelineActions, usePipelineBuilds, usePipelineDisplay, } from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ButtonPanel } from '@/components/pipeline/nodes/ButtonPanel';
 import { useHotkeys } from '@/lib/useHotKeys';
@@ -187,13 +183,6 @@ export function PipelineCanvas() {
         capture: true,
         ref: wrapperRef,
     });
-    useHotkeys(
-        'escape',
-        () => {
-            if (isViewingBuild) setActiveBuildId(null);
-        },
-        { preventDefault: true, ref: wrapperRef },
-    );
 
     const { onDragOver, onDragLeave, onDrop } = useDragAndDropFlow(rfInstance);
     const { minimapVisible, onMoveStart, onMoveEnd } = useMinimap();
@@ -255,11 +244,11 @@ export function PipelineCanvas() {
                     variant={BackgroundVariant.Dots}
                     gap={20}
                     size={1.5}
-                    color="var(--base-6)"
+                    color="var(--base-7)"
                 />
                 <BuildsPanel />
                 <ButtonPanel />
-                {isViewingBuild && activeBuildNumber !== null && (
+                {isViewingBuild && activeBuildNumber && (
                     <BuildPreviewBanner
                         buildNumber={activeBuildNumber}
                         onExit={() => setActiveBuildId(null)}

@@ -68,6 +68,7 @@ export function NodeLogsPanel({ buildId, nodeId, nodeStatus }: NodeLogsPanelProp
                 <StatusNodeLive buildId={buildId} nodeId={nodeId} initialStatus={nodeStatus} />
                 <LogsToolbar
                     id="node-log-showTimestamp"
+                    sizeButton={'xs'}
                     showTimestamp={showTimestamp}
                     onShowTimestampChange={setShowTimestamp}
                     hasLogs={logs.length > 0}
