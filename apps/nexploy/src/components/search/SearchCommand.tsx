@@ -8,7 +8,8 @@ import { SearchActionBar } from './SearchActionBar';
 import { SearchNavigationList } from './SearchNavigationList';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow.tsx';
 import { SearchResultsList } from '@/components/search/SearchResultsList.tsx';
-import { useSearchEffects } from '@/hooks/search/useSearchEffects.ts';
+import { useHotkeys } from '@/lib/useHotKeys.ts';
+import { useCallback } from 'react';
 
 export function SearchCommand() {
     const t = useTranslations('ai.command');
@@ -21,7 +22,14 @@ export function SearchCommand() {
     const setInputValue = useSearchStore((s) => s.setInputValue);
     const setCommandValue = useSearchStore((s) => s.setCommandValue);
 
-    const { handleStartBuild, handleAskAI } = useSearchEffects();
+    useHotkeys(
+        ['meta+k', 'ctrl+k'],
+        useCallback(() => {
+            if (open) closeDialog();
+            else openDialog();
+        }, [open]),
+        { preventDefault: true },
+    );
 
     const typeLabels = {
         repository: t('types.repository'),
@@ -60,15 +68,13 @@ export function SearchCommand() {
                     value={inputValue}
                     onValueChange={setInputValue}
                 />
-
-                <CommandList className="bg-card max-h-none overflow-x-hidden overflow-y-hidden">
-                    <ScrollAreaWithShadow className="h-[400px]" bottomShadow>
-                        <SearchResultsList typeLabels={typeLabels} onAskAI={handleAskAI} />
+                <CommandList className="bg-card max-h-none overflow-hidden">
+                    <ScrollAreaWithShadow viewportClassName="max-h-[60vh]" bottomShadow>
+                        <SearchResultsList typeLabels={typeLabels} />
                         <SearchNavigationList />
                     </ScrollAreaWithShadow>
                 </CommandList>
-
-                <SearchActionBar handleStartBuild={handleStartBuild} />
+                <SearchActionBar />
             </CommandDialog>
         </>
     );

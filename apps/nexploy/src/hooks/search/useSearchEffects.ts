@@ -4,7 +4,6 @@ import { useCallback, useEffect } from 'react';
 import { useAction } from 'next-safe-action/hooks';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
-import { useHotkeys } from '@/lib/useHotKeys';
 import { useAIPanelStore } from '@/stores/useAIPanelStore';
 import { onStartBuild } from '@/actions/repository/builds/startBuild.action';
 import { useSearchStore } from '@/stores/useSearchStore';
@@ -37,16 +36,6 @@ export function useSearchEffects(): SearchHandlers {
     useEffect(() => {
         if (!open) setReposFetched(false);
     }, [open, setReposFetched]);
-
-    useHotkeys(
-        ['meta+k', 'ctrl+k'],
-        useCallback(() => {
-            const { open: isOpen, openDialog, closeDialog } = useSearchStore.getState();
-            if (isOpen) closeDialog();
-            else openDialog();
-        }, []),
-        { preventDefault: true },
-    );
 
     const { execute: triggerBuild } = useAction(onStartBuild, {
         onSuccess: ({ data }) => {

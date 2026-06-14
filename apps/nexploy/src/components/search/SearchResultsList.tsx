@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useTranslations } from 'next-intl';
 import { useSearchStore } from '@/stores/useSearchStore';
 import { AskAiGroup } from './groups/AskAiGroup';
 import { RepositoryResultsGroup } from './groups/RepositoryResultsGroup';
@@ -14,12 +13,9 @@ import { useDockerSearch } from '@/hooks/search/useDockerSearch.ts';
 
 interface SearchResultsListProps {
     typeLabels: TypeLabels;
-    onAskAI: (query: string) => void;
 }
 
-export function SearchResultsList({ typeLabels, onAskAI }: SearchResultsListProps) {
-    const t = useTranslations('ai.command');
-
+export function SearchResultsList({ typeLabels }: SearchResultsListProps) {
     const inputValue = useSearchStore((s) => s.inputValue);
     const repositories = useSearchStore((s) => s.repositories);
 
@@ -39,17 +35,12 @@ export function SearchResultsList({ typeLabels, onAskAI }: SearchResultsListProp
 
     return (
         <>
-            <AskAiGroup onAskAI={onAskAI} />
+            {!hasAnyResults && <AskAiGroup />}
             <RepositoryResultsGroup repos={filteredRepos} typeLabel={typeLabels.repository} />
             <ContainerResultsGroup containers={containers} typeLabel={typeLabels.container} />
             <ImageResultsGroup images={images} typeLabel={typeLabels.image} />
             <VolumeResultsGroup volumes={volumes} typeLabel={typeLabels.volume} />
             <NetworkResultsGroup networks={networks} typeLabel={typeLabels.network} />
-            {!hasAnyResults && (
-                <p className="text-muted-foreground py-10 text-center text-sm">
-                    {t('noResults', { query: inputValue })}
-                </p>
-            )}
         </>
     );
 }

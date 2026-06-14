@@ -1,21 +1,17 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { useHotkeys } from '@/lib/useHotKeys';
 import { useSearchStore } from '@/stores/useSearchStore';
 import { Button } from '@workspace/ui/components/button.tsx';
 import { Kbd } from '@workspace/ui/components/kbd.tsx';
+import { useSearchEffects } from '@/hooks/search/useSearchEffects.ts';
 
-interface SearchActionBarProps {
-    handleStartBuild: (repositoryId: string) => void;
-}
-
-export function SearchActionBar({ handleStartBuild }: SearchActionBarProps) {
+export function SearchActionBar() {
     const commandValue = useSearchStore((s) => s.commandValue);
-    const open = useSearchStore((s) => s.open);
     const t = useTranslations('ai.command');
     const tBuild = useTranslations('repository.builds');
+    const { handleStartBuild } = useSearchEffects();
 
     const primaryLabel = useMemo(() => {
         if (!commandValue) return null;
@@ -33,14 +29,6 @@ export function SearchActionBar({ handleStartBuild }: SearchActionBarProps) {
             handler: () => handleStartBuild(repoId),
         };
     }, [commandValue, tBuild, handleStartBuild]);
-
-    useHotkeys(
-        ['meta+enter'],
-        useCallback(() => {
-            if (open && secondaryAction) secondaryAction.handler();
-        }, [open, secondaryAction]),
-        { preventDefault: true },
-    );
 
     if (!primaryLabel) return null;
 
