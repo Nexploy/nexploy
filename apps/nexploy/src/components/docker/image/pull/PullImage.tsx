@@ -13,7 +13,6 @@ import { Alert, AlertTitle } from '@workspace/ui/components/alert';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { ImageNameConfig } from '@/components/docker/image/pull/ImageNameConfig';
-import { SearchImages } from './SearchImages';
 import { RegistrySelector } from '@/components/docker/image/pull/RegistrySelector';
 import type { RegistryInfo } from '@/services/registry.service';
 
@@ -95,7 +94,6 @@ export function PullImage({ registries }: PullImageProps) {
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
                         <div className="flex flex-col gap-4 overflow-hidden px-5 pb-5">
                             <div className={'flex flex-col'}>
-                                <SearchImages />
                                 <ImageNameConfig />
                             </div>
                             {registries.length > 0 && <RegistrySelector registries={registries} />}

@@ -11,7 +11,6 @@ import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { onContainerCreateAction } from '@/actions/docker/container/containerCreate.action';
 import { useTranslations } from 'next-intl';
-import { ContainerTemplates } from '@/components/docker/containers/create/ContainerTemplates';
 import { ContainerBasicConfig } from '@/components/docker/containers/create/ContainerBasicConfig';
 import { ContainerPorts } from '@/components/docker/containers/create/ContainerPorts';
 import { ContainerEnvVars } from '@/components/docker/containers/create/ContainerEnvVars';
@@ -97,7 +96,6 @@ export default function CreateContainerPage() {
 
                     <ScrollAreaWithShadow className="h-full overflow-hidden">
                         <div className="flex flex-col gap-4 px-5 pb-5">
-                            <ContainerTemplates />
                             <ContainerBasicConfig />
                             <ContainerPorts />
                             <ContainerEnvVars />

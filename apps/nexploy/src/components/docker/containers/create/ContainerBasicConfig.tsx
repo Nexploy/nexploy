@@ -28,6 +28,9 @@ import {
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { useImagesStore } from '@/stores/docker/useImagesStore.ts';
 import { useMemo } from 'react';
+import { DockerHubSearchDialog } from '@/components/docker/image/pull/DockerHubSearchDialog.tsx';
+import { Button } from '@workspace/ui/components/button.tsx';
+import { Docker } from '@thesvg/react';
 
 export function ContainerBasicConfig() {
     const t = useTranslations('docker.createContainer');
@@ -48,6 +51,8 @@ export function ContainerBasicConfig() {
             .sort()
             .map((name) => ({ value: name, label: name }));
     }, [images]);
+
+    const selectedImage = form.watch('image');
 
     return (
         <Card>
@@ -79,13 +84,30 @@ export function ContainerBasicConfig() {
                         <FormItem>
                             <FormLabel>{t('dockerImage')}</FormLabel>
                             <FormControl>
-                                <InputAutoComplete
-                                    {...field}
-                                    options={imageOptions}
-                                    heading={t('availableImages')}
-                                    autoComplete="off"
-                                    placeholder="postgres:latest"
-                                />
+                                <div className={'flex'}>
+                                    <InputAutoComplete
+                                        {...field}
+                                        className={'w-full flex-1 rounded-r-none'}
+                                        options={imageOptions}
+                                        heading={t('availableImages')}
+                                        autoComplete="off"
+                                        placeholder="postgres:latest"
+                                    />
+                                    <DockerHubSearchDialog
+                                        onSelect={(image) =>
+                                            form.setValue('image', `${image.slug}:latest`)
+                                        }
+                                        isSelected={(image) =>
+                                            selectedImage === `${image.slug}:latest`
+                                        }
+                                        trigger={
+                                            <Button className={'rounded-l-none font-semibold'}>
+                                                <Docker className="size-4 [&_path]:fill-current" />
+                                                {t('dockerHub')}
+                                            </Button>
+                                        }
+                                    />
+                                </div>
                             </FormControl>
                             <FormDescription>{t('dockerImageDescription')}</FormDescription>
                             <FormMessage />

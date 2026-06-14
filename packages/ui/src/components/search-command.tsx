@@ -85,7 +85,7 @@ export const InputAutoComplete = ({
 
     return (
         <PopoverPrimitive.Root open={shouldShowList} onOpenChange={setOpen}>
-            <CommandPrimitive onKeyDown={handleKeyDown}>
+            <CommandPrimitive className={'w-full'} onKeyDown={handleKeyDown}>
                 <PopoverPrimitive.Anchor asChild>
                     <Input
                         {...props}

@@ -2,6 +2,7 @@
 
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useIntersectionObserver } from 'usehooks-ts';
 import useSWRInfinite from 'swr/infinite';
 import { BadgeCheck, Download, Search, Star } from 'lucide-react';
 import { Input } from '@workspace/ui/components/input';
@@ -27,31 +28,15 @@ import {
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow.tsx';
 import { cn } from '@workspace/ui/lib/utils.ts';
 import { fetcherApi } from '@/lib/api/fetcherApi';
-import type { DockerHubImage, DockerHubSort, } from '@workspace/typescript-interface/docker/docker.hub';
+import type {
+    DockerHubImage,
+    DockerHubSort,
+} from '@workspace/typescript-interface/docker/docker.hub';
 import { ImageLogo } from '@/components/docker/image/pull/ImageLogo.tsx';
 
 type SourceFilter = 'all' | 'official';
 
 const PAGE_SIZE = 30;
-
-function ImageCardSkeleton() {
-    return (
-        <div className="flex h-full flex-col gap-2 rounded-lg border p-3">
-            <div className="flex items-start gap-3">
-                <Skeleton className="size-10 shrink-0 rounded-md" />
-                <Skeleton className="mt-1 h-4 w-2/3" />
-            </div>
-            <div className="min-h-8 space-y-1">
-                <Skeleton className="h-3 w-full" />
-                <Skeleton className="h-3 w-4/5" />
-            </div>
-            <div className="mt-auto flex items-center gap-3">
-                <Skeleton className="h-3 w-10" />
-                <Skeleton className="h-3 w-12" />
-            </div>
-        </div>
-    );
-}
 
 interface DockerHubSearchDialogProps {
     trigger: ReactNode;
@@ -67,12 +52,29 @@ export function DockerHubSearchDialog({
     const t = useTranslations('docker.pullImagePage');
 
     const [open, setOpen] = useState(false);
+    const [session, setSession] = useState(0);
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
     const [sort, setSort] = useState<DockerHubSort>('pull_count');
     const [source, setSource] = useState<SourceFilter>('official');
 
-    const scrollRef = useRef<HTMLDivElement>(null);
+    const viewportRef = useRef<HTMLDivElement | null>(null);
+    const [scrollRoot, setScrollRoot] = useState<HTMLDivElement | null>(null);
+    const setViewport = useCallback((node: HTMLDivElement | null) => {
+        viewportRef.current = node;
+        setScrollRoot(node);
+    }, []);
+
+    const handleOpenChange = (next: boolean) => {
+        if (next) {
+            setSession((s) => s + 1);
+            setSearch('');
+            setDebouncedSearch('');
+            setSort('pull_count');
+            setSource('official');
+        }
+        setOpen(next);
+    };
 
     useEffect(() => {
         const id = setTimeout(() => setDebouncedSearch(search.trim()), 350);
@@ -83,12 +85,12 @@ export function DockerHubSearchDialog({
         (pageIndex: number, previousPageData: DockerHubImage[] | null) => {
             if (!open) return null;
             if (previousPageData && previousPageData.length < PAGE_SIZE) return null;
-            const from = pageIndex * PAGE_SIZE;
             return {
-                url: `/api/docker/images/search?query=${encodeURIComponent(debouncedSearch)}&sort=${sort}&from=${from}`,
+                url: `/api/docker/images/search?query=${encodeURIComponent(debouncedSearch)}&sort=${sort}&from=${pageIndex * PAGE_SIZE}`,
+                session,
             };
         },
-        [open, debouncedSearch, sort],
+        [open, debouncedSearch, sort, session],
     );
 
     const {
@@ -96,50 +98,30 @@ export function DockerHubSearchDialog({
         setSize,
         isLoading,
         isValidating,
-    } = useSWRInfinite<DockerHubImage[]>(getKey, fetcherApi, {
-        keepPreviousData: true,
-        revalidateFirstPage: false,
-        revalidateOnMount: true,
-    });
+    } = useSWRInfinite<DockerHubImage[]>(getKey, fetcherApi, { revalidateFirstPage: false });
 
     useEffect(() => {
-        setSize(1);
-        scrollRef.current?.scrollTo({ top: 0 });
-    }, [open, debouncedSearch, sort, setSize]);
+        viewportRef.current?.scrollTo({ top: 0 });
+    }, [debouncedSearch, sort, session]);
 
     const images = useMemo(() => pages?.flat() ?? [], [pages]);
-
-    const filteredImages = useMemo(() => {
-        if (source === 'official') return images.filter((image) => image.isOfficial);
-        return images;
-    }, [images, source]);
+    const filteredImages = useMemo(
+        () => (source === 'official' ? images.filter((image) => image.isOfficial) : images),
+        [images, source],
+    );
 
     const lastPage = pages?.[pages.length - 1];
     const isReachingEnd = !!lastPage && lastPage.length < PAGE_SIZE;
     const isLoadingMore = isValidating && (pages?.length ?? 0) > 0;
 
-    const sentinelRef = useRef<HTMLDivElement>(null);
-    const loadMoreRef = useRef<() => void>(() => {});
-    loadMoreRef.current = () => {
-        if (isValidating || isReachingEnd) return;
-        setSize((s) => s + 1);
-    };
+    const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({
+        root: scrollRoot,
+        rootMargin: '300px',
+    });
 
     useEffect(() => {
-        if (!open) return;
-        const sentinel = sentinelRef.current;
-        if (!sentinel) return;
-        const root = sentinel.closest<HTMLElement>('[data-slot="scroll-area-viewport"]');
-
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0]?.isIntersecting) loadMoreRef.current();
-            },
-            { root, rootMargin: '300px' },
-        );
-        observer.observe(sentinel);
-        return () => observer.disconnect();
-    }, [open, pages?.length]);
+        if (isIntersecting && !isValidating && !isReachingEnd) setSize((s) => s + 1);
+    }, [isIntersecting, isValidating, isReachingEnd, setSize]);
 
     const handleSelect = (image: DockerHubImage) => {
         onSelect(image);
@@ -147,7 +129,7 @@ export function DockerHubSearchDialog({
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
             <DialogContent className="flex flex-col gap-4 overflow-hidden sm:max-w-4xl">
                 <DialogHeader>
@@ -194,8 +176,9 @@ export function DockerHubSearchDialog({
                         </SelectContent>
                     </Select>
                 </div>
+
                 <ScrollAreaWithShadow
-                    ref={scrollRef}
+                    ref={setViewport}
                     bottomShadow
                     className="h-[70vh] overflow-hidden px-3"
                 >
@@ -218,7 +201,7 @@ export function DockerHubSearchDialog({
                     <div className="grid grid-cols-1 gap-3 pb-3 sm:grid-cols-3">
                         {filteredImages.map((image) => (
                             <button
-                                key={image.slug}
+                                key={image.name}
                                 type="button"
                                 onClick={() => handleSelect(image)}
                                 className={cn(
@@ -257,7 +240,23 @@ export function DockerHubSearchDialog({
                         {isLoadingMore &&
                             !isLoading &&
                             Array.from({ length: 4 }).map((_, i) => (
-                                <ImageCardSkeleton key={`skeleton-${i}`} />
+                                <div
+                                    key={`skeleton-${i}`}
+                                    className="flex h-full flex-col gap-2 rounded-lg border p-3"
+                                >
+                                    <div className="flex items-start gap-3">
+                                        <Skeleton className="size-10 shrink-0 rounded-md" />
+                                        <Skeleton className="mt-1 h-4 w-2/3" />
+                                    </div>
+                                    <div className="min-h-8 space-y-1">
+                                        <Skeleton className="h-3 w-full" />
+                                        <Skeleton className="h-3 w-4/5" />
+                                    </div>
+                                    <div className="mt-auto flex items-center gap-3">
+                                        <Skeleton className="h-3 w-10" />
+                                        <Skeleton className="h-3 w-12" />
+                                    </div>
+                                </div>
                             ))}
                     </div>
 
