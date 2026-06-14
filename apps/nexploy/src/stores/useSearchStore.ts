@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { RepositoryResult } from './SearchPrimitives';
+import type { RepositoryResult } from '@/components/search/SearchPrimitives';
 
 interface SearchStore {
     open: boolean;

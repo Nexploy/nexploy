@@ -17,7 +17,9 @@ import {
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { type ComponentType } from 'react';
-import { useSearchStore } from './useSearchStore';
+import { cn } from '@workspace/ui/lib/utils';
+import { useSearchStore } from '@/stores/useSearchStore';
+import { useSearchItemSelect } from '@/hooks/search/useSearchItemSelect';
 
 interface NavItem {
     href: string;
@@ -30,50 +32,33 @@ export function SearchNavigationList() {
     const t = useTranslations('ai.command');
     const tNav = useTranslations('navigation');
     const runCommand = useSearchStore((s) => s.runCommand);
+    const getItemProps = useSearchItemSelect();
 
     const homeItems: NavItem[] = [
-        {
-            href: '/repositories',
-            icon: FolderGit2,
-            label: tNav('repositories'),
-        },
+        { href: '/repositories', icon: FolderGit2, label: tNav('repositories') },
         { href: '/monitoring', icon: Activity, label: tNav('monitoring') },
         { href: '/requests', icon: Send, label: tNav('requests') },
         { href: '/swarm', icon: Network, label: tNav('swarm') },
-        {
-            href: '/admin/registry',
-            icon: Warehouse,
-            label: tNav('registry'),
-        },
+        { href: '/admin/registry', icon: Warehouse, label: tNav('registry') },
     ];
 
     const dockerItems: NavItem[] = [
-        {
-            href: '/docker/containers',
-            icon: Container,
-            label: tNav('containers'),
-        },
+        { href: '/docker/containers', icon: Container, label: tNav('containers') },
         { href: '/docker/images', icon: LayoutList, label: tNav('images') },
         { href: '/docker/volumes', icon: HardDrive, label: tNav('volumes') },
-        {
-            href: '/docker/networks',
-            icon: EthernetPort,
-            label: tNav('networks'),
-        },
+        { href: '/docker/networks', icon: EthernetPort, label: tNav('networks') },
         { href: '/docker/events', icon: Bug, label: tNav('events') },
     ];
 
-    const renderItem = ({ href, icon: Icon, label }: NavItem, index: number) => (
-        <CommandItem
-            key={index}
-            value={label}
-            onSelect={() => runCommand(() => router.push(href))}
-            className={'rounded'}
-        >
-            <Icon className="text-muted-foreground ml-1 shrink-0" />
-            <span className="text-sm font-medium">{label}</span>
-        </CommandItem>
-    );
+    const renderItem = ({ href, icon: Icon, label }: NavItem, index: number) => {
+        const itemProps = getItemProps(label, () => runCommand(() => router.push(href)));
+        return (
+            <CommandItem key={index} {...itemProps} className={cn(itemProps.className, 'rounded')}>
+                <Icon className="text-muted-foreground ml-1 shrink-0" />
+                <span className="text-sm font-medium">{label}</span>
+            </CommandItem>
+        );
+    };
 
     return (
         <>
@@ -81,8 +66,7 @@ export function SearchNavigationList() {
             <CommandGroup heading={tNav('docker')}>{dockerItems.map(renderItem)}</CommandGroup>
             <CommandGroup heading={t('system')}>
                 <CommandItem
-                    value={t('account')}
-                    onSelect={() => runCommand(() => router.push('/account'))}
+                    {...getItemProps(t('account'), () => runCommand(() => router.push('/account')))}
                 >
                     <User className="text-muted-foreground shrink-0" />
                     <span className="text-sm font-medium">{t('account')}</span>

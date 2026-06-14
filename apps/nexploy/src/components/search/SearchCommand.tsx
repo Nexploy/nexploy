@@ -3,10 +3,12 @@
 import { CommandDialog, CommandInput, CommandList } from '@workspace/ui/components/command';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
-import { useSearchStore } from './useSearchStore';
-import { useSearchEffects } from './useSearchEffects';
+import { useSearchStore } from '@/stores/useSearchStore';
 import { SearchActionBar } from './SearchActionBar';
 import { SearchNavigationList } from './SearchNavigationList';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow.tsx';
+import { SearchResultsList } from '@/components/search/SearchResultsList.tsx';
+import { useSearchEffects } from '@/hooks/search/useSearchEffects.ts';
 
 export function SearchCommand() {
     const t = useTranslations('ai.command');
@@ -20,8 +22,6 @@ export function SearchCommand() {
     const setCommandValue = useSearchStore((s) => s.setCommandValue);
 
     const { handleStartBuild, handleAskAI } = useSearchEffects();
-
-    const isSearching = inputValue.trim().length > 0;
 
     const typeLabels = {
         repository: t('types.repository'),
@@ -51,6 +51,7 @@ export function SearchCommand() {
                     className: 'bg-card',
                     value: commandValue,
                     onValueChange: setCommandValue,
+                    disablePointerSelection: true,
                 }}
             >
                 <CommandInput
@@ -60,9 +61,11 @@ export function SearchCommand() {
                     onValueChange={setInputValue}
                 />
 
-                <CommandList className="bg-card">
-                    {/*<SearchResultsList typeLabels={typeLabels} onAskAI={handleAskAI} />*/}
-                    <SearchNavigationList />
+                <CommandList className="bg-card max-h-none overflow-x-hidden overflow-y-hidden">
+                    <ScrollAreaWithShadow className="h-[400px]" bottomShadow>
+                        <SearchResultsList typeLabels={typeLabels} onAskAI={handleAskAI} />
+                        <SearchNavigationList />
+                    </ScrollAreaWithShadow>
                 </CommandList>
 
                 <SearchActionBar handleStartBuild={handleStartBuild} />

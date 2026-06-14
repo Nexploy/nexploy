@@ -3,7 +3,7 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useHotkeys } from '@/lib/useHotKeys';
-import { useSearchStore } from './useSearchStore';
+import { useSearchStore } from '@/stores/useSearchStore';
 import { Button } from '@workspace/ui/components/button.tsx';
 import { Kbd } from '@workspace/ui/components/kbd.tsx';
 
@@ -55,10 +55,11 @@ export function SearchActionBar({ handleStartBuild }: SearchActionBarProps) {
                 <>
                     <div className="bg-border h-3.5 w-px" />
                     <Button
-                        className="flex cursor-pointer items-center gap-1.5"
+                        size={'sm'}
+                        className="flex h-7 cursor-pointer items-center gap-1.5"
                         onClick={() => secondaryAction.handler()}
                     >
-                        <span className="text-muted-foreground hover:text-foreground text-xs font-medium transition-colors">
+                        <span className="text-xs font-medium transition-colors">
                             {secondaryAction.label}
                         </span>
                         {secondaryAction.hotkeys.map((k) => (

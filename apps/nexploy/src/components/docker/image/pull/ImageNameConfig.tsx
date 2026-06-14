@@ -25,7 +25,7 @@ export function ImageNameConfig() {
     const selectedImage = form.watch('imageName');
 
     return (
-        <Card className={'rounded-t-none'}>
+        <Card>
             <CardHeaderWithIcon
                 icon={Settings}
                 title={t('configuration')}

@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useHotkeys } from '@/lib/useHotKeys';
 import { useAIPanelStore } from '@/stores/useAIPanelStore';
 import { onStartBuild } from '@/actions/repository/builds/startBuild.action';
-import { useSearchStore } from './useSearchStore';
+import { useSearchStore } from '@/stores/useSearchStore';
 
 export interface SearchHandlers {
     handleAskAI: (query: string) => void;
