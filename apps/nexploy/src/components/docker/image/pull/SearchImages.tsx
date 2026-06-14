@@ -2,34 +2,33 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { LayoutTemplate, Search } from 'lucide-react';
+import { LayoutGrid, Search } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { Button } from '@workspace/ui/components/button';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 import { DockerHubSearchDialog } from '@/components/docker/image/pull/DockerHubSearchDialog.tsx';
-import { buildContainerConfig } from '@/components/docker/containers/create/containerImageDefaults.ts';
 
-export function ContainerTemplates() {
-    const t = useTranslations('docker.createContainer');
+export function SearchImages() {
+    const t = useTranslations('docker.pullImagePage');
     const form = useFormContext();
 
-    const selectedImage = form.watch('image');
+    const selectedImage = form.watch('imageName');
 
     return (
-        <Card>
+        <Card className={'rounded-b-none border-b-0'}>
             <CardHeaderWithIcon
-                icon={LayoutTemplate}
-                title={t('templates')}
-                description={t('templatesDescription')}
+                icon={LayoutGrid}
+                title={t('popularImages')}
+                description={t('popularImagesDescription')}
             />
-            <CardContent className="overflow-hidden">
+            <CardContent className={'overflow-hidden'}>
                 <DockerHubSearchDialog
-                    onSelect={(image) => form.reset(buildContainerConfig(image))}
+                    onSelect={(image) => form.setValue('imageName', `${image.slug}:latest`)}
                     isSelected={(image) => selectedImage === `${image.slug}:latest`}
                     trigger={
                         <Button type="button" variant="outline" className="w-full justify-start">
                             <Search className="size-4" />
-                            {t('browseTemplates')}
+                            {t('browseImages')}
                         </Button>
                     }
                 />

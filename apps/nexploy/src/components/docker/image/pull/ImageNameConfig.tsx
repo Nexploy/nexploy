@@ -20,7 +20,7 @@ export function ImageNameConfig() {
     const form = useFormContext();
 
     return (
-        <Card>
+        <Card className={'rounded-t-none'}>
             <CardHeaderWithIcon
                 icon={Settings}
                 title={t('configuration')}
