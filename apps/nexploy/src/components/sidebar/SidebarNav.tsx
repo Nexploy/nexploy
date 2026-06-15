@@ -32,18 +32,11 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
 } from '@workspace/ui/components/sidebar';
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from '@workspace/ui/components/collapsible';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger, } from '@workspace/ui/components/collapsible';
 import Link from 'next/link';
 import { RefreshDocker } from '@/components/sidebar/RefreshDocker';
 import { NavPermission, usePermissions } from '@/contexts/PermissionContext';
-import type {
-    SidebarItem,
-    SidebarNavGroup,
-} from '@workspace/typescript-interface/sidebar/sidebarNav';
+import type { SidebarItem, SidebarNavGroup, } from '@workspace/typescript-interface/sidebar/sidebarNav';
 import { useTranslations } from 'next-intl';
 
 interface PermissionedSidebarItem extends SidebarItem {
@@ -93,18 +86,6 @@ const groups: PermissionedSidebarNavGroup[] = [
                 permission: { resource: 'docker', action: 'manage' },
             },
             { titleKey: 'requests', href: '/requests', icon: Send },
-            {
-                titleKey: 'registry',
-                href: '/admin/registry',
-                icon: Warehouse,
-                permission: { resource: 'registry', action: 'read' },
-            },
-            {
-                titleKey: 'traefik',
-                href: '/admin/traefik',
-                icon: Waypoints,
-                permission: { resource: 'user', action: 'ban' },
-            },
         ],
     },
     {
@@ -123,10 +104,29 @@ const groups: PermissionedSidebarNavGroup[] = [
                 permission: { resource: 'gitProvider', action: 'create' },
             },
             {
+                titleKey: 'registry',
+                href: '/admin/registry',
+                icon: Warehouse,
+                permission: { resource: 'registry', action: 'read' },
+            },
+            {
+                titleKey: 'traefik',
+                href: '/admin/traefik',
+                icon: Waypoints,
+                permission: { resource: 'user', action: 'ban' },
+            },
+            {
+                titleKey: 'sslCertificates',
+                href: '/admin/ssl-certificates',
+                icon: Shield,
+                permission: { resource: 'repository', action: 'update' },
+            },
+            {
                 titleKey: 'ai',
                 href: '/admin/ai/models',
                 icon: Bot,
                 permission: { resource: 'ai', action: 'manage' },
+                defaultCollapsibleOpen: false,
                 children: [
                     { titleKey: 'models', icon: Cpu, href: '/admin/ai/models' },
                     { titleKey: 'mcp', icon: Network, href: '/admin/ai/mcp' },
@@ -138,12 +138,6 @@ const groups: PermissionedSidebarNavGroup[] = [
                 href: '/admin/backups',
                 icon: Database,
                 permission: { resource: 'backup', action: 'read' },
-            },
-            {
-                titleKey: 'sslCertificates',
-                href: '/admin/ssl-certificates',
-                icon: Shield,
-                permission: { resource: 'repository', action: 'update' },
             },
         ],
     },
@@ -206,7 +200,7 @@ export function SidebarNav() {
                                     <Collapsible
                                         key={item.titleKey}
                                         asChild
-                                        defaultOpen
+                                        defaultOpen={item.defaultCollapsibleOpen ?? true}
                                         className="group/collapsible"
                                     >
                                         <SidebarMenuItem>

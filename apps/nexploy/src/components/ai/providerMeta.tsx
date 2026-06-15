@@ -12,11 +12,9 @@ type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
 
 export interface ProviderMeta {
     icon: IconComponent;
-    /** Tailwind background color class used behind the provider icon. */
     color: string;
 }
 
-/** Single source of truth for provider icons and brand background colors. */
 export const PROVIDER_META: Record<Provider, ProviderMeta> = {
     OPENAI: { icon: Openai, color: 'bg-[#10A37F]' },
     ANTHROPIC: { icon: Anthropic, color: 'bg-[#D97757]' },

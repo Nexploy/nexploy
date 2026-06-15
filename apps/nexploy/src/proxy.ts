@@ -25,7 +25,8 @@ const PERMISSION_ROUTES: { path: string; resource: PermissionResource; action: s
     { path: '/admin/ai', resource: 'ai', action: 'manage' },
     { path: '/admin/backups', resource: 'backup', action: 'read' },
     { path: '/admin/ssl-certificates', resource: 'repository', action: 'update' },
-    // /admin/registry: registry.read is available to all roles — no restriction
+    { path: '/admin/registry', resource: 'registry', action: 'read' },
+    { path: '/admin/traefik', resource: 'user', action: 'ban' },
 ];
 
 async function getRedirectUrl(request: NextRequest): Promise<string | NextResponse | null> {

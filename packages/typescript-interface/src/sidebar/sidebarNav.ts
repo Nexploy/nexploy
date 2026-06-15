@@ -12,5 +12,6 @@ export interface SidebarItem {
     className?: string;
     actionIcon?: JSX.Element;
     enableCollapsible?: boolean;
+    defaultCollapsibleOpen?: boolean;
     children?: SidebarItem[];
 }

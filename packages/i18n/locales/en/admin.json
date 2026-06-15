@@ -189,6 +189,8 @@
         "deleteError": "Failed to delete file",
         "createdSuccess": "File created successfully",
         "createError": "Failed to create file",
+        "movedSuccess": "Moved successfully",
+        "moveError": "Failed to move",
         "loadFilesError": "Failed to load configuration files",
         "loadFileError": "Failed to load file content",
         "yamlInvalid": "YAML Error",

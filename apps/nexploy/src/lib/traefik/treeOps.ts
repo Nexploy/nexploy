@@ -28,11 +28,12 @@ function sortNodes(nodes: TraefikTreeNode[]): TraefikTreeNode[] {
     });
 }
 
-export function insertFileNode(tree: TraefikTreeNode[], filePath: string): TraefikTreeNode[] {
-    const segments = filePath.split('/');
-    const popped = segments.pop();
-    if (!popped) return tree;
-    const fileName: string = popped;
+export function insertNode(
+    tree: TraefikTreeNode[],
+    destDir: string,
+    node: TraefikTreeNode,
+): TraefikTreeNode[] {
+    const segments = destDir ? destDir.split('/') : [];
 
     function insertInto(
         nodes: TraefikTreeNode[],
@@ -41,9 +42,8 @@ export function insertFileNode(tree: TraefikTreeNode[], filePath: string): Traef
     ): TraefikTreeNode[] {
         const [head, ...rest] = segs;
         if (!head) {
-            const path = prefix ? `${prefix}/${fileName}` : fileName;
-            if (nodes.some((n) => n.path === path)) return nodes;
-            return sortNodes([...nodes, { name: fileName, path, type: 'file' }]);
+            if (nodes.some((n) => n.path === node.path)) return nodes;
+            return sortNodes([...nodes, node]);
         }
 
         const folderPath = prefix ? `${prefix}/${head}` : head;
@@ -71,6 +71,14 @@ export function insertFileNode(tree: TraefikTreeNode[], filePath: string): Traef
     return insertInto(tree, segments, '');
 }
 
+export function insertFileNode(tree: TraefikTreeNode[], filePath: string): TraefikTreeNode[] {
+    const segments = filePath.split('/');
+    const popped = segments.pop();
+    if (!popped) return tree;
+    const destDir = segments.join('/');
+    return insertNode(tree, destDir, { name: popped, path: filePath, type: 'file' });
+}
+
 export function removeNode(tree: TraefikTreeNode[], targetPath: string): TraefikTreeNode[] {
     function removeFrom(nodes: TraefikTreeNode[]): TraefikTreeNode[] {
         return nodes
@@ -78,4 +86,38 @@ export function removeNode(tree: TraefikTreeNode[], targetPath: string): Traefik
             .map((n) => (n.children ? { ...n, children: removeFrom(n.children) } : n));
     }
     return removeFrom(tree);
+}
+
+function findNode(nodes: TraefikTreeNode[], targetPath: string): TraefikTreeNode | undefined {
+    for (const node of nodes) {
+        if (node.path === targetPath) return node;
+        if (node.children) {
+            const found = findNode(node.children, targetPath);
+            if (found) return found;
+        }
+    }
+    return undefined;
+}
+
+function rebasePaths(node: TraefikTreeNode, newPath: string): TraefikTreeNode {
+    return {
+        ...node,
+        path: newPath,
+        children: node.children?.map((child) => rebasePaths(child, `${newPath}/${child.name}`)),
+    };
+}
+
+export function moveNode(
+    tree: TraefikTreeNode[],
+    sourcePath: string,
+    destDir: string,
+): TraefikTreeNode[] {
+    const node = findNode(tree, sourcePath);
+    if (!node) return tree;
+
+    const newPath = destDir ? `${destDir}/${node.name}` : node.name;
+    if (newPath === sourcePath || newPath.startsWith(`${sourcePath}/`)) return tree;
+
+    const without = removeNode(tree, sourcePath);
+    return insertNode(without, destDir, rebasePaths(node, newPath));
 }

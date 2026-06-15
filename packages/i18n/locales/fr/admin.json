@@ -189,6 +189,8 @@
         "deleteError": "Impossible de supprimer le fichier",
         "createdSuccess": "Fichier créé avec succès",
         "createError": "Impossible de créer le fichier",
+        "movedSuccess": "Déplacé avec succès",
+        "moveError": "Impossible de déplacer",
         "loadFilesError": "Impossible de charger les fichiers de configuration",
         "loadFileError": "Impossible de charger le contenu du fichier",
         "yamlInvalid": "Erreur YAML",

@@ -14,3 +14,15 @@ export const saveTraefikFileSchema = z.object({
     filename: traefikYmlPath,
     content: z.string(),
 });
+
+// Relative path to a file or folder (no extension requirement).
+const traefikRelPath = z
+    .string()
+    .regex(/^(?!\/)(?!.*(^|\/)\.\.(\/|$))[\w.\-/]+$/, 'Invalid path');
+
+export const moveTraefikEntrySchema = z.object({
+    // File (`.yml`) or folder being moved.
+    source: traefikRelPath,
+    // Destination folder, empty string means the service root.
+    destinationDir: z.union([z.literal(''), traefikRelPath]),
+});

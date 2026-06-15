@@ -7,10 +7,11 @@ import { fetcherApi } from '@/lib/api/fetcherApi';
 import { formatYaml, validateYaml } from '@/lib/yaml';
 import { deleteTraefikFile } from '@/actions/admin/deleteTraefikFile.action';
 import { saveTraefikFile } from '@/actions/admin/saveTraefikFile.action';
+import { moveTraefikEntry } from '@/actions/admin/moveTraefikEntry.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { TranslationFunction } from '@workspace/typescript-interface/commun.ts';
 import type { TraefikTreeNode } from '@/lib/traefik/types';
-import { insertFileNode, removeNode } from '@/lib/traefik/treeOps';
+import { insertFileNode, moveNode, removeNode } from '@/lib/traefik/treeOps';
 
 function fileUrl(relPath: string): string {
     const segments = relPath.split('/').map(encodeURIComponent).join('/');
@@ -33,6 +34,7 @@ export interface TraefikConfigState {
     selectFile: (name: string, t: TranslationFunction) => void;
     setFileContent: (content: string) => void;
     deleteFile: (t: TranslationFunction, filename?: string) => void;
+    moveEntry: (source: string, destinationDir: string, t: TranslationFunction) => Promise<void>;
     formatContent: (t: TranslationFunction) => void;
     toggleDiffMode: () => void;
     afterNewFile: (name: string) => Promise<void>;
@@ -167,6 +169,35 @@ export function createTraefikConfigStore(initialTree: TraefikTreeNode[]) {
             });
         },
 
+        moveEntry: async (source, destinationDir, t) => {
+            const name = source.split('/').pop();
+            if (!name) return;
+            const newPath = destinationDir ? `${destinationDir}/${name}` : name;
+
+            if (newPath === source || newPath.startsWith(`${source}/`)) return;
+
+            const prevTree = get().tree;
+            const prevSelected = get().selectedFile;
+
+            set((s) => {
+                let selectedFile = s.selectedFile;
+                if (selectedFile === source) {
+                    selectedFile = newPath;
+                } else if (selectedFile && selectedFile.startsWith(`${source}/`)) {
+                    selectedFile = newPath + selectedFile.slice(source.length);
+                }
+                return { tree: moveNode(s.tree, source, destinationDir), selectedFile };
+            });
+
+            const result = await moveTraefikEntry({ source, destinationDir });
+            if (result?.serverError || !result?.data?.success) {
+                toast.error(t('moveError'));
+                set({ tree: prevTree, selectedFile: prevSelected });
+                return;
+            }
+            toast.success(t('movedSuccess'));
+        },
+
         formatContent: (t) => {
             const { yamlError, fileContent } = get();
             if (yamlError || !fileContent.trim()) return;
@@ -188,8 +219,6 @@ export function createTraefikConfigStore(initialTree: TraefikTreeNode[]) {
                 clearTimeout(autoSaveTimer);
                 autoSaveTimer = null;
             }
-            // The file was just created empty server-side; insert it and open it
-            // locally without re-fetching the whole tree or its content.
             set((s) => ({
                 tree: insertFileNode(s.tree, name),
                 selectedFile: name,
