@@ -11,10 +11,6 @@ export const TRAEFIK_SERVICE_DIR = path.join(
     'service',
 );
 
-/**
- * Resolve a path relative to the Traefik service directory while preventing
- * traversal outside of it. Returns the absolute path, or `null` if invalid.
- */
 export function resolveTraefikPath(relPath: string): string | null {
     if (!relPath || relPath.includes('\0')) return null;
     const normalized = path.normalize(relPath);
@@ -26,7 +22,6 @@ export function resolveTraefikPath(relPath: string): string | null {
     return full;
 }
 
-/** Resolve a `.yml` file path, returning `null` for non-yml or unsafe paths. */
 export function resolveTraefikYmlPath(relPath: string): string | null {
     if (!relPath.endsWith('.yml')) return null;
     return resolveTraefikPath(relPath);
@@ -54,7 +49,6 @@ async function walk(absDir: string, relDir: string): Promise<TraefikTreeNode[]> 
     return nodes;
 }
 
-/** Build a hierarchical tree of folders and `.yml` files. */
 export async function readTraefikTree(): Promise<TraefikTreeNode[]> {
     await fs.mkdir(TRAEFIK_SERVICE_DIR, { recursive: true });
     return walk(TRAEFIK_SERVICE_DIR, '');

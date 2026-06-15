@@ -10,7 +10,7 @@ import { Label } from '@workspace/ui/components/label';
 import { toast } from 'sonner';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 
-export function TraefikNewFileDialog() {
+export function TraefikNewFileDialog({ baseDir }: { baseDir?: string }) {
     const { onSuccess, closeDialog } = useConfirmationDialogStore();
     const t = useTranslations('admin.traefik');
     const [fileName, setFileName] = useState('');
@@ -20,7 +20,8 @@ export function TraefikNewFileDialog() {
 
     const handleCreate = async () => {
         const trimmed = fileName.trim();
-        const name = trimmed.endsWith('.yml') ? trimmed : `${trimmed}.yml`;
+        const withExt = trimmed.endsWith('.yml') ? trimmed : `${trimmed}.yml`;
+        const name = baseDir ? `${baseDir}/${withExt}` : withExt;
 
         if (!trimmed || !isValidPath(trimmed)) {
             toast.error(t('invalidFilename'));
@@ -57,9 +58,12 @@ export function TraefikNewFileDialog() {
             <div className="flex flex-col gap-2">
                 <Label htmlFor="traefik-filename">{t('filename')}</Label>
                 <div className="flex items-center gap-2">
+                    {baseDir && (
+                        <span className="text-muted-foreground shrink-0 text-sm">{baseDir}/</span>
+                    )}
                     <Input
                         id="traefik-filename"
-                        placeholder="apps/my-config"
+                        placeholder={baseDir ? 'my-config' : 'apps/my-config'}
                         value={fileName}
                         onChange={(e) => setFileName(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && !creating && handleCreate()}

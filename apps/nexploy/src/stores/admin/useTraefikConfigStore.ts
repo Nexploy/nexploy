@@ -4,14 +4,14 @@ import { createContext, useContext } from 'react';
 import { createStore, useStore } from 'zustand';
 import { toast } from 'sonner';
 import { fetcherApi } from '@/lib/api/fetcherApi';
-import { validateYaml, formatYaml } from '@/lib/yaml';
+import { formatYaml, validateYaml } from '@/lib/yaml';
 import { deleteTraefikFile } from '@/actions/admin/deleteTraefikFile.action';
 import { saveTraefikFile } from '@/actions/admin/saveTraefikFile.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { TranslationFunction } from '@workspace/typescript-interface/commun.ts';
 import type { TraefikTreeNode } from '@/lib/traefik/types';
+import { insertFileNode, removeNode } from '@/lib/traefik/treeOps';
 
-/** Build the request URL for a file, encoding each path segment. */
 function fileUrl(relPath: string): string {
     const segments = relPath.split('/').map(encodeURIComponent).join('/');
     return `/api/admin/traefik/${segments}`;
@@ -19,7 +19,6 @@ function fileUrl(relPath: string): string {
 
 export interface TraefikConfigState {
     tree: TraefikTreeNode[];
-    filesLoading: boolean;
     selectedFile: string | null;
     fileContent: string;
     savedContent: string;
@@ -30,7 +29,6 @@ export interface TraefikConfigState {
 
     isDirty: () => boolean;
 
-    fetchFiles: () => Promise<void>;
     loadFile: (name: string) => Promise<void>;
     selectFile: (name: string, t: TranslationFunction) => void;
     setFileContent: (content: string) => void;
@@ -47,7 +45,6 @@ export function createTraefikConfigStore(initialTree: TraefikTreeNode[]) {
 
     return createStore<TraefikConfigState>((set, get) => ({
         tree: initialTree,
-        filesLoading: false,
         selectedFile: null,
         fileContent: '',
         savedContent: '',
@@ -57,16 +54,6 @@ export function createTraefikConfigStore(initialTree: TraefikTreeNode[]) {
         isDiffMode: false,
 
         isDirty: () => get().fileContent !== get().savedContent,
-
-        fetchFiles: async () => {
-            set({ filesLoading: true });
-            try {
-                const data = await fetcherApi<TraefikTreeNode[]>({ url: '/api/admin/traefik' });
-                set({ tree: data });
-            } finally {
-                set({ filesLoading: false });
-            }
-        },
 
         loadFile: async (name) => {
             set({ contentLoading: true, isDiffMode: false });
@@ -136,7 +123,10 @@ export function createTraefikConfigStore(initialTree: TraefikTreeNode[]) {
             if (!selectedFile) return;
             set({ isSaving: true });
             try {
-                const result = await saveTraefikFile({ filename: selectedFile, content: fileContent });
+                const result = await saveTraefikFile({
+                    filename: selectedFile,
+                    content: fileContent,
+                });
                 if (!result?.serverError && result?.data?.success) {
                     set({ savedContent: fileContent });
                 }
@@ -161,10 +151,18 @@ export function createTraefikConfigStore(initialTree: TraefikTreeNode[]) {
                         return;
                     }
                     toast.success(t('deletedSuccess'));
-                    if (target === get().selectedFile) {
-                        set({ selectedFile: null, fileContent: '', savedContent: '', isDiffMode: false, yamlError: null });
-                    }
-                    await get().fetchFiles();
+                    set((s) => ({
+                        tree: removeNode(s.tree, target),
+                        ...(target === s.selectedFile
+                            ? {
+                                  selectedFile: null,
+                                  fileContent: '',
+                                  savedContent: '',
+                                  isDiffMode: false,
+                                  yamlError: null,
+                              }
+                            : {}),
+                    }));
                 },
             });
         },
@@ -186,8 +184,21 @@ export function createTraefikConfigStore(initialTree: TraefikTreeNode[]) {
         toggleDiffMode: () => set((s) => ({ isDiffMode: !s.isDiffMode })),
 
         afterNewFile: async (name) => {
-            await get().fetchFiles();
-            await get().loadFile(name);
+            if (autoSaveTimer) {
+                clearTimeout(autoSaveTimer);
+                autoSaveTimer = null;
+            }
+            // The file was just created empty server-side; insert it and open it
+            // locally without re-fetching the whole tree or its content.
+            set((s) => ({
+                tree: insertFileNode(s.tree, name),
+                selectedFile: name,
+                fileContent: '',
+                savedContent: '',
+                yamlError: validateYaml(''),
+                isDiffMode: false,
+                contentLoading: false,
+            }));
         },
     }));
 }
@@ -201,4 +212,3 @@ export function useTraefikConfigStore(): TraefikConfigState {
     if (!store) throw new Error('useTraefikConfigStore must be used within TraefikConfigProvider');
     return useStore(store);
 }
-

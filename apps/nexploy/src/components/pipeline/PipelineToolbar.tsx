@@ -75,7 +75,7 @@ export function PipelineToolbar() {
     };
 
     return (
-        <div className="mx-5 flex items-center justify-between gap-2 rounded-t-md border border-b-0 px-2 py-1">
+        <div className="mx-5 flex items-center justify-between gap-2 rounded-t-lg border border-b-0 px-2 py-1">
             <div className={'flex items-center gap-1'}>
                 <div className={'flex items-center gap-1 pr-1'}>
                     <span className="text-muted-foreground text-xs">

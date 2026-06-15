@@ -10,7 +10,7 @@ export function PipelineEditor() {
     return (
         <div className="flex h-full flex-col">
             <PipelineToolbar />
-            <div className="mx-5 mb-5 relative flex flex-1 overflow-hidden rounded-md rounded-t-none border">
+            <div className="relative mx-5 mb-5 flex flex-1 overflow-hidden rounded-lg rounded-t-none border">
                 <PipelineCanvas />
                 <NodeTemplatePanel />
                 <NodeAddPanel />

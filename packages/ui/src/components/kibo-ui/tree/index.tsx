@@ -142,8 +142,8 @@ export const TreeProvider = ({
             <motion.div
                 animate={{ opacity: 1, y: 0 }}
                 className={cn('w-full', className)}
-                initial={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.3, ease: 'easeOut' }}
+                initial={animateExpand ? { opacity: 0, y: 10 } : false}
+                transition={{ duration: animateExpand ? 0.3 : 0, ease: 'easeOut' }}
             >
                 {children}
             </motion.div>
@@ -214,7 +214,7 @@ export const TreeNodeTrigger = ({
     onClick,
     ...props
 }: TreeNodeTriggerProps) => {
-    const { selectedIds, toggleExpanded, handleSelection, indent } = useTree();
+    const { selectedIds, toggleExpanded, handleSelection, indent, animateExpand } = useTree();
     const { nodeId, level } = useTreeNode();
     const isSelected = selectedIds.includes(nodeId);
 
@@ -232,7 +232,7 @@ export const TreeNodeTrigger = ({
                 onClick?.(e);
             }}
             style={{ paddingLeft: level * (indent ?? 0) + 8 }}
-            whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
+            whileTap={animateExpand ? { scale: 0.98, transition: { duration: 0.1 } } : undefined}
             {...props}
         >
             <TreeLines />
@@ -350,7 +350,7 @@ export const TreeExpander = ({
     onClick,
     ...props
 }: TreeExpanderProps) => {
-    const { expandedIds, toggleExpanded } = useTree();
+    const { expandedIds, toggleExpanded, animateExpand } = useTree();
     const { nodeId } = useTreeNode();
     const isExpanded = expandedIds.has(nodeId);
 
@@ -370,7 +370,7 @@ export const TreeExpander = ({
                 toggleExpanded(nodeId);
                 onClick?.(e);
             }}
-            transition={{ duration: 0.2, ease: 'easeInOut' }}
+            transition={{ duration: animateExpand ? 0.2 : 0, ease: 'easeInOut' }}
             {...props}
         >
             <ChevronRight className="text-muted-foreground h-3 w-3" />
@@ -384,7 +384,7 @@ export type TreeIconProps = ComponentProps<typeof motion.div> & {
 };
 
 export const TreeIcon = ({ icon, hasChildren = false, className, ...props }: TreeIconProps) => {
-    const { showIcons, expandedIds } = useTree();
+    const { showIcons, expandedIds, animateExpand } = useTree();
     const { nodeId } = useTreeNode();
     const isExpanded = expandedIds.has(nodeId);
 
@@ -409,8 +409,8 @@ export const TreeIcon = ({ icon, hasChildren = false, className, ...props }: Tre
                 'text-muted-foreground mr-2 flex h-4 w-4 items-center justify-center',
                 className,
             )}
-            transition={{ duration: 0.15 }}
-            whileHover={{ scale: 1.1 }}
+            transition={{ duration: animateExpand ? 0.15 : 0 }}
+            whileHover={animateExpand ? { scale: 1.1 } : undefined}
             {...props}
         >
             {icon || getDefaultIcon()}

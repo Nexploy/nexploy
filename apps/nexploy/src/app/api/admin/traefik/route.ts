@@ -15,8 +15,7 @@ export const GET = route
 export const POST = route
     .use(authRouteServer)
     .use(requirePermission('user', 'ban'))
-    .handler(async (request) => {
-        const body = await request.json();
+    .handler(async (_, { body }) => {
         const { filename, content } = body as { filename: string; content: string };
 
         const filePath = resolveTraefikYmlPath(filename);

@@ -5,7 +5,6 @@ import {
     Background,
     BackgroundVariant,
     IsValidConnection,
-    MiniMap,
     Node,
     NodeMouseHandler,
     Panel,
@@ -24,8 +23,11 @@ import { cn } from '@workspace/ui/lib/utils';
 import { GradientEdge } from '@/components/pipeline/edges/GradientEdge';
 import { useDragAndDropFlow } from '@/hooks/useDragAndDropFlow';
 import { useAutoLayout } from '@/hooks/useAutoLayout';
-import { useMinimap } from '@/hooks/useMinimap';
-import { usePipelineActions, usePipelineBuilds, usePipelineDisplay, } from '@/stores/pipeline/usePipelineStore';
+import {
+    usePipelineActions,
+    usePipelineBuilds,
+    usePipelineDisplay,
+} from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ButtonPanel } from '@/components/pipeline/nodes/ButtonPanel';
 import { useHotkeys } from '@/lib/useHotKeys';
@@ -185,7 +187,6 @@ export function PipelineCanvas() {
     });
 
     const { onDragOver, onDragLeave, onDrop } = useDragAndDropFlow(rfInstance);
-    const { minimapVisible, onMoveStart, onMoveEnd } = useMinimap();
 
     return (
         <div
@@ -236,8 +237,6 @@ export function PipelineCanvas() {
                 fitView
                 fitViewOptions={{ padding: 0.3 }}
                 defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
-                onMoveStart={onMoveStart}
-                onMoveEnd={onMoveEnd}
                 proOptions={{ hideAttribution: true }}
             >
                 <Background
@@ -296,14 +295,6 @@ export function PipelineCanvas() {
                         </div>
                     </Panel>
                 )}
-                <MiniMap
-                    className={cn(
-                        '!border-border !bg-card transition-all duration-300 [&>svg]:rounded-md [&>svg]:border',
-                        minimapVisible ? 'opacity-100' : 'pointer-events-none opacity-0',
-                    )}
-                    nodeColor={'var(--accent)'}
-                    maskColor={'oklch(from var(--accent) l c h / 0.5)'}
-                />
                 {displayNodes.length === 0 && (
                     <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3">
                         <div className="border-border bg-card flex size-16 items-center justify-center rounded-2xl border">

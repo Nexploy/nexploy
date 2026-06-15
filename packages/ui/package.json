@@ -11,6 +11,8 @@
         "./hooks/*": "./src/hooks/*.ts"
     },
     "dependencies": {
+        "@headless-tree/core": "^1.7.0",
+        "@headless-tree/react": "^1.7.0",
         "cmdk": "^1.1.1",
         "motion": "^12.23.25",
         "radix-ui": "^1.4.3",

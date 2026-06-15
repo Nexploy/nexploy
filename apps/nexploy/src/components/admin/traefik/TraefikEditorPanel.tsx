@@ -1,18 +1,9 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import {
-    AlertTriangle,
-    Check,
-    FileCode2,
-    GitCompare,
-    Loader2,
-    Trash2,
-    WandSparkles,
-} from 'lucide-react';
+import { AlertTriangle, Check, FileCode2, GitCompare, Loader2, Trash2, WandSparkles, } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
-import { Separator } from '@workspace/ui/components/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { DiffEditor, Editor } from '@monaco-editor/react';
 import { useTheme } from '@wrksz/themes/client';
@@ -52,7 +43,7 @@ export function TraefikEditorPanel() {
     } = useTraefikConfigStore();
 
     return (
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex h-full min-w-0 flex-col">
             <div className="border-border flex h-9 items-center justify-between gap-2 border-b px-3">
                 <div className="flex min-w-0 items-center gap-2">
                     <FileCode2 className="text-muted-foreground size-4 shrink-0" />
@@ -84,7 +75,7 @@ export function TraefikEditorPanel() {
                     )}
                 </div>
 
-                <div className="flex shrink-0 items-center gap-0.5">
+                <div className="flex shrink-0 items-center gap-1">
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button
@@ -114,7 +105,6 @@ export function TraefikEditorPanel() {
                             {isDiffMode ? t('editorView') : t('diffView')}
                         </TooltipContent>
                     </Tooltip>
-                    <Separator orientation="vertical" className="mx-1 h-4" />
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button
