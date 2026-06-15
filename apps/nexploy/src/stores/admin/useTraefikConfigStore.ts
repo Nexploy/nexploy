@@ -9,13 +9,16 @@ import { deleteTraefikFile } from '@/actions/admin/deleteTraefikFile.action';
 import { saveTraefikFile } from '@/actions/admin/saveTraefikFile.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { TranslationFunction } from '@workspace/typescript-interface/commun.ts';
+import type { TraefikTreeNode } from '@/lib/traefik/types';
 
-export interface TraefikFile {
-    name: string;
+/** Build the request URL for a file, encoding each path segment. */
+function fileUrl(relPath: string): string {
+    const segments = relPath.split('/').map(encodeURIComponent).join('/');
+    return `/api/admin/traefik/${segments}`;
 }
 
 export interface TraefikConfigState {
-    files: TraefikFile[];
+    tree: TraefikTreeNode[];
     filesLoading: boolean;
     selectedFile: string | null;
     fileContent: string;
@@ -39,11 +42,11 @@ export interface TraefikConfigState {
     _flushSave: () => Promise<void>;
 }
 
-export function createTraefikConfigStore(initialFiles: TraefikFile[]) {
+export function createTraefikConfigStore(initialTree: TraefikTreeNode[]) {
     let autoSaveTimer: ReturnType<typeof setTimeout> | null = null;
 
     return createStore<TraefikConfigState>((set, get) => ({
-        files: initialFiles,
+        tree: initialTree,
         filesLoading: false,
         selectedFile: null,
         fileContent: '',
@@ -58,8 +61,8 @@ export function createTraefikConfigStore(initialFiles: TraefikFile[]) {
         fetchFiles: async () => {
             set({ filesLoading: true });
             try {
-                const data = await fetcherApi<TraefikFile[]>({ url: '/api/admin/traefik' });
-                set({ files: data });
+                const data = await fetcherApi<TraefikTreeNode[]>({ url: '/api/admin/traefik' });
+                set({ tree: data });
             } finally {
                 set({ filesLoading: false });
             }
@@ -69,7 +72,7 @@ export function createTraefikConfigStore(initialFiles: TraefikFile[]) {
             set({ contentLoading: true, isDiffMode: false });
             try {
                 const data = await fetcherApi<{ name: string; content: string }>({
-                    url: `/api/admin/traefik/${encodeURIComponent(name)}`,
+                    url: fileUrl(name),
                 });
                 set({
                     fileContent: data.content,

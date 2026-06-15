@@ -16,11 +16,13 @@ export function TraefikNewFileDialog() {
     const [fileName, setFileName] = useState('');
     const [creating, setCreating] = useState(false);
 
+    const isValidPath = (raw: string) => /^[\w.-]+(\/[\w.-]+)*$/.test(raw.replace(/\.yml$/, ''));
+
     const handleCreate = async () => {
         const trimmed = fileName.trim();
         const name = trimmed.endsWith('.yml') ? trimmed : `${trimmed}.yml`;
 
-        if (!trimmed || !/^[\w.-]+$/.test(trimmed.replace(/\.yml$/, ''))) {
+        if (!trimmed || !isValidPath(trimmed)) {
             toast.error(t('invalidFilename'));
             return;
         }
@@ -48,7 +50,7 @@ export function TraefikNewFileDialog() {
         }
     };
 
-    const isInvalid = !!fileName && !/^[\w.-]+$/.test(fileName.replace(/\.yml$/, ''));
+    const isInvalid = !!fileName && !isValidPath(fileName);
 
     return (
         <div className="flex flex-col gap-4">
@@ -57,7 +59,7 @@ export function TraefikNewFileDialog() {
                 <div className="flex items-center gap-2">
                     <Input
                         id="traefik-filename"
-                        placeholder="my-config"
+                        placeholder="apps/my-config"
                         value={fileName}
                         onChange={(e) => setFileName(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && !creating && handleCreate()}

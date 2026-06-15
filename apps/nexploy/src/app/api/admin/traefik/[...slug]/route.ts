@@ -1,26 +1,24 @@
 import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import * as fs from 'fs/promises';
-import * as path from 'path';
+import { resolveTraefikYmlPath } from '@/lib/traefik/fileTree';
 
-const TRAEFIK_SERVICE_DIR = path.join(process.cwd(), '..', '..', 'infra', 'traefik', 'service');
-
-function safePath(filename: string): string | null {
-    if (!/^[\w.-]+\.yml$/.test(filename)) return null;
-    return path.join(TRAEFIK_SERVICE_DIR, filename);
+function relPath(slug: string[]): string {
+    return slug.map((s) => decodeURIComponent(s)).join('/');
 }
 
 export const GET = route
     .use(authRouteServer)
     .use(requirePermission('user', 'ban'))
     .handler(async (_request, { params }) => {
-        const { filename } = await params;
-        const filePath = safePath(filename);
+        const { slug } = await params;
+        const name = relPath(slug);
+        const filePath = resolveTraefikYmlPath(name);
         if (!filePath) return NextResponse.json({ message: 'Invalid filename' }, { status: 400 });
 
         try {
             const content = await fs.readFile(filePath, 'utf-8');
-            return NextResponse.json({ name: filename, content });
+            return NextResponse.json({ name, content });
         } catch {
             return NextResponse.json({ message: 'File not found' }, { status: 404 });
         }
@@ -30,8 +28,8 @@ export const DELETE = route
     .use(authRouteServer)
     .use(requirePermission('user', 'ban'))
     .handler(async (_request, { params }) => {
-        const { filename } = await params;
-        const filePath = safePath(filename);
+        const { slug } = await params;
+        const filePath = resolveTraefikYmlPath(relPath(slug));
         if (!filePath) return NextResponse.json({ message: 'Invalid filename' }, { status: 400 });
 
         try {

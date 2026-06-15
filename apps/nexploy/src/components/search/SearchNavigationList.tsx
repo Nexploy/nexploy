@@ -20,6 +20,7 @@ import { type ComponentType } from 'react';
 import { cn } from '@workspace/ui/lib/utils';
 import { useSearchStore } from '@/stores/useSearchStore';
 import { useSearchItemSelect } from '@/hooks/search/useSearchItemSelect';
+import { matchesQuery } from '@/hooks/search/searchFilters';
 
 interface NavItem {
     href: string;
@@ -32,6 +33,7 @@ export function SearchNavigationList() {
     const t = useTranslations('ai.command');
     const tNav = useTranslations('navigation');
     const runCommand = useSearchStore((s) => s.runCommand);
+    const inputValue = useSearchStore((s) => s.inputValue);
     const getItemProps = useSearchItemSelect();
 
     const homeItems: NavItem[] = [
@@ -40,7 +42,7 @@ export function SearchNavigationList() {
         { href: '/requests', icon: Send, label: tNav('requests') },
         { href: '/swarm', icon: Network, label: tNav('swarm') },
         { href: '/admin/registry', icon: Warehouse, label: tNav('registry') },
-    ];
+    ].filter((item) => matchesQuery(item.label, inputValue));
 
     const dockerItems: NavItem[] = [
         { href: '/docker/containers', icon: Container, label: tNav('containers') },
@@ -48,30 +50,40 @@ export function SearchNavigationList() {
         { href: '/docker/volumes', icon: HardDrive, label: tNav('volumes') },
         { href: '/docker/networks', icon: EthernetPort, label: tNav('networks') },
         { href: '/docker/events', icon: Bug, label: tNav('events') },
-    ];
+    ].filter((item) => matchesQuery(item.label, inputValue));
+
+    const showAccount = matchesQuery(t('account'), inputValue);
 
     const renderItem = ({ href, icon: Icon, label }: NavItem, index: number) => {
         const itemProps = getItemProps(label, () => runCommand(() => router.push(href)));
         return (
             <CommandItem key={index} {...itemProps} className={cn(itemProps.className, 'rounded')}>
-                <Icon className="text-muted-foreground ml-1 shrink-0" />
-                <span className="text-sm font-medium">{label}</span>
+                <Icon className="text-muted-foreground shrink-0" />
+                <span className="truncate text-sm font-medium">{label}</span>
             </CommandItem>
         );
     };
 
     return (
         <>
-            <CommandGroup heading={tNav('home')}>{homeItems.map(renderItem)}</CommandGroup>
-            <CommandGroup heading={tNav('docker')}>{dockerItems.map(renderItem)}</CommandGroup>
-            <CommandGroup heading={t('system')}>
-                <CommandItem
-                    {...getItemProps(t('account'), () => runCommand(() => router.push('/account')))}
-                >
-                    <User className="text-muted-foreground shrink-0" />
-                    <span className="text-sm font-medium">{t('account')}</span>
-                </CommandItem>
-            </CommandGroup>
+            {homeItems.length > 0 && (
+                <CommandGroup heading={tNav('home')}>{homeItems.map(renderItem)}</CommandGroup>
+            )}
+            {dockerItems.length > 0 && (
+                <CommandGroup heading={tNav('docker')}>{dockerItems.map(renderItem)}</CommandGroup>
+            )}
+            {showAccount && (
+                <CommandGroup heading={t('system')}>
+                    <CommandItem
+                        {...getItemProps(t('account'), () =>
+                            runCommand(() => router.push('/account')),
+                        )}
+                    >
+                        <User className="text-muted-foreground shrink-0" />
+                        <span className="text-sm font-medium">{t('account')}</span>
+                    </CommandItem>
+                </CommandGroup>
+            )}
         </>
     );
 }

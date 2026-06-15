@@ -151,7 +151,9 @@
             "title": "Sélectionner un modèle",
             "search": "Rechercher des modèles…",
             "noResults": "Aucun modèle ne correspond à votre recherche.",
-            "loading": "Chargement des modèles…"
+            "loading": "Chargement des modèles…",
+            "select": "Sélectionner",
+            "allProviders": "Tous"
         }
     },
     "context": {

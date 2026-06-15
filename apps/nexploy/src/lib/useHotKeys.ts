@@ -4,6 +4,7 @@ type Options = {
     keydown?: boolean;
     keyup?: boolean;
     preventDefault?: boolean;
+    stopPropagation?: boolean;
     capture?: boolean;
     ref?: RefObject<HTMLElement | null>;
 };
@@ -32,7 +33,14 @@ export function useHotkeys(
     callback: (event: KeyboardEvent) => void,
     options: Options = {},
 ) {
-    const { keydown = true, keyup = false, preventDefault = false, capture = false, ref } = options;
+    const {
+        keydown = true,
+        keyup = false,
+        preventDefault = false,
+        stopPropagation = false,
+        capture = false,
+        ref,
+    } = options;
 
     useEffect(() => {
         const configs = (Array.isArray(hotkey) ? hotkey : [hotkey]).map(parseHotkey);
@@ -56,6 +64,7 @@ export function useHotkeys(
 
             if (!matches) return;
             if (preventDefault) event.preventDefault();
+            if (stopPropagation) event.stopPropagation();
             callback(event);
         };
 
@@ -66,5 +75,5 @@ export function useHotkeys(
             if (keydown) target.removeEventListener('keydown', handler, { capture });
             if (keyup) target.removeEventListener('keyup', handler, { capture });
         };
-    }, [hotkey, callback, keydown, keyup, preventDefault, capture, ref]);
+    }, [hotkey, callback, keydown, keyup, preventDefault, stopPropagation, capture, ref]);
 }

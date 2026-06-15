@@ -79,6 +79,9 @@ export function ModelProviderCard({
             onAction: async () => {
                 await deleteKey({ provider });
                 toast.success(t('deleteSuccess'));
+                form.reset();
+                form.clearErrors();
+                setEditing(true);
                 router.refresh();
             },
         });

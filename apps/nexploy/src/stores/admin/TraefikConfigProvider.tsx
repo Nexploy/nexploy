@@ -6,19 +6,19 @@ import {
     createTraefikConfigStore,
     TraefikConfigContext,
     type TraefikConfigStore,
-    type TraefikFile,
 } from './useTraefikConfigStore';
+import type { TraefikTreeNode } from '@/lib/traefik/types';
 
 export function TraefikConfigProvider({
-    initialFiles,
+    initialTree,
     children,
 }: {
-    initialFiles: TraefikFile[];
+    initialTree: TraefikTreeNode[];
     children: ReactNode;
 }) {
     const storeRef = useRef<TraefikConfigStore>(null);
     if (!storeRef.current) {
-        storeRef.current = createTraefikConfigStore(initialFiles);
+        storeRef.current = createTraefikConfigStore(initialTree);
     }
     return (
         <TraefikConfigContext.Provider value={storeRef.current}>

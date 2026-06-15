@@ -4,19 +4,28 @@ import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { getAllProviderKeyStatus } from '@/services/aiConfig.service';
 import { ModelProviderCard } from '@/components/admin/ai/models/ModelProviderCard';
-import type { ProviderCardConfig } from '@workspace/typescript-interface/ai/aiConfig';
-import Openai from '@thesvg/react/openai';
-import Anthropic from '@thesvg/react/anthropic';
-import Gemini from '@thesvg/react/gemini';
-import Openrouter from '@thesvg/react/openrouter';
-import Groq from '@thesvg/react/groq';
-import Perplexity from '@thesvg/react/perplexity';
-import { Grok, Mistral } from '@thesvg/react';
+import type { Provider, ProviderCardConfig } from '@workspace/typescript-interface/ai/aiConfig';
+import { PROVIDER_META } from '@/components/ai/providerMeta';
 
 export const metadata: Metadata = {
     title: 'AI Models',
     description: 'Configure AI provider API keys',
 };
+
+const PROVIDER_DEFS: { provider: Provider; label: string; keyUrl: string }[] = [
+    { provider: 'OPENROUTER', label: 'OpenRouter', keyUrl: 'https://openrouter.ai/settings/keys' },
+    { provider: 'OPENAI', label: 'OpenAI', keyUrl: 'https://platform.openai.com/api-keys' },
+    {
+        provider: 'ANTHROPIC',
+        label: 'Anthropic',
+        keyUrl: 'https://console.anthropic.com/settings/keys',
+    },
+    { provider: 'GOOGLE', label: 'Google', keyUrl: 'https://aistudio.google.com/app/apikey' },
+    { provider: 'MISTRAL', label: 'Mistral AI', keyUrl: 'https://console.mistral.ai/api-keys' },
+    { provider: 'GROQ', label: 'Groq', keyUrl: 'https://console.groq.com/keys' },
+    { provider: 'PERPLEXITY', label: 'Perplexity', keyUrl: 'https://www.perplexity.ai/settings/api' },
+    { provider: 'GROK', label: 'Grok (xAI)', keyUrl: 'https://console.x.ai/' },
+];
 
 export default async function AIModelsPage() {
     const [t, keyStatus] = await Promise.all([
@@ -24,72 +33,17 @@ export default async function AIModelsPage() {
         getAllProviderKeyStatus(),
     ]);
 
-    const providers: ProviderCardConfig[] = [
-        {
-            provider: 'OPENROUTER',
-            label: 'OpenRouter',
-            color: 'bg-gray-500',
-            icon: <Openrouter className="size-6 shrink-0" />,
-            hasKey: keyStatus.OPENROUTER,
-            keyUrl: 'https://openrouter.ai/settings/keys',
-        },
-        {
-            provider: 'OPENAI',
-            label: 'OpenAI',
-            color: 'bg-[#10A37F]',
-            icon: <Openai className="size-6 shrink-0" />,
-            hasKey: keyStatus.OPENAI,
-            keyUrl: 'https://platform.openai.com/api-keys',
-        },
-        {
-            provider: 'ANTHROPIC',
-            label: 'Anthropic',
-            color: 'bg-[#D97757]',
-            icon: <Anthropic className="size-6 shrink-0" />,
-            hasKey: keyStatus.ANTHROPIC,
-            keyUrl: 'https://console.anthropic.com/settings/keys',
-        },
-        {
-            provider: 'GOOGLE',
-            label: 'Google',
-            color: 'bg-white',
-            icon: <Gemini className="size-6 shrink-0" />,
-            hasKey: keyStatus.GOOGLE,
-            keyUrl: 'https://aistudio.google.com/app/apikey',
-        },
-        {
-            provider: 'MISTRAL',
-            label: 'Mistral AI',
-            color: 'bg-[#FF7000]',
-            icon: <Mistral className="size-6 shrink-0" />,
-            hasKey: keyStatus.MISTRAL,
-            keyUrl: 'https://console.mistral.ai/api-keys',
-        },
-        {
-            provider: 'GROQ',
-            label: 'Groq',
-            color: 'bg-[#F55036]',
-            icon: <Groq className="size-6 shrink-0" />,
-            hasKey: keyStatus.GROQ,
-            keyUrl: 'https://console.groq.com/keys',
-        },
-        {
-            provider: 'PERPLEXITY',
-            label: 'Perplexity',
-            color: 'bg-[#1A6570]',
-            icon: <Perplexity className="size-6 shrink-0" />,
-            hasKey: keyStatus.PERPLEXITY,
-            keyUrl: 'https://www.perplexity.ai/settings/api',
-        },
-        {
-            provider: 'GROK',
-            label: 'Grok (xAI)',
-            color: 'bg-zinc-900',
-            icon: <Grok className="size-6 shrink-0" />,
-            hasKey: keyStatus.GROK,
-            keyUrl: 'https://console.x.ai/',
-        },
-    ];
+    const providers: ProviderCardConfig[] = PROVIDER_DEFS.map(({ provider, label, keyUrl }) => {
+        const { icon: Icon, color } = PROVIDER_META[provider];
+        return {
+            provider,
+            label,
+            color,
+            icon: <Icon className="size-6 shrink-0" />,
+            hasKey: keyStatus[provider],
+            keyUrl,
+        };
+    });
 
     return (
         <div className="flex h-full flex-1 flex-col">

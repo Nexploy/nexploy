@@ -15,3 +15,7 @@ export const addProviderApiKeySchema = z.object({
     provider: providerSchema,
     apiKey: z.string().min(1),
 });
+
+export const deleteAiConfigSchema = z.object({
+    provider: providerSchema,
+});

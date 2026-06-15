@@ -7,9 +7,14 @@ import { useSearchStore } from '@/stores/useSearchStore';
 import { SearchActionBar } from './SearchActionBar';
 import { SearchNavigationList } from './SearchNavigationList';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow.tsx';
-import { SearchResultsList } from '@/components/search/SearchResultsList.tsx';
 import { useHotkeys } from '@/lib/useHotKeys.ts';
 import { useCallback } from 'react';
+import { AskAiGroup } from '@/components/search/groups/AskAiGroup.tsx';
+import { RepositorySearchGroup } from './groups/RepositorySearchGroup.tsx';
+import { ContainerSeachGroup } from './groups/ContainerSeachGroup.tsx';
+import { ImageResultsSearchGroup } from './groups/ImageResultsSearchGroup.tsx';
+import { VolumeResultsSearchGroup } from '@/components/search/groups/VolumeResultsSearchGroup.tsx';
+import { NetworkResultsSearchGroup } from '@/components/search/groups/NetworkResultsSearchGroup.tsx';
 
 export function SearchCommand() {
     const t = useTranslations('ai.command');
@@ -30,14 +35,6 @@ export function SearchCommand() {
         }, [open]),
         { preventDefault: true },
     );
-
-    const typeLabels = {
-        repository: t('types.repository'),
-        container: t('types.container'),
-        image: t('types.image'),
-        volume: t('types.volume'),
-        network: t('types.network'),
-    };
 
     return (
         <>
@@ -60,6 +57,7 @@ export function SearchCommand() {
                     value: commandValue,
                     onValueChange: setCommandValue,
                     disablePointerSelection: true,
+                    shouldFilter: false,
                 }}
             >
                 <CommandInput
@@ -69,8 +67,17 @@ export function SearchCommand() {
                     onValueChange={setInputValue}
                 />
                 <CommandList className="bg-card max-h-none overflow-hidden">
-                    <ScrollAreaWithShadow viewportClassName="max-h-[60vh]" bottomShadow>
-                        <SearchResultsList typeLabels={typeLabels} />
+                    <ScrollAreaWithShadow
+                        viewportClassName="max-h-[60vh] [&>div]:!block"
+                        bottomShadow
+                        colorShadow={'from-card via-card/50'}
+                    >
+                        <AskAiGroup />
+                        <RepositorySearchGroup />
+                        <ContainerSeachGroup />
+                        <ImageResultsSearchGroup />
+                        <VolumeResultsSearchGroup />
+                        <NetworkResultsSearchGroup />
                         <SearchNavigationList />
                     </ScrollAreaWithShadow>
                 </CommandList>

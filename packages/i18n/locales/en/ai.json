@@ -151,7 +151,9 @@
             "title": "Select a model",
             "search": "Search models…",
             "noResults": "No models match your search.",
-            "loading": "Loading models…"
+            "loading": "Loading models…",
+            "select": "Select",
+            "allProviders": "All"
         }
     },
     "context": {

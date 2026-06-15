@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import useSWR from 'swr';
 import { Check } from 'lucide-react';
 import { CommandGroup, CommandItem } from '@workspace/ui/components/command';
@@ -8,13 +9,15 @@ import { cn } from '@workspace/ui/lib/utils';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import type { ModelOption, Provider } from '@workspace/typescript-interface/ai/aiConfig';
 import { useAIPanelStore } from '@/stores/useAIPanelStore';
+import { PROVIDER_META } from '@/components/ai/providerMeta';
 
 interface ProviderGroupProps {
     provider: Provider;
     label: string;
+    onSettled?: (provider: Provider) => void;
 }
 
-export function ProviderGroup({ provider, label }: ProviderGroupProps) {
+export function ProviderGroup({ provider, label, onSettled }: ProviderGroupProps) {
     const selected = useAIPanelStore((s) => s.selectedModel);
     const setSelectedModel = useAIPanelStore((s) => s.setSelectedModel);
     const closeModelSelector = useAIPanelStore((s) => s.closeModelSelector);
@@ -25,7 +28,12 @@ export function ProviderGroup({ provider, label }: ProviderGroupProps) {
         { errorRetryCount: 0 },
     );
 
+    useEffect(() => {
+        if (!isLoading) onSettled?.(provider);
+    }, [provider, isLoading, onSettled]);
+
     const models = data?.models ?? [];
+    const { icon: Icon, color } = PROVIDER_META[provider];
 
     if (!isLoading && models.length === 0) return null;
 
@@ -52,7 +60,15 @@ export function ProviderGroup({ provider, label }: ProviderGroupProps) {
                               }}
                               className="gap-3 py-2.5"
                           >
-                              <span className="flex-1">{m.label}</span>
+                              <span
+                                  className={cn(
+                                      'flex size-7 shrink-0 items-center justify-center rounded-md',
+                                      color,
+                                  )}
+                              >
+                                  <Icon className="size-4 shrink-0" />
+                              </span>
+                              <span className="flex-1 truncate">{m.label}</span>
                               <Check
                                   className={cn(
                                       'size-4 shrink-0',

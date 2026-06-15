@@ -1,10 +1,16 @@
 import { z } from 'zod';
 
+// Relative path to a `.yml` file, optionally nested in folders.
+// Disallows leading slash and `..` traversal segments.
+const traefikYmlPath = z
+    .string()
+    .regex(/^(?!\/)(?!.*(^|\/)\.\.(\/|$))[\w.\-/]+\.yml$/, 'Invalid filename');
+
 export const deleteTraefikFileSchema = z.object({
-    filename: z.string().regex(/^[\w.-]+\.yml$/, 'Invalid filename'),
+    filename: traefikYmlPath,
 });
 
 export const saveTraefikFileSchema = z.object({
-    filename: z.string().regex(/^[\w.-]+\.yml$/, 'Invalid filename'),
+    filename: traefikYmlPath,
     content: z.string(),
 });

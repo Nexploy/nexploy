@@ -87,7 +87,7 @@ async function fetchGroqModels(apiKey: string): Promise<ModelOption[]> {
 }
 
 async function fetchPerplexityModels(apiKey: string): Promise<ModelOption[]> {
-    const res = await fetch('https://api.perplexity.ai/models', {
+    const res = await fetch('https://api.perplexity.ai/v1/models', {
         headers: { Authorization: `Bearer ${apiKey}` },
         next: { revalidate: 3600 },
     });

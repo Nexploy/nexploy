@@ -4,14 +4,14 @@ import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSearchStore } from '@/stores/useSearchStore';
 import { Button } from '@workspace/ui/components/button.tsx';
-import { Kbd } from '@workspace/ui/components/kbd.tsx';
-import { useSearchEffects } from '@/hooks/search/useSearchEffects.ts';
+import { Kbd, KbdGroup } from '@workspace/ui/components/kbd.tsx';
+import { useSearchActions } from '@/hooks/search/useSearchActions.ts';
 
 export function SearchActionBar() {
     const commandValue = useSearchStore((s) => s.commandValue);
     const t = useTranslations('ai.command');
     const tBuild = useTranslations('repository.builds');
-    const { handleStartBuild } = useSearchEffects();
+    const { handleStartBuild } = useSearchActions();
 
     const primaryLabel = useMemo(() => {
         if (!commandValue) return null;
@@ -25,7 +25,7 @@ export function SearchActionBar() {
         const repoId = commandValue.slice(5);
         return {
             label: tBuild('runBuild'),
-            hotkeys: ['⌘', '↵'],
+            hotkeys: ['⌘ + ↵'],
             handler: () => handleStartBuild(repoId),
         };
     }, [commandValue, tBuild, handleStartBuild]);
@@ -50,9 +50,11 @@ export function SearchActionBar() {
                         <span className="text-xs font-medium transition-colors">
                             {secondaryAction.label}
                         </span>
-                        {secondaryAction.hotkeys.map((k) => (
-                            <Kbd key={k}>{k}</Kbd>
-                        ))}
+                        <KbdGroup>
+                            {secondaryAction.hotkeys.map((k) => (
+                                <Kbd key={k}>{k}</Kbd>
+                            ))}
+                        </KbdGroup>
                     </Button>
                 </>
             )}
