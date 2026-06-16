@@ -1,9 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { cn } from '@workspace/ui/lib/utils';
 import { LayoutTemplate } from 'lucide-react';
-import { usePipelinePanelStore } from '@/stores/pipeline/usePipelinePanelStore';
 import { PIPELINE_TEMPLATES, PipelineTemplate } from './pipelineTemplates';
 import { TemplateItem } from '@/components/pipeline/nodes/template/TemplateItem';
 import { useReactFlow } from '@xyflow/react';
@@ -16,8 +14,6 @@ import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-
 
 export function NodeTemplatePanel() {
     const t = useTranslations('repository.pipeline');
-    const { activePanel } = usePipelinePanelStore();
-    const open = activePanel === 'template';
     const { screenToFlowPosition } = useReactFlow();
 
     const { setNodes, setEdges, triggerAutoSave } = usePipelineActions();
@@ -70,12 +66,7 @@ export function NodeTemplatePanel() {
     };
 
     return (
-        <div
-            className={cn(
-                'bg-sidebar flex shrink-0 flex-col overflow-hidden transition-all duration-200',
-                open ? 'w-[25%] border-l' : 'w-0',
-            )}
-        >
+        <div className="bg-sidebar flex h-full w-full flex-col overflow-hidden">
             <div className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
                 <div className="bg-primary/10 text-primary flex size-6 shrink-0 items-center justify-center rounded-md">
                     <LayoutTemplate className="size-3.5" />

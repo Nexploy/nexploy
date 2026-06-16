@@ -35,14 +35,12 @@ export function NodeAddPanel() {
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 
     const {
-        activePanel,
         paletteCategory: activeCategory,
         paletteSearch: search,
         setPaletteSearch: setSearch,
         openPaletteCategory: openCategory,
         setPaletteCategory: setActiveCategory,
     } = usePipelinePanelStore();
-    const open = activePanel === 'palette';
 
     const grouped = definitions.reduce<Record<string, typeof definitions>>((acc, def) => {
         if (!acc[def.category]) acc[def.category] = [];
@@ -107,12 +105,7 @@ export function NodeAddPanel() {
     const categoryNodes = activeCategory ? (grouped[activeCategory] ?? []) : [];
 
     return (
-        <div
-            className={cn(
-                'bg-sidebar flex shrink-0 flex-col overflow-hidden transition-all duration-200',
-                open ? 'w-[25%] border-l' : 'w-0',
-            )}
-        >
+        <div className="bg-sidebar flex h-full w-full flex-col overflow-hidden">
             <div className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
                 <div className="bg-primary/10 text-primary flex size-6 shrink-0 items-center justify-center rounded-md">
                     <Boxes className="size-3.5" />
