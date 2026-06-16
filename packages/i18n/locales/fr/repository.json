@@ -492,6 +492,10 @@
                 "name": "Ajouter un domaine",
                 "description": "Ajouter un domaine au dépôt"
             },
+            "remove-domain": {
+                "name": "Supprimer un domaine",
+                "description": "Supprimer un domaine du dépôt"
+            },
             "add-ssl-certificate": {
                 "name": "Ajouter un certificat SSL",
                 "description": "Provisionner un certificat SSL pour un domaine"
@@ -744,6 +748,7 @@
             "mergeMessagePlaceholder": "Merge feature/ma-branche dans main",
             "mergePush": "Pousser après le merge",
             "addDomainHost": "Domaine",
+            "removeDomainHost": "Domaine à supprimer",
             "addDomainContainerPort": "Port du conteneur",
             "addDomainPath": "Chemin",
             "addDomainInternalPath": "Chemin interne",
@@ -934,7 +939,15 @@
             "context": "Nom du statut",
             "desc_context": "Nom/contexte du statut de commit",
             "description": "Description du statut",
-            "desc_description": "Courte description affichée à côté du statut de commit"
+            "desc_description": "Courte description affichée à côté du statut de commit",
+            "host": "Domaine",
+            "desc_host": "Nom de domaine configuré dans Traefik",
+            "domainId": "ID du domaine",
+            "desc_domainId": "Identifiant du routeur Traefik pour le domaine",
+            "containerPort": "Port du conteneur",
+            "desc_containerPort": "Port exposé par le conteneur pour ce domaine",
+            "domainRemoved": "Domaine supprimé",
+            "desc_domainRemoved": "Indique si le domaine a été supprimé avec succès"
         },
         "noInputsAvailable": "Aucune entrée disponible des noeuds précédents",
         "nodeOutputs": "Sorties du nœud",

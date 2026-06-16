@@ -153,7 +153,7 @@ export const useNetworksStore = create<NetworkState>((set, get) => ({
                     if (!data.networkId) return;
 
                     get().removeNetwork(data.networkId);
-                    const networkName = data.oldState?.name || data.networkId.substring(0, 12);
+                    const networkName = data.oldState?.name || data.networkId;
                     toast.success(clientT('toasts.networkRemoved', { name: networkName }));
                     set({ lastUpdate: data.timestamp });
                 }),

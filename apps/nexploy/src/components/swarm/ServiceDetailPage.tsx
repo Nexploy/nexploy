@@ -30,7 +30,7 @@ export function ServiceDetailPage({ serviceId }: ServiceDetailPageProps) {
     const notFound = useSwarmServiceStore((s) => s.notFound);
     const isConnecting = useSwarmServiceStore((s) => s.isConnecting);
 
-    const serviceName = service?.name || serviceId.substring(0, 12);
+    const serviceName = service?.name || serviceId;
 
     if (notFound) {
         return (

@@ -87,6 +87,7 @@ export type NodeId =
     | 'sonarqube-scan'
     // Domain & SSL
     | 'add-domain'
+    | 'remove-domain'
     | 'add-ssl-certificate';
 
 export type NodeType = 'base-node' | 'large-node' | 'attach-node';

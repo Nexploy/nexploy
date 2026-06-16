@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import { useRealtime } from 'inngest/react';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { Button } from '@workspace/ui/components/button';
@@ -20,16 +21,23 @@ interface BuildLogsProps {
 export function BuildLogs({ build }: BuildLogsProps) {
     const router = useRouter();
 
-    const { messages } = useRealtime({
-        token: async () => {
-            const result = await onGetTokenBuildIdAction({
-                buildId: build.id,
-                topics: ['log', 'commit-info'],
-            });
-            if (!result?.data) throw new Error('Failed to get subscription token');
-            return result.data;
-        },
+    const { actions, status } = useBuildActions({
+        buildId: build.id,
+        initialStatus: build.status,
+        onRemoveSuccess: () => router.back(),
     });
+    const isLive = isBuildLive(status);
+
+    const refreshToken = useCallback(async () => {
+        const result = await onGetTokenBuildIdAction({
+            buildId: build.id,
+            topics: ['log', 'commit-info'],
+        });
+        if (!result?.data) throw new Error('Failed to get subscription token');
+        return result.data;
+    }, [build.id]);
+
+    const { messages } = useRealtime({ enabled: isLive, token: refreshToken });
 
     const data = messages.all as BuildMessage[];
     const latestData = messages.last as BuildMessage | null;
@@ -39,13 +47,6 @@ export function BuildLogs({ build }: BuildLogsProps) {
     const branch = liveCommitInfo?.branch ?? build.branch;
     const commitHash = liveCommitInfo?.commitHash ?? build.commitHash;
     const commitMessage = liveCommitInfo?.commitMessage ?? build.commitMessage;
-
-    const { actions, status } = useBuildActions({
-        buildId: build.id,
-        initialStatus: build.status,
-        onRemoveSuccess: () => router.back(),
-    });
-    const isLive = isBuildLive(status);
 
     return (
         <div className="flex h-full w-full flex-col">

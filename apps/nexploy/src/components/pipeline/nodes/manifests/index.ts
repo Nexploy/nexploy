@@ -52,6 +52,7 @@ import { deleteImageManifest } from './delete-image.manifest';
 import { deleteNetworkManifest } from './delete-network.manifest';
 import { deleteVolumeManifest } from './delete-volume.manifest';
 import { addDomainManifest } from './add-domain.manifest';
+import { removeDomainManifest } from './remove-domain.manifest';
 import { addSslCertificateManifest } from './add-ssl-certificate.manifest';
 
 export const allBuiltinManifests: NodeManifest[] = [
@@ -128,5 +129,6 @@ export const allBuiltinManifests: NodeManifest[] = [
     sonarqubeScanManifest,
     // Domain & SSL
     addDomainManifest,
+    removeDomainManifest,
     addSslCertificateManifest,
 ];

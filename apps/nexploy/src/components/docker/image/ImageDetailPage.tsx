@@ -37,7 +37,7 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
     const router = useRouter();
     const forceRef = useRef(false);
 
-    const imageName = image?.repoTags?.[0] || image?.name?.[0] || imageId.substring(0, 12);
+    const imageName = image?.repoTags?.[0] || image?.name?.[0] || imageId;
 
     const handleUse = () => {
         router.push(`/docker/containers/create?image=${image?.repoTags[0]}`);

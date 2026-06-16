@@ -1,9 +1,10 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
-import { addDomainConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import {
-    generateTraefikConfigForRepository,
-    getDomainsFromTraefikConfig,
-} from '@/services/traefik.service';
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
+import { addDomainConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { generateTraefikConfigForRepository, getDomainsFromTraefikConfig, } from '@/services/traefik.service';
 import { z } from 'zod';
 
 export class AddDomainExecutor implements INodeExecutor {
@@ -27,7 +28,7 @@ export class AddDomainExecutor implements INodeExecutor {
         const alreadyExists = existingDomains.some((d) => d.host === host);
         if (alreadyExists) {
             await logger.info(nodeId, `Domain already exists, skipping: ${host}`);
-            return { output: { host, domainId, skipped: true }, skipped: true };
+            return { output: { host, domainId, containerPort, skipped: true }, skipped: true };
         }
 
         const otherDomains = existingDomains.filter((d) => d.host !== host);

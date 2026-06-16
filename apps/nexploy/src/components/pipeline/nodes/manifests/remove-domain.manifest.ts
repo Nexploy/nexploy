@@ -1,20 +1,20 @@
 import { Position } from '@xyflow/react';
-import { addDomainConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { AddDomainConfig } from '../config/AddDomainConfig';
+import { removeDomainConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { RemoveDomainConfig } from '../config/RemoveDomainConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
-import { Globe } from 'lucide-react';
+import { GlobeOff } from 'lucide-react';
 
-export const addDomainManifest: NodeManifest = {
-    type: 'add-domain',
+export const removeDomainManifest: NodeManifest = {
+    type: 'remove-domain',
     definition: {
-        id: 'add-domain',
+        id: 'remove-domain',
         type: 'base-node',
         category: 'deploy',
         metadata: {
-            name: 'add-domain.name',
-            description: 'add-domain.description',
-            icon: Globe,
+            name: 'remove-domain.name',
+            description: 'remove-domain.description',
+            icon: GlobeOff,
             color: `${CATEGORY_BG_MUTED['deploy']} ${CATEGORY_TEXT['deploy']}`,
         },
         handles: {
@@ -23,8 +23,8 @@ export const addDomainManifest: NodeManifest = {
             attachments: [],
         },
     },
-    configSchema: addDomainConfigSchema,
-    configPanel: AddDomainConfig,
+    configSchema: removeDomainConfigSchema,
+    configPanel: RemoveDomainConfig,
     inputFields: [
         {
             key: 'host',
@@ -33,16 +33,10 @@ export const addDomainManifest: NodeManifest = {
             type: 'input',
         },
         {
-            key: 'domainId',
-            labelKey: 'pipeline.inputs.domainId',
-            descriptionKey: 'pipeline.inputs.desc_domainId',
+            key: 'removed',
+            labelKey: 'pipeline.inputs.domainRemoved',
+            descriptionKey: 'pipeline.inputs.desc_domainRemoved',
             type: 'input',
-        },
-        {
-            key: 'containerPort',
-            labelKey: 'pipeline.inputs.containerPort',
-            descriptionKey: 'pipeline.inputs.desc_containerPort',
-            type: 'number',
         },
     ],
 };

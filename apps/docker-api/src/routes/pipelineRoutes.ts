@@ -170,7 +170,7 @@ app.post(
                         await traefikNetwork.connect({ Container: containerId });
                     } catch {
                         logger.warn(
-                            { containerId: containerId.substring(0, 12) },
+                            { containerId },
                             'Could not connect container to Traefik network',
                         );
                     }

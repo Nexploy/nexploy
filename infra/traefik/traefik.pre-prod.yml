@@ -41,7 +41,7 @@ providers:
 certificatesResolvers:
   letsencrypt:
     acme:
-      email: admin@yourdomain.com
+      email: letsencrypt@localhost.com
       storage: /etc/traefik/acme.json
       httpChallenge:
         entryPoint: web

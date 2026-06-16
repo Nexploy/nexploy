@@ -400,12 +400,10 @@ app.post('/stream/compose', async (c) => {
                     await network.connect({
                         Container: containerId,
                     });
-                    sendLog(
-                        `Container ${containerId.substring(0, 12)} connected to Traefik network`,
-                    );
+                    sendLog(`Container ${containerId} connected to Traefik network`);
                 } catch (e) {
                     sendLog(
-                        `Warning: Could not connect container ${containerId.substring(0, 12)} to Traefik network`,
+                        `Warning: Could not connect container ${containerId} to Traefik network`,
                     );
                 }
             }

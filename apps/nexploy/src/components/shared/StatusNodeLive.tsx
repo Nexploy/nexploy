@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Badge } from '@workspace/ui/components/badge';
 import {
     Ban,
@@ -29,14 +29,13 @@ export function StatusNodeLive({ buildId, nodeId, initialStatus }: StatusNodeLiv
 
     const isLive = status === 'running' || status === undefined;
 
-    const { messages } = useRealtime({
-        enabled: isLive,
-        token: async () => {
-            const result = await onGetTokenBuildIdAction({ buildId, topics: ['node-status'] });
-            if (!result?.data) throw new Error('Failed to get subscription token');
-            return result.data;
-        },
-    });
+    const refreshToken = useCallback(async () => {
+        const result = await onGetTokenBuildIdAction({ buildId, topics: ['node-status'] });
+        if (!result?.data) throw new Error('Failed to get subscription token');
+        return result.data;
+    }, [buildId]);
+
+    const { messages } = useRealtime({ enabled: isLive, token: refreshToken });
 
     const latestData = messages.last as BuildMessage | null;
 

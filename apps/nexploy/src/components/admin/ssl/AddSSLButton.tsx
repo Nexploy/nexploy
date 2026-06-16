@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@workspace/ui/components/button';
-import { ChevronDown, Plus, ShieldCheck } from 'lucide-react';
+import { ChevronDown, ShieldCheck } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -51,7 +51,6 @@ export function AddSSLButton() {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button className="mt-5">
-                    <Plus />
                     {tSsl('add')}
                     <ChevronDown className="size-3.5" />
                 </Button>

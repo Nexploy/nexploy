@@ -28,7 +28,7 @@ export function NetworkDetailPage({ networkId }: NetworkDetailPageProps) {
     const router = useRouter();
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
-    const networkName = network?.name || networkId.substring(0, 12);
+    const networkName = network?.name || networkId;
 
     const handleRemove = () => {
         openAlertDialog({

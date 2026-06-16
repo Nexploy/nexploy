@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import {
     addDomainConfigSchema,
+    removeDomainConfigSchema,
     addSslCertificateConfigSchema,
     backupVolumeS3ConfigSchema,
     buildDockerImageConfigSchema,
@@ -226,6 +227,12 @@ export const NODE_META_MAP: Record<string, NodeMeta> = {
         category: 'deploy',
         description: 'Adds a custom domain and Traefik routing rule for a container.',
         outputs: ['domain'],
+    },
+    'remove-domain': {
+        schema: removeDomainConfigSchema,
+        category: 'deploy',
+        description: 'Removes a domain and its Traefik routing rule for the repository.',
+        outputs: ['host', 'removed'],
     },
     'add-ssl-certificate': {
         schema: addSslCertificateConfigSchema,

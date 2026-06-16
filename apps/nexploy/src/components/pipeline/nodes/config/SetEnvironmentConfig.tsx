@@ -28,7 +28,7 @@ export function SetEnvironmentConfig() {
                     <FormLabel>{t('environment')}</FormLabel>
                     <Select {...field} onValueChange={field.onChange}>
                         <FormControl>
-                            <SelectTrigger>
+                            <SelectTrigger className={'w-full'}>
                                 <SelectValue placeholder={t('selectEnvironment')} />
                             </SelectTrigger>
                         </FormControl>

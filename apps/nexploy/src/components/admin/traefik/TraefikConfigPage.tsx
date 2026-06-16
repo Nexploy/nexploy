@@ -2,11 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { FileCog } from 'lucide-react';
-import {
-    ResizableHandle,
-    ResizablePanel,
-    ResizablePanelGroup,
-} from '@workspace/ui/components/resizable';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup, } from '@workspace/ui/components/resizable';
 import { useTraefikConfigStore } from '@/stores/admin/useTraefikConfigStore';
 import { TraefikFileList } from './TraefikFileList';
 import { TraefikEditorPanel } from './TraefikEditorPanel';
@@ -34,7 +30,7 @@ export function TraefikConfigPage() {
                         <ResizablePanel defaultSize={200} minSize={200} maxSize={300}>
                             <TraefikFileList />
                         </ResizablePanel>
-                        <ResizableHandle />
+                        <ResizableHandle withHandle />
                         <ResizablePanel>
                             {selectedFile ? (
                                 <TraefikEditorPanel />

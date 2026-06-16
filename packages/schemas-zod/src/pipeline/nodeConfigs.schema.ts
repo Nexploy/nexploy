@@ -452,6 +452,10 @@ export const addDomainConfigSchema = z.object({
     certificateId: z.string().optional(),
 });
 
+export const removeDomainConfigSchema = z.object({
+    host: refable(z.string().min(1, 'Host is required')).default(''),
+});
+
 export const addSslCertificateConfigSchema = z.object({
     certType: z.enum(['LETS_ENCRYPT', 'CUSTOM']).default('LETS_ENCRYPT'),
     name: z.string().min(1, 'Name is required').default(''),

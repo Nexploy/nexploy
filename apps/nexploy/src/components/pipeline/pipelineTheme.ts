@@ -19,6 +19,7 @@ import {
     GitFork,
     GitMerge,
     Globe,
+    GlobeOff,
     Hammer,
     HardDrive,
     HeartPulse,
@@ -196,6 +197,7 @@ const NODE_CATEGORY: Record<string, string> = {
     'merge-branch': 'source',
     // Domain & SSL
     'add-domain': 'deploy',
+    'remove-domain': 'deploy',
     'add-ssl-certificate': 'deploy',
 };
 
@@ -274,6 +276,7 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'merge-branch': GitMerge,
     // Domain & SSL
     'add-domain': Globe,
+    'remove-domain': GlobeOff,
     'add-ssl-certificate': ShieldCheck,
 };
 

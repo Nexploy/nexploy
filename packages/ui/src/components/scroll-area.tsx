@@ -8,9 +8,10 @@ interface ScrollAreaProps extends React.ComponentProps<typeof ScrollAreaPrimitiv
     thumbColor?: string;
     trackColor?: string;
     viewportClassName?: string;
+    scrollbarX?: boolean;
 }
 
-function ScrollArea({ className, children, thumbColor, trackColor, viewportClassName, ...props }: ScrollAreaProps) {
+function ScrollArea({ className, children, thumbColor, trackColor, viewportClassName, scrollbarX, ...props }: ScrollAreaProps) {
     return (
         <ScrollAreaPrimitive.Root
             data-slot="scroll-area"
@@ -24,6 +25,7 @@ function ScrollArea({ className, children, thumbColor, trackColor, viewportClass
                 {children}
             </ScrollAreaPrimitive.Viewport>
             <ScrollBar thumbColor={thumbColor} trackColor={trackColor} />
+            {scrollbarX && <ScrollBar orientation="horizontal" thumbColor={thumbColor} trackColor={trackColor} />}
             <ScrollAreaPrimitive.Corner />
         </ScrollAreaPrimitive.Root>
     );

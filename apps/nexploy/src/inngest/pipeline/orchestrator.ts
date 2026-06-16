@@ -260,7 +260,7 @@ export class PipelineOrchestrator {
                                     await reporter.markSkipped(node.id);
                                     return {
                                         ok: true,
-                                        output: {},
+                                        output: execResult.output ?? {},
                                         skipped: true,
                                         skippedBranchTargets: execResult.skippedBranchTargets,
                                     };

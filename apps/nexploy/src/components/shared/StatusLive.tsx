@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import { BuildStatus } from 'generated/client';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { useRealtime } from 'inngest/react';
@@ -14,7 +15,9 @@ interface StatusBadgeProps {
 }
 
 export function StatusLive({ initialStatus, buildId, displayType = 'badge' }: StatusBadgeProps) {
-    const refreshToken = async () => {
+    const isLive = isBuildLive(initialStatus);
+
+    const refreshToken = useCallback(async () => {
         if (!buildId) throw new Error('Missing buildId');
         const result = await onGetTokenBuildIdAction({
             buildId,
@@ -22,14 +25,9 @@ export function StatusLive({ initialStatus, buildId, displayType = 'badge' }: St
         });
         if (!result?.data) throw new Error('Failed to get subscription token');
         return result.data;
-    };
+    }, [buildId]);
 
-    const isLive = isBuildLive(initialStatus);
-
-    const { messages } = useRealtime({
-        enabled: isLive,
-        token: refreshToken,
-    });
+    const { messages } = useRealtime({ enabled: isLive, token: refreshToken });
 
     const latestData = messages.last as BuildMessage | null;
     const status = (latestData?.data?.buildStatus ?? initialStatus) as BuildStatus;

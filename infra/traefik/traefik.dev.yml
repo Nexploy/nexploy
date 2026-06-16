@@ -2,7 +2,7 @@ api:
   dashboard: true
   insecure: true
 
-ping: {}
+ping: { }
 
 log:
   level: DEBUG
@@ -33,7 +33,7 @@ providers:
 certificatesResolvers:
   letsencrypt:
     acme:
-      email: dev@example.com
+      email: letsencrypt@localhost.com
       storage: /etc/nexploy/traefik/service/acme.json
       caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
       httpChallenge:

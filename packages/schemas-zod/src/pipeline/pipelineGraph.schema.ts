@@ -67,6 +67,7 @@ export const nodeTypeSchema = z.enum([
     'sonarqube-scan',
     // Domain & SSL
     'add-domain',
+    'remove-domain',
     'add-ssl-certificate',
 ]);
 

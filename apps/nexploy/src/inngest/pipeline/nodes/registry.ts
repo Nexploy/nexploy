@@ -52,6 +52,7 @@ import { deleteImageExecutor } from './executors/delete-image.executor';
 import { deleteNetworkExecutor } from './executors/delete-network.executor';
 import { deleteVolumeExecutor } from './executors/delete-volume.executor';
 import { addDomainExecutor } from './executors/add-domain.executor';
+import { removeDomainExecutor } from './executors/remove-domain.executor';
 import { addSslCertificateExecutor } from './executors/add-ssl-certificate.executor';
 
 const executors: INodeExecutor[] = [
@@ -129,6 +130,7 @@ const executors: INodeExecutor[] = [
     sonarqubeScanExecutor,
     // Domain & SSL
     addDomainExecutor,
+    removeDomainExecutor,
     addSslCertificateExecutor,
 ];
 

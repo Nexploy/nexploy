@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { useRealtime } from 'inngest/react';
 import dayjs from 'dayjs';
@@ -34,14 +35,13 @@ export function NodeLogsPanel({ buildId, nodeId, nodeStatus }: NodeLogsPanelProp
         fetcherApi,
     );
 
-    const { messages } = useRealtime({
-        enabled: isLive,
-        token: async () => {
-            const result = await onGetTokenBuildIdAction({ buildId, topics: ['log'] });
-            if (!result?.data) throw new Error('Failed to get subscription token');
-            return result.data;
-        },
-    });
+    const refreshToken = useCallback(async () => {
+        const result = await onGetTokenBuildIdAction({ buildId, topics: ['log'] });
+        if (!result?.data) throw new Error('Failed to get subscription token');
+        return result.data;
+    }, [buildId]);
+
+    const { messages } = useRealtime({ enabled: isLive, token: refreshToken });
 
     const liveLogs = (messages.all as BuildMessage[])
         .filter((evt) => evt.topic === 'log' && evt.data?.log?.step === nodeId)

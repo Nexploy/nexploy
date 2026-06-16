@@ -486,6 +486,7 @@
                 "description": "Analyze code quality with SonarQube or SonarCloud"
             },
             "add-domain": { "name": "Add Domain", "description": "Add a domain to the repository" },
+            "remove-domain": { "name": "Remove Domain", "description": "Remove a domain from the repository" },
             "add-ssl-certificate": {
                 "name": "Add SSL Certificate",
                 "description": "Provision an SSL certificate for a domain"
@@ -738,6 +739,7 @@
             "mergeMessagePlaceholder": "Merge feature/my-branch into main",
             "mergePush": "Push after merge",
             "addDomainHost": "Domain",
+            "removeDomainHost": "Domain to Remove",
             "addDomainContainerPort": "Container Port",
             "addDomainPath": "Path",
             "addDomainInternalPath": "Internal Path",
@@ -928,7 +930,15 @@
             "context": "Status name",
             "desc_context": "Name/context of the commit status",
             "description": "Status description",
-            "desc_description": "Short description shown next to the commit status"
+            "desc_description": "Short description shown next to the commit status",
+            "host": "Domain",
+            "desc_host": "Domain name configured in Traefik",
+            "domainId": "Domain ID",
+            "desc_domainId": "Traefik router identifier for the domain",
+            "containerPort": "Container port",
+            "desc_containerPort": "Port exposed by the container for this domain",
+            "domainRemoved": "Domain removed",
+            "desc_domainRemoved": "Whether the domain was successfully removed"
         },
         "noInputsAvailable": "No inputs available from previous nodes",
         "nodeOutputs": "Node outputs",

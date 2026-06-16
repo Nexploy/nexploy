@@ -19,7 +19,7 @@ interface ScrollAreaWithShadowProps extends ScrollAreaProps {
     colorShadow?: string;
     thumbColor?: string;
     trackColor?: string;
-    orientation?: 'vertical' | 'horizontal';
+    orientation?: 'vertical' | 'horizontal' | 'both';
 }
 
 export const ScrollAreaWithShadow = forwardRef<
@@ -29,7 +29,7 @@ export const ScrollAreaWithShadow = forwardRef<
     {
         children,
         bottomShadow = false,
-        colorShadow = 'background',
+        colorShadow = 'from-background via-background/50',
         orientation = 'vertical',
         className,
         ...props
@@ -59,10 +59,8 @@ export const ScrollAreaWithShadow = forwardRef<
 
             handleScroll();
             el.addEventListener('scroll', handleScroll);
-
             const ro = new ResizeObserver(handleScroll);
             ro.observe(el);
-
             return () => {
                 el.removeEventListener('scroll', handleScroll);
                 ro.disconnect();
@@ -84,14 +82,28 @@ export const ScrollAreaWithShadow = forwardRef<
         }
 
         const handleScroll = () => {
-            const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+            const { scrollTop, scrollHeight, clientHeight, scrollLeft, scrollWidth, clientWidth } =
+                scrollContainer;
+
             setShowTopShadow(scrollTop > 5);
-            if (bottomShadow) setShowBottomShadow(scrollTop + clientHeight < scrollHeight - 5);
+
+            const wantsBottomShadow = orientation === 'both' || bottomShadow;
+            if (wantsBottomShadow) setShowBottomShadow(scrollTop + clientHeight < scrollHeight - 5);
+
+            if (orientation === 'both') {
+                setShowLeftShadow(scrollLeft > 5);
+                setShowRightShadow(scrollLeft + clientWidth < scrollWidth - 5);
+            }
         };
 
         handleScroll();
         scrollContainer.addEventListener('scroll', handleScroll);
-        return () => scrollContainer.removeEventListener('scroll', handleScroll);
+        const ro = new ResizeObserver(handleScroll);
+        ro.observe(scrollContainer);
+        return () => {
+            scrollContainer.removeEventListener('scroll', handleScroll);
+            ro.disconnect();
+        };
     }, [bottomShadow, forwardedRef, orientation]);
 
     if (orientation === 'horizontal') {
@@ -99,13 +111,15 @@ export const ScrollAreaWithShadow = forwardRef<
             <div className="relative min-w-0 overflow-hidden">
                 <div
                     className={cn(
-                        'pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-8 bg-gradient-to-r from-background/80 to-transparent transition-opacity duration-200',
+                        'pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-8 bg-gradient-to-r to-transparent transition-opacity duration-200',
+                        colorShadow,
                         showLeftShadow ? 'opacity-100' : 'opacity-0',
                     )}
                 />
                 <div
                     className={cn(
-                        'pointer-events-none absolute top-0 right-0 bottom-0 z-10 w-8 bg-gradient-to-l from-background/80 to-transparent transition-opacity duration-200',
+                        'pointer-events-none absolute top-0 right-0 bottom-0 z-10 w-8 bg-gradient-to-l to-transparent transition-opacity duration-200',
+                        colorShadow,
                         showRightShadow ? 'opacity-100' : 'opacity-0',
                     )}
                 />
@@ -116,27 +130,51 @@ export const ScrollAreaWithShadow = forwardRef<
         );
     }
 
+    const showBottom = orientation === 'both' || bottomShadow;
+
     return (
         <div className="relative flex-1 overflow-hidden">
             <div
                 className={cn(
-                    `from-background via-background/50 pointer-events-none absolute top-0 right-0 left-0 z-10 h-5 bg-gradient-to-b to-transparent transition-opacity duration-200`,
-                    showTopShadow ? 'opacity-100' : 'opacity-0',
+                    'pointer-events-none absolute top-0 right-0 left-0 z-10 h-5 bg-gradient-to-b to-transparent transition-opacity duration-200',
                     colorShadow,
+                    showTopShadow ? 'opacity-100' : 'opacity-0',
                 )}
             />
-
-            {bottomShadow && (
+            {showBottom && (
                 <div
                     className={cn(
-                        `from-background via-background/50 pointer-events-none absolute right-0 bottom-0 left-0 z-10 h-5 rotate-180 bg-gradient-to-b to-transparent transition-opacity duration-200`,
-                        showBottomShadow ? 'opacity-100' : 'opacity-0',
+                        'pointer-events-none absolute right-0 bottom-0 left-0 z-10 h-5 rotate-180 bg-gradient-to-b to-transparent transition-opacity duration-200',
                         colorShadow,
+                        showBottomShadow ? 'opacity-100' : 'opacity-0',
+                    )}
+                />
+            )}
+            {orientation === 'both' && (
+                <div
+                    className={cn(
+                        'pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-5 bg-gradient-to-r to-transparent transition-opacity duration-200',
+                        colorShadow,
+                        showLeftShadow ? 'opacity-100' : 'opacity-0',
+                    )}
+                />
+            )}
+            {orientation === 'both' && (
+                <div
+                    className={cn(
+                        'pointer-events-none absolute top-0 right-0 bottom-0 z-10 w-5 bg-gradient-to-l to-transparent transition-opacity duration-200',
+                        colorShadow,
+                        showRightShadow ? 'opacity-100' : 'opacity-0',
                     )}
                 />
             )}
 
-            <ScrollArea className={className} {...props} ref={scrollRef}>
+            <ScrollArea
+                className={className}
+                scrollbarX={orientation === 'both'}
+                {...props}
+                ref={scrollRef}
+            >
                 {children}
             </ScrollArea>
         </div>

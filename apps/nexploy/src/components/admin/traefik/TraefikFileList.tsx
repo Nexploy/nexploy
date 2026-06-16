@@ -83,13 +83,13 @@ export function TraefikFileList() {
                 value={{ activePath, dropTarget, setActivePath, setDropTarget, moveInto }}
             >
                 <ScrollAreaWithShadow
-                    bottomShadow
+                    orientation="both"
                     colorShadow={'from-card via-card/50'}
-                    className={'h-full overflow-hidden'}
+                    className={'h-full'}
                 >
                     <div
                         className={cn(
-                            'my-1 min-h-full rounded-md',
+                            'my-1 min-h-full min-w-max rounded-md',
                             rootHighlight && 'bg-primary/5 ring-primary/40 ring-1 ring-inset',
                         )}
                         onDragOver={handleRootDragOver}

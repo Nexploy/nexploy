@@ -7,7 +7,14 @@ import { useRequestsStore } from '@/stores/traefik/useRequestsStore';
 import { useState } from 'react';
 import { Badge } from '@workspace/ui/components/badge';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@workspace/ui/components/table';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
