@@ -7,14 +7,7 @@ import { useRequestsStore } from '@/stores/traefik/useRequestsStore';
 import { useState } from 'react';
 import { Badge } from '@workspace/ui/components/badge';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -158,7 +151,7 @@ export default function RequestsPage() {
                                     value={methodFilter}
                                     onValueChange={handleMethodFilterChange}
                                 >
-                                    <SelectTrigger className="min-w-32">
+                                    <SelectTrigger>
                                         <SelectValue placeholder={t('method')} />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -177,7 +170,7 @@ export default function RequestsPage() {
                                     value={statusFilter}
                                     onValueChange={handleStatusFilterChange}
                                 >
-                                    <SelectTrigger className="min-w-32">
+                                    <SelectTrigger>
                                         <SelectValue placeholder={t('status')} />
                                     </SelectTrigger>
                                     <SelectContent>

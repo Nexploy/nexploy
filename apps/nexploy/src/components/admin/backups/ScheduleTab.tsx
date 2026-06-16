@@ -317,7 +317,7 @@ export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
                                                             )
                                                         }
                                                     >
-                                                        <SelectTrigger className="w-20">
+                                                        <SelectTrigger>
                                                             <SelectValue />
                                                         </SelectTrigger>
                                                         <SelectContent>

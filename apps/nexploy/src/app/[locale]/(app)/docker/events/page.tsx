@@ -149,7 +149,7 @@ export default function EventsPage() {
                             onChange={(e) => handleSearchChange(e.target.value)}
                         />
                         <Select value={typeFilter} onValueChange={handleTypeFilterChange}>
-                            <SelectTrigger className="min-w-40">
+                            <SelectTrigger>
                                 <SelectValue placeholder={t('type')} />
                             </SelectTrigger>
                             <SelectContent>

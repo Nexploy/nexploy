@@ -67,7 +67,7 @@ export function BackupVolumeS3Config() {
                                             onValueChange={field.onChange}
                                             disabled={isLoading}
                                         >
-                                            <SelectTrigger className="max-w-full min-w-40 data-[placeholder]:!pl-3">
+                                            <SelectTrigger className="w-full min-w-40 data-[placeholder]:!pl-3">
                                                 {isStale ? (
                                                     <span className="flex min-w-0 items-center gap-1.5">
                                                         <AlertTriangle className="h-3 w-3 shrink-0" />
@@ -127,7 +127,7 @@ export function BackupVolumeS3Config() {
                                     onValueChange={field.onChange}
                                     disabled={isLoadingAccounts}
                                 >
-                                    <SelectTrigger className="min-w-40 overflow-hidden data-[placeholder]:!pl-3">
+                                    <SelectTrigger className="w-full overflow-hidden data-[placeholder]:!pl-3">
                                         {isLoadingAccounts ? (
                                             <span className="text-muted-foreground flex items-center gap-2">
                                                 <Loader2 className="h-3 w-3 animate-spin" />

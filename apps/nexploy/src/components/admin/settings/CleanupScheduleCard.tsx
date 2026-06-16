@@ -126,7 +126,7 @@ export function CleanupScheduleCard({ settings }: { settings: CleanupSettings })
                                         onValueChange={(v) => field.onChange(Number(v))}
                                     >
                                         <FormControl>
-                                            <SelectTrigger className="w-28">
+                                            <SelectTrigger>
                                                 <SelectValue />
                                             </SelectTrigger>
                                         </FormControl>

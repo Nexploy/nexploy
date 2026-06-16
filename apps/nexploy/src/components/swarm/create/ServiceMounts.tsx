@@ -64,7 +64,7 @@ export function ServiceMounts() {
                                                     value={field.value}
                                                     onValueChange={field.onChange}
                                                 >
-                                                    <SelectTrigger className="w-28">
+                                                    <SelectTrigger>
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>

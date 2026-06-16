@@ -25,7 +25,7 @@ export function LanguageSwitcher() {
 
     return (
         <Select value={locale} onValueChange={handleLanguageChange}>
-            <SelectTrigger className="w-full">
+            <SelectTrigger>
                 <SelectValue placeholder={t('selectLanguage')} />
             </SelectTrigger>
             <SelectContent>

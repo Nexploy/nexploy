@@ -100,7 +100,7 @@ export function ServicePorts() {
                                                     value={field.value}
                                                     onValueChange={field.onChange}
                                                 >
-                                                    <SelectTrigger className="w-20">
+                                                    <SelectTrigger>
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>
@@ -127,7 +127,7 @@ export function ServicePorts() {
                                                     value={field.value}
                                                     onValueChange={field.onChange}
                                                 >
-                                                    <SelectTrigger className="w-36">
+                                                    <SelectTrigger>
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>

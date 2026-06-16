@@ -3,8 +3,20 @@
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle, } from '@workspace/ui/components/card';
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, } from '@workspace/ui/components/empty';
+import {
+    Card,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@workspace/ui/components/card';
+import {
+    Empty,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from '@workspace/ui/components/empty';
 import {
     Select,
     SelectContent,
@@ -81,7 +93,7 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                         value={providerFilter}
                         onValueChange={(value: GitProviderType) => setProviderFilter(value)}
                     >
-                        <SelectTrigger className="w-36 shadow-xs">
+                        <SelectTrigger className="w-40">
                             <SelectValue placeholder={t('filterByProvider')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -108,7 +120,7 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                         value={statusFilter}
                         onValueChange={(value: BuildStatus) => setStatusFilter(value)}
                     >
-                        <SelectTrigger className="w-40 shadow-xs">
+                        <SelectTrigger className="w-40">
                             <SelectValue placeholder={t('filterByStatus')} />
                         </SelectTrigger>
                         <SelectContent>

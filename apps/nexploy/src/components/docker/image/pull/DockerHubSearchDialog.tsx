@@ -28,10 +28,7 @@ import {
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow.tsx';
 import { cn } from '@workspace/ui/lib/utils.ts';
 import { fetcherApi } from '@/lib/api/fetcherApi';
-import type {
-    DockerHubImage,
-    DockerHubSort,
-} from '@workspace/typescript-interface/docker/docker.hub';
+import type { DockerHubImage, DockerHubSort, } from '@workspace/typescript-interface/docker/docker.hub';
 import { ImageLogo } from '@/components/docker/image/pull/ImageLogo.tsx';
 
 type SourceFilter = 'all' | 'official';
@@ -149,7 +146,7 @@ export function DockerHubSearchDialog({
                         />
                     </div>
                     <Select value={sort} onValueChange={(value) => setSort(value as DockerHubSort)}>
-                        <SelectTrigger className="sm:w-44">
+                        <SelectTrigger>
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -164,7 +161,7 @@ export function DockerHubSearchDialog({
                         value={source}
                         onValueChange={(value) => setSource(value as SourceFilter)}
                     >
-                        <SelectTrigger className="sm:w-44">
+                        <SelectTrigger>
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>

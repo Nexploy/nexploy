@@ -61,7 +61,7 @@ export function VolumeBasicConfig() {
                             <FormLabel>{t('driver')}</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
-                                    <SelectTrigger className="min-w-30">
+                                    <SelectTrigger>
                                         <SelectValue placeholder={t('selectDriver')} />
                                     </SelectTrigger>
                                 </FormControl>

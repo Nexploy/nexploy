@@ -2,12 +2,23 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from '@workspace/ui/components/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@workspace/ui/components/select';
 import { ShieldCheck } from 'lucide-react';
-import { useParams } from 'next/navigation';
 import useSWR from 'swr';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 
@@ -22,7 +33,6 @@ export function AddDomainConfig() {
     const t = useTranslations('repository.pipeline.config');
     const tDomains = useTranslations('repository.settings.domains');
     const form = useFormContext();
-    const params = useParams<{ repositoryId: string }>();
 
     const httpsEnabled = form.watch('https');
 
@@ -40,7 +50,11 @@ export function AddDomainConfig() {
                     <FormItem>
                         <FormLabel>{t('addDomainHost')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder={t('domainPlaceholder')} className="font-mono" />
+                            <Input
+                                {...field}
+                                placeholder={t('domainPlaceholder')}
+                                className="font-mono"
+                            />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -53,7 +67,11 @@ export function AddDomainConfig() {
                     <FormItem>
                         <FormLabel>{t('addDomainContainerPort')}</FormLabel>
                         <FormControl>
-                            <Input {...field} type="number" placeholder={t('portNumberPlaceholder')} />
+                            <Input
+                                {...field}
+                                type="number"
+                                placeholder={t('portNumberPlaceholder')}
+                            />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -67,7 +85,11 @@ export function AddDomainConfig() {
                         <FormItem>
                             <FormLabel>{t('addDomainPath')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder={t('pathPlaceholder')} className="font-mono" />
+                                <Input
+                                    {...field}
+                                    placeholder={t('pathPlaceholder')}
+                                    className="font-mono"
+                                />
                             </FormControl>
                             <FormMessage className="text-xs" />
                         </FormItem>
@@ -80,7 +102,11 @@ export function AddDomainConfig() {
                         <FormItem>
                             <FormLabel>{t('addDomainInternalPath')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder={t('pathPlaceholder')} className="font-mono" />
+                                <Input
+                                    {...field}
+                                    placeholder={t('pathPlaceholder')}
+                                    className="font-mono"
+                                />
                             </FormControl>
                             <FormMessage className="text-xs" />
                         </FormItem>
