@@ -7,7 +7,7 @@ import { useBuildsInfinite } from '@/hooks/useBuildsInfinite';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { type PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
-import type { NodeRunStatus } from '@/types/pipeline.type';
+import type { NodeRunStatus } from '@workspace/typescript-interface/pipeline/pipeline';
 import type { PipelineBuild } from '@workspace/typescript-interface/stores/pipelineStore';
 import { createPipelineStore, type PipelineStore } from '@/stores/pipeline/createPipelineStore';
 import { PipelineContext } from '@/contexts/PipelineContext';

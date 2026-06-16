@@ -3,7 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-} from '@/types/pipeline.type';
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { getRegistryWithPassword } from '@/services/registry.service';
 import { pullFromRegistryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';

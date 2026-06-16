@@ -100,12 +100,20 @@ export default function ContainersPage() {
                     </div>
                 </div>
                 <Can resource="docker" action="manage">
-                    <Button asChild className={'mt-5'}>
-                        <Link href={'/docker/containers/create'}>
-                            <Plus />
-                            {t('createContainer.create')}
-                        </Link>
-                    </Button>
+                    <div className="mt-5 flex gap-2">
+                        <Button asChild variant="outline">
+                            <Link href={'/docker/containers/stacks/create'}>
+                                <Layers />
+                                {t('createStack.create')}
+                            </Link>
+                        </Button>
+                        <Button asChild>
+                            <Link href={'/docker/containers/create'}>
+                                <Plus />
+                                {t('createContainer.create')}
+                            </Link>
+                        </Button>
+                    </div>
                 </Can>
             </div>
 

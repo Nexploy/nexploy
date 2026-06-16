@@ -502,6 +502,23 @@
             "keyPlaceholder": "com.example.label"
         }
     },
+    "createStack": {
+        "create": "Create stack",
+        "title": "New Stack",
+        "description": "Deploy a Docker Compose stack",
+        "back": "Back",
+        "deploying": "Deploying stack...",
+        "deployButton": "Deploy Stack",
+        "deploySuccess": "Stack \"{name}\" deployed successfully",
+        "stackConfig": "Stack Configuration",
+        "stackConfigDescription": "Main stack information",
+        "stackName": "Stack Name",
+        "stackNamePlaceholder": "my-stack",
+        "stackNameDescription": "A unique name to identify the stack (Compose project name)",
+        "composeFile": "Compose File",
+        "composeFileDescription": "Write or upload a docker-compose.yml file",
+        "uploadFile": "Upload file"
+    },
     "createContainer": {
         "create": "Create container",
         "title": "New Container",

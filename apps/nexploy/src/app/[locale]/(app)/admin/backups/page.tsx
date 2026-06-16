@@ -7,6 +7,7 @@ import { getAllAwsAccounts } from '@/services/aws.service';
 import { getBackupSchedulesForVolumes } from '@/services/backupSchedule.service';
 import { VolumeS3Button } from '@/components/admin/backups/VolumeS3Button';
 import { SchedulesAccordion } from '@/components/admin/backups/SchedulesAccordion';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 
 export default async function BackupsPage() {
     const [t, volumes, awsAccounts] = await Promise.all([
@@ -41,39 +42,43 @@ export default async function BackupsPage() {
                         </p>
                     </div>
                 </div>
-                <div className="flex flex-col gap-4 px-5 pb-5">
-                    <SchedulesAccordion volumeSchedules={volumeSchedules} />
-                    <div className="bg-card overflow-hidden rounded-md border shadow-sm">
-                        {volumes.map((volume, index) => (
-                            <div
-                                key={volume.name}
-                                className={`flex items-center justify-between gap-2 px-4 py-3 ${
-                                    index < volumes.length - 1 ? 'border-b' : ''
-                                }`}
-                            >
-                                <div className="flex min-w-0 flex-1 items-center gap-3">
-                                    <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-md">
-                                        <HardDrive className="text-primary size-4" />
+                <ScrollAreaWithShadow className="h-full overflow-hidden">
+                    <div className="flex flex-col gap-4 px-5 pb-5">
+                        <SchedulesAccordion volumeSchedules={volumeSchedules} />
+                        <div className="bg-card overflow-hidden rounded-md border shadow-sm">
+                            {volumes.map((volume, index) => (
+                                <div
+                                    key={volume.name}
+                                    className={`flex items-center justify-between gap-2 px-4 py-3 ${
+                                        index < volumes.length - 1 ? 'border-b' : ''
+                                    }`}
+                                >
+                                    <div className="flex min-w-0 flex-1 items-center gap-3">
+                                        <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-md">
+                                            <HardDrive className="text-primary size-4" />
+                                        </div>
+                                        <div className="flex min-w-0 flex-1 flex-col break-all">
+                                            <span className="text-sm font-medium">
+                                                {volume.name}
+                                            </span>
+                                            <span className="text-muted-foreground text-xs">
+                                                {volume.driver}
+                                                {volume.usageData?.Size != null &&
+                                                    ` · ${formatBytes(volume.usageData.Size)}`}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className="flex min-w-0 flex-1 flex-col break-all">
-                                        <span className="text-sm font-medium">{volume.name}</span>
-                                        <span className="text-muted-foreground text-xs">
-                                            {volume.driver}
-                                            {volume.usageData?.Size != null &&
-                                                ` · ${formatBytes(volume.usageData.Size)}`}
-                                        </span>
+                                    <div className="flex shrink-0 items-center gap-2">
+                                        <VolumeS3Button
+                                            volumeName={volume.name}
+                                            awsAccounts={awsAccounts}
+                                        />
                                     </div>
                                 </div>
-                                <div className="flex shrink-0 items-center gap-2">
-                                    <VolumeS3Button
-                                        volumeName={volume.name}
-                                        awsAccounts={awsAccounts}
-                                    />
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
+                </ScrollAreaWithShadow>
             </div>
         </div>
     );

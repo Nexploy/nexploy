@@ -10,7 +10,12 @@ export const backupSchedulerAwsFunction = inngest.createFunction(
         id: 'backup-schedule-run',
         triggers: [{ event: 'backup/schedule.start' }],
         retries: 2,
-        cancelOn: [{ event: 'backup/schedule.cancel', match: 'data.id' }],
+        cancelOn: [
+            {
+                event: 'backup/schedule.cancel',
+                if: 'event.data.id == async.data.id',
+            },
+        ],
     },
     async ({ event, step }) => {
         const {

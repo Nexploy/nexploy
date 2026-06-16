@@ -13,8 +13,9 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
-import { useInngestSubscription } from '@inngest/realtime/hooks';
-import { NodeRunStatus } from '@/types/pipeline.type';
+import { useRealtime } from 'inngest/react';
+import type { BuildMessage } from '@workspace/typescript-interface/repository/buildRealtime';
+import { NodeRunStatus } from '@workspace/typescript-interface/pipeline/pipeline';
 
 interface StatusNodeLiveProps {
     buildId: string;
@@ -28,13 +29,16 @@ export function StatusNodeLive({ buildId, nodeId, initialStatus }: StatusNodeLiv
 
     const isLive = status === 'running' || status === undefined;
 
-    const { latestData } = useInngestSubscription({
+    const { messages } = useRealtime({
         enabled: isLive,
-        refreshToken: async () => {
+        token: async () => {
             const result = await onGetTokenBuildIdAction({ buildId, topics: ['node-status'] });
-            return result?.data ?? null;
+            if (!result?.data) throw new Error('Failed to get subscription token');
+            return result.data;
         },
     });
+
+    const latestData = messages.last as BuildMessage | null;
 
     useEffect(() => {
         if (latestData?.topic === 'node-status' && latestData.data?.nodeId === nodeId) {

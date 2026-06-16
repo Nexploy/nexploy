@@ -502,6 +502,23 @@
             "keyPlaceholder": "com.example.label"
         }
     },
+    "createStack": {
+        "create": "Créer une stack",
+        "title": "Nouvelle stack",
+        "description": "Déployer une stack Docker Compose",
+        "back": "Retour",
+        "deploying": "Déploiement de la stack...",
+        "deployButton": "Déployer la stack",
+        "deploySuccess": "Stack « {name} » déployée avec succès",
+        "stackConfig": "Configuration de la stack",
+        "stackConfigDescription": "Informations principales de la stack",
+        "stackName": "Nom de la stack",
+        "stackNamePlaceholder": "ma-stack",
+        "stackNameDescription": "Un nom unique pour identifier la stack (nom du projet Compose)",
+        "composeFile": "Fichier Compose",
+        "composeFileDescription": "Écrivez ou importez un fichier docker-compose.yml",
+        "uploadFile": "Importer un fichier"
+    },
     "createContainer": {
         "create": "Créer un conteneur",
         "title": "Nouveau conteneur",

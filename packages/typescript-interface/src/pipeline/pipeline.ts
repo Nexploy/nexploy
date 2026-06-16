@@ -1,5 +1,5 @@
-import { BuildConfig } from '@workspace/typescript-interface/repository/build';
-import { PipelineEdge, PipelineNode } from '@workspace/typescript-interface/pipeline/node';
+import { BuildConfig } from '../repository/build';
+import { PipelineEdge, PipelineNode } from './node';
 import { z } from 'zod';
 
 export type LogLevel = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
@@ -54,7 +54,7 @@ export interface PipelineLogger {
     flush(): Promise<void>;
 }
 
-export type { NodeRunStatus } from '@workspace/typescript-interface/pipeline/node';
+export type { NodeRunStatus } from './node';
 
 export interface CommitInfo {
     branch: string;

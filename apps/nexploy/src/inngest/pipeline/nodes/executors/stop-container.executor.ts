@@ -3,7 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-} from '@/types/pipeline.type';
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { stopContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';

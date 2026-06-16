@@ -1,5 +1,5 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, KyDockerOptions } from '@/lib/api/kyDocker';
 import { createS3Client, putS3Object } from '@/lib/aws/s3';
 import { getAwsCredentials } from '@/services/aws.service';

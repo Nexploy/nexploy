@@ -3,7 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-} from '@/types/pipeline.type';
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { checkContainerLogsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';

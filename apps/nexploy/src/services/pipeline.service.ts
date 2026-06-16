@@ -1,7 +1,7 @@
 import { prisma } from '../../prisma/prisma';
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { SavePipelineInput } from '@workspace/schemas-zod/pipeline/pipelineGraph.schema';
-import { type NodeRunStatus } from '@/types/pipeline.type';
+import { type NodeRunStatus } from '@workspace/typescript-interface/pipeline/pipeline';
 import { decryptPipelineNodes, encryptPipelineNodes } from '@/lib/pipelineEncryption';
 
 export interface BuildPipelineStatus {

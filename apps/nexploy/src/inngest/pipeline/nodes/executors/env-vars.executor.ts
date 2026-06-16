@@ -1,5 +1,5 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
 import { getAllEnvsBuild } from '@/services/repository/build.service';
 
 export class EnvVarsExecutor implements INodeExecutor {

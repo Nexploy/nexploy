@@ -1,4 +1,4 @@
-import { INodeExecutor } from '@/types/pipeline.type';
+import { INodeExecutor } from '@workspace/typescript-interface/pipeline/pipeline';
 import { cloneRepositoryExecutor } from './executors/clone-repository.executor';
 import { webhookCloneExecutor } from './executors/webhook-clone.executor';
 import { envVarsExecutor } from './executors/env-vars.executor';

@@ -1,4 +1,4 @@
-import { SlidersHorizontal } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
@@ -24,7 +24,7 @@ export default async function AISettingsPage() {
             <div className="flex flex-col gap-5 overflow-hidden">
                 <div className="flex gap-3 px-5">
                     <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <SlidersHorizontal className="text-primary size-7" />
+                        <Settings className="text-primary size-7" />
                     </div>
                     <div className="mt-3.5 flex flex-col">
                         <h1 className="text-3xl font-semibold tracking-tight break-all">
@@ -35,7 +35,7 @@ export default async function AISettingsPage() {
                 </div>
 
                 <ScrollAreaWithShadow className="h-full overflow-hidden px-5">
-                    <div className="space-y-6 pb-5">
+                    <div className="flex flex-col gap-5 pb-5">
                         <GeneralSettingsCard
                             aiEnabled={aiSettings.aiEnabled}
                             mcpEnabled={aiSettings.mcpEnabled}

@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import { useStore } from 'zustand';
-import { useInngestSubscription } from '@inngest/realtime/hooks';
+import { useRealtime } from 'inngest/react';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { usePipelineStoreInstance } from '@/contexts/PipelineContext';
 import { isBuildLive } from '@/utils/buildStatus';
-import { type CommitInfo, type NodeRunStatus } from '@/types/pipeline.type';
+import { type CommitInfo, type NodeRunStatus } from '@workspace/typescript-interface/pipeline/pipeline';
+import type { BuildMessage } from '@workspace/typescript-interface/repository/buildRealtime';
 import type { PipelineBuildStatus } from '@workspace/typescript-interface/stores/pipelineStore';
 
 export function BuildTracker({
@@ -30,10 +31,12 @@ export function BuildTracker({
             buildId,
             topics: ['build-status', 'commit-info', 'node-status'],
         });
-        return result?.data ?? null;
+        if (!result?.data) throw new Error('Failed to get subscription token');
+        return result.data;
     }, [buildId]);
 
-    const { data: liveEvents } = useInngestSubscription({ enabled: isLive, refreshToken });
+    const { messages } = useRealtime({ enabled: isLive, token: refreshToken });
+    const liveEvents = messages.all as BuildMessage[];
 
     useEffect(() => {
         const newEvents = liveEvents.slice(processedCountRef.current);

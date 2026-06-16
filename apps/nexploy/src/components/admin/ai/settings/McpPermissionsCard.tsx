@@ -82,11 +82,16 @@ export function McpPermissionsCard(props: McpPermissionsCardProps) {
             render={({ field }) => (
                 <FormItem>
                     <FormLabel className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
-                        <div className="flex flex-col">
-                            <span className="text-base">{t(`${name}`)}</span>
-                            <span className="text-muted-foreground text-xs">
-                                {t(`${name}Description`)}
-                            </span>
+                        <div className="flex items-center gap-3">
+                            <div className="bg-primary/10 flex size-7 shrink-0 items-center justify-center rounded-md">
+                                <Icon className="text-primary size-4" />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-base">{t(`${name}`)}</span>
+                                <span className="text-muted-foreground text-xs">
+                                    {t(`${name}Description`)}
+                                </span>
+                            </div>
                         </div>
                         <FormControl>
                             <Switch
@@ -115,7 +120,7 @@ export function McpPermissionsCard(props: McpPermissionsCardProps) {
                 <Form {...form}>
                     <form onSubmit={handleSubmitWithAction} className="space-y-4">
                         <div className="flex flex-col gap-1">
-                            <p className="text-muted-foreground px-1 text-xs font-medium tracking-wider uppercase">
+                            <p className="text-muted-foreground px-1 text-sm font-medium">
                                 {t('mcpSectionDocker')}
                             </p>
                             <div className="flex flex-col gap-2">
@@ -123,7 +128,7 @@ export function McpPermissionsCard(props: McpPermissionsCardProps) {
                             </div>
                         </div>
                         <div className="flex flex-col gap-1">
-                            <p className="text-muted-foreground px-1 text-xs font-medium tracking-wider uppercase">
+                            <p className="text-muted-foreground px-1 text-sm font-medium">
                                 {t('mcpSectionNexploy')}
                             </p>
                             <div className="flex flex-col gap-2">

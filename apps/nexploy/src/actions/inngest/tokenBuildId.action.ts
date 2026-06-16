@@ -3,7 +3,7 @@
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { HTTPError } from 'ky';
-import { getSubscriptionToken } from '@inngest/realtime';
+import { getSubscriptionToken } from 'inngest/realtime';
 import { inngest } from '@/inngest/client';
 import { tokenBuildIdSchema } from '@workspace/schemas-zod/inngest/token.schema';
 
@@ -16,7 +16,7 @@ export const onGetTokenBuildIdAction = authActionServer
                 channel: `build:${buildId}`,
                 topics,
             });
-            return { ...token, app: { apiBaseUrl: process.env.NEXPLOY_URL } };
+            return { ...token, apiBaseUrl: process.env.NEXPLOY_URL ?? token.apiBaseUrl };
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({

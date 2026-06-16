@@ -23,7 +23,7 @@ export default async function IntegrationsPage() {
                 </div>
 
                 <ScrollAreaWithShadow className="h-full overflow-hidden px-5">
-                    <div className="space-y-6 pb-5">
+                    <div className="flex flex-col gap-5 pb-5">
                         <GitProvidersSection />
                         <CloudInfrastructureSection />
                     </div>

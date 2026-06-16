@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Waypoints } from 'lucide-react';
+import { FileCog } from 'lucide-react';
 import {
     ResizableHandle,
     ResizablePanel,
@@ -20,7 +20,7 @@ export function TraefikConfigPage() {
             <div className="flex min-h-0 flex-1 flex-col gap-4">
                 <div className="flex gap-3 px-5">
                     <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <Waypoints className="text-primary size-7" />
+                        <FileCog className="text-primary size-7" />
                     </div>
                     <div className="mt-3.5 flex flex-col">
                         <h1 className="text-3xl font-semibold tracking-tight break-all">

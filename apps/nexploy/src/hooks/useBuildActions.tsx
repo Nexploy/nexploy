@@ -6,9 +6,10 @@ import { onCancelBuild } from '@/actions/repository/builds/cancelBuild.action';
 import { RemoveBuildButton } from '@/components/repositories/RemoveBuildButton';
 import { useTranslations } from 'next-intl';
 import { BuildStatus } from 'generated/client';
-import { useInngestSubscription } from '@inngest/realtime/hooks';
+import { useRealtime } from 'inngest/react';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { isBuildLive } from '@/utils/buildStatus';
+import type { BuildMessage } from '@workspace/typescript-interface/repository/buildRealtime';
 
 interface BaseBuildAction {
     id: string;
@@ -51,13 +52,15 @@ export function useBuildActions({
             buildId,
             topics: ['build-status'],
         });
-        return result?.data ?? null;
+        if (!result?.data) throw new Error('Failed to get subscription token');
+        return result.data;
     }, [buildId]);
 
-    const { data } = useInngestSubscription({
+    const { messages } = useRealtime({
         enabled: isBuildLive(initialStatus),
-        refreshToken,
+        token: refreshToken,
     });
+    const data = messages.all as BuildMessage[];
 
     const liveStatus = data.findLast((e) => e.topic === 'build-status')?.data as
         | { buildStatus: BuildStatus }

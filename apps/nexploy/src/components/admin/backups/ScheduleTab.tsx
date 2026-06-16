@@ -1,13 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import { Switch } from '@workspace/ui/components/switch';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import {
     Select,
@@ -45,7 +43,11 @@ interface ScheduleTabProps {
 
 export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
     const t = useTranslations('admin');
-    const [is12h, setIs12h] = useState(false);
+    const locale = useLocale();
+
+    // Le format 12h/24h suit la langue (en → 12h AM/PM, fr → 24h).
+    const is12h =
+        new Intl.DateTimeFormat(locale, { hour: 'numeric' }).resolvedOptions().hour12 ?? false;
 
     const { closeDialog } = useConfirmationDialogStore();
 
@@ -139,13 +141,7 @@ export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
                         name="frequency"
                         render={({ field }) => (
                             <FormItem>
-                                <div className="flex items-center justify-between">
-                                    <FormLabel>{t('frequency')}</FormLabel>
-                                    <div className="flex items-center gap-1.5">
-                                        <span className="text-muted-foreground text-xs">12h</span>
-                                        <Switch checked={is12h} onCheckedChange={setIs12h} />
-                                    </div>
-                                </div>
+                                <FormLabel>{t('frequency')}</FormLabel>
                                 <Select
                                     value={field.value}
                                     onValueChange={(val) => {

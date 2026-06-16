@@ -3,7 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-} from '@/types/pipeline.type';
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 
 export class CleanWorkdirExecutor implements INodeExecutor {

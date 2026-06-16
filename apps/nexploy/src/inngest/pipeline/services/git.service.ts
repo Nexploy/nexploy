@@ -8,7 +8,7 @@ import { BuildConfig } from '@workspace/typescript-interface/repository/build';
 import { GitProviderToken } from '@workspace/typescript-interface/git/git';
 import { getValidToken } from '@/services/api/gitProvider.service';
 import { getGitProviderToken } from '@/services/git/git.service';
-import { ProgressCallback } from '@/types/pipeline.type';
+import { ProgressCallback } from '@workspace/typescript-interface/pipeline/pipeline';
 
 const ALLOWED_GIT_PROTOCOLS = ['http:', 'https:'];
 

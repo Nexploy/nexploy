@@ -1,10 +1,6 @@
 'use client';
 
-import {
-    ResizableHandle,
-    ResizablePanel,
-    ResizablePanelGroup,
-} from '@workspace/ui/components/resizable';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup, } from '@workspace/ui/components/resizable';
 import { NodeAddPanel } from '@/components/pipeline/nodes/add/NodeAddPanel';
 import { NodeTemplatePanel } from '@/components/pipeline/nodes/template/NodeTemplatePanel';
 import { PipelineCanvas } from '@/components/pipeline/PipelineCanvas';
@@ -25,7 +21,7 @@ export function PipelineEditor() {
                     </ResizablePanel>
                     {activePanel && (
                         <>
-                            <ResizableHandle withHandle />
+                            <ResizableHandle />
                             <ResizablePanel
                                 id="pipeline-side-panel"
                                 defaultSize={250}

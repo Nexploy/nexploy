@@ -1,5 +1,5 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { removeContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';

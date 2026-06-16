@@ -1,6 +1,6 @@
 'use client';
 
-import { useInngestSubscription } from '@inngest/realtime/hooks';
+import { useRealtime } from 'inngest/react';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { Button } from '@workspace/ui/components/button';
 import { ArrowLeft, GitBranch, GitCommit } from 'lucide-react';
@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { getRepositorieBuildLogs } from '@/services/repository.service';
 import { useBuildActions } from '@/hooks/useBuildActions';
 import { isBuildLive } from '@/utils/buildStatus';
+import type { BuildMessage } from '@workspace/typescript-interface/repository/buildRealtime';
 
 interface BuildLogsProps {
     build: NonNullable<Awaited<ReturnType<typeof getRepositorieBuildLogs>>>;
@@ -19,15 +20,19 @@ interface BuildLogsProps {
 export function BuildLogs({ build }: BuildLogsProps) {
     const router = useRouter();
 
-    const { latestData, data } = useInngestSubscription({
-        refreshToken: async () => {
+    const { messages } = useRealtime({
+        token: async () => {
             const result = await onGetTokenBuildIdAction({
                 buildId: build.id,
                 topics: ['log', 'commit-info'],
             });
-            return result?.data ?? null;
+            if (!result?.data) throw new Error('Failed to get subscription token');
+            return result.data;
         },
     });
+
+    const data = messages.all as BuildMessage[];
+    const latestData = messages.last as BuildMessage | null;
 
     const liveCommitInfo = data.findLast((e) => e.topic === 'commit-info')?.data;
 

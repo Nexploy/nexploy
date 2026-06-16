@@ -1,0 +1,13 @@
+model CleanupSettings {
+  id              String    @id @default("singleton")
+  enabled         Boolean   @default(false)
+  scheduledHour   Int       @default(3)
+  cleanImages     Boolean   @default(true)
+  cleanVolumes    Boolean   @default(false)
+  cleanContainers Boolean   @default(true)
+  cleanBuild      Boolean   @default(true)
+  lastRunAt       DateTime?
+  lastReclaimed   Float     @default(0)
+
+  @@map("cleanup_settings")
+}

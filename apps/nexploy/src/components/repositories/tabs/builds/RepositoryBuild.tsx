@@ -9,10 +9,11 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import { StatusLive } from '@/components/shared/StatusLive';
 import { onCancelBuild } from '@/actions/repository/builds/cancelBuild.action';
 import { Button } from '@workspace/ui/components/button';
-import { useInngestSubscription } from '@inngest/realtime/hooks';
+import { useRealtime } from 'inngest/react';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { type CommitInfo } from '@/types/pipeline.type';
+import { type CommitInfo } from '@workspace/typescript-interface/pipeline/pipeline';
+import type { BuildMessage } from '@workspace/typescript-interface/repository/buildRealtime';
 import { isBuildLive } from '@/utils/buildStatus';
 import { BuildDropdownActions } from '@/components/repositories/BuildDropdownActions';
 import { useTranslations } from 'next-intl';
@@ -33,13 +34,15 @@ export function RepositoryBuild({ repositoryId, build }: BuildLogsProps) {
             buildId: build.id,
             topics: ['commit-info'],
         });
-        return result?.data ?? null;
+        if (!result?.data) throw new Error('Failed to get subscription token');
+        return result.data;
     }, [build.id]);
 
-    const { data: liveEvents } = useInngestSubscription({
+    const { messages } = useRealtime({
         enabled: isLive,
-        refreshToken,
+        token: refreshToken,
     });
+    const liveEvents = messages.all as BuildMessage[];
 
     useEffect(() => {
         const newEvents = liveEvents.slice(processedCountRef.current);

@@ -1,5 +1,5 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
 import { waitForPortConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { checkPort } from '@/inngest/pipeline/services/network.service';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';

@@ -122,9 +122,13 @@ export function ChatBehaviorCard({
                                                     {field.value}
                                                 </span>
                                             </div>
-                                            <div className="text-muted-foreground flex justify-between text-xs">
-                                                <span>1</span>
-                                                {field.value !== 20 && <span>20</span>}
+                                            <div className="text-muted-foreground relative h-3 text-xs">
+                                                {field.value !== 1 && (
+                                                    <span className={'absolute left-0'}>1</span>
+                                                )}
+                                                {field.value !== 20 && (
+                                                    <span className={'absolute right-0'}>20</span>
+                                                )}
                                             </div>
                                             <FormMessage />
                                         </div>

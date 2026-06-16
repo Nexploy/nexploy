@@ -1,5 +1,5 @@
 import { getFromAllOutputs } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
 import { updateCommitStatusConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { githubUpdateCommitStatus } from '@/lib/api/github.api';
 import { gitlabUpdateCommitStatus } from '@/lib/api/gitlab.api';

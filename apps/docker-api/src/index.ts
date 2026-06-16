@@ -34,6 +34,7 @@ import composeRoutes from './routes/composeRoutes';
 import environmentsRoutes from '@/routes/environments.routes';
 import backupsRoutes from '@/routes/backupsRoutes';
 import registriesRoutes from '@/routes/registriesRoutes';
+import systemRoutes from '@/routes/system/systemRoutes';
 import { dockerEnvironmentMiddleware } from '@/middleware/dockerEnvironment.middleware';
 import { authMiddleware } from '@/middleware/auth.middleware';
 import { securityHeadersMiddleware } from '@/middleware/securityHeaders.middleware';
@@ -105,6 +106,7 @@ app.route('/api/environments', environmentsRoutes);
 
 app.route('/api/backups', backupsRoutes);
 app.route('/api/registries', registriesRoutes);
+app.route('/api/system', systemRoutes);
 
 app.route('/ws/docker', createTerminalRoutes(upgradeWebSocket));
 

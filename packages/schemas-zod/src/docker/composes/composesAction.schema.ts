@@ -19,8 +19,16 @@ export const composeProjectParamSchema = z.object({
     project: z.string().min(1),
 });
 
+export const composeProjectNameSchema = z
+    .string()
+    .min(1)
+    .regex(
+        /^[a-z0-9][a-z0-9_-]*$/,
+        'must consist only of lowercase alphanumeric characters, hyphens, and underscores as well as start with a letter or number',
+    );
+
 export const deployComposeSchema = z.object({
-    projectName: z.string().min(1),
+    projectName: composeProjectNameSchema,
     yaml: z.string().min(1),
 });
 

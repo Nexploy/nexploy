@@ -107,12 +107,10 @@ export function NodeAddPanel() {
     return (
         <div className="bg-sidebar flex h-full w-full flex-col overflow-hidden">
             <div className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
-                <div className="bg-primary/10 text-primary flex size-6 shrink-0 items-center justify-center rounded-md">
-                    <Boxes className="size-3.5" />
+                <div className="bg-primary/10 text-primary flex size-6 shrink-0 items-center justify-center rounded-sm">
+                    <Boxes className="size-3.5" strokeWidth={1.7} />
                 </div>
-                <span className="text-foreground truncate text-xs font-semibold">
-                    {t('palette')}
-                </span>
+                <span className="text-foreground truncate text-xs">{t('palette')}</span>
             </div>
             <div className="flex flex-1 flex-col overflow-hidden">
                 <div className="shrink-0 p-2">

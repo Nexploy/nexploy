@@ -6,15 +6,11 @@ import { BuildLogEntry } from '@workspace/typescript-interface/repository/build'
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { StatusLive } from '@/components/shared/StatusLive';
 import { cn } from '@workspace/ui/lib/utils';
-import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
-import { Realtime } from '@inngest/realtime';
 import { getLogLevelColor, getLogLevelColorGradiant, parseAnsiColors } from '@/utils/color';
 import { useTranslations } from 'next-intl';
 import { LogsToolbar } from '@/components/shared/LogsToolbar';
 import { useLogsToolbar } from '@/hooks/useLogsToolbar';
-
-type BuildToken = NonNullable<Awaited<ReturnType<typeof onGetTokenBuildIdAction>>['data']>;
-type BuildMessage = Realtime.Subscribe.Token.InferMessage<BuildToken>;
+import type { BuildMessage } from '@workspace/typescript-interface/repository/buildRealtime';
 
 interface BuildLogsViewerProps {
     inngestData: {

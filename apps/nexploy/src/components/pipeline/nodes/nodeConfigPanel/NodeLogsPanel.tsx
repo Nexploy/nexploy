@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useInngestSubscription } from '@inngest/realtime/hooks';
+import { useRealtime } from 'inngest/react';
 import dayjs from 'dayjs';
 import useSWR from 'swr';
 import { BuildLogEntry } from '@workspace/typescript-interface/repository/build';
@@ -10,7 +10,8 @@ import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-
 import { getLogLevelColor, getLogLevelColorGradiant, parseAnsiColors } from '@/utils/color';
 import { cn } from '@workspace/ui/lib/utils';
 import { fetcherApi } from '@/lib/api/fetcherApi';
-import { NodeRunStatus } from '@/types/pipeline.type';
+import { NodeRunStatus } from '@workspace/typescript-interface/pipeline/pipeline';
+import type { BuildMessage } from '@workspace/typescript-interface/repository/buildRealtime';
 import { useTranslations } from 'next-intl';
 import { LogsToolbar } from '@/components/shared/LogsToolbar';
 import { useLogsToolbar } from '@/hooks/useLogsToolbar';
@@ -33,16 +34,16 @@ export function NodeLogsPanel({ buildId, nodeId, nodeStatus }: NodeLogsPanelProp
         fetcherApi,
     );
 
-    const { data: liveData } = useInngestSubscription({
+    const { messages } = useRealtime({
         enabled: isLive,
-        refreshToken: async () => {
-            if (!isLive) return null;
+        token: async () => {
             const result = await onGetTokenBuildIdAction({ buildId, topics: ['log'] });
-            return result?.data ?? null;
+            if (!result?.data) throw new Error('Failed to get subscription token');
+            return result.data;
         },
     });
 
-    const liveLogs = liveData
+    const liveLogs = (messages.all as BuildMessage[])
         .filter((evt) => evt.topic === 'log' && evt.data?.log?.step === nodeId)
         .map((evt) => evt.data.log as BuildLogEntry);
 

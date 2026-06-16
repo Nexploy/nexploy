@@ -8,7 +8,7 @@ import { useReactFlow } from '@xyflow/react';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { getConfigSchema } from '@/components/pipeline/nodeManifestRegistry';
 import { NodeId } from '@workspace/typescript-interface/pipeline/node';
-import { usePipelineActions, useIsViewingBuild } from '@/stores/pipeline/usePipelineStore';
+import { useIsViewingBuild, usePipelineActions } from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 
@@ -68,12 +68,10 @@ export function NodeTemplatePanel() {
     return (
         <div className="bg-sidebar flex h-full w-full flex-col overflow-hidden">
             <div className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
-                <div className="bg-primary/10 text-primary flex size-6 shrink-0 items-center justify-center rounded-md">
+                <div className="bg-primary/10 text-primary flex size-6 shrink-0 items-center justify-center rounded-sm">
                     <LayoutTemplate className="size-3.5" />
                 </div>
-                <span className="text-foreground truncate text-xs font-semibold">
-                    {t('templates.title')}
-                </span>
+                <span className="text-foreground truncate text-xs">{t('templates.title')}</span>
             </div>
 
             <ScrollAreaWithShadow

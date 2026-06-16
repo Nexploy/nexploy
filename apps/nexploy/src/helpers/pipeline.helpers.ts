@@ -1,5 +1,5 @@
 import { MinimalEdge, MinimalNode, PipelineEdge } from '@workspace/typescript-interface/pipeline/node';
-import { NodeOutputData, NodeOutputStore } from '@/types/pipeline.type';
+import { NodeOutputData, NodeOutputStore } from '@workspace/typescript-interface/pipeline/pipeline';
 
 export function getFromInputs<T>(inputOutputs: NodeOutputData[], key: string): T | undefined {
     for (const output of inputOutputs) {

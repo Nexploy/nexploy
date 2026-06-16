@@ -1,4 +1,4 @@
-import { SSEEvent } from '@/types/pipeline.type';
+import { SSEEvent } from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 
 class DockerService {

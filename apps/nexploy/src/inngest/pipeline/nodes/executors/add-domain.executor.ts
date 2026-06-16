@@ -1,4 +1,4 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@/types/pipeline.type';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
 import { addDomainConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import {
     generateTraefikConfigForRepository,

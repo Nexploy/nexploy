@@ -4,7 +4,7 @@ import { BuildConfig, BuildLogEntry } from '@workspace/typescript-interface/repo
 import { inngest } from '@/inngest/client';
 import { updateNodeStatus, updateStatusBuild } from '@/services/repository/build.service';
 import { createLogsBatch } from '@/services/repository/log.service';
-import { LogLevel, PipelineReporter, PipelineStatus } from '@/types/pipeline.type';
+import { LogLevel, PipelineReporter, PipelineStatus } from '@workspace/typescript-interface/pipeline/pipeline';
 import { createPipelineLogger, pipelineOrchestrator } from '@/inngest/pipeline/orchestrator';
 import { getPipelineConfig } from '@/services/pipeline.service';
 import { createBuildChannel } from '@/inngest/channels/build.channel';

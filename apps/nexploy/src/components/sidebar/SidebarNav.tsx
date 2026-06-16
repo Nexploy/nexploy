@@ -10,17 +10,17 @@ import {
     Cpu,
     Database,
     EthernetPort,
+    FileCog,
     FolderGit2,
     HardDrive,
     LayoutList,
     Network,
     Plug,
     Send,
+    Settings,
     Shield,
-    SlidersHorizontal,
     Users,
     Warehouse,
-    Waypoints,
 } from 'lucide-react';
 import {
     SidebarGroup,
@@ -32,11 +32,18 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
 } from '@workspace/ui/components/sidebar';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger, } from '@workspace/ui/components/collapsible';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@workspace/ui/components/collapsible';
 import Link from 'next/link';
 import { RefreshDocker } from '@/components/sidebar/RefreshDocker';
 import { NavPermission, usePermissions } from '@/contexts/PermissionContext';
-import type { SidebarItem, SidebarNavGroup, } from '@workspace/typescript-interface/sidebar/sidebarNav';
+import type {
+    SidebarItem,
+    SidebarNavGroup,
+} from '@workspace/typescript-interface/sidebar/sidebarNav';
 import { useTranslations } from 'next-intl';
 
 interface PermissionedSidebarItem extends SidebarItem {
@@ -112,7 +119,7 @@ const groups: PermissionedSidebarNavGroup[] = [
             {
                 titleKey: 'traefik',
                 href: '/admin/traefik',
-                icon: Waypoints,
+                icon: FileCog,
                 permission: { resource: 'user', action: 'ban' },
             },
             {
@@ -130,7 +137,7 @@ const groups: PermissionedSidebarNavGroup[] = [
                 children: [
                     { titleKey: 'models', icon: Cpu, href: '/admin/ai/models' },
                     { titleKey: 'mcp', icon: Network, href: '/admin/ai/mcp' },
-                    { titleKey: 'settings', icon: SlidersHorizontal, href: '/admin/ai/settings' },
+                    { titleKey: 'settings', icon: Settings, href: '/admin/ai/settings' },
                 ],
             },
             {
@@ -138,6 +145,12 @@ const groups: PermissionedSidebarNavGroup[] = [
                 href: '/admin/backups',
                 icon: Database,
                 permission: { resource: 'backup', action: 'read' },
+            },
+            {
+                titleKey: 'settings',
+                href: '/admin/settings',
+                icon: Settings,
+                permission: { resource: 'docker', action: 'prune' },
             },
         ],
     },

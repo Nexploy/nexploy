@@ -3,7 +3,7 @@ import {
     INodeExecutor,
     NodeExecutionContext,
     NodeExecutionResult,
-} from '@/types/pipeline.type';
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { cherryPickCommitConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { gitService } from '@/inngest/pipeline/services/git.service';

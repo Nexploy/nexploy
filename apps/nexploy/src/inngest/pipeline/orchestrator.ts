@@ -14,7 +14,7 @@ import {
     type PipelineReporter,
     type PipelineResult,
     type PipelineStatus,
-} from '@/types/pipeline.type';
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { formatErrorDetails, resolveNodeConfig } from './utils';
 import { analyzeGraph } from '@/inngest/pipeline/utils/graphQueries';
 import { getNodeExecutor } from '@/inngest/pipeline/nodes/registry';
