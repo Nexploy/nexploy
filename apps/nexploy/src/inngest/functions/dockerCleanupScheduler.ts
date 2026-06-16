@@ -1,5 +1,9 @@
 import { inngest } from '@/inngest/client';
-import { getCleanupSettings, markCleanupRan } from '@/services/cleanupSettings.service';
+import {
+    getCleanupSettings,
+    LOCAL_ENVIRONMENT_KEY,
+    markCleanupRan,
+} from '@/services/cleanupSettings.service';
 import { runScheduledCleanup } from '@/services/dockerCleanup.service';
 import type { CleanupTarget } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
 
@@ -33,14 +37,18 @@ function collectTargets(settings: {
 export const dockerCleanupSchedulerFunction = inngest.createFunction(
     {
         id: 'docker-cleanup-scheduler',
-        singleton: { mode: 'cancel' },
+        singleton: { mode: 'cancel', key: 'event.data.environmentId' },
         triggers: [{ event: CLEANUP_SCHEDULE_EVENT }],
     },
-    async ({ step }) => {
-        const settings = await step.run('load-settings', async () => getCleanupSettings());
+    async ({ event, step }) => {
+        const environmentId = (event.data?.environmentId as string) ?? LOCAL_ENVIRONMENT_KEY;
+
+        const settings = await step.run('load-settings', async () =>
+            getCleanupSettings(environmentId),
+        );
 
         if (!settings.enabled) {
-            return { skipped: true, reason: 'disabled' };
+            return { skipped: true, reason: 'disabled', environmentId };
         }
 
         const nextRun = await step.run('compute-next-run', async () =>
@@ -49,22 +57,29 @@ export const dockerCleanupSchedulerFunction = inngest.createFunction(
 
         await step.sleepUntil('wait-for-scheduled-hour', nextRun);
 
-        const current = await step.run('reload-settings', async () => getCleanupSettings());
+        const current = await step.run('reload-settings', async () =>
+            getCleanupSettings(environmentId),
+        );
 
         if (!current.enabled) {
-            return { skipped: true, reason: 'disabled' };
+            return { skipped: true, reason: 'disabled', environmentId };
         }
 
         const targets = collectTargets(current);
 
         let reclaimed = 0;
         if (targets.length > 0) {
-            reclaimed = await step.run('run-cleanup', async () => runScheduledCleanup(targets));
-            await step.run('mark-ran', async () => markCleanupRan(reclaimed));
+            reclaimed = await step.run('run-cleanup', async () =>
+                runScheduledCleanup(targets, environmentId),
+            );
+            await step.run('mark-ran', async () => markCleanupRan(reclaimed, environmentId));
         }
 
-        await step.sendEvent('reschedule', { name: CLEANUP_SCHEDULE_EVENT });
+        await step.sendEvent('reschedule', {
+            name: CLEANUP_SCHEDULE_EVENT,
+            data: { environmentId },
+        });
 
-        return { skipped: false, reclaimed, targets };
+        return { skipped: false, reclaimed, targets, environmentId };
     },
 );

@@ -10,6 +10,7 @@ import { PortType } from '@workspace/typescript-interface/docker/docker.port';
 import { HttpError } from '@workspace/shared/http-error';
 import {
     containerActionsSchema,
+    containerRemoveSchema,
     containerExecBodySchema,
     containerIdOrNameParamSchema,
     containerLogsQuerySchema,
@@ -460,14 +461,14 @@ app.post(
 
 app.delete(
     '/remove',
-    route({ json: containerActionsSchema }, async (c) => {
-        const { containerIds } = c.req.valid('json');
+    route({ json: containerRemoveSchema }, async (c) => {
+        const { containerIds, removeVolumes, force } = c.req.valid('json');
         await Promise.all(
             containerIds.map(async (id) => {
                 const container = docker.getContainer(id);
                 const containerInfo = await container.inspect();
-                if (containerInfo.State.Running) await container.stop();
-                return container.remove();
+                if (containerInfo.State.Running && !force) await container.stop();
+                return container.remove({ force, v: removeVolumes });
             }),
         );
     }),

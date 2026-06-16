@@ -38,7 +38,8 @@ app.get(
         const volumes = df.Volumes ?? [];
         const buildCache = df.BuildCache ?? [];
 
-        const sum = <T>(arr: T[], fn: (item: T) => number) => arr.reduce((acc, i) => acc + fn(i), 0);
+        const sum = <T>(arr: T[], fn: (item: T) => number) =>
+            arr.reduce((acc, i) => acc + fn(i), 0);
 
         const imagesSize = sum(images, (i) => i.Size ?? 0);
         const imagesReclaimable = sum(images, (i) => ((i.Containers ?? 0) > 0 ? 0 : (i.Size ?? 0)));

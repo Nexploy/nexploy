@@ -18,14 +18,6 @@ export default async function BackupsPage() {
 
     const volumeSchedules = await getBackupSchedulesForVolumes(volumes.map((v) => v.name));
 
-    if (volumes.length === 0) {
-        return (
-            <div className="text-muted-foreground py-12 text-center text-sm">
-                {t('noVolumesAvailable')}
-            </div>
-        );
-    }
-
     return (
         <div className="flex h-full flex-1 flex-col">
             <div className="flex h-full flex-col gap-4">
@@ -44,39 +36,47 @@ export default async function BackupsPage() {
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="flex flex-col gap-4 px-5 pb-5">
-                        <SchedulesAccordion volumeSchedules={volumeSchedules} />
-                        <div className="bg-card overflow-hidden rounded-md border shadow-sm">
-                            {volumes.map((volume, index) => (
-                                <div
-                                    key={volume.name}
-                                    className={`flex items-center justify-between gap-2 px-4 py-3 ${
-                                        index < volumes.length - 1 ? 'border-b' : ''
-                                    }`}
-                                >
-                                    <div className="flex min-w-0 flex-1 items-center gap-3">
-                                        <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-md">
-                                            <HardDrive className="text-primary size-4" />
+                        {volumes.length === 0 ? (
+                            <div className="text-muted-foreground rounded-md border p-8 text-center text-sm">
+                                {t('noVolumesAvailable')}
+                            </div>
+                        ) : (
+                            <>
+                                <SchedulesAccordion volumeSchedules={volumeSchedules} />
+                                <div className="bg-card overflow-hidden rounded-md border shadow-sm">
+                                    {volumes.map((volume, index) => (
+                                        <div
+                                            key={volume.name}
+                                            className={`flex items-center justify-between gap-2 px-4 py-3 ${
+                                                index < volumes.length - 1 ? 'border-b' : ''
+                                            }`}
+                                        >
+                                            <div className="flex min-w-0 flex-1 items-center gap-3">
+                                                <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-md">
+                                                    <HardDrive className="text-primary size-4" />
+                                                </div>
+                                                <div className="flex min-w-0 flex-1 flex-col break-all">
+                                                    <span className="text-sm font-medium">
+                                                        {volume.name}
+                                                    </span>
+                                                    <span className="text-muted-foreground text-xs">
+                                                        {volume.driver}
+                                                        {volume.usageData?.Size != null &&
+                                                            ` · ${formatBytes(volume.usageData.Size)}`}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="flex shrink-0 items-center gap-2">
+                                                <VolumeS3Button
+                                                    volumeName={volume.name}
+                                                    awsAccounts={awsAccounts}
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="flex min-w-0 flex-1 flex-col break-all">
-                                            <span className="text-sm font-medium">
-                                                {volume.name}
-                                            </span>
-                                            <span className="text-muted-foreground text-xs">
-                                                {volume.driver}
-                                                {volume.usageData?.Size != null &&
-                                                    ` · ${formatBytes(volume.usageData.Size)}`}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className="flex shrink-0 items-center gap-2">
-                                        <VolumeS3Button
-                                            volumeName={volume.name}
-                                            awsAccounts={awsAccounts}
-                                        />
-                                    </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
+                            </>
+                        )}
                     </div>
                 </ScrollAreaWithShadow>
             </div>

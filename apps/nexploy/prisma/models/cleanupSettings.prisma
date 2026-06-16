@@ -1,5 +1,6 @@
 model CleanupSettings {
-  id              String    @id @default("singleton")
+  id              String    @id @default(cuid())
+  environmentId   String    @unique @default("default")
   enabled         Boolean   @default(false)
   scheduledHour   Int       @default(3)
   cleanImages     Boolean   @default(true)

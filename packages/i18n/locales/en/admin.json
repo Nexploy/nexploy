@@ -97,6 +97,7 @@
     "backupFailed": "Failed",
     "local": "Local",
     "noVolumesAvailable": "No volumes available",
+    "noVolumesAvailableDescription": "Create a volume to start configuring backups",
     "noAwsAccounts": "No AWS accounts configured. Add one in Integrations.",
     "awsAccount": "AWS Account",
     "selectAwsAccount": "Select an AWS account",

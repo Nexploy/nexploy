@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { Play, RotateCw, Square, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
+import { Switch } from '@workspace/ui/components/switch';
 import { useAction } from 'next-safe-action/hooks';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { onContainerStartAction } from '@/actions/docker/container/containerStart.action';
@@ -11,7 +12,7 @@ import { onContainerRestartAction } from '@/actions/docker/container/containerRe
 import { onContainerRemoveAction } from '@/actions/docker/container/containerRemove.action';
 import { ContainerTableRow } from './containerTableUtils';
 import { Badge } from '@workspace/ui/components/badge.tsx';
-import React from 'react';
+import React, { useRef } from 'react';
 import { usePermissions } from '@/contexts/PermissionContext';
 
 interface ContainerTableActionsProps {
@@ -69,15 +70,41 @@ export function ContainerTableActions({
         onResetSelection();
     };
 
+    const forceRef = useRef(false);
+
     const handleRemove = () => {
+        forceRef.current = false;
         openAlertDialog({
             title: t('removeContainers'),
             cancelLabel: tCommon('cancel'),
             actionLabel: tCommon('remove'),
-            description: t('confirmRemoveContainers', { count: numberOfSelectedRows }),
+            description: (
+                <div className={'space-y-4'}>
+                    <p>{t('confirmRemoveContainers', { count: numberOfSelectedRows })}</p>
+                    <label
+                        htmlFor={'force-remove'}
+                        className={
+                            'bg-muted/50 border-destructive flex cursor-pointer items-center justify-between rounded-lg border p-3'
+                        }
+                    >
+                        <div className={'space-y-0.5'}>
+                            <p className={'text-destructive text-sm font-medium'}>
+                                {t('forceRemove')}
+                            </p>
+                            <p className={'text-xs'}>{t('forceRemoveDescription')}</p>
+                        </div>
+                        <Switch
+                            id={'force-remove'}
+                            className={'data-[state=checked]:!bg-destructive'}
+                            onCheckedChange={(checked) => (forceRef.current = checked)}
+                        />
+                    </label>
+                </div>
+            ),
             onAction: async () => {
                 const containerIds = selectedContainers.map((c) => c.id);
-                if (containerIds.length) await removeAsync({ containerIds });
+                if (containerIds.length)
+                    await removeAsync({ containerIds, force: forceRef.current });
                 onResetSelection();
             },
         });

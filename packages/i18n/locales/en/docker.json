@@ -471,7 +471,9 @@
         "noContainersFound": "No containers found.",
         "noContainersMatchSearch": "No containers match your search.",
         "removeContainers": "Remove Containers",
-        "confirmRemoveContainers": "Are you sure you want to remove {count} container(s)?"
+        "confirmRemoveContainers": "Are you sure you want to remove {count} container(s)?",
+        "forceRemove": "Force remove",
+        "forceRemoveDescription": "Force removal of running containers."
     },
     "forms": {
         "key": "Key",

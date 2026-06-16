@@ -20,6 +20,7 @@ export const nodeTypeSchema = z.enum([
     'stop-container',
     'restart-container',
     'remove-container',
+    'delete-container',
     'create-network',
     'create-volume',
     // Flow Control

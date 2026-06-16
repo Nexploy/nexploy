@@ -27,7 +27,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
     return (
         <Link href={`/docker/containers/${container.id}`}>
             <Card className="relative h-full cursor-pointer rounded-xl border transition-all duration-300 hover:scale-[1.03] hover:shadow-xl">
-                <CardHeader className="flex">
+                <CardHeader className="flex items-center">
                     <div className="flex flex-1 items-center gap-3 truncate">
                         <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
                             <IconContainer className="text-primary size-5" />
@@ -39,7 +39,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
                     <Can resource="docker" action="manage">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm">
+                                <Button variant="ghost" size="icon" className="size-8">
                                     <MoreVertical />
                                 </Button>
                             </DropdownMenuTrigger>

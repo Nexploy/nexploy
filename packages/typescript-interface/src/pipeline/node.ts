@@ -39,6 +39,7 @@ export type NodeId =
     | 'stop-container'
     | 'restart-container'
     | 'remove-container'
+    | 'delete-container'
     | 'create-container'
     | 'create-network'
     | 'create-volume'

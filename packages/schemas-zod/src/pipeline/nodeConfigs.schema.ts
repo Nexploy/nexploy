@@ -95,6 +95,11 @@ export const removeContainerConfigSchema = z.object({
     containerId: refable(z.string().min(1, 'Container is required')).default(''),
 });
 
+export const deleteContainerConfigSchema = z.object({
+    containerId: refable(z.string().min(1, 'Container is required')).default(''),
+    force: z.boolean().default(false),
+});
+
 const createContainerPortSchema = z.object({
     hostPort: z.coerce
         .number()
@@ -402,9 +407,7 @@ export const sonarqubeScanConfigSchema = z.object({
     exclusions: z.string().optional(),
     qualityGate: z.boolean().default(true),
     enforceMinScore: z.boolean().default(false),
-    scoreMetric: z
-        .enum(['coverage', 'line_coverage', 'branch_coverage'])
-        .default('coverage'),
+    scoreMetric: z.enum(['coverage', 'line_coverage', 'branch_coverage']).default('coverage'),
     minScore: z.coerce
         .number()
         .min(0, 'Minimum score must be between 0 and 100')

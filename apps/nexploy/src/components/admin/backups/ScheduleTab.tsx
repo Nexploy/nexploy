@@ -45,7 +45,6 @@ export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
     const t = useTranslations('admin');
     const locale = useLocale();
 
-    // Le format 12h/24h suit la langue (en → 12h AM/PM, fr → 24h).
     const is12h =
         new Intl.DateTimeFormat(locale, { hour: 'numeric' }).resolvedOptions().hour12 ?? false;
 

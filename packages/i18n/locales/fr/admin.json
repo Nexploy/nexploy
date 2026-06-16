@@ -97,6 +97,7 @@
     "backupFailed": "Échoué",
     "local": "Local",
     "noVolumesAvailable": "Aucun volume disponible",
+    "noVolumesAvailableDescription": "Créez un volume pour commencer à configurer les sauvegardes",
     "noAwsAccounts": "Aucun compte AWS configuré. Ajoutez-en un dans Intégrations.",
     "awsAccount": "Compte AWS",
     "selectAwsAccount": "Sélectionnez un compte AWS",

@@ -2,16 +2,18 @@
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
-import { containerActionsSchema } from '@workspace/schemas-zod/docker/container/containerAction.schema';
+import { containerRemoveSchema } from '@workspace/schemas-zod/docker/container/containerAction.schema';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 
 export const onContainerRemoveAction = authActionServer
     .use(requirePermission('docker', 'manage'))
-    .inputSchema(containerActionsSchema)
-    .action(async ({ parsedInput: { containerIds } }) => {
+    .inputSchema(containerRemoveSchema)
+    .action(async ({ parsedInput: { containerIds, force } }) => {
         try {
-            return await kyDocker.delete('container/remove', { json: { containerIds } }).json();
+            return await kyDocker
+                .delete('container/remove', { json: { containerIds, force } })
+                .json();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({

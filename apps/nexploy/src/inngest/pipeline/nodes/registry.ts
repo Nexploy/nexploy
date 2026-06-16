@@ -17,6 +17,7 @@ import { startContainerExecutor } from './executors/start-container.executor';
 import { stopContainerExecutor } from './executors/stop-container.executor';
 import { restartContainerExecutor } from './executors/restart-container.executor';
 import { removeContainerExecutor } from './executors/remove-container.executor';
+import { deleteContainerExecutor } from './executors/delete-container.executor';
 import { createContainerExecutor } from './executors/create-container.executor';
 import { createNetworkExecutor } from './executors/create-network.executor';
 import { createVolumeExecutor } from './executors/create-volume.executor';
@@ -81,6 +82,7 @@ const executors: INodeExecutor[] = [
     stopContainerExecutor,
     restartContainerExecutor,
     removeContainerExecutor,
+    deleteContainerExecutor,
     createNetworkExecutor,
     createVolumeExecutor,
     // Flow Control

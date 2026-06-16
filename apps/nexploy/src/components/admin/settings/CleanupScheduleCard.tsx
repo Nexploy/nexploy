@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
@@ -11,7 +11,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@workspace/ui
 import { Switch } from '@workspace/ui/components/switch';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Button } from '@workspace/ui/components/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from '@workspace/ui/components/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@workspace/ui/components/select';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { updateCleanupSettingsSchema } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
 import { updateCleanupSettingsAction } from '@/actions/admin/cleanup/updateCleanupSettings.action';
@@ -37,13 +43,8 @@ export function CleanupScheduleCard({ settings }: { settings: CleanupSettings })
     const t = useTranslations('admin.settings');
     const locale = useLocale();
 
-    // dayjs ne fournit que la locale `en` par défaut : on charge la locale
-    // courante dynamiquement puis on force un re-render une fois disponible.
-    const [, setLocaleLoaded] = useState(false);
     useEffect(() => {
-        import(`dayjs/locale/${locale}`)
-            .then(() => setLocaleLoaded(true))
-            .catch(() => setLocaleLoaded(true));
+        import(`dayjs/locale/${locale}`);
     }, [locale]);
 
     const formatHour = (hour: number) => dayjs().hour(hour).minute(0).locale(locale).format('LT');

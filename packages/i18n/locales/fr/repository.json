@@ -368,6 +368,10 @@
                 "name": "Supprimer un conteneur",
                 "description": "Supprimer un conteneur Docker"
             },
+            "delete-container": {
+                "name": "Détruire un conteneur",
+                "description": "Détruit un conteneur, avec suppression forcée et de ses volumes en option"
+            },
             "create-container": {
                 "name": "Créer un conteneur",
                 "description": "Créer et démarrer un conteneur Docker à partir d'une image"

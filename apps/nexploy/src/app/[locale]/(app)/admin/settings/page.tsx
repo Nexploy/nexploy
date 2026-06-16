@@ -3,7 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { kyDocker } from '@/lib/api/kyDocker';
-import { getCleanupSettings } from '@/services/cleanupSettings.service';
+import { getCleanupSettings, getCurrentEnvironmentKey } from '@/services/cleanupSettings.service';
 import { DiskUsageCard } from '@/components/admin/settings/DiskUsageCard';
 import { CleanupScheduleCard } from '@/components/admin/settings/CleanupScheduleCard';
 import type { DiskUsage } from '@workspace/typescript-interface/docker/docker.system';
@@ -14,9 +14,10 @@ export const metadata: Metadata = {
 };
 
 export default async function SettingsPage() {
+    const environmentId = await getCurrentEnvironmentKey();
     const [t, settings] = await Promise.all([
         getTranslations('admin.settings'),
-        getCleanupSettings(),
+        getCleanupSettings(environmentId),
     ]);
 
     let diskUsage: DiskUsage | null = null;

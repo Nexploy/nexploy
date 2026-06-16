@@ -17,6 +17,7 @@ import { startContainerManifest } from './start-container.manifest';
 import { stopContainerManifest } from './stop-container.manifest';
 import { restartContainerManifest } from './restart-container.manifest';
 import { removeContainerManifest } from './remove-container.manifest';
+import { deleteContainerManifest } from './delete-container.manifest';
 import { createContainerManifest } from './create-container.manifest';
 import { createNetworkManifest } from './create-network.manifest';
 import { createVolumeManifest } from './create-volume.manifest';
@@ -80,6 +81,7 @@ export const allBuiltinManifests: NodeManifest[] = [
     stopContainerManifest,
     restartContainerManifest,
     removeContainerManifest,
+    deleteContainerManifest,
     createNetworkManifest,
     createVolumeManifest,
     // Flow Control

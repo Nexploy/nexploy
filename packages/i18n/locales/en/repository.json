@@ -368,6 +368,10 @@
                 "name": "Remove Container",
                 "description": "Remove a Docker container"
             },
+            "delete-container": {
+                "name": "Delete Container",
+                "description": "Delete a container, optionally force-removing it and its volumes"
+            },
             "create-container": {
                 "name": "Create Container",
                 "description": "Create and start a Docker container from an image"

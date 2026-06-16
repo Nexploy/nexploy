@@ -4,6 +4,12 @@ export const containerActionsSchema = z.object({
     containerIds: z.array(z.string().min(1)).min(1),
 });
 
+export const containerRemoveSchema = z.object({
+    containerIds: z.array(z.string().min(1)).min(1),
+    removeVolumes: z.boolean().optional().default(false),
+    force: z.boolean().optional().default(false),
+});
+
 export const containerIdOrNameParamSchema = z.object({
     idOrName: z.string().min(1),
 });

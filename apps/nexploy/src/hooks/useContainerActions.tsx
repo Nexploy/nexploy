@@ -7,7 +7,9 @@ import { onContainerPauseAction } from '@/actions/docker/container/containerPaus
 import { onContainerRestartAction } from '@/actions/docker/container/containerRestart.action';
 import { onContainerRemoveAction } from '@/actions/docker/container/containerRemove.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { Switch } from '@workspace/ui/components/switch';
 import { useTranslations } from 'next-intl';
+import { useRef } from 'react';
 
 interface UseContainerActionsProps {
     containerId: string;
@@ -21,7 +23,9 @@ export function useContainerActions({
     isPaused,
 }: UseContainerActionsProps) {
     const t = useTranslations('docker.containerActions');
+    const tTables = useTranslations('docker.tables');
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
+    const forceRef = useRef(false);
 
     const containerTools: ContainerTool[] = [
         isPaused
@@ -71,15 +75,41 @@ export function useContainerActions({
             label: t('delete'),
             onClick: () =>
                 new Promise((resolve, reject) => {
+                    forceRef.current = false;
                     openAlertDialog({
                         title: t('removeTitle'),
-                        description: t('removeDescription', { name: containerName }),
+                        description: (
+                            <div className={'space-y-4'}>
+                                <p>{t('removeDescription', { name: containerName })}</p>
+                                <label
+                                    htmlFor={'force-remove'}
+                                    className={
+                                        'bg-muted/50 border-destructive flex cursor-pointer items-center justify-between rounded-lg border p-3'
+                                    }
+                                >
+                                    <div className={'space-y-0.5'}>
+                                        <p className={'text-destructive text-sm font-medium'}>
+                                            {tTables('forceRemove')}
+                                        </p>
+                                        <p className={'text-xs'}>
+                                            {tTables('forceRemoveDescription')}
+                                        </p>
+                                    </div>
+                                    <Switch
+                                        id={'force-remove'}
+                                        className={'data-[state=checked]:!bg-destructive'}
+                                        onCheckedChange={(checked) => (forceRef.current = checked)}
+                                    />
+                                </label>
+                            </div>
+                        ),
                         cancelLabel: t('cancel'),
                         actionLabel: t('remove'),
                         onAction: async () => {
                             try {
                                 const result = await onContainerRemoveAction({
                                     containerIds: [containerId],
+                                    force: forceRef.current,
                                 });
                                 resolve(result);
                             } catch (error) {

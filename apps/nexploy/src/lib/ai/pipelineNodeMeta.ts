@@ -17,6 +17,7 @@ import {
     createServiceConfigSchema,
     createVolumeConfigSchema,
     delayConfigSchema,
+    deleteContainerConfigSchema,
     deleteImageConfigSchema,
     deleteNetworkConfigSchema,
     deleteVolumeConfigSchema,
@@ -185,6 +186,14 @@ export const NODE_META_MAP: Record<string, NodeMeta> = {
         schema: removeContainerConfigSchema,
         category: 'deploy',
         description: 'Removes a stopped container.',
+        consumesFromUpstream: ['containerId'],
+        outputs: [],
+    },
+    'delete-container': {
+        schema: deleteContainerConfigSchema,
+        category: 'deploy',
+        description:
+            'Deletes a container, optionally force-removing it even when running and deleting its anonymous volumes.',
         consumesFromUpstream: ['containerId'],
         outputs: [],
     },

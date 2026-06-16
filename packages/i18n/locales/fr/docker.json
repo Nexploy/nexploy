@@ -471,7 +471,9 @@
         "noContainersFound": "Aucun conteneur trouvé.",
         "noContainersMatchSearch": "Aucun conteneur ne correspond à votre recherche.",
         "removeContainers": "Supprimer les conteneurs",
-        "confirmRemoveContainers": "Êtes-vous sûr de vouloir supprimer {count} conteneur(s) ?"
+        "confirmRemoveContainers": "Êtes-vous sûr de vouloir supprimer {count} conteneur(s) ?",
+        "forceRemove": "Forcer la suppression",
+        "forceRemoveDescription": "Forcer la suppression des conteneurs en cours d'exécution."
     },
     "forms": {
         "key": "Clé",
