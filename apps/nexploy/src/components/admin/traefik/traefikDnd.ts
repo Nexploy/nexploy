@@ -1,5 +1,3 @@
-export const ROOT_DROP_ID = '::traefik-root::';
-
 export function parentDir(path: string): string {
     return path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '';
 }

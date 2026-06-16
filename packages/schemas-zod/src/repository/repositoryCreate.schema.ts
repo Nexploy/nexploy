@@ -7,7 +7,16 @@ export const repositoryCreateFormSchema = z.object({
             id: z.string({ error: 'Repository is required' }).min(1, 'Repository is required'),
             name: z.string().min(1),
             fullName: z.string().min(1),
-            url: z.string().min(1),
+            url: z
+                .string()
+                .min(1)
+                .refine((v) => {
+                    try {
+                        return ['http:', 'https:'].includes(new URL(v).protocol);
+                    } catch {
+                        return false;
+                    }
+                }, 'Repository URL must be a valid http(s) URL'),
             private: z.boolean(),
             defaultBranch: z.string({ error: 'Branch is required' }).min(1, 'Branch is required'),
         },

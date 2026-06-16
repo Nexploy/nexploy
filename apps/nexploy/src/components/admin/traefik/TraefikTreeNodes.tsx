@@ -1,7 +1,6 @@
 'use client';
 
 import { FileCode2, FilePlus2, Folder, Trash2 } from 'lucide-react';
-import { useDraggable, useDroppable } from '@dnd-kit/core';
 import {
     TreeExpander,
     TreeIcon,
@@ -16,6 +15,7 @@ import { useTraefikConfigStore } from '@/stores/admin/useTraefikConfigStore';
 import type { TraefikTreeNode } from '@/lib/traefik/types';
 import { TraefikNewFileDialog } from './TraefikNewFileDialog';
 import { canDropInto } from './traefikDnd';
+import { useTraefikDnd } from './traefikDndContext';
 import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button.tsx';
 
@@ -57,32 +57,46 @@ function TraefikTreeRow({
     const t = useTranslations('admin.traefik');
     const { selectedFile, isDirty, deleteFile, afterNewFile } = useTraefikConfigStore();
     const { openDialog, closeDialog } = useConfirmationDialogStore();
+    const { activePath, dropTarget, setActivePath, setDropTarget, moveInto } = useTraefikDnd();
 
     const isFolder = node.type === 'folder';
     const hasChildren = isFolder && (node.children?.length ?? 0) > 0;
 
-    const {
-        attributes,
-        listeners,
-        setNodeRef: setDragRef,
-        isDragging,
-    } = useDraggable({
-        id: node.path,
-        data: { type: node.type, path: node.path },
-    });
+    const isDragging = activePath === node.path;
+    const isDropTarget = isFolder && dropTarget === node.path && canDropInto(activePath, node.path);
 
-    const {
-        setNodeRef: setDropRef,
-        isOver,
-        active,
-    } = useDroppable({
-        id: node.path,
-        disabled: !isFolder,
-        data: { type: node.type, path: node.path },
-    });
+    const handleDragStart = (e: React.DragEvent) => {
+        setActivePath(node.path);
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', node.path);
+    };
 
-    const isDropTarget =
-        isFolder && isOver && canDropInto(active?.id as string | undefined, node.path);
+    const handleDragEnd = () => {
+        setActivePath(null);
+        setDropTarget(null);
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        if (!isFolder || !canDropInto(activePath, node.path)) return;
+        e.preventDefault();
+        e.stopPropagation();
+        e.dataTransfer.dropEffect = 'move';
+        if (dropTarget !== node.path) setDropTarget(node.path);
+    };
+
+    const handleDragLeave = (e: React.DragEvent) => {
+        if (!isFolder) return;
+        if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+        if (dropTarget === node.path) setDropTarget(null);
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+        if (!isFolder || !canDropInto(activePath, node.path)) return;
+        e.preventDefault();
+        e.stopPropagation();
+        moveInto(node.path);
+        setDropTarget(null);
+    };
 
     const handleNewFileInFolder = (folderPath: string) => {
         openDialog({
@@ -98,8 +112,12 @@ function TraefikTreeRow({
 
     return (
         <TreeNode nodeId={node.path} level={level} isLast={isLast} parentPath={parentPath}>
-            <div ref={isFolder ? setDropRef : undefined}>
-                <div ref={setDragRef} {...listeners} {...attributes}>
+            <div
+                onDragOver={isFolder ? handleDragOver : undefined}
+                onDragLeave={isFolder ? handleDragLeave : undefined}
+                onDrop={isFolder ? handleDrop : undefined}
+            >
+                <div draggable onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
                     <TreeNodeTrigger
                         className={cn(
                             'px-2 py-1',

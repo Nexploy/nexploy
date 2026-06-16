@@ -2,19 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import {
-    type CollisionDetection,
-    DndContext,
-    type DragEndEvent,
-    DragOverlay,
-    type DragStartEvent,
-    PointerSensor,
-    pointerWithin,
-    useDroppable,
-    useSensor,
-    useSensors,
-} from '@dnd-kit/core';
-import { FileCode2, FilePlus2, Folder } from 'lucide-react';
+import { FilePlus2 } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { TreeProvider } from '@workspace/ui/components/kibo-ui/tree';
@@ -22,32 +10,10 @@ import { Button } from '@workspace/ui/components/button.tsx';
 import { useTraefikConfigStore } from '@/stores/admin/useTraefikConfigStore';
 import { buildPathMap, collectFolderPaths } from '@/lib/traefik/treeOps';
 import { TraefikTreeNodes } from './TraefikTreeNodes';
-import { canDropInto, ROOT_DROP_ID } from './traefikDnd';
+import { canDropInto } from './traefikDnd';
+import { TraefikDndProvider } from './traefikDndContext';
 import { TraefikNewFileDialog } from '@/components/admin/traefik/TraefikNewFileDialog.tsx';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore.ts';
-
-const collisionDetection: CollisionDetection = (args) => {
-    const collisions = pointerWithin(args);
-    const nonRoot = collisions.filter((c) => c.id !== ROOT_DROP_ID);
-    return nonRoot.length ? nonRoot : collisions;
-};
-
-function RootDropZone({ children }: { children: React.ReactNode }) {
-    const { setNodeRef, isOver, active } = useDroppable({ id: ROOT_DROP_ID });
-    const highlight = isOver && canDropInto(active?.id as string | undefined, '');
-
-    return (
-        <div
-            ref={setNodeRef}
-            className={cn(
-                'my-1 min-h-full rounded-md',
-                highlight && 'bg-primary/5 ring-primary/40 ring-1 ring-inset',
-            )}
-        >
-            {children}
-        </div>
-    );
-}
 
 export function TraefikFileList() {
     const t = useTranslations('admin.traefik');
@@ -55,8 +21,8 @@ export function TraefikFileList() {
     const { openDialog, closeDialog } = useConfirmationDialogStore();
 
     const [activePath, setActivePath] = useState<string | null>(null);
-
-    const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+    const [dropTarget, setDropTarget] = useState<string | null>(null);
+    const [rootOver, setRootOver] = useState(false);
 
     const pathMap = buildPathMap(tree);
 
@@ -72,18 +38,33 @@ export function TraefikFileList() {
         });
     };
 
-    const onDragStart = (e: DragStartEvent) => setActivePath(String(e.active.id));
-
-    const onDragEnd = (e: DragEndEvent) => {
-        const source = String(e.active.id);
-        const overId = e.over ? String(e.over.id) : null;
+    const moveInto = (destDir: string) => {
+        if (activePath && canDropInto(activePath, destDir)) moveEntry(activePath, destDir, t);
         setActivePath(null);
-        if (!overId) return;
-        const destDir = overId === ROOT_DROP_ID ? '' : overId;
-        if (canDropInto(source, destDir)) moveEntry(source, destDir, t);
+        setDropTarget(null);
     };
 
-    const activeNode = activePath ? pathMap.get(activePath) : undefined;
+    const rootHighlight = rootOver && canDropInto(activePath, '');
+
+    const handleRootDragOver = (e: React.DragEvent) => {
+        if (!canDropInto(activePath, '')) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (!rootOver) setRootOver(true);
+    };
+
+    const handleRootDragLeave = (e: React.DragEvent) => {
+        if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+        setRootOver(false);
+    };
+
+    const handleRootDrop = (e: React.DragEvent) => {
+        if (dropTarget) return;
+        if (!canDropInto(activePath, '')) return;
+        e.preventDefault();
+        moveInto('');
+        setRootOver(false);
+    };
 
     return (
         <div className="flex h-full flex-1 flex-col overflow-hidden">
@@ -98,19 +79,23 @@ export function TraefikFileList() {
                     <FilePlus2 className="size-3" />
                 </Button>
             </div>
-            <DndContext
-                sensors={sensors}
-                collisionDetection={collisionDetection}
-                onDragStart={onDragStart}
-                onDragEnd={onDragEnd}
-                onDragCancel={() => setActivePath(null)}
+            <TraefikDndProvider
+                value={{ activePath, dropTarget, setActivePath, setDropTarget, moveInto }}
             >
                 <ScrollAreaWithShadow
                     bottomShadow
                     colorShadow={'from-card via-card/50'}
                     className={'h-full overflow-hidden'}
                 >
-                    <RootDropZone>
+                    <div
+                        className={cn(
+                            'my-1 min-h-full rounded-md',
+                            rootHighlight && 'bg-primary/5 ring-primary/40 ring-1 ring-inset',
+                        )}
+                        onDragOver={handleRootDragOver}
+                        onDragLeave={handleRootDragLeave}
+                        onDrop={handleRootDrop}
+                    >
                         {tree.length === 0 ? (
                             <p className="text-muted-foreground px-2 py-4 text-center text-xs">
                                 {t('noFiles')}
@@ -129,22 +114,9 @@ export function TraefikFileList() {
                                 <TraefikTreeNodes nodes={tree} level={0} parentPath={[]} />
                             </TreeProvider>
                         )}
-                    </RootDropZone>
+                    </div>
                 </ScrollAreaWithShadow>
-
-                <DragOverlay dropAnimation={null}>
-                    {activeNode ? (
-                        <div className="bg-card text-foreground flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs shadow-md">
-                            {activeNode.type === 'folder' ? (
-                                <Folder className="size-3.5 shrink-0 opacity-70" />
-                            ) : (
-                                <FileCode2 className="size-3.5 shrink-0 opacity-70" />
-                            )}
-                            {activeNode.name}
-                        </div>
-                    ) : null}
-                </DragOverlay>
-            </DndContext>
+            </TraefikDndProvider>
         </div>
     );
 }

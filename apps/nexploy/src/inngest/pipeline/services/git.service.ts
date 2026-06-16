@@ -10,7 +10,23 @@ import { getValidToken } from '@/services/api/gitProvider.service';
 import { getGitProviderToken } from '@/services/git/git.service';
 import { ProgressCallback } from '@/types/pipeline.type';
 
+const ALLOWED_GIT_PROTOCOLS = ['http:', 'https:'];
+
 class GitService {
+    private assertSafeGitUrl(gitUrl: string): void {
+        let parsed: URL;
+        try {
+            parsed = new URL(gitUrl);
+        } catch {
+            throw new Error(`Invalid repository URL: ${gitUrl}`);
+        }
+        if (!ALLOWED_GIT_PROTOCOLS.includes(parsed.protocol)) {
+            throw new Error(
+                `Unsupported repository URL protocol "${parsed.protocol}". Only http(s) is allowed.`,
+            );
+        }
+    }
+
     private async exec(
         command: string,
         args: string[],
@@ -81,6 +97,8 @@ class GitService {
         onProgress?: ProgressCallback,
         options?: { submodules?: boolean; destDir?: string; manualToken?: string },
     ): Promise<string> {
+        this.assertSafeGitUrl(buildConfig.gitUrl);
+
         const workDir =
             options?.destDir ??
             join(
@@ -187,7 +205,7 @@ class GitService {
         const args = ['clone', '--depth=1', '--single-branch'];
         if (submodules) args.push('--recurse-submodules', '--shallow-submodules');
         if (gitBranch) args.push(`--branch=${gitBranch}`);
-        args.push('--progress', gitUrl, workDir);
+        args.push('--progress', '--', gitUrl, workDir);
         return args;
     }
 

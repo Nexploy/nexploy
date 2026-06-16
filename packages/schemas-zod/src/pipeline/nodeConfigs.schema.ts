@@ -1,6 +1,18 @@
 import { z } from 'zod';
 import { refable } from './nodeFieldRef.schema.ts';
 
+const httpGitUrl = (label: string) =>
+    z
+        .string()
+        .min(1, `${label} is required`)
+        .refine((v) => {
+            try {
+                return ['http:', 'https:'].includes(new URL(v).protocol);
+            } catch {
+                return false;
+            }
+        }, `${label} must be a valid http(s) URL`);
+
 const relativePath = (label: string) =>
     z
         .string()
@@ -349,7 +361,7 @@ export const gitTagConfigSchema = z.object({
 });
 
 export const gitCloneExtraConfigSchema = z.object({
-    repoUrl: z.string().min(1, 'Repository URL is required').default(''),
+    repoUrl: httpGitUrl('Repository URL').default(''),
     branch: z.string().default('main'),
     targetDir: relativePath('Target directory').default('extra'),
     token: z.string().optional(),
