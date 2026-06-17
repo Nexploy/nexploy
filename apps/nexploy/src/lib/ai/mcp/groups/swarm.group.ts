@@ -6,7 +6,7 @@ import {
     scaleServiceSchema,
 } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
 import { swarmNodeActionSchema } from '@workspace/schemas-zod/docker/swarm/nodeAction.schema';
-import { kyDocker } from '@/lib/api/kyDocker';
+import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { fail, guard, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
@@ -23,7 +23,9 @@ export const swarmGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'read');
                 if (g) return g;
                 try {
-                    const nodes = await kyDocker.get('swarm/nodes').json<any[]>();
+                    const nodes = await kyDocker
+                        .get('swarm/nodes', { environmentId: ctx.environmentId } as KyDockerOptions)
+                        .json<any[]>();
                     const data = nodes.map((n) => ({
                         id: n.id?.slice(0, 12),
                         hostname: n.hostname,
@@ -48,7 +50,9 @@ export const swarmGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'read');
                 if (g) return g;
                 try {
-                    const services = await kyDocker.get('swarm/services').json<any[]>();
+                    const services = await kyDocker
+                        .get('swarm/services', { environmentId: ctx.environmentId } as KyDockerOptions)
+                        .json<any[]>();
                     const data = services.map((s) => ({
                         id: s.id?.slice(0, 12),
                         name: s.name,
@@ -78,7 +82,12 @@ export const swarmGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    await kyDocker.post('swarm/init', { json: params }).json();
+                    await kyDocker
+                        .post('swarm/init', {
+                            json: params,
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json();
                     return ok('Swarm initialized successfully');
                 } catch (e: any) {
                     return fail(e.message);
@@ -98,7 +107,12 @@ export const swarmGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    await kyDocker.post('swarm/leave', { json: { force } }).json();
+                    await kyDocker
+                        .post('swarm/leave', {
+                            json: { force },
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json();
                     return ok('Left the swarm successfully');
                 } catch (e: any) {
                     return fail(e.message);
@@ -116,7 +130,12 @@ export const swarmGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    await kyDocker.post(`swarm/node/${params.nodeId}/${params.action}`, { json: params }).json();
+                    await kyDocker
+                        .post(`swarm/node/${params.nodeId}/${params.action}`, {
+                            json: params,
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json();
                     return ok(`Node "${params.nodeId}" — ${params.action} completed`);
                 } catch (e: any) {
                     return fail(e.message);
@@ -134,7 +153,12 @@ export const swarmGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    const result = await kyDocker.post('swarm/services', { json: params }).json<any>();
+                    const result = await kyDocker
+                        .post('swarm/services', {
+                            json: params,
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json<any>();
                     return ok(`Service "${params.name}" created (ID: ${result.id?.slice(0, 12) ?? result.id})`);
                 } catch (e: any) {
                     return fail(e.message);
@@ -155,7 +179,12 @@ export const swarmGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    await kyDocker.post(`swarm/services/${id}/scale`, { json: { replicas } }).json();
+                    await kyDocker
+                        .post(`swarm/services/${id}/scale`, {
+                            json: { replicas },
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json();
                     return ok(`Service "${id}" scaled to ${replicas} replica(s)`);
                 } catch (e: any) {
                     return fail(e.message);
@@ -173,7 +202,12 @@ export const swarmGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    await kyDocker.delete('swarm/services', { json: params }).json();
+                    await kyDocker
+                        .delete('swarm/services', {
+                            json: params,
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json();
                     return ok(`Removed ${params.serviceIds.length} service(s)`);
                 } catch (e: any) {
                     return fail(e.message);

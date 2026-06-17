@@ -9,15 +9,18 @@ import {
     mcpListContainersSchema,
 } from '@workspace/schemas-zod/docker/container/containerAction.schema';
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
-import { kyDocker } from '@/lib/api/kyDocker';
+import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { Container } from '@workspace/typescript-interface/docker/docker.container';
 import { fail, guard, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
 async function resolveContainer(
     idOrName: string,
+    environmentId?: string,
 ): Promise<{ match: Container; name: string } | null> {
-    const containers = await kyDocker.get('containers').json<Container[]>();
+    const containers = await kyDocker
+        .get('containers', { environmentId } as KyDockerOptions)
+        .json<Container[]>();
     const match = containers.find(
         (c) => c.id?.startsWith(idOrName) || c.name === idOrName || c.name === `/${idOrName}`,
     );
@@ -39,7 +42,9 @@ export const containersGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'read');
                 if (g) return g;
                 try {
-                    const containers = await kyDocker.get('containers').json<Container[]>();
+                    const containers = await kyDocker
+                        .get('containers', { environmentId: ctx.environmentId } as KyDockerOptions)
+                        .json<Container[]>();
                     const filtered =
                         filter === 'running'
                             ? containers.filter((c) => c.state === 'running')
@@ -73,7 +78,11 @@ export const containersGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'read');
                 if (g) return g;
                 try {
-                    const data = await kyDocker.get(`container/${idOrName}/inspect`).json();
+                    const data = await kyDocker
+                        .get(`container/${idOrName}/inspect`, {
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json();
                     return ok(JSON.stringify(data));
                 } catch (e: any) {
                     return fail(e.message);
@@ -94,7 +103,8 @@ export const containersGroup: ToolGroup = {
                     const { logs } = await kyDocker
                         .get(`container/${idOrName}/logs`, {
                             searchParams: { tail: String(tail ?? 50) },
-                        })
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
                         .json<{ logs: string }>();
                     return ok(logs);
                 } catch (e: any) {
@@ -113,7 +123,9 @@ export const containersGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    const containers = await kyDocker.get('containers').json<Container[]>();
+                    const containers = await kyDocker
+                        .get('containers', { environmentId: ctx.environmentId } as KyDockerOptions)
+                        .json<Container[]>();
                     const match = containers.find(
                         (c) =>
                             c.id?.startsWith(idOrName) ||
@@ -128,11 +140,13 @@ export const containersGroup: ToolGroup = {
                     if (action === 'remove') {
                         await kyDocker.delete('container/remove', {
                             json: { containerIds: [match.id] },
-                        });
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions);
                     } else {
                         await kyDocker.post(`container/${action}`, {
                             json: { containerIds: [match.id] },
-                        });
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions);
                     }
                     return ok(`Container "${name}" ${action}ed successfully`);
                 } catch (e: any) {
@@ -153,11 +167,12 @@ export const containersGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    const resolved = await resolveContainer(idOrName);
+                    const resolved = await resolveContainer(idOrName, ctx.environmentId);
                     if (!resolved) return fail(`No container matching "${idOrName}"`);
                     await kyDocker.post('container/pause', {
                         json: { containerIds: [resolved.match.id] },
-                    });
+                        environmentId: ctx.environmentId,
+                    } as KyDockerOptions);
                     return ok(`Container "${resolved.name}" paused`);
                 } catch (e: any) {
                     return fail(e.message);
@@ -177,11 +192,12 @@ export const containersGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    const resolved = await resolveContainer(idOrName);
+                    const resolved = await resolveContainer(idOrName, ctx.environmentId);
                     if (!resolved) return fail(`No container matching "${idOrName}"`);
                     await kyDocker.post('container/unpause', {
                         json: { containerIds: [resolved.match.id] },
-                    });
+                        environmentId: ctx.environmentId,
+                    } as KyDockerOptions);
                     return ok(`Container "${resolved.name}" unpaused`);
                 } catch (e: any) {
                     return fail(e.message);
@@ -199,7 +215,12 @@ export const containersGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    await kyDocker.post('container/rename', { json: params }).json();
+                    await kyDocker
+                        .post('container/rename', {
+                            json: params,
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json();
                     return ok(`Container renamed to "${params.name}"`);
                 } catch (e: any) {
                     return fail(e.message);
@@ -218,7 +239,12 @@ export const containersGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    await kyDocker.post('container/recreate', { json: params }).json();
+                    await kyDocker
+                        .post('container/recreate', {
+                            json: params,
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json();
                     return ok(`Container recreated successfully`);
                 } catch (e: any) {
                     return fail(e.message);
@@ -237,7 +263,10 @@ export const containersGroup: ToolGroup = {
                 if (g) return g;
                 try {
                     const response = await kyDocker
-                        .post('container/create', { json: params })
+                        .post('container/create', {
+                            json: params,
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
                         .json<{ id: string }>();
                     return ok(`Container created (ID: ${response.id?.slice(0, 12)})`);
                 } catch (e: any) {
@@ -257,7 +286,10 @@ export const containersGroup: ToolGroup = {
                 if (g) return g;
                 try {
                     const result = await kyDocker
-                        .post(`container/${idOrName}/exec`, { json: { command } })
+                        .post(`container/${idOrName}/exec`, {
+                            json: { command },
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
                         .json<{ exitCode: number; output: string }>();
                     return ok(`Exit code: ${result.exitCode}\n\n${result.output}`);
                 } catch (e: any) {

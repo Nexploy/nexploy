@@ -41,9 +41,7 @@ const EDITOR_OPTIONS = {
 
 const DEFAULT_COMPOSE = `services:
   web:
-    image: nginx:latest
-    ports:
-      - "8080:80"
+    image: hello-world:latest
     restart: unless-stopped
 `;
 
@@ -66,7 +64,7 @@ export default function CreateStack() {
         {
             formProps: {
                 defaultValues: {
-                    projectName: '',
+                    stackName: '',
                     yaml: DEFAULT_COMPOSE,
                 },
             },
@@ -77,7 +75,7 @@ export default function CreateStack() {
                 onSuccess: ({ data }) => {
                     toast.dismiss('stack-deploy');
                     if (data?.success) {
-                        toast.success(t('deploySuccess', { name: data.projectName }));
+                        toast.success(t('deploySuccess', { name: data.stackName }));
                         router.push('/docker/containers');
                     }
                 },
@@ -98,9 +96,9 @@ export default function CreateStack() {
             const content = e.target?.result;
             if (typeof content === 'string') {
                 form.setValue('yaml', content, { shouldValidate: true });
-                if (!form.getValues('projectName')) {
+                if (!form.getValues('stackName')) {
                     const base = sanitizeProjectName(file.name.replace(/\.(ya?ml)$/i, ''));
-                    if (base) form.setValue('projectName', base, { shouldValidate: true });
+                    if (base) form.setValue('stackName', base, { shouldValidate: true });
                 }
             }
         };
@@ -159,7 +157,7 @@ export default function CreateStack() {
                                 <CardContent>
                                     <FormField
                                         control={form.control}
-                                        name="projectName"
+                                        name="stackName"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>{t('stackName')}</FormLabel>
@@ -169,9 +167,7 @@ export default function CreateStack() {
                                                         {...field}
                                                         onChange={(e) =>
                                                             field.onChange(
-                                                                sanitizeProjectName(
-                                                                    e.target.value,
-                                                                ),
+                                                                sanitizeProjectName(e.target.value),
                                                             )
                                                         }
                                                     />
@@ -222,7 +218,9 @@ export default function CreateStack() {
                                                             height="100%"
                                                             language="yaml"
                                                             value={field.value}
-                                                            onChange={(v) => field.onChange(v ?? '')}
+                                                            onChange={(v) =>
+                                                                field.onChange(v ?? '')
+                                                            }
                                                             options={EDITOR_OPTIONS}
                                                             theme={monacoTheme}
                                                         />

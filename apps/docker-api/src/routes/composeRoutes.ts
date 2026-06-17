@@ -76,7 +76,7 @@ app.get(
 app.post(
     '/deploy',
     route({ json: deployComposeSchema }, async (c) => {
-        const { projectName, yaml } = c.req.valid('json');
+        const { stackName, yaml } = c.req.valid('json');
 
         const environmentId = getCurrentEnvironmentId();
         const envConfig = environmentId
@@ -93,20 +93,25 @@ app.post(
 
             const logs: string[] = [];
             const exitCode = await runDockerCompose(
-                ['-p', projectName, '-f', composeFile, 'up', '-d', '--remove-orphans'],
+                ['-p', stackName, '-f', composeFile, 'up', '-d', '--remove-orphans'],
                 tmpDir,
                 dockerEnv,
                 (line) => logs.push(line),
             );
 
             if (exitCode !== 0) {
-                throw new HttpError(`docker compose up failed (exit ${exitCode}): ${logs.slice(-5).join('; ')}`, 500);
+                throw new HttpError(
+                    `docker compose up failed (exit ${exitCode}): ${logs.slice(-5).join('; ')}`,
+                    500,
+                );
             }
 
-            return { success: true, projectName, logs };
+            return { success: true, stackName, logs };
         } finally {
             dockerEnvResult.cleanup?.();
-            try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch {}
+            try {
+                fs.rmSync(tmpDir, { recursive: true, force: true });
+            } catch {}
         }
     }),
 );
@@ -196,7 +201,9 @@ app.post(
     '/:project/remove',
     route({ param: composeProjectParamSchema }, async (c) => {
         const { project } = c.req.valid('param');
-        return controlComposeStack(project, 'remove');
+        const body = await c.req.json().catch(() => ({}));
+        const force = body?.force === true;
+        return controlComposeStack(project, 'remove', force);
     }),
 );
 

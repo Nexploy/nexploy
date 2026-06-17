@@ -71,7 +71,11 @@ export function AddSslCertificateConfig() {
                     <FormItem>
                         <FormLabel>{t('sslDomain')}</FormLabel>
                         <FormControl>
-                            <Input {...field} placeholder={t('domainPlaceholder')} className="font-mono" />
+                            <Input
+                                {...field}
+                                placeholder={t('domainPlaceholder')}
+                                className="font-mono"
+                            />
                         </FormControl>
                         {certType === 'LETS_ENCRYPT' && (
                             <FormDescription className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
@@ -107,14 +111,14 @@ export function AddSslCertificateConfig() {
                         control={form.control}
                         name="agreedToTos"
                         render={({ field }) => (
-                            <FormItem className="flex items-center gap-3">
+                            <FormItem className="flex gap-3">
                                 <FormControl>
                                     <Switch
                                         checked={field.value}
                                         onCheckedChange={field.onChange}
                                     />
                                 </FormControl>
-                                <FormLabel className="cursor-pointer font-normal">
+                                <FormLabel className="cursor-pointer">
                                     {t('sslAgreeToTos')}{' '}
                                     <Link
                                         href="https://letsencrypt.org/repository/"

@@ -53,7 +53,7 @@ export function CloudflareAccordionSection({ accounts }: CloudflareAccordionSect
                                     </TooltipContent>
                                 </Tooltip>
                             </div>
-                            <span className="text-muted-foreground text-xs font-normal">
+                            <span className="text-muted-foreground text-xs">
                                 ({t('cloudflare.instanceCount', { count: accounts.length })})
                             </span>
                         </div>

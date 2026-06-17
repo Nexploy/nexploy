@@ -4,14 +4,15 @@ import {
     environmentSchema,
 } from '@workspace/schemas-zod/docker/environment/environment.schema';
 import {
-    getUserEnvironments,
     createEnvironment,
-    updateEnvironment,
     deleteEnvironment,
+    getUserEnvironments,
     setDefaultEnvironmentById,
+    updateEnvironment,
 } from '@/services/environment/environment.service';
 import { fail, guard, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
+import { z } from 'zod';
 
 export const environmentsGroup: ToolGroup = {
     name: 'environments',
@@ -21,20 +22,63 @@ export const environmentsGroup: ToolGroup = {
 
         server.registerTool(
             'listEnvironments',
-            { description: 'List all configured Docker environments.' },
+            {
+                description:
+                    'List all configured Docker environments. Shows which one is currently active for this session and which is the global default.',
+            },
             async () => {
                 const g = guard(ctx, 'environment', 'read');
                 if (g) return g;
                 try {
-                    const envs = await getUserEnvironments();
+                    const envs = await getUserEnvironments(ctx.userId);
                     const data = envs.map((e) => ({
                         id: e.id,
                         name: e.name,
                         connectionType: e.connectionType,
                         isDefault: e.isDefault,
+                        isActiveInSession: e.id === ctx.environmentId,
+                        healthStatus: e.healthStatus,
                         description: e.description,
                     }));
-                    return ok(JSON.stringify({ count: data.length, data }));
+                    return ok(
+                        JSON.stringify({
+                            count: data.length,
+                            activeSessionEnvironmentId: ctx.environmentId ?? null,
+                            data,
+                        }),
+                    );
+                } catch (e: any) {
+                    return fail(e.message);
+                }
+            },
+        );
+
+        server.registerTool(
+            'useEnvironment',
+            {
+                description:
+                    'Switch the active Docker environment for this MCP session. All subsequent Docker operations (containers, images, volumes, networks, etc.) will target this environment. Use listEnvironments first to get available IDs.',
+                inputSchema: z.object({
+                    environmentId: z
+                        .string()
+                        .describe('ID of the environment to use for this session'),
+                }).shape,
+            },
+            async ({ environmentId }) => {
+                const g = guard(ctx, 'environment', 'read');
+                if (g) return g;
+                try {
+                    const envs = await getUserEnvironments(ctx.userId);
+                    const target = envs.find((e) => e.id === environmentId);
+                    if (!target) {
+                        return fail(
+                            `Environment "${environmentId}" not found. Available: ${envs.map((e) => `${e.name} (${e.id})`).join(', ')}`,
+                        );
+                    }
+                    ctx.environmentId = environmentId;
+                    return ok(
+                        `Now using environment "${target.name}" (${environmentId}) for this session.`,
+                    );
                 } catch (e: any) {
                     return fail(e.message);
                 }

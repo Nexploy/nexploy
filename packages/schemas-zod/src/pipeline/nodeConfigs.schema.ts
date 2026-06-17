@@ -442,15 +442,25 @@ export const fetchSecretsDopplerConfigSchema = z.object({
 
 // ─── Domain & SSL ─────────────────────────────────────────────────────────────
 
-export const addDomainConfigSchema = z.object({
-    host: z.string().min(1, 'Host is required').default(''),
-    path: z.string().min(1).default('/'),
-    internalPath: z.string().min(1).default('/'),
-    stripPath: z.boolean().default(false),
-    containerPort: z.coerce.number().int().min(1).max(65535).default(3000),
-    https: z.boolean().default(false),
-    certificateId: z.string().optional(),
-});
+export const addDomainConfigSchema = z
+    .object({
+        host: z.string().min(1, 'Host is required').default(''),
+        path: z.string().min(1).default('/'),
+        internalPath: z.string().min(1).default('/'),
+        stripPath: z.boolean().default(false),
+        containerPort: z.coerce.number().int().min(1).max(65535).default(3000),
+        https: z.boolean().default(false),
+        certificateId: z.string().optional(),
+    })
+    .superRefine((data, ctx) => {
+        if (data.https && !data.certificateId) {
+            ctx.addIssue({
+                code: 'custom',
+                message: 'certificateRequired',
+                path: ['certificateId'],
+            });
+        }
+    });
 
 export const removeDomainConfigSchema = z.object({
     host: refable(z.string().min(1, 'Host is required')).default(''),

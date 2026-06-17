@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useRef, useState } from 'react';
 import { ContainerCard } from '@/components/docker/containers/ContainerCard';
 import { Layers, Play, RotateCw, Square, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
@@ -13,6 +13,7 @@ import {
     AccordionTrigger,
 } from '@workspace/ui/components/accordion';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
+import { Switch } from '@workspace/ui/components/switch';
 import { onComposesAction } from '@/actions/docker/composes/composeAction';
 import { ComposesAction } from '@workspace/typescript-interface/docker/docker.composeStack';
 import { Containers } from '@workspace/typescript-interface/docker/docker.containers';
@@ -43,17 +44,42 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
         setIsloading(false);
     };
 
+    const forceRef = useRef(false);
+
     const handleRemove = (event: MouseEvent) => {
         event.stopPropagation();
+        forceRef.current = false;
 
         openAlertDialog({
             title: tDocker('stack.removeTitle'),
-            description: tDocker('stack.removeDescription', { name: stackName }),
+            description: (
+                <div className={'space-y-4'}>
+                    <p>{tDocker('stack.removeDescription', { name: stackName })}</p>
+                    <label
+                        htmlFor={'force-remove-stack'}
+                        className={
+                            'bg-muted/50 border-destructive flex cursor-pointer items-center justify-between rounded-lg border p-3'
+                        }
+                    >
+                        <div className={'space-y-0.5'}>
+                            <p className={'text-destructive text-sm font-medium'}>
+                                {tDocker('stack.forceRemove')}
+                            </p>
+                            <p className={'text-xs'}>{tDocker('stack.forceRemoveDescription')}</p>
+                        </div>
+                        <Switch
+                            id={'force-remove-stack'}
+                            className={'data-[state=checked]:!bg-destructive'}
+                            onCheckedChange={(checked) => (forceRef.current = checked)}
+                        />
+                    </label>
+                </div>
+            ),
             cancelLabel: t('cancel'),
             actionLabel: t('delete'),
             onAction: async () => {
                 setIsloading(true);
-                await onComposesAction({ stackName, action: 'remove' });
+                await onComposesAction({ stackName, action: 'remove', force: forceRef.current });
                 setIsloading(false);
             },
         });

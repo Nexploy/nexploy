@@ -53,7 +53,7 @@ export function AwsAccordionSection({ awsAccounts }: AwsAccordionSectionProps) {
                                     </TooltipContent>
                                 </Tooltip>
                             </div>
-                            <span className="text-muted-foreground text-xs font-normal">
+                            <span className="text-muted-foreground text-xs">
                                 ({t('aws.instanceCount', { count: awsAccounts.length })})
                             </span>
                         </div>

@@ -825,7 +825,9 @@
     "stack": {
         "title": "stack",
         "removeTitle": "Supprimer la stack",
-        "removeDescription": "Êtes-vous sûr de vouloir supprimer la stack « {name} » ? Tous les conteneurs de cette stack seront arrêtés et supprimés."
+        "removeDescription": "Êtes-vous sûr de vouloir supprimer la stack « {name} » ? Tous les conteneurs de cette stack seront arrêtés et supprimés.",
+        "forceRemove": "Forcer la suppression",
+        "forceRemoveDescription": "Forcer la suppression des conteneurs en cours d'exécution sans les arrêter au préalable."
     },
     "volumeDrivers": {
         "local": "Local",

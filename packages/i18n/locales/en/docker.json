@@ -825,7 +825,9 @@
     "stack": {
         "title": "stack",
         "removeTitle": "Remove Stack",
-        "removeDescription": "Are you sure you want to remove the stack {name}? All containers in this stack will be stopped and removed."
+        "removeDescription": "Are you sure you want to remove the stack {name}? All containers in this stack will be stopped and removed.",
+        "forceRemove": "Force remove",
+        "forceRemoveDescription": "Force removal of running containers without stopping them first."
     },
     "volumeDrivers": {
         "local": "Local",

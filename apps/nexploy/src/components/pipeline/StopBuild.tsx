@@ -26,7 +26,7 @@ export function StopBuild({
     const t = useTranslations('repository.pipeline');
     const { can } = usePermissions();
 
-    // if (!STOPPABLE_STATUSES.includes(status) || !can('build', 'cancel')) return null;
+    if (!STOPPABLE_STATUSES.includes(status) || !can('build', 'cancel')) return null;
 
     return (
         <Tooltip>

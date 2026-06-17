@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import {
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -18,9 +19,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import { ShieldCheck } from 'lucide-react';
+import { Alert, AlertDescription } from '@workspace/ui/components/alert';
+import { Info, ShieldCheck } from 'lucide-react';
 import useSWR from 'swr';
 import { fetcherApi } from '@/lib/api/fetcherApi';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId';
+import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 
 interface CertOption {
     id: string;
@@ -41,8 +45,21 @@ export function AddDomainConfig() {
         fetcherApi,
     );
 
+    const environmentId = usePipelineEnvironmentId();
+    const environment = useEnvironmentStore((s) =>
+        s.environments.find((env) => env.id === environmentId),
+    );
+    const isRemoteEnvironment =
+        environment?.connectionType === 'TCP' || environment?.connectionType === 'TCP_TLS';
+
     return (
         <div className="space-y-4">
+            {isRemoteEnvironment && (
+                <Alert variant={'info'}>
+                    <Info />
+                    <AlertDescription>{tDomains('remotePortHint')}</AlertDescription>
+                </Alert>
+            )}
             <FormField
                 control={form.control}
                 name="host"
@@ -129,9 +146,7 @@ export function AddDomainConfig() {
                                 }}
                             />
                         </FormControl>
-                        <FormLabel className="cursor-pointer font-normal">
-                            {t('addDomainHttps')}
-                        </FormLabel>
+                        <FormLabel className="cursor-pointer">{t('addDomainHttps')}</FormLabel>
                         <FormMessage className="text-xs" />
                     </FormItem>
                 )}
@@ -144,9 +159,7 @@ export function AddDomainConfig() {
                         <FormControl>
                             <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
-                        <FormLabel className="cursor-pointer font-normal">
-                            {t('addDomainStripPath')}
-                        </FormLabel>
+                        <FormLabel className="cursor-pointer">{t('addDomainStripPath')}</FormLabel>
                         <FormMessage className="text-xs" />
                     </FormItem>
                 )}
@@ -155,7 +168,7 @@ export function AddDomainConfig() {
                 <FormField
                     control={form.control}
                     name="certificateId"
-                    render={({ field }) => (
+                    render={({ field, fieldState }) => (
                         <FormItem>
                             <FormLabel>{tDomains('certificate')}</FormLabel>
                             <Select
@@ -187,7 +200,12 @@ export function AddDomainConfig() {
                                     )}
                                 </SelectContent>
                             </Select>
-                            <FormMessage className="text-xs" />
+                            {fieldState.error && (
+                                <p className="text-destructive text-xs">
+                                    {t(fieldState.error.message as string)}
+                                </p>
+                            )}
+                            <FormDescription>{t('certificateDescription')}</FormDescription>
                         </FormItem>
                     )}
                 />

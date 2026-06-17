@@ -110,7 +110,7 @@ export function LetsEncryptCertForm({ onClose }: LetsEncryptCertFormProps) {
                                         onCheckedChange={field.onChange}
                                     />
                                 </FormControl>
-                                <FormLabel className="cursor-pointer font-normal">
+                                <FormLabel className="cursor-pointer">
                                     {t('agreeToTos.prefix')}{' '}
                                     <Link
                                         href="https://letsencrypt.org/repository/"

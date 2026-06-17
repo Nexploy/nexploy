@@ -5,7 +5,7 @@ import {
     deployComposeSchema,
     validateComposeSyntaxMcpSchema,
 } from '@workspace/schemas-zod/docker/composes/composesAction.schema';
-import { kyDocker } from '@/lib/api/kyDocker';
+import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { fail, guard, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
@@ -25,7 +25,9 @@ export const composeGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'read');
                 if (g) return g;
                 try {
-                    const data = await kyDocker.get('composes').json<any[]>();
+                    const data = await kyDocker
+                        .get('composes', { environmentId: ctx.environmentId } as KyDockerOptions)
+                        .json<any[]>();
                     return ok(JSON.stringify({ count: data.length, stacks: data }));
                 } catch (e: any) {
                     return fail(e.message);
@@ -44,7 +46,11 @@ export const composeGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'read');
                 if (g) return g;
                 try {
-                    const data = await kyDocker.get(`composes/${stackName}/status`).json<any>();
+                    const data = await kyDocker
+                        .get(`composes/${stackName}/status`, {
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json<any>();
                     return ok(JSON.stringify(data));
                 } catch (e: any) {
                     return fail(e.message);
@@ -62,7 +68,11 @@ export const composeGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'read');
                 if (g) return g;
                 try {
-                    const data = await kyDocker.get(`composes/${stackName}/list`).json<any[]>();
+                    const data = await kyDocker
+                        .get(`composes/${stackName}/list`, {
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json<any[]>();
                     return ok(JSON.stringify({ count: data.length, data }));
                 } catch (e: any) {
                     return fail(e.message);
@@ -81,7 +91,10 @@ export const composeGroup: ToolGroup = {
                 if (g) return g;
                 try {
                     const result = await kyDocker
-                        .post('composes/validate-syntax', { json: { content: yaml } })
+                        .post('composes/validate-syntax', {
+                            json: { content: yaml },
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
                         .json<any>();
                     return ok(JSON.stringify(result));
                 } catch (e: any) {
@@ -97,14 +110,19 @@ export const composeGroup: ToolGroup = {
                     'Deploy a Docker Compose stack from a YAML string. Creates or updates the stack using `docker compose up -d`.',
                 inputSchema: deployComposeSchema.shape,
             },
-            async ({ projectName, yaml }) => {
+            async ({ stackName, yaml }) => {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
                     const result = await kyDocker
-                        .post('composes/deploy', { json: { projectName, yaml } })
+                        .post('composes/deploy', {
+                            json: { stackName, yaml },
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
                         .json<any>();
-                    return ok(`Stack "${projectName}" deployed. Logs: ${(result.logs ?? []).slice(-3).join(' | ')}`);
+                    return ok(
+                        `Stack "${stackName}" deployed. Logs: ${(result.logs ?? []).slice(-3).join(' | ')}`,
+                    );
                 } catch (e: any) {
                     return fail(e.message);
                 }
@@ -122,7 +140,11 @@ export const composeGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    await kyDocker.post(`composes/${stackName}/${action}`).json();
+                    await kyDocker
+                        .post(`composes/${stackName}/${action}`, {
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json();
                     return ok(`Stack "${stackName}" — ${action} completed`);
                 } catch (e: any) {
                     return fail(e.message);

@@ -6,7 +6,7 @@ import {
     imageTagBodySchema,
 } from '@workspace/schemas-zod/docker/image/imageAction.schema';
 import { imagePullSchema } from '@workspace/schemas-zod/docker/image/imagePullAction.schema';
-import { kyDocker } from '@/lib/api/kyDocker';
+import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { fail, guard, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
@@ -23,7 +23,9 @@ export const imagesGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'read');
                 if (g) return g;
                 try {
-                    const images = await kyDocker.get('images').json<any[]>();
+                    const images = await kyDocker
+                        .get('images', { environmentId: ctx.environmentId } as KyDockerOptions)
+                        .json<any[]>();
                     const data = images.map((img) => ({
                         id: img.id,
                         tags: img.repoTags ?? img.tags ?? [],
@@ -46,7 +48,9 @@ export const imagesGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'read');
                 if (g) return g;
                 try {
-                    const data = await kyDocker.get(`images/${id}`).json();
+                    const data = await kyDocker
+                        .get(`images/${id}`, { environmentId: ctx.environmentId } as KyDockerOptions)
+                        .json();
                     return ok(JSON.stringify(data));
                 } catch (e: any) {
                     return fail(e.message);
@@ -64,7 +68,12 @@ export const imagesGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    await kyDocker.post('images/pull', { json: params }).json();
+                    await kyDocker
+                        .post('images/pull', {
+                            json: params,
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json();
                     return ok(`Started pulling \`${params.imageName}\`. This may take a moment.`);
                 } catch (e: any) {
                     return fail(e.message);
@@ -86,7 +95,12 @@ export const imagesGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    await kyDocker.post(`images/${id}/tag`, { json: { repo, tag } }).json();
+                    await kyDocker
+                        .post(`images/${id}/tag`, {
+                            json: { repo, tag },
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json();
                     return ok(`Image tagged as ${repo}:${tag}`);
                 } catch (e: any) {
                     return fail(e.message);
@@ -105,7 +119,10 @@ export const imagesGroup: ToolGroup = {
                 if (g) return g;
                 try {
                     const result = await kyDocker
-                        .post('images/delete', { json: params })
+                        .post('images/delete', {
+                            json: params,
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
                         .json<{ deleted: string[]; skipped: { id: string; name: string; reason: string }[] }>();
 
                     if (result.deleted.length === 0 && result.skipped.length > 0) {
@@ -139,7 +156,12 @@ export const imagesGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'prune');
                 if (g) return g;
                 try {
-                    const result = await kyDocker.post('images/prune', { json: params }).json<any>();
+                    const result = await kyDocker
+                        .post('images/prune', {
+                            json: params,
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json<any>();
                     return ok(JSON.stringify(result));
                 } catch (e: any) {
                     return fail(e.message);
@@ -160,7 +182,12 @@ export const imagesGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    const result = await kyDocker.post('images/scan', { json: { image, severity } }).json<any>();
+                    const result = await kyDocker
+                        .post('images/scan', {
+                            json: { image, severity },
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json<any>();
                     return ok(JSON.stringify(result));
                 } catch (e: any) {
                     return fail(e.message);

@@ -4,7 +4,7 @@ import {
     networkCreateSchema,
     networkDeleteSchema,
 } from '@workspace/schemas-zod/docker/network/networkAction.schema';
-import { kyDocker } from '@/lib/api/kyDocker';
+import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { fail, guard, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
@@ -21,7 +21,9 @@ export const networksGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'read');
                 if (g) return g;
                 try {
-                    const networks = await kyDocker.get('networks').json<any[]>();
+                    const networks = await kyDocker
+                        .get('networks', { environmentId: ctx.environmentId } as KyDockerOptions)
+                        .json<any[]>();
                     const data = networks.map((n) => ({
                         id: n.id?.slice(0, 12),
                         name: n.name,
@@ -45,7 +47,11 @@ export const networksGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'read');
                 if (g) return g;
                 try {
-                    const data = await kyDocker.get(`networks/${id}`).json();
+                    const data = await kyDocker
+                        .get(`networks/${id}`, {
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json();
                     return ok(JSON.stringify(data));
                 } catch (e: any) {
                     return fail(e.message);
@@ -63,7 +69,12 @@ export const networksGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    await kyDocker.post('networks/create', { json: params }).json();
+                    await kyDocker
+                        .post('networks/create', {
+                            json: params,
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json();
                     return ok(`Network \`${params.name}\` created`);
                 } catch (e: any) {
                     return fail(e.message);
@@ -81,7 +92,12 @@ export const networksGroup: ToolGroup = {
                 const g = guard(ctx, 'docker', 'manage');
                 if (g) return g;
                 try {
-                    await kyDocker.post('networks/delete', { json: params }).json();
+                    await kyDocker
+                        .post('networks/delete', {
+                            json: params,
+                            environmentId: ctx.environmentId,
+                        } as KyDockerOptions)
+                        .json();
                     return ok(`Deleted ${params.networkIds.length} network(s)`);
                 } catch (e: any) {
                     return fail(e.message);

@@ -142,6 +142,13 @@ export async function generateTraefikConfigForRepository(
                 hostPort = portMappings[domain.containerPort];
             }
 
+            if (hostPort === undefined) {
+                console.warn(
+                    `[traefik] Remote domain "${domain.host}" (repo ${repositoryId}) has no published host port for container port ${domain.containerPort} on ${remoteHost}. ` +
+                        `Traefik will not be able to reach the container. Ensure the container publishes port ${domain.containerPort} and that ${remoteHost} is reachable from the Traefik host.`,
+                );
+            }
+
             config.http.services[serviceName] = {
                 loadBalancer: {
                     servers: [

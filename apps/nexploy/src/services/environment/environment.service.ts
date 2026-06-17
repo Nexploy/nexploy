@@ -5,13 +5,13 @@ import { EnvironmentSchemaType } from '@workspace/schemas-zod/docker/environment
 import { Environment } from 'generated/client';
 import { kyDocker } from '@/lib/api/kyDocker';
 
-export async function getUserEnvironments() {
+export async function getUserEnvironments(userId?: string) {
     try {
-        const session = await getUserSession();
+        const resolvedUserId = userId ?? (await getUserSession())?.user.id;
 
         return prisma.environment.findMany({
             where: {
-                OR: [{ userId: session?.user.id }, { userId: null }],
+                OR: [{ userId: resolvedUserId }, { userId: null }],
                 isActive: true,
             },
             orderBy: { createdAt: 'asc' },

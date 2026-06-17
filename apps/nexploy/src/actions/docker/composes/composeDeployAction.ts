@@ -13,7 +13,7 @@ export const onComposeDeployAction = authActionServer
         try {
             return await kyDocker
                 .post(`composes/deploy`, { json: parsedInput, timeout: false })
-                .json<{ success: boolean; projectName: string; logs: string[] }>();
+                .json<{ success: boolean; stackName: string; logs: string[] }>();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({

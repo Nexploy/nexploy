@@ -8,9 +8,13 @@ import { composesActionsSchema } from '@workspace/schemas-zod/docker/composes/co
 
 export const onComposesAction = authActionServer
     .inputSchema(composesActionsSchema)
-    .action(async ({ parsedInput: { stackName, action } }) => {
+    .action(async ({ parsedInput: { stackName, action, force } }) => {
         try {
-            return await kyDocker.post(`composes/${stackName}/${action}`).json();
+            return await kyDocker
+                .post(`composes/${stackName}/${action}`, {
+                    json: force !== undefined ? { force } : undefined,
+                })
+                .json();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({
