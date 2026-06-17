@@ -4,6 +4,7 @@ import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { updateEnvVariables } from '@/services/repository.service';
 import { envVariableSchema } from '@workspace/schemas-zod/repository/envVariable.schema';
+import { z } from 'zod';
 
 export const onEnvVariableAction = authActionServer
     .use(requirePermission('repository', 'update'))
@@ -40,6 +41,26 @@ export const onEnvVariableAction = authActionServer
                     type: 'error',
                     message: error.message,
                 });
+            }
+            throw error;
+        }
+    });
+
+export const deleteEnvVariableAction = authActionServer
+    .use(requirePermission('repository', 'update'))
+    .inputSchema(z.object({ repositoryId: z.string(), envVariableId: z.string() }))
+    .action(async ({ parsedInput, ctx }) => {
+        const { repositoryId, envVariableId } = parsedInput;
+
+        try {
+            await updateEnvVariables(repositoryId, ctx.session.user.id, {
+                updates: [],
+                creates: [],
+                deleteIds: [envVariableId],
+            });
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                await setToastServer({ type: 'error', message: error.message });
             }
             throw error;
         }

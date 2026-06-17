@@ -9,13 +9,17 @@ import { Input } from '@workspace/ui/components/input';
 import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
 import { Form, FormControl, FormField, FormItem } from '@workspace/ui/components/form';
 import { Eye, EyeOff, Key, Loader2, Plus, Save, Trash2 } from 'lucide-react';
-import { onEnvVariableAction } from '@/actions/repository/envVariable.action';
+import {
+    deleteEnvVariableAction,
+    onEnvVariableAction,
+} from '@/actions/repository/envVariable.action';
 import { envVariableSchema } from '@workspace/schemas-zod/repository/envVariable.schema';
 import { toast } from 'sonner';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import { ImportEnv } from './ImportEnv';
 import { usePermissions } from '@/contexts/PermissionContext';
+import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 
 interface EnvVariable {
     id?: string;
@@ -36,6 +40,7 @@ export function RepositoryEnv({
     const t = useTranslations('repository.settings.envVars');
     const { can } = usePermissions();
     const canEdit = can('environment', 'update');
+    const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const [showValues, setShowValues] = useState<Record<string, boolean>>({});
     const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -70,7 +75,6 @@ export function RepositoryEnv({
 
     const isSubmitting = action.status === 'executing';
     const envVariables = form.watch('envVariables');
-    const deletedIds = form.watch('deleteIds');
 
     const handleAddNew = () => {
         const currentEnvs = form.getValues('envVariables');
@@ -90,41 +94,49 @@ export function RepositoryEnv({
     const handleRemove = (index: number) => {
         const currentEnvs = form.getValues('envVariables');
         const env = currentEnvs[index];
+        if (!env) return;
 
-        if (env?.id) {
-            const deleted = new Set(form.getValues('deleteIds') ?? []);
-            deleted.add(env.id);
-            form.setValue('deleteIds', Array.from(deleted), { shouldDirty: true });
+        const key = env.key || t('keyPlaceholder');
+
+        if (!env.id) {
+            form.setValue(
+                'envVariables',
+                currentEnvs.filter((_, i) => i !== index),
+                { shouldDirty: true },
+            );
+            return;
         }
 
-        form.setValue(
-            'envVariables',
-            currentEnvs.filter((_, i) => i !== index),
-            { shouldDirty: true },
-        );
-    };
-
-    const handleUndoDelete = (id?: string) => {
-        if (!id) return;
-
-        const deleted = new Set(form.getValues('deleteIds') ?? []);
-        deleted.delete(id);
-        form.setValue('deleteIds', Array.from(deleted), { shouldDirty: true });
-
-        const originalEnv = initialEnvVariables.find((e) => e.id === id);
-        if (originalEnv) {
-            const currentEnvs = form.getValues('envVariables');
-            form.setValue('envVariables', [...currentEnvs, originalEnv], { shouldDirty: true });
-        }
+        openAlertDialog({
+            title: t('removeTitle'),
+            description: t('removeDescription', { key }),
+            cancelLabel: t('cancel'),
+            actionLabel: t('remove'),
+            onAction: async () => {
+                const result = await deleteEnvVariableAction({
+                    repositoryId,
+                    envVariableId: env.id!,
+                });
+                if (result?.serverError) {
+                    toast.error(result.serverError);
+                    return;
+                }
+                form.setValue(
+                    'envVariables',
+                    currentEnvs.filter((_, i) => i !== index),
+                    { shouldDirty: false },
+                );
+                toast.success(t('removeSuccess'));
+                router.refresh();
+            },
+        });
     };
 
     const toggleShowValue = (index: number) => {
         setShowValues((prev) => ({ ...prev, [index]: !prev[index] }));
     };
 
-    const deletedIdsSet = new Set(deletedIds);
-    const deletedEnvs = initialEnvVariables.filter((env) => env.id && deletedIdsSet.has(env.id));
-    const hasChanges = form.formState.isDirty || deletedIdsSet.size > 0;
+    const hasChanges = form.formState.isDirty;
 
     return (
         <Card className="mx-5">
@@ -245,32 +257,6 @@ export function RepositoryEnv({
                                                 <Trash2 className="text-destructive size-4" />
                                             </Button>
                                         )}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        {deletedEnvs.length > 0 && (
-                            <div className="border-t pt-4">
-                                <p className="text-muted-foreground mb-2 text-sm">
-                                    {t('pendingDeletion')}
-                                </p>
-                                {deletedEnvs.map((env) => (
-                                    <div
-                                        key={env.id}
-                                        className="bg-destructive/10 flex items-center justify-between rounded-md p-2"
-                                    >
-                                        <span className="font-mono text-sm line-through">
-                                            {env.key}
-                                        </span>
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            type="button"
-                                            onClick={() => handleUndoDelete(env.id)}
-                                        >
-                                            {t('undo')}
-                                        </Button>
                                     </div>
                                 ))}
                             </div>

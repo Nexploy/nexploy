@@ -9,7 +9,7 @@ import { isBuildLive } from '@/utils/buildStatus';
 import { StatusView } from '@/components/shared/StatusView';
 import { cn } from '@workspace/ui/lib/utils';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import { StopBuildToolbar } from '@/components/pipeline/StopBuildToolbar.tsx';
+import { StopBuild } from '../StopBuild.tsx';
 
 export interface BuildsPanelItemProps {
     build: PipelineBuild;
@@ -44,9 +44,9 @@ export const BuildsPanelItem = memo(function BuildsPanelItem({
                     {dayjs(build.createdAt).locale(locale).fromNow(true)}
                 </span>
             </div>
-            <div className={'flex max-w-[220px] items-center gap-1'}>
+            <div className={'flex w-[220px] items-center gap-1'}>
                 {isLive && !build.commitMessage ? (
-                    <Skeleton className="h-2.5 w-32" />
+                    <Skeleton className="h-2.5 w-full" />
                 ) : (
                     build.commitMessage && (
                         <span className={cn('truncate text-left text-xs')}>
@@ -54,7 +54,7 @@ export const BuildsPanelItem = memo(function BuildsPanelItem({
                         </span>
                     )
                 )}
-                <StopBuildToolbar buildId={build.id} status={build.status} />
+                <StopBuild buildId={build.id} status={build.status} variant={'secondary'} />
             </div>
         </div>
     );

@@ -166,10 +166,13 @@
             "importSuccess": "{count} variable(s) imported",
             "importError": "No valid variables found in file",
             "noVariables": "No environment variables configured.",
-            "pendingDeletion": "Pending deletion (save to confirm):",
-            "undo": "Undo",
             "keyPlaceholder": "VARIABLE_NAME",
-            "valuePlaceholder": "value"
+            "valuePlaceholder": "value",
+            "removeTitle": "Remove variable",
+            "removeDescription": "Are you sure you want to remove {key}? This action cannot be undone.",
+            "cancel": "Cancel",
+            "remove": "Remove",
+            "removeSuccess": "Variable removed successfully"
         },
         "source": {
             "connect": "Connect {provider}",
@@ -302,8 +305,12 @@
             }
         },
         "nodes": {
-            "clone-repository": { "name": "Clone Repository" },
-            "webhook-clone": { "name": "Webhook Clone" },
+            "clone-repository": {
+                "name": "Clone Repository"
+            },
+            "webhook-clone": {
+                "name": "Webhook Clone"
+            },
             "build-docker-image": {
                 "name": "Build Docker Image",
                 "description": "Build a Docker image from a Dockerfile"
@@ -376,8 +383,12 @@
                 "name": "Create Container",
                 "description": "Create and start a Docker container from an image"
             },
-            "create-network": { "name": "Create Network" },
-            "create-volume": { "name": "Create Volume" },
+            "create-network": {
+                "name": "Create Network"
+            },
+            "create-volume": {
+                "name": "Create Volume"
+            },
             "wait-for-health": {
                 "name": "Wait for Health",
                 "description": "Wait until a Docker container passes its healthcheck"
@@ -412,7 +423,10 @@
                 "name": "Update Commit Status",
                 "description": "Update a GitHub or GitLab commit status"
             },
-            "tag-image": { "name": "Tag Image", "description": "Add a tag to a Docker image" },
+            "tag-image": {
+                "name": "Tag Image",
+                "description": "Add a tag to a Docker image"
+            },
             "scan-image": {
                 "name": "Scan Image",
                 "description": "Security scan a Docker image with Trivy"
@@ -485,8 +499,14 @@
                 "name": "SonarQube Scan",
                 "description": "Analyze code quality with SonarQube or SonarCloud"
             },
-            "add-domain": { "name": "Add Domain", "description": "Add a domain to the repository" },
-            "remove-domain": { "name": "Remove Domain", "description": "Remove a domain from the repository" },
+            "add-domain": {
+                "name": "Add Domain",
+                "description": "Add a domain to the repository"
+            },
+            "remove-domain": {
+                "name": "Remove Domain",
+                "description": "Remove a domain from the repository"
+            },
             "add-ssl-certificate": {
                 "name": "Add SSL Certificate",
                 "description": "Provision an SSL certificate for a domain"

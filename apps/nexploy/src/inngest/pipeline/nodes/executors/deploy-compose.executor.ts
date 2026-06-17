@@ -30,13 +30,16 @@ export class DeployComposeExecutor implements INodeExecutor {
             : composeFileName;
         const projectName = `nexploy-${buildConfig.repositoryId}`;
 
-        const envVars: Record<string, string> =
-            getFromClosestAncestor<Record<string, string>>(
+        const envVarsArray =
+            getFromClosestAncestor<{ key: string; value: string }[]>(
                 allOutputs,
                 edges,
                 nodeId,
                 'envVariables',
-            ) ?? {};
+            ) ?? [];
+        const envVars: Record<string, string> = Object.fromEntries(
+            envVarsArray.map((e) => [e.key, e.value]),
+        );
 
         const branch = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'branch');
         const commitHash = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitHash');

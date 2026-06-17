@@ -25,7 +25,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { Kbd } from '@workspace/ui/components/kbd';
 import { useStore } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
-import { StopBuildToolbar } from '@/components/pipeline/StopBuildToolbar.tsx';
+import { StopBuild } from './StopBuild.tsx';
 import { StatusView } from '@/components/shared/StatusView';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { mod } from '@/components/pipeline/utils/modKey';
@@ -223,9 +223,10 @@ export function PipelineToolbar() {
                         <Separator orientation="vertical" className="!h-4" />
                         <div key={activeBuild.id} className="flex items-center gap-1.5">
                             <StatusView status={activeBuild.status} />
-                            <StopBuildToolbar
+                            <StopBuild
                                 buildId={activeBuild.id}
                                 status={activeBuild.status}
+                                variant="outline"
                             />
                         </div>
                     </div>

@@ -166,10 +166,13 @@
             "importSuccess": "{count} variable(s) importée(s)",
             "importError": "Aucune variable valide trouvée dans le fichier",
             "noVariables": "Aucune variable d'environnement configurée.",
-            "pendingDeletion": "Suppression en attente (enregistrez pour confirmer) :",
-            "undo": "Annuler",
             "keyPlaceholder": "Clé",
-            "valuePlaceholder": "Valeur"
+            "valuePlaceholder": "Valeur",
+            "removeTitle": "Supprimer la variable",
+            "removeDescription": "Êtes-vous sûr de vouloir supprimer {key} ? Cette action est irréversible.",
+            "cancel": "Annuler",
+            "remove": "Supprimer",
+            "removeSuccess": "Variable supprimée avec succès"
         },
         "source": {
             "connect": "Connecter {provider}",
@@ -302,8 +305,12 @@
             }
         },
         "nodes": {
-            "clone-repository": { "name": "Cloner le dépôt" },
-            "webhook-clone": { "name": "Clonage via Webhook" },
+            "clone-repository": {
+                "name": "Cloner le dépôt"
+            },
+            "webhook-clone": {
+                "name": "Clonage via Webhook"
+            },
             "build-docker-image": {
                 "name": "Construire l'image Docker",
                 "description": "Construire une image Docker depuis un Dockerfile"
@@ -376,8 +383,12 @@
                 "name": "Créer un conteneur",
                 "description": "Créer et démarrer un conteneur Docker à partir d'une image"
             },
-            "create-network": { "name": "Créer un réseau" },
-            "create-volume": { "name": "Créer un volume" },
+            "create-network": {
+                "name": "Créer un réseau"
+            },
+            "create-volume": {
+                "name": "Créer un volume"
+            },
             "wait-for-health": {
                 "name": "Attendre le healthcheck",
                 "description": "Attend qu'un conteneur Docker passe son healthcheck"

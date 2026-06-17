@@ -15,6 +15,7 @@ import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfir
 import { toast } from 'sonner';
 import { Version } from '@workspace/typescript-interface/docker/docker.version';
 import { usePermissions } from '@/contexts/PermissionContext';
+import { useSWRConfig } from 'swr';
 
 interface VersionDropdownActionsProps {
     version: Version;
@@ -27,10 +28,13 @@ export function VersionDropdownActions({ version, repositoryId }: VersionDropdow
     const { can } = usePermissions();
     if (!can('build', 'delete')) return null;
 
+    const { mutate } = useSWRConfig();
+
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const { execute } = useAction(onDeleteVersion, {
         onSuccess: () => {
             toast.success(t('deleteSuccess'));
+            mutate({ url: `/api/repositories/${repositoryId}/versions` });
         },
     });
 

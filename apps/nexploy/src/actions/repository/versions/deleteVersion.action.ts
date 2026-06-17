@@ -14,7 +14,7 @@ export const onDeleteVersion = authActionServer
             const { repositoryId, imageTag } = parsedInput;
             await deleteVersion(repositoryId, imageTag);
 
-            revalidatePath('/repositories', 'page');
+            revalidatePath('/repositories/[repositoryId]', 'page');
         } catch (error) {
             if (error instanceof Error) {
                 await setToastServer({
