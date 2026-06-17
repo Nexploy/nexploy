@@ -16,7 +16,7 @@ export const relinkGitAccountAction = authActionServer
         const t = await getTranslations('repository.reassociateGitAccount');
         try {
             await relinkGitAccount(repositoryId, parsedInput.gitAccountId);
-            revalidatePath('/[locale]/(app)/repositories/[repositoryId]', 'page');
+            revalidatePath('/repositories/[repositoryId]', 'page');
         } catch (error: unknown) {
             if (error instanceof Error) {
                 const isNotAccessible = error.message === 'REPO_NOT_ACCESSIBLE';

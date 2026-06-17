@@ -13,7 +13,7 @@ async function getEnvVariables(repositoryId: string): Promise<{
     const repository = await getRepositorieWithEnv(repositoryId);
 
     if (!repository) {
-        throw new Error('repository_not_found');
+        throw new Error('Repository not found');
     }
 
     const envVariables: Record<string, string> = {};
@@ -37,7 +37,7 @@ export async function deployDockerfileVersion(
         .json<Image[]>();
 
     if (!images.some((img) => img.repoTags.includes(imageName))) {
-        throw new Error('image_not_found');
+        throw new Error('Image not found: ' + imageName);
     }
 
     return kyDocker

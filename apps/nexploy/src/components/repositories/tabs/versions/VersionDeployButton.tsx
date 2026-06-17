@@ -5,10 +5,8 @@ import { Button } from '@workspace/ui/components/button';
 import { Check, Loader2, Rocket } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import {
-    onDeployComposeVersion,
-    onDeployDockerfileVersion,
-} from '@/actions/repository/versions/deployVersion.action';
+import { onDeployDockerfileVersion } from '@/actions/repository/versions/deployDockerfileVersion.action';
+import { onDeployComposeVersion } from '@/actions/repository/versions/deployComposeVersion.action';
 import { useTranslations } from 'next-intl';
 import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore.ts';
 import { Version } from '@workspace/typescript-interface/docker/docker.version';

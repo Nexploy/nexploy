@@ -120,7 +120,17 @@
             "deleteDescription": "Cette action est irréversible. Tous les builds, logs et configurations seront supprimés définitivement.",
             "confirmLabel": "Tapez <highlight>{name}</highlight> pour confirmer",
             "cancel": "Annuler",
-            "delete": "Supprimer"
+            "delete": "Supprimer",
+            "clearCacheButton": "Vider le cache",
+            "clearCacheTitle": "Vider le cache de la pipeline ?",
+            "clearCacheDescription": "Cela supprimera définitivement tous les fichiers temporaires de build pour ce dépôt. Les builds actifs peuvent échouer.",
+            "clearCacheConfirm": "Vider le cache",
+            "cacheClearedSuccess": "Cache vidé avec succès",
+            "cacheSize": "Taille du cache",
+            "loadingCacheSize": "Chargement...",
+            "noCacheFiles": "Aucun fichier en cache",
+            "cacheNotFound": "Aucun cache à vider",
+            "deleteButtonDescription": "Supprime définitivement ce dépôt ainsi que tous ses builds, logs et configurations associés."
         },
         "domains": {
             "title": "Domaines",

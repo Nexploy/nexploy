@@ -16,6 +16,7 @@ import {
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
 import { Button } from '@workspace/ui/components/button';
+import { Alert, AlertDescription, AlertTitle } from '@workspace/ui/components/alert';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { useAction } from 'next-safe-action/hooks';
 import { setupWebhookAction } from '@/actions/repository/pipeline/setupWebhook.action';
@@ -42,37 +43,39 @@ export function WebhookCloneConfig() {
     return (
         <div className="space-y-4">
             {webhookStatus?.isConfigured ? (
-                <div className="flex items-start gap-2 rounded-md border border-green-500/30 bg-green-500/10 p-3 text-xs text-green-600">
-                    <CheckCircle className="mt-0.5 size-3.5 shrink-0" />
-                    <span>{t('webhookStatusConfigured')}</span>
-                </div>
+                <Alert className="border-green-500/30 bg-green-500/10 text-green-600 [&>svg]:text-green-600">
+                    <CheckCircle />
+                    <AlertDescription className="text-green-600">
+                        {t('webhookStatusConfigured')}
+                    </AlertDescription>
+                </Alert>
             ) : (
                 webhookStatus && (
-                    <div className="flex items-center justify-between gap-3 rounded-md border border-yellow-500/30 bg-yellow-500/10 p-3 text-xs text-yellow-600">
-                        <div className="flex items-start gap-2">
-                            <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
-                            <div className="space-y-0.5">
-                                <p className="font-medium">{t('webhookStatusNotConfigured')}</p>
-                                <p className="text-yellow-600/80">
-                                    {t('webhookStatusNotConfiguredDescription')}
-                                </p>
-                            </div>
-                        </div>
-                        <Can resource="repository" action="update">
-                            <Button
-                                type="button"
-                                size="sm"
-                                variant="outline"
-                                icon={RefreshCw}
-                                isLoading={isPending}
-                                disabled={isPending}
-                                onClick={() => execute({ repositoryId: params.repositoryId })}
-                                className="shrink-0 border-yellow-500/40 text-yellow-600 hover:bg-yellow-500/10 hover:text-yellow-700"
-                            >
-                                {t('webhookSetupButton')}
-                            </Button>
-                        </Can>
-                    </div>
+                    <Alert className="border-yellow-500/30 bg-yellow-500/10 text-yellow-600 [&>svg]:text-yellow-600">
+                        <AlertTriangle />
+                        <AlertTitle className="text-yellow-600">
+                            {t('webhookStatusNotConfigured')}
+                        </AlertTitle>
+                        <AlertDescription className="flex items-center justify-between gap-3">
+                            <span className="text-yellow-600/80">
+                                {t('webhookStatusNotConfiguredDescription')}
+                            </span>
+                            <Can resource="repository" action="update">
+                                <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="outline"
+                                    icon={RefreshCw}
+                                    isLoading={isPending}
+                                    disabled={isPending}
+                                    onClick={() => execute({ repositoryId: params.repositoryId })}
+                                    className="shrink-0 border-yellow-500/40 text-yellow-600 hover:bg-yellow-500/10 hover:text-yellow-700"
+                                >
+                                    {t('webhookSetupButton')}
+                                </Button>
+                            </Can>
+                        </AlertDescription>
+                    </Alert>
                 )
             )}
 

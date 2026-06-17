@@ -120,7 +120,17 @@
             "deleteDescription": "This action is irreversible. All builds, logs and configurations will be permanently deleted.",
             "confirmLabel": "Type <highlight>{name}</highlight> to confirm",
             "cancel": "Cancel",
-            "delete": "Delete"
+            "delete": "Delete",
+            "clearCacheButton": "Clear cache",
+            "clearCacheTitle": "Clear pipeline cache?",
+            "clearCacheDescription": "This will permanently delete all temporary build files for this repository. Active builds may fail.",
+            "clearCacheConfirm": "Clear cache",
+            "cacheClearedSuccess": "Cache cleared successfully",
+            "cacheSize": "Cache size",
+            "loadingCacheSize": "Loading...",
+            "noCacheFiles": "No cache files",
+            "cacheNotFound": "No cache to clear",
+            "deleteButtonDescription": "Permanently delete this repository and all associated builds, logs and configurations."
         },
         "domains": {
             "title": "Domains",

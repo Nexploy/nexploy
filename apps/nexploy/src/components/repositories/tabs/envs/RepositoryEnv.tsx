@@ -9,10 +9,8 @@ import { Input } from '@workspace/ui/components/input';
 import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
 import { Form, FormControl, FormField, FormItem } from '@workspace/ui/components/form';
 import { Eye, EyeOff, Key, Loader2, Plus, Save, Trash2 } from 'lucide-react';
-import {
-    deleteEnvVariableAction,
-    onEnvVariableAction,
-} from '@/actions/repository/envVariable.action';
+import { onEnvVariableAction } from '@/actions/repository/updateEnvVariables.action';
+import { deleteEnvVariableAction } from '@/actions/repository/deleteEnvVariable.action';
 import { envVariableSchema } from '@workspace/schemas-zod/repository/envVariable.schema';
 import { toast } from 'sonner';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
