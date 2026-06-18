@@ -1,0 +1,17 @@
+http:
+  routers:
+    repo-cmpt0yv0j00088eynxoerdbt1-cmqjfa28k00001hynkunz7n5a-portfolio-localhost:
+      rule: Host(`portfolio.localhost`)
+      service: svc-cmpt0yv0j00088eynxoerdbt1-cmqjfa28k00001hynkunz7n5a-portfolio-localhost
+      entryPoints:
+        - web
+  services:
+    svc-cmpt0yv0j00088eynxoerdbt1-cmqjfa28k00001hynkunz7n5a-portfolio-localhost:
+      loadBalancer:
+        servers:
+          - url: http://portfolio-nathan:3000
+x-nexploy-domains:
+  repo-cmpt0yv0j00088eynxoerdbt1-cmqjfa28k00001hynkunz7n5a-portfolio-localhost:
+    containerPort: 3000
+    environmentId: cmniv23gc00005eyn9sef7ra2
+    stageId: cmqjfa28k00001hynkunz7n5a

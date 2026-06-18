@@ -53,6 +53,7 @@ export class SaveVersionExecutor implements INodeExecutor {
             commitHash,
             commitMessage,
             environmentId,
+            stageId: buildConfig.stageId,
             composeConfig,
         });
 

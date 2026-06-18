@@ -19,21 +19,23 @@ export class RemoveDomainExecutor implements INodeExecutor {
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof removeDomainConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeId, nodeConfig, buildConfig, logger, abortSignal } = ctx;
-        const { repositoryId } = buildConfig;
+        const { repositoryId, stageId } = buildConfig;
         const { host } = nodeConfig;
 
         await logger.info(nodeId, `Removing domain: ${host}`);
         if (abortSignal.aborted) throw new Error('Build cancelled');
 
         const existingDomains = await getDomainsFromTraefikConfig(repositoryId);
-        const exists = existingDomains.some((d) => d.host === host);
+        const exists = existingDomains.some((d) => d.host === host && d.stageId === stageId);
 
         if (!exists) {
             await logger.info(nodeId, `Domain not found, skipping: ${host}`);
             return { output: { host, removed: false }, skipped: true };
         }
 
-        const remainingDomains = existingDomains.filter((d) => d.host !== host);
+        const remainingDomains = existingDomains.filter(
+            (d) => !(d.host === host && d.stageId === stageId),
+        );
         await generateTraefikConfigForRepository(repositoryId, remainingDomains);
 
         await logger.info(nodeId, `Domain removed: ${host}`);

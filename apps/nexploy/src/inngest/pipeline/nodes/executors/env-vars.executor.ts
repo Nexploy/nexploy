@@ -8,7 +8,12 @@ export class EnvVarsExecutor implements INodeExecutor {
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { logger, nodeId, buildConfig, allOutputs, edges } = ctx;
 
-        const repoEnvs = await getAllEnvsBuild(buildConfig.repositoryId);
+        if (!buildConfig.stageId) {
+            await logger.info(nodeId, 'No deployment stage resolved; skipping env injection');
+            return { output: {}, skipped: true };
+        }
+
+        const repoEnvs = await getAllEnvsBuild(buildConfig.stageId);
         const repoMap = Object.fromEntries(repoEnvs.map((e) => [e.key, e.value]));
 
         const ancestorEnvs =

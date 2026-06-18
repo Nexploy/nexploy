@@ -51,7 +51,7 @@ export function NodeConfigDialog() {
             <DialogContent
                 aria-describedby={undefined}
                 className={cn(
-                    'flex !h-[80%] !max-w-[70%] flex-col gap-0 !p-0',
+                    'flex !h-[80%] !max-w-[70%] !min-w-[700px] flex-col gap-0 !p-0',
                     isViewing && '!max-w-[80%]',
                 )}
                 onOpenAutoFocus={(e) => e.preventDefault()}
@@ -89,10 +89,12 @@ export function NodeConfigDialog() {
                             {isViewing ? (
                                 <>
                                     <div className="flex min-h-0 flex-1">
-                                        <div className="flex w-80 flex-col">
-                                            <NodeConfigForm node={node} />
+                                        <div className={'hidden md:flex'}>
+                                            <div className="flex w-80 flex-col">
+                                                <NodeConfigForm node={node} />
+                                            </div>
+                                            <Separator orientation="vertical" />
                                         </div>
-                                        <Separator orientation="vertical" />
                                         <NodeLogsPanel
                                             buildId={activeBuildId!}
                                             nodeId={node.id}

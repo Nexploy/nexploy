@@ -9,7 +9,7 @@ export const onEnvVariableAction = authActionServer
     .use(requirePermission('repository', 'update'))
     .inputSchema(envVariableSchema)
     .action(async ({ parsedInput, ctx }) => {
-        const { repositoryId, envVariables, deleteIds } = parsedInput;
+        const { repositoryId, stageId, envVariables, deleteIds } = parsedInput;
 
         try {
             const updates = envVariables
@@ -27,11 +27,16 @@ export const onEnvVariableAction = authActionServer
                     value: env.value,
                 }));
 
-            return await updateEnvVariables(repositoryId, ctx.session.user.id, {
-                updates,
-                creates,
-                deleteIds,
-            });
+            return await updateEnvVariables(
+                repositoryId,
+                ctx.session.user.id,
+                {
+                    updates,
+                    creates,
+                    deleteIds,
+                },
+                stageId,
+            );
         } catch (error: unknown) {
             if (error instanceof Error) {
                 await setToastServer({

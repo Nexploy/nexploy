@@ -8,6 +8,7 @@ export interface CreateVersionInput {
     commitHash?: string;
     commitMessage?: string;
     environmentId?: string;
+    stageId?: string;
     composeConfig?: string;
 }
 

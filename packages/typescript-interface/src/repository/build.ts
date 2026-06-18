@@ -16,4 +16,6 @@ export interface BuildConfig {
     gitBranch?: string;
     buildId: string;
     triggerSource: 'manual' | 'webhook';
+    stageId?: string;
+    environmentId?: string;
 }

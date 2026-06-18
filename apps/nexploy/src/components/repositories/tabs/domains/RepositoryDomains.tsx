@@ -1,11 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
 import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger, } from '@workspace/ui/components/collapsible';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@workspace/ui/components/collapsible';
 import { Form } from '@workspace/ui/components/form';
 import { ChevronDown, Cloud, Globe, Lock, Plus, Trash2 } from 'lucide-react';
 import { manageDomains } from '@/actions/repository/manageDomains.action';
@@ -21,6 +25,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import type { CloudflareAccountInfo } from '@workspace/typescript-interface/cloudflare/cloudflare';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useSelectedStage } from '@/hooks/useSelectedStage';
 
 interface CertOption {
     id: string;
@@ -60,6 +65,14 @@ export function RepositoryDomains({
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
+    const { stageId, stages } = useSelectedStage(repositoryId);
+    const isProdStage = !!stages.find((s) => s.id === stageId)?.isProduction;
+
+    const stageDomains = useMemo(
+        () => domainsConfig.filter((d) => d.stageId === stageId || (!d.stageId && isProdStage)),
+        [domainsConfig, stageId, isProdStage],
+    );
+
     const bindManageDomains = manageDomains.bind(null, repositoryId);
     const bindDeleteDomain = deleteDomain.bind(null, repositoryId);
 
@@ -69,7 +82,7 @@ export function RepositoryDomains({
         {
             formProps: {
                 defaultValues: {
-                    domains: domainsConfig,
+                    domains: [],
                     deletedIds: [],
                 },
             },
@@ -90,11 +103,19 @@ export function RepositoryDomains({
     const isSubmitting = action.status === 'executing';
     const domains = form.watch('domains');
 
+    useEffect(() => {
+        if (!stageId) return;
+        form.reset({ domains: stageDomains, deletedIds: [] });
+        setExpandedIds(new Set());
+    }, [stageId, stageDomains]);
+
     const handleAddNew = () => {
         const currentDomains = form.getValues('domains');
-        form.setValue('domains', [...currentDomains, DEFAULT_NEW_DOMAIN as Domain], {
-            shouldDirty: true,
-        });
+        form.setValue(
+            'domains',
+            [...currentDomains, { ...DEFAULT_NEW_DOMAIN, stageId: stageId ?? undefined } as Domain],
+            { shouldDirty: true },
+        );
     };
 
     const handleRemoveNew = (index: number) => {
@@ -179,7 +200,7 @@ export function RepositoryDomains({
                         title={t('title')}
                         description={t('description')}
                     />
-                    <div className="flex gap-2">
+                    <div className="flex items-center gap-2">
                         <Button
                             size="sm"
                             onClick={handleSubmitWithAction}

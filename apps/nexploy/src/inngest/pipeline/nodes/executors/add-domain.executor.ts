@@ -16,7 +16,7 @@ export class AddDomainExecutor implements INodeExecutor {
         ctx: NodeExecutionContext<z.infer<typeof addDomainConfigSchema>>,
     ): Promise<NodeExecutionResult> {
         const { nodeId, nodeConfig, buildConfig, allOutputs, edges, logger, abortSignal } = ctx;
-        const { repositoryId } = buildConfig;
+        const { repositoryId, stageId } = buildConfig;
         const { host, path, internalPath, stripPath, containerPort, https, certificateId } =
             nodeConfig;
 
@@ -31,14 +31,20 @@ export class AddDomainExecutor implements INodeExecutor {
         if (abortSignal.aborted) throw new Error('Build cancelled');
 
         const existingDomains = await getDomainsFromTraefikConfig(repositoryId);
-        const domainId = `repo-${repositoryId}-${host}`;
+        const stageSeg = stageId ? `${stageId}-` : '';
+        const domainId = `repo-${repositoryId}-${stageSeg}${host}`;
 
-        const alreadyExists = existingDomains.some((d) => d.host === host);
+        const alreadyExists = existingDomains.some(
+            (d) => d.host === host && d.stageId === stageId,
+        );
         if (alreadyExists) {
             await logger.info(nodeId, `Domain already exists, overwriting config: ${host}`);
         }
 
-        const otherDomains = existingDomains.filter((d) => d.host !== host);
+        // Keep domains of other stages (or other hosts) untouched.
+        const otherDomains = existingDomains.filter(
+            (d) => !(d.host === host && d.stageId === stageId),
+        );
         const newDomain = {
             id: domainId,
             host,
@@ -49,6 +55,7 @@ export class AddDomainExecutor implements INodeExecutor {
             https,
             certificateId: certificateId || undefined,
             environmentId,
+            stageId,
         };
 
         await generateTraefikConfigForRepository(repositoryId, [...otherDomains, newDomain]);

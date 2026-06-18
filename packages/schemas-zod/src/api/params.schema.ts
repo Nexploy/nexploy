@@ -13,6 +13,11 @@ export const repositoryIdParamSchema = z.object({
     repositoryId: z.string().min(1),
 });
 
+export const stageParamSchema = z.object({
+    repositoryId: z.string().min(1),
+    stageId: z.string().min(1),
+});
+
 export const buildParamSchema = z.object({
     repositoryId: z.string().min(1),
     buildId: z.string().min(1),

@@ -1,7 +1,8 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import useSWR from 'swr';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
@@ -18,6 +19,8 @@ import { useTranslations } from 'next-intl';
 import { ImportEnv } from './ImportEnv';
 import { usePermissions } from '@/contexts/PermissionContext';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useSelectedStage } from '@/hooks/useSelectedStage';
+import { fetcherApi } from '@/lib/api/fetcherApi';
 
 interface EnvVariable {
     id?: string;
@@ -27,13 +30,9 @@ interface EnvVariable {
 
 interface RepositoryEnvTabProps {
     repositoryId: string;
-    envVariables: EnvVariable[];
 }
 
-export function RepositoryEnv({
-    repositoryId,
-    envVariables: initialEnvVariables,
-}: RepositoryEnvTabProps) {
+export function RepositoryEnv({ repositoryId }: RepositoryEnvTabProps) {
     const router = useRouter();
     const t = useTranslations('repository.settings.envVars');
     const { can } = usePermissions();
@@ -42,6 +41,13 @@ export function RepositoryEnv({
     const [showValues, setShowValues] = useState<Record<string, boolean>>({});
     const bottomRef = useRef<HTMLDivElement>(null);
 
+    const { stageId } = useSelectedStage(repositoryId);
+
+    const { data: stageEnvs, isLoading: isLoadingEnvs } = useSWR<EnvVariable[]>(
+        stageId ? { url: `/api/repositories/${repositoryId}/stages/${stageId}/env` } : null,
+        fetcherApi,
+    );
+
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onEnvVariableAction,
         zodResolver(envVariableSchema),
@@ -49,17 +55,17 @@ export function RepositoryEnv({
             formProps: {
                 defaultValues: {
                     repositoryId,
-                    envVariables: initialEnvVariables,
+                    stageId: undefined,
+                    envVariables: [],
                     deleteIds: [],
                 },
             },
             actionProps: {
                 onSuccess: () => {
                     toast.success(t('updated'));
-                    router.refresh();
-
                     form.reset({
                         repositoryId,
+                        stageId: stageId ?? undefined,
                         envVariables: form.getValues('envVariables'),
                         deleteIds: [],
                     });
@@ -71,18 +77,24 @@ export function RepositoryEnv({
         },
     );
 
+    // Reload the form whenever the selected stage's variables change.
+    useEffect(() => {
+        if (!stageId || stageEnvs === undefined) return;
+        form.reset({
+            repositoryId,
+            stageId,
+            envVariables: stageEnvs,
+            deleteIds: [],
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [stageId, stageEnvs]);
+
     const isSubmitting = action.status === 'executing';
     const envVariables = form.watch('envVariables');
 
     const handleAddNew = () => {
         const currentEnvs = form.getValues('envVariables');
-        form.setValue('envVariables', [
-            ...currentEnvs,
-            {
-                key: '',
-                value: '',
-            },
-        ]);
+        form.setValue('envVariables', [...currentEnvs, { key: '', value: '' }]);
         setTimeout(
             () => bottomRef.current?.scrollIntoView({ behavior: 'instant', block: 'end' }),
             0,
@@ -146,38 +158,50 @@ export function RepositoryEnv({
                         title={t('title')}
                         description={t('description')}
                     />
-                    {canEdit && (
-                        <div className="flex gap-2">
-                            <ImportEnv
-                                onImport={(vars) => {
-                                    const currentEnvs = form.getValues('envVariables');
-                                    form.setValue('envVariables', [...currentEnvs, ...vars], {
-                                        shouldDirty: true,
-                                    });
-                                }}
-                            />
-                            <Button variant="outline" size="sm" onClick={handleAddNew}>
-                                <Plus />
-                                {t('addVariable')}
-                            </Button>
-                            {hasChanges && (
-                                <Button
-                                    size="sm"
-                                    onClick={handleSubmitWithAction}
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? <Loader2 className="animate-spin" /> : <Save />}
-                                    {t('saveChanges')}
+                    <div className="flex items-center gap-2">
+                        {canEdit && (
+                            <>
+                                <ImportEnv
+                                    onImport={(vars) => {
+                                        const currentEnvs = form.getValues('envVariables');
+                                        form.setValue(
+                                            'envVariables',
+                                            [...currentEnvs, ...vars],
+                                            { shouldDirty: true },
+                                        );
+                                    }}
+                                />
+                                <Button variant="outline" size="sm" onClick={handleAddNew}>
+                                    <Plus />
+                                    {t('addVariable')}
                                 </Button>
-                            )}
-                        </div>
-                    )}
+                                {hasChanges && (
+                                    <Button
+                                        size="sm"
+                                        onClick={handleSubmitWithAction}
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? (
+                                            <Loader2 className="animate-spin" />
+                                        ) : (
+                                            <Save />
+                                        )}
+                                        {t('saveChanges')}
+                                    </Button>
+                                )}
+                            </>
+                        )}
+                    </div>
                 </div>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
                     <form onSubmit={handleSubmitWithAction}>
-                        {envVariables.length === 0 ? (
+                        {isLoadingEnvs ? (
+                            <div className="text-muted-foreground flex items-center justify-center gap-2 py-8 text-sm">
+                                <Loader2 className="size-4 animate-spin" />
+                            </div>
+                        ) : envVariables.length === 0 ? (
                             <div className="text-muted-foreground py-8 text-center text-sm">
                                 {t('noVariables')}
                             </div>

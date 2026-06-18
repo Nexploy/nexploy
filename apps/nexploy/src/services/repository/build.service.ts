@@ -10,9 +10,10 @@ import { BuildStatus } from 'generated/client';
 import { createLog } from '@/services/repository/log.service';
 import type { Realtime } from 'inngest';
 import { createBuildChannel } from '@/inngest/channels/build.channel';
+import { resolveStage } from '@/services/repository/deploymentStage.service';
 
 export async function startBuildRepository(
-    { repositoryId, branch }: StartBuildSchemaType,
+    { repositoryId, branch, stageId }: StartBuildSchemaType,
     userId: string,
     triggerSource: 'manual' | 'webhook' = 'manual',
 ) {
@@ -33,8 +34,14 @@ export async function startBuildRepository(
         );
     }
 
+    const stage = await resolveStage(repository.id, stageId);
+    if (!stage) {
+        throw new Error('No deployment stage found. Create a stage before starting a build.');
+    }
+
     const build = await createBuild({
         repositoryId: repository.id,
+        stageId: stage.id,
         pipelineSnapshot: { nodes: pipelineConfig.nodes, edges: pipelineConfig.edges },
     });
 
@@ -48,6 +55,8 @@ export async function startBuildRepository(
         gitUrl: repository.repositoryUrl,
         buildId: build.id,
         triggerSource,
+        stageId: stage.id,
+        environmentId: stage.environmentId ?? undefined,
     };
 
     await addBuildJob(build.id, config);
@@ -64,11 +73,13 @@ export async function removeBuild(buildId: string) {
 
 export async function createBuild({
     repositoryId,
+    stageId,
     commitMessage,
     commitHash,
     pipelineSnapshot,
 }: {
     repositoryId: string;
+    stageId?: string;
     environmentId?: string;
     commitMessage?: string;
     commitHash?: string;
@@ -84,6 +95,7 @@ export async function createBuild({
             return tx.build.create({
                 data: {
                     repositoryId,
+                    stageId,
                     number: (last?.number ?? 0) + 1,
                     commitMessage,
                     commitHash,
@@ -249,9 +261,9 @@ export async function getBuildsPage(repositoryId: string, cursor?: string, take 
     }
 }
 
-export async function getAllEnvsBuild(repositoryId: string) {
+export async function getAllEnvsBuild(stageId: string) {
     try {
-        const envs = await prisma.envVariable.findMany({ where: { repositoryId } });
+        const envs = await prisma.envVariable.findMany({ where: { stageId } });
         return envs.map((env) => ({ ...env, value: decrypt(env.value) }));
     } catch {
         throw new Error('Failed to get builds');

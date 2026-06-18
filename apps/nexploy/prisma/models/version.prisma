@@ -15,7 +15,11 @@ model Version {
   environmentId String?
   environment   Environment? @relation("VersionEnvironment", fields: [environmentId], references: [id])
 
+  stageId String?
+  stage   DeploymentStage? @relation(fields: [stageId], references: [id], onDelete: SetNull)
+
   @@unique([repositoryId, imageTag])
+  @@index([stageId])
   @@index([repositoryId])
   @@map("version")
 }

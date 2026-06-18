@@ -10,6 +10,7 @@ export const domainSchema = z.object({
     https: z.boolean().default(false),
     certificateId: z.string().optional(),
     environmentId: z.string().optional(),
+    stageId: z.string().optional(),
     cloudflareCredentialId: z.string().optional(),
     cloudflareZoneId: z.string().optional(),
     cloudflareZoneName: z.string().optional(),

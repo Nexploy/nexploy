@@ -56,8 +56,9 @@ export async function generateTraefikConfigForRepository(
 
     for (const domain of domains) {
         const sanitizedHost = domain.host.replace(/\./g, '-');
-        const routerName = `repo-${repositoryId}-${sanitizedHost}`;
-        const serviceName = `svc-${repositoryId}-${sanitizedHost}`;
+        const stageSeg = domain.stageId ? `${domain.stageId}-` : '';
+        const routerName = `repo-${repositoryId}-${stageSeg}${sanitizedHost}`;
+        const serviceName = `svc-${repositoryId}-${stageSeg}${sanitizedHost}`;
 
         const env = domain.environmentId ? await getEnvironmentById(domain.environmentId) : null;
         const isRemote = env?.connectionType === 'TCP' || env?.connectionType === 'TCP_TLS';
@@ -72,7 +73,7 @@ export async function generateTraefikConfigForRepository(
         const middlewares: string[] = [];
 
         if (domain.stripPath && domain.path !== '/') {
-            const stripMiddlewareName = `strip-${repositoryId}-${sanitizedHost}`;
+            const stripMiddlewareName = `strip-${repositoryId}-${stageSeg}${sanitizedHost}`;
             middlewares.push(stripMiddlewareName);
 
             config.http.middlewares[stripMiddlewareName] = {
@@ -87,7 +88,7 @@ export async function generateTraefikConfigForRepository(
             domain.internalPath !== '/' &&
             domain.internalPath !== domain.path
         ) {
-            const addPrefixMiddlewareName = `addprefix-${repositoryId}-${sanitizedHost}`;
+            const addPrefixMiddlewareName = `addprefix-${repositoryId}-${stageSeg}${sanitizedHost}`;
             middlewares.push(addPrefixMiddlewareName);
 
             config.http.middlewares[addPrefixMiddlewareName] = {
@@ -173,6 +174,7 @@ export async function generateTraefikConfigForRepository(
         config['x-nexploy-domains'][routerName] = {
             containerPort: domain.containerPort,
             environmentId: domain.environmentId,
+            stageId: domain.stageId,
             certificateId: domain.certificateId,
             cloudflare: domain.cloudflareZoneId && {
                 credentialId: domain.cloudflareCredentialId,
@@ -214,7 +216,10 @@ export async function getDomainsFromTraefikConfig(repositoryId: string): Promise
         const nexployDomains = config?.['x-nexploy-domains'] ?? {};
 
         return Object.entries(routers).map(([routerName, router]: [string, any]) => {
-            const hostFromRouter = routerName.replace(`repo-${repositoryId}-`, '');
+            // Middleware names share the router suffix (stage segment included),
+            // only the leading prefix differs.
+            const stripName = routerName.replace(/^repo-/, 'strip-');
+            const addPrefixName = routerName.replace(/^repo-/, 'addprefix-');
 
             const hostMatch = router.rule?.match(/Host\(`([^`]+)`\)/);
             const pathMatch = router.rule?.match(/PathPrefix\(`([^`]+)`\)/);
@@ -235,14 +240,13 @@ export async function getDomainsFromTraefikConfig(repositoryId: string): Promise
                 id: routerName,
                 host: hostMatch?.[1] ?? '',
                 path: pathMatch?.[1] ?? '/',
-                internalPath:
-                    middlewares[`addprefix-${repositoryId}-${hostFromRouter}`]?.addPrefix?.prefix ??
-                    '/',
-                stripPath: !!middlewares[`strip-${repositoryId}-${hostFromRouter}`],
+                internalPath: middlewares[addPrefixName]?.addPrefix?.prefix ?? '/',
+                stripPath: !!middlewares[stripName],
                 containerPort,
                 https: !!router.tls,
                 certificateId: domainMeta.certificateId ?? undefined,
                 environmentId: domainMeta.environmentId ?? undefined,
+                stageId: domainMeta.stageId ?? undefined,
                 cloudflareCredentialId: cloudflare?.credentialId,
                 cloudflareZoneId: cloudflare?.zoneId,
                 cloudflareZoneName: cloudflare?.zoneName,

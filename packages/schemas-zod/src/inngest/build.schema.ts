@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const startBuildSchema = z.object({
     repositoryId: z.cuid(),
     branch: z.string().optional(),
+    stageId: z.cuid().optional(),
 });
 
 export type StartBuildSchemaType = z.infer<typeof startBuildSchema>;

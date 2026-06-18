@@ -8,6 +8,7 @@ import { RepositoryPayload } from '@/types/repository.type';
 import { teardownRepositoryWebhook } from '@/services/webhook/repoWebhook.service';
 import { verifyRepoAccessFromAccount } from '@/services/git/git.service';
 import { DeleteRepositoryInput } from '@workspace/schemas-zod/repository/settings/deleteRepository.schema';
+import { resolveStage } from '@/services/repository/deploymentStage.service';
 
 export async function createRepository(
     { repo, name, gitProvider, gitAccountId }: RepositoryCreateForm,
@@ -190,6 +191,7 @@ export async function updateEnvVariables(
         creates: { key: string; value: string }[];
         deleteIds: string[];
     },
+    stageId?: string,
 ) {
     try {
         const repository = await prisma.repository.findUnique({
@@ -198,6 +200,11 @@ export async function updateEnvVariables(
 
         if (!repository) {
             throw new Error('Repository not found');
+        }
+
+        const stage = await resolveStage(repositoryId, stageId);
+        if (!stage) {
+            throw new Error('No deployment stage found for this repository');
         }
 
         return await prisma.$transaction(async (tx) => {
@@ -223,7 +230,7 @@ export async function updateEnvVariables(
             for (const create of data.creates) {
                 await tx.envVariable.upsert({
                     where: {
-                        repositoryId_key: { repositoryId, key: create.key },
+                        stageId_key: { stageId: stage.id, key: create.key },
                     },
                     update: {
                         value: encrypt(create.value),
@@ -232,6 +239,7 @@ export async function updateEnvVariables(
                         key: create.key,
                         value: encrypt(create.value),
                         repositoryId,
+                        stageId: stage.id,
                     },
                 });
             }

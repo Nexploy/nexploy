@@ -21,6 +21,7 @@ model Repository {
   build          Build[]
   envVariables   EnvVariable[]
   versions       Version[]
+  stages         DeploymentStage[]
   pipelineConfig PipelineConfig?
 
   @@map("repository")
@@ -49,7 +50,11 @@ model EnvVariable {
   repositoryId String
   repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
 
-  @@unique([repositoryId, key])
+  stageId String
+  stage   DeploymentStage @relation(fields: [stageId], references: [id], onDelete: Cascade)
+
+  @@unique([stageId, key])
+  @@index([repositoryId])
   @@map("env_variable")
 }
 
@@ -72,7 +77,11 @@ model Build {
   repositoryId String
   repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
 
+  stageId String?
+  stage   DeploymentStage? @relation(fields: [stageId], references: [id], onDelete: SetNull)
+
   @@unique([repositoryId, number])
+  @@index([stageId])
   @@map("build")
 }
 

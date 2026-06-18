@@ -85,7 +85,8 @@
             "noLogs": "Aucun log disponible",
             "loading": "Chargement des logs...",
             "waitingForLogs": "En attente de logs..."
-        }
+        },
+        "selectStage": "Stage à builder"
     },
     "reassociateGitAccount": {
         "title": "Compte Git déconnecté",
@@ -978,5 +979,29 @@
         "nodeOutputsHint": "Valeurs que ce nœud produira pour les nœuds en aval",
         "noOutputs": "Ce nœud ne produit aucune sortie",
         "sslCertificates": "Certificats SSL"
+    },
+    "stages": {
+        "selectStage": "Stage",
+        "manageTitle": "Gérer les stages",
+        "manageDescription": "Configurez les stages de déploiement (pré-prod, prod, …) de ce dépôt.",
+        "productionBadge": "Production",
+        "newStage": "Nouveau stage",
+        "editStage": "Modifier le stage",
+        "cancelEdit": "Annuler",
+        "nameLabel": "Nom",
+        "namePlaceholder": "Production",
+        "slugLabel": "Slug",
+        "environmentLabel": "Environnement cible",
+        "environmentPlaceholder": "Sélectionner un environnement",
+        "environmentDefault": "Environnement par défaut",
+        "isProductionLabel": "Stage de production",
+        "addStage": "Ajouter le stage",
+        "saveStage": "Enregistrer",
+        "createSuccess": "Stage créé",
+        "updateSuccess": "Stage mis à jour",
+        "deleteSuccess": "Stage supprimé",
+        "removeTitle": "Supprimer le stage « {name} » ?",
+        "removeDescription": "Le stage et ses variables seront supprimés. Cette action est irréversible.",
+        "remove": "Supprimer"
     }
 }

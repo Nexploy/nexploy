@@ -28,7 +28,14 @@ export async function applyDomainOperations({
 
     const allDomains = [...operations.unchanged, ...editedDomains, ...addedDomains];
 
-    await generateTraefikConfigForRepository(repositoryId, allDomains);
+    const handledIds = new Set(
+        [...operations.unchanged, ...operations.edit, ...operations.delete]
+            .map((d) => d.id)
+            .filter(Boolean) as string[],
+    );
+    const preservedDomains = existingDomains.filter((d) => d.id && !handledIds.has(d.id));
+
+    await generateTraefikConfigForRepository(repositoryId, [...allDomains, ...preservedDomains]);
 
     return allDomains;
 }
@@ -236,9 +243,11 @@ async function handleAdd({
         }
     }
 
+    const stageSeg = domain.stageId ? `${domain.stageId}-` : '';
+
     return {
         ...domain,
-        id: `repo-${repositoryId}-${domain.host}`,
+        id: `repo-${repositoryId}-${stageSeg}${domain.host}`,
         cloudflareDnsRecordId,
     };
 }

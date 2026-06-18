@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { RunBuildButton } from '@/components/repositories/RunBuildButton';
+import { StageSelect } from '@/components/repositories/stages/StageSelect';
 import { RepositoryTabs } from '@/components/repositories/RepositoryTabs';
 import { RepositoryEnvTab } from '@/components/repositories/tabs/envs/RepositoryEnvTab';
 import { RepositoryDomainsTab } from '@/components/repositories/tabs/domains/RepositoryDomainsTab';
@@ -80,7 +81,10 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
                                 </div>
                             </div>
                         </div>
-                        <RunBuildButton className={'mt-5'} repositoryId={repository.id} />
+                        <div className="mt-5 flex items-center gap-2">
+                            <StageSelect repositoryId={repository.id} />
+                            <RunBuildButton repositoryId={repository.id} />
+                        </div>
                     </div>
 
                     <RepositoryTabs>

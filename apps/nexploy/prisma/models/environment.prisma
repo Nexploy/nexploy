@@ -25,6 +25,7 @@ model Environment {
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   versions     Version[]    @relation("VersionEnvironment")
+  stages       DeploymentStage[] @relation("StageEnvironment")
 
   @@map("environment")
 }

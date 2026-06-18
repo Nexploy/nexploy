@@ -8,6 +8,7 @@ const envVariableItemSchema = z.object({
 
 export const envVariableSchema = z.object({
     repositoryId: z.string(),
+    stageId: z.string().optional(),
     envVariables: z.array(envVariableItemSchema),
     deleteIds: z.array(z.string()),
 });

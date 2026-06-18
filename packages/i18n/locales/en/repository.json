@@ -85,7 +85,8 @@
             "noLogs": "No logs available",
             "loading": "Loading logs...",
             "waitingForLogs": "Waiting for logs..."
-        }
+        },
+        "selectStage": "Build stage"
     },
     "reassociateGitAccount": {
         "title": "Git account disconnected",
@@ -978,5 +979,29 @@
         "nodeOutputsHint": "Values this node will produce for downstream nodes",
         "noOutputs": "This node produces no outputs",
         "sslCertificates": "SSL Certificates"
+    },
+    "stages": {
+        "selectStage": "Stage",
+        "manageTitle": "Manage stages",
+        "manageDescription": "Configure the deployment stages (pre-prod, prod, …) for this repository.",
+        "productionBadge": "Production",
+        "newStage": "New stage",
+        "editStage": "Edit stage",
+        "cancelEdit": "Cancel",
+        "nameLabel": "Name",
+        "namePlaceholder": "Production",
+        "slugLabel": "Slug",
+        "environmentLabel": "Target environment",
+        "environmentPlaceholder": "Select an environment",
+        "environmentDefault": "Default environment",
+        "isProductionLabel": "Production stage",
+        "addStage": "Add stage",
+        "saveStage": "Save",
+        "createSuccess": "Stage created",
+        "updateSuccess": "Stage updated",
+        "deleteSuccess": "Stage deleted",
+        "removeTitle": "Delete stage “{name}”?",
+        "removeDescription": "This will remove the stage and its scoped variables. This action cannot be undone.",
+        "remove": "Delete"
     }
 }
