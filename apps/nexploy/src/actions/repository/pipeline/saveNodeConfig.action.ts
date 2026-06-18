@@ -11,19 +11,22 @@ export const saveNodeConfigAction = authActionServer
     .use(requirePermission('repository', 'update'))
     .bindArgsSchemas(saveNodeConfigBindArgsSchemas)
     .inputSchema(saveNodeConfigInputSchema)
-    .action(async ({ parsedInput: config, bindArgsParsedInputs: [repositoryId, nodeId] }) => {
-        const pipeline = await getPipelineConfig(repositoryId);
-        if (!pipeline) throw new Error('Pipeline config not found');
+    .action(
+        async ({ parsedInput: config, bindArgsParsedInputs: [repositoryId, stageId, nodeId] }) => {
+            const pipeline = await getPipelineConfig(stageId);
+            if (!pipeline) throw new Error('Pipeline config not found');
 
-        await savePipelineConfig({
-            repositoryId,
-            graph: {
-                ...pipeline,
-                nodes: pipeline.nodes.map((node) =>
-                    node.id === nodeId ? { ...node, data: { ...node.data, config } } : node,
-                ),
-            },
-        });
+            await savePipelineConfig({
+                repositoryId,
+                stageId,
+                graph: {
+                    ...pipeline,
+                    nodes: pipeline.nodes.map((node) =>
+                        node.id === nodeId ? { ...node, data: { ...node.data, config } } : node,
+                    ),
+                },
+            });
 
-        return config;
-    });
+            return config;
+        },
+    );

@@ -7,6 +7,7 @@ import { decrypt } from '@/lib/encryption';
 import { getValidToken } from '@/services/api/gitProvider.service';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { savePipelineConfig } from '@/services/pipeline.service';
+import { getFirstStage } from '@/services/repository/deploymentStage.service';
 import { extractGitHubRepo, extractGitLabRepo } from '@/services/git/git.service';
 import { kyGithubApi } from '@/lib/api/kyGithub';
 import { kyGitlab } from '@/lib/api/kyGitlab';
@@ -33,7 +34,6 @@ const KEY_FILES = [
     'composer.json',
     '.env.example',
 ];
-
 
 type GitHubContentFile = {
     type: string;
@@ -245,7 +245,7 @@ export const pipelineGroup: ToolGroup = {
                     'Save a complete pipeline graph (nodes + edges) for a repository, replacing any existing pipeline. Call this after analyzing the repository and designing the appropriate pipeline workflow.',
                 inputSchema: savePipelineMcpSchema.shape,
             },
-            async ({ repositoryId, nodes, edges }) => {
+            async ({ repositoryId, stageId, nodes, edges }) => {
                 const g = guard(ctx, 'repository', 'update');
                 if (g) return g;
                 try {
@@ -256,8 +256,12 @@ export const pipelineGroup: ToolGroup = {
 
                     if (!repo) return fail(`Repository "${repositoryId}" not found`);
 
+                    const stage = await getFirstStage(repositoryId, stageId);
+                    if (!stage) return fail('No deployment stage found for this repository');
+
                     await savePipelineConfig({
                         repositoryId,
+                        stageId: stage.id,
                         graph: {
                             nodes: nodes as PipelineGraph['nodes'],
                             edges: edges as PipelineGraph['edges'],
@@ -265,7 +269,7 @@ export const pipelineGroup: ToolGroup = {
                     });
 
                     return ok(
-                        `Pipeline saved for repository "${repo.name}" — ${nodes.length} node(s), ${edges.length} edge(s). The pipeline is now ready to run.`,
+                        `Pipeline saved for repository "${repo.name}" (stage "${stage.name}") — ${nodes.length} node(s), ${edges.length} edge(s). The pipeline is now ready to run.`,
                     );
                 } catch (e: any) {
                     return fail(e.message);

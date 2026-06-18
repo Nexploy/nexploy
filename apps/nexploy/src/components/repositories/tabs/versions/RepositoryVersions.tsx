@@ -9,6 +9,7 @@ import { Badge } from '@workspace/ui/components/badge';
 import { Version } from '@workspace/typescript-interface/docker/docker.version';
 import { useTranslations } from 'next-intl';
 import { fetcherApi } from '@/lib/api/fetcherApi';
+import { usePipelineStage } from '@/hooks/pipeline/usePipelineStage.ts';
 import { useContainersStore } from '@/stores/docker/useContainersStore';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
 import { VersionDeployButton } from '@/components/repositories/tabs/versions/VersionDeployButton.tsx';
@@ -26,10 +27,11 @@ export function RepositoryVersions({
     const t = useTranslations('repository.versions');
     const tBuilds = useTranslations('repository.builds');
 
+    const { stageId } = usePipelineStage(repositoryId);
+
     const { data } = useSWR<{ versions: Version[] }>(
-        { url: `/api/repositories/${repositoryId}/versions` },
+        stageId ? { url: `/api/repositories/${repositoryId}/versions?stage=${stageId}` } : null,
         fetcherApi,
-        { fallbackData: { versions: initialVersions } },
     );
     const versions = data?.versions ?? initialVersions;
 

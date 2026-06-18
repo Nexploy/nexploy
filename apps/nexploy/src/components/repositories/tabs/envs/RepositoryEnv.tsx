@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import useSWR from 'swr';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
@@ -19,8 +18,6 @@ import { useTranslations } from 'next-intl';
 import { ImportEnv } from './ImportEnv';
 import { usePermissions } from '@/contexts/PermissionContext';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
-import { useSelectedStage } from '@/hooks/useSelectedStage';
-import { fetcherApi } from '@/lib/api/fetcherApi';
 
 interface EnvVariable {
     id?: string;
@@ -30,9 +27,11 @@ interface EnvVariable {
 
 interface RepositoryEnvTabProps {
     repositoryId: string;
+    stageId: string;
+    envVariables: EnvVariable[];
 }
 
-export function RepositoryEnv({ repositoryId }: RepositoryEnvTabProps) {
+export function RepositoryEnv({ repositoryId, stageId, envVariables }: RepositoryEnvTabProps) {
     const router = useRouter();
     const t = useTranslations('repository.settings.envVars');
     const { can } = usePermissions();
@@ -41,13 +40,6 @@ export function RepositoryEnv({ repositoryId }: RepositoryEnvTabProps) {
     const [showValues, setShowValues] = useState<Record<string, boolean>>({});
     const bottomRef = useRef<HTMLDivElement>(null);
 
-    const { stageId } = useSelectedStage(repositoryId);
-
-    const { data: stageEnvs, isLoading: isLoadingEnvs } = useSWR<EnvVariable[]>(
-        stageId ? { url: `/api/repositories/${repositoryId}/stages/${stageId}/env` } : null,
-        fetcherApi,
-    );
-
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onEnvVariableAction,
         zodResolver(envVariableSchema),
@@ -55,8 +47,8 @@ export function RepositoryEnv({ repositoryId }: RepositoryEnvTabProps) {
             formProps: {
                 defaultValues: {
                     repositoryId,
-                    stageId: undefined,
-                    envVariables: [],
+                    stageId,
+                    envVariables,
                     deleteIds: [],
                 },
             },
@@ -65,32 +57,16 @@ export function RepositoryEnv({ repositoryId }: RepositoryEnvTabProps) {
                     toast.success(t('updated'));
                     form.reset({
                         repositoryId,
-                        stageId: stageId ?? undefined,
-                        envVariables: form.getValues('envVariables'),
+                        stageId,
+                        envVariables,
                         deleteIds: [],
                     });
-                },
-                onError: ({ error }) => {
-                    toast.error(error.serverError || t('updateError'));
                 },
             },
         },
     );
 
-    // Reload the form whenever the selected stage's variables change.
-    useEffect(() => {
-        if (!stageId || stageEnvs === undefined) return;
-        form.reset({
-            repositoryId,
-            stageId,
-            envVariables: stageEnvs,
-            deleteIds: [],
-        });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [stageId, stageEnvs]);
-
     const isSubmitting = action.status === 'executing';
-    const envVariables = form.watch('envVariables');
 
     const handleAddNew = () => {
         const currentEnvs = form.getValues('envVariables');
@@ -164,11 +140,9 @@ export function RepositoryEnv({ repositoryId }: RepositoryEnvTabProps) {
                                 <ImportEnv
                                     onImport={(vars) => {
                                         const currentEnvs = form.getValues('envVariables');
-                                        form.setValue(
-                                            'envVariables',
-                                            [...currentEnvs, ...vars],
-                                            { shouldDirty: true },
-                                        );
+                                        form.setValue('envVariables', [...currentEnvs, ...vars], {
+                                            shouldDirty: true,
+                                        });
                                     }}
                                 />
                                 <Button variant="outline" size="sm" onClick={handleAddNew}>
@@ -197,11 +171,7 @@ export function RepositoryEnv({ repositoryId }: RepositoryEnvTabProps) {
             <CardContent>
                 <Form {...form}>
                     <form onSubmit={handleSubmitWithAction}>
-                        {isLoadingEnvs ? (
-                            <div className="text-muted-foreground flex items-center justify-center gap-2 py-8 text-sm">
-                                <Loader2 className="size-4 animate-spin" />
-                            </div>
-                        ) : envVariables.length === 0 ? (
+                        {envVariables.length === 0 ? (
                             <div className="text-muted-foreground py-8 text-center text-sm">
                                 {t('noVariables')}
                             </div>

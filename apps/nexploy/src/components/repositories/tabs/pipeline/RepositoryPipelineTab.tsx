@@ -5,16 +5,19 @@ import { PipelineEditorPage } from '@/components/pipeline/PipelineEditorPage';
 
 interface RepositoryPipelineTabProps {
     repositoryId: string;
+    stageId: string;
 }
 
-export async function RepositoryPipelineTab({ repositoryId }: RepositoryPipelineTabProps) {
+export async function RepositoryPipelineTab({ repositoryId, stageId }: RepositoryPipelineTabProps) {
     const [graph, initialBuilds] = await Promise.all([
-        getPipelineConfig(repositoryId),
-        getBuildsPage(repositoryId, undefined, BUILDS_PAGE_SIZE),
+        getPipelineConfig(stageId),
+        getBuildsPage(repositoryId, stageId, undefined, BUILDS_PAGE_SIZE),
     ]);
 
     return (
         <PipelineEditorPage
+            key={stageId}
+            stageId={stageId}
             initialGraph={graph ?? { nodes: [], edges: [] }}
             initialBuilds={initialBuilds}
             initialHasMore={initialBuilds.length === BUILDS_PAGE_SIZE}

@@ -9,9 +9,12 @@ type BuildsPage = { builds: PipelineBuild[]; nextCursor: string | null };
 
 export function useBuildsInfinite(
     repositoryId: string,
+    stageId: string | null,
     initialBuilds: PipelineBuild[],
     initialHasMore: boolean,
 ) {
+    const stageQuery = stageId ? `&stage=${stageId}` : '';
+
     const fallbackData = useMemo<BuildsPage[]>(
         () => [
             {
@@ -28,12 +31,14 @@ export function useBuildsInfinite(
         (pageIndex: number, previousPageData: BuildsPage | null) => {
             if (previousPageData && !previousPageData.nextCursor) return null;
             if (pageIndex === 0)
-                return { url: `/api/repositories/${repositoryId}/builds?take=${BUILDS_PAGE_SIZE}` };
+                return {
+                    url: `/api/repositories/${repositoryId}/builds?take=${BUILDS_PAGE_SIZE}${stageQuery}`,
+                };
             return {
-                url: `/api/repositories/${repositoryId}/builds?take=${BUILDS_PAGE_SIZE}&cursor=${previousPageData!.nextCursor}`,
+                url: `/api/repositories/${repositoryId}/builds?take=${BUILDS_PAGE_SIZE}${stageQuery}&cursor=${previousPageData!.nextCursor}`,
             };
         },
-        [repositoryId],
+        [repositoryId, stageQuery],
     );
 
     const buildStartTrigger = usePipelineEditorStore((s) => s.buildStartTrigger);

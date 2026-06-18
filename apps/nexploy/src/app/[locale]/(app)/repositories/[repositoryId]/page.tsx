@@ -10,6 +10,7 @@ import { ExternalLink } from 'lucide-react';
 import { RepositoryBuildsTab } from '@/components/repositories/tabs/builds/RepositoryBuildsTab';
 import { RepositoryPipelineTab } from '@/components/repositories/tabs/pipeline/RepositoryPipelineTab';
 import { getRepositorieById } from '@/services/repository.service';
+import { getFirstStage } from '@/services/repository/deploymentStage.service';
 import { capitalizeFirstLetter } from '@/utils/capitalize';
 import { getHostname } from '@/utils/url';
 import Link from 'next/link';
@@ -22,14 +23,19 @@ interface RepositoryIdPageProps {
     params: Promise<{
         repositoryId: string;
     }>;
+    searchParams: Promise<{ stage?: string }>;
 }
 
-export default async function RepositoryIdPage({ params }: RepositoryIdPageProps) {
+export default async function RepositoryIdPage({ params, searchParams }: RepositoryIdPageProps) {
     const { repositoryId } = await params;
+    const { stage } = await searchParams;
     const repository = await getRepositorieById(repositoryId, {
         gitAccount: { include: { gitProvider: { select: { baseUrl: true } } } },
     });
     if (!repository) notFound();
+
+    const selectedStage = await getFirstStage(repository.id, stage);
+    const stageId = selectedStage?.id ?? '';
 
     const hostname = getHostname(repository.gitAccount?.gitProvider?.baseUrl);
     const ProviderIcon = PROVIDER_ICONS[repository.gitProvider];
@@ -89,10 +95,25 @@ export default async function RepositoryIdPage({ params }: RepositoryIdPageProps
 
                     <RepositoryTabs>
                         {{
-                            pipeline: <RepositoryPipelineTab repositoryId={repository.id} />,
-                            builds: <RepositoryBuildsTab repositoryId={repository.id} />,
+                            pipeline: (
+                                <RepositoryPipelineTab
+                                    repositoryId={repository.id}
+                                    stageId={stageId}
+                                />
+                            ),
+                            builds: (
+                                <RepositoryBuildsTab
+                                    repositoryId={repository.id}
+                                    stageId={stageId}
+                                />
+                            ),
                             versions: <RepositoryVersionsTab repositoryId={repository.id} />,
-                            env: <RepositoryEnvTab repositoryId={repository.id} />,
+                            env: (
+                                <RepositoryEnvTab
+                                    repositoryId={repository.id}
+                                    stageId={stageId}
+                                />
+                            ),
                             domain: <RepositoryDomainsTab repositoryId={repository.id} />,
                             setting: <RepositorySettingsTab repositoryId={repository.id} />,
                         }}

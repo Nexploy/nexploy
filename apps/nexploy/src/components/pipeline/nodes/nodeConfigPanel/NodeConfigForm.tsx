@@ -3,7 +3,11 @@
 import { useTranslations } from 'next-intl';
 import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { type Node } from '@xyflow/react';
-import { usePipelineActions, useIsViewingBuild } from '@/stores/pipeline/usePipelineStore';
+import {
+    usePipelineActions,
+    useIsViewingBuild,
+    usePipelineStageId,
+} from '@/stores/pipeline/usePipelineStore';
 import { Button } from '@workspace/ui/components/button';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { Form } from '@workspace/ui/components/form';
@@ -42,6 +46,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
     const tCommon = useTranslations('common');
 
     const params = useParams<{ repositoryId: string }>();
+    const stageId = usePipelineStageId();
     const { handleConfigChange, handleResetPanelNode } = usePipelineActions();
     const isViewingBuild = useIsViewingBuild();
     const { can } = usePermissions();
@@ -54,7 +59,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
     const hasSchema = hasConfigSchema(nodeType);
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
-        saveNodeConfigAction.bind(null, params.repositoryId, node.id),
+        saveNodeConfigAction.bind(null, params.repositoryId, stageId, node.id),
         zodResolver(schema as any),
         {
             formProps: {

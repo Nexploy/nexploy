@@ -3,8 +3,9 @@
 import { useRouter } from 'next/navigation';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowLeft, FolderGit2, Plus } from 'lucide-react';
+import { FolderGit2, Plus } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
+import { BackButton } from '@/components/shared/BackButton';
 import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { repositoryCreateFormSchema } from '@workspace/schemas-zod/repository/repositoryCreate.schema';
@@ -44,15 +45,7 @@ export default function AddRepositoryPage() {
                 </div>
 
                 <div className="mt-5 flex gap-3">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        icon={ArrowLeft}
-                        onClick={router.back}
-                        disabled={isSubmitting}
-                    >
-                        {t('back')}
-                    </Button>
+                    <BackButton disabled={isSubmitting} />
                     <Button
                         type="submit"
                         icon={Plus}

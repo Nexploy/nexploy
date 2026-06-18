@@ -8,13 +8,16 @@ import { RepositoryPayload } from '@/types/repository.type';
 import { teardownRepositoryWebhook } from '@/services/webhook/repoWebhook.service';
 import { verifyRepoAccessFromAccount } from '@/services/git/git.service';
 import { DeleteRepositoryInput } from '@workspace/schemas-zod/repository/settings/deleteRepository.schema';
-import { resolveStage } from '@/services/repository/deploymentStage.service';
+import { getFirstStage } from '@/services/repository/deploymentStage.service';
+import { getDefaultEnvironment } from '@/services/environment/environment.service';
 
 export async function createRepository(
     { repo, name, gitProvider, gitAccountId }: RepositoryCreateForm,
     ctx: { session: Session },
 ) {
     try {
+        const defaultEnvironment = await getDefaultEnvironment();
+
         const repository = await prisma.repository.create({
             data: {
                 name,
@@ -23,6 +26,13 @@ export async function createRepository(
                 gitId: repo.id,
                 repositoryUrl: repo.url,
                 userId: ctx.session.user.id,
+                stages: {
+                    create: {
+                        name: 'Production',
+                        isProduction: true,
+                        environmentId: defaultEnvironment?.id ?? null,
+                    },
+                },
             },
         });
 
@@ -202,7 +212,7 @@ export async function updateEnvVariables(
             throw new Error('Repository not found');
         }
 
-        const stage = await resolveStage(repositoryId, stageId);
+        const stage = await getFirstStage(repositoryId, stageId);
         if (!stage) {
             throw new Error('No deployment stage found for this repository');
         }

@@ -10,7 +10,7 @@ import { BuildStatus } from 'generated/client';
 import { createLog } from '@/services/repository/log.service';
 import type { Realtime } from 'inngest';
 import { createBuildChannel } from '@/inngest/channels/build.channel';
-import { resolveStage } from '@/services/repository/deploymentStage.service';
+import { getFirstStage } from '@/services/repository/deploymentStage.service';
 
 export async function startBuildRepository(
     { repositoryId, branch, stageId }: StartBuildSchemaType,
@@ -24,19 +24,19 @@ export async function startBuildRepository(
         throw new Error('Repository not found');
     }
 
+    const stage = await getFirstStage(repository.id, stageId);
+    if (!stage) {
+        throw new Error('No deployment stage found. Create a stage before starting a build.');
+    }
+
     const pipelineConfig = await prisma.pipelineConfig.findUnique({
-        where: { repositoryId: repository.id },
+        where: { stageId: stage.id },
         select: { nodes: true, edges: true },
     });
     if (!pipelineConfig) {
         throw new Error(
-            'No pipeline configuration found. Configure a pipeline before starting a build.',
+            'No pipeline configuration found for this stage. Configure a pipeline before starting a build.',
         );
-    }
-
-    const stage = await resolveStage(repository.id, stageId);
-    if (!stage) {
-        throw new Error('No deployment stage found. Create a stage before starting a build.');
     }
 
     const build = await createBuild({
@@ -248,10 +248,15 @@ export async function cancelBuildRepository(buildId: string) {
     await inngest.send({ name: 'build/cancel', data: { buildId } });
 }
 
-export async function getBuildsPage(repositoryId: string, cursor?: string, take = 20) {
+export async function getBuildsPage(
+    repositoryId: string,
+    stageId?: string,
+    cursor?: string,
+    take = 20,
+) {
     try {
         return await prisma.build.findMany({
-            where: { repositoryId },
+            where: { repositoryId, ...(stageId ? { stageId } : {}) },
             orderBy: { createdAt: 'desc' },
             take,
             ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),

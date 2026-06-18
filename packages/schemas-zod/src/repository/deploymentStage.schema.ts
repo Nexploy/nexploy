@@ -4,13 +4,8 @@ export const deploymentStageSchema = z.object({
     id: z.cuid().optional(),
     repositoryId: z.cuid(),
     name: z.string().min(1, 'Name is required'),
-    slug: z
-        .string()
-        .min(1, 'Slug is required')
-        .regex(/^[a-z0-9-]+$/, 'Slug must be lowercase alphanumeric with dashes'),
     isProduction: z.boolean().optional(),
-    order: z.number().int().min(0).optional(),
-    environmentId: z.cuid().nullish(),
+    environmentId: z.cuid('An environment is required'),
 });
 
 export const updateDeploymentStageSchema = deploymentStageSchema.extend({

@@ -9,12 +9,14 @@ import { RepositoryBuild } from '@/components/repositories/tabs/builds/Repositor
 
 interface BuildsHistoryListProps {
     repositoryId: string;
+    stageId: string | null;
     initialBuilds: Build[];
     initialHasMore: boolean;
 }
 
 export function BuildsHistoryList({
     repositoryId,
+    stageId,
     initialBuilds,
     initialHasMore,
 }: BuildsHistoryListProps) {
@@ -23,6 +25,7 @@ export function BuildsHistoryList({
 
     const { builds, hasMore, isLoadingMore, isValidating, setSize } = useBuildsInfinite(
         repositoryId,
+        stageId,
         initialBuilds,
         initialHasMore,
     );

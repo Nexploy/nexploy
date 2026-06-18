@@ -86,7 +86,8 @@
             "loading": "Chargement des logs...",
             "waitingForLogs": "En attente de logs..."
         },
-        "selectStage": "Stage à builder"
+        "selectStage": "Stage à builder",
+        "noStageSelected": "Aucune stage de déploiement sélectionnée"
     },
     "reassociateGitAccount": {
         "title": "Compte Git déconnecté",
@@ -171,7 +172,6 @@
             "title": "Variables d'environnement",
             "description": "Configurez les variables d'environnement",
             "updated": "Variables d'environnement mises à jour",
-            "updateError": "Échec de la mise à jour des variables d'environnement",
             "saveChanges": "Enregistrer",
             "addVariable": "Ajouter une variable",
             "importEnv": "Importer .env",
@@ -984,16 +984,22 @@
         "selectStage": "Stage",
         "manageTitle": "Gérer les stages",
         "manageDescription": "Configurez les stages de déploiement (pré-prod, prod, …) de ce dépôt.",
+        "stagesCount": "{count, plural, =0 {Aucun stage} one {# stage} other {# stages}}",
         "productionBadge": "Production",
+        "list": "Stages",
+        "stages": "Stages",
+        "noStages": "Aucun stage pour ce dépôt pour le moment",
+        "configuration": "Configuration",
+        "addNewStage": "Ajouter un nouveau stage",
+        "addNewStageDescription": "Créez un nouveau stage de déploiement pour ce dépôt.",
         "newStage": "Nouveau stage",
+        "editDescription": "Modifiez ce stage de déploiement.",
         "editStage": "Modifier le stage",
         "cancelEdit": "Annuler",
         "nameLabel": "Nom",
         "namePlaceholder": "Production",
-        "slugLabel": "Slug",
         "environmentLabel": "Environnement cible",
         "environmentPlaceholder": "Sélectionner un environnement",
-        "environmentDefault": "Environnement par défaut",
         "isProductionLabel": "Stage de production",
         "addStage": "Ajouter le stage",
         "saveStage": "Enregistrer",
@@ -1002,6 +1008,8 @@
         "deleteSuccess": "Stage supprimé",
         "removeTitle": "Supprimer le stage « {name} » ?",
         "removeDescription": "Le stage et ses variables seront supprimés. Cette action est irréversible.",
-        "remove": "Supprimer"
+        "remove": "Supprimer",
+        "cannotDeleteProduction": "Le stage de production ne peut pas être supprimé",
+        "environmentNotSet": "Non défini"
     }
 }

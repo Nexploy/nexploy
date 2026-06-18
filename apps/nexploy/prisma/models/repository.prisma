@@ -18,24 +18,29 @@ model Repository {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  build          Build[]
-  envVariables   EnvVariable[]
-  versions       Version[]
-  stages         DeploymentStage[]
-  pipelineConfig PipelineConfig?
+  build           Build[]
+  envVariables    EnvVariable[]
+  versions        Version[]
+  stages          DeploymentStage[]
+  pipelineConfigs PipelineConfig[]
 
   @@map("repository")
 }
 
 model PipelineConfig {
   id           String     @id @default(cuid())
-  repositoryId String     @unique
+  repositoryId String
   repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
-  nodes        Json
-  edges        Json
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
 
+  stageId String          @unique
+  stage   DeploymentStage @relation(fields: [stageId], references: [id], onDelete: Cascade)
+
+  nodes     Json
+  edges     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([repositoryId])
   @@map("pipeline_config")
 }
 

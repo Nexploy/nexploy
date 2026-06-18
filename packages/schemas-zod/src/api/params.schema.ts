@@ -7,6 +7,7 @@ export const idParamSchema = z.object({
 export const buildsQuerySchema = z.object({
     cursor: z.string().optional(),
     take: z.coerce.number().int().positive().max(100).default(20),
+    stage: z.string().optional(),
 });
 
 export const repositoryIdParamSchema = z.object({
@@ -16,6 +17,10 @@ export const repositoryIdParamSchema = z.object({
 export const stageParamSchema = z.object({
     repositoryId: z.string().min(1),
     stageId: z.string().min(1),
+});
+
+export const stageQuerySchema = z.object({
+    stage: z.string().optional(),
 });
 
 export const buildParamSchema = z.object({

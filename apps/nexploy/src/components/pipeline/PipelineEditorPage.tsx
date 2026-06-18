@@ -6,12 +6,14 @@ import { PipelineBuild } from '@workspace/typescript-interface/stores/pipelineSt
 import '@xyflow/react/dist/style.css';
 
 interface PipelineEditorPageProps {
+    stageId: string;
     initialGraph: PipelineGraph;
     initialBuilds: PipelineBuild[];
     initialHasMore: boolean;
 }
 
 export function PipelineEditorPage({
+    stageId,
     initialGraph,
     initialBuilds,
     initialHasMore,
@@ -19,6 +21,7 @@ export function PipelineEditorPage({
     return (
         <ReactFlowProvider>
             <PipelineProvider
+                stageId={stageId}
                 initialGraph={initialGraph}
                 initialBuilds={initialBuilds}
                 initialHasMore={initialHasMore}

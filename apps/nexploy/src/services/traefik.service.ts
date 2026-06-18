@@ -216,8 +216,6 @@ export async function getDomainsFromTraefikConfig(repositoryId: string): Promise
         const nexployDomains = config?.['x-nexploy-domains'] ?? {};
 
         return Object.entries(routers).map(([routerName, router]: [string, any]) => {
-            // Middleware names share the router suffix (stage segment included),
-            // only the leading prefix differs.
             const stripName = routerName.replace(/^repo-/, 'strip-');
             const addPrefixName = routerName.replace(/^repo-/, 'addprefix-');
 

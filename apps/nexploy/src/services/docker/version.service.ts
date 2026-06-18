@@ -122,10 +122,13 @@ export async function deleteVersion(repositoryId: string, imageTag: string): Pro
     }
 }
 
-export async function getVersionsByRepository(repositoryId: string): Promise<Version[]> {
+export async function getVersionsByRepository(
+    repositoryId: string,
+    stageId?: string,
+): Promise<Version[]> {
     try {
         const versions = await prisma.version.findMany({
-            where: { repositoryId },
+            where: { repositoryId, ...(stageId ? { stageId } : {}) },
             orderBy: { createdAt: 'desc' },
             include: {
                 environment: {

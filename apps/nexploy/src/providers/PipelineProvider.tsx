@@ -15,11 +15,13 @@ import { BuildTracker } from '@/components/pipeline/buildsPanel/BuildTracker';
 import { isBuildLive } from '@/utils/buildStatus';
 
 export function PipelineProvider({
+    stageId,
     initialGraph,
     initialBuilds = [],
     initialHasMore = false,
     children,
 }: {
+    stageId: string;
     initialGraph: PipelineGraph;
     initialBuilds?: PipelineBuild[];
     initialHasMore?: boolean;
@@ -31,6 +33,7 @@ export function PipelineProvider({
     if (!storeRef.current) {
         storeRef.current = createPipelineStore({
             repositoryId,
+            stageId,
             initialGraph,
             initialBuilds,
             initialHasMore,
@@ -40,6 +43,7 @@ export function PipelineProvider({
 
     const { builds, hasMore, isLoadingMore, loadMore } = useBuildsInfinite(
         repositoryId,
+        stageId,
         initialBuilds,
         initialHasMore,
     );

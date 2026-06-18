@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { ArrowLeft, Layers, Rocket, Upload } from 'lucide-react';
+import { Layers, Rocket, Upload } from 'lucide-react';
 import { Editor } from '@monaco-editor/react';
 import { useTheme } from '@wrksz/themes/client';
 import { Button } from '@workspace/ui/components/button';
@@ -21,10 +21,10 @@ import {
 import { Input } from '@workspace/ui/components/input';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
-import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { deployComposeSchema } from '@workspace/schemas-zod/docker/composes/composesAction.schema';
 import { onComposeDeployAction } from '@/actions/docker/composes/composeDeployAction';
 import { useTranslations } from 'next-intl';
+import { BackButton } from '@/components/shared/BackButton';
 
 const EDITOR_OPTIONS = {
     minimap: { enabled: false },
@@ -126,15 +126,7 @@ export default function CreateStack() {
                             </div>
                         </div>
                         <div className="mt-5 flex gap-3">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                icon={ArrowLeft}
-                                onClick={router.back}
-                                disabled={isSubmitting}
-                            >
-                                {t('back')}
-                            </Button>
+                            <BackButton disabled={isSubmitting} />
                             <Button
                                 type="submit"
                                 icon={Rocket}
@@ -146,94 +138,90 @@ export default function CreateStack() {
                         </div>
                     </div>
 
-                    <ScrollAreaWithShadow className="h-full overflow-hidden">
-                        <div className="flex flex-col gap-4 px-5 pb-5">
-                            <Card>
-                                <CardHeaderWithIcon
-                                    icon={Layers}
-                                    title={t('stackConfig')}
-                                    description={t('stackConfigDescription')}
+                    <div className="flex flex-1 flex-col gap-4 px-5 pb-5">
+                        <Card>
+                            <CardHeaderWithIcon
+                                icon={Layers}
+                                title={t('stackConfig')}
+                                description={t('stackConfigDescription')}
+                            />
+                            <CardContent>
+                                <FormField
+                                    control={form.control}
+                                    name="stackName"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>{t('stackName')}</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder={t('stackNamePlaceholder')}
+                                                    {...field}
+                                                    onChange={(e) =>
+                                                        field.onChange(
+                                                            sanitizeProjectName(e.target.value),
+                                                        )
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormDescription>
+                                                {t('stackNameDescription')}
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
                                 />
-                                <CardContent>
-                                    <FormField
-                                        control={form.control}
-                                        name="stackName"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>{t('stackName')}</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        placeholder={t('stackNamePlaceholder')}
-                                                        {...field}
-                                                        onChange={(e) =>
-                                                            field.onChange(
-                                                                sanitizeProjectName(e.target.value),
-                                                            )
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormDescription>
-                                                    {t('stackNameDescription')}
-                                                </FormDescription>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </CardContent>
-                            </Card>
+                            </CardContent>
+                        </Card>
 
-                            <Card>
-                                <CardHeaderWithIcon
-                                    icon={Layers}
-                                    title={t('composeFile')}
-                                    description={t('composeFileDescription')}
+                        <Card className={'flex-1'}>
+                            <CardHeaderWithIcon
+                                icon={Layers}
+                                title={t('composeFile')}
+                                description={t('composeFileDescription')}
+                            >
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept=".yml,.yaml,text/yaml"
+                                    className="hidden"
+                                    onChange={handleFileUpload}
+                                />
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    icon={Upload}
+                                    className="ml-auto"
+                                    onClick={() => fileInputRef.current?.click()}
                                 >
-                                    <input
-                                        ref={fileInputRef}
-                                        type="file"
-                                        accept=".yml,.yaml,text/yaml"
-                                        className="hidden"
-                                        onChange={handleFileUpload}
-                                    />
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="sm"
-                                        icon={Upload}
-                                        className="ml-auto"
-                                        onClick={() => fileInputRef.current?.click()}
-                                    >
-                                        {t('uploadFile')}
-                                    </Button>
-                                </CardHeaderWithIcon>
-                                <CardContent>
-                                    <FormField
-                                        control={form.control}
-                                        name="yaml"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormControl>
-                                                    <div className="h-[420px] overflow-hidden rounded-lg border">
-                                                        <Editor
-                                                            height="100%"
-                                                            language="yaml"
-                                                            value={field.value}
-                                                            onChange={(v) =>
-                                                                field.onChange(v ?? '')
-                                                            }
-                                                            options={EDITOR_OPTIONS}
-                                                            theme={monacoTheme}
-                                                        />
-                                                    </div>
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </CardContent>
-                            </Card>
-                        </div>
-                    </ScrollAreaWithShadow>
+                                    {t('uploadFile')}
+                                </Button>
+                            </CardHeaderWithIcon>
+                            <CardContent className="flex-1">
+                                <FormField
+                                    control={form.control}
+                                    name="yaml"
+                                    render={({ field }) => (
+                                        <FormItem className="h-full">
+                                            <FormControl>
+                                                <div className="flex-1 overflow-hidden rounded-lg border">
+                                                    <Editor
+                                                        height="100%"
+                                                        language="yaml"
+                                                        value={field.value}
+                                                        onChange={(v) => field.onChange(v ?? '')}
+                                                        options={EDITOR_OPTIONS}
+                                                        theme={monacoTheme}
+                                                    />
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </CardContent>
+                        </Card>
+                    </div>
                 </form>
             </Form>
         </div>

@@ -102,12 +102,14 @@ export const pipelineGraphSchema = z.object({
 
 export const savePipelineSchema = z.object({
     repositoryId: z.cuid(),
+    stageId: z.cuid(),
     graph: pipelineGraphSchema,
 });
 
 export type SavePipelineInput = z.infer<typeof savePipelineSchema>;
 
-export const saveNodeConfigBindArgsSchemas = [z.cuid(), z.string()] as const;
+// [repositoryId, stageId, nodeId]
+export const saveNodeConfigBindArgsSchemas = [z.cuid(), z.cuid(), z.string()] as const;
 export const saveNodeConfigInputSchema = z.record(z.string(), z.unknown());
 
 export const analyzeRepositorySchema = z.object({
@@ -117,6 +119,10 @@ export const analyzeRepositorySchema = z.object({
 
 export const savePipelineMcpSchema = z.object({
     repositoryId: z.string().min(1).describe('The ID of the repository'),
+    stageId: z
+        .string()
+        .optional()
+        .describe('Deployment stage ID (defaults to the production stage)'),
     nodes: z.array(pipelineNodeSchema).describe('Pipeline nodes'),
     edges: z.array(pipelineEdgeSchema).describe('Pipeline edges connecting nodes'),
 });

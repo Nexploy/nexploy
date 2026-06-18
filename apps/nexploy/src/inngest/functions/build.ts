@@ -87,12 +87,14 @@ export const buildFunction = inngest.createFunction(
 
             const logger = createPipelineLogger(publishLog, flushLogs);
 
-            const graph = await getPipelineConfig(config.repositoryId);
+            if (!config.stageId) {
+                throw new Error('No deployment stage associated with this build');
+            }
+
+            const graph = await getPipelineConfig(config.stageId);
 
             if (!graph) {
-                throw new Error(
-                    `No pipeline configuration found for repository: ${config.repositoryId}`,
-                );
+                throw new Error(`No pipeline configuration found for stage: ${config.stageId}`);
             }
 
             return await pipelineOrchestrator.execute(

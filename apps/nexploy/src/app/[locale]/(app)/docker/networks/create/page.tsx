@@ -3,8 +3,9 @@
 import { useRouter } from 'next/navigation';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowLeft, Network, Plus } from 'lucide-react';
+import { Network, Plus } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
+import { BackButton } from '@/components/shared/BackButton';
 import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { onNetworkCreateAction } from '@/actions/docker/network/networkCreate.action';
@@ -80,15 +81,7 @@ export default function CreateNetworkPage() {
                             </div>
                         </div>
                         <div className="mt-5 flex gap-3">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => router.back()}
-                                disabled={isSubmitting}
-                            >
-                                <ArrowLeft />
-                                {t('back')}
-                            </Button>
+                            <BackButton disabled={isSubmitting} />
                             <Button type="submit" disabled={isSubmitting}>
                                 <Plus />
                                 {isSubmitting ? t('creating') : t('createButton')}

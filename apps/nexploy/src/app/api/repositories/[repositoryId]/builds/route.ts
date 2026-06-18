@@ -14,9 +14,9 @@ export const GET = route
     .query(buildsQuerySchema)
     .handler(async (_, { params, query }) => {
         const { repositoryId } = params;
-        const { cursor, take } = query;
+        const { cursor, take, stage } = query;
 
-        const builds = await getBuildsPage(repositoryId, cursor, take);
+        const builds = await getBuildsPage(repositoryId, stage, cursor, take);
         const lastBuild = builds[builds.length - 1];
         const nextCursor = builds.length === BUILDS_PAGE_SIZE && lastBuild ? lastBuild.id : null;
 

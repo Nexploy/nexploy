@@ -1,4 +1,3 @@
-/** Result of `docker system df` as returned by the docker-api `/api/system/df` route. */
 export interface DiskUsage {
     layersSize: number;
     images: {
@@ -28,7 +27,6 @@ export interface DiskUsage {
     totalReclaimable: number;
 }
 
-/** Result of a single prune operation. */
 export interface CleanupResult {
     reclaimedSpace: number;
 }

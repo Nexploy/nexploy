@@ -13,11 +13,13 @@ export type PipelineStore = ReturnType<typeof createPipelineStore>;
 
 export function createPipelineStore({
     repositoryId,
+    stageId,
     initialGraph,
     initialBuilds,
     initialHasMore,
 }: {
     repositoryId: string;
+    stageId: string;
     initialGraph: PipelineGraph;
     initialBuilds: PipelineBuild[];
     initialHasMore: boolean;
@@ -39,6 +41,7 @@ export function createPipelineStore({
         canUndo: false,
         canRedo: false,
         repositoryId,
+        stageId,
         buildOverlays: {},
         buildNodeStatuses: {},
 
@@ -221,11 +224,15 @@ export function createPipelineStore({
         },
 
         _save: async () => {
-            const { repositoryId: repoId, nodes, edges, isSaving } = get();
+            const { repositoryId: repoId, stageId: stage, nodes, edges, isSaving } = get();
             if (isSaving) return;
             set({ isSaving: true });
             try {
-                await savePipelineAction({ repositoryId: repoId, graph: flowToGraph(nodes, edges) });
+                await savePipelineAction({
+                    repositoryId: repoId,
+                    stageId: stage,
+                    graph: flowToGraph(nodes, edges),
+                });
             } finally {
                 set({ isSaving: false });
             }

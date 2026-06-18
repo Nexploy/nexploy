@@ -21,7 +21,7 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from '@workspace/ui/components/sidebar';
-import { Check, ChevronsUpDown, MoreHorizontal, Pencil, Plus, Star, Trash } from 'lucide-react';
+import { Check, ChevronsUpDown, MoreHorizontal, Pencil, Plus, Star, Trash2 } from 'lucide-react';
 import { CreateEnvironmentForm } from '@/components/sidebar/environment/CreateEnvironmentForm';
 import { EditEnvironmentForm } from '@/components/sidebar/environment/EditEnvironmentForm';
 import { Environment } from 'generated/client';
@@ -220,7 +220,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                                                 variant="destructive"
                                                 onClick={() => handleEnvironmentDelete(environment)}
                                             >
-                                                <Trash />
+                                                <Trash2 />
                                                 {t('delete')}
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>

@@ -308,9 +308,6 @@ export class PipelineOrchestrator {
 
                     allOutputs.set(node.id, result.output ?? {});
 
-                    // Seed the stage's target environment on root nodes so every
-                    // downstream node resolves it via getFromClosestAncestor. An
-                    // explicit set-environment node closer in the branch still wins.
                     if (config.environmentId && parentsOf(node.id).length === 0) {
                         const rootOutput = allOutputs.get(node.id)!;
                         if (!('environmentId' in rootOutput)) {

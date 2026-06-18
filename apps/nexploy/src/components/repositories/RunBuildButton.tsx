@@ -1,7 +1,6 @@
 'use client';
 
 import { useAction } from 'next-safe-action/hooks';
-import { useQueryState } from 'nuqs';
 import { Button } from '@workspace/ui/components/button';
 import { Loader2, Rocket } from 'lucide-react';
 import { ComponentProps, MouseEvent } from 'react';
@@ -10,7 +9,7 @@ import { onStartBuild } from '@/actions/repository/builds/startBuild.action';
 import { useTranslations } from 'next-intl';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { usePermissions } from '@/contexts/PermissionContext';
-import { useStages } from '@/hooks/useStages';
+import { usePipelineStage } from '@/hooks/pipeline/usePipelineStage.ts';
 
 interface DeployButtonProps extends ComponentProps<typeof Button> {
     repositoryId: string;
@@ -24,8 +23,7 @@ export function RunBuildButton({ repositoryId, showText = true, ...props }: Depl
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
     const triggerBuildRefresh = usePipelineEditorStore((s) => s.triggerBuildRefresh);
 
-    const { stages } = useStages(repositoryId);
-    const [stageParam] = useQueryState('stage');
+    const { stageId } = usePipelineStage(repositoryId);
 
     const { execute, isPending } = useAction(onStartBuild, {
         onSuccess: ({ data }) => {
@@ -37,9 +35,11 @@ export function RunBuildButton({ repositoryId, showText = true, ...props }: Depl
 
     const handleDeploy = (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        const fallback = stages.find((s) => s.isProduction) ?? stages[0];
-        const stageId =
-            stageParam && stages.some((s) => s.id === stageParam) ? stageParam : fallback?.id;
+        if (!stageId) {
+            toast.error(t('noStageSelected'));
+            return;
+        }
+
         execute({ repositoryId, stageId });
     };
 

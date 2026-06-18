@@ -58,6 +58,11 @@ export function usePipelineGraph() {
     );
 }
 
+export function usePipelineStageId(): string {
+    const store = usePipelineStoreInstance();
+    return useStore(store, (s) => s.stageId);
+}
+
 export function useIsViewingBuild(): boolean {
     const store = usePipelineStoreInstance();
     const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);

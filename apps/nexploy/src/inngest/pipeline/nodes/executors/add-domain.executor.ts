@@ -4,7 +4,10 @@ import {
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
 import { addDomainConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { generateTraefikConfigForRepository, getDomainsFromTraefikConfig, } from '@/services/traefik.service';
+import {
+    generateTraefikConfigForRepository,
+    getDomainsFromTraefikConfig,
+} from '@/services/traefik.service';
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
 import { z } from 'zod';
 
@@ -34,14 +37,11 @@ export class AddDomainExecutor implements INodeExecutor {
         const stageSeg = stageId ? `${stageId}-` : '';
         const domainId = `repo-${repositoryId}-${stageSeg}${host}`;
 
-        const alreadyExists = existingDomains.some(
-            (d) => d.host === host && d.stageId === stageId,
-        );
+        const alreadyExists = existingDomains.some((d) => d.host === host && d.stageId === stageId);
         if (alreadyExists) {
             await logger.info(nodeId, `Domain already exists, overwriting config: ${host}`);
         }
 
-        // Keep domains of other stages (or other hosts) untouched.
         const otherDomains = existingDomains.filter(
             (d) => !(d.host === host && d.stageId === stageId),
         );

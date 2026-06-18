@@ -71,6 +71,7 @@ export interface PipelineStoreState {
     canUndo: boolean;
     canRedo: boolean;
     repositoryId: string;
+    stageId: string;
     buildOverlays: Record<string, Partial<PipelineBuild>>;
     buildNodeStatuses: Record<string, Record<string, NodeRunStatus>>;
 

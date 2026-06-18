@@ -127,31 +127,6 @@ export const repositoriesGroup: ToolGroup = {
         );
 
         server.registerTool(
-            'listEnvVariables',
-            {
-                description:
-                    'List all environment variables for a repository (values are decrypted).',
-                inputSchema: listBuildsSchema.shape,
-            },
-            async ({ repositoryId }) => {
-                const g = guard(ctx, 'repository', 'read');
-                if (g) return g;
-                try {
-                    const repo = await getRepositorieWithEnv(repositoryId);
-                    if (!repo) return fail(`Repository "${repositoryId}" not found`);
-                    const data = (repo.envVariables ?? []).map((v: any) => ({
-                        id: v.id,
-                        key: v.key,
-                        value: v.value,
-                    }));
-                    return ok(JSON.stringify({ count: data.length, data }));
-                } catch (e: any) {
-                    return fail(e.message);
-                }
-            },
-        );
-
-        server.registerTool(
             'triggerRepositoryBuild',
             {
                 description: 'Start a new build and deployment for a repository.',

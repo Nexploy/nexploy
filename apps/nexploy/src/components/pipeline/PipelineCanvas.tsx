@@ -23,11 +23,7 @@ import { cn } from '@workspace/ui/lib/utils';
 import { GradientEdge } from '@/components/pipeline/edges/GradientEdge';
 import { useDragAndDropFlow } from '@/hooks/useDragAndDropFlow';
 import { useAutoLayout } from '@/hooks/useAutoLayout';
-import {
-    usePipelineActions,
-    usePipelineBuilds,
-    usePipelineDisplay,
-} from '@/stores/pipeline/usePipelineStore';
+import { usePipelineActions, usePipelineBuilds, usePipelineDisplay, } from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ButtonPanel } from '@/components/pipeline/nodes/ButtonPanel';
 import { useHotkeys } from '@/lib/useHotKeys';
@@ -297,8 +293,8 @@ export function PipelineCanvas() {
                 )}
                 {displayNodes.length === 0 && (
                     <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3">
-                        <div className="border-border bg-card flex size-16 items-center justify-center rounded-2xl border">
-                            <SquareMousePointer size={28} className={'text-muted-foreground'} />
+                        <div className="border-border bg-card flex size-12 items-center justify-center rounded-lg border">
+                            <SquareMousePointer className={'text-muted-foreground'} />
                         </div>
                         <p className="text-muted-foreground mx-5 text-center text-sm">
                             {t('empty')}

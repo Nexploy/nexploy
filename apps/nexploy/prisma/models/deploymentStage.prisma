@@ -1,9 +1,7 @@
 model DeploymentStage {
   id           String  @id @default(cuid())
   name         String
-  slug         String
   isProduction Boolean @default(false)
-  order        Int     @default(0)
 
   repositoryId String
   repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
@@ -14,11 +12,11 @@ model DeploymentStage {
   envVariables EnvVariable[]
   versions     Version[]
   builds       Build[]
+  pipelineConfig PipelineConfig?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([repositoryId, slug])
   @@index([repositoryId])
   @@map("deployment_stage")
 }

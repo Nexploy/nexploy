@@ -27,10 +27,10 @@ export async function getBuildPipelineStatus(buildId: string): Promise<BuildPipe
     }
 }
 
-export async function getPipelineConfig(repositoryId: string): Promise<PipelineGraph | null> {
+export async function getPipelineConfig(stageId: string): Promise<PipelineGraph | null> {
     try {
         const config = await prisma.pipelineConfig.findUnique({
-            where: { repositoryId },
+            where: { stageId },
         });
 
         if (!config) return null;
@@ -47,14 +47,16 @@ export async function getPipelineConfig(repositoryId: string): Promise<PipelineG
 
 export async function savePipelineConfig({
     repositoryId,
+    stageId,
     graph,
 }: SavePipelineInput): Promise<void> {
     try {
         const encryptedNodes = encryptPipelineNodes(graph.nodes);
         await prisma.pipelineConfig.upsert({
-            where: { repositoryId },
+            where: { stageId },
             create: {
                 repositoryId,
+                stageId,
                 nodes: encryptedNodes as object[],
                 edges: graph.edges as object[],
             },

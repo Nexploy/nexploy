@@ -25,7 +25,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import type { CloudflareAccountInfo } from '@workspace/typescript-interface/cloudflare/cloudflare';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
-import { useSelectedStage } from '@/hooks/useSelectedStage';
+import { usePipelineStage } from '@/hooks/pipeline/usePipelineStage.ts';
 
 interface CertOption {
     id: string;
@@ -65,7 +65,7 @@ export function RepositoryDomains({
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
-    const { stageId, stages } = useSelectedStage(repositoryId);
+    const { stageId, stages } = usePipelineStage(repositoryId);
     const isProdStage = !!stages.find((s) => s.id === stageId)?.isProduction;
 
     const stageDomains = useMemo(

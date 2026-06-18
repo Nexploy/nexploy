@@ -1,22 +1,23 @@
 'use client';
 
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { Layers, Settings2 } from 'lucide-react';
+import { Settings2 } from 'lucide-react';
 
 import { Button } from '@workspace/ui/components/button';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
-
-import { useSelectedStage } from '@/hooks/useSelectedStage';
-import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import { usePipelineStage } from '@/hooks/pipeline/usePipelineStage.ts';
 import { usePermissions } from '@/contexts/PermissionContext';
-import { StageManager } from './StageManager';
+import { ButtonGroup } from '@workspace/ui/components/button-group.tsx';
 
 interface StageSelectProps {
     repositoryId: string;
@@ -24,52 +25,44 @@ interface StageSelectProps {
 
 export function StageSelect({ repositoryId }: StageSelectProps) {
     const t = useTranslations('repository.stages');
-    const { stageId, setStageId, stages } = useSelectedStage(repositoryId);
-    const { openDialog } = useConfirmationDialogStore();
+    const { stageId, setStageId, stages } = usePipelineStage(repositoryId);
     const { can } = usePermissions();
-
-    const openManager = () => {
-        openDialog({
-            title: t('manageTitle'),
-            description: t('manageDescription'),
-            content: <StageManager repositoryId={repositoryId} />,
-        });
-    };
 
     return (
         <div className="flex items-center gap-1">
-            <Layers className="text-muted-foreground size-4" />
-            <Select
-                value={stageId ?? undefined}
-                onValueChange={setStageId}
-                disabled={stages.length === 0}
-            >
-                <SelectTrigger size="sm" className="min-w-[150px]">
-                    <SelectValue placeholder={t('selectStage')} />
-                </SelectTrigger>
-                <SelectContent>
-                    {stages.map((stage) => (
-                        <SelectItem key={stage.id} value={stage.id}>
-                            {stage.name}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-            {can('repository', 'update') && (
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-8"
-                            onClick={openManager}
-                        >
-                            <Settings2 className="size-4" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>{t('manageTitle')}</TooltipContent>
-                </Tooltip>
-            )}
+            <ButtonGroup>
+                <Select
+                    value={stageId ?? ''}
+                    onValueChange={setStageId}
+                    disabled={stages.length === 0}
+                >
+                    <SelectTrigger>
+                        <SelectValue placeholder={t('selectStage')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>{t('stages')}</SelectLabel>
+                            {stages.map((stage) => (
+                                <SelectItem key={stage.id} value={stage.id}>
+                                    {stage.name}
+                                </SelectItem>
+                            ))}
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+                {can('repository', 'update') && (
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button asChild variant="outline" size="icon">
+                                <Link href={`/repositories/${repositoryId}/stages`}>
+                                    <Settings2 className="size-4" />
+                                </Link>
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>{t('manageTitle')}</TooltipContent>
+                    </Tooltip>
+                )}
+            </ButtonGroup>
         </div>
     );
 }
