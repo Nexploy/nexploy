@@ -1,7 +1,7 @@
 {
     "admin": {
         "title": "IA",
-        "description": "Configurez les intégrations IA et l'accès externe au serveur MCP",
+        "description": "Configurez l'accès externe au serveur MCP",
         "settings": {
             "title": "Paramètres",
             "description": "Configurez le comportement de l'assistant IA",

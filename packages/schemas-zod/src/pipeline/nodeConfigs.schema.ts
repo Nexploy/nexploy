@@ -466,6 +466,14 @@ export const removeDomainConfigSchema = z.object({
     host: refable(z.string().min(1, 'Host is required')).default(''),
 });
 
+// ─── Stage Orchestration ──────────────────────────────────────────────────────
+
+export const triggerStageBuildConfigSchema = z.object({
+    stageId: z.string().min(1, 'Target stage is required').default(''),
+    stageName: z.string().default(''),
+    triggerOnFailure: z.boolean().default(false),
+});
+
 export const addSslCertificateConfigSchema = z.object({
     certType: z.enum(['LETS_ENCRYPT', 'CUSTOM']).default('LETS_ENCRYPT'),
     name: z.string().min(1, 'Name is required').default(''),

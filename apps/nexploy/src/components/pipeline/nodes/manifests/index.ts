@@ -54,6 +54,7 @@ import { deleteVolumeManifest } from './delete-volume.manifest';
 import { addDomainManifest } from './add-domain.manifest';
 import { removeDomainManifest } from './remove-domain.manifest';
 import { addSslCertificateManifest } from './add-ssl-certificate.manifest';
+import { triggerStageBuildManifest } from './trigger-stage-build.manifest';
 
 export const allBuiltinManifests: NodeManifest[] = [
     // Source
@@ -131,4 +132,6 @@ export const allBuiltinManifests: NodeManifest[] = [
     addDomainManifest,
     removeDomainManifest,
     addSslCertificateManifest,
+    // Stage Orchestration
+    triggerStageBuildManifest,
 ];

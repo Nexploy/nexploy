@@ -27,9 +27,17 @@ const mcpSessions: Map<string, McpSession> = globalThis.mcpSessions ?? new Map()
 globalThis.mcpSessions = mcpSessions;
 
 async function mcpRouteHandler(request: Request): Promise<Response> {
-    const mcpAuthSession = await auth.api.getMcpSession({ headers: request.headers });
+    let userId: string | undefined;
 
-    if (!mcpAuthSession) {
+    const mcpAuthSession = await auth.api.getMcpSession({ headers: request.headers });
+    if (mcpAuthSession) {
+        userId = mcpAuthSession.userId;
+    } else {
+        const apiKeySession = await auth.api.getSession({ headers: request.headers });
+        userId = apiKeySession?.user?.id;
+    }
+
+    if (!userId) {
         return new Response(JSON.stringify({ error: 'Unauthorized' }), {
             status: 401,
             headers: {
@@ -63,14 +71,14 @@ async function mcpRouteHandler(request: Request): Promise<Response> {
 
     const [user, defaultEnv] = await Promise.all([
         prisma.user.findUnique({
-            where: { id: mcpAuthSession.userId },
+            where: { id: userId },
             select: { role: true },
         }),
         getDefaultEnvironment(),
     ]);
     const role = user?.role ?? 'read';
 
-    const server = createNexployMCPServer(mcpAuthSession.userId, role, aiSettings, defaultEnv?.id);
+    const server = createNexployMCPServer(userId, role, aiSettings, defaultEnv?.id);
 
     const transport = new WebStandardStreamableHTTPServerTransport({
         sessionIdGenerator: () => crypto.randomUUID(),

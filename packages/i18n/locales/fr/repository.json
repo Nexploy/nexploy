@@ -252,6 +252,9 @@
         "saveSuccess": "Pipeline enregistré avec succès",
         "saveError": "Échec de l'enregistrement du pipeline",
         "saving": "Enregistrement...",
+        "stageNode": {
+            "alsoOnFailure": "S'exécute même en cas d'échec"
+        },
         "saved": "Enregistré",
         "undo": "Annuler",
         "redo": "Rétablir",
@@ -523,6 +526,10 @@
                 "name": "Ajouter un certificat SSL",
                 "description": "Provisionner un certificat SSL pour un domaine"
             },
+            "trigger-stage-build": {
+                "name": "Déclencher un build de stage",
+                "description": "Lance un build sur un autre stage lorsque ce pipeline réussit"
+            },
             "cherry-pick-commit": {
                 "name": "Cherry-pick d'un commit",
                 "description": "Appliquer un commit spécifique sur la branche courante"
@@ -537,6 +544,13 @@
             }
         },
         "config": {
+            "targetStage": "Stage cible",
+            "selectTargetStage": "Sélectionner un stage",
+            "stagesLoading": "Chargement des stages...",
+            "stageUnavailable": "Stage indisponible",
+            "stageStaleWarning": "Ce stage n'est plus disponible.",
+            "noStagesFound": "Aucun autre stage disponible.",
+            "triggerOnFailure": "Déclencher même si ce pipeline échoue",
             "webhookStatusConfigured": "Webhook configuré",
             "webhookStatusNotConfigured": "Webhook non configuré",
             "webhookStatusNotConfiguredDescription": "Le webhook n'est pas encore configuré. Cliquez sur le bouton pour le configurer manuellement.",
@@ -564,7 +578,6 @@
             "triggerOn": "Déclencher sur",
             "triggerOnSuccess": "Succès",
             "triggerOnSuccessDesc": "uniquement si le pipeline s'est terminé sans erreur",
-            "triggerOnFailure": "Échec",
             "triggerOnFailureDesc": "uniquement si au moins un nœud a échoué",
             "triggerOnAlways": "Toujours",
             "triggerOnAlwaysDesc": "quel que soit le résultat du pipeline",
@@ -984,6 +997,8 @@
         "selectStage": "Stage",
         "manageTitle": "Gérer les stages",
         "manageDescription": "Configurez les stages de déploiement (pré-prod, prod, …) de ce dépôt.",
+        "infoTitle": "À quoi servent les stages de déploiement ?",
+        "infoDescription": "Les stages vous permettent de déployer un même dépôt vers plusieurs environnements isolés (par exemple pré-production et production) à partir d’une seule base de code. Chaque stage exécute son propre pipeline, son propre conteneur et son propre routage Traefik, et conserve ses variables d’environnement dédiées. Vous pouvez ainsi valider un build sur un stage de pré-prod avant de le promouvoir en production, sans jamais mélanger la configuration ni les secrets entre les environnements.",
         "stagesCount": "{count, plural, =0 {Aucun stage} one {# stage} other {# stages}}",
         "productionBadge": "Production",
         "list": "Stages",

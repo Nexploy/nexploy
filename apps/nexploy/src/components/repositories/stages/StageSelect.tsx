@@ -55,7 +55,7 @@ export function StageSelect({ repositoryId }: StageSelectProps) {
                         <TooltipTrigger asChild>
                             <Button asChild variant="outline" size="icon">
                                 <Link href={`/repositories/${repositoryId}/stages`}>
-                                    <Settings2 className="size-4" />
+                                    <Settings2 />
                                 </Link>
                             </Button>
                         </TooltipTrigger>

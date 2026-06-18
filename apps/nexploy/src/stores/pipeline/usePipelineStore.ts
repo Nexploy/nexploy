@@ -3,10 +3,7 @@
 import { useMemo } from 'react';
 import { useStore } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
-import {
-    type NodeRunStatus,
-    type PipelineGraph,
-} from '@workspace/typescript-interface/pipeline/node';
+import { type NodeRunStatus, type PipelineGraph, } from '@workspace/typescript-interface/pipeline/node';
 import { graphToFlow } from '@/components/pipeline/utils/graphConvert';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { usePipelineStoreInstance } from '@/contexts/PipelineContext';
@@ -58,7 +55,7 @@ export function usePipelineGraph() {
     );
 }
 
-export function usePipelineStageId(): string {
+export function usePipelineStageId() {
     const store = usePipelineStoreInstance();
     return useStore(store, (s) => s.stageId);
 }

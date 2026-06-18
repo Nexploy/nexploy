@@ -88,9 +88,11 @@ export type NodeId =
     // Domain & SSL
     | 'add-domain'
     | 'remove-domain'
-    | 'add-ssl-certificate';
+    | 'add-ssl-certificate'
+    // Stage Orchestration
+    | 'trigger-stage-build';
 
-export type NodeType = 'base-node' | 'large-node' | 'attach-node';
+export type NodeType = 'base-node' | 'large-node' | 'attach-node' | 'stage-node';
 
 export type NodeCategory =
     | 'source'

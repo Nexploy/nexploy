@@ -199,6 +199,8 @@ const NODE_CATEGORY: Record<string, string> = {
     'add-domain': 'deploy',
     'remove-domain': 'deploy',
     'add-ssl-certificate': 'deploy',
+    // Stage Orchestration
+    'trigger-stage-build': 'deploy',
 };
 
 export const NODE_BG_MUTED: Record<string, string> = Object.fromEntries(
@@ -278,6 +280,8 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     'add-domain': Globe,
     'remove-domain': GlobeOff,
     'add-ssl-certificate': ShieldCheck,
+    // Stage Orchestration
+    'trigger-stage-build': Workflow,
 };
 
 export const TEMPLATE_ICONS: Record<string, LucideIcon> = {

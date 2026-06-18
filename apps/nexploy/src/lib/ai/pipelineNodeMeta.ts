@@ -44,6 +44,7 @@ import {
     startContainerConfigSchema,
     stopContainerConfigSchema,
     tagImageConfigSchema,
+    triggerStageBuildConfigSchema,
     updateCommitStatusConfigSchema,
     updateServiceConfigSchema,
     validateDockerfileConfigSchema,
@@ -427,5 +428,13 @@ export const NODE_META_MAP: Record<string, NodeMeta> = {
         category: 'integration',
         description: 'Merges a branch into the current branch.',
         outputs: [],
+    },
+    'trigger-stage-build': {
+        schema: triggerStageBuildConfigSchema,
+        category: 'deploy',
+        description:
+            'Triggers a new build on another deployment stage of the same repository. Only runs when the current pipeline has succeeded — use it to promote a successful pre-prod build to production. Place it at the end of the success path.',
+        isEndNode: true,
+        outputs: ['triggered', 'triggeredStageId', 'triggeredBuildId'],
     },
 };

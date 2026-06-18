@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { Layers } from 'lucide-react';
+import { Info, Layers } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { getRepositorieById } from '@/services/repository.service';
@@ -43,6 +43,15 @@ export default async function RepositoryStagesPage({ params }: StagesPageProps) 
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="flex flex-col gap-4 px-5 pb-5">
+                        <div className="border-primary/20 bg-primary/5 flex gap-3 rounded-lg border p-4">
+                            <Info className="text-primary mt-0.5 size-5 shrink-0" />
+                            <div className="flex flex-col gap-1">
+                                <span className="text-sm font-medium">{t('infoTitle')}</span>
+                                <span className="text-muted-foreground text-sm leading-relaxed">
+                                    {t('infoDescription')}
+                                </span>
+                            </div>
+                        </div>
                         <StageList repositoryId={repositoryId} />
                     </div>
                 </ScrollAreaWithShadow>

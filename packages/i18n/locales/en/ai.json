@@ -1,7 +1,7 @@
 {
     "admin": {
         "title": "AI",
-        "description": "Configure AI integrations and external access to the MCP server",
+        "description": "Configure AI external access to the MCP server",
         "settings": {
             "title": "Settings",
             "description": "Configure AI assistant behavior",

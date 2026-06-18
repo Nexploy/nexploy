@@ -69,6 +69,8 @@ export const nodeTypeSchema = z.enum([
     'add-domain',
     'remove-domain',
     'add-ssl-certificate',
+    // Stage Orchestration
+    'trigger-stage-build',
 ]);
 
 export const pipelineNodeDataSchema = z.object({

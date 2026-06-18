@@ -4,8 +4,8 @@ import { useTranslations } from 'next-intl';
 import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { type Node } from '@xyflow/react';
 import {
-    usePipelineActions,
     useIsViewingBuild,
+    usePipelineActions,
     usePipelineStageId,
 } from '@/stores/pipeline/usePipelineStore';
 import { Button } from '@workspace/ui/components/button';
@@ -60,7 +60,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         saveNodeConfigAction.bind(null, params.repositoryId, stageId, node.id),
-        zodResolver(schema as any),
+        zodResolver(schema),
         {
             formProps: {
                 defaultValues: computeDefaultValues(schema, nodeConfig as Record<string, unknown>),

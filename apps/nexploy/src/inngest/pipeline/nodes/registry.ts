@@ -54,6 +54,7 @@ import { deleteVolumeExecutor } from './executors/delete-volume.executor';
 import { addDomainExecutor } from './executors/add-domain.executor';
 import { removeDomainExecutor } from './executors/remove-domain.executor';
 import { addSslCertificateExecutor } from './executors/add-ssl-certificate.executor';
+import { triggerStageBuildExecutor } from './executors/trigger-stage-build.executor';
 
 const executors: INodeExecutor[] = [
     // Source
@@ -132,6 +133,8 @@ const executors: INodeExecutor[] = [
     addDomainExecutor,
     removeDomainExecutor,
     addSslCertificateExecutor,
+    // Stage Orchestration
+    triggerStageBuildExecutor,
 ];
 
 const executorRegistry = new Map(executors.map((e) => [e.type, e]));
