@@ -46,8 +46,6 @@ export class TriggerStageBuildExecutor implements INodeExecutor {
 
         await logger.info(nodeId, `Triggering build on stage "${targetStage.name}"`);
 
-        const triggeredByStageId = pipelineHasFailed ? undefined : buildConfig.stageId;
-
         const triggered = await startBuildRepository(
             {
                 repositoryId: buildConfig.repositoryId,
@@ -56,7 +54,7 @@ export class TriggerStageBuildExecutor implements INodeExecutor {
             },
             buildConfig.userId,
             'manual',
-            triggeredByStageId,
+            buildConfig.stageId,
         );
 
         await logger.info(

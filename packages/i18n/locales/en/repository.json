@@ -1030,8 +1030,8 @@
         "requiredStageLabel": "Build protection",
         "requiredStagePlaceholder": "No protection",
         "requiredStageNone": "No protection",
-        "requiredStageHint": "When set, this stage can only start a build once the selected stage has a successful build.",
+        "requiredStageHint": "When set, this stage can no longer be built directly: only the selected stage can build it through its \"Trigger Stage Build\" node.",
         "protectedBadge": "Protected by {stage}",
-        "protectedTooltip": "This stage can only build after a successful build on “{stage}”."
+        "protectedTooltip": "This stage cannot be built directly — only « {stage} » can build it via its \"Trigger Stage Build\" node"
     }
 }

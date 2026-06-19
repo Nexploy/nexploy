@@ -282,17 +282,10 @@ export async function assertStageProtectionSatisfied(
         select: { name: true },
     });
 
-    const successfulBuild = await prisma.build.findFirst({
-        where: { stageId: requiredStageId, status: 'COMPLETED' },
-        select: { id: true },
-    });
-
-    if (!successfulBuild) {
-        const requiredName = requiredStage?.name ?? 'another stage';
-        throw new Error(
-            `This stage is protected: it requires a successful build on "${requiredName}" before it can build.`,
-        );
-    }
+    const requiredName = requiredStage?.name ?? 'another stage';
+    throw new Error(
+        `This stage is protected: it can only be built by the "${requiredName}" stage via its "Trigger Stage Build" node.`,
+    );
 }
 
 export async function getAllEnvsBuild(stageId: string) {

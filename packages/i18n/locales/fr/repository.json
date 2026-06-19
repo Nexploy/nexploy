@@ -1030,8 +1030,8 @@
         "requiredStageLabel": "Protection de build",
         "requiredStagePlaceholder": "Aucune protection",
         "requiredStageNone": "Aucune protection",
-        "requiredStageHint": "Lorsqu'il est défini, ce stage ne peut lancer un build qu'une fois qu'un build a réussi sur le stage sélectionné.",
+        "requiredStageHint": "Lorsqu'il est défini, ce stage ne peut plus être buildé directement : seul le stage sélectionné peut le builder via son node « Déclencher un build de stage ».",
         "protectedBadge": "Protégé par {stage}",
-        "protectedTooltip": "Ce stage ne peut être déployé qu'après un build réussi sur « {stage} »."
+        "protectedTooltip": "Ce stage ne peut pas être buildé directement — seul « {stage} » peut le builder via son node « Déclencher un build de stage »"
     }
 }
