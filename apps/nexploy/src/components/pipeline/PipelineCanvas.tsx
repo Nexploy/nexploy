@@ -32,14 +32,12 @@ import { BuildsPanel } from '@/components/pipeline/buildsPanel/BuildsPanel';
 import { LargeNode } from '@/components/pipeline/nodes/types/LargeNode';
 import { BaseNode } from '@/components/pipeline/nodes/types/BaseNode';
 import { AttachNode } from '@/components/pipeline/nodes/types/AttachNode';
-import { StageNode } from '@/components/pipeline/nodes/types/StageNode';
 import { BuildPreviewBanner } from '@/components/pipeline/BuildPreviewBanner';
 
 const nodeTypes = {
     'base-node': BaseNode,
     'large-node': LargeNode,
     'attach-node': AttachNode,
-    'stage-node': StageNode,
 };
 const edgeTypes = { 'gradient-edge': GradientEdge };
 

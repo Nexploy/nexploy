@@ -6,6 +6,7 @@ export const deploymentStageSchema = z.object({
     name: z.string().min(1, 'Name is required'),
     isProduction: z.boolean().optional(),
     environmentId: z.cuid('An environment is required'),
+    requiredStageId: z.cuid().nullable().optional(),
 });
 
 export const updateDeploymentStageSchema = deploymentStageSchema.extend({

@@ -1025,6 +1025,12 @@
         "removeDescription": "Le stage et ses variables seront supprimés. Cette action est irréversible.",
         "remove": "Supprimer",
         "cannotDeleteProduction": "Le stage de production ne peut pas être supprimé",
-        "environmentNotSet": "Non défini"
+        "environmentNotSet": "Non défini",
+        "requiredStageLabel": "Protection de build",
+        "requiredStagePlaceholder": "Aucune protection",
+        "requiredStageNone": "Aucune protection",
+        "requiredStageHint": "Lorsqu'il est défini, ce stage ne peut lancer un build qu'une fois qu'un build a réussi sur le stage sélectionné.",
+        "protectedBadge": "Protégé par {stage}",
+        "protectedTooltip": "Ce stage ne peut être déployé qu'après un build réussi sur « {stage} »."
     }
 }

@@ -3,10 +3,7 @@ import {
     DeploymentStageSchemaType,
     UpdateDeploymentStageSchemaType,
 } from '@workspace/schemas-zod/repository/deploymentStage.schema';
-import {
-    generateTraefikConfigForRepository,
-    getDomainsFromTraefikConfig,
-} from '@/services/traefik.service';
+import { generateTraefikConfigForRepository, getDomainsFromTraefikConfig, } from '@/services/traefik.service';
 
 export async function getStagesByRepository(repositoryId: string) {
     try {
@@ -21,8 +18,16 @@ export async function getStagesByRepository(repositoryId: string) {
 
 export async function getFirstStage(repositoryId: string, stageId?: string) {
     try {
+        if (stageId) {
+            const stage = await prisma.deploymentStage.findFirst({
+                where: { id: stageId, repositoryId },
+            });
+            if (stage) return stage;
+        }
+
         return await prisma.deploymentStage.findFirst({
-            where: { id: stageId, repositoryId },
+            where: { repositoryId },
+            orderBy: [{ isProduction: 'desc' }, { createdAt: 'asc' }],
         });
     } catch {
         throw new Error('Failed to resolve deployment stage');
@@ -45,6 +50,7 @@ export async function createStage(data: DeploymentStageSchemaType) {
                     name: data.name,
                     isProduction: data.isProduction ?? false,
                     environmentId: data.environmentId ?? null,
+                    requiredStageId: data.requiredStageId ?? null,
                 },
             });
         });
@@ -59,6 +65,10 @@ export async function updateStage(data: UpdateDeploymentStageSchemaType) {
     const stage = await prisma.deploymentStage.findUnique({ where: { id: data.id } });
     if (!stage) {
         throw new Error('Deployment stage not found');
+    }
+
+    if (data.requiredStageId && data.requiredStageId === data.id) {
+        throw new Error('A stage cannot require itself');
     }
 
     try {
@@ -79,6 +89,7 @@ export async function updateStage(data: UpdateDeploymentStageSchemaType) {
                     name: data.name,
                     isProduction: data.isProduction ?? stage.isProduction,
                     environmentId: data.environmentId ?? null,
+                    requiredStageId: data.requiredStageId ?? null,
                 },
             });
         });

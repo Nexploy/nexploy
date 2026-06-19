@@ -32,6 +32,8 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 import { deploymentStageSchema } from '@workspace/schemas-zod/repository/deploymentStage.schema';
 import type { DeploymentStage } from '@workspace/typescript-interface/repository/deploymentStage';
 
+const NONE_VALUE = '__none__';
+
 interface EnvironmentOption {
     id: string;
     name: string;
@@ -53,15 +55,7 @@ export function StageForm({ repositoryId, stage }: StageFormProps) {
     );
 
     const { stages } = usePipelineStage(repositoryId);
-    const copyableStages = stages.filter((s) => s.id !== stage?.id);
-
-    console.log({
-        id: stage?.id,
-        repositoryId,
-        name: stage?.name ?? '',
-        isProduction: stage?.isProduction ?? false,
-        environmentId: stage?.environmentId ?? null,
-    });
+    const protectionStages = stages.filter((s) => s.id !== stage?.id);
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         upsertStageAction,
@@ -74,6 +68,7 @@ export function StageForm({ repositoryId, stage }: StageFormProps) {
                     name: stage?.name ?? '',
                     isProduction: stage?.isProduction ?? false,
                     environmentId: stage?.environmentId ?? undefined,
+                    requiredStageId: stage?.requiredStageId ?? null,
                 },
             },
             actionProps: {
@@ -129,6 +124,44 @@ export function StageForm({ repositoryId, stage }: StageFormProps) {
                                     ))}
                                 </SelectContent>
                             </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="requiredStageId"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('requiredStageLabel')}</FormLabel>
+                            <Select
+                                value={field.value ?? NONE_VALUE}
+                                onValueChange={(value) =>
+                                    field.onChange(value === NONE_VALUE ? null : value)
+                                }
+                            >
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue
+                                            placeholder={t('requiredStagePlaceholder')}
+                                        />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectItem value={NONE_VALUE}>
+                                        {t('requiredStageNone')}
+                                    </SelectItem>
+                                    {protectionStages.map((s) => (
+                                        <SelectItem key={s.id} value={s.id}>
+                                            {s.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <p className="text-muted-foreground text-xs">
+                                {t('requiredStageHint')}
+                            </p>
                             <FormMessage />
                         </FormItem>
                     )}

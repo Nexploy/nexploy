@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { Info, Layers } from 'lucide-react';
+import { Info, Workflow } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { getRepositorieById } from '@/services/repository.service';
@@ -25,7 +25,7 @@ export default async function RepositoryStagesPage({ params }: StagesPageProps) 
                 <div className="flex justify-between gap-2 px-5">
                     <div className="flex gap-3">
                         <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                            <Layers className="text-primary size-7" />
+                            <Workflow className="text-primary size-7" />
                         </div>
                         <div className="mt-3.5 flex flex-col">
                             <h1 className="text-3xl font-semibold tracking-tight break-all">

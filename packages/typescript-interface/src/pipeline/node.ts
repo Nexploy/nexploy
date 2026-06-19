@@ -92,7 +92,7 @@ export type NodeId =
     // Stage Orchestration
     | 'trigger-stage-build';
 
-export type NodeType = 'base-node' | 'large-node' | 'attach-node' | 'stage-node';
+export type NodeType = 'base-node' | 'large-node' | 'attach-node';
 
 export type NodeCategory =
     | 'source'

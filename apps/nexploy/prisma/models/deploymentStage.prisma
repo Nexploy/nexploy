@@ -9,6 +9,10 @@ model DeploymentStage {
   environmentId String?
   environment   Environment? @relation("StageEnvironment", fields: [environmentId], references: [id], onDelete: SetNull)
 
+  requiredStageId String?
+  requiredStage   DeploymentStage?  @relation("StageProtection", fields: [requiredStageId], references: [id], onDelete: SetNull)
+  protectedStages DeploymentStage[] @relation("StageProtection")
+
   envVariables EnvVariable[]
   versions     Version[]
   builds       Build[]
@@ -18,5 +22,6 @@ model DeploymentStage {
   updatedAt DateTime @updatedAt
 
   @@index([repositoryId])
+  @@index([requiredStageId])
   @@map("deployment_stage")
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Lock, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 
@@ -32,7 +32,11 @@ export function StageCard({ stage, repositoryId }: StageCardProps) {
     const tCommon = useTranslations('common');
     const { openDialog, closeDialog } = useConfirmationDialogStore();
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
-    const { mutate } = usePipelineStage(repositoryId);
+    const { mutate, stages } = usePipelineStage(repositoryId);
+
+    const requiredStageName = stage.requiredStageId
+        ? stages.find((s) => s.id === stage.requiredStageId)?.name
+        : null;
 
     const { data: environments } = useSWR<EnvironmentOption[]>(
         { url: '/api/environments' },
@@ -80,6 +84,19 @@ export function StageCard({ stage, repositoryId }: StageCardProps) {
                     <div className="flex items-center gap-2">
                         <span className="font-medium">{stage.name}</span>
                         {stage.isProduction && <Badge>{t('productionBadge')}</Badge>}
+                        {requiredStageName && (
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Badge variant="outline" className="gap-1">
+                                        <Lock className="size-3" />
+                                        {t('protectedBadge', { stage: requiredStageName })}
+                                    </Badge>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    {t('protectedTooltip', { stage: requiredStageName })}
+                                </TooltipContent>
+                            </Tooltip>
+                        )}
                     </div>
                     <p className="text-muted-foreground text-sm">{environmentName}</p>
                 </div>

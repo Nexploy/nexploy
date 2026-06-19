@@ -1025,6 +1025,12 @@
         "removeDescription": "This will remove the stage and its scoped variables. This action cannot be undone.",
         "remove": "Delete",
         "cannotDeleteProduction": "The production stage cannot be deleted",
-        "environmentNotSet": "Not set"
+        "environmentNotSet": "Not set",
+        "requiredStageLabel": "Build protection",
+        "requiredStagePlaceholder": "No protection",
+        "requiredStageNone": "No protection",
+        "requiredStageHint": "When set, this stage can only start a build once the selected stage has a successful build.",
+        "protectedBadge": "Protected by {stage}",
+        "protectedTooltip": "This stage can only build after a successful build on “{stage}”."
     }
 }

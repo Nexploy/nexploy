@@ -9,7 +9,7 @@ export const triggerStageBuildManifest: NodeManifest = {
     type: 'trigger-stage-build',
     definition: {
         id: 'trigger-stage-build',
-        type: 'stage-node',
+        type: 'base-node',
         category: 'deploy',
         metadata: {
             name: 'trigger-stage-build.name',

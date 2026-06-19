@@ -16,6 +16,7 @@ export async function startBuildRepository(
     { repositoryId, branch, stageId }: StartBuildSchemaType,
     userId: string,
     triggerSource: 'manual' | 'webhook' = 'manual',
+    triggeredByStageId?: string,
 ) {
     const repository = await getRepositorieWithEnv(repositoryId);
 
@@ -28,6 +29,8 @@ export async function startBuildRepository(
     if (!stage) {
         throw new Error('No deployment stage found. Create a stage before starting a build.');
     }
+
+    await assertStageProtectionSatisfied(stage.id, stage.requiredStageId, triggeredByStageId);
 
     const pipelineConfig = await prisma.pipelineConfig.findUnique({
         where: { stageId: stage.id },
@@ -88,7 +91,7 @@ export async function createBuild({
     try {
         return await prisma.$transaction(async (tx) => {
             const last = await tx.build.findFirst({
-                where: { repositoryId },
+                where: { repositoryId, stageId: stageId ?? null },
                 orderBy: { number: 'desc' },
                 select: { number: true },
             });
@@ -263,6 +266,32 @@ export async function getBuildsPage(
         });
     } catch {
         throw new Error('Failed to get builds page');
+    }
+}
+
+export async function assertStageProtectionSatisfied(
+    stageId: string,
+    requiredStageId: string | null | undefined,
+    triggeredByStageId?: string,
+) {
+    if (!requiredStageId || requiredStageId === stageId) return;
+    if (triggeredByStageId && triggeredByStageId === requiredStageId) return;
+
+    const requiredStage = await prisma.deploymentStage.findUnique({
+        where: { id: requiredStageId },
+        select: { name: true },
+    });
+
+    const successfulBuild = await prisma.build.findFirst({
+        where: { stageId: requiredStageId, status: 'COMPLETED' },
+        select: { id: true },
+    });
+
+    if (!successfulBuild) {
+        const requiredName = requiredStage?.name ?? 'another stage';
+        throw new Error(
+            `This stage is protected: it requires a successful build on "${requiredName}" before it can build.`,
+        );
     }
 }
 

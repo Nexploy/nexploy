@@ -1,0 +1,91 @@
+model PipelineConfig {
+  id           String     @id @default(cuid())
+  repositoryId String
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  stageId String          @unique
+  stage   DeploymentStage @relation(fields: [stageId], references: [id], onDelete: Cascade)
+
+  nodes     Json
+  edges     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([repositoryId])
+  @@map("pipeline_config")
+}
+
+model EnvVariable {
+  id    String @id @default(cuid())
+  key   String
+  value String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  repositoryId String
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  stageId String
+  stage   DeploymentStage @relation(fields: [stageId], references: [id], onDelete: Cascade)
+
+  @@unique([stageId, key])
+  @@index([repositoryId])
+  @@map("env_variable")
+}
+
+model Build {
+  id     String      @id @default(cuid())
+  number Int         @default(1)
+  status BuildStatus @default(QUEUED)
+
+  branch           String?
+  commitHash       String?
+  commitMessage    String?
+  nodeStatuses     Json    @default("{}")
+  pipelineSnapshot Json?
+
+  log Log[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  repositoryId String
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  stageId String?
+  stage   DeploymentStage? @relation(fields: [stageId], references: [id], onDelete: SetNull)
+
+  @@unique([repositoryId, stageId, number])
+  @@index([stageId])
+  @@map("build")
+}
+
+model Log {
+  id      String   @id @default(cuid())
+  level   LogLevel @default(INFO)
+  step    String
+  message String   @db.Text
+
+  createdAt DateTime @default(now())
+
+  buildId String
+  build   Build  @relation(fields: [buildId], references: [id], onDelete: Cascade)
+
+  @@map("log")
+}
+
+enum LogLevel {
+  INFO
+  WARN
+  ERROR
+  DEBUG
+}
+
+enum BuildStatus {
+  QUEUED
+  BUILDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}

@@ -3,7 +3,9 @@
 import { cn } from '@workspace/ui/lib/utils';
 import { CATEGORY_BORDER, CATEGORY_HEX } from '@/components/pipeline/pipelineTheme';
 import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
-import { PropsWithChildren } from 'react';
+import { Position } from '@xyflow/react';
+import { CSSProperties, PropsWithChildren } from 'react';
+import { HandleGlow } from '@/components/pipeline/nodes/HandleGlow';
 import { AnimatedCircleX } from '@/components/pipeline/nodes/animations/AnimatedCircleX.tsx';
 import { AnimatedBan } from '@/components/pipeline/nodes/animations/AnimatedBan.tsx';
 import { AnimatedAlertCircle } from '@/components/pipeline/nodes/animations/AnimatedAlertCircle.tsx';
@@ -29,14 +31,14 @@ export function NodeAnimation({
 
     const rounded = square
         ? isStartNode
-            ? 'rounded-l-4xl rounded-r-2xl'
+            ? 'rounded-l-4xl rounded-r-3xl'
             : isEndNode
-              ? 'rounded-r-4xl rounded-l-2xl'
-              : 'rounded-2xl'
+              ? 'rounded-r-4xl rounded-l-3xl'
+              : 'rounded-3xl'
         : isStartNode
-          ? 'rounded-l-4xl rounded-r-2xl'
+          ? 'rounded-l-4xl rounded-r-3xl'
           : isEndNode
-            ? 'rounded-r-4xl rounded-l-2xl'
+            ? 'rounded-r-4xl rounded-l-3xl'
             : 'rounded-full';
 
     const iconRounded = square ? 'rounded-xl' : 'rounded-full';
@@ -61,6 +63,58 @@ export function NodeAnimation({
         </div>
     );
 
+    const glowFor = (position: Position, index: number, total: number): CSSProperties => {
+        const offset = total > 1 ? `${((index + 1) / (total + 1)) * 100}%` : '50%';
+        const base: CSSProperties = {
+            boxShadow: `0 0 30px 5px ${categoryHex}`,
+        };
+        switch (position) {
+            case Position.Left:
+                return { ...base, left: 0, top: offset, transform: 'translate(-50%, -50%)' };
+            case Position.Right:
+                return { ...base, right: 0, top: offset, transform: 'translate(50%, -50%)' };
+            case Position.Top:
+                return { ...base, top: 0, left: offset, transform: 'translate(-50%, -50%)' };
+            case Position.Bottom:
+            default:
+                return { ...base, bottom: 0, left: offset, transform: 'translate(-50%, 50%)' };
+        }
+    };
+
+    const attachGlowFor = (position: Position, index: number, total: number): CSSProperties => {
+        const style = glowFor(position, index, total);
+        return { ...style, transform: `${style.transform} translateX(-4rem)` };
+    };
+
+    const glows = (
+        <>
+            {data.definition.handles.inputs.map((handle, index, arr) => (
+                <HandleGlow
+                    key={`glow-in-${handle.id}`}
+                    handleType="target"
+                    handleId={handle.id}
+                    style={glowFor(handle.position, index, arr.length)}
+                />
+            ))}
+            {data.definition.handles.outputs.map((handle, index, arr) => (
+                <HandleGlow
+                    key={`glow-out-${handle.id}`}
+                    handleType="source"
+                    handleId={handle.id}
+                    style={glowFor(handle.position, index, arr.length)}
+                />
+            ))}
+            {data.definition.handles.attachments.map((attach, index, arr) => (
+                <HandleGlow
+                    key={`glow-attach-${attach.id}`}
+                    handleType="source"
+                    handleId={attach.id}
+                    style={attachGlowFor(attach.position, index, arr.length)}
+                />
+            ))}
+        </>
+    );
+
     if (data.status === 'running') {
         return (
             <div
@@ -80,9 +134,11 @@ export function NodeAnimation({
                     className={cn(
                         'bg-card relative flex items-center p-4',
                         children ? 'gap-3' : 'justify-center',
+                        'overflow-hidden',
                         rounded,
                     )}
                 >
+                    {glows}
                     {icon}
                     {children}
                     <AnimatedNodeSpinner
@@ -106,7 +162,7 @@ export function NodeAnimation({
                     : undefined
             }
             className={cn(
-                'bg-card relative flex items-center border-2 p-4 shadow-lg transition-[border-color,box-shadow] duration-300',
+                'bg-card relative flex items-center overflow-hidden border-2 p-4 shadow-lg transition-[border-color,box-shadow] duration-300',
                 children ? 'gap-3' : 'justify-center',
                 rounded,
                 data.status === 'completed'
@@ -122,6 +178,7 @@ export function NodeAnimation({
                     'border-border',
             )}
         >
+            {glows}
             {data.status === 'completed' && <AnimatedCheckCircle className={cornerClass} />}
             {data.status === 'failed' && <AnimatedCircleX className={cornerClass} />}
             {data.status === 'cancelled' && <AnimatedBan className={cornerClass} />}
