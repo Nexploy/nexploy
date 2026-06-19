@@ -1,11 +1,19 @@
 http:
   middlewares:
+    maintenance-errors:
+      errors:
+        status:
+          - "502"
+          - "503"
+          - "504"
+        service: maintenance-loopback
+        query: "/"
     redirect-to-https:
       redirectScheme:
         scheme: https
         permanent: true
     gzip-compress:
-      compress: {}
+      compress: { }
     security-headers:
       headers:
         frameDeny: true
@@ -16,3 +24,4 @@ http:
         stsSeconds: 31536000
         stsIncludeSubdomains: true
         stsPreload: true
+

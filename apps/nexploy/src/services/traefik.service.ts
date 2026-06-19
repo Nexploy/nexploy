@@ -69,8 +69,7 @@ export async function generateTraefikConfigForRepository(
         if (domain.path && domain.path !== '/') {
             rule += ` && PathPrefix(\`${domain.path}\`)`;
         }
-
-        const middlewares: string[] = [];
+        const middlewares: string[] = ['maintenance-errors@file'];
 
         if (domain.stripPath && domain.path !== '/') {
             const stripMiddlewareName = `strip-${repositoryId}-${stageSeg}${sanitizedHost}`;

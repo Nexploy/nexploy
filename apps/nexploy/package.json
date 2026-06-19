@@ -4,7 +4,7 @@
     "type": "module",
     "private": true,
     "scripts": {
-        "dev": "NODE_OPTIONS='--expose-gc --max-old-space-size=1536 --max-semi-space-size=64' tsx server.ts",
+        "dev": "NODE_OPTIONS='--expose-gc --max-old-space-size=4096 --max-semi-space-size=128' tsx server.ts",
         "build": "next build --turbopack",
         "start": "NODE_ENV=production node server.js",
         "lint": "next lint",

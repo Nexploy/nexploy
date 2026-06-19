@@ -25,8 +25,17 @@ export function TraefikEditorPanel() {
     const { theme } = useTheme();
     const monacoTheme = theme === 'dark' ? 'vs-dark' : 'vs-light';
 
-    const { savedContent, fileContent, isDiffMode, yamlError, contentLoading, setFileContent } =
-        useTraefikConfigStore();
+    const {
+        savedContent,
+        fileContent,
+        isDiffMode,
+        yamlError,
+        contentLoading,
+        selectedFile,
+        setFileContent,
+    } = useTraefikConfigStore();
+
+    const language = selectedFile?.endsWith('.html') ? 'html' : 'yaml';
 
     return (
         <div className="flex h-full min-w-0 flex-col">
@@ -52,7 +61,7 @@ export function TraefikEditorPanel() {
                     <DiffEditor
                         original={savedContent}
                         modified={fileContent}
-                        language="yaml"
+                        language={language}
                         height="100%"
                         theme={monacoTheme}
                         onMount={(editor) => {
@@ -71,7 +80,7 @@ export function TraefikEditorPanel() {
                 <div className="flex-1 overflow-hidden">
                     <Editor
                         height="100%"
-                        language="yaml"
+                        language={language}
                         value={fileContent}
                         onChange={(v) => setFileContent(v ?? '')}
                         options={EDITOR_OPTIONS}

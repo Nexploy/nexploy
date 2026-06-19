@@ -23,6 +23,8 @@ export function TraefikEditorToolbar() {
         deleteFile,
     } = useTraefikConfigStore();
 
+    const isYaml = !!selectedFile && selectedFile.endsWith('.yml');
+
     return (
         <div className="border-border flex h-9 items-center justify-between gap-2 border-b px-3">
             <div className="flex min-w-0 items-center gap-2">
@@ -65,7 +67,7 @@ export function TraefikEditorToolbar() {
                             size="icon"
                             className="size-7"
                             onClick={() => formatContent(t)}
-                            disabled={!!yamlError || !fileContent.trim()}
+                            disabled={!isYaml || !!yamlError || !fileContent.trim()}
                         >
                             <WandSparkles className="size-3.5" />
                         </Button>

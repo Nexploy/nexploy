@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
-import { Info, Workflow } from 'lucide-react';
+import { Info, Layers } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { getRepositorieById } from '@/services/repository.service';
+import { getStagesByRepository } from '@/services/repository/deploymentStage.service';
 import { StageList } from '@/components/repositories/stages/StageList';
 import { AddStageButton } from '@/components/repositories/stages/AddStageButton';
 import { BackButton } from '@/components/shared/BackButton';
@@ -17,6 +18,8 @@ export default async function RepositoryStagesPage({ params }: StagesPageProps) 
     const repository = await getRepositorieById(repositoryId);
     if (!repository) notFound();
 
+    const stages = await getStagesByRepository(repositoryId);
+
     const t = await getTranslations('repository.stages');
 
     return (
@@ -25,7 +28,7 @@ export default async function RepositoryStagesPage({ params }: StagesPageProps) 
                 <div className="flex justify-between gap-2 px-5">
                     <div className="flex gap-3">
                         <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                            <Workflow className="text-primary size-7" />
+                            <Layers className="text-primary size-7" />
                         </div>
                         <div className="mt-3.5 flex flex-col">
                             <h1 className="text-3xl font-semibold tracking-tight break-all">
@@ -52,7 +55,7 @@ export default async function RepositoryStagesPage({ params }: StagesPageProps) 
                                 </span>
                             </div>
                         </div>
-                        <StageList repositoryId={repositoryId} />
+                        <StageList repositoryId={repositoryId} stages={stages} />
                     </div>
                 </ScrollAreaWithShadow>
             </div>

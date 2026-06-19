@@ -18,6 +18,10 @@ function fileUrl(relPath: string): string {
     return `/api/admin/traefik/${segments}`;
 }
 
+function isYamlFile(name: string | null): boolean {
+    return !!name && name.endsWith('.yml');
+}
+
 export interface TraefikConfigState {
     tree: TraefikTreeNode[];
     selectedFile: string | null;
@@ -67,7 +71,7 @@ export function createTraefikConfigStore(initialTree: TraefikTreeNode[]) {
                     fileContent: data.content,
                     savedContent: data.content,
                     selectedFile: name,
-                    yamlError: validateYaml(data.content),
+                    yamlError: isYamlFile(name) ? validateYaml(data.content) : null,
                 });
             } finally {
                 set({ contentLoading: false });
@@ -107,7 +111,7 @@ export function createTraefikConfigStore(initialTree: TraefikTreeNode[]) {
         },
 
         setFileContent: (content) => {
-            const error = validateYaml(content);
+            const error = isYamlFile(get().selectedFile) ? validateYaml(content) : null;
             set({ fileContent: content, yamlError: error });
 
             if (autoSaveTimer) {
@@ -199,8 +203,8 @@ export function createTraefikConfigStore(initialTree: TraefikTreeNode[]) {
         },
 
         formatContent: (t) => {
-            const { yamlError, fileContent } = get();
-            if (yamlError || !fileContent.trim()) return;
+            const { yamlError, fileContent, selectedFile } = get();
+            if (!isYamlFile(selectedFile) || yamlError || !fileContent.trim()) return;
             try {
                 const formatted = formatYaml(fileContent);
                 set({ fileContent: formatted, yamlError: null });

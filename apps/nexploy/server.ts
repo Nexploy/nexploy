@@ -156,7 +156,7 @@ function matchAndTransformWsUrl(pathname: string): MatchResult {
 pruneTurbopackCache();
 
 app.prepare().then(() => {
-    const HEAP_SOFT_LIMIT_MB = Number(process.env.HEAP_SOFT_LIMIT_MB ?? 1400);
+    const HEAP_SOFT_LIMIT_MB = Number(process.env.HEAP_SOFT_LIMIT_MB ?? 3200);
     if (typeof (global as any).gc === 'function') {
         const timer = setInterval(() => {
             const heapUsedMb = process.memoryUsage().heapUsed / 1024 / 1024;

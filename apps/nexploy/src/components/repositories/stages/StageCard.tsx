@@ -1,6 +1,5 @@
 'use client';
 
-import useSWR from 'swr';
 import { Lock, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
@@ -8,43 +7,34 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
-import { fetcherApi } from '@/lib/api/fetcherApi';
+import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
-import { usePipelineStage } from '@/hooks/pipeline/usePipelineStage.ts';
 import { deleteStageAction } from '@/actions/repository/stages/deleteStage.action';
 import { StageForm } from '@/components/repositories/stages/StageForm';
 import { Can } from '@/components/permission/Can';
-import type { DeploymentStage } from '@workspace/typescript-interface/repository/deploymentStage';
-
-interface EnvironmentOption {
-    id: string;
-    name: string;
-}
+import { DeploymentStage } from 'generated/client';
 
 interface StageCardProps {
     stage: DeploymentStage;
+    stages: DeploymentStage[];
     repositoryId: string;
 }
 
-export function StageCard({ stage, repositoryId }: StageCardProps) {
+export function StageCard({ stage, stages, repositoryId }: StageCardProps) {
     const t = useTranslations('repository.stages');
     const tCommon = useTranslations('common');
     const { openDialog, closeDialog } = useConfirmationDialogStore();
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
-    const { mutate, stages } = usePipelineStage(repositoryId);
 
     const requiredStageName = stage.requiredStageId
         ? stages.find((s) => s.id === stage.requiredStageId)?.name
         : null;
 
-    const { data: environments } = useSWR<EnvironmentOption[]>(
-        { url: '/api/environments' },
-        fetcherApi,
-    );
+    const environments = useEnvironmentStore((state) => state.environments);
 
     const environmentName = stage.environmentId
-        ? (environments?.find((env) => env.id === stage.environmentId)?.name ?? stage.environmentId)
+        ? (environments.find((env) => env.id === stage.environmentId)?.name ?? stage.environmentId)
         : t('environmentNotSet');
 
     const handleEdit = () => {
@@ -54,7 +44,6 @@ export function StageCard({ stage, repositoryId }: StageCardProps) {
             content: <StageForm repositoryId={repositoryId} stage={stage} />,
             onSuccess: () => {
                 closeDialog();
-                mutate();
             },
         });
     };
@@ -72,7 +61,6 @@ export function StageCard({ stage, repositoryId }: StageCardProps) {
                     return;
                 }
                 toast.success(t('deleteSuccess'));
-                await mutate();
             },
         });
     };

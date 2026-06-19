@@ -14,7 +14,7 @@ export const upsertStageAction = authActionServer
             const stage = parsedInput.id
                 ? await updateStage({ ...parsedInput, id: parsedInput.id })
                 : await createStage(parsedInput);
-            revalidatePath('/repositories/[repositoryId]', 'page');
+            revalidatePath('/repositories/[repositoryId]/stages', 'page');
             return stage;
         } catch (error: unknown) {
             if (error instanceof Error) {

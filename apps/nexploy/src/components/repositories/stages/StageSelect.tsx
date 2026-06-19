@@ -18,6 +18,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { usePipelineStage } from '@/hooks/pipeline/usePipelineStage.ts';
 import { usePermissions } from '@/contexts/PermissionContext';
 import { ButtonGroup } from '@workspace/ui/components/button-group.tsx';
+import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore.ts';
 
 interface StageSelectProps {
     repositoryId: string;
@@ -27,6 +28,8 @@ export function StageSelect({ repositoryId }: StageSelectProps) {
     const t = useTranslations('repository.stages');
     const { stageId, setStageId, stages } = usePipelineStage(repositoryId);
     const { can } = usePermissions();
+
+    const environments = useEnvironmentStore((state) => state.environments);
 
     return (
         <div className="flex items-center gap-1">
@@ -42,11 +45,22 @@ export function StageSelect({ repositoryId }: StageSelectProps) {
                     <SelectContent>
                         <SelectGroup>
                             <SelectLabel>{t('stages')}</SelectLabel>
-                            {stages.map((stage) => (
-                                <SelectItem key={stage.id} value={stage.id}>
-                                    {stage.name}
-                                </SelectItem>
-                            ))}
+                            {stages.map((stage) => {
+                                const environmentName = stage.environmentId
+                                    ? (environments.find((env) => env.id === stage.environmentId)
+                                          ?.name ?? stage.environmentId)
+                                    : t('environmentNotSet');
+                                return (
+                                    <SelectItem key={stage.id} value={stage.id}>
+                                        <div className="flex items-center gap-1">
+                                            <span>{stage.name}</span>
+                                            <span className={'text-muted-foreground text-xs'}>
+                                                ({environmentName})
+                                            </span>
+                                        </div>
+                                    </SelectItem>
+                                );
+                            })}
                         </SelectGroup>
                     </SelectContent>
                 </Select>

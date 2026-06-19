@@ -90,8 +90,8 @@ export function NodeAnimation({
                         categoryHex={categoryHex!}
                         className={cn(
                             'absolute',
-                            square ? 'top-1 right-1' : 'top-[11px] right-[11px]',
-                            isEndNode && 'top-1 left-1',
+                            square ? 'top-[9px] right-[9px]' : 'top-[13px] right-[13px]',
+                            isEndNode && 'top-[9px] left-[9px]',
                         )}
                     />
                 </div>

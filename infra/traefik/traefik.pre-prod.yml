@@ -24,8 +24,17 @@ entryPoints:
         certResolver: letsencrypt
         options: default
 
+  maintenance:
+    address: ":8090"
+
   ping:
     address: ":8082"
+
+experimental:
+  plugins:
+    staticresponse:
+      moduleName: "github.com/jdel/staticresponse"
+      version: "v0.0.1"
 
 providers:
   docker:

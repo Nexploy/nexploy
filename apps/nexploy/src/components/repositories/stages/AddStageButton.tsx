@@ -1,12 +1,12 @@
 'use client';
 
 import { Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@workspace/ui/components/button';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { usePermissions } from '@/contexts/PermissionContext';
-import { usePipelineStage } from '@/hooks/pipeline/usePipelineStage.ts';
 import { StageForm } from '@/components/repositories/stages/StageForm';
 
 interface AddStageButtonProps {
@@ -16,7 +16,7 @@ interface AddStageButtonProps {
 export function AddStageButton({ repositoryId }: AddStageButtonProps) {
     const { can } = usePermissions();
     const { openDialog, closeDialog } = useConfirmationDialogStore();
-    const { mutate } = usePipelineStage(repositoryId);
+    const router = useRouter();
     const t = useTranslations('repository.stages');
 
     if (!can('repository', 'update')) return null;
@@ -28,7 +28,7 @@ export function AddStageButton({ repositoryId }: AddStageButtonProps) {
             content: <StageForm repositoryId={repositoryId} />,
             onSuccess: () => {
                 closeDialog();
-                mutate();
+                router.refresh();
             },
         });
     };

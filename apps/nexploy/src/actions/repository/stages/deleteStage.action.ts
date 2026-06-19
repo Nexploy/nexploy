@@ -12,7 +12,7 @@ export const deleteStageAction = authActionServer
     .action(async ({ parsedInput }) => {
         try {
             await deleteStage(parsedInput.id);
-            revalidatePath('/repositories/[repositoryId]', 'page');
+            revalidatePath('/repositories/[repositoryId]/stages', 'page');
         } catch (error: unknown) {
             if (error instanceof Error) {
                 await setToastServer({ type: 'error', message: error.message });

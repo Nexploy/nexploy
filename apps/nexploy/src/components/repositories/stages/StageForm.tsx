@@ -20,7 +20,10 @@ import { DialogFooter } from '@workspace/ui/components/dialog';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
+    SelectSeparator,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -30,9 +33,7 @@ import { upsertStageAction } from '@/actions/repository/stages/upsertStage.actio
 import { usePipelineStage } from '@/hooks/pipeline/usePipelineStage.ts';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { deploymentStageSchema } from '@workspace/schemas-zod/repository/deploymentStage.schema';
-import type { DeploymentStage } from '@workspace/typescript-interface/repository/deploymentStage';
-
-const NONE_VALUE = '__none__';
+import { DeploymentStage } from 'generated/client';
 
 interface EnvironmentOption {
     id: string;
@@ -110,18 +111,26 @@ export function StageForm({ repositoryId, stage }: StageFormProps) {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>{t('environmentLabel')}</FormLabel>
-                            <Select value={field.value ?? undefined} onValueChange={field.onChange}>
+                            <Select
+                                value={field.value ?? ''}
+                                onValueChange={(value) =>
+                                    field.onChange(value === '' ? undefined : value)
+                                }
+                            >
                                 <FormControl>
                                     <SelectTrigger>
                                         <SelectValue placeholder={t('environmentPlaceholder')} />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    {(environments ?? []).map((env) => (
-                                        <SelectItem key={env.id} value={env.id}>
-                                            {env.name}
-                                        </SelectItem>
-                                    ))}
+                                    <SelectGroup>
+                                        <SelectLabel>{t('environmentLabel')}</SelectLabel>
+                                        {(environments ?? []).map((env) => (
+                                            <SelectItem key={env.id} value={env.id}>
+                                                {env.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
                                 </SelectContent>
                             </Select>
                             <FormMessage />
@@ -136,27 +145,29 @@ export function StageForm({ repositoryId, stage }: StageFormProps) {
                         <FormItem>
                             <FormLabel>{t('requiredStageLabel')}</FormLabel>
                             <Select
-                                value={field.value ?? NONE_VALUE}
+                                value={field.value ?? '__NONE__'}
                                 onValueChange={(value) =>
-                                    field.onChange(value === NONE_VALUE ? null : value)
+                                    field.onChange(value === '__NONE__' ? null : value)
                                 }
                             >
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue
-                                            placeholder={t('requiredStagePlaceholder')}
-                                        />
+                                        <SelectValue placeholder={t('requiredStagePlaceholder')} />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value={NONE_VALUE}>
-                                        {t('requiredStageNone')}
-                                    </SelectItem>
-                                    {protectionStages.map((s) => (
-                                        <SelectItem key={s.id} value={s.id}>
-                                            {s.name}
+                                    <SelectGroup>
+                                        <SelectLabel>{t('requiredStageLabel')}</SelectLabel>
+                                        <SelectItem value={'__NONE__'}>
+                                            {t('requiredStageNone')}
                                         </SelectItem>
-                                    ))}
+                                        <SelectSeparator />
+                                        {protectionStages.map((s) => (
+                                            <SelectItem key={s.id} value={s.id}>
+                                                {s.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
                                 </SelectContent>
                             </Select>
                             <p className="text-muted-foreground text-xs">

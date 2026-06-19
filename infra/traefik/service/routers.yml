@@ -3,7 +3,40 @@ http:
     http-catchall:
       entryPoints:
         - web
-      rule: HostRegexp(`{host:.+}`)
+      rule: HostRegexp(`^.+$`)
       middlewares:
         - redirect-to-https
       service: noop@internal
+
+    maintenance-catchall-web:
+      entryPoints:
+        - web
+      rule: PathPrefix(`/`)
+      priority: 1
+      middlewares:
+        - maintenance@file
+      service: noop@internal
+
+    maintenance-catchall-websecure:
+      entryPoints:
+        - websecure
+      rule: PathPrefix(`/`)
+      priority: 1
+      middlewares:
+        - maintenance@file
+      service: noop@internal
+      tls: {}
+
+    maintenance-page:
+      entryPoints:
+        - maintenance
+      rule: PathPrefix(`/`)
+      middlewares:
+        - maintenance@file
+      service: noop@internal
+
+  services:
+    maintenance-loopback:
+      loadBalancer:
+        servers:
+          - url: "http://127.0.0.1:8090"
