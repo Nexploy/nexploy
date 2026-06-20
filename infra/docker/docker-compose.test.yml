@@ -1,0 +1,35 @@
+name: nexploy_test
+services:
+  postgres:
+    image: postgres:18.0
+    container_name: nexploy_postgres_test
+    ports:
+      - "5434:5432"
+    environment:
+      - "POSTGRES_DB=nexploy_test"
+      - "POSTGRES_USER=nexploy"
+      - "POSTGRES_PASSWORD=nexploy"
+    tmpfs:
+      - /var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U nexploy -d nexploy_test" ]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  # Isolated, throwaway Docker daemon that docker-api drives during E2E, so the
+  # front-end exercises real Docker operations without touching the host's Docker.
+  dind:
+    image: docker:28-dind
+    container_name: nexploy_dind_test
+    privileged: true
+    command: [ "--tls=false" ]
+    environment:
+      - DOCKER_TLS_CERTDIR=
+    ports:
+      - "12375:2375"
+    healthcheck:
+      test: [ "CMD", "docker", "info" ]
+      interval: 2s
+      timeout: 3s
+      retries: 40

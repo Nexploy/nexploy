@@ -42,3 +42,10 @@ infra/traefik/logs/
 acme.json
 infra/traefik/service/acme.json
 *.log
+
+# Playwright E2E (repo root)
+/.e2e-logs/
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/playwright/.auth/

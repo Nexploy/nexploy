@@ -7,6 +7,7 @@ const rootPackage = JSON.parse(fs.readFileSync(path.resolve(__dirname, './packag
 
 const nextConfig: NextConfig = {
     output: 'standalone',
+    distDir: process.env.NEXT_DIST_DIR || '.next',
     env: {
         appVersion: rootPackage.version,
     },
