@@ -18,7 +18,7 @@ test('container interactions through the UI', async ({ page }) => {
     await test.step('open the container detail page', async () => {
         await page.goto('/docker/containers');
         await page.getByRole('link', { name: CONTAINER }).click();
-        await expect(page).toHaveURL(/\/docker\/containers\/[a-f0-9]+/);
+        await expect(page).toHaveURL(/\/docker\/containers\/[a-f0-9]+/, ACT);
         await expect(page.getByRole('heading', { name: CONTAINER })).toBeVisible(ACT);
     });
 

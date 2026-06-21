@@ -1,18 +1,4 @@
 #!/usr/bin/env bash
-#
-# Full-stack E2E orchestrator.
-#
-#   ./scripts/e2e.sh           # boot everything + run the Playwright suite + tear down
-#   ./scripts/e2e.sh --ui      # same, Playwright UI mode (args passed through)
-#   ./scripts/e2e.sh up        # only boot the stack (DB + DinD + nexploy + docker-api)
-#   ./scripts/e2e.sh down      # tear the stack down
-#
-# Brings up an isolated stack so the front-end can exercise the WHOLE app,
-# including everything served by docker-api:
-#   - throwaway Postgres (5434)         — never touches dev data
-#   - throwaway Docker-in-Docker (12375) — docker-api drives this, not the host Docker
-#   - nexploy (3022) + docker-api (3300) wired together with the seeded API key
-#
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -30,8 +16,6 @@ export DOCKER_API_URL="http://localhost:${DOCKER_API_PORT}"
 
 compose() { docker compose -f "$COMPOSE_FILE" "$@"; }
 
-# Sample resources created directly on the DinD daemon so each Docker page in the
-# UI has real, predictable data to display (proving the front -> docker-api path).
 seed_dind() {
     local D="docker -H tcp://127.0.0.1:12375"
     echo "▶ Seeding DinD with sample resources…"
@@ -41,6 +25,9 @@ seed_dind() {
     $D run -d --name e2e-actions-container alpine:latest sleep 3600 >/dev/null 2>&1 || true
     $D volume create e2e-sample-volume >/dev/null 2>&1 || true
     $D network create e2e-sample-network >/dev/null 2>&1 || true
+    docker exec nexploy_dind_test docker swarm init --advertise-addr eth0 >/dev/null 2>&1 \
+        || docker exec nexploy_dind_test docker swarm init >/dev/null 2>&1 || true
+    $D service create --name e2e-sample-service --replicas 1 alpine:latest sleep 3600 >/dev/null 2>&1 || true
 }
 
 kill_port() {
@@ -89,13 +76,9 @@ stack_up() {
     export DOCKER_API_KEY="$API_KEY"
 
     echo "▶ Pointing the default Docker environment at the DinD daemon…"
-    # Prisma 7 reads the datasource URL from prisma.config.ts (env DATABASE_URL).
     printf "UPDATE environment SET \"connectionType\"='TCP', host='127.0.0.1', port=12375, \"socketPath\"=NULL WHERE \"isDefault\"=true;" \
         | (cd "$APP_DIR" && pnpm exec prisma db execute --stdin)
 
-    # Run each server from its own package dir (NOT `pnpm --filter` from root:
-    # the repo root package is also named "nexploy", so a root filter would run
-    # the root `turbo run dev` and start a conflicting second server).
     echo "▶ Starting nexploy (:$NEXPLOY_PORT)…"
     kill_port "$NEXPLOY_PORT"
     (cd "$APP_DIR" && pnpm dev >"$LOG_DIR/nexploy.log" 2>&1) &
@@ -104,8 +87,15 @@ stack_up() {
     echo "▶ Starting docker-api (:$DOCKER_API_PORT)…"
     kill_port "$DOCKER_API_PORT"
     (cd "$REPO_ROOT/apps/docker-api" && PORT="$DOCKER_API_PORT" pnpm dev >"$LOG_DIR/docker-api.log" 2>&1) &
-    # /api/system/df returning 200 proves docker-api -> DinD + auth all work.
     wait_for "docker-api" "$DOCKER_API_URL/api/system/df" "$API_KEY"
+
+    echo "▶ Warming up pages…"
+    for path in /setup /signin /repositories /repositories/create \
+        /docker/containers /docker/images /docker/volumes /docker/networks \
+        /docker/volumes/create /docker/networks/create /docker/images/pull \
+        /docker/containers/stacks/create /swarm; do
+        curl -s "$NEXPLOY_API_URL$path" >/dev/null 2>&1 || true
+    done
 }
 
 stack_down() {
@@ -117,7 +107,6 @@ stack_down() {
     rm -rf "$APP_DIR/$NEXT_DIST_DIR"
 }
 
-# Tears the stack down on exit while preserving the test exit code (for CI).
 cleanup() {
     local code=$?
     stack_down || true
