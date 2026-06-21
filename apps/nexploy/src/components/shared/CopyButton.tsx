@@ -28,7 +28,11 @@ export default function CopyButton({
     };
 
     return (
-        <Button {...props} onClick={handleCopy} variant={copied ? 'default' : 'outline'}>
+        <Button
+            {...props}
+            onClick={handleCopy}
+            variant={copied ? 'default' : (props.variant ?? 'outline')}
+        >
             <span className="relative inline-flex items-center justify-center">
                 <Copy
                     className={`size-[60%] transition-all duration-300 ${

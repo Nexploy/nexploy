@@ -20,11 +20,6 @@ export interface CloudflareApiResponse<T> {
     result: T;
 }
 
-export interface CloudflareCredentialInfo {
-    isConnected: boolean;
-    createdAt?: Date;
-}
-
 export interface CloudflareAccountInfo {
     id: string;
     displayName: string;

@@ -166,7 +166,13 @@
             "removeTitle": "Supprimer le domaine",
             "removeDescription": "Êtes-vous sûr de vouloir supprimer {host} ? Cette action est irréversible.",
             "remove": "Supprimer",
-            "removeSuccess": "Domaine supprimé avec succès"
+            "removeSuccess": "Domaine supprimé avec succès",
+            "created": "Domaine ajouté avec succès",
+            "addTitle": "Ajouter un domaine",
+            "addDescription": "Configurez un nouveau domaine pour exposer votre application.",
+            "addDomain": "Ajouter le domaine",
+            "editTitle": "Modifier le domaine",
+            "editDescription": "Mettez à jour la configuration de {host}."
         },
         "envVars": {
             "title": "Variables d'environnement",
@@ -184,7 +190,19 @@
             "removeDescription": "Êtes-vous sûr de vouloir supprimer {key} ? Cette action est irréversible.",
             "cancel": "Annuler",
             "remove": "Supprimer",
-            "removeSuccess": "Variable supprimée avec succès"
+            "removeSuccess": "Variable supprimée avec succès",
+            "created": "Variable ajoutée avec succès",
+            "addTitle": "Ajouter une variable",
+            "addDescription": "Ajoutez une nouvelle variable d'environnement pour votre application.",
+            "editTitle": "Modifier la variable",
+            "editDescription": "Mettez à jour la valeur de {key}.",
+            "key": "Clé",
+            "value": "Valeur",
+            "copy": "Copier la valeur",
+            "copied": "Valeur copiée dans le presse-papiers",
+            "copyError": "Échec de la copie de la valeur",
+            "show": "Afficher la valeur",
+            "hide": "Masquer la valeur"
         },
         "source": {
             "connect": "Connecter {provider}",

@@ -112,7 +112,7 @@ export function CardInfoDetail() {
                                             text={field.value as string}
                                             className="size-6 shrink-0"
                                             size="icon"
-                                            variant="ghost"
+                                            variant="outline"
                                         />
                                     )}
                                 </div>

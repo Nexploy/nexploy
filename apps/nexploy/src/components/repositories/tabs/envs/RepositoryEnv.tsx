@@ -1,23 +1,22 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useAction } from 'next-safe-action/hooks';
 import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input';
 import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
-import { Form, FormControl, FormField, FormItem } from '@workspace/ui/components/form';
-import { Eye, EyeOff, Key, Loader2, Plus, Save, Trash2 } from 'lucide-react';
+import { Eye, EyeOff, Key, Pencil, Plus, Trash2 } from 'lucide-react';
 import { onEnvVariableAction } from '@/actions/repository/updateEnvVariables.action';
 import { deleteEnvVariableAction } from '@/actions/repository/deleteEnvVariable.action';
-import { envVariableSchema } from '@workspace/schemas-zod/repository/envVariable.schema';
 import { toast } from 'sonner';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import { ImportEnv } from './ImportEnv';
+import { EnvVariableForm } from './EnvVariableForm';
 import { usePermissions } from '@/contexts/PermissionContext';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import CopyButton from '@/components/shared/CopyButton.tsx';
 
 interface EnvVariable {
     id?: string;
@@ -37,92 +36,71 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
     const { can } = usePermissions();
     const canEdit = can('environment', 'update');
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
+    const { openDialog, closeDialog } = useConfirmationDialogStore();
     const [showValues, setShowValues] = useState<Record<string, boolean>>({});
-    const bottomRef = useRef<HTMLDivElement>(null);
+    const [copiedId, setCopiedId] = useState<string | null>(null);
 
-    const { form, action, handleSubmitWithAction } = useHookFormAction(
-        onEnvVariableAction,
-        zodResolver(envVariableSchema),
-        {
-            formProps: {
-                defaultValues: {
-                    repositoryId,
-                    stageId,
-                    envVariables,
-                    deleteIds: [],
-                },
-            },
-            actionProps: {
-                onSuccess: () => {
-                    toast.success(t('updated'));
-                    form.reset({
-                        repositoryId,
-                        stageId,
-                        envVariables,
-                        deleteIds: [],
-                    });
-                },
-            },
+    const { execute: importVariables } = useAction(onEnvVariableAction, {
+        onSuccess: () => {
+            router.refresh();
         },
-    );
-
-    const isSubmitting = action.status === 'executing';
+    });
 
     const handleAddNew = () => {
-        const currentEnvs = form.getValues('envVariables');
-        form.setValue('envVariables', [...currentEnvs, { key: '', value: '' }]);
-        setTimeout(
-            () => bottomRef.current?.scrollIntoView({ behavior: 'instant', block: 'end' }),
-            0,
-        );
+        openDialog({
+            title: t('addTitle'),
+            description: t('addDescription'),
+            content: <EnvVariableForm repositoryId={repositoryId} stageId={stageId} />,
+            onSuccess: () => {
+                closeDialog();
+                router.refresh();
+            },
+        });
     };
 
-    const handleRemove = (index: number) => {
-        const currentEnvs = form.getValues('envVariables');
-        const env = currentEnvs[index];
-        if (!env) return;
+    const handleEdit = (variable: EnvVariable) => {
+        openDialog({
+            title: t('editTitle'),
+            description: t('editDescription', { key: variable.key }),
+            content: (
+                <EnvVariableForm
+                    repositoryId={repositoryId}
+                    stageId={stageId}
+                    variable={variable}
+                />
+            ),
+            onSuccess: () => {
+                closeDialog();
+                router.refresh();
+            },
+        });
+    };
 
-        const key = env.key || t('keyPlaceholder');
-
-        if (!env.id) {
-            form.setValue(
-                'envVariables',
-                currentEnvs.filter((_, i) => i !== index),
-                { shouldDirty: true },
-            );
-            return;
-        }
-
+    const handleRemove = (variable: EnvVariable) => {
+        if (!variable.id) return;
         openAlertDialog({
             title: t('removeTitle'),
-            description: t('removeDescription', { key }),
+            description: t('removeDescription', { key: variable.key || t('keyPlaceholder') }),
             cancelLabel: t('cancel'),
             actionLabel: t('remove'),
             onAction: async () => {
                 const result = await deleteEnvVariableAction({
                     repositoryId,
-                    envVariableId: env.id!,
+                    envVariableId: variable.id!,
                 });
                 if (result?.serverError) {
                     toast.error(result.serverError);
                     return;
                 }
-                form.setValue(
-                    'envVariables',
-                    currentEnvs.filter((_, i) => i !== index),
-                    { shouldDirty: false },
-                );
                 toast.success(t('removeSuccess'));
                 router.refresh();
             },
         });
     };
 
-    const toggleShowValue = (index: number) => {
-        setShowValues((prev) => ({ ...prev, [index]: !prev[index] }));
+    const toggleShowValue = (id: string) => {
+        setShowValues((prev) => ({ ...prev, [id]: !prev[id] }));
     };
-
-    const hasChanges = form.formState.isDirty;
 
     return (
         <Card className="mx-5">
@@ -134,128 +112,104 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
                         title={t('title')}
                         description={t('description')}
                     />
-                    <div className="flex items-center gap-2">
-                        {canEdit && (
-                            <>
-                                <ImportEnv
-                                    onImport={(vars) => {
-                                        const currentEnvs = form.getValues('envVariables');
-                                        form.setValue('envVariables', [...currentEnvs, ...vars], {
-                                            shouldDirty: true,
-                                        });
-                                    }}
-                                />
-                                <Button variant="outline" size="sm" onClick={handleAddNew}>
-                                    <Plus />
-                                    {t('addVariable')}
-                                </Button>
-                                {hasChanges && (
-                                    <Button
-                                        size="sm"
-                                        onClick={handleSubmitWithAction}
-                                        disabled={isSubmitting}
-                                    >
-                                        {isSubmitting ? (
-                                            <Loader2 className="animate-spin" />
-                                        ) : (
-                                            <Save />
-                                        )}
-                                        {t('saveChanges')}
-                                    </Button>
-                                )}
-                            </>
-                        )}
-                    </div>
+                    {canEdit && (
+                        <div className="flex items-center gap-2">
+                            <ImportEnv
+                                onImport={(vars) => {
+                                    importVariables({
+                                        repositoryId,
+                                        stageId,
+                                        envVariables: vars,
+                                        deleteIds: [],
+                                    });
+                                }}
+                            />
+                            <Button size="sm" onClick={handleAddNew}>
+                                <Plus />
+                                {t('addVariable')}
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </CardHeader>
             <CardContent>
-                <Form {...form}>
-                    <form onSubmit={handleSubmitWithAction}>
-                        {envVariables.length === 0 ? (
-                            <div className="text-muted-foreground py-8 text-center text-sm">
-                                {t('noVariables')}
+                {envVariables.length === 0 ? (
+                    <div className="text-muted-foreground py-8 text-center text-sm">
+                        {t('noVariables')}
+                    </div>
+                ) : (
+                    <div className="flex flex-col">
+                        <div className="text-muted-foreground border-b py-2 text-sm font-medium">
+                            <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] items-center gap-4">
+                                <span>{t('key')}</span>
+                                <span>{t('value')}</span>
                             </div>
-                        ) : (
-                            <div className={'flex flex-col gap-2'}>
-                                {envVariables.map((_, index) => (
-                                    <div key={index} className="flex items-end gap-2">
-                                        <div className="flex-1">
-                                            <FormField
-                                                control={form.control}
-                                                name={`envVariables.${index}.key`}
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormControl>
-                                                            <Input
-                                                                {...field}
-                                                                autoComplete="off"
-                                                                placeholder={t('keyPlaceholder')}
-                                                                className="font-mono"
-                                                            />
-                                                        </FormControl>
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </div>
-                                        <div className="flex-1">
-                                            <FormField
-                                                control={form.control}
-                                                name={`envVariables.${index}.value`}
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormControl>
-                                                            <div className="relative">
-                                                                <Input
-                                                                    {...field}
-                                                                    type={
-                                                                        showValues[index]
-                                                                            ? 'text'
-                                                                            : 'password'
-                                                                    }
-                                                                    autoComplete="off"
-                                                                    placeholder={t(
-                                                                        'valuePlaceholder',
-                                                                    )}
-                                                                    className="pr-10 font-mono"
-                                                                />
-                                                                <Button
-                                                                    type="button"
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    className="absolute top-1/2 right-1 -translate-y-1/2"
-                                                                    onClick={() =>
-                                                                        toggleShowValue(index)
-                                                                    }
-                                                                >
-                                                                    {showValues[index] ? (
-                                                                        <Eye />
-                                                                    ) : (
-                                                                        <EyeOff />
-                                                                    )}
-                                                                </Button>
-                                                            </div>
-                                                        </FormControl>
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </div>
+                        </div>
+                        {envVariables.map((variable, index) => {
+                            const rowId = variable.id ?? `idx-${index}`;
+                            const isVisible = showValues[rowId];
+                            return (
+                                <div
+                                    key={rowId}
+                                    className="group grid grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] items-center gap-4 border-b py-3 transition-colors last:border-0"
+                                >
+                                    <code className="min-w-0 truncate text-sm font-semibold">
+                                        {variable.key}
+                                    </code>
+                                    <div className="flex min-w-0 items-center gap-1">
+                                        <CopyButton
+                                            className="size-8 shrink-0"
+                                            size="icon"
+                                            variant="ghost"
+                                            text={variable.value}
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="size-8 shrink-0"
+                                            title={isVisible ? t('hide') : t('show')}
+                                            onClick={() => toggleShowValue(rowId)}
+                                        >
+                                            {isVisible ? <Eye /> : <EyeOff />}
+                                        </Button>
+                                        <code className="text-muted-foreground min-w-0 flex-1 truncate font-mono text-sm">
+                                            {isVisible ? (
+                                                variable.value
+                                            ) : (
+                                                <span className="tracking-[0.2em]">
+                                                    ▪▪▪▪▪▪▪▪▪▪
+                                                </span>
+                                            )}
+                                        </code>
                                         {canEdit && (
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                type="button"
-                                                onClick={() => handleRemove(index)}
-                                            >
-                                                <Trash2 className="text-destructive size-4" />
-                                            </Button>
+                                            <div className="ml-auto flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="size-8"
+                                                    onClick={() => handleEdit(variable)}
+                                                >
+                                                    <Pencil className="size-4" />
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="size-8"
+                                                    onClick={() => handleRemove(variable)}
+                                                >
+                                                    <Trash2 className="text-destructive size-4" />
+                                                </Button>
+                                            </div>
                                         )}
                                     </div>
-                                ))}
-                            </div>
-                        )}
-                        <div ref={bottomRef} />
-                    </form>
-                </Form>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
             </CardContent>
         </Card>
     );

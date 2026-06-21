@@ -166,7 +166,13 @@
             "removeTitle": "Remove domain",
             "removeDescription": "Are you sure you want to remove {host}? This action cannot be undone.",
             "remove": "Remove",
-            "removeSuccess": "Domain removed successfully"
+            "removeSuccess": "Domain removed successfully",
+            "created": "Domain added successfully",
+            "addTitle": "Add domain",
+            "addDescription": "Configure a new domain to expose your application.",
+            "addDomain": "Add domain",
+            "editTitle": "Edit domain",
+            "editDescription": "Update the configuration for {host}."
         },
         "envVars": {
             "title": "Environment Variables",
@@ -184,7 +190,19 @@
             "removeDescription": "Are you sure you want to remove {key}? This action cannot be undone.",
             "cancel": "Cancel",
             "remove": "Remove",
-            "removeSuccess": "Variable removed successfully"
+            "removeSuccess": "Variable removed successfully",
+            "created": "Variable added successfully",
+            "addTitle": "Add variable",
+            "addDescription": "Add a new environment variable for your application.",
+            "editTitle": "Edit variable",
+            "editDescription": "Update the value of {key}.",
+            "key": "Key",
+            "value": "Value",
+            "copy": "Copy value",
+            "copied": "Value copied to clipboard",
+            "copyError": "Failed to copy value",
+            "show": "Show value",
+            "hide": "Hide value"
         },
         "source": {
             "connect": "Connect {provider}",

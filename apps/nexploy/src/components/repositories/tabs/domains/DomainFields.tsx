@@ -33,27 +33,25 @@ interface CertOption {
 
 interface DomainFieldsProps<T extends FieldValues> {
     form: UseFormReturn<T>;
-    index: number;
     cloudflareAccounts: CloudflareAccountInfo[];
     certificates: CertOption[];
 }
 
 export function DomainFields<T extends FieldValues>({
     form,
-    index,
     cloudflareAccounts,
     certificates,
 }: DomainFieldsProps<T>) {
     const t = useTranslations('repository.settings.domains');
-    const cloudflareZoneId = form.watch(`domains.${index}.cloudflareZoneId` as Path<T>);
-    const httpsEnabled = form.watch(`domains.${index}.https` as Path<T>);
+    const cloudflareZoneId = form.watch(`domains.0.cloudflareZoneId` as Path<T>);
+    const httpsEnabled = form.watch(`domains.0.https` as Path<T>);
     const environments = useEnvironmentStore((s) => s.environments);
 
     return (
-        <div className="flex flex-col gap-4 border-t border-dashed p-4">
+        <div className="flex flex-col gap-4">
             <FormField
                 control={form.control}
-                name={`domains.${index}.environmentId` as Path<T>}
+                name={`domains.0.environmentId` as Path<T>}
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>{t('environment')}</FormLabel>
@@ -74,21 +72,20 @@ export function DomainFields<T extends FieldValues>({
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
+                        <FormMessage />
                         <FormDescription>{t('environmentDescription')}</FormDescription>
                     </FormItem>
                 )}
             />
-
             <CloudflareDomainSelector
                 form={form}
-                index={index}
+                index={0}
                 cloudflareAccounts={cloudflareAccounts}
             />
-
             <div className="grid items-start gap-4 md:grid-cols-2">
                 <FormField
                     control={form.control}
-                    name={`domains.${index}.host` as Path<T>}
+                    name={`domains.0.host` as Path<T>}
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>{t('host')}</FormLabel>
@@ -113,7 +110,7 @@ export function DomainFields<T extends FieldValues>({
 
                 <FormField
                     control={form.control}
-                    name={`domains.${index}.path` as Path<T>}
+                    name={`domains.0.path` as Path<T>}
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>{t('path')}</FormLabel>
@@ -134,7 +131,7 @@ export function DomainFields<T extends FieldValues>({
             <div className="grid gap-4 md:grid-cols-2">
                 <FormField
                     control={form.control}
-                    name={`domains.${index}.internalPath` as Path<T>}
+                    name={`domains.0.internalPath` as Path<T>}
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>{t('internalPath')}</FormLabel>
@@ -153,7 +150,7 @@ export function DomainFields<T extends FieldValues>({
 
                 <FormField
                     control={form.control}
-                    name={`domains.${index}.containerPort` as Path<T>}
+                    name={`domains.0.containerPort` as Path<T>}
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>{t('containerPort')}</FormLabel>
@@ -181,7 +178,7 @@ export function DomainFields<T extends FieldValues>({
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
                 <FormField
                     control={form.control}
-                    name={`domains.${index}.stripPath` as Path<T>}
+                    name={`domains.0.stripPath` as Path<T>}
                     render={({ field }) => (
                         <FormItem className="flex items-center gap-3">
                             <FormControl>
@@ -200,7 +197,7 @@ export function DomainFields<T extends FieldValues>({
 
                 <FormField
                     control={form.control}
-                    name={`domains.${index}.https` as Path<T>}
+                    name={`domains.0.https` as Path<T>}
                     render={({ field }) => (
                         <FormItem className="flex items-center gap-3">
                             <FormControl>
@@ -210,7 +207,7 @@ export function DomainFields<T extends FieldValues>({
                                         field.onChange(checked);
                                         if (!checked) {
                                             form.setValue(
-                                                `domains.${index}.certificateId` as Path<T>,
+                                                `domains.0.certificateId` as Path<T>,
                                                 undefined as never,
                                             );
                                         }
@@ -229,7 +226,7 @@ export function DomainFields<T extends FieldValues>({
             {httpsEnabled && (
                 <FormField
                     control={form.control}
-                    name={`domains.${index}.certificateId` as Path<T>}
+                    name={`domains.0.certificateId` as Path<T>}
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>{t('certificate')}</FormLabel>

@@ -4,7 +4,9 @@ import * as path from 'path';
 import * as crypto from 'crypto';
 import * as yaml from 'yaml';
 
-const TRAEFIK_SERVICE_DIR = path.join(process.cwd(), '..', '..', 'infra', 'traefik', 'service');
+const TRAEFIK_SERVICE_DIR =
+    process.env.TRAEFIK_SERVICE_DIR ??
+    path.join(process.cwd(), '..', '..', 'infra', 'traefik', 'service');
 const CERTS_DIR = path.join(TRAEFIK_SERVICE_DIR, 'certs');
 const TRAEFIK_CERTS_CONTAINER_PATH =
     process.env.TRAEFIK_CERTS_CONTAINER_PATH ?? '/etc/nexploy/traefik/service/certs';
@@ -15,6 +17,26 @@ function parseCertExpiry(certPem: string): Date | null {
         return new Date(cert.validTo);
     } catch {
         return null;
+    }
+}
+
+function validateCertKeyPair(certPem: string, privateKeyPem: string): void {
+    let cert: crypto.X509Certificate;
+    try {
+        cert = new crypto.X509Certificate(certPem);
+    } catch {
+        throw new Error('Invalid certificate: not a valid PEM certificate');
+    }
+
+    let key: crypto.KeyObject;
+    try {
+        key = crypto.createPrivateKey(privateKeyPem);
+    } catch {
+        throw new Error('Invalid private key: not a valid PEM private key');
+    }
+
+    if (!cert.checkPrivateKey(key)) {
+        throw new Error('The private key does not match the certificate');
     }
 }
 
@@ -48,23 +70,28 @@ export async function createCustomCertificate(
     certificate: string,
     privateKey: string,
 ) {
+    validateCertKeyPair(certificate, privateKey);
+
+    const expiresAt = parseCertExpiry(certificate);
+
+    const cert = await prisma.sslCertificate.create({
+        data: { name, type: 'CUSTOM', domain, email: '', expiresAt },
+    });
+
     try {
-        const expiresAt = parseCertExpiry(certificate);
-
-        const cert = await prisma.sslCertificate.create({
-            data: { name, type: 'CUSTOM', domain, email: '', expiresAt },
-        });
-
         await fs.mkdir(CERTS_DIR, { recursive: true });
         await fs.writeFile(path.join(CERTS_DIR, `${cert.id}.pem`), certificate, 'utf-8');
         await fs.writeFile(path.join(CERTS_DIR, `${cert.id}.key`), privateKey, 'utf-8');
 
         await regenerateCertsTlsConfig();
-
-        return cert;
     } catch (error) {
-        throw new Error('Failed to create custom certificate');
+        await prisma.sslCertificate.delete({ where: { id: cert.id } }).catch(() => {});
+        await fs.unlink(path.join(CERTS_DIR, `${cert.id}.pem`)).catch(() => {});
+        await fs.unlink(path.join(CERTS_DIR, `${cert.id}.key`)).catch(() => {});
+        throw new Error('Failed to write certificate files for Traefik');
     }
+
+    return cert;
 }
 
 export async function deleteSslCertificate(id: string) {
