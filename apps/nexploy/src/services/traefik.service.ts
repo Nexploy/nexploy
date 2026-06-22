@@ -11,9 +11,11 @@ import { prisma } from '../../prisma/prisma';
 
 const TRAEFIK_SERVICE_DIR = path.join(process.cwd(), '..', '..', 'infra', 'traefik', 'service');
 
+export type TraefikDomainInput = Omit<Domain, 'environmentId'> & { environmentId?: string };
+
 export async function generateTraefikConfigForRepository(
     repositoryId: string,
-    domains: Domain[],
+    domains: TraefikDomainInput[],
 ): Promise<void> {
     await fs.mkdir(TRAEFIK_SERVICE_DIR, { recursive: true });
 
