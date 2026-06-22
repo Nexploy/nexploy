@@ -21,7 +21,9 @@ RUN pnpm install --frozen-lockfile
 
 FROM base AS migrate-tools
 WORKDIR /tools
-RUN pnpm init && pnpm add --node-linker=hoisted prisma@7.5.0 tsx@^4 dotenv@^17
+RUN pnpm init && pnpm add --node-linker=hoisted \
+    prisma@7.5.0 tsx@^4 dotenv@^17 \
+    @prisma/client@7.5.0 @prisma/adapter-pg@7.5.0 pg
 
 FROM base AS builder
 WORKDIR /app

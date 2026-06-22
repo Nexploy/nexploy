@@ -1,7 +1,12 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
+import * as os from 'node:os';
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { downloadFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { safeResolvePath } from '@workspace/shared/pathSafety';
@@ -21,7 +26,7 @@ export class DownloadFileExecutor implements INodeExecutor {
         const filename = nodeConfig.filename;
 
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
-        const base = workDir ?? process.cwd();
+        const base = workDir ?? os.tmpdir();
 
         const resolvedDest = safeResolvePath(base, destinationPath);
 
