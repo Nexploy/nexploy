@@ -19,11 +19,9 @@ COPY --from=prepare /app/out/json/ .
 COPY --from=prepare /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN pnpm install --frozen-lockfile
 
-FROM base AS prod-deps
-WORKDIR /app
-COPY --from=prepare /app/out/json/ .
-COPY --from=prepare /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-RUN pnpm install --prod --frozen-lockfile
+FROM base AS migrate-tools
+WORKDIR /tools
+RUN pnpm init && pnpm add --node-linker=hoisted prisma@7.5.0 tsx@^4 dotenv@^17
 
 FROM base AS builder
 WORKDIR /app
@@ -66,15 +64,15 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/package.json ./apps/
 COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/generated ./apps/nexploy/generated
 
 COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/prisma ./apps/nexploy/prisma
-# Prisma 7 reads the datasource URL from prisma.config.ts (the schema has no url),
-# so it must be present at runtime for `prisma migrate deploy` in the entrypoint.
 COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/prisma.config.ts ./apps/nexploy/prisma.config.ts
 COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/src ./apps/nexploy/src
 COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/tsconfig.json ./apps/nexploy/tsconfig.json
 COPY --from=builder --chown=nextjs:nodejs /app/packages ./packages
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 
-COPY --from=prod-deps --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=migrate-tools --chown=nextjs:nodejs /tools/node_modules ./node_modules
+
+COPY --from=builder --chown=nextjs:nodejs /app/packages/typescript-config ./node_modules/@workspace/typescript-config
 
 COPY --from=builder /app/apps/nexploy/scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
