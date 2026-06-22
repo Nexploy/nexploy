@@ -19,6 +19,12 @@ COPY --from=prepare /app/out/json/ .
 COPY --from=prepare /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN pnpm install --frozen-lockfile
 
+FROM base AS prod-deps
+WORKDIR /app
+COPY --from=prepare /app/out/json/ .
+COPY --from=prepare /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+RUN pnpm install --prod --frozen-lockfile
+
 FROM base AS builder
 WORKDIR /app
 
@@ -68,7 +74,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/tsconfig.json ./apps
 COPY --from=builder --chown=nextjs:nodejs /app/packages ./packages
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 
-COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=prod-deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 
 COPY --from=builder /app/apps/nexploy/scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

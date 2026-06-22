@@ -43,8 +43,8 @@ export function NodeAnimation({
 
     const cornerClass = cn(
         'bg-card absolute size-4 rounded-full',
-        square ? 'top-[9px] right-[9px]' : 'top-[13px] right-[13px]',
-        isEndNode && 'top-[9px] left-[9px]',
+        square ? 'top-1.5 right-1.5' : 'top-[11px] right-[11px]',
+        isEndNode && 'top-1.5 left-1.5',
     );
 
     const icon = (
@@ -90,8 +90,8 @@ export function NodeAnimation({
                         categoryHex={categoryHex!}
                         className={cn(
                             'absolute',
-                            square ? 'top-[9px] right-[9px]' : 'top-[13px] right-[13px]',
-                            isEndNode && 'top-[9px] left-[9px]',
+                            square ? 'top-1.5 right-1.5' : 'top-[11px] right-[11px]',
+                            isEndNode && 'top-1 left-1',
                         )}
                     />
                 </div>

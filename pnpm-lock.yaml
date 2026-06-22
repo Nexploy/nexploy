@@ -170,6 +170,9 @@ importers:
       '@workspace/shared':
         specifier: workspace:*
         version: link:packages/shared
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:packages/typescript-config
       '@workspace/ui':
         specifier: workspace:*
         version: link:packages/ui
@@ -263,6 +266,9 @@ importers:
       pino-pretty:
         specifier: ^13.1.3
         version: 13.1.3
+      prisma:
+        specifier: ^7.5.0
+        version: 7.5.0(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
       radix-ui:
         specifier: ^1.4.3
         version: 1.4.3(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -299,6 +305,9 @@ importers:
       tar-fs:
         specifier: ^3.1.2
         version: 3.1.2
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
@@ -363,9 +372,6 @@ importers:
       '@workspace/eslint-config':
         specifier: workspace:^
         version: link:packages/eslint-config
-      '@workspace/typescript-config':
-        specifier: workspace:*
-        version: link:packages/typescript-config
       '@workspace/typescript-interface':
         specifier: workspace:*
         version: link:packages/typescript-interface
@@ -399,15 +405,9 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: ^0.6.14
         version: 0.6.14(prettier@3.6.2)
-      prisma:
-        specifier: ^7.5.0
-        version: 7.5.0(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
       tailwindcss:
         specifier: ^4.1.14
         version: 4.1.14
-      tsx:
-        specifier: ^4.20.6
-        version: 4.20.6
       turbo:
         specifier: ^2.9.4
         version: 2.9.4

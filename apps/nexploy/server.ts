@@ -25,7 +25,7 @@ const app = next({
 const handle = app.getRequestHandler();
 
 const MAX_TURBOPACK_CACHE_GB = Number(process.env.MAX_TURBOPACK_CACHE_GB ?? 3);
-const TURBOPACK_CACHE_DIR = join(import.meta.dirname, '.next', 'dev', 'cache', 'turbopack');
+const TURBOPACK_CACHE_DIR = join(process.cwd(), '.next', 'dev', 'cache', 'turbopack');
 
 function dirSizeBytes(dir: string): number {
     let total = 0;
