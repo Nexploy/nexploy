@@ -1,12 +1,5 @@
 http:
   routers:
-    repo-cmpt0yv0j00088eynxoerdbt1-cmqjn7bjf0001fkynv4b1kp1x-cztq-localhost:
-      rule: Host(`cztq.localhost`)
-      service: svc-cmpt0yv0j00088eynxoerdbt1-cmqjn7bjf0001fkynv4b1kp1x-cztq-localhost
-      entryPoints:
-        - web
-      middlewares:
-        - maintenance-errors@file
     repo-cmpt0yv0j00088eynxoerdbt1-cmqjn7bjf0001fkynv4b1kp1x-cmq-localhost:
       rule: Host(`cmq.localhost`)
       service: svc-cmpt0yv0j00088eynxoerdbt1-cmqjn7bjf0001fkynv4b1kp1x-cmq-localhost
@@ -15,18 +8,12 @@ http:
       middlewares:
         - maintenance-errors@file
   services:
-    svc-cmpt0yv0j00088eynxoerdbt1-cmqjn7bjf0001fkynv4b1kp1x-cztq-localhost:
-      loadBalancer:
-        servers:
-          - url: http://portfolio-nathan:3000
     svc-cmpt0yv0j00088eynxoerdbt1-cmqjn7bjf0001fkynv4b1kp1x-cmq-localhost:
       loadBalancer:
         servers:
           - url: http://portfolio-nathan:3000
 x-nexploy-domains:
-  repo-cmpt0yv0j00088eynxoerdbt1-cmqjn7bjf0001fkynv4b1kp1x-cztq-localhost:
-    containerPort: 3000
-    stageId: cmqjn7bjf0001fkynv4b1kp1x
   repo-cmpt0yv0j00088eynxoerdbt1-cmqjn7bjf0001fkynv4b1kp1x-cmq-localhost:
     containerPort: 3000
+    environmentId: cmniv23gc00005eyn9sef7ra2
     stageId: cmqjn7bjf0001fkynv4b1kp1x

@@ -1,10 +1,11 @@
 import { Hono } from 'hono';
 import { route } from '@/utils/route';
 import { logger } from '@/utils/logger';
-import { writeDockerConfig, removeDockerConfig, validateRegistry } from '@/services/registryService';
+import { writeDockerConfig, removeDockerConfig, validateRegistry, pingRegistry } from '@/services/registryService';
 import {
     registryLoginSchema,
     registryLogoutSchema,
+    registryPingSchema,
 } from '@workspace/schemas-zod/docker/registry/registryAction.schema';
 
 const app = new Hono();
@@ -22,6 +23,16 @@ app.post(
         writeDockerConfig(serveraddress, username, password);
         logger.info({ serveraddress }, 'docker login succeeded');
 
+        return { success: true };
+    }),
+);
+
+app.post(
+    '/ping',
+    route({ json: registryPingSchema }, async (c) => {
+        const { serveraddress } = c.req.valid('json');
+        await pingRegistry(serveraddress);
+        logger.info({ serveraddress }, 'registry ping succeeded');
         return { success: true };
     }),
 );

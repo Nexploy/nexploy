@@ -588,6 +588,7 @@
             "dockerfilePath": "Dockerfile Path",
             "dockerfileFilePath": "File Path",
             "dockerfileFilePathPlaceholder": "Leave empty for repository root",
+            "buildImageNamePlaceholder": "Leave empty for auto-generated name",
             "script": "Script",
             "webhookUrl": "Webhook URL",
             "webhookUrlTooltipDesc": "A POST request with the following JSON body will be sent to this URL:",

@@ -1,5 +1,9 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
 import { buildDockerImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -30,7 +34,12 @@ export class BuildDockerImageExecutor implements INodeExecutor {
 
         const repositorySlug = `nexploy-${buildConfig.repositoryName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
-        const imageName = `${repositorySlug}-${nodeId}:${buildConfig.buildId}`;
+        const customImageName = nodeConfig.imageName?.trim();
+        const imageName = customImageName
+            ? customImageName.includes(':')
+                ? customImageName
+                : `${customImageName}:${buildConfig.buildId}`
+            : `${repositorySlug}-${nodeId}:${buildConfig.buildId}`;
 
         await logger.info(nodeId, `Building Docker image: ${imageName}`);
 

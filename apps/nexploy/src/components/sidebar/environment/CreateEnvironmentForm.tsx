@@ -21,6 +21,8 @@ import {
     FormLabel,
     FormMessage,
 } from '@workspace/ui/components/form';
+import { Alert, AlertDescription } from '@workspace/ui/components/alert';
+import { Info } from 'lucide-react';
 import { TlsCertificateField } from './TlsCertificateField';
 import { DownloadCertScriptButton } from './DownloadCertScriptButton';
 import { Switch } from '@workspace/ui/components/switch';
@@ -81,6 +83,10 @@ export function CreateEnvironmentForm() {
     return (
         <Form {...form}>
             <form onSubmit={handleSubmitWithAction} className="space-y-4">
+                <Alert variant="info">
+                    <Info />
+                    <AlertDescription>{t('selectionNotice')}</AlertDescription>
+                </Alert>
                 <FormField
                     control={form.control}
                     name="name"

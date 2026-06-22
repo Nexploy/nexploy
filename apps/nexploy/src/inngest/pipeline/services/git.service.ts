@@ -1,9 +1,8 @@
 import { spawn } from 'child_process';
 import dayjs from 'dayjs';
-import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'fs/promises';
+import { access, mkdir, readFile, rm } from 'fs/promises';
 import { join } from 'path';
 import { kyDocker } from '@/lib/api/kyDocker';
-import os from 'os';
 import { BuildConfig } from '@workspace/typescript-interface/repository/build';
 import { GitProviderToken } from '@workspace/typescript-interface/git/git';
 import { getValidToken } from '@/services/api/gitProvider.service';
@@ -109,25 +108,13 @@ class GitService {
         await mkdir(workDir, { recursive: true });
 
         const token = await this.resolveToken(buildConfig, options?.manualToken);
-        const { credsTmpDir, gitEnv } = token.accessToken
-            ? await this.setupCredentials(buildConfig.gitUrl, token.accessToken)
-            : { credsTmpDir: null, gitEnv: this.baseGitEnv() };
-
-        const cloneArgs = this.buildCloneArgs(
-            buildConfig.gitUrl,
-            buildConfig.gitBranch,
-            workDir,
-            options?.submodules ?? false,
-        );
 
         try {
             await this.execCloneWithRetry(
-                cloneArgs,
-                gitEnv,
-                credsTmpDir,
                 token,
                 buildConfig,
                 workDir,
+                options?.submodules ?? false,
                 onProgress,
             );
         } catch (error: unknown) {
@@ -141,9 +128,6 @@ class GitService {
             throw new Error(
                 `Failed to clone repository from ${buildConfig.gitUrl} (branch: ${buildConfig.gitBranch}): ${message}`,
             );
-        } finally {
-            if (credsTmpDir)
-                await rm(credsTmpDir, { recursive: true, force: true }).catch(() => {});
         }
 
         return workDir;
@@ -176,24 +160,24 @@ class GitService {
         return { ...process.env, GIT_TERMINAL_PROMPT: '0', GIT_ASKPASS: 'echo' };
     }
 
-    private async setupCredentials(
+    private gitCredentialUsername(provider: BuildConfig['gitProvider']): string {
+        return provider === 'GITHUB' ? 'x-access-token' : 'oauth2';
+    }
+
+    private buildAuthedUrl(
         gitUrl: string,
-        accessToken: string,
-    ): Promise<{ credsTmpDir: string; gitEnv: NodeJS.ProcessEnv }> {
-        const credsTmpDir = await mkdtemp(join(os.tmpdir(), 'nexploy-git-'));
-        const { protocol, host } = new URL(gitUrl);
-        const credsFile = join(credsTmpDir, 'credentials');
-        const configFile = join(credsTmpDir, 'config');
+        accessToken: string | null,
+        provider: BuildConfig['gitProvider'],
+    ): string {
+        if (!accessToken) return gitUrl;
+        const url = new URL(gitUrl);
+        url.username = this.gitCredentialUsername(provider);
+        url.password = accessToken;
+        return url.toString();
+    }
 
-        await writeFile(credsFile, `${protocol}//oauth2:${accessToken}@${host}\n`, { mode: 0o600 });
-        await writeFile(configFile, `[credential]\n\thelper = store --file ${credsFile}\n`, {
-            mode: 0o600,
-        });
-
-        return {
-            credsTmpDir,
-            gitEnv: { ...this.baseGitEnv(), GIT_CONFIG_GLOBAL: configFile },
-        };
+    private redactToken(message: string, accessToken: string | null): string {
+        return accessToken ? message.split(accessToken).join('***') : message;
     }
 
     private buildCloneArgs(
@@ -202,7 +186,7 @@ class GitService {
         workDir: string,
         submodules: boolean,
     ): string[] {
-        const args = ['clone', '--depth=1', '--single-branch'];
+        const args = ['-c', 'credential.helper=', 'clone', '--depth=1', '--single-branch'];
         if (submodules) args.push('--recurse-submodules', '--shallow-submodules');
         if (gitBranch) args.push(`--branch=${gitBranch}`);
         args.push('--progress', '--', gitUrl, workDir);
@@ -218,16 +202,36 @@ class GitService {
     }
 
     private async execCloneWithRetry(
-        cloneArgs: string[],
-        gitEnv: NodeJS.ProcessEnv,
-        credsTmpDir: string | null,
         token: GitProviderToken,
         buildConfig: BuildConfig,
         workDir: string,
+        submodules: boolean,
         onProgress?: ProgressCallback,
     ): Promise<void> {
+        const gitEnv = this.baseGitEnv();
+
+        const runClone = async (accessToken: string | null) => {
+            const authedUrl = this.buildAuthedUrl(
+                buildConfig.gitUrl,
+                accessToken,
+                buildConfig.gitProvider,
+            );
+            const cloneArgs = this.buildCloneArgs(
+                authedUrl,
+                buildConfig.gitBranch,
+                workDir,
+                submodules,
+            );
+            try {
+                await this.exec('git', cloneArgs, { env: gitEnv }, onProgress);
+            } catch (err: unknown) {
+                const raw = err instanceof Error ? err.message : String(err);
+                throw new Error(this.redactToken(raw, accessToken));
+            }
+        };
+
         try {
-            await this.exec('git', cloneArgs, { env: gitEnv }, onProgress);
+            await runClone(token.accessToken);
         } catch (cloneError: unknown) {
             const message = cloneError instanceof Error ? cloneError.message : String(cloneError);
             if (!this.isAuthenticationError(message) || !token.accessToken) throw cloneError;
@@ -239,18 +243,9 @@ class GitService {
                 buildConfig.gitAccountId,
             );
 
-            if (credsTmpDir && refreshedToken.accessToken) {
-                const { protocol, host } = new URL(buildConfig.gitUrl);
-                await writeFile(
-                    join(credsTmpDir, 'credentials'),
-                    `${protocol}//oauth2:${refreshedToken.accessToken}@${host}\n`,
-                    { mode: 0o600 },
-                );
-            }
-
             await rm(workDir, { recursive: true, force: true }).catch(() => {});
             await mkdir(workDir, { recursive: true });
-            await this.exec('git', cloneArgs, { env: gitEnv }, onProgress);
+            await runClone(refreshedToken.accessToken);
         }
     }
 

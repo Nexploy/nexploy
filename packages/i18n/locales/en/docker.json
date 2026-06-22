@@ -635,7 +635,8 @@
         "adding": "Adding...",
         "addEnvironment": "Adding environment",
         "updating": "Updating...",
-        "updateEnvironment": "Update environment"
+        "updateEnvironment": "Update environment",
+        "selectionNotice": "When you select an environment other than the default one, all your Docker interactions (containers, images, volumes, networks, deployments...) will go through this new environment."
     },
     "dropdownActions": {
         "remove": "Remove",

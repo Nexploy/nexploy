@@ -20,6 +20,10 @@ export const createRegistryAction = authActionServer
                         password: parsedInput.password,
                     },
                 });
+            } else {
+                await kyDocker.post('registries/ping', {
+                    json: { serveraddress: parsedInput.url },
+                });
             }
 
             await createRegistry(parsedInput);

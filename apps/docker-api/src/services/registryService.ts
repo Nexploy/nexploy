@@ -39,6 +39,31 @@ export function removeDockerConfig(serveraddress: string): void {
     } catch {}
 }
 
+export async function pingRegistry(serveraddress: string): Promise<void> {
+    let lastError = 'no response';
+
+    for (const scheme of ['https', 'http'] as const) {
+        try {
+            const res = await fetch(`${scheme}://${serveraddress}/v2/`, {
+                method: 'GET',
+                redirect: 'follow',
+                signal: AbortSignal.timeout(10000),
+            });
+
+            if (res.status === 200 || res.status === 401 || res.status === 403) {
+                return;
+            }
+
+            lastError = `unexpected status ${res.status}`;
+        } catch (err) {
+            lastError = err instanceof Error ? err.message : String(err);
+        }
+    }
+
+    logger.warn({ serveraddress, lastError }, 'registry ping failed');
+    throw new Error(`Registry ${serveraddress} is not reachable: ${lastError}`);
+}
+
 export function validateRegistry(
     serveraddress: string,
     username: string,

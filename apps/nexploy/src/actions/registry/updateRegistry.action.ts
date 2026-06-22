@@ -29,6 +29,10 @@ export const updateRegistryAction = authActionServer
                         password: passwordToLogin,
                     },
                 });
+            } else {
+                await kyDocker.post('registries/ping', {
+                    json: { serveraddress: parsedInput.url },
+                });
             }
 
             await updateRegistry(parsedInput);

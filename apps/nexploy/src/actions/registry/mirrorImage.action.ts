@@ -45,7 +45,10 @@ export const mirrorImageAction = authActionServer
 
             return { targetName };
         } catch (err: any) {
-            await setToastServer({ type: 'error', message: err.message });
+            await setToastServer({
+                type: 'error',
+                message: err.message as string,
+            });
             throw err;
         }
     });

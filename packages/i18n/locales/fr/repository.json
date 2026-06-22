@@ -588,6 +588,7 @@
             "dockerfilePath": "Chemin du Dockerfile",
             "dockerfileFilePath": "Chemin du fichier",
             "dockerfileFilePathPlaceholder": "Laisser vide pour la racine du dépôt",
+            "buildImageNamePlaceholder": "Laisser vide pour un nom auto-généré",
             "script": "Script",
             "webhookUrl": "URL du webhook",
             "webhookUrlTooltipDesc": "Une requête POST avec le corps JSON suivant sera envoyée à cette URL :",

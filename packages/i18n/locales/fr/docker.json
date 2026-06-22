@@ -635,7 +635,8 @@
         "adding": "Ajout...",
         "addEnvironment": "Ajouter l'environnement",
         "updating": "Mise à jour...",
-        "updateEnvironment": "Mettre à jour l'environnement"
+        "updateEnvironment": "Mettre à jour l'environnement",
+        "selectionNotice": "Lorsque vous sélectionnez un environnement autre que celui par défaut, toutes vos interactions Docker (conteneurs, images, volumes, réseaux, déploiements...) passeront par ce nouvel environnement."
     },
     "dropdownActions": {
         "remove": "Supprimer",

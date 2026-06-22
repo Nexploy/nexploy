@@ -153,9 +153,7 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
                                     key={rowId}
                                     className="group grid grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] items-center gap-4 border-b py-3 transition-colors last:border-0"
                                 >
-                                    <code className="min-w-0 truncate text-sm font-semibold">
-                                        {variable.key}
-                                    </code>
+                                    <code className="min-w-0 truncate text-sm">{variable.key}</code>
                                     <div className="flex min-w-0 items-center gap-1">
                                         <CopyButton
                                             className="size-8 shrink-0"

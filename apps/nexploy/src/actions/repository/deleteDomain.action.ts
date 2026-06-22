@@ -6,6 +6,7 @@ import { deleteDomainSchema } from '@workspace/schemas-zod/repository/domain.sch
 import { getDomainsFromTraefikConfig } from '@/services/traefik.service';
 import { applyDomainOperations } from '@/services/domain.service';
 import { setToastServer } from '@/lib/toastServer.ts';
+import { revalidatePath } from 'next/cache';
 
 export const deleteDomain = authActionServer
     .use(requirePermission('repository', 'update'))
@@ -20,7 +21,7 @@ export const deleteDomain = authActionServer
                 throw new Error('Domain not found');
             }
 
-            return await applyDomainOperations({
+            await applyDomainOperations({
                 repositoryId,
                 operations: {
                     add: [],
@@ -29,6 +30,8 @@ export const deleteDomain = authActionServer
                     unchanged: existingDomains.filter((d) => d.id !== domainId),
                 },
             });
+
+            revalidatePath('/repositories/[repositoryId]', 'page');
         } catch (error: unknown) {
             if (error instanceof Error) {
                 await setToastServer({

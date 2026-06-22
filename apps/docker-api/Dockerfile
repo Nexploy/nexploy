@@ -1,5 +1,8 @@
 # ---- Base ----
 FROM node:20-alpine AS base
+# Disable anonymous telemetry/update notices for a quiet, reproducible build
+ENV TURBO_TELEMETRY_DISABLED=1
+ENV DO_NOT_TRACK=1
 # pnpm global bin dir (used for turbo, esbuild)
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -28,6 +31,9 @@ WORKDIR /app
 
 # Bring in the pruned full source
 COPY --from=prepare /app/out/full/ .
+# turbo prune omits the root tsconfig.json; restore it so package tsconfigs that
+# `extends "../../tsconfig.json"` resolve cleanly during esbuild bundling.
+COPY --from=prepare /app/tsconfig.json ./tsconfig.json
 
 # Bundle with esbuild (resolves path aliases and workspace imports)
 RUN pnpm add -g esbuild && esbuild apps/docker-api/src/index.ts \

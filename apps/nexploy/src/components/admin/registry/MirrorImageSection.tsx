@@ -5,22 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { mirrorImageSchema } from '@workspace/schemas-zod/registry/mirrorImage.schema';
 import { mirrorImageAction } from '@/actions/registry/mirrorImage.action';
 import { Button } from '@workspace/ui/components/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
 import { Input } from '@workspace/ui/components/input';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -62,13 +49,6 @@ export function MirrorImageSection({ registries }: MirrorImageSectionProps) {
                     toast.success(t('mirrorSuccess', { target: data?.targetName ?? '' }));
                     resetFormAndAction();
                     setPrivateSource(false);
-                },
-                onError: ({ error }) => {
-                    const message =
-                        error.serverError ||
-                        error.validationErrors?._errors?.[0] ||
-                        t('mirrorFailed');
-                    toast.error(message);
                 },
             },
         },

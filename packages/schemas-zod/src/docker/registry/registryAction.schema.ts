@@ -9,3 +9,7 @@ export const registryLoginSchema = z.object({
 export const registryLogoutSchema = z.object({
     serveraddress: z.string().min(1),
 });
+
+export const registryPingSchema = z.object({
+    serveraddress: z.string().min(1),
+});

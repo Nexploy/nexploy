@@ -515,6 +515,7 @@ export class ImagesStateManager extends BaseStateManager {
                     }
 
                     let imageId: string | undefined;
+                    let buildError: string | undefined;
 
                     this.docker.modem.followProgress(
                         stream,
@@ -530,6 +531,12 @@ export class ImagesStateManager extends BaseStateManager {
                                     return;
                                 }
                                 reject(progressErr);
+                                return;
+                            }
+
+                            if (buildError) {
+                                logger.error({ imageName, buildError }, 'Docker build failed');
+                                reject(new Error(buildError));
                                 return;
                             }
 
@@ -554,8 +561,9 @@ export class ImagesStateManager extends BaseStateManager {
                                     onLog(line);
                                 }
                             }
-                            if (event.error && onLog) {
-                                onLog(`ERROR: ${event.error}`);
+                            if (event.error) {
+                                buildError = event.errorDetail?.message || event.error;
+                                if (onLog) onLog(`ERROR: ${event.error}`);
                             }
                         },
                     );

@@ -35,6 +35,7 @@ export const webhookCloneConfigSchema = z.object({
 export const buildDockerImageConfigSchema = z.object({
     dockerfilePath: refable(relativePath('Dockerfile path')).default('Dockerfile'),
     dockerfileFilePath: refable(relativePath('Dockerfile file path')).optional(),
+    imageName: refable(z.string()).default(''),
 });
 
 export const validateDockerfileConfigSchema = z.object({

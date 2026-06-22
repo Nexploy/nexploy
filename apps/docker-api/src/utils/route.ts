@@ -30,19 +30,17 @@ function resolveError(err: unknown): ResolvedError {
             json?: { message?: string };
         };
 
-        const status = (e.statusCode === 304 ? 409 : e.statusCode) ?? e.status;
+        const status = (e.statusCode === 304 ? 409 : e.statusCode) ?? e.status ?? 500;
         const message = e.json?.message ?? e.message;
 
-        if (status !== undefined) {
-            return { message, status: status as ContentfulStatusCode };
-        }
+        return { message, status: status as ContentfulStatusCode };
     }
 
     return { message: 'Internal server error', status: 500 };
 }
 
 function clientMessage(resolved: ResolvedError): string {
-    return resolved.status >= 500 ? 'Internal server error' : resolved.message;
+    return resolved.message;
 }
 
 function makeValidator(target: keyof ValidationTargets, schema: AnySchema): MiddlewareHandler {

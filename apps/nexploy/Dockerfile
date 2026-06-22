@@ -1,5 +1,7 @@
 FROM node:20-alpine AS base
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV TURBO_TELEMETRY_DISABLED=1
+ENV DO_NOT_TRACK=1
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN apk add --no-cache libc6-compat su-exec git
@@ -19,8 +21,12 @@ RUN pnpm install --frozen-lockfile
 
 FROM base AS builder
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+
+COPY --from=deps /app/ ./
 COPY --from=prepare /app/out/full/ .
+COPY --from=prepare /app/tsconfig.json ./tsconfig.json
+
+ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
 
 RUN pnpm --filter=nexploy db:generate
 
@@ -54,6 +60,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/package.json ./apps/
 COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/generated ./apps/nexploy/generated
 
 COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/prisma ./apps/nexploy/prisma
+# Prisma 7 reads the datasource URL from prisma.config.ts (the schema has no url),
+# so it must be present at runtime for `prisma migrate deploy` in the entrypoint.
+COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/prisma.config.ts ./apps/nexploy/prisma.config.ts
 COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/src ./apps/nexploy/src
 COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/tsconfig.json ./apps/nexploy/tsconfig.json
 COPY --from=builder --chown=nextjs:nodejs /app/packages ./packages
