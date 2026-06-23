@@ -1,6 +1,7 @@
 import { GitProviderType } from 'generated/client';
 import { prisma } from '../../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export interface GitProviderInfo {
     id: string;
@@ -23,6 +24,7 @@ export interface GitProviderCredentials {
 }
 
 export async function getAllGitProviders(): Promise<GitProviderInfo[]> {
+    const t = await getErrorTranslator();
     try {
         const records = await prisma.gitProvider.findMany({
             where: { enabled: true },
@@ -60,7 +62,7 @@ export async function getAllGitProviders(): Promise<GitProviderInfo[]> {
                 };
             });
     } catch (error: unknown) {
-        throw new Error('Failed to get git providers');
+        throw new Error(t('oauthProvider.getProvidersFailed'));
     }
 }
 
@@ -68,6 +70,7 @@ export async function getGitProviderCredentials(
     provider: GitProviderType,
     gitAccountId?: string,
 ): Promise<GitProviderCredentials | null> {
+    const t = await getErrorTranslator();
     try {
         if (gitAccountId) {
             const gitAccount = await prisma.gitAccount.findUnique({
@@ -95,7 +98,7 @@ export async function getGitProviderCredentials(
             baseUrl: record.baseUrl ?? undefined,
         };
     } catch (error: unknown) {
-        throw new Error('Failed to get git provider credentials');
+        throw new Error(t('oauthProvider.getCredentialsFailed'));
     }
 }
 
@@ -128,6 +131,7 @@ export async function saveGitHubApp(data: {
     ownerName?: string;
     ownerType?: string;
 }): Promise<void> {
+    const t = await getErrorTranslator();
     try {
         await prisma.gitProvider.create({
             data: {
@@ -144,7 +148,7 @@ export async function saveGitHubApp(data: {
             },
         });
     } catch (error: unknown) {
-        throw new Error('Failed to save GitHub App');
+        throw new Error(t('oauthProvider.saveGithubAppFailed'));
     }
 }
 
@@ -154,6 +158,7 @@ export async function saveGitLabProvider(
     clientSecret: string,
     baseUrl?: string | null,
 ): Promise<void> {
+    const t = await getErrorTranslator();
     try {
         await prisma.gitProvider.create({
             data: {
@@ -165,16 +170,17 @@ export async function saveGitLabProvider(
             },
         });
     } catch (error: unknown) {
-        throw new Error('Failed to save GitLab provider');
+        throw new Error(t('oauthProvider.saveGitlabFailed'));
     }
 }
 
 export async function deleteGitProvider(id: string) {
+    const t = await getErrorTranslator();
     try {
         return await prisma.gitProvider.delete({
             where: { id },
         });
     } catch (error: unknown) {
-        throw new Error('Failed to delete git provider');
+        throw new Error(t('oauthProvider.deleteProviderFailed'));
     }
 }

@@ -11,7 +11,6 @@ import { relinkGitAccountAction } from '@/actions/repository/relinkGitAccount.ac
 import { relinkGitAccountSchema } from '@workspace/schemas-zod/repository/relinkGitAccount.schema';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { GitAccountFormField } from '@/components/git/GitAccountFormField';
-import { Can } from '@/components/permission/Can';
 import { usePermissions } from '@/contexts/PermissionContext';
 
 interface SwitchGitAccountSectionProps {
@@ -47,36 +46,25 @@ export function SwitchGitAccountSection({
                 description={t('description')}
             />
             <CardContent>
-                <Can
-                    resource="repository"
-                    action="update"
-                    condition={isOwner || isAdmin}
-                    fallback={
-                        <p className="text-muted-foreground py-4 text-center text-sm font-semibold">
-                            {t('onlyOwnerOrAdmin')}
-                        </p>
-                    }
-                >
-                    <Form {...form}>
-                        <form onSubmit={handleSubmitWithAction} className="flex flex-col gap-4">
-                            <GitAccountFormField
-                                noAccountsContent={
-                                    <p className="text-muted-foreground text-sm">
-                                        {tSource('noAccounts')}
-                                    </p>
-                                }
-                            />
-                            <Button
-                                type="submit"
-                                className="self-start"
-                                isLoading={action.isPending}
-                                disabled={action.isPending || !form.formState.isDirty}
-                            >
-                                {t('save')}
-                            </Button>
-                        </form>
-                    </Form>
-                </Can>
+                <Form {...form}>
+                    <form onSubmit={handleSubmitWithAction} className="flex flex-col gap-4">
+                        <GitAccountFormField
+                            noAccountsContent={
+                                <p className="text-muted-foreground text-sm">
+                                    {tSource('noAccounts')}
+                                </p>
+                            }
+                        />
+                        <Button
+                            type="submit"
+                            className="self-start"
+                            isLoading={action.isPending}
+                            disabled={action.isPending || !form.formState.isDirty}
+                        >
+                            {t('save')}
+                        </Button>
+                    </form>
+                </Form>
             </CardContent>
         </Card>
     );

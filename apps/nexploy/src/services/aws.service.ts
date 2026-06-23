@@ -1,10 +1,12 @@
 import { prisma } from '../../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
 import { AwsAccountInfo, AwsCredentials } from '@workspace/typescript-interface/aws/aws';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export type { AwsAccountInfo, AwsCredentials };
 
 export async function getAllAwsAccounts(): Promise<AwsAccountInfo[]> {
+    const t = await getErrorTranslator();
     try {
         const records = await prisma.awsCredential.findMany({
             orderBy: { createdAt: 'asc' },
@@ -24,7 +26,7 @@ export async function getAllAwsAccounts(): Promise<AwsAccountInfo[]> {
             };
         });
     } catch (error: unknown) {
-        throw new Error('Failed to get AWS accounts');
+        throw new Error(t('aws.getAccountsFailed'));
     }
 }
 
@@ -34,6 +36,7 @@ export async function saveAwsAccount(
     secretAccessKey: string,
     region: string,
 ): Promise<AwsAccountInfo> {
+    const t = await getErrorTranslator();
     try {
         const record = await prisma.awsCredential.create({
             data: {
@@ -57,22 +60,24 @@ export async function saveAwsAccount(
             createdAt: record.createdAt,
         };
     } catch (error: unknown) {
-        throw new Error('Failed to save AWS account');
+        throw new Error(t('aws.saveAccountFailed'));
     }
 }
 
 export async function deleteAwsAccount(id: string): Promise<void> {
+    const t = await getErrorTranslator();
     try {
         await prisma.awsCredential.delete({ where: { id } });
     } catch (error: unknown) {
-        throw new Error('Failed to delete AWS account');
+        throw new Error(t('aws.deleteAccountFailed'));
     }
 }
 
 export async function getAwsCredentials(id: string): Promise<AwsCredentials> {
+    const t = await getErrorTranslator();
     try {
         const record = await prisma.awsCredential.findUnique({ where: { id } });
-        if (!record) throw new Error('AWS account not found');
+        if (!record) throw new Error(t('aws.accountNotFound'));
 
         return {
             accessKeyId: decrypt(record.accessKeyId),
@@ -80,6 +85,6 @@ export async function getAwsCredentials(id: string): Promise<AwsCredentials> {
             region: record.region,
         };
     } catch (error: unknown) {
-        throw new Error('Failed to retrieve AWS credentials');
+        throw new Error(t('aws.retrieveCredentialsFailed'));
     }
 }

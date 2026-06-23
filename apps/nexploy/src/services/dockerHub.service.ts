@@ -3,6 +3,7 @@ import type {
     DockerHubRawResponse,
     DockerHubSearchOptions,
 } from '@workspace/typescript-interface/docker/docker.hub';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 const DOCKER_HUB_SEARCH_URL = 'https://hub.docker.com/api/search/v3/catalog/search';
 
@@ -10,6 +11,7 @@ export async function searchDockerHubImages(
     query: string,
     { sort = 'pull_count', size = 30, from = 0 }: DockerHubSearchOptions = {},
 ): Promise<DockerHubImage[]> {
+    const t = await getErrorTranslator();
     const term = query.trim();
 
     const params = new URLSearchParams({
@@ -31,7 +33,7 @@ export async function searchDockerHubImages(
     });
 
     if (!res.ok) {
-        throw new Error(`Docker Hub search failed with status ${res.status}`);
+        throw new Error(t('dockerHub.searchFailed', { status: res.status }));
     }
 
     const data = (await res.json()) as DockerHubRawResponse;

@@ -7,6 +7,7 @@ import { getDomainsFromTraefikConfig } from '@/services/traefik.service';
 import { applyDomainOperations } from '@/services/domain.service';
 import { setToastServer } from '@/lib/toastServer.ts';
 import { revalidatePath } from 'next/cache';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const deleteDomain = authActionServer
     .use(requirePermission('domain', 'manage'))
@@ -18,7 +19,7 @@ export const deleteDomain = authActionServer
             const domainToDelete = existingDomains.find((d) => d.id === domainId);
 
             if (!domainToDelete) {
-                throw new Error('Domain not found');
+                throw new Error((await getErrorTranslator())('domain.notFound'));
             }
 
             await applyDomainOperations({

@@ -201,12 +201,12 @@ export const pipelineGroup: ToolGroup = {
                     let files: Record<string, string> = {};
 
                     if (repo.gitProvider === 'GITHUB') {
-                        const { owner, repo: repoName } = extractGitHubRepo(repo.repositoryUrl);
+                        const { owner, repo: repoName } = await extractGitHubRepo(repo.repositoryUrl);
                         ({ rootFiles, files } = await tokenGitStorage.run(token, () =>
                             fetchGithubFiles(owner, repoName, ref),
                         ));
                     } else if (repo.gitProvider === 'GITLAB') {
-                        const { baseUrl } = extractGitLabRepo(repo.repositoryUrl);
+                        const { baseUrl } = await extractGitLabRepo(repo.repositoryUrl);
                         const url = new URL(repo.repositoryUrl);
                         const pathWithNamespace = url.pathname
                             .replace(/^\//, '')

@@ -28,7 +28,7 @@ export const GET = route
 
             let payload;
             try {
-                payload = verifyOAuthState(state);
+                payload = await verifyOAuthState(state);
             } catch {
                 return NextResponse.redirect(`${accountUrl}?error=invalid_state`);
             }

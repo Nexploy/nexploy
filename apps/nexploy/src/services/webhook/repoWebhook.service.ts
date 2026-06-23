@@ -6,11 +6,13 @@ import { getValidToken } from '@/services/api/gitProvider.service';
 import { githubCreateWebhook, githubDeleteWebhook } from '@/lib/api/github.api';
 import { gitlabCreateWebhook, gitlabDeleteWebhook } from '@/lib/api/gitlab.api';
 import { encrypt } from '@/lib/encryption';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
-function getWebhookUrl(baseUrl: string, provider: string): string {
+async function getWebhookUrl(baseUrl: string, provider: string): Promise<string> {
+    const t = await getErrorTranslator();
     if (provider === 'github') return `${baseUrl}/api/webhooks/github`;
     if (provider === 'gitlab') return `${baseUrl}/api/webhooks/gitlab`;
-    throw new Error(`Unsupported git provider: ${provider}`);
+    throw new Error(t('webhook.unsupportedProvider', { provider }));
 }
 
 export type WebhookSetupResult = { configured: true } | { configured: false; error: string };
@@ -19,6 +21,7 @@ export async function setupRepositoryWebhook(
     repositoryId: string,
     baseUrl: string,
 ): Promise<WebhookSetupResult> {
+    const t = await getErrorTranslator();
     const repo = await prisma.repository.findUnique({
         where: { id: repositoryId },
         select: {
@@ -37,13 +40,13 @@ export async function setupRepositoryWebhook(
         },
     });
 
-    if (!repo) throw new Error('Repository not found');
+    if (!repo) throw new Error(t('webhook.repositoryNotFound'));
 
     if (repo.webhookId) {
         return { configured: true };
     }
 
-    const webhookUrl = getWebhookUrl(baseUrl, repo.gitProvider);
+    const webhookUrl = await getWebhookUrl(baseUrl, repo.gitProvider);
     const secret = crypto.randomUUID();
 
     try {
@@ -63,7 +66,7 @@ export async function setupRepositoryWebhook(
         await tokenGitStorage.run(token, async () => {
             if (repo.gitProvider === 'GITHUB') {
                 const [owner, repoName] = repo.name.split('/');
-                if (!owner || !repoName) throw new Error(`Invalid repository name: ${repo.name}`);
+                if (!owner || !repoName) throw new Error(t('webhook.invalidRepositoryName', { name: repo.name }));
                 const result = await githubCreateWebhook(owner, repoName, webhookUrl, secret);
                 webhookId = String(result.id);
             } else if (repo.gitProvider === 'GITLAB') {
@@ -88,7 +91,7 @@ export async function setupRepositoryWebhook(
         if (error instanceof Error) {
             throw new Error(error.message);
         }
-        throw new Error('Unknown error');
+        throw new Error(t('webhook.unknownError'));
     }
 }
 
@@ -96,6 +99,7 @@ export async function teardownRepositoryWebhook(
     repositoryId: string,
     userId: string,
 ): Promise<void> {
+    const t = await getErrorTranslator();
     try {
         const repo = await prisma.repository.findUnique({
             where: { id: repositoryId, userId },
@@ -134,11 +138,11 @@ export async function teardownRepositoryWebhook(
                     if (repo.gitProvider === 'GITHUB') {
                         const [owner, repoName] = repo.name.split('/');
                         if (!owner || !repoName)
-                            throw new Error(`Invalid repository name: ${repo.name}`);
+                            throw new Error(t('webhook.invalidRepositoryName', { name: repo.name }));
                         await githubDeleteWebhook(owner, repoName, repo.webhookId!);
                     } else if (repo.gitProvider === 'GITLAB') {
                         const gitlabBase = repo.gitAccount?.gitProvider?.baseUrl;
-                        if (!gitlabBase) throw new Error('GitLab base URL not found');
+                        if (!gitlabBase) throw new Error(t('webhook.gitlabBaseNotFound'));
                         await gitlabDeleteWebhook(gitlabBase, repo.gitId, repo.webhookId!);
                     }
                 });
@@ -150,6 +154,6 @@ export async function teardownRepositoryWebhook(
             data: { webhookId: null, webhookSecret: null },
         });
     } catch {
-        throw new Error('Failed to teardown repository webhook');
+        throw new Error(t('webhook.teardownFailed'));
     }
 }

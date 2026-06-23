@@ -61,7 +61,7 @@ export class CreateReleaseExecutor implements INodeExecutor {
         let releaseUrl: string;
 
         if (provider === 'GITHUB') {
-            const { owner, repo } = extractGitHubRepo(buildConfig.gitUrl);
+            const { owner, repo } = await extractGitHubRepo(buildConfig.gitUrl);
             const result = await githubCreateRelease(token, owner, repo, {
                 tagName,
                 targetBranch,
@@ -73,7 +73,7 @@ export class CreateReleaseExecutor implements INodeExecutor {
             releaseId = String(result.id);
             releaseUrl = result.html_url;
         } else if (provider === 'GITLAB') {
-            const { baseUrl, owner, repo } = extractGitLabRepo(buildConfig.gitUrl);
+            const { baseUrl, owner, repo } = await extractGitLabRepo(buildConfig.gitUrl);
             const result = await gitlabCreateRelease(token, baseUrl, owner, repo, {
                 tagName,
                 ref: targetBranch,

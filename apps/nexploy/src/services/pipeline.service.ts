@@ -1,4 +1,5 @@
 import { prisma } from '../../prisma/prisma';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { SavePipelineInput } from '@workspace/schemas-zod/pipeline/pipelineGraph.schema';
 import { type NodeRunStatus } from '@workspace/typescript-interface/pipeline/pipeline';
@@ -10,6 +11,7 @@ export interface BuildPipelineStatus {
 }
 
 export async function getBuildPipelineStatus(buildId: string): Promise<BuildPipelineStatus | null> {
+    const t = await getErrorTranslator();
     try {
         const build = await prisma.build.findUnique({
             where: { id: buildId },
@@ -23,11 +25,12 @@ export async function getBuildPipelineStatus(buildId: string): Promise<BuildPipe
             status: build.status,
         };
     } catch (e) {
-        throw new Error('Failed to get build pipeline status');
+        throw new Error(t('pipeline.getStatusFailed'));
     }
 }
 
 export async function getPipelineConfig(stageId: string): Promise<PipelineGraph | null> {
+    const t = await getErrorTranslator();
     try {
         const config = await prisma.pipelineConfig.findUnique({
             where: { stageId },
@@ -41,7 +44,7 @@ export async function getPipelineConfig(stageId: string): Promise<PipelineGraph 
             edges: config.edges as unknown as PipelineGraph['edges'],
         };
     } catch (error: unknown) {
-        throw new Error('Failed to get pipeline config');
+        throw new Error(t('pipeline.getConfigFailed'));
     }
 }
 
@@ -50,6 +53,7 @@ export async function savePipelineConfig({
     stageId,
     graph,
 }: SavePipelineInput): Promise<void> {
+    const t = await getErrorTranslator();
     try {
         const encryptedNodes = encryptPipelineNodes(graph.nodes);
         await prisma.pipelineConfig.upsert({
@@ -66,6 +70,6 @@ export async function savePipelineConfig({
             },
         });
     } catch (error: unknown) {
-        throw new Error('Failed to save pipeline config');
+        throw new Error(t('pipeline.saveConfigFailed'));
     }
 }

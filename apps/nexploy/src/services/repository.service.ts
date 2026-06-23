@@ -1,4 +1,5 @@
 import { RepositoryCreateForm } from '@workspace/schemas-zod/repository/repositoryCreate.schema';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 import { Session } from '@/lib/auth/auth';
 import { prisma } from '../../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
@@ -14,6 +15,7 @@ export async function createRepository(
     { repo, name, gitProvider, gitAccountId }: RepositoryCreateForm,
     ctx: { session: Session },
 ) {
+    const t = await getErrorTranslator();
     try {
         const defaultEnvironment = await getDefaultEnvironment();
 
@@ -37,13 +39,14 @@ export async function createRepository(
 
         return repository.id;
     } catch (error: unknown) {
-        throw new Error('Failed to create repository');
+        throw new Error(t('repository.createFailed'));
     }
 }
 
 export async function getRepositorieById<
     T extends Prisma.RepositoryInclude | undefined = undefined,
 >(repositoryId: string, include?: T): Promise<RepositoryPayload<T> | null> {
+    const t = await getErrorTranslator();
     try {
         return (await prisma.repository.findUnique({
             where: {
@@ -52,11 +55,12 @@ export async function getRepositorieById<
             ...(include && { include }),
         })) as RepositoryPayload<T> | null;
     } catch (error: unknown) {
-        throw new Error('Failed to get repository');
+        throw new Error(t('repository.getFailed'));
     }
 }
 
-export function getRepositories() {
+export async function getRepositories() {
+    const t = await getErrorTranslator();
     try {
         return prisma.repository.findMany({
             include: {
@@ -77,11 +81,12 @@ export function getRepositories() {
             },
         });
     } catch (error: unknown) {
-        throw new Error('Failed to get repository');
+        throw new Error(t('repository.getFailed'));
     }
 }
 
 export async function getRepositorieWithEnv(repositoryId: string) {
+    const t = await getErrorTranslator();
     try {
         const repository = await prisma.repository.findUnique({
             where: { id: repositoryId },
@@ -99,11 +104,12 @@ export async function getRepositorieWithEnv(repositoryId: string) {
 
         return repository;
     } catch (error: unknown) {
-        throw new Error('Failed to get repository with env');
+        throw new Error(t('repository.getWithEnvFailed'));
     }
 }
 
 export async function getRepositorieBuildLogs(repositoryId: string, buildId: string) {
+    const t = await getErrorTranslator();
     try {
         const build = await prisma.build.findFirst({
             where: {
@@ -126,7 +132,7 @@ export async function getRepositorieBuildLogs(repositoryId: string, buildId: str
 
         return build;
     } catch (error: unknown) {
-        throw new Error('Failed to get repository build logs');
+        throw new Error(t('repository.getBuildLogsFailed'));
     }
 }
 
@@ -145,6 +151,7 @@ export async function getBuildNodeLogs(repositoryId: string, buildId: string, no
 }
 
 export async function getBuilds(repositoryId: string) {
+    const t = await getErrorTranslator();
     try {
         return prisma.build.findMany({
             where: {
@@ -153,7 +160,7 @@ export async function getBuilds(repositoryId: string) {
             orderBy: { createdAt: 'desc' },
         });
     } catch (error: unknown) {
-        throw new Error('Failed to get active builds');
+        throw new Error(t('repository.getActiveBuildsFailed'));
     }
 }
 
@@ -161,20 +168,21 @@ export async function deleteRepository(
     { repositoryId, confirmName }: DeleteRepositoryInput,
     userId: string,
 ) {
+    const t = await getErrorTranslator();
     const repository = await prisma.repository.findUnique({
         where: { id: repositoryId },
     });
 
     if (!repository) {
-        throw new Error('Repository not found');
+        throw new Error(t('repository.notFound'));
     }
 
     if (repository.userId !== userId) {
-        throw new Error('User not authorized to delete this repository');
+        throw new Error(t('repository.notAuthorizedDelete'));
     }
 
     if (confirmName !== repository.name) {
-        throw new Error(`Confirmation failed: expected "${repository.name}"`);
+        throw new Error(t('repository.confirmationFailed', { name: repository.name }));
     }
 
     await teardownRepositoryWebhook(repositoryId, userId);
@@ -183,7 +191,7 @@ export async function deleteRepository(
             where: { id: repositoryId, userId },
         });
     } catch (error: unknown) {
-        throw new Error('Failed to delete repository');
+        throw new Error(t('repository.deleteFailed'));
     }
 }
 
@@ -197,18 +205,19 @@ export async function updateEnvVariables(
     },
     stageId?: string,
 ) {
+    const t = await getErrorTranslator();
     try {
         const repository = await prisma.repository.findUnique({
             where: { id: repositoryId, userId },
         });
 
         if (!repository) {
-            throw new Error('Repository not found');
+            throw new Error(t('repository.notFound'));
         }
 
         const stage = await getFirstStage(repositoryId, stageId);
         if (!stage) {
-            throw new Error('No deployment stage found for this repository');
+            throw new Error(t('repository.noDeploymentStage'));
         }
 
         return await prisma.$transaction(async (tx) => {
@@ -249,18 +258,19 @@ export async function updateEnvVariables(
             }
         });
     } catch (error: unknown) {
-        throw new Error('Failed to update env variables');
+        throw new Error(t('repository.updateEnvFailed'));
     }
 }
 
 export async function getRepositoryWebhookStatus(repositoryId: string) {
+    const t = await getErrorTranslator();
     try {
         return prisma.repository.findUnique({
             where: { id: repositoryId },
             select: { webhookId: true },
         });
     } catch (error: unknown) {
-        throw new Error('Failed to fetch repository webhook status');
+        throw new Error(t('repository.fetchWebhookStatusFailed'));
     }
 }
 
@@ -270,15 +280,16 @@ export async function relinkGitAccount(
     userId: string,
     isAdmin: boolean,
 ) {
+    const t = await getErrorTranslator();
     const repo = await prisma.repository.findUnique({
         where: { id: repositoryId },
         select: { gitId: true, repositoryUrl: true, gitProvider: true, userId: true },
     });
 
-    if (!repo) throw new Error('Repository not found');
+    if (!repo) throw new Error(t('repository.notFound'));
 
     if (repo.userId !== userId && !isAdmin) {
-        throw new Error('User not authorized to relink this repository');
+        throw new Error(t('repository.notAuthorizedRelink'));
     }
 
     const repoInfo = await verifyRepoAccessFromAccount(

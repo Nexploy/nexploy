@@ -33,6 +33,6 @@ export const banUser = authActionServer
             revalidatePath('/admin/users');
             return action;
         } catch (error: unknown) {
-            throw new Error('Failed to ban/unban user');
+            throw new Error(t('errors.banFailed'));
         }
     });

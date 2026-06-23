@@ -11,6 +11,7 @@ import { createLog } from '@/services/repository/log.service';
 import type { Realtime } from 'inngest';
 import { createBuildChannel } from '@/inngest/channels/build.channel';
 import { getFirstStage } from '@/services/repository/deploymentStage.service';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export async function startBuildRepository(
     { repositoryId, branch, stageId }: StartBuildSchemaType,
@@ -18,16 +19,17 @@ export async function startBuildRepository(
     triggerSource: 'manual' | 'webhook' = 'manual',
     triggeredByStageId?: string,
 ) {
+    const t = await getErrorTranslator();
     const repository = await getRepositorieWithEnv(repositoryId);
 
     if (!repository) {
-        await setToastServer({ type: 'error', message: 'Repository not found' });
-        throw new Error('Repository not found');
+        await setToastServer({ type: 'error', message: t('build.repositoryNotFound') });
+        throw new Error(t('build.repositoryNotFound'));
     }
 
     const stage = await getFirstStage(repository.id, stageId);
     if (!stage) {
-        throw new Error('No deployment stage found. Create a stage before starting a build.');
+        throw new Error(t('build.noDeploymentStage'));
     }
 
     await assertStageProtectionSatisfied(stage.id, stage.requiredStageId, triggeredByStageId);
@@ -37,9 +39,7 @@ export async function startBuildRepository(
         select: { nodes: true, edges: true },
     });
     if (!pipelineConfig) {
-        throw new Error(
-            'No pipeline configuration found for this stage. Configure a pipeline before starting a build.',
-        );
+        throw new Error(t('build.noPipelineConfig'));
     }
 
     const build = await createBuild({
@@ -67,10 +67,11 @@ export async function startBuildRepository(
 }
 
 export async function removeBuild(buildId: string) {
+    const t = await getErrorTranslator();
     try {
         return await prisma.build.delete({ where: { id: buildId } });
     } catch {
-        throw new Error('Failed to remove build');
+        throw new Error(t('build.removeFailed'));
     }
 }
 
@@ -88,6 +89,7 @@ export async function createBuild({
     commitHash?: string;
     pipelineSnapshot?: object;
 }) {
+    const t = await getErrorTranslator();
     try {
         return await prisma.$transaction(async (tx) => {
             const last = await tx.build.findFirst({
@@ -107,7 +109,7 @@ export async function createBuild({
             });
         });
     } catch {
-        throw new Error('Failed to create build');
+        throw new Error(t('build.createFailed'));
     }
 }
 
@@ -117,17 +119,19 @@ export async function updateBuildGitInfo(
     commitHash?: string,
     commitMessage?: string,
 ) {
+    const t = await getErrorTranslator();
     try {
         await prisma.build.update({
             where: { id: buildId },
             data: { branch, commitHash, commitMessage },
         });
     } catch {
-        throw new Error('Failed to update build git info');
+        throw new Error(t('build.updateGitInfoFailed'));
     }
 }
 
 export async function getBuildStatus(buildId: string): Promise<BuildStatus | null> {
+    const t = await getErrorTranslator();
     try {
         const build = await prisma.build.findUnique({
             where: { id: buildId },
@@ -135,15 +139,16 @@ export async function getBuildStatus(buildId: string): Promise<BuildStatus | nul
         });
         return build?.status ?? null;
     } catch {
-        throw new Error('Failed to get build status');
+        throw new Error(t('build.getStatusFailed'));
     }
 }
 
 export async function updateStatusBuild(buildId: string, status: BuildStatus) {
+    const t = await getErrorTranslator();
     try {
         return await prisma.build.update({ where: { id: buildId }, data: { status } });
     } catch {
-        throw new Error('Failed to update status build');
+        throw new Error(t('build.updateStatusFailed'));
     }
 }
 
@@ -153,6 +158,7 @@ export async function updateNodeStatus(
     status: string,
     buildStatus?: BuildStatus,
 ) {
+    const t = await getErrorTranslator();
     try {
         const build = await prisma.build.findUnique({
             where: { id: buildId },
@@ -167,19 +173,20 @@ export async function updateNodeStatus(
             },
         });
     } catch {
-        throw new Error('Failed to update node status');
+        throw new Error(t('build.updateNodeStatusFailed'));
     }
 }
 
 export async function cancelBuildRepository(buildId: string) {
+    const t = await getErrorTranslator();
     const build = await prisma.build.findUnique({
         where: { id: buildId },
         select: { status: true, nodeStatuses: true, pipelineSnapshot: true },
     });
 
-    if (!build) throw new Error('Build not found');
+    if (!build) throw new Error(t('build.notFound'));
     if (build.status !== 'QUEUED' && build.status !== 'BUILDING') {
-        throw new Error('Build cannot be cancelled');
+        throw new Error(t('build.cannotBeCancelled'));
     }
 
     const terminalStatuses = new Set(['completed', 'skipped', 'failed', 'cancelled']);
@@ -257,6 +264,7 @@ export async function getBuildsPage(
     cursor?: string,
     take = 20,
 ) {
+    const t = await getErrorTranslator();
     try {
         return await prisma.build.findMany({
             where: { repositoryId, ...(stageId ? { stageId } : {}) },
@@ -265,7 +273,7 @@ export async function getBuildsPage(
             ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
         });
     } catch {
-        throw new Error('Failed to get builds page');
+        throw new Error(t('build.getPageFailed'));
     }
 }
 
@@ -274,6 +282,7 @@ export async function assertStageProtectionSatisfied(
     requiredStageId: string | null | undefined,
     triggeredByStageId?: string,
 ) {
+    const t = await getErrorTranslator();
     if (!requiredStageId || requiredStageId === stageId) return;
     if (triggeredByStageId && triggeredByStageId === requiredStageId) return;
 
@@ -283,16 +292,15 @@ export async function assertStageProtectionSatisfied(
     });
 
     const requiredName = requiredStage?.name ?? 'another stage';
-    throw new Error(
-        `This stage is protected: it can only be built by the "${requiredName}" stage via its "Trigger Stage Build" node.`,
-    );
+    throw new Error(t('build.stageProtected', { stage: requiredName }));
 }
 
 export async function getAllEnvsBuild(stageId: string) {
+    const t = await getErrorTranslator();
     try {
         const envs = await prisma.envVariable.findMany({ where: { stageId } });
         return envs.map((env) => ({ ...env, value: decrypt(env.value) }));
     } catch {
-        throw new Error('Failed to get builds');
+        throw new Error(t('build.getBuildsFailed'));
     }
 }

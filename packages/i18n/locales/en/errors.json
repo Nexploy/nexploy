@@ -1,0 +1,197 @@
+{
+    "repository": {
+        "createFailed": "Failed to create repository",
+        "getFailed": "Failed to get repository",
+        "getWithEnvFailed": "Failed to get repository with env",
+        "getBuildLogsFailed": "Failed to get repository build logs",
+        "getActiveBuildsFailed": "Failed to get active builds",
+        "notFound": "Repository not found",
+        "notAuthorizedDelete": "User not authorized to delete this repository",
+        "confirmationFailed": "Confirmation failed: expected \"{name}\"",
+        "deleteFailed": "Failed to delete repository",
+        "noDeploymentStage": "No deployment stage found for this repository",
+        "updateEnvFailed": "Failed to update env variables",
+        "fetchWebhookStatusFailed": "Failed to fetch repository webhook status",
+        "notAuthorizedRelink": "User not authorized to relink this repository",
+        "workDirNotConfigured": "DEPLOYER_WORK_DIR is not configured"
+    },
+    "pipeline": {
+        "getStatusFailed": "Failed to get build pipeline status",
+        "getConfigFailed": "Failed to get pipeline config",
+        "saveConfigFailed": "Failed to save pipeline config",
+        "configNotFound": "Pipeline config not found"
+    },
+    "dockerHub": {
+        "searchFailed": "Docker Hub search failed with status {status}"
+    },
+    "aiConfig": {
+        "getKeyFailed": "Failed to get provider API key",
+        "upsertKeyFailed": "Failed to upsert provider API key",
+        "deleteKeyFailed": "Failed to delete provider API key",
+        "getProvidersFailed": "Failed to get configured providers",
+        "getKeyStatusFailed": "Failed to get all provider key status"
+    },
+    "aws": {
+        "getAccountsFailed": "Failed to get AWS accounts",
+        "saveAccountFailed": "Failed to save AWS account",
+        "deleteAccountFailed": "Failed to delete AWS account",
+        "accountNotFound": "AWS account not found",
+        "retrieveCredentialsFailed": "Failed to retrieve AWS credentials"
+    },
+    "domain": {
+        "originNotFound": "Original domain not found for ID: {id}",
+        "createDnsFailed": "Failed to create DNS for {host}: {error}",
+        "updateDnsFailed": "Failed to update DNS for {host}: {error}",
+        "notFound": "Domain not found"
+    },
+    "user": {
+        "getUsersFailed": "Failed to get users"
+    },
+    "cleanupSettings": {
+        "getFailed": "Failed to get cleanup settings",
+        "updateFailed": "Failed to update cleanup settings",
+        "markRanFailed": "Failed to mark cleanup as ran"
+    },
+    "sslCertificate": {
+        "invalidCertificate": "Invalid certificate: not a valid PEM certificate",
+        "invalidPrivateKey": "Invalid private key: not a valid PEM private key",
+        "keyMismatch": "The private key does not match the certificate",
+        "createLetsEncryptFailed": "Failed to create LetsEncrypt certificate",
+        "writeFilesFailed": "Failed to write certificate files for Traefik"
+    },
+    "cloudflare": {
+        "saveCredentialFailed": "Cloudflare error saving credential",
+        "deleteCredentialFailed": "Cloudflare error deleting credential",
+        "fetchAccountsFailed": "Cloudflare error fetching accounts",
+        "credentialNotFound": "Cloudflare credential not found",
+        "getCredentialByIdFailed": "Cloudflare error getting credential by ID",
+        "listZonesFailed": "Cloudflare error listing zones",
+        "createDnsFailed": "Cloudflare error creating DNS record",
+        "deleteDnsFailed": "Cloudflare error deleting DNS record",
+        "updateDnsFailed": "Cloudflare error updating DNS record",
+        "getServerIpFailed": "Failed to get server IP"
+    },
+    "backupSchedule": {
+        "getForVolumeFailed": "Failed to get backup schedules for volume",
+        "getForVolumesFailed": "Failed to get backup schedules for volumes",
+        "createFailed": "Failed to create backup schedule",
+        "deleteFailed": "Failed to delete backup schedule",
+        "deleteForVolumeFailed": "Failed to delete backup schedules for volume",
+        "markRanFailed": "Failed to mark schedule as ran"
+    },
+    "aiSettings": {
+        "getFailed": "Failed to get AI settings",
+        "updateFailed": "Failed to update AI settings"
+    },
+    "oauthProvider": {
+        "getProvidersFailed": "Failed to get git providers",
+        "getCredentialsFailed": "Failed to get git provider credentials",
+        "saveGithubAppFailed": "Failed to save GitHub App",
+        "saveGitlabFailed": "Failed to save GitLab provider",
+        "deleteProviderFailed": "Failed to delete git provider"
+    },
+    "registry": {
+        "getFailed": "Failed to get registries",
+        "createFailed": "Failed to create registry",
+        "updateFailed": "Failed to update registry",
+        "deleteFailed": "Failed to delete registry",
+        "retrieveWithPasswordFailed": "Failed to retrieve registry with password",
+        "notFound": "Registry not found"
+    },
+    "webhook": {
+        "unsupportedProvider": "Unsupported git provider: {provider}",
+        "repositoryNotFound": "Repository not found",
+        "invalidRepositoryName": "Invalid repository name: {name}",
+        "unknownError": "Unknown error",
+        "gitlabBaseNotFound": "GitLab base URL not found",
+        "teardownFailed": "Failed to teardown repository webhook"
+    },
+    "log": {
+        "createFailed": "Failed to create log",
+        "createManyFailed": "Failed to create logs"
+    },
+    "version": {
+        "getNextNumberFailed": "Failed to get next version number",
+        "upsertFailed": "Failed to upsert version",
+        "deleteByImageTagFailed": "Failed to delete versions by image tag"
+    },
+    "deploymentStage": {
+        "getFailed": "Failed to get deployment stages",
+        "resolveFailed": "Failed to resolve deployment stage",
+        "createFailed": "Failed to create deployment stage",
+        "notFound": "Deployment stage not found",
+        "cannotRequireItself": "A stage cannot require itself",
+        "updateFailed": "Failed to update deployment stage",
+        "cannotDeleteProduction": "Cannot delete the production deployment stage",
+        "cannotDeleteLast": "Cannot delete the last deployment stage",
+        "deleteFailed": "Failed to delete deployment stage"
+    },
+    "build": {
+        "repositoryNotFound": "Repository not found",
+        "noDeploymentStage": "No deployment stage found. Create a stage before starting a build.",
+        "noPipelineConfig": "No pipeline configuration found for this stage. Configure a pipeline before starting a build.",
+        "removeFailed": "Failed to remove build",
+        "createFailed": "Failed to create build",
+        "updateGitInfoFailed": "Failed to update build git info",
+        "getStatusFailed": "Failed to get build status",
+        "updateStatusFailed": "Failed to update status build",
+        "updateNodeStatusFailed": "Failed to update node status",
+        "notFound": "Build not found",
+        "cannotBeCancelled": "Build cannot be cancelled",
+        "getPageFailed": "Failed to get builds page",
+        "stageProtected": "This stage is protected: it can only be built by the \"{stage}\" stage via its \"Trigger Stage Build\" node.",
+        "getBuildsFailed": "Failed to get builds",
+        "noStageAssociated": "No deployment stage associated with this build"
+    },
+    "dockerVersion": {
+        "repositoryNotFound": "Repository not found",
+        "imageNotFound": "Image not found: {name}",
+        "deleteFailed": "Failed to delete version"
+    },
+    "gitProvider": {
+        "oauthTokenExpired": "Your {provider} OAuth token has expired or been revoked. Please reconnect your account from the integrations settings.",
+        "gitlabOauthExpired": "Your GitLab OAuth token has expired or been revoked. Please reconnect your GitLab account from the integrations settings.",
+        "unknownProvider": "Unknown provider: {provider}",
+        "fetchCommitsFailed": "Failed to fetch commits: {error}",
+        "invalidGitlabUrl": "Invalid GitLab repository URL: {url}",
+        "noRefreshTokenGitlab": "No refresh token available for GitLab",
+        "gitlabNotConfigured": "GitLab provider not configured",
+        "refreshTokenFailedStatus": "Failed to refresh token. Status {status}. Message: {message}",
+        "noRefreshTokenGithub": "No refresh token available for GitHub",
+        "githubNotConfigured": "GitHub provider not configured",
+        "githubTokenRefreshFailed": "GitHub token refresh failed: {error}"
+    },
+    "git": {
+        "invalidGithubUrl": "Invalid GitHub repository URL: {url}",
+        "invalidGitlabUrl": "Invalid GitLab repository URL: {url}",
+        "unauthorized": "Unauthorized",
+        "noAccessToken": "No access token found for {provider}",
+        "fetchGitlabReposFailed": "Failed to fetch GitLab repositories",
+        "unsupportedProvider": "Unsupported provider: {provider}",
+        "fetchGithubBranchesFailed": "Failed to fetch GitHub branches",
+        "fetchGitlabBranchesFailed": "Failed to fetch GitLab branches",
+        "noAccountForUser": "No {provider} account found for user",
+        "updateTokenFailed": "Failed to update git provider token",
+        "listAccountsFailed": "Failed to list git accounts",
+        "gitAccountNotFound": "Git account not found",
+        "disconnectFailed": "Failed to disconnect git account"
+    },
+    "oauth": {
+        "invalidState": "Invalid OAuth state",
+        "stateExpired": "OAuth state expired"
+    },
+    "environment": {
+        "getUserEnvironmentsFailed": "Failed to get user environments",
+        "getEnvironmentFailed": "Failed to get environment",
+        "setDefaultFailed": "Failed to set default environment. Is the Docker environment configured correctly?",
+        "getDefaultFailed": "Failed to get default environment",
+        "notAccessible": "This environment is not accessible. Please check the connection.",
+        "registerFailed": "Failed to register environment with docker-api: {error}",
+        "notFound": "Environment not found",
+        "dockerApiNotAccessible": "docker-api is not accessible. Please ensure the service is running.",
+        "updateDbFailed": "Failed to update environment in database",
+        "updateDockerApiFailed": "Failed to update environment in docker-api: {error}",
+        "deleteDbFailed": "Failed to delete environment from database",
+        "unregisterFailed": "Failed to unregister environment from docker-api: {error}"
+    }
+}

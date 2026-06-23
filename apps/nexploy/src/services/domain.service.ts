@@ -9,6 +9,7 @@ import {
     getDomainsFromTraefikConfig,
 } from '@/services/traefik.service';
 import { ApplyDomainOperationsInput } from '@workspace/typescript-interface/domain';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export async function applyDomainOperations({
     repositoryId,
@@ -68,9 +69,10 @@ async function handleEdit({
     domain: Domain;
     existingDomains: Domain[];
 }): Promise<Domain> {
+    const t = await getErrorTranslator();
     const originalDomain = existingDomains.find((d) => d.id === domain.id);
     if (!originalDomain) {
-        throw new Error(`Original domain not found for ID: ${domain.id}`);
+        throw new Error(t('domain.originNotFound', { id: domain.id ?? '' }));
     }
 
     const credentialId = domain.cloudflareCredentialId ?? originalDomain.cloudflareCredentialId;
@@ -113,7 +115,7 @@ async function handleEdit({
             );
             cloudflareDnsRecordId = record.id;
         } catch (error) {
-            throw new Error(`Failed to create DNS for ${domain.host}: ${error}`);
+            throw new Error(t('domain.createDnsFailed', { host: domain.host, error: String(error) }));
         }
     } else if (zoneChanged && domain.cloudflareZoneId && domain.cloudflareZoneName) {
         if (originalDomain.cloudflareDnsRecordId) {
@@ -137,7 +139,7 @@ async function handleEdit({
             );
             cloudflareDnsRecordId = record.id;
         } catch (error) {
-            throw new Error(`Failed to create DNS for ${domain.host}: ${error}`);
+            throw new Error(t('domain.createDnsFailed', { host: domain.host, error: String(error) }));
         }
     } else if (
         hostChanged &&
@@ -156,7 +158,7 @@ async function handleEdit({
                 domain.cloudflareZoneName,
             );
         } catch (error) {
-            throw new Error(`Failed to update DNS for ${domain.host}: ${error}`);
+            throw new Error(t('domain.updateDnsFailed', { host: domain.host, error: String(error) }));
         }
     }
 
@@ -226,6 +228,7 @@ async function handleAdd({
     domain: Domain;
     repositoryId: string;
 }): Promise<Domain> {
+    const t = await getErrorTranslator();
     let cloudflareDnsRecordId: string | undefined;
 
     if (domain.cloudflareCredentialId && domain.cloudflareZoneId && domain.cloudflareZoneName) {
@@ -239,7 +242,7 @@ async function handleAdd({
             );
             cloudflareDnsRecordId = record.id;
         } catch (error) {
-            throw new Error(`Failed to create DNS for ${domain.host}: ${error}`);
+            throw new Error(t('domain.createDnsFailed', { host: domain.host, error: String(error) }));
         }
     }
 

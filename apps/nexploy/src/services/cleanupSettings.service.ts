@@ -1,6 +1,7 @@
 import { prisma } from '../../prisma/prisma';
 import { cookies } from 'next/headers';
 import type { UpdateCleanupSettings } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const LOCAL_ENVIRONMENT_KEY = 'default';
 
@@ -14,6 +15,7 @@ export async function getCurrentEnvironmentKey(): Promise<string> {
 }
 
 export async function getCleanupSettings(environmentId: string = LOCAL_ENVIRONMENT_KEY) {
+    const t = await getErrorTranslator();
     try {
         return await prisma.cleanupSettings.upsert({
             where: { environmentId },
@@ -21,7 +23,7 @@ export async function getCleanupSettings(environmentId: string = LOCAL_ENVIRONME
             update: {},
         });
     } catch (error: unknown) {
-        throw new Error('Failed to get cleanup settings');
+        throw new Error(t('cleanupSettings.getFailed'));
     }
 }
 
@@ -29,6 +31,7 @@ export async function updateCleanupSettings(
     data: UpdateCleanupSettings,
     environmentId: string = LOCAL_ENVIRONMENT_KEY,
 ) {
+    const t = await getErrorTranslator();
     try {
         return await prisma.cleanupSettings.upsert({
             where: { environmentId },
@@ -36,7 +39,7 @@ export async function updateCleanupSettings(
             update: data,
         });
     } catch (error: unknown) {
-        throw new Error('Failed to update cleanup settings');
+        throw new Error(t('cleanupSettings.updateFailed'));
     }
 }
 
@@ -44,12 +47,13 @@ export async function markCleanupRan(
     reclaimed: number,
     environmentId: string = LOCAL_ENVIRONMENT_KEY,
 ) {
+    const t = await getErrorTranslator();
     try {
         return await prisma.cleanupSettings.update({
             where: { environmentId },
             data: { lastRunAt: new Date(), lastReclaimed: reclaimed },
         });
     } catch (error: unknown) {
-        throw new Error('Failed to mark cleanup as ran');
+        throw new Error(t('cleanupSettings.markRanFailed'));
     }
 }

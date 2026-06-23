@@ -3,6 +3,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as crypto from 'crypto';
 import * as yaml from 'yaml';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 const TRAEFIK_SERVICE_DIR =
     process.env.TRAEFIK_SERVICE_DIR ??
@@ -20,23 +21,24 @@ function parseCertExpiry(certPem: string): Date | null {
     }
 }
 
-function validateCertKeyPair(certPem: string, privateKeyPem: string): void {
+async function validateCertKeyPair(certPem: string, privateKeyPem: string): Promise<void> {
+    const t = await getErrorTranslator();
     let cert: crypto.X509Certificate;
     try {
         cert = new crypto.X509Certificate(certPem);
     } catch {
-        throw new Error('Invalid certificate: not a valid PEM certificate');
+        throw new Error(t('sslCertificate.invalidCertificate'));
     }
 
     let key: crypto.KeyObject;
     try {
         key = crypto.createPrivateKey(privateKeyPem);
     } catch {
-        throw new Error('Invalid private key: not a valid PEM private key');
+        throw new Error(t('sslCertificate.invalidPrivateKey'));
     }
 
     if (!cert.checkPrivateKey(key)) {
-        throw new Error('The private key does not match the certificate');
+        throw new Error(t('sslCertificate.keyMismatch'));
     }
 }
 
@@ -55,12 +57,13 @@ export async function getAllCertificates() {
 }
 
 export async function createLetsEncryptCertificate(name: string, domain: string, email: string) {
+    const t = await getErrorTranslator();
     try {
         return prisma.sslCertificate.create({
             data: { name, type: 'LETS_ENCRYPT', domain, email },
         });
     } catch (error) {
-        throw new Error('Failed to create LetsEncrypt certificate');
+        throw new Error(t('sslCertificate.createLetsEncryptFailed'));
     }
 }
 
@@ -70,7 +73,8 @@ export async function createCustomCertificate(
     certificate: string,
     privateKey: string,
 ) {
-    validateCertKeyPair(certificate, privateKey);
+    const t = await getErrorTranslator();
+    await validateCertKeyPair(certificate, privateKey);
 
     const expiresAt = parseCertExpiry(certificate);
 
@@ -88,7 +92,7 @@ export async function createCustomCertificate(
         await prisma.sslCertificate.delete({ where: { id: cert.id } }).catch(() => {});
         await fs.unlink(path.join(CERTS_DIR, `${cert.id}.pem`)).catch(() => {});
         await fs.unlink(path.join(CERTS_DIR, `${cert.id}.key`)).catch(() => {});
-        throw new Error('Failed to write certificate files for Traefik');
+        throw new Error(t('sslCertificate.writeFilesFailed'));
     }
 
     return cert;

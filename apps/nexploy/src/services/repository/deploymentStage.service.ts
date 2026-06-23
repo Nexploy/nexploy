@@ -4,19 +4,22 @@ import {
     UpdateDeploymentStageSchemaType,
 } from '@workspace/schemas-zod/repository/deploymentStage.schema';
 import { generateTraefikConfigForRepository, getDomainsFromTraefikConfig, } from '@/services/traefik.service';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export async function getStagesByRepository(repositoryId: string) {
+    const t = await getErrorTranslator();
     try {
         return await prisma.deploymentStage.findMany({
             where: { repositoryId },
             orderBy: { createdAt: 'asc' },
         });
     } catch {
-        throw new Error('Failed to get deployment stages');
+        throw new Error(t('deploymentStage.getFailed'));
     }
 }
 
 export async function getFirstStage(repositoryId: string, stageId?: string) {
+    const t = await getErrorTranslator();
     try {
         if (stageId) {
             const stage = await prisma.deploymentStage.findFirst({
@@ -30,11 +33,12 @@ export async function getFirstStage(repositoryId: string, stageId?: string) {
             orderBy: [{ isProduction: 'desc' }, { createdAt: 'asc' }],
         });
     } catch {
-        throw new Error('Failed to resolve deployment stage');
+        throw new Error(t('deploymentStage.resolveFailed'));
     }
 }
 
 export async function createStage(data: DeploymentStageSchemaType) {
+    const t = await getErrorTranslator();
     let stage;
     try {
         stage = await prisma.$transaction(async (tx) => {
@@ -55,20 +59,21 @@ export async function createStage(data: DeploymentStageSchemaType) {
             });
         });
     } catch {
-        throw new Error('Failed to create deployment stage');
+        throw new Error(t('deploymentStage.createFailed'));
     }
 
     return stage;
 }
 
 export async function updateStage(data: UpdateDeploymentStageSchemaType) {
+    const t = await getErrorTranslator();
     const stage = await prisma.deploymentStage.findUnique({ where: { id: data.id } });
     if (!stage) {
-        throw new Error('Deployment stage not found');
+        throw new Error(t('deploymentStage.notFound'));
     }
 
     if (data.requiredStageId && data.requiredStageId === data.id) {
-        throw new Error('A stage cannot require itself');
+        throw new Error(t('deploymentStage.cannotRequireItself'));
     }
 
     try {
@@ -94,25 +99,26 @@ export async function updateStage(data: UpdateDeploymentStageSchemaType) {
             });
         });
     } catch {
-        throw new Error('Failed to update deployment stage');
+        throw new Error(t('deploymentStage.updateFailed'));
     }
 }
 
 export async function deleteStage(id: string) {
+    const t = await getErrorTranslator();
     const stage = await prisma.deploymentStage.findUnique({ where: { id } });
     if (!stage) {
-        throw new Error('Deployment stage not found');
+        throw new Error(t('deploymentStage.notFound'));
     }
 
     if (stage.isProduction) {
-        throw new Error('Cannot delete the production deployment stage');
+        throw new Error(t('deploymentStage.cannotDeleteProduction'));
     }
 
     const count = await prisma.deploymentStage.count({
         where: { repositoryId: stage.repositoryId },
     });
     if (count <= 1) {
-        throw new Error('Cannot delete the last deployment stage');
+        throw new Error(t('deploymentStage.cannotDeleteLast'));
     }
 
     try {
@@ -126,6 +132,6 @@ export async function deleteStage(id: string) {
     try {
         await prisma.deploymentStage.delete({ where: { id } });
     } catch {
-        throw new Error('Failed to delete deployment stage');
+        throw new Error(t('deploymentStage.deleteFailed'));
     }
 }

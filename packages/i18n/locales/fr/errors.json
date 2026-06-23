@@ -1,0 +1,197 @@
+{
+    "repository": {
+        "createFailed": "Échec de la création du dépôt",
+        "getFailed": "Échec de la récupération du dépôt",
+        "getWithEnvFailed": "Échec de la récupération du dépôt avec ses variables d'environnement",
+        "getBuildLogsFailed": "Échec de la récupération des logs de build du dépôt",
+        "getActiveBuildsFailed": "Échec de la récupération des builds actifs",
+        "notFound": "Dépôt introuvable",
+        "notAuthorizedDelete": "Utilisateur non autorisé à supprimer ce dépôt",
+        "confirmationFailed": "Confirmation échouée : attendu « {name} »",
+        "deleteFailed": "Échec de la suppression du dépôt",
+        "noDeploymentStage": "Aucun environnement de déploiement trouvé pour ce dépôt",
+        "updateEnvFailed": "Échec de la mise à jour des variables d'environnement",
+        "fetchWebhookStatusFailed": "Échec de la récupération du statut du webhook du dépôt",
+        "notAuthorizedRelink": "Utilisateur non autorisé à relier ce dépôt",
+        "workDirNotConfigured": "DEPLOYER_WORK_DIR n'est pas configuré"
+    },
+    "pipeline": {
+        "getStatusFailed": "Échec de la récupération du statut du pipeline de build",
+        "getConfigFailed": "Échec de la récupération de la configuration du pipeline",
+        "saveConfigFailed": "Échec de l'enregistrement de la configuration du pipeline",
+        "configNotFound": "Configuration de pipeline introuvable"
+    },
+    "dockerHub": {
+        "searchFailed": "La recherche Docker Hub a échoué avec le statut {status}"
+    },
+    "aiConfig": {
+        "getKeyFailed": "Échec de la récupération de la clé API du fournisseur",
+        "upsertKeyFailed": "Échec de l'enregistrement de la clé API du fournisseur",
+        "deleteKeyFailed": "Échec de la suppression de la clé API du fournisseur",
+        "getProvidersFailed": "Échec de la récupération des fournisseurs configurés",
+        "getKeyStatusFailed": "Échec de la récupération du statut des clés des fournisseurs"
+    },
+    "aws": {
+        "getAccountsFailed": "Échec de la récupération des comptes AWS",
+        "saveAccountFailed": "Échec de l'enregistrement du compte AWS",
+        "deleteAccountFailed": "Échec de la suppression du compte AWS",
+        "accountNotFound": "Compte AWS introuvable",
+        "retrieveCredentialsFailed": "Échec de la récupération des identifiants AWS"
+    },
+    "domain": {
+        "originNotFound": "Domaine d'origine introuvable pour l'ID : {id}",
+        "createDnsFailed": "Échec de la création du DNS pour {host} : {error}",
+        "updateDnsFailed": "Échec de la mise à jour du DNS pour {host} : {error}",
+        "notFound": "Domaine introuvable"
+    },
+    "user": {
+        "getUsersFailed": "Échec de la récupération des utilisateurs"
+    },
+    "cleanupSettings": {
+        "getFailed": "Échec de la récupération des paramètres de nettoyage",
+        "updateFailed": "Échec de la mise à jour des paramètres de nettoyage",
+        "markRanFailed": "Échec du marquage du nettoyage comme exécuté"
+    },
+    "sslCertificate": {
+        "invalidCertificate": "Certificat invalide : ce n'est pas un certificat PEM valide",
+        "invalidPrivateKey": "Clé privée invalide : ce n'est pas une clé privée PEM valide",
+        "keyMismatch": "La clé privée ne correspond pas au certificat",
+        "createLetsEncryptFailed": "Échec de la création du certificat LetsEncrypt",
+        "writeFilesFailed": "Échec de l'écriture des fichiers de certificat pour Traefik"
+    },
+    "cloudflare": {
+        "saveCredentialFailed": "Erreur Cloudflare lors de l'enregistrement de l'identifiant",
+        "deleteCredentialFailed": "Erreur Cloudflare lors de la suppression de l'identifiant",
+        "fetchAccountsFailed": "Erreur Cloudflare lors de la récupération des comptes",
+        "credentialNotFound": "Identifiant Cloudflare introuvable",
+        "getCredentialByIdFailed": "Erreur Cloudflare lors de la récupération de l'identifiant par ID",
+        "listZonesFailed": "Erreur Cloudflare lors de la liste des zones",
+        "createDnsFailed": "Erreur Cloudflare lors de la création de l'enregistrement DNS",
+        "deleteDnsFailed": "Erreur Cloudflare lors de la suppression de l'enregistrement DNS",
+        "updateDnsFailed": "Erreur Cloudflare lors de la mise à jour de l'enregistrement DNS",
+        "getServerIpFailed": "Échec de la récupération de l'IP du serveur"
+    },
+    "backupSchedule": {
+        "getForVolumeFailed": "Échec de la récupération des planifications de sauvegarde pour le volume",
+        "getForVolumesFailed": "Échec de la récupération des planifications de sauvegarde pour les volumes",
+        "createFailed": "Échec de la création de la planification de sauvegarde",
+        "deleteFailed": "Échec de la suppression de la planification de sauvegarde",
+        "deleteForVolumeFailed": "Échec de la suppression des planifications de sauvegarde pour le volume",
+        "markRanFailed": "Échec du marquage de la planification comme exécutée"
+    },
+    "aiSettings": {
+        "getFailed": "Échec de la récupération des paramètres IA",
+        "updateFailed": "Échec de la mise à jour des paramètres IA"
+    },
+    "oauthProvider": {
+        "getProvidersFailed": "Échec de la récupération des fournisseurs Git",
+        "getCredentialsFailed": "Échec de la récupération des identifiants du fournisseur Git",
+        "saveGithubAppFailed": "Échec de l'enregistrement de l'application GitHub",
+        "saveGitlabFailed": "Échec de l'enregistrement du fournisseur GitLab",
+        "deleteProviderFailed": "Échec de la suppression du fournisseur Git"
+    },
+    "registry": {
+        "getFailed": "Échec de la récupération des registres",
+        "createFailed": "Échec de la création du registre",
+        "updateFailed": "Échec de la mise à jour du registre",
+        "deleteFailed": "Échec de la suppression du registre",
+        "retrieveWithPasswordFailed": "Échec de la récupération du registre avec son mot de passe",
+        "notFound": "Registre introuvable"
+    },
+    "webhook": {
+        "unsupportedProvider": "Fournisseur Git non pris en charge : {provider}",
+        "repositoryNotFound": "Dépôt introuvable",
+        "invalidRepositoryName": "Nom de dépôt invalide : {name}",
+        "unknownError": "Erreur inconnue",
+        "gitlabBaseNotFound": "URL de base GitLab introuvable",
+        "teardownFailed": "Échec de la suppression du webhook du dépôt"
+    },
+    "log": {
+        "createFailed": "Échec de la création du log",
+        "createManyFailed": "Échec de la création des logs"
+    },
+    "version": {
+        "getNextNumberFailed": "Échec de la récupération du prochain numéro de version",
+        "upsertFailed": "Échec de l'enregistrement de la version",
+        "deleteByImageTagFailed": "Échec de la suppression des versions par tag d'image"
+    },
+    "deploymentStage": {
+        "getFailed": "Échec de la récupération des environnements de déploiement",
+        "resolveFailed": "Échec de la résolution de l'environnement de déploiement",
+        "createFailed": "Échec de la création de l'environnement de déploiement",
+        "notFound": "Environnement de déploiement introuvable",
+        "cannotRequireItself": "Un environnement ne peut pas dépendre de lui-même",
+        "updateFailed": "Échec de la mise à jour de l'environnement de déploiement",
+        "cannotDeleteProduction": "Impossible de supprimer l'environnement de déploiement de production",
+        "cannotDeleteLast": "Impossible de supprimer le dernier environnement de déploiement",
+        "deleteFailed": "Échec de la suppression de l'environnement de déploiement"
+    },
+    "build": {
+        "repositoryNotFound": "Dépôt introuvable",
+        "noDeploymentStage": "Aucun environnement de déploiement trouvé. Créez un environnement avant de lancer un build.",
+        "noPipelineConfig": "Aucune configuration de pipeline trouvée pour cet environnement. Configurez un pipeline avant de lancer un build.",
+        "removeFailed": "Échec de la suppression du build",
+        "createFailed": "Échec de la création du build",
+        "updateGitInfoFailed": "Échec de la mise à jour des informations Git du build",
+        "getStatusFailed": "Échec de la récupération du statut du build",
+        "updateStatusFailed": "Échec de la mise à jour du statut du build",
+        "updateNodeStatusFailed": "Échec de la mise à jour du statut du nœud",
+        "notFound": "Build introuvable",
+        "cannotBeCancelled": "Le build ne peut pas être annulé",
+        "getPageFailed": "Échec de la récupération de la page des builds",
+        "stageProtected": "Cet environnement est protégé : il ne peut être buildé que par l'environnement « {stage} » via son nœud « Trigger Stage Build ».",
+        "getBuildsFailed": "Échec de la récupération des builds",
+        "noStageAssociated": "Aucun environnement de déploiement associé à ce build"
+    },
+    "dockerVersion": {
+        "repositoryNotFound": "Dépôt introuvable",
+        "imageNotFound": "Image introuvable : {name}",
+        "deleteFailed": "Échec de la suppression de la version"
+    },
+    "gitProvider": {
+        "oauthTokenExpired": "Votre jeton OAuth {provider} a expiré ou a été révoqué. Veuillez reconnecter votre compte depuis les paramètres d'intégrations.",
+        "gitlabOauthExpired": "Votre jeton OAuth GitLab a expiré ou a été révoqué. Veuillez reconnecter votre compte GitLab depuis les paramètres d'intégrations.",
+        "unknownProvider": "Fournisseur inconnu : {provider}",
+        "fetchCommitsFailed": "Échec de la récupération des commits : {error}",
+        "invalidGitlabUrl": "URL de dépôt GitLab invalide : {url}",
+        "noRefreshTokenGitlab": "Aucun jeton de rafraîchissement disponible pour GitLab",
+        "gitlabNotConfigured": "Fournisseur GitLab non configuré",
+        "refreshTokenFailedStatus": "Échec du rafraîchissement du jeton. Statut {status}. Message : {message}",
+        "noRefreshTokenGithub": "Aucun jeton de rafraîchissement disponible pour GitHub",
+        "githubNotConfigured": "Fournisseur GitHub non configuré",
+        "githubTokenRefreshFailed": "Échec du rafraîchissement du jeton GitHub : {error}"
+    },
+    "git": {
+        "invalidGithubUrl": "URL de dépôt GitHub invalide : {url}",
+        "invalidGitlabUrl": "URL de dépôt GitLab invalide : {url}",
+        "unauthorized": "Non autorisé",
+        "noAccessToken": "Aucun jeton d'accès trouvé pour {provider}",
+        "fetchGitlabReposFailed": "Échec de la récupération des dépôts GitLab",
+        "unsupportedProvider": "Fournisseur non pris en charge : {provider}",
+        "fetchGithubBranchesFailed": "Échec de la récupération des branches GitHub",
+        "fetchGitlabBranchesFailed": "Échec de la récupération des branches GitLab",
+        "noAccountForUser": "Aucun compte {provider} trouvé pour l'utilisateur",
+        "updateTokenFailed": "Échec de la mise à jour du jeton du fournisseur Git",
+        "listAccountsFailed": "Échec de la liste des comptes Git",
+        "gitAccountNotFound": "Compte Git introuvable",
+        "disconnectFailed": "Échec de la déconnexion du compte Git"
+    },
+    "oauth": {
+        "invalidState": "État OAuth invalide",
+        "stateExpired": "État OAuth expiré"
+    },
+    "environment": {
+        "getUserEnvironmentsFailed": "Échec de la récupération des environnements de l'utilisateur",
+        "getEnvironmentFailed": "Échec de la récupération de l'environnement",
+        "setDefaultFailed": "Échec de la définition de l'environnement par défaut. L'environnement Docker est-il configuré correctement ?",
+        "getDefaultFailed": "Échec de la récupération de l'environnement par défaut",
+        "notAccessible": "Cet environnement n'est pas accessible. Veuillez vérifier la connexion.",
+        "registerFailed": "Échec de l'enregistrement de l'environnement auprès de docker-api : {error}",
+        "notFound": "Environnement introuvable",
+        "dockerApiNotAccessible": "docker-api n'est pas accessible. Veuillez vous assurer que le service est en cours d'exécution.",
+        "updateDbFailed": "Échec de la mise à jour de l'environnement dans la base de données",
+        "updateDockerApiFailed": "Échec de la mise à jour de l'environnement dans docker-api : {error}",
+        "deleteDbFailed": "Échec de la suppression de l'environnement de la base de données",
+        "unregisterFailed": "Échec du désenregistrement de l'environnement auprès de docker-api : {error}"
+    }
+}

@@ -9,6 +9,7 @@ import { createPipelineLogger, pipelineOrchestrator } from '@/inngest/pipeline/o
 import { getPipelineConfig } from '@/services/pipeline.service';
 import { createBuildChannel } from '@/inngest/channels/build.channel';
 import { BuildStatus } from 'generated/client';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const buildFunction = inngest.createFunction(
     {
@@ -88,7 +89,7 @@ export const buildFunction = inngest.createFunction(
             const logger = createPipelineLogger(publishLog, flushLogs);
 
             if (!config.stageId) {
-                throw new Error('No deployment stage associated with this build');
+                throw new Error((await getErrorTranslator())('build.noStageAssociated'));
             }
 
             const graph = await getPipelineConfig(config.stageId);

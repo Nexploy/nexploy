@@ -21,26 +21,29 @@ import {
     githubGetUserInstallations,
 } from '@/lib/api/github.api';
 import { GitProviderType } from 'generated/client';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
-export function extractGitHubRepo(repositoryUrl: string): { owner: string; repo: string } {
+export async function extractGitHubRepo(repositoryUrl: string): Promise<{ owner: string; repo: string }> {
+    const t = await getErrorTranslator();
     const match = repositoryUrl.match(/github\.com[\/:]([^\/]+)\/([^\/\.]+)/);
     if (match && match[1] && match[2]) {
         return { owner: match[1], repo: match[2].replace('.git', '') };
     }
-    throw new Error(`Invalid GitHub repository URL: ${repositoryUrl}`);
+    throw new Error(t('git.invalidGithubUrl', { url: repositoryUrl }));
 }
 
-export function extractGitLabRepo(repositoryUrl: string): {
+export async function extractGitLabRepo(repositoryUrl: string): Promise<{
     baseUrl: string;
     owner: string;
     repo: string;
-} {
+}> {
+    const t = await getErrorTranslator();
     const url = new URL(repositoryUrl);
     const parts = url.pathname
         .replace(/\.git$/, '')
         .split('/')
         .filter(Boolean);
-    if (parts.length < 2) throw new Error(`Invalid GitLab repository URL: ${repositoryUrl}`);
+    if (parts.length < 2) throw new Error(t('git.invalidGitlabUrl', { url: repositoryUrl }));
     const repo = parts[parts.length - 1]!;
     const owner = parts.slice(0, -1).join('/');
     return { baseUrl: `${url.protocol}//${url.host}`, owner, repo };
@@ -50,8 +53,9 @@ export async function getGitProviderToken(
     provider: GitProviderType,
     { gitAccountId, requestedUserId }: { gitAccountId?: string; requestedUserId?: string } = {},
 ): Promise<GitProviderToken> {
+    const t = await getErrorTranslator();
     const userId = requestedUserId ?? (await getUserSession())?.user.id;
-    if (!userId) throw new Error('Unauthorized');
+    if (!userId) throw new Error(t('git.unauthorized'));
 
     const gitAccount = await prisma.gitAccount.findFirst({
         where: {
@@ -67,7 +71,7 @@ export async function getGitProviderToken(
     });
 
     if (!gitAccount?.accessToken) {
-        throw new Error(`No access token found for ${provider}`);
+        throw new Error(t('git.noAccessToken', { provider }));
     }
 
     return {
@@ -82,6 +86,7 @@ export async function getRepositories(
     gitAccountId: string,
     userId: string,
 ): Promise<GitRepository[]> {
+    const t = await getErrorTranslator();
     const oldToken = await getGitProviderToken(provider, { gitAccountId });
     const token = await getValidToken(oldToken, provider, userId, gitAccountId);
 
@@ -151,11 +156,11 @@ export async function getRepositories(
                         defaultBranch: repo.default_branch,
                     }));
             } catch (error: unknown) {
-                throw new Error('Failed to fetch GitLab repositories');
+                throw new Error(t('git.fetchGitlabReposFailed'));
             }
         }
         default:
-            throw new Error(`Unsupported provider: ${provider}`);
+            throw new Error(t('git.unsupportedProvider', { provider }));
     }
 }
 
@@ -167,6 +172,7 @@ export async function getBranches(
     owner?: string,
     repoName?: string,
 ): Promise<GitBranch[]> {
+    const t = await getErrorTranslator();
     const oldToken = await getGitProviderToken(provider, {
         gitAccountId,
         requestedUserId: userId,
@@ -185,7 +191,7 @@ export async function getBranches(
                     protected: branch.protected,
                 }));
             } catch (error: unknown) {
-                throw new Error('Failed to fetch GitHub branches');
+                throw new Error(t('git.fetchGithubBranchesFailed'));
             }
         }
         case 'GITLAB': {
@@ -204,11 +210,11 @@ export async function getBranches(
                     protected: branch.protected,
                 }));
             } catch (error: unknown) {
-                throw new Error('Failed to fetch GitLab branches');
+                throw new Error(t('git.fetchGitlabBranchesFailed'));
             }
         }
         default:
-            throw new Error(`Unsupported provider: ${provider}`);
+            throw new Error(t('git.unsupportedProvider', { provider }));
     }
 }
 
@@ -218,6 +224,7 @@ export async function updateGitProviderToken(
     tokenData: GitProviderToken,
     gitAccountId?: string,
 ): Promise<void> {
+    const t = await getErrorTranslator();
     try {
         const gitAccount = await prisma.gitAccount.findFirst({
             where: {
@@ -227,7 +234,7 @@ export async function updateGitProviderToken(
             },
         });
 
-        if (!gitAccount) throw new Error(`No ${provider} account found for user`);
+        if (!gitAccount) throw new Error(t('git.noAccountForUser', { provider }));
 
         await prisma.gitAccount.update({
             where: {
@@ -240,11 +247,12 @@ export async function updateGitProviderToken(
             },
         });
     } catch (error: unknown) {
-        throw new Error('Failed to update git provider token');
+        throw new Error(t('git.updateTokenFailed'));
     }
 }
 
 export async function listGitAccounts(userId: string) {
+    const t = await getErrorTranslator();
     try {
         return await prisma.gitAccount.findMany({
             where: { userId },
@@ -267,7 +275,7 @@ export async function listGitAccounts(userId: string) {
             },
         });
     } catch (error: unknown) {
-        throw new Error('Failed to list git accounts');
+        throw new Error(t('git.listAccountsFailed'));
     }
 }
 
@@ -278,6 +286,7 @@ export async function verifyRepoAccessFromAccount(
     gitAccountId: string,
     userId: string,
 ): Promise<GitRepository> {
+    const t = await getErrorTranslator();
     const oldToken = await getGitProviderToken(gitProvider, {
         gitAccountId,
         requestedUserId: userId,
@@ -286,7 +295,7 @@ export async function verifyRepoAccessFromAccount(
 
     switch (gitProvider) {
         case 'GITHUB': {
-            const { owner, repo } = extractGitHubRepo(repositoryUrl);
+            const { owner, repo } = await extractGitHubRepo(repositoryUrl);
             try {
                 const repoData = await tokenGitStorage.run(token, async () => {
                     return await githubGetRepository(owner, repo);
@@ -330,11 +339,12 @@ export async function verifyRepoAccessFromAccount(
             }
         }
         default:
-            throw new Error(`Unsupported provider: ${gitProvider}`);
+            throw new Error(t('git.unsupportedProvider', { provider: gitProvider }));
     }
 }
 
 export async function disconnectGitAccount(userId: string, gitProviderId: string) {
+    const t = await getErrorTranslator();
     try {
         const gitAccount = await prisma.gitAccount.findUnique({
             where: {
@@ -343,13 +353,13 @@ export async function disconnectGitAccount(userId: string, gitProviderId: string
         });
 
         if (!gitAccount) {
-            throw new Error('Git account not found');
+            throw new Error(t('git.gitAccountNotFound'));
         }
 
         await prisma.gitAccount.delete({
             where: { id: gitAccount.id },
         });
     } catch (error: unknown) {
-        throw new Error('Failed to disconnect git account');
+        throw new Error(t('git.disconnectFailed'));
     }
 }

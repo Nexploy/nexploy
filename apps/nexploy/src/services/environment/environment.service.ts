@@ -4,8 +4,10 @@ import { getUserSession } from '@/services/auth/auth.service';
 import { EnvironmentSchemaType } from '@workspace/schemas-zod/docker/environment/environment.schema';
 import { Environment } from 'generated/client';
 import { kyDocker } from '@/lib/api/kyDocker';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export async function getUserEnvironments(userId?: string) {
+    const t = await getErrorTranslator();
     try {
         const resolvedUserId = userId ?? (await getUserSession())?.user.id;
 
@@ -17,21 +19,23 @@ export async function getUserEnvironments(userId?: string) {
             orderBy: { createdAt: 'asc' },
         });
     } catch {
-        throw new Error('Failed to get user environments');
+        throw new Error(t('environment.getUserEnvironmentsFailed'));
     }
 }
 
 export async function getEnvironmentById(id: string) {
+    const t = await getErrorTranslator();
     try {
         return prisma.environment.findUnique({
             where: { id },
         });
     } catch {
-        throw new Error('Failed to get environment');
+        throw new Error(t('environment.getEnvironmentFailed'));
     }
 }
 
 export async function setDefaultEnvironmentById(environmentId: string) {
+    const t = await getErrorTranslator();
     try {
         await kyDocker.post(`environments/${environmentId}/set-default`);
         await prisma.$transaction(async (tx) => {
@@ -45,29 +49,29 @@ export async function setDefaultEnvironmentById(environmentId: string) {
             });
         });
     } catch {
-        throw new Error(
-            'Failed to set default environment. Is the Docker environment configured correctly?',
-        );
+        throw new Error(t('environment.setDefaultFailed'));
     }
 }
 
 export async function getDefaultEnvironment() {
+    const t = await getErrorTranslator();
     try {
         return await prisma.environment.findFirst({
             where: { isDefault: true, isActive: true },
         });
     } catch {
-        throw new Error('Failed to get default environment');
+        throw new Error(t('environment.getDefaultFailed'));
     }
 }
 
 export async function createEnvironment(data: EnvironmentSchemaType, userId: string) {
+    const t = await getErrorTranslator();
     try {
         await kyDocker.post('environments/validate', {
             json: data,
         });
     } catch (error: any) {
-        throw new Error('This environment is not accessible. Please check the connection.');
+        throw new Error(t('environment.notAccessible'));
     }
 
     const environment = await prisma.environment.create({
@@ -90,7 +94,7 @@ export async function createEnvironment(data: EnvironmentSchemaType, userId: str
         });
     } catch (error: any) {
         await prisma.environment.delete({ where: { id: environment.id } }).catch(() => {});
-        throw new Error(`Failed to register environment with docker-api: ${error.message}`);
+        throw new Error(t('environment.registerFailed', { error: error.message }));
     }
 
     if (data.isDefault) {
@@ -118,12 +122,13 @@ export async function createEnvironment(data: EnvironmentSchemaType, userId: str
 }
 
 export async function updateEnvironment(environmentData: EnvironmentSchemaType) {
+    const t = await getErrorTranslator();
     const currentEnv = await prisma.environment.findUnique({
         where: { id: environmentData.id },
     });
 
     if (!currentEnv) {
-        throw new Error('Environment not found');
+        throw new Error(t('environment.notFound'));
     }
 
     const dockerConfigChanging =
@@ -163,7 +168,7 @@ export async function updateEnvironment(environmentData: EnvironmentSchemaType) 
                 const errorData = await error.response.json().catch(() => null);
                 throw new Error(errorData?.message || error.message);
             }
-            throw new Error('docker-api is not accessible. Please ensure the service is running.');
+            throw new Error(t('environment.dockerApiNotAccessible'));
         }
     }
 
@@ -189,7 +194,7 @@ export async function updateEnvironment(environmentData: EnvironmentSchemaType) 
             });
         });
     } catch (error: unknown) {
-        throw new Error('Failed to update environment in database');
+        throw new Error(t('environment.updateDbFailed'));
     }
 
     if (dockerConfigChanging) {
@@ -227,7 +232,7 @@ export async function updateEnvironment(environmentData: EnvironmentSchemaType) 
                 },
             });
 
-            throw new Error(`Failed to update environment in docker-api: ${error.message}`);
+            throw new Error(t('environment.updateDockerApiFailed', { error: error.message }));
         }
     }
 
@@ -241,12 +246,13 @@ export async function updateEnvironment(environmentData: EnvironmentSchemaType) 
 }
 
 export async function deleteEnvironment(id: string) {
+    const t = await getErrorTranslator();
     const environment = await prisma.environment.findUnique({
         where: { id },
     });
 
     if (!environment) {
-        throw new Error('Environment not found');
+        throw new Error(t('environment.notFound'));
     }
 
     try {
@@ -254,12 +260,12 @@ export async function deleteEnvironment(id: string) {
             where: { id },
         });
     } catch (error) {
-        throw new Error('Failed to delete environment from database');
+        throw new Error(t('environment.deleteDbFailed'));
     }
 
     try {
         await kyDocker.delete(`environments/${id}`);
     } catch (error: any) {
-        throw new Error(`Failed to unregister environment from docker-api: ${error.message}`);
+        throw new Error(t('environment.unregisterFailed', { error: error.message }));
     }
 }

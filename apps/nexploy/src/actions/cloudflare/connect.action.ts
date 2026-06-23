@@ -7,6 +7,7 @@ import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 import { revalidatePath } from 'next/cache';
 import { getPublicIp } from '@/lib/network/getPublicIp.ts';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const connectCloudflareAction = authActionServer
     .use(requirePermission('dns', 'manage'))
@@ -15,7 +16,7 @@ export const connectCloudflareAction = authActionServer
         try {
             const { displayName, apiToken } = parsedInput;
             const serverIp = await getPublicIp();
-            if (!serverIp) throw new Error('Failed to get server IP');
+            if (!serverIp) throw new Error((await getErrorTranslator())('cloudflare.getServerIpFailed'));
 
             await saveCloudflareCredential(ctx.session.user.id, displayName, apiToken, serverIp);
             revalidatePath('/integrations');

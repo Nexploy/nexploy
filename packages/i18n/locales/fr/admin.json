@@ -191,7 +191,8 @@
     "errors": {
         "cannotChangeOwnRole": "Vous ne pouvez pas modifier votre propre rôle",
         "cannotDeleteOwnAccount": "Vous ne pouvez pas supprimer votre propre compte",
-        "cannotModifySystemUser": "L'utilisateur système ne peut pas être modifié"
+        "cannotModifySystemUser": "L'utilisateur système ne peut pas être modifié",
+        "banFailed": "Échec du bannissement/débannissement de l'utilisateur"
     },
     "traefik": {
         "title": "Configuration Traefik",

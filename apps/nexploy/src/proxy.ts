@@ -16,16 +16,19 @@ const SIMPLE_REDIRECTS: Record<string, string> = {
 
 const PERMISSION_ROUTES: { path: string; resource: PermissionResource; action: string }[] = [
     { path: '/repositories/create', resource: 'repository', action: 'create' },
+    { path: '/docker/containers/stacks/create', resource: 'container', action: 'manage' },
     { path: '/docker/containers/create', resource: 'container', action: 'manage' },
     { path: '/docker/images/pull', resource: 'image', action: 'pull' },
     { path: '/docker/volumes/create', resource: 'volume', action: 'manage' },
     { path: '/docker/networks/create', resource: 'network', action: 'manage' },
-    { path: '/admin/users', resource: 'user', action: 'ban' },
+    { path: '/swarm/services/create', resource: 'swarm', action: 'manage' },
+    { path: '/admin/users', resource: 'user', action: 'update' },
     { path: '/admin/integrations', resource: 'gitProvider', action: 'create' },
     { path: '/admin/ai', resource: 'ai', action: 'manage' },
     { path: '/admin/backups', resource: 'backup', action: 'read' },
     { path: '/admin/ssl-certificates', resource: 'ssl', action: 'manage' },
     { path: '/admin/registry', resource: 'registry', action: 'read' },
+    { path: '/admin/settings', resource: 'setting', action: 'manage' },
     { path: '/admin/traefik', resource: 'traefik', action: 'manage' },
 ];
 

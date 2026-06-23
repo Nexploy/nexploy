@@ -6,14 +6,16 @@ import { getRepositorieWithEnv } from '@/services/repository.service';
 import { Image } from '@workspace/typescript-interface/docker/docker.image';
 import { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
 import * as yaml from 'yaml';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 async function getEnvVariables(repositoryId: string): Promise<{
     envVariables: Record<string, string>;
 }> {
+    const t = await getErrorTranslator();
     const repository = await getRepositorieWithEnv(repositoryId);
 
     if (!repository) {
-        throw new Error('Repository not found');
+        throw new Error(t('dockerVersion.repositoryNotFound'));
     }
 
     const envVariables: Record<string, string> = {};
@@ -29,6 +31,7 @@ export async function deployDockerfileVersion(
     imageTag: string,
     environmentId?: string,
 ): Promise<unknown> {
+    const t = await getErrorTranslator();
     const { envVariables } = await getEnvVariables(repositoryId);
     const imageName = `${repositoryId}:${imageTag}`;
 
@@ -37,7 +40,7 @@ export async function deployDockerfileVersion(
         .json<Image[]>();
 
     if (!images.some((img) => img.repoTags.includes(imageName))) {
-        throw new Error('Image not found: ' + imageName);
+        throw new Error(t('dockerVersion.imageNotFound', { name: imageName }));
     }
 
     return kyDocker
@@ -105,6 +108,7 @@ export async function deployComposeVersion(
 }
 
 export async function deleteVersion(repositoryId: string, imageTag: string): Promise<void> {
+    const t = await getErrorTranslator();
     try {
         const imageName = `${repositoryId}:${imageTag}`;
 
@@ -118,7 +122,7 @@ export async function deleteVersion(repositoryId: string, imageTag: string): Pro
             where: { repositoryId_imageTag: { repositoryId, imageTag } },
         });
     } catch {
-        throw new Error('Failed to delete version');
+        throw new Error(t('dockerVersion.deleteFailed'));
     }
 }
 

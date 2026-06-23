@@ -7,6 +7,7 @@ import { access, rm } from 'fs/promises';
 import { join } from 'path';
 import { getTranslations } from 'next-intl/server';
 import { revalidatePath } from 'next/cache';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 const clearCacheSchema = z.object({ repositoryId: z.string() });
 
@@ -16,7 +17,7 @@ export const clearCacheAction = authActionServer
     .action(async ({ parsedInput }) => {
         const t = await getTranslations('repository.settings.dangerZone');
         const workDir = process.env.DEPLOYER_WORK_DIR;
-        if (!workDir) throw new Error('DEPLOYER_WORK_DIR not configured');
+        if (!workDir) throw new Error((await getErrorTranslator())('repository.workDirNotConfigured'));
 
         const cacheDir = join(workDir, parsedInput.repositoryId);
 

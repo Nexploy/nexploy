@@ -1,6 +1,7 @@
 import { BackupSchedule, Frequency } from 'generated/client';
 import { prisma } from '../../prisma/prisma';
 import { cookies } from 'next/headers';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export function getNextRunAt(
     frequency: Frequency,
@@ -48,6 +49,7 @@ export function getNextRunAt(
 }
 
 export async function getBackupSchedulesForVolume(volumeName: string): Promise<BackupSchedule[]> {
+    const t = await getErrorTranslator();
     try {
         const cookieStore = await cookies();
         const environmentId = cookieStore.get('X-Docker-Environment')?.value;
@@ -57,13 +59,14 @@ export async function getBackupSchedulesForVolume(volumeName: string): Promise<B
             orderBy: { createdAt: 'asc' },
         });
     } catch {
-        throw new Error('Failed to get backup schedules for volume');
+        throw new Error(t('backupSchedule.getForVolumeFailed'));
     }
 }
 
 export async function getBackupSchedulesForVolumes(
     volumeNames: string[],
 ): Promise<{ volumeName: string; schedules: BackupSchedule[] }[]> {
+    const t = await getErrorTranslator();
     try {
         const cookieStore = await cookies();
         const environmentId = cookieStore.get('X-Docker-Environment')?.value;
@@ -81,7 +84,7 @@ export async function getBackupSchedulesForVolumes(
             schedules: schedules.filter((s) => s.volumeName === volumeName),
         }));
     } catch {
-        throw new Error('Failed to get backup schedules for volumes');
+        throw new Error(t('backupSchedule.getForVolumesFailed'));
     }
 }
 
@@ -94,6 +97,7 @@ export async function createBackupSchedule(
     scheduledMinute: number,
     scheduledDay?: number,
 ): Promise<BackupSchedule> {
+    const t = await getErrorTranslator();
     try {
         const cookieStore = await cookies();
         const environmentId = cookieStore.get('X-Docker-Environment')?.value;
@@ -112,28 +116,31 @@ export async function createBackupSchedule(
             },
         });
     } catch {
-        throw new Error('Failed to create backup schedule');
+        throw new Error(t('backupSchedule.createFailed'));
     }
 }
 
 export async function deleteBackupSchedule(id: string): Promise<void> {
+    const t = await getErrorTranslator();
     try {
         await prisma.backupSchedule.delete({ where: { id } });
     } catch {
-        throw new Error('Failed to delete backup schedule');
+        throw new Error(t('backupSchedule.deleteFailed'));
     }
 }
 
 export async function deleteBackupSchedulesByVolume(volumeName: string): Promise<number> {
+    const t = await getErrorTranslator();
     try {
         const result = await prisma.backupSchedule.deleteMany({ where: { volumeName } });
         return result.count;
     } catch {
-        throw new Error('Failed to delete backup schedules for volume');
+        throw new Error(t('backupSchedule.deleteForVolumeFailed'));
     }
 }
 
 export async function markScheduleRan(id: string): Promise<void> {
+    const t = await getErrorTranslator();
     try {
         const schedule = await prisma.backupSchedule.findUniqueOrThrow({ where: { id } });
         await prisma.backupSchedule.update({
@@ -149,6 +156,6 @@ export async function markScheduleRan(id: string): Promise<void> {
             },
         });
     } catch {
-        throw new Error('Failed to mark schedule as ran');
+        throw new Error(t('backupSchedule.markRanFailed'));
     }
 }

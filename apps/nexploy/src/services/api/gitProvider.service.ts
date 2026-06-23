@@ -10,6 +10,7 @@ import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { getGitProviderCredentials } from '@/services/oauthProvider.service';
 import { githubGetCommit, githubRefreshAccessToken } from '@/lib/api/github.api';
 import { GitProviderType } from 'generated/client';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export async function getValidToken(
     token: GitProviderToken,
@@ -17,6 +18,7 @@ export async function getValidToken(
     userId: string,
     gitAccountId?: string,
 ): Promise<GitProviderToken> {
+    const t = await getErrorTranslator();
     if (!token.accessTokenExpiresAt) {
         return token;
     }
@@ -39,9 +41,7 @@ export async function getValidToken(
             ) {
                 return freshToken;
             }
-            throw new Error(
-                `Your ${provider} OAuth token has expired or been revoked. Please reconnect your account from the integrations settings.`,
-            );
+            throw new Error(t('gitProvider.oauthTokenExpired', { provider }));
         }
     }
 
@@ -55,13 +55,14 @@ export async function getCommit(
     provider: string,
     commitHash?: string,
 ): Promise<{ hash: string; message: string } | null> {
+    const t = await getErrorTranslator();
     if (provider === 'gitlab') {
         return await getGitLabCommit(repositoryUrl, branch, accessToken, commitHash);
     } else if (provider === 'github') {
         return await getGitHubCommit(repositoryUrl, branch, accessToken, commitHash);
     }
 
-    throw new Error(`Unknown provider: ${provider}`);
+    throw new Error(t('gitProvider.unknownProvider', { provider }));
 }
 
 async function getGitLabCommit(
@@ -70,7 +71,8 @@ async function getGitLabCommit(
     accessToken: string | null,
     commitHash?: string,
 ): Promise<{ hash: string; message: string } | null> {
-    const repositoryPath = extractGitLabRepositoryPath(repositoryUrl);
+    const t = await getErrorTranslator();
+    const repositoryPath = await extractGitLabRepositoryPath(repositoryUrl);
     const encodedRepositoryPath = encodeURIComponent(repositoryPath);
 
     const token: GitProviderToken = {
@@ -80,7 +82,7 @@ async function getGitLabCommit(
     };
 
     try {
-        const baseUrl = extractGitLabBaseUrl(repositoryUrl);
+        const baseUrl = await extractGitLabBaseUrl(repositoryUrl);
 
         return await tokenGitStorage.run(token, async () => {
             const endpoint = commitHash
@@ -108,7 +110,7 @@ async function getGitLabCommit(
             };
         });
     } catch (error) {
-        throw new Error(`Failed to fetch commits: ${error}`);
+        throw new Error(t('gitProvider.fetchCommitsFailed', { error: String(error) }));
     }
 }
 
@@ -119,7 +121,7 @@ async function getGitHubCommit(
     commitHash?: string,
 ): Promise<{ hash: string; message: string } | null> {
     try {
-        const { owner, repo } = extractGitHubRepo(repositoryUrl);
+        const { owner, repo } = await extractGitHubRepo(repositoryUrl);
         const repoPath = `${owner}/${repo}`;
         const ref = commitHash || branch;
 
@@ -142,21 +144,23 @@ async function getGitHubCommit(
     }
 }
 
-function extractGitLabRepositoryPath(repositoryUrl: string): string {
+async function extractGitLabRepositoryPath(repositoryUrl: string): Promise<string> {
+    const t = await getErrorTranslator();
     try {
         const url = new URL(repositoryUrl);
         return url.pathname.replace(/^\//, '').replace(/\.git$/, '');
     } catch {
-        throw new Error(`Invalid GitLab repository URL: ${repositoryUrl}`);
+        throw new Error(t('gitProvider.invalidGitlabUrl', { url: repositoryUrl }));
     }
 }
 
-function extractGitLabBaseUrl(repositoryUrl: string): string {
+async function extractGitLabBaseUrl(repositoryUrl: string): Promise<string> {
+    const t = await getErrorTranslator();
     try {
         const url = new URL(repositoryUrl);
         return `${url.protocol}//${url.host}`;
     } catch {
-        throw new Error(`Invalid GitLab repository URL: ${repositoryUrl}`);
+        throw new Error(t('gitProvider.invalidGitlabUrl', { url: repositoryUrl }));
     }
 }
 
@@ -165,8 +169,9 @@ async function refreshGitLabToken(
     userId: string,
     gitAccountId?: string,
 ): Promise<GitProviderToken> {
+    const t = await getErrorTranslator();
     if (!token.refreshToken) {
-        throw new Error('No refresh token available for GitLab');
+        throw new Error(t('gitProvider.noRefreshTokenGitlab'));
     }
 
     const gitlabCreds = await getGitProviderCredentials('GITLAB', gitAccountId);
@@ -175,7 +180,7 @@ async function refreshGitLabToken(
 
     const gitlabBaseUrl = gitlabCreds?.baseUrl;
     if (!gitlabBaseUrl || !clientId || !clientSecret)
-        throw new Error('GitLab provider not configured');
+        throw new Error(t('gitProvider.gitlabNotConfigured'));
     const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 
     const body = new URLSearchParams({
@@ -199,11 +204,9 @@ async function refreshGitLabToken(
             errorData = JSON.parse(message);
         } catch {}
         if (errorData.error === 'invalid_grant') {
-            throw new Error(
-                'Your GitLab OAuth token has expired or been revoked. Please reconnect your GitLab account from the integrations settings.',
-            );
+            throw new Error(t('gitProvider.gitlabOauthExpired'));
         }
-        throw new Error(`Failed to refresh token. Status ${response.status}. Message: ${message}`);
+        throw new Error(t('gitProvider.refreshTokenFailedStatus', { status: response.status, message }));
     }
 
     const data = await response.json();
@@ -226,13 +229,14 @@ async function refreshGitHubToken(
     userId: string,
     gitAccountId?: string,
 ): Promise<GitProviderToken> {
+    const t = await getErrorTranslator();
     if (!token.refreshToken) {
-        throw new Error('No refresh token available for GitHub');
+        throw new Error(t('gitProvider.noRefreshTokenGithub'));
     }
 
     const githubCreds = await getGitProviderCredentials('GITHUB', gitAccountId);
     if (!githubCreds) {
-        throw new Error('GitHub provider not configured');
+        throw new Error(t('gitProvider.githubNotConfigured'));
     }
 
     const data = await githubRefreshAccessToken(
@@ -242,7 +246,7 @@ async function refreshGitHubToken(
     );
 
     if (data.error) {
-        throw new Error(`GitHub token refresh failed: ${data.error_description || data.error}`);
+        throw new Error(t('gitProvider.githubTokenRefreshFailed', { error: data.error_description || data.error }));
     }
 
     const expiresAt = data.expires_in ? dayjs().add(data.expires_in, 'second').toDate() : null;

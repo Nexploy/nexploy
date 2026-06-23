@@ -9,10 +9,10 @@ export async function setupAdminAccount({
     password,
     name,
 }: TypeSetupFormSchema): Promise<User> {
-    const hasAdmin = await isAdminExist();
-    if (hasAdmin) throw new Error('Admin account already exists');
-
     const t = await getTranslations('auth');
+
+    const hasAdmin = await isAdminExist();
+    if (hasAdmin) throw new Error(t('adminAlreadyExists'));
 
     const resSignIn = await auth.api.createUser({
         body: {

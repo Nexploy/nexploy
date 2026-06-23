@@ -5,6 +5,7 @@ import { mirrorImageSchema } from '@workspace/schemas-zod/registry/mirrorImage.s
 import { kyDocker } from '@/lib/api/kyDocker';
 import { getRegistryWithPassword } from '@/services/registry.service';
 import { setToastServer } from '@/lib/toastServer';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const mirrorImageAction = authActionServer
     .use(requirePermission('registry', 'mirror'))
@@ -16,7 +17,7 @@ export const mirrorImageAction = authActionServer
             const registry = await getRegistryWithPassword(targetRegistryId);
 
             if (!registry) {
-                throw new Error('Registry not found');
+                throw new Error((await getErrorTranslator())('registry.notFound'));
             }
 
             const sourceBase = sourceImage.split('/').pop() || sourceImage;
