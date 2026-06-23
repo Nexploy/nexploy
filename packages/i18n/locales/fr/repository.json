@@ -112,7 +112,8 @@
             "title": "Compte Git",
             "description": "Changer le compte Git associé à ce dépôt",
             "save": "Enregistrer",
-            "saving": "Enregistrement..."
+            "saving": "Enregistrement...",
+            "onlyOwnerOrAdmin": "Seul le créateur du dépôt ou un administrateur peut changer le compte Git associé."
         },
         "dangerZone": {
             "title": "Zone de danger",

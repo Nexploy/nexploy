@@ -12,13 +12,16 @@ type CanProps = {
 }[PermissionResource] & {
     children: ReactNode;
     fallback?: ReactNode;
+    condition?: boolean;
 };
 
-export function Can({ children, fallback = null, ...props }: CanProps) {
+export function Can({ children, fallback = null, condition = true, ...props }: CanProps) {
     const { can } = usePermissions();
-    const allowed = can(
-        props.resource as PermissionResource,
-        props.action as PermissionActions[PermissionResource],
-    );
+    const allowed =
+        condition &&
+        can(
+            props.resource as PermissionResource,
+            props.action as PermissionActions[PermissionResource],
+        );
     return allowed ? <>{children}</> : <>{fallback}</>;
 }

@@ -112,7 +112,8 @@
             "title": "Git Account",
             "description": "Change the Git account linked to this repository",
             "save": "Save",
-            "saving": "Saving..."
+            "saving": "Saving...",
+            "onlyOwnerOrAdmin": "Only the repository creator or an administrator can change the linked Git account."
         },
         "dangerZone": {
             "title": "Danger Zone",

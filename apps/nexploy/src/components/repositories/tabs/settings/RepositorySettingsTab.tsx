@@ -1,4 +1,5 @@
 import { getRepositorieById } from '@/services/repository.service';
+import { getUserSession } from '@/services/auth/auth.service';
 import { SwitchGitAccountSection } from '@/components/repositories/tabs/settings/SwitchGitAccountSection';
 import { ClearCacheButton } from '@/components/repositories/tabs/settings/ClearCacheButton';
 import { DeleteRepositoryButton } from '@/components/repositories/tabs/settings/DeleteRepositoryButton';
@@ -14,11 +15,14 @@ interface RepositorySettingsTabProps {
 }
 
 export async function RepositorySettingsTab({ repositoryId }: RepositorySettingsTabProps) {
-    const [repository, cacheSize] = await Promise.all([
+    const [repository, cacheSize, session] = await Promise.all([
         getRepositorieById(repositoryId),
         getRepositoryCacheSize(repositoryId),
+        getUserSession(),
     ]);
     if (!repository) return notFound();
+
+    const isOwner = repository.userId === session?.user.id;
 
     const t = await getTranslations('repository.settings.dangerZone');
 
@@ -27,6 +31,7 @@ export async function RepositorySettingsTab({ repositoryId }: RepositorySettings
             <SwitchGitAccountSection
                 repositoryId={repository.id}
                 currentGitAccountId={repository.gitAccountId}
+                isOwner={isOwner}
             />
             <Card className="border-destructive">
                 <CardHeaderWithIcon

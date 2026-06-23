@@ -268,6 +268,7 @@ export async function relinkGitAccount(
     repositoryId: string,
     gitAccountId: string,
     userId: string,
+    isAdmin: boolean,
 ) {
     const repo = await prisma.repository.findUnique({
         where: { id: repositoryId },
@@ -276,7 +277,7 @@ export async function relinkGitAccount(
 
     if (!repo) throw new Error('Repository not found');
 
-    if (repo.userId !== userId) {
+    if (repo.userId !== userId && !isAdmin) {
         throw new Error('User not authorized to relink this repository');
     }
 

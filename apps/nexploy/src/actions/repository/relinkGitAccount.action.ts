@@ -15,7 +15,12 @@ export const relinkGitAccountAction = authActionServer
     .action(async ({ parsedInput, bindArgsParsedInputs: [repositoryId], ctx: { session } }) => {
         const t = await getTranslations('repository.reassociateGitAccount');
         try {
-            await relinkGitAccount(repositoryId, parsedInput.gitAccountId, session.user.id);
+            await relinkGitAccount(
+                repositoryId,
+                parsedInput.gitAccountId,
+                session.user.id,
+                session.user.role === 'admin',
+            );
             revalidatePath('/repositories/[repositoryId]', 'page');
         } catch (error: unknown) {
             if (error instanceof Error) {
