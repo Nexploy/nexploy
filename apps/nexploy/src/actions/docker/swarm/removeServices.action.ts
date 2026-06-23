@@ -7,7 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { removeServicesSchema } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
 
 export const onRemoveServicesAction = authActionServer
-    .use(requirePermission('docker', 'manage'))
+    .use(requirePermission('swarm', 'manage'))
     .inputSchema(removeServicesSchema)
     .action(async ({ parsedInput: { serviceIds } }) => {
         try {

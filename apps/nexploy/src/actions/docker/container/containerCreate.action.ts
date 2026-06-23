@@ -7,7 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { kyDocker } from '@/lib/api/kyDocker';
 
 export const onContainerCreateAction = authActionServer
-    .use(requirePermission('docker', 'manage'))
+    .use(requirePermission('container', 'manage'))
     .inputSchema(containerCreateFormSchema)
     .action(async ({ parsedInput }) => {
         try {

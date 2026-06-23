@@ -5,7 +5,7 @@ import { repositoryIdParamSchema } from '@workspace/schemas-zod/api/params.schem
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('repository', 'read'))
+    .use(requirePermission('stage', 'read'))
     .params(repositoryIdParamSchema)
     .handler(async (_, { params }) => {
         try {

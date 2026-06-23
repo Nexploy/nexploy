@@ -22,7 +22,7 @@ export const composeGroup: ToolGroup = {
                     'List all Docker Compose stacks/projects running on this host, with container counts and service names.',
             },
             async () => {
-                const g = guard(ctx, 'docker', 'read');
+                const g = guard(ctx, 'container', 'read');
                 if (g) return g;
                 try {
                     const data = await kyDocker
@@ -43,7 +43,7 @@ export const composeGroup: ToolGroup = {
                 inputSchema: composeStackNameMcpSchema.shape,
             },
             async ({ stackName }) => {
-                const g = guard(ctx, 'docker', 'read');
+                const g = guard(ctx, 'container', 'read');
                 if (g) return g;
                 try {
                     const data = await kyDocker
@@ -65,7 +65,7 @@ export const composeGroup: ToolGroup = {
                 inputSchema: composeStackNameMcpSchema.shape,
             },
             async ({ stackName }) => {
-                const g = guard(ctx, 'docker', 'read');
+                const g = guard(ctx, 'container', 'read');
                 if (g) return g;
                 try {
                     const data = await kyDocker
@@ -87,7 +87,7 @@ export const composeGroup: ToolGroup = {
                 inputSchema: validateComposeSyntaxMcpSchema.shape,
             },
             async ({ yaml }) => {
-                const g = guard(ctx, 'docker', 'read');
+                const g = guard(ctx, 'container', 'read');
                 if (g) return g;
                 try {
                     const result = await kyDocker
@@ -111,7 +111,7 @@ export const composeGroup: ToolGroup = {
                 inputSchema: deployComposeSchema.shape,
             },
             async ({ stackName, yaml }) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'container', 'manage');
                 if (g) return g;
                 try {
                     const result = await kyDocker
@@ -137,7 +137,7 @@ export const composeGroup: ToolGroup = {
                 inputSchema: composeActionMcpSchema.shape,
             },
             async ({ stackName, action }) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'container', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker

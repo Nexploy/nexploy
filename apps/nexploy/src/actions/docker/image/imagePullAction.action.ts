@@ -8,7 +8,7 @@ import { HTTPError } from 'ky';
 import { getRegistryWithPassword } from '@/services/registry.service';
 
 export const onImagePullAction = authActionServer
-    .use(requirePermission('docker', 'manage'))
+    .use(requirePermission('image', 'pull'))
     .inputSchema(imagePullSchema)
     .action(async ({ parsedInput: { imageName, registryId } }) => {
         let auth: { username: string; password: string; serveraddress: string } | undefined;

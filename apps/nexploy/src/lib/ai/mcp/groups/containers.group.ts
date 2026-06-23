@@ -39,7 +39,7 @@ export const containersGroup: ToolGroup = {
                 inputSchema: mcpListContainersSchema.shape,
             },
             async ({ filter }) => {
-                const g = guard(ctx, 'docker', 'read');
+                const g = guard(ctx, 'container', 'read');
                 if (g) return g;
                 try {
                     const containers = await kyDocker
@@ -75,7 +75,7 @@ export const containersGroup: ToolGroup = {
                 }).shape,
             },
             async ({ idOrName }) => {
-                const g = guard(ctx, 'docker', 'read');
+                const g = guard(ctx, 'container', 'read');
                 if (g) return g;
                 try {
                     const data = await kyDocker
@@ -97,7 +97,7 @@ export const containersGroup: ToolGroup = {
                 inputSchema: mcpGetContainerLogsSchema.shape,
             },
             async ({ idOrName, tail }) => {
-                const g = guard(ctx, 'docker', 'read');
+                const g = guard(ctx, 'container', 'read');
                 if (g) return g;
                 try {
                     const { logs } = await kyDocker
@@ -120,7 +120,7 @@ export const containersGroup: ToolGroup = {
                 inputSchema: mcpContainerActionSchema.shape,
             },
             async ({ idOrName, action }) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'container', 'manage');
                 if (g) return g;
                 try {
                     const containers = await kyDocker
@@ -164,7 +164,7 @@ export const containersGroup: ToolGroup = {
                 }).shape,
             },
             async ({ idOrName }) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'container', 'manage');
                 if (g) return g;
                 try {
                     const resolved = await resolveContainer(idOrName, ctx.environmentId);
@@ -189,7 +189,7 @@ export const containersGroup: ToolGroup = {
                 }).shape,
             },
             async ({ idOrName }) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'container', 'manage');
                 if (g) return g;
                 try {
                     const resolved = await resolveContainer(idOrName, ctx.environmentId);
@@ -212,7 +212,7 @@ export const containersGroup: ToolGroup = {
                 inputSchema: containerRenameSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'container', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker
@@ -236,7 +236,7 @@ export const containersGroup: ToolGroup = {
                 inputSchema: ContainerRecreateFormSchema.shape,
             },
             async (params: import('zod').infer<typeof ContainerRecreateFormSchema>) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'container', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker
@@ -259,7 +259,7 @@ export const containersGroup: ToolGroup = {
                 inputSchema: containerCreateFormSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'container', 'manage');
                 if (g) return g;
                 try {
                     const response = await kyDocker
@@ -282,7 +282,7 @@ export const containersGroup: ToolGroup = {
                 inputSchema: mcpExecInContainerSchema.shape,
             },
             async ({ idOrName, command }) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'container', 'manage');
                 if (g) return g;
                 try {
                     const result = await kyDocker

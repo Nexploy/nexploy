@@ -1,6 +1,13 @@
 'use client';
 
-import { Activity, Container as IconContainer, FileText, Globe, PencilLine, Terminal, } from 'lucide-react';
+import {
+    Activity,
+    Container as IconContainer,
+    FileText,
+    Globe,
+    PencilLine,
+    Terminal,
+} from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { CardInfoDetail } from '@/components/docker/container/cards/CardInfoDetail';

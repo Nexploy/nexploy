@@ -8,7 +8,7 @@ import { createS3Client, putS3Object } from '@/lib/aws/s3';
 import { setToastServer } from '@/lib/toastServer';
 
 export const uploadVolumeToS3Action = authActionServer
-    .use(requirePermission('backup', 'create'))
+    .use(requirePermission('cloudBackup', 'manage'))
     .inputSchema(uploadVolumeToS3Schema)
     .action(async ({ parsedInput }) => {
         try {

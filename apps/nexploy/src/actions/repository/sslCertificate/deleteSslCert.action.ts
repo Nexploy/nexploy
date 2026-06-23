@@ -6,7 +6,7 @@ import { deleteSslCertificate } from '@/services/sslCertificate.service';
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const deleteSslCert = authActionServer
-    .use(requirePermission('repository', 'update'))
+    .use(requirePermission('ssl', 'manage'))
     .inputSchema(deleteCertSchema)
     .action(async ({ parsedInput }) => {
         try {

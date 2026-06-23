@@ -7,7 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { scaleServiceFormSchema } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
 
 export const onScaleServiceAction = authActionServer
-    .use(requirePermission('docker', 'manage'))
+    .use(requirePermission('swarm', 'manage'))
     .inputSchema(scaleServiceFormSchema)
     .action(async ({ parsedInput: { id, replicas } }) => {
         try {

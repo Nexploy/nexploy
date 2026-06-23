@@ -7,7 +7,7 @@ import { getRegistryWithPassword } from '@/services/registry.service';
 import { setToastServer } from '@/lib/toastServer';
 
 export const mirrorImageAction = authActionServer
-    .use(requirePermission('registry', 'create'))
+    .use(requirePermission('registry', 'mirror'))
     .inputSchema(mirrorImageSchema)
     .action(async ({ parsedInput }) => {
         const { sourceImage, sourceUsername, sourcePassword, targetRegistryId } = parsedInput;

@@ -6,7 +6,7 @@ import { createLetsEncryptCertificate } from '@/services/sslCertificate.service'
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const createLetsEncryptCert = authActionServer
-    .use(requirePermission('repository', 'update'))
+    .use(requirePermission('ssl', 'manage'))
     .inputSchema(createLetsEncryptCertSchema)
     .action(async ({ parsedInput }) => {
         try {

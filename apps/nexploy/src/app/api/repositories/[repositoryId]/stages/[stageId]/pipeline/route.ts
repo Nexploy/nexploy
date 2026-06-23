@@ -5,7 +5,7 @@ import { stageParamSchema } from '@workspace/schemas-zod/api/params.schema';
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('repository', 'read'))
+    .use(requirePermission('pipeline', 'read'))
     .params(stageParamSchema)
     .handler(async (_, { params }) => {
         try {

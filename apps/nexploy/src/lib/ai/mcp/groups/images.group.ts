@@ -20,7 +20,7 @@ export const imagesGroup: ToolGroup = {
             'listImages',
             { description: 'List all locally available Docker images.' },
             async () => {
-                const g = guard(ctx, 'docker', 'read');
+                const g = guard(ctx, 'image', 'read');
                 if (g) return g;
                 try {
                     const images = await kyDocker
@@ -45,7 +45,7 @@ export const imagesGroup: ToolGroup = {
                 inputSchema: z.object({ id: z.string().describe('Image ID or tag') }).shape,
             },
             async ({ id }) => {
-                const g = guard(ctx, 'docker', 'read');
+                const g = guard(ctx, 'image', 'read');
                 if (g) return g;
                 try {
                     const data = await kyDocker
@@ -65,7 +65,7 @@ export const imagesGroup: ToolGroup = {
                 inputSchema: imagePullSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'image', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker
@@ -92,7 +92,7 @@ export const imagesGroup: ToolGroup = {
                 }).shape,
             },
             async ({ id, repo, tag }) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'image', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker
@@ -115,7 +115,7 @@ export const imagesGroup: ToolGroup = {
                 inputSchema: imageDeleteSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'image', 'manage');
                 if (g) return g;
                 try {
                     const result = await kyDocker
@@ -153,7 +153,7 @@ export const imagesGroup: ToolGroup = {
                 inputSchema: imagePruneSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'docker', 'prune');
+                const g = guard(ctx, 'image', 'remove');
                 if (g) return g;
                 try {
                     const result = await kyDocker
@@ -179,7 +179,7 @@ export const imagesGroup: ToolGroup = {
                 }).shape,
             },
             async ({ image, severity }) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'image', 'manage');
                 if (g) return g;
                 try {
                     const result = await kyDocker

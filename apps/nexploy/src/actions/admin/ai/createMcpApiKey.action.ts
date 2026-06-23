@@ -1,11 +1,12 @@
 'use server';
 
 import { auth } from '@/lib/auth/auth';
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { createMcpApiKeySchema } from '@workspace/schemas-zod/ai/mcpApiKey.schema';
 import { setToastServer } from '@/lib/toastServer';
 
 export const createMcpApiKeyAction = authActionServer
+    .use(requirePermission('mcpKey', 'create'))
     .inputSchema(createMcpApiKeySchema)
     .action(async ({ parsedInput, ctx }) => {
         try {

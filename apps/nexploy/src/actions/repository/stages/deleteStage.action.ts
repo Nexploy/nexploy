@@ -7,7 +7,7 @@ import { deleteDeploymentStageSchema } from '@workspace/schemas-zod/repository/d
 import { revalidatePath } from 'next/cache';
 
 export const deleteStageAction = authActionServer
-    .use(requirePermission('repository', 'update'))
+    .use(requirePermission('stage', 'manage'))
     .inputSchema(deleteDeploymentStageSchema)
     .action(async ({ parsedInput }) => {
         try {

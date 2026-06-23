@@ -7,7 +7,7 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 
 export const onContainerRecreateAction = authActionServer
-    .use(requirePermission('docker', 'manage'))
+    .use(requirePermission('container', 'manage'))
     .inputSchema(ContainerRecreateFormSchema)
     .action(async ({ parsedInput }) => {
         try {

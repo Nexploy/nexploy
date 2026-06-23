@@ -54,8 +54,8 @@ export function UploadNowTab({ volumeName, awsAccounts }: UploadNowTabProps) {
                     toast.success(t('backupUploadedSuccess'));
                     closeDialog();
                 },
-                onError: ({ error }) => {
-                    toast.error(error.serverError ?? t('backupFailed'));
+                onError: () => {
+                    toast.error(t('backupFailed'));
                 },
             },
         },

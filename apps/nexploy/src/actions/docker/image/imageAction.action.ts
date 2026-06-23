@@ -8,7 +8,7 @@ import { ImageDeleteResponse } from '@workspace/typescript-interface/docker/dock
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const onImageAction = authActionServer
-    .use(requirePermission('docker', 'manage'))
+    .use(requirePermission('image', 'manage'))
     .inputSchema(imageActionsSchema)
     .action(async ({ parsedInput: { action, imageIds, force } }) => {
         try {

@@ -27,7 +27,7 @@ export default function NetworksPage() {
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
                 </div>
-                <Can resource="docker" action="manage">
+                <Can resource="network" action="manage">
                     <Button asChild className={'mt-5'}>
                         <Link href={'/docker/networks/create'}>
                             <Plus />

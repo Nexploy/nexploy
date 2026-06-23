@@ -7,7 +7,7 @@ import { moveTraefikEntrySchema } from '@workspace/schemas-zod/admin/traefikFile
 import { resolveTraefikPath } from '@/lib/traefik/fileTree';
 
 export const moveTraefikEntry = authActionServer
-    .use(requirePermission('user', 'ban'))
+    .use(requirePermission('traefik', 'manage'))
     .inputSchema(moveTraefikEntrySchema)
     .action(async ({ parsedInput: { source, destinationDir } }) => {
         const srcAbs = resolveTraefikPath(source);

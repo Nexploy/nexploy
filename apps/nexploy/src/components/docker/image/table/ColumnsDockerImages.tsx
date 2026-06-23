@@ -242,7 +242,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                 return null;
             }
             return (
-                <Can resource="docker" action="manage">
+                <Can resource="image" action="manage">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className={'size-8'}>

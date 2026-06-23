@@ -8,7 +8,7 @@ import { applyDomainOperations, classifyDomainOperations } from '@/services/doma
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const manageDomains = authActionServer
-    .use(requirePermission('repository', 'update'))
+    .use(requirePermission('domain', 'manage'))
     .inputSchema(domainsFormSchema)
     .bindArgsSchemas(repositoryIdSchema)
     .action(async ({ parsedInput, bindArgsParsedInputs: [repositoryId] }) => {

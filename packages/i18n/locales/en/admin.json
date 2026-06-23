@@ -75,12 +75,12 @@
     "cancel": "Cancel",
     "role": "Role",
     "adminRole": "Admin",
-    "readWriteRole": "Read/Write",
-    "readRole": "Read",
+    "developerRole": "Developer",
+    "guestRole": "Guest",
     "roleDescriptions": {
-        "read": "Can view repositories, builds, environments and Docker resources. No modifications allowed.",
-        "readWrite": "Can create, update and deploy repositories, manage builds and environments, and manage Docker resources.",
-        "admin": "Full access including user management, Git provider configuration, backups, and all Read/Write permissions."
+        "guest": "Read-only access: repositories, builds, Docker resources and monitoring. No modifications and no access to secrets.",
+        "developer": "Day-to-day deployment work: manage repositories, builds, deployments, environment variables, pipelines, domains, SSL certificates and Docker resources. No integration or user management.",
+        "admin": "Full access: everything a Developer can do, plus management of integrations (Git, registries, Cloudflare, AWS), Swarm infrastructure, Traefik, cleanup, AI and users."
     },
     "email": "Email",
     "name": "Name",

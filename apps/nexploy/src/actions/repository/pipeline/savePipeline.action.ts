@@ -7,7 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { getTranslations } from 'next-intl/server';
 
 export const savePipelineAction = authActionServer
-    .use(requirePermission('repository', 'update'))
+    .use(requirePermission('pipeline', 'update'))
     .inputSchema(savePipelineSchema)
     .action(async ({ parsedInput }) => {
         const t = await getTranslations('repository');

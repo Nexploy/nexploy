@@ -7,7 +7,7 @@ import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 
 export const onContainerStartAction = authActionServer
-    .use(requirePermission('docker', 'manage'))
+    .use(requirePermission('container', 'manage'))
     .inputSchema(containerActionsSchema)
     .action(async ({ parsedInput: { containerIds } }) => {
         try {

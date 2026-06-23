@@ -68,12 +68,10 @@ export function SSLCertificatesTable({ certificates }: SSLCertificatesTableProps
             actionLabel: tSsl('delete'),
             onAction: async () => {
                 const result = await deleteSslCert({ id: cert.id });
-                if (result?.serverError || result?.validationErrors) {
-                    toast.error(tSsl('deletedError'));
-                    throw new Error('delete failed');
+                if (!result?.serverError) {
+                    toast.success(tSsl('deletedSuccess'));
+                    router.refresh();
                 }
-                toast.success(tSsl('deletedSuccess'));
-                router.refresh();
             },
         });
     };

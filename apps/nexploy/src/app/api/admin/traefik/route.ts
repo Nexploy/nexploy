@@ -6,7 +6,7 @@ import { readTraefikTree, resolveTraefikYmlPath } from '@/lib/traefik/fileTree';
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('user', 'ban'))
+    .use(requirePermission('traefik', 'read'))
     .handler(async () => {
         const tree = await readTraefikTree();
         return NextResponse.json(tree);
@@ -14,7 +14,7 @@ export const GET = route
 
 export const POST = route
     .use(authRouteServer)
-    .use(requirePermission('user', 'ban'))
+    .use(requirePermission('traefik', 'manage'))
     .handler(async (_, { body }) => {
         const { filename, content } = body as { filename: string; content: string };
 

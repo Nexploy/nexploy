@@ -182,7 +182,7 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
         id: 'actions',
         size: 50,
         cell: ({ row }) => (
-            <Can resource="docker" action="manage">
+            <Can resource="network" action="manage">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className={'size-8'}>

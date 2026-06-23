@@ -7,7 +7,7 @@ import { deploymentStageSchema } from '@workspace/schemas-zod/repository/deploym
 import { revalidatePath } from 'next/cache';
 
 export const upsertStageAction = authActionServer
-    .use(requirePermission('repository', 'update'))
+    .use(requirePermission('stage', 'manage'))
     .inputSchema(deploymentStageSchema)
     .action(async ({ parsedInput }) => {
         try {

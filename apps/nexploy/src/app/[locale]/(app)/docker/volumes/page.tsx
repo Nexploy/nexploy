@@ -28,7 +28,7 @@ export default function VolumesPage() {
                             <p className="text-muted-foreground text-sm">{t('description')}</p>
                         </div>
                     </div>
-                    <Can resource="docker" action="manage">
+                    <Can resource="volume" action="manage">
                         <Button asChild className={'mt-5'}>
                             <Link href={'/docker/volumes/create'}>
                                 <Plus />

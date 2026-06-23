@@ -7,7 +7,7 @@ import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 
 export const onContainerRemoveAction = authActionServer
-    .use(requirePermission('docker', 'manage'))
+    .use(requirePermission('container', 'remove'))
     .inputSchema(containerRemoveSchema)
     .action(async ({ parsedInput: { containerIds, force } }) => {
         try {

@@ -7,7 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { createServiceFormSchema } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
 
 export const onCreateServiceAction = authActionServer
-    .use(requirePermission('docker', 'manage'))
+    .use(requirePermission('swarm', 'manage'))
     .inputSchema(createServiceFormSchema)
     .action(async ({ parsedInput }) => {
         try {

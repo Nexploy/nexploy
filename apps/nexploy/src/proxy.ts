@@ -16,17 +16,17 @@ const SIMPLE_REDIRECTS: Record<string, string> = {
 
 const PERMISSION_ROUTES: { path: string; resource: PermissionResource; action: string }[] = [
     { path: '/repositories/create', resource: 'repository', action: 'create' },
-    { path: '/docker/containers/create', resource: 'docker', action: 'manage' },
-    { path: '/docker/images/pull', resource: 'docker', action: 'manage' },
-    { path: '/docker/volumes/create', resource: 'docker', action: 'manage' },
-    { path: '/docker/networks/create', resource: 'docker', action: 'manage' },
+    { path: '/docker/containers/create', resource: 'container', action: 'manage' },
+    { path: '/docker/images/pull', resource: 'image', action: 'pull' },
+    { path: '/docker/volumes/create', resource: 'volume', action: 'manage' },
+    { path: '/docker/networks/create', resource: 'network', action: 'manage' },
     { path: '/admin/users', resource: 'user', action: 'ban' },
     { path: '/admin/integrations', resource: 'gitProvider', action: 'create' },
     { path: '/admin/ai', resource: 'ai', action: 'manage' },
     { path: '/admin/backups', resource: 'backup', action: 'read' },
-    { path: '/admin/ssl-certificates', resource: 'repository', action: 'update' },
+    { path: '/admin/ssl-certificates', resource: 'ssl', action: 'manage' },
     { path: '/admin/registry', resource: 'registry', action: 'read' },
-    { path: '/admin/traefik', resource: 'user', action: 'ban' },
+    { path: '/admin/traefik', resource: 'traefik', action: 'manage' },
 ];
 
 async function getRedirectUrl(request: NextRequest): Promise<string | NextResponse | null> {

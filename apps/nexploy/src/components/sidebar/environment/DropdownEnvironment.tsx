@@ -133,15 +133,19 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
             cancelLabel: tCommon('cancel'),
             actionLabel: tCommon('delete'),
             onAction: async () => {
-                await deleteEnvironmentAction({ environmentId: environment.id });
-                removeEnvironment(environment.id);
+                const result = await deleteEnvironmentAction({ environmentId: environment.id });
+                if (!result?.serverError) {
+                    removeEnvironment(environment.id);
 
-                if (selectedEnvironmentId === environment.id) {
-                    const remaining = storeEnvironments.filter((env) => env.id !== environment.id);
-                    if (remaining.length) selectEnvironment(remaining[0]!.id);
+                    if (selectedEnvironmentId === environment.id) {
+                        const remaining = storeEnvironments.filter(
+                            (env) => env.id !== environment.id,
+                        );
+                        if (remaining.length) selectEnvironment(remaining[0]!.id);
+                    }
+
+                    router.refresh();
                 }
-
-                router.refresh();
             },
         });
     };

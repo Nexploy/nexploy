@@ -88,12 +88,10 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
                     repositoryId,
                     envVariableId: variable.id!,
                 });
-                if (result?.serverError) {
-                    toast.error(result.serverError);
-                    return;
+                if (!result?.serverError) {
+                    toast.success(t('removeSuccess'));
+                    router.refresh();
                 }
-                toast.success(t('removeSuccess'));
-                router.refresh();
             },
         });
     };

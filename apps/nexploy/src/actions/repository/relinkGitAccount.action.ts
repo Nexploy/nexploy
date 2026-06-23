@@ -12,10 +12,10 @@ export const relinkGitAccountAction = authActionServer
     .use(requirePermission('repository', 'update'))
     .inputSchema(relinkGitAccountSchema)
     .bindArgsSchemas(repositoryIdSchema)
-    .action(async ({ parsedInput, bindArgsParsedInputs: [repositoryId] }) => {
+    .action(async ({ parsedInput, bindArgsParsedInputs: [repositoryId], ctx: { session } }) => {
         const t = await getTranslations('repository.reassociateGitAccount');
         try {
-            await relinkGitAccount(repositoryId, parsedInput.gitAccountId);
+            await relinkGitAccount(repositoryId, parsedInput.gitAccountId, session.user.id);
             revalidatePath('/repositories/[repositoryId]', 'page');
         } catch (error: unknown) {
             if (error instanceof Error) {

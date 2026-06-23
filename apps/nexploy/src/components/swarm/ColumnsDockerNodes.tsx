@@ -164,7 +164,7 @@ export const getColumnsTableNodes = (t: TranslationFunction): ColumnDef<SwarmNod
         size: 50,
         cell: ({ row }) => (
             <div className="flex justify-end">
-                <Can resource="docker" action="manage">
+                <Can resource="swarm" action="manage">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">

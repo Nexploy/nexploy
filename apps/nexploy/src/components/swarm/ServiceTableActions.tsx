@@ -15,10 +15,13 @@ interface ServiceTableActionsProps {
     onResetSelection: () => void;
 }
 
-export function ServiceTableActions({ selectedServices, onResetSelection }: ServiceTableActionsProps) {
+export function ServiceTableActions({
+    selectedServices,
+    onResetSelection,
+}: ServiceTableActionsProps) {
     const { can } = usePermissions();
     const t = useTranslations('swarm');
-    if (!can('docker', 'manage')) return null;
+    if (!can('swarm', 'manage')) return null;
     const tCommon = useTranslations('common');
     const openAlertDialog = useAlertConfirmationDialogStore((s) => s.openAlertDialog);
 

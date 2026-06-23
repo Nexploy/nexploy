@@ -5,7 +5,7 @@ import { Session } from '@/lib/auth/auth';
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('gitProvider', 'create'))
+    .use(requirePermission('dns', 'read'))
     .handler(async (request: Request, { ctx }: { ctx: { session: Session } }) => {
         try {
             const { searchParams } = new URL(request.url);

@@ -3,14 +3,7 @@
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createCustomCertSchema } from '@workspace/schemas-zod/repository/sslCertificate.schema';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { Button } from '@workspace/ui/components/button';
@@ -38,9 +31,6 @@ export function CustomCertForm({ onClose }: CustomCertFormProps) {
                     router.refresh();
                     onClose();
                 },
-                onError: () => {
-                    toast.error(t('addedError'));
-                },
             },
         },
     );
@@ -50,7 +40,7 @@ export function CustomCertForm({ onClose }: CustomCertFormProps) {
     return (
         <Form {...form}>
             <form onSubmit={handleSubmitWithAction} className="space-y-4">
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid items-start gap-4 md:grid-cols-2">
                     <FormField
                         control={form.control}
                         name="name"

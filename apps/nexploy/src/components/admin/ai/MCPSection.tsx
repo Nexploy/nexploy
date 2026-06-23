@@ -32,9 +32,11 @@ export function MCPSection({ mcpUrl, keys }: MCPSectionProps) {
             title: t('revokeKey'),
             description: t('confirmRevoke'),
             onAction: async () => {
-                await deleteKey({ keyId });
-                toast.success(t('keyRevokedSuccess'));
-                router.refresh();
+                const result = await deleteKey({ keyId });
+                if (!result.serverError) {
+                    toast.success(t('keyRevokedSuccess'));
+                    router.refresh();
+                }
             },
         });
     }

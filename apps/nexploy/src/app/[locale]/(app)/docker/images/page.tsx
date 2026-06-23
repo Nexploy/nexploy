@@ -25,7 +25,7 @@ export default function ImagesPage() {
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
                 </div>
-                <Can resource="docker" action="manage">
+                <Can resource="image" action="pull">
                     <Button asChild className={'mt-5'}>
                         <Link href={'/docker/images/pull'}>
                             <Plus />

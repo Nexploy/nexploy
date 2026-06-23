@@ -6,7 +6,7 @@ import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 
 export const onSwarmRefreshAction = authActionServer
-    .use(requirePermission('docker', 'manage'))
+    .use(requirePermission('swarm', 'read'))
     .action(async () => {
         try {
             return await kyDocker.post(`swarm/hardRefresh`).json();

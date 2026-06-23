@@ -56,11 +56,9 @@ export function StageCard({ stage, stages, repositoryId }: StageCardProps) {
             actionLabel: t('remove'),
             onAction: async () => {
                 const result = await deleteStageAction({ id: stage.id });
-                if (result?.serverError) {
-                    toast.error(result.serverError);
-                    return;
+                if (!result?.serverError) {
+                    toast.success(t('deleteSuccess'));
                 }
-                toast.success(t('deleteSuccess'));
             },
         });
     };

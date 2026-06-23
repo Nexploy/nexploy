@@ -36,7 +36,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
                             {container.name}
                         </CardTitle>
                     </div>
-                    <Can resource="docker" action="manage">
+                    <Can resource="container" action="manage">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon" className="size-8">

@@ -7,7 +7,7 @@ import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 
 export const onContainerRenameAction = authActionServer
-    .use(requirePermission('docker', 'manage'))
+    .use(requirePermission('container', 'manage'))
     .inputSchema(containerRenameSchema)
     .action(async ({ parsedInput: { containerId, name } }) => {
         try {

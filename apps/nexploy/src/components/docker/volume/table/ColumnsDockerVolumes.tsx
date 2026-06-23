@@ -156,7 +156,7 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
         id: 'actions',
         size: 50,
         cell: ({ row }) => (
-            <Can resource="docker" action="manage">
+            <Can resource="volume" action="manage">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className={'size-8'}>

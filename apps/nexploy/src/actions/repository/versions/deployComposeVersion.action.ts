@@ -6,7 +6,7 @@ import { deployVersionSchema } from '@workspace/schemas-zod/inngest/build.schema
 import { deployComposeVersion } from '@/services/docker/version.service';
 
 export const onDeployComposeVersion = authActionServer
-    .use(requirePermission('repository', 'deploy'))
+    .use(requirePermission('deployment', 'deploy'))
     .inputSchema(deployVersionSchema)
     .action(async ({ parsedInput }) => {
         const { imageTag, repositoryId, environmentId } = parsedInput;

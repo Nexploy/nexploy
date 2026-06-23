@@ -8,7 +8,7 @@ import { HTTPError } from 'ky';
 import { getTranslations } from 'next-intl/server';
 
 export const onNetworkCreateAction = authActionServer
-    .use(requirePermission('docker', 'manage'))
+    .use(requirePermission('network', 'manage'))
     .inputSchema(networkCreateSchema)
     .action(async ({ parsedInput }) => {
         try {

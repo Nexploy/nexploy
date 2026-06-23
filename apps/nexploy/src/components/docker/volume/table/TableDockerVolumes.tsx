@@ -99,8 +99,10 @@ export function TableDockerVolumes() {
             cancelLabel: tCommon('cancel'),
             actionLabel: tCommon('remove'),
             onAction: async () => {
-                await onVolumeAction({ volumeNames, action: 'delete' });
-                table.resetRowSelection();
+                const result = await onVolumeAction({ volumeNames, action: 'delete' });
+                if (!result?.serverError) {
+                    table.resetRowSelection();
+                }
             },
         });
     };

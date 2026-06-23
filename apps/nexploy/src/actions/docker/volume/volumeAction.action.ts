@@ -15,7 +15,7 @@ const skipReasonToKey: Record<string, string> = {
 };
 
 export const onVolumeAction = authActionServer
-    .use(requirePermission('docker', 'manage'))
+    .use(requirePermission('volume', 'manage'))
     .inputSchema(volumeActionsSchema)
     .action(async ({ parsedInput: { action, volumeNames } }) => {
         try {

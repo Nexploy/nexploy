@@ -125,12 +125,14 @@ export function TableDockerNetworks() {
             cancelLabel: tCommon('cancel'),
             actionLabel: tCommon('remove'),
             onAction: async () => {
-                await onNetworkAction({
+                const result = await onNetworkAction({
                     networkIds,
                     action: 'delete',
                     force: forceRef.current,
                 });
-                table.resetRowSelection();
+                if (!result?.serverError) {
+                    table.resetRowSelection();
+                }
             },
         });
     }, [rowSelection, openAlertDialog, tDocker, tCommon, table]);

@@ -5,7 +5,7 @@ import type { DiskUsage } from '@workspace/typescript-interface/docker/docker.sy
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('docker', 'read'))
+    .use(requirePermission('monitoring', 'read'))
     .handler(async () => {
         try {
             const diskUsage = await kyDocker.get('system/df').json<DiskUsage>();

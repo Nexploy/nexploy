@@ -77,12 +77,14 @@ export function ModelProviderCard({
             description: t('deleteConfirmDescription', { provider: label }),
             actionLabel: t('deleteConfirmAction'),
             onAction: async () => {
-                await deleteKey({ provider });
-                toast.success(t('deleteSuccess'));
-                form.reset();
-                form.clearErrors();
-                setEditing(true);
-                router.refresh();
+                const result = await deleteKey({ provider });
+                if (!result?.serverError) {
+                    toast.success(t('deleteSuccess'));
+                    form.reset();
+                    form.clearErrors();
+                    setEditing(true);
+                    router.refresh();
+                }
             },
         });
     }

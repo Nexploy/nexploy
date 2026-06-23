@@ -33,6 +33,8 @@ COPY --from=prepare /app/out/full/ .
 COPY --from=prepare /app/tsconfig.json ./tsconfig.json
 
 ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
+ENV BETTER_AUTH_SECRET="build-placeholder-secret-not-used-at-runtime"
+ENV BETTER_AUTH_URL="http://localhost:3000"
 
 RUN pnpm --filter=nexploy db:generate
 

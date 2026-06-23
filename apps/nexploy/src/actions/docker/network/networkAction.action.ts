@@ -20,7 +20,7 @@ const skipReasonToKey: Record<string, string> = {
 };
 
 export const onNetworkAction = authActionServer
-    .use(requirePermission('docker', 'manage'))
+    .use(requirePermission('network', 'manage'))
     .use(preventInfrastructureNetworkAction)
     .inputSchema(networkActionsSchema)
     .action(async ({ parsedInput: { action, networkIds, force } }) => {

@@ -99,7 +99,7 @@ export default function ContainersPage() {
                         )}
                     </div>
                 </div>
-                <Can resource="docker" action="manage">
+                <Can resource="container" action="manage">
                     <div className="mt-5 flex gap-2">
                         <Button asChild variant="outline">
                             <Link href={'/docker/containers/stacks/create'}>

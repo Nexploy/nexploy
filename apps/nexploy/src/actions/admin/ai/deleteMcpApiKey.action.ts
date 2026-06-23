@@ -1,12 +1,13 @@
 'use server';
 
 import { auth } from '@/lib/auth/auth';
-import { authActionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { headers } from 'next/headers';
 import { deleteMcpApiKeySchema } from '@workspace/schemas-zod/ai/mcpApiKey.schema';
 import { setToastServer } from '@/lib/toastServer';
 
 export const deleteMcpApiKeyAction = authActionServer
+    .use(requirePermission('mcpKey', 'delete'))
     .inputSchema(deleteMcpApiKeySchema)
     .action(async ({ parsedInput }) => {
         try {

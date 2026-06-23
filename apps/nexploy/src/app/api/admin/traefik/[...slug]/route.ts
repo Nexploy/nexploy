@@ -9,7 +9,7 @@ function relPath(slug: string[]): string {
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('user', 'ban'))
+    .use(requirePermission('traefik', 'read'))
     .handler(async (_request, { params }) => {
         const { slug } = await params;
         const name = relPath(slug);
@@ -26,7 +26,7 @@ export const GET = route
 
 export const DELETE = route
     .use(authRouteServer)
-    .use(requirePermission('user', 'ban'))
+    .use(requirePermission('traefik', 'manage'))
     .handler(async (_request, { params }) => {
         const { slug } = await params;
         const filePath = resolveTraefikYmlPath(relPath(slug));

@@ -32,9 +32,7 @@ export function RegistryCard({ registry }: RegistryCardProps) {
             actionLabel: t('delete'),
             onAction: async () => {
                 const result = await deleteRegistryAction({ id: registry.id });
-                if (result?.serverError) {
-                    toast.error(result.serverError);
-                } else {
+                if (!result?.serverError) {
                     toast.success(t('deleteSuccess'));
                     router.refresh();
                 }

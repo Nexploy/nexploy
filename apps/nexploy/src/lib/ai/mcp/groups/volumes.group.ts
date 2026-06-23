@@ -18,7 +18,7 @@ export const volumesGroup: ToolGroup = {
             'listVolumes',
             { description: 'List all Docker volumes.' },
             async () => {
-                const g = guard(ctx, 'docker', 'read');
+                const g = guard(ctx, 'volume', 'read');
                 if (g) return g;
                 try {
                     const volumes = await kyDocker
@@ -39,7 +39,7 @@ export const volumesGroup: ToolGroup = {
                 inputSchema: z.object({ name: z.string().describe('Volume name') }).shape,
             },
             async ({ name }) => {
-                const g = guard(ctx, 'docker', 'read');
+                const g = guard(ctx, 'volume', 'read');
                 if (g) return g;
                 try {
                     const data = await kyDocker
@@ -61,7 +61,7 @@ export const volumesGroup: ToolGroup = {
                 inputSchema: volumeCreateSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'volume', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker
@@ -84,7 +84,7 @@ export const volumesGroup: ToolGroup = {
                 inputSchema: volumeDeleteSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'volume', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker
@@ -104,7 +104,7 @@ export const volumesGroup: ToolGroup = {
             'pruneVolumes',
             { description: 'Remove all unused Docker volumes. Requires admin role.' },
             async () => {
-                const g = guard(ctx, 'docker', 'prune');
+                const g = guard(ctx, 'volume', 'remove');
                 if (g) return g;
                 try {
                     const result = await kyDocker

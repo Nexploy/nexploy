@@ -26,7 +26,7 @@ export function ContainerTableActions({
 }: ContainerTableActionsProps) {
     const { can } = usePermissions();
     const t = useTranslations('docker.tables');
-    if (!can('docker', 'manage')) return null;
+    if (!can('container', 'manage')) return null;
     const tActions = useTranslations('docker.containerActions');
     const tCommon = useTranslations('common');
     const openAlertDialog = useAlertConfirmationDialogStore((s) => s.openAlertDialog);

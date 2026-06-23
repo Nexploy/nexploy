@@ -12,7 +12,7 @@ import { inngest } from '@/inngest/client';
 import { CLEANUP_SCHEDULE_EVENT } from '@/inngest/functions/dockerCleanupScheduler';
 
 export const updateCleanupSettingsAction = authActionServer
-    .use(requirePermission('docker', 'prune'))
+    .use(requirePermission('setting', 'manage'))
     .inputSchema(updateCleanupSettingsSchema)
     .action(async ({ parsedInput }) => {
         try {

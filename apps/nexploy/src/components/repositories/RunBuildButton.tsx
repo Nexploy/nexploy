@@ -43,7 +43,7 @@ export function RunBuildButton({ repositoryId, showText = true, ...props }: Depl
         execute({ repositoryId, stageId });
     };
 
-    if (!can('repository', 'deploy')) return null;
+    if (!can('build', 'run')) return null;
 
     return (
         <Button {...props} onClick={(e) => handleDeploy(e)} disabled={isPending}>

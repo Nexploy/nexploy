@@ -9,7 +9,7 @@ import { setToastServer } from '@/lib/toastServer.ts';
 import { revalidatePath } from 'next/cache';
 
 export const deleteDomain = authActionServer
-    .use(requirePermission('repository', 'update'))
+    .use(requirePermission('domain', 'manage'))
     .inputSchema(deleteDomainSchema)
     .bindArgsSchemas(repositoryIdSchema)
     .action(async ({ parsedInput: { domainId }, bindArgsParsedInputs: [repositoryId] }) => {

@@ -4,7 +4,7 @@ import { getAllAwsAccounts } from '@/services/aws.service';
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('backup', 'read'))
+    .use(requirePermission('cloudBackup', 'read'))
     .handler(async () => {
         const accounts = await getAllAwsAccounts();
         return NextResponse.json(accounts);

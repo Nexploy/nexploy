@@ -240,7 +240,7 @@ export function getColumnsDockerContainers(
                 }
                 return (
                     <div className="flex justify-end">
-                        <Can resource="docker" action="manage">
+                        <Can resource="container" action="manage">
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" className={'size-8'}>

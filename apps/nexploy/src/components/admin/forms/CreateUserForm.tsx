@@ -43,7 +43,7 @@ export function CreateUserForm() {
                     email: '',
                     password: '',
                     confirmPassword: '',
-                    role: 'read',
+                    role: 'developer',
                 },
             },
             actionProps: {
@@ -131,15 +131,15 @@ export function CreateUserForm() {
                                     </TooltipTrigger>
                                     <TooltipContent side="right" className="max-w-64 space-y-2 p-3">
                                         <div>
-                                            <p className="font-semibold">{t('readRole')}</p>
+                                            <p className="font-semibold">{t('guestRole')}</p>
                                             <p className="text-muted-foreground text-xs">
-                                                {t('roleDescriptions.read')}
+                                                {t('roleDescriptions.guest')}
                                             </p>
                                         </div>
                                         <div>
-                                            <p className="font-semibold">{t('readWriteRole')}</p>
+                                            <p className="font-semibold">{t('developerRole')}</p>
                                             <p className="text-muted-foreground text-xs">
-                                                {t('roleDescriptions.readWrite')}
+                                                {t('roleDescriptions.developer')}
                                             </p>
                                         </div>
                                         <div>
@@ -160,9 +160,9 @@ export function CreateUserForm() {
                                 <SelectContent>
                                     <SelectGroup>
                                         <SelectLabel>{t('role')}</SelectLabel>
-                                        <SelectItem value="read">{t('readRole')}</SelectItem>
-                                        <SelectItem value="readWrite">
-                                            {t('readWriteRole')}
+                                        <SelectItem value="guest">{t('guestRole')}</SelectItem>
+                                        <SelectItem value="developer">
+                                            {t('developerRole')}
                                         </SelectItem>
                                         <SelectItem value="admin">{t('adminRole')}</SelectItem>
                                     </SelectGroup>

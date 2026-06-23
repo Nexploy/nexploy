@@ -42,8 +42,10 @@ export function LeaveSwarmDialog() {
             cancelLabel: tCommon('cancel'),
             actionLabel: t('leaveSwarm'),
             onAction: async () => {
-                await onSwarmLeaveAction({ force: forceRef.current });
-                toast.success(t('leftSwarmSuccess'));
+                const result = await onSwarmLeaveAction({ force: forceRef.current });
+                if (!result?.serverError) {
+                    toast.success(t('leftSwarmSuccess'));
+                }
             },
         });
     };

@@ -9,7 +9,7 @@ import { revalidatePath } from 'next/cache';
 import { getPublicIp } from '@/lib/network/getPublicIp.ts';
 
 export const connectCloudflareAction = authActionServer
-    .use(requirePermission('gitProvider', 'create'))
+    .use(requirePermission('dns', 'manage'))
     .inputSchema(cloudflareConnectSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {

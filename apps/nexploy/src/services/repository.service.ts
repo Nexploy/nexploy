@@ -1,7 +1,6 @@
 import { RepositoryCreateForm } from '@workspace/schemas-zod/repository/repositoryCreate.schema';
 import { Session } from '@/lib/auth/auth';
 import { prisma } from '../../prisma/prisma';
-import { getUserSession } from '@/services/auth/auth.service';
 import { decrypt, encrypt } from '@/lib/encryption';
 import { Prisma } from 'generated/client';
 import { RepositoryPayload } from '@/types/repository.type';
@@ -158,35 +157,30 @@ export async function getBuilds(repositoryId: string) {
     }
 }
 
-async function getRepositoryById(repositoryId: string) {
-    try {
-        const session = await getUserSession();
+export async function deleteRepository(
+    { repositoryId, confirmName }: DeleteRepositoryInput,
+    userId: string,
+) {
+    const repository = await prisma.repository.findUnique({
+        where: { id: repositoryId },
+    });
 
-        const repository = await prisma.repository.findFirst({
-            where: { id: repositoryId, userId: session?.user.id },
-        });
-
-        if (!repository) {
-            throw new Error('Repository not found');
-        }
-
-        return repository;
-    } catch (error: unknown) {
-        throw new Error('Failed to get repository');
+    if (!repository) {
+        throw new Error('Repository not found');
     }
-}
 
-export async function deleteRepository({ repositoryId, confirmName }: DeleteRepositoryInput) {
-    const repository = await getRepositoryById(repositoryId);
+    if (repository.userId !== userId) {
+        throw new Error('User not authorized to delete this repository');
+    }
 
     if (confirmName !== repository.name) {
         throw new Error(`Confirmation failed: expected "${repository.name}"`);
     }
 
-    await teardownRepositoryWebhook(repositoryId);
+    await teardownRepositoryWebhook(repositoryId, userId);
     try {
         await prisma.repository.delete({
-            where: { id: repositoryId },
+            where: { id: repositoryId, userId },
         });
     } catch (error: unknown) {
         throw new Error('Failed to delete repository');
@@ -270,13 +264,21 @@ export async function getRepositoryWebhookStatus(repositoryId: string) {
     }
 }
 
-export async function relinkGitAccount(repositoryId: string, gitAccountId: string) {
+export async function relinkGitAccount(
+    repositoryId: string,
+    gitAccountId: string,
+    userId: string,
+) {
     const repo = await prisma.repository.findUnique({
         where: { id: repositoryId },
         select: { gitId: true, repositoryUrl: true, gitProvider: true, userId: true },
     });
 
     if (!repo) throw new Error('Repository not found');
+
+    if (repo.userId !== userId) {
+        throw new Error('User not authorized to relink this repository');
+    }
 
     const repoInfo = await verifyRepoAccessFromAccount(
         repo.gitProvider,
@@ -286,7 +288,7 @@ export async function relinkGitAccount(repositoryId: string, gitAccountId: strin
         repo.userId,
     );
 
-    await teardownRepositoryWebhook(repositoryId);
+    await teardownRepositoryWebhook(repositoryId, repo.userId);
 
     await prisma.repository.update({
         where: { id: repositoryId },

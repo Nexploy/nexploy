@@ -4,7 +4,7 @@ import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('repository', 'read'))
+    .use(requirePermission('ssl', 'read'))
     .handler(async () => {
         try {
             const certificates = await getAllCertificates();

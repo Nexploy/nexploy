@@ -139,8 +139,14 @@ export function TableDockerImages() {
                 </div>
             ),
             onAction: async () => {
-                await onImageAction({ imageIds, action: 'delete', force: forceRef.current });
-                table.resetRowSelection();
+                const result = await onImageAction({
+                    imageIds,
+                    action: 'delete',
+                    force: forceRef.current,
+                });
+                if (!result?.serverError) {
+                    table.resetRowSelection();
+                }
             },
         });
     };

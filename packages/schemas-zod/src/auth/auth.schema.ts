@@ -51,7 +51,7 @@ export const createUserFormSchema = z
         email,
         password,
         confirmPassword: z.string().min(1, { message: 'Passwords must match' }),
-        role: z.enum(['admin', 'readWrite', 'read']),
+        role: z.enum(['guest', 'developer', 'admin']),
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: 'Passwords must match',

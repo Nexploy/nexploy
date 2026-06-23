@@ -92,10 +92,13 @@ export async function setupRepositoryWebhook(
     }
 }
 
-export async function teardownRepositoryWebhook(repositoryId: string): Promise<void> {
+export async function teardownRepositoryWebhook(
+    repositoryId: string,
+    userId: string,
+): Promise<void> {
     try {
         const repo = await prisma.repository.findUnique({
-            where: { id: repositoryId },
+            where: { id: repositoryId, userId },
             select: {
                 id: true,
                 name: true,

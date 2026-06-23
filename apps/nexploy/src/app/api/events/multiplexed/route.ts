@@ -64,7 +64,7 @@ const buildEndpointUrl = (template: string, params?: Record<string, string>): st
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('docker', 'read'))
+    .use(requirePermission('container', 'read'))
     .handler(async (request: Request, context) => {
         const { searchParams } = new URL(request.url);
         const channelsParam = searchParams.get('channels');

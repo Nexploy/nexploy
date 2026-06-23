@@ -6,7 +6,7 @@ export const runtime = 'nodejs';
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('docker', 'read'))
+    .use(requirePermission('monitoring', 'read'))
     .handler(async (request: Request) => {
     const { searchParams } = new URL(request.url);
     const refreshRate = parseInt(searchParams.get('refreshRate') ?? '2000', 10);

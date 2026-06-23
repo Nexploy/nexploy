@@ -91,7 +91,7 @@ export function ServiceDetailPage({ serviceId }: ServiceDetailPageProps) {
                                 {t('detail.back')}
                             </Link>
                         </Button>
-                        <Can resource="docker" action="manage">
+                        <Can resource="swarm" action="manage">
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button

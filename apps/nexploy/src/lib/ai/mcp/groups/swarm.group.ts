@@ -20,7 +20,7 @@ export const swarmGroup: ToolGroup = {
             'listSwarmNodes',
             { description: 'List all swarm nodes with their role (manager/worker), availability, and state.' },
             async () => {
-                const g = guard(ctx, 'docker', 'read');
+                const g = guard(ctx, 'swarm', 'read');
                 if (g) return g;
                 try {
                     const nodes = await kyDocker
@@ -47,7 +47,7 @@ export const swarmGroup: ToolGroup = {
             'listSwarmServices',
             { description: 'List all swarm services with their replica count and running status.' },
             async () => {
-                const g = guard(ctx, 'docker', 'read');
+                const g = guard(ctx, 'swarm', 'read');
                 if (g) return g;
                 try {
                     const services = await kyDocker
@@ -79,7 +79,7 @@ export const swarmGroup: ToolGroup = {
                 }).shape,
             },
             async (params) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'swarm', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker
@@ -104,7 +104,7 @@ export const swarmGroup: ToolGroup = {
                 }).shape,
             },
             async ({ force }) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'swarm', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker
@@ -127,7 +127,7 @@ export const swarmGroup: ToolGroup = {
                 inputSchema: swarmNodeActionSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'swarm', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker
@@ -150,7 +150,7 @@ export const swarmGroup: ToolGroup = {
                 inputSchema: createServiceFormSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'swarm', 'manage');
                 if (g) return g;
                 try {
                     const result = await kyDocker
@@ -176,7 +176,7 @@ export const swarmGroup: ToolGroup = {
                 }).shape,
             },
             async ({ id, replicas }) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'swarm', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker
@@ -199,7 +199,7 @@ export const swarmGroup: ToolGroup = {
                 inputSchema: removeServicesSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'swarm', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker

@@ -50,7 +50,7 @@ interface ColumnsOptions {
     isUpdatingRole: boolean;
     isDeleting: boolean;
     isBanning: boolean;
-    onRoleChange: (userId: string, role: 'admin' | 'readWrite' | 'read') => void;
+    onRoleChange: (userId: string, role: 'guest' | 'developer' | 'admin') => void;
     onDelete: (user: UserRow) => void;
     onBan: (user: UserRow) => void;
 }
@@ -175,8 +175,8 @@ export const getColumnsUsers = (
                 if (canEditRole) {
                     return (
                         <Select
-                            value={user.role || 'readWrite'}
-                            onValueChange={(value: 'admin' | 'readWrite' | 'read') =>
+                            value={user.role || 'developer'}
+                            onValueChange={(value: 'guest' | 'developer' | 'admin') =>
                                 onRoleChange(user.id, value)
                             }
                             disabled={isUpdatingRole}
@@ -191,16 +191,16 @@ export const getColumnsUsers = (
                                         <span className={'truncate'}>{t('adminRole')}</span>
                                     </div>
                                 </SelectItem>
-                                <SelectItem value="readWrite">
+                                <SelectItem value="developer">
                                     <div className="flex items-center gap-2 truncate">
                                         <ShieldOff className="size-3" />
-                                        <span className={'truncate'}>{t('readWriteRole')}</span>
+                                        <span className={'truncate'}>{t('developerRole')}</span>
                                     </div>
                                 </SelectItem>
-                                <SelectItem value="read">
+                                <SelectItem value="guest">
                                     <div className="flex items-center gap-2 truncate">
                                         <ShieldOff className="size-3" />
-                                        <span className={'truncate'}>{t('readRole')}</span>
+                                        <span className={'truncate'}>{t('guestRole')}</span>
                                     </div>
                                 </SelectItem>
                             </SelectContent>
@@ -211,9 +211,9 @@ export const getColumnsUsers = (
                 const roleLabel =
                     user.role === 'admin'
                         ? t('adminRole')
-                        : user.role === 'read'
-                          ? t('readRole')
-                          : t('readWriteRole');
+                        : user.role === 'guest'
+                          ? t('guestRole')
+                          : t('developerRole');
 
                 return (
                     <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>

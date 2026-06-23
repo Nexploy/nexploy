@@ -8,7 +8,7 @@ import { revalidatePath } from 'next/cache';
 import { setToastServer } from '@/lib/toastServer';
 
 export const deleteBackupScheduleAction = authActionServer
-    .use(requirePermission('backup', 'delete'))
+    .use(requirePermission('cloudBackup', 'manage'))
     .inputSchema(deleteBackupScheduleSchema)
     .action(async ({ parsedInput }) => {
         try {

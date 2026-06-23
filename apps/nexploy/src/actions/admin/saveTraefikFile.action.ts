@@ -6,7 +6,7 @@ import { saveTraefikFileSchema } from '@workspace/schemas-zod/admin/traefikFile.
 import { resolveTraefikYmlPath } from '@/lib/traefik/fileTree';
 
 export const saveTraefikFile = authActionServer
-    .use(requirePermission('user', 'ban'))
+    .use(requirePermission('traefik', 'manage'))
     .inputSchema(saveTraefikFileSchema)
     .action(async ({ parsedInput: { filename, content } }) => {
         const filePath = resolveTraefikYmlPath(filename);

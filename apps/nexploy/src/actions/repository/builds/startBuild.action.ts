@@ -8,7 +8,7 @@ import { revalidatePath } from 'next/cache';
 import { getTranslations } from 'next-intl/server';
 
 export const onStartBuild = authActionServer
-    .use(requirePermission('repository', 'deploy'))
+    .use(requirePermission('build', 'run'))
     .inputSchema(startBuildSchema)
     .action(async ({ parsedInput, ctx }) => {
         const t = await getTranslations('repository');

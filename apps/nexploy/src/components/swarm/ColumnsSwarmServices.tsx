@@ -180,7 +180,7 @@ export function getColumnsSwarmServices(
             size: 100,
             cell: ({ row }) => (
                 <div className="flex justify-end">
-                    <Can resource="docker" action="manage">
+                    <Can resource="swarm" action="manage">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon">

@@ -5,8 +5,8 @@ import { teardownRepositoryWebhook } from '@/services/webhook/repoWebhook.servic
 import { teardownWebhookSchema } from '@workspace/schemas-zod/repository/teardownWebhook.schema';
 
 export const teardownWebhookAction = authActionServer
-    .use(requirePermission('repository', 'update'))
+    .use(requirePermission('pipeline', 'webhook'))
     .inputSchema(teardownWebhookSchema)
-    .action(async ({ parsedInput }) => {
-        await teardownRepositoryWebhook(parsedInput.repositoryId);
+    .action(async ({ parsedInput, ctx }) => {
+        await teardownRepositoryWebhook(parsedInput.repositoryId, ctx.session.user.id);
     });

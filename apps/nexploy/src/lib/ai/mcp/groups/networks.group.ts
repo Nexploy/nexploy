@@ -18,7 +18,7 @@ export const networksGroup: ToolGroup = {
             'listNetworks',
             { description: 'List all Docker networks.' },
             async () => {
-                const g = guard(ctx, 'docker', 'read');
+                const g = guard(ctx, 'network', 'read');
                 if (g) return g;
                 try {
                     const networks = await kyDocker
@@ -44,7 +44,7 @@ export const networksGroup: ToolGroup = {
                 inputSchema: z.object({ id: z.string().describe('Network ID or name') }).shape,
             },
             async ({ id }) => {
-                const g = guard(ctx, 'docker', 'read');
+                const g = guard(ctx, 'network', 'read');
                 if (g) return g;
                 try {
                     const data = await kyDocker
@@ -66,7 +66,7 @@ export const networksGroup: ToolGroup = {
                 inputSchema: networkCreateSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'network', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker
@@ -89,7 +89,7 @@ export const networksGroup: ToolGroup = {
                 inputSchema: networkDeleteSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'docker', 'manage');
+                const g = guard(ctx, 'network', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker

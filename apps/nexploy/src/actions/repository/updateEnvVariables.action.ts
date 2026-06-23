@@ -6,7 +6,7 @@ import { updateEnvVariables } from '@/services/repository.service';
 import { envVariableSchema } from '@workspace/schemas-zod/repository/envVariable.schema';
 
 export const onEnvVariableAction = authActionServer
-    .use(requirePermission('repository', 'update'))
+    .use(requirePermission('envVar', 'write'))
     .inputSchema(envVariableSchema)
     .action(async ({ parsedInput, ctx }) => {
         const { repositoryId, stageId, envVariables, deleteIds } = parsedInput;

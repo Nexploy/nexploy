@@ -13,7 +13,7 @@ export function ContainerActionButtons() {
     const { can } = usePermissions();
     const container = useContainerStore((state) => state.container);
     const router = useRouter();
-    if (!can('docker', 'manage')) return null;
+    if (!can('container', 'manage')) return null;
 
     const containerActions = useContainerActions({
         containerId: container?.id ?? '',

@@ -25,7 +25,6 @@ import {
 import { fail, guard, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
-
 export const repositoriesGroup: ToolGroup = {
     name: 'repositories',
 
@@ -231,7 +230,7 @@ export const repositoriesGroup: ToolGroup = {
                 const g = guard(ctx, 'repository', 'delete');
                 if (g) return g;
                 try {
-                    await deleteRepository(params);
+                    await deleteRepository(params, ctx.userId);
                     return ok(`Repository deleted`);
                 } catch (e: any) {
                     return fail(e.message);

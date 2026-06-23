@@ -39,9 +39,11 @@ export function RemoveBuildButton({
             cancelLabel: tCommon('cancel'),
             actionLabel: tCommon('delete'),
             onAction: async () => {
-                await executeAsync({ buildId });
-                triggerBuildDelete();
-                onSuccess?.();
+                const result = await executeAsync({ buildId });
+                if (!result?.serverError) {
+                    triggerBuildDelete();
+                    onSuccess?.();
+                }
             },
         });
     };

@@ -8,7 +8,7 @@ import {
 } from '@workspace/schemas-zod/pipeline/pipelineGraph.schema';
 
 export const saveNodeConfigAction = authActionServer
-    .use(requirePermission('repository', 'update'))
+    .use(requirePermission('pipeline', 'update'))
     .bindArgsSchemas(saveNodeConfigBindArgsSchemas)
     .inputSchema(saveNodeConfigInputSchema)
     .action(

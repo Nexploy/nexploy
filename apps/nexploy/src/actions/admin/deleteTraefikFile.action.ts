@@ -6,7 +6,7 @@ import { deleteTraefikFileSchema } from '@workspace/schemas-zod/admin/traefikFil
 import { resolveTraefikYmlPath } from '@/lib/traefik/fileTree';
 
 export const deleteTraefikFile = authActionServer
-    .use(requirePermission('user', 'ban'))
+    .use(requirePermission('traefik', 'manage'))
     .inputSchema(deleteTraefikFileSchema)
     .action(async ({ parsedInput: { filename } }) => {
         const filePath = resolveTraefikYmlPath(filename);

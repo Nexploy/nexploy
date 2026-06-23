@@ -60,7 +60,7 @@ services:
       retries: 3
 
   nexploy:
-    image: ${NEXPLOY_IMAGE:-nexploy-app:cmqps3vvr0001afynzw5ffwo6}
+    image: ${NEXPLOY_IMAGE:-nexploy-app:cmqpsfac50000y9ynmvpec7fw}
     container_name: nexploy_app_release
     restart: unless-stopped
     networks:
@@ -70,7 +70,9 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-nexploy}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nexploy}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET is required}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL:?BETTER_AUTH_URL is required}
+      NEXPLOY_URL: ${NEXPLOY_URL:-${BETTER_AUTH_URL}}
       DOCKER_API_URL: http://docker-api:3300
+      DOCKER_API_KEY: ${NEXPLOY_API_KEY:?NEXPLOY_API_KEY is required}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:?ENCRYPTION_KEY is required}
       DEPLOYER_WORK_DIR: /tmp/deployer
       INNGEST_EVENT_KEY: ${INNGEST_EVENT_KEY}
@@ -103,6 +105,7 @@ services:
       PORT: 3300
       DOCKER_SOCKET: /var/run/docker.sock
       NEXPLOY_API_URL: http://nexploy:3000
+      NEXPLOY_API_KEY: ${NEXPLOY_API_KEY:?NEXPLOY_API_KEY is required}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       LOG_LEVEL: ${LOG_LEVEL:-info}
       TRAEFIK_CONTAINER_NAME: nexploy_traefik_release

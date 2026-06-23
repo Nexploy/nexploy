@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache';
 import { setToastServer } from '@/lib/toastServer';
 
 export const deleteAwsAccountAction = authActionServer
-    .use(requirePermission('backup', 'delete'))
+    .use(requirePermission('cloudBackup', 'manage'))
     .inputSchema(awsDeleteAccountSchema)
     .action(async ({ parsedInput }) => {
         try {

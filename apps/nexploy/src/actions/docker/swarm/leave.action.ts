@@ -7,11 +7,11 @@ import { setToastServer } from '@/lib/toastServer';
 import { swarmLeaveSchema } from '@workspace/schemas-zod/docker/swarm/leave.schema';
 
 export const onSwarmLeaveAction = authActionServer
-    .use(requirePermission('docker', 'manage'))
+    .use(requirePermission('swarm', 'manage'))
     .inputSchema(swarmLeaveSchema)
     .action(async ({ parsedInput: { force } }) => {
         try {
-            return await kyDocker.post(`swarm/leave`, { json: { force: !!force } }).json();
+            return await kyDocker.post(`swarm/leave`, { json: { force } }).json();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({ type: 'error', message: err.message as string });

@@ -78,7 +78,7 @@ export function NodeDetailPage({ nodeId }: NodeDetailPageProps) {
                                 {t('detail.back')}
                             </Link>
                         </Button>
-                        <Can resource="docker" action="manage">
+                        <Can resource="swarm" action="manage">
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button

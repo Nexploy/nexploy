@@ -6,7 +6,7 @@ import { runCleanupTarget } from '@/services/dockerCleanup.service';
 import { setToastServer } from '@/lib/toastServer';
 
 export const runCleanupAction = authActionServer
-    .use(requirePermission('docker', 'prune'))
+    .use(requirePermission('setting', 'manage'))
     .inputSchema(runCleanupSchema)
     .action(async ({ parsedInput }) => {
         try {

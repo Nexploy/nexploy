@@ -7,7 +7,7 @@ import { setupWebhookSchema } from '@workspace/schemas-zod/repository/setupWebho
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const setupWebhookAction = authActionServer
-    .use(requirePermission('repository', 'update'))
+    .use(requirePermission('pipeline', 'webhook'))
     .inputSchema(setupWebhookSchema)
     .action(async ({ parsedInput }) => {
         try {

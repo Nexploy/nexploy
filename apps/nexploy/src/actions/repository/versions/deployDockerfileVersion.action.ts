@@ -12,7 +12,7 @@ const ERROR_TRANSLATION_MAP: Record<string, string> = {
 };
 
 export const onDeployDockerfileVersion = authActionServer
-    .use(requirePermission('repository', 'deploy'))
+    .use(requirePermission('deployment', 'deploy'))
     .inputSchema(deployVersionSchema)
     .action(async ({ parsedInput }) => {
         const { imageTag, repositoryId, environmentId } = parsedInput;

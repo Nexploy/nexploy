@@ -5,7 +5,7 @@ import type { DockerHubSort } from '@workspace/typescript-interface/docker/docke
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('docker', 'read'))
+    .use(requirePermission('image', 'read'))
     .handler(async (request: Request) => {
         try {
             const { searchParams } = new URL(request.url);

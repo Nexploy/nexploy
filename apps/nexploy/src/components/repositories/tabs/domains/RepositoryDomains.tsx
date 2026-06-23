@@ -102,8 +102,8 @@ export function RepositoryDomains({
             cancelLabel: t('cancel'),
             actionLabel: t('remove'),
             onAction: async () => {
-                await bindDeleteDomain({ domainId: domain.id! });
-                toast.success(t('removeSuccess'));
+                const result = await bindDeleteDomain({ domainId: domain.id! });
+                if (!result.serverError) toast.success(t('removeSuccess'));
             },
         });
     };
