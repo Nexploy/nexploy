@@ -12,7 +12,6 @@ import { LabelForm } from '@/components/docker/container/forms/LabelForm';
 import { Label } from '@workspace/typescript-interface/docker/docker.label';
 import { LabelItem } from '@/components/docker/container/cards/label/LabelItem';
 import { useTranslations } from 'next-intl';
-import { useIsSwarmContainer } from '@/hooks/useIsSwarmContainer';
 
 export function CardLabels() {
     const t = useTranslations('docker.labels');
@@ -22,7 +21,9 @@ export function CardLabels() {
     const { openDialog } = useConfirmationDialogStore();
     const labelChanges = useContainerChangesStore((state) => state.labelChanges);
     const onLabelChange = useContainerChangesStore((state) => state.onLabelChange);
-    const isSwarmContainer = useIsSwarmContainer();
+    const isSwarmContainer = useContainerStore(
+        (state) => !!state.container?.labels?.['com.docker.swarm.service.id'],
+    );
 
     const handleOpenDialog = (mode: 'add' | 'edit', label?: Label, originalLabel?: Label) => {
         openDialog({

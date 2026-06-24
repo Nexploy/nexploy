@@ -18,7 +18,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { usePipelineStage } from '@/hooks/pipeline/usePipelineStage.ts';
 import { usePermissions } from '@/contexts/PermissionContext';
 import { ButtonGroup } from '@workspace/ui/components/button-group.tsx';
-import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore.ts';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore.ts';
 
 interface StageSelectProps {
     repositoryId: string;

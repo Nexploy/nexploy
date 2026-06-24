@@ -3,7 +3,8 @@
         "connected": "Connected",
         "connecting": "Connecting...",
         "disconnected": "Disconnected",
-        "error": "Error"
+        "error": "Error",
+        "not_accessible": "Docker Environment not accessible"
     },
     "containerDetail": {
         "description": "Docker container details and information",
@@ -117,6 +118,10 @@
     "dead": "Dead",
     "ports": "Ports",
     "environment": "Environment",
+    "environmentUnavailable": {
+        "title": "Environment not accessible",
+        "description": "Unable to reach the Docker daemon for the environment \"{name}\". Check that the host is online and reachable, then try again."
+    },
     "mounts": "Mounts",
     "createdAt": "Created At",
     "internal": "Internal",

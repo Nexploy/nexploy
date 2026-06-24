@@ -12,7 +12,14 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@workspace/ui/components/table';
 import React, { useCallback, useRef, useState } from 'react';
 import { getColumnsTableNetworks } from '@/components/docker/network/table/ColumnsDockerNetworks';
 import { useNetworksStore } from '../../../../stores/docker/useNetworksStore';
@@ -35,6 +42,7 @@ import {
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { Switch } from '@workspace/ui/components/switch';
 import { useTranslations } from 'next-intl';
+import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
 
 const globalFilterFn: FilterFn<Network> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -56,6 +64,8 @@ export function TableDockerNetworks() {
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [rowSelection, setRowSelection] = useState({});
     const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
+
+    const statusDocker = useDockerStore((state) => state.status);
 
     const networks = useNetworksStore((state) => state.networks);
     const lastUpdate = useNetworksStore((state) => state.lastUpdate);
@@ -152,7 +162,7 @@ export function TableDockerNetworks() {
                     <Button
                         variant={'destructive'}
                         onClick={handleDeleteAction}
-                        disabled={numberOfSelectedRows === 0}
+                        disabled={numberOfSelectedRows === 0 || statusDocker !== 'connected'}
                         icon={Trash2}
                     >
                         {tCommon('remove')}

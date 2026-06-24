@@ -20,7 +20,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { CloudflareDomainSelector } from '@/components/domains/CloudflareDomainSelector';
-import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore.ts';
 import { useEnvironmentContainers } from '@/hooks/sse/useEnvironmentContainers';
 import { useTranslations } from 'next-intl';
 import { ShieldCheck } from 'lucide-react';

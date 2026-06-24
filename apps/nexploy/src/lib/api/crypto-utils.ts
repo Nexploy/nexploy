@@ -9,15 +9,3 @@ export function timingSafeEqual(a: string, b: string): boolean {
     }
     return crypto.timingSafeEqual(aBuf, bBuf);
 }
-
-export function hmacSha256(key: Buffer | string, data: string): Buffer {
-    return crypto.createHmac('sha256', key).update(data).digest();
-}
-
-export function sha256Hex(data: string | Buffer): string {
-    return crypto.createHash('sha256').update(data).digest('hex');
-}
-
-export function hmacSha256Hex(key: Buffer | string, data: string): string {
-    return crypto.createHmac('sha256', key).update(data).digest('hex');
-}

@@ -10,7 +10,7 @@ import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/k
 import { Terminal } from 'lucide-react';
 import { statusMap } from '@/utils/statusMap';
 import { useTerminalStore } from '@/stores/useTerminalStore';
-import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore.ts';
 import { useTranslations } from 'next-intl';
 
 interface ContainerAttachProps {

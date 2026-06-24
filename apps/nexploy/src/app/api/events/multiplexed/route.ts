@@ -229,21 +229,30 @@ export const GET = route
                         });
 
                         if (!response.ok) {
-                            if (response.status === 404) {
+                            if (response.status === 404 || response.status === 503) {
+                                let code =
+                                    response.status === 404
+                                        ? 'ENVIRONMENT_NOT_FOUND'
+                                        : 'ENVIRONMENT_UNAVAILABLE';
+                                let message = `HTTP ${response.status}: ${response.statusText}`;
+                                let environmentId = effectiveEnvironment ?? undefined;
+
                                 try {
                                     const errorData = await response.json();
-                                    if (errorData.code === 'ENVIRONMENT_NOT_FOUND') {
-                                        throw new Error(
-                                            JSON.stringify({
-                                                code: 'ENVIRONMENT_NOT_FOUND',
-                                                message: errorData.error,
-                                                environmentId: errorData.environmentId,
-                                            }),
-                                        );
+                                    if (
+                                        errorData?.code === 'ENVIRONMENT_NOT_FOUND' ||
+                                        errorData?.code === 'ENVIRONMENT_UNAVAILABLE'
+                                    ) {
+                                        code = errorData.code;
                                     }
+                                    if (errorData?.error) message = errorData.error;
+                                    if (errorData?.environmentId)
+                                        environmentId = errorData.environmentId;
                                 } catch {
                                     /* empty */
                                 }
+
+                                throw new Error(JSON.stringify({ code, message, environmentId }));
                             }
 
                             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -335,7 +344,10 @@ export const GET = route
 
                         try {
                             const parsed = JSON.parse(errorData);
-                            if (parsed.code === 'ENVIRONMENT_NOT_FOUND') {
+                            if (
+                                parsed.code === 'ENVIRONMENT_NOT_FOUND' ||
+                                parsed.code === 'ENVIRONMENT_UNAVAILABLE'
+                            ) {
                                 shouldRetry = false;
                                 errorData = JSON.stringify(parsed);
                             }

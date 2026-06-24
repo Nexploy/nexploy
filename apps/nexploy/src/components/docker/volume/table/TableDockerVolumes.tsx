@@ -34,6 +34,7 @@ import {
 } from '@workspace/ui/components/select';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { onVolumeAction } from '@/actions/docker/volume/volumeAction.action';
+import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
 
 const globalFilterFn: FilterFn<Volume> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -57,6 +58,8 @@ export function TableDockerVolumes() {
 
     const t = useTranslations('docker.tables');
     const tCommon = useTranslations('common');
+
+    const statusDocker = useDockerStore((state) => state.status);
 
     const volumes = useVolumesStore((state) => state.volumes);
     const lastUpdate = useVolumesStore((state) => state.lastUpdate);
@@ -122,7 +125,7 @@ export function TableDockerVolumes() {
                     <Button
                         variant={'destructive'}
                         onClick={handleDeleteAction}
-                        disabled={numberOfSelectedRows === 0}
+                        disabled={numberOfSelectedRows === 0 || statusDocker !== 'connected'}
                         icon={Trash2}
                     >
                         {tCommon('remove')}

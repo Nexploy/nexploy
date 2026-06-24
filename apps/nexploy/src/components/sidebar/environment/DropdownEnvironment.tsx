@@ -3,7 +3,7 @@
 import {
     initializeEnvironmentStore,
     useEnvironmentStore,
-} from '@/stores/environment/useEnvironmentStore';
+} from '@/stores/docker/useEnvironmentStore';
 import { useEffect } from 'react';
 import {
     DropdownMenu,

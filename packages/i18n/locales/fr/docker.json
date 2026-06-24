@@ -3,7 +3,8 @@
         "connected": "Connecté",
         "connecting": "Connexion...",
         "disconnected": "Déconnecté",
-        "error": "Erreur"
+        "error": "Erreur",
+        "not_accessible": "Environnement Docker inaccessible"
     },
     "containerDetail": {
         "description": "Détails et informations du conteneur Docker",
@@ -117,6 +118,10 @@
     "dead": "Mort",
     "ports": "Ports",
     "environment": "Environnement",
+    "environmentUnavailable": {
+        "title": "Environnement Docker inaccessible",
+        "description": "Impossible de joindre le démon Docker de l'environnement « {name} ». Vérifiez que l'hôte est en ligne et accessible, puis réessayez."
+    },
     "mounts": "Montages",
     "createdAt": "Créé le",
     "internal": "Interne",

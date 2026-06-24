@@ -11,7 +11,6 @@ import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStor
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import { type EnvVar, EnvVarItem } from './EnvVarItem';
-import { useIsSwarmContainer } from '@/hooks/useIsSwarmContainer';
 
 function parseEnvString(envString: string): EnvVar {
     const [key, ...valueParts] = envString.split('=');
@@ -25,7 +24,9 @@ export function CardEnv() {
     const { openDialog } = useConfirmationDialogStore();
     const envVarChanges = useContainerChangesStore((state) => state.envVarChanges);
     const onEnvVarChange = useContainerChangesStore((state) => state.onEnvVarChange);
-    const isSwarmContainer = useIsSwarmContainer();
+    const isSwarmContainer = useContainerStore(
+        (state) => !!state.container?.labels?.['com.docker.swarm.service.id'],
+    );
     const t = useTranslations('docker.containerEnv');
 
     const handleOpenDialog = (mode: 'add' | 'edit', envVar?: EnvVar, originalEnvVar?: EnvVar) => {

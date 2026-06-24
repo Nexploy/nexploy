@@ -12,14 +12,20 @@ import {
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from '@workspace/ui/components/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@workspace/ui/components/select';
 import { Alert, AlertDescription } from '@workspace/ui/components/alert';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { Info, ShieldCheck } from 'lucide-react';
 import useSWR from 'swr';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId';
-import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore.ts';
 import { useEnvironmentContainers } from '@/hooks/sse/useEnvironmentContainers';
 import { CloudflareDomainSelector } from '@/components/domains/CloudflareDomainSelector';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';

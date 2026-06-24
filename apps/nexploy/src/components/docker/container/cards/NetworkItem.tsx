@@ -1,9 +1,9 @@
-import { X, Trash2 } from 'lucide-react';
+import { Trash2, X } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { useTranslations } from 'next-intl';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
-import { useIsSwarmContainer } from '@/hooks/useIsSwarmContainer';
+import { useContainerStore } from '@/stores/docker/useContainerStore.ts';
 
 export interface NetworkItemProps {
     networkName: string;
@@ -22,7 +22,9 @@ export interface NetworkItemProps {
 export function NetworkItem({ networkName, networkInfo, isNew }: NetworkItemProps) {
     const t = useTranslations('docker.containerNetworks');
     const { networkChanges, onNetworkChange } = useContainerChangesStore();
-    const isSwarmContainer = useIsSwarmContainer();
+    const isSwarmContainer = useContainerStore(
+        (state) => !!state.container?.labels?.['com.docker.swarm.service.id'],
+    );
 
     const isDeleted = networkChanges.some(
         (change) => change.typeAction === 'delete' && change.currentName === networkName,
@@ -46,35 +48,36 @@ export function NetworkItem({ networkName, networkInfo, isNew }: NetworkItemProp
                     </span>
                     {statusIndicator}
                 </div>
-                {!isSwarmContainer && (isDeleted ? (
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                size="icon"
-                                variant="ghost"
-                                className="h-6 w-6"
-                                onClick={onCancelDelete}
-                            >
-                                <X />
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>{t('cancelDisconnect')}</TooltipContent>
-                    </Tooltip>
-                ) : (
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                size="icon"
-                                variant="destructiveGhost"
-                                className="h-6 w-6"
-                                onClick={onDelete}
-                            >
-                                <Trash2 />
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>{t('disconnect')}</TooltipContent>
-                    </Tooltip>
-                ))}
+                {!isSwarmContainer &&
+                    (isDeleted ? (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-6 w-6"
+                                    onClick={onCancelDelete}
+                                >
+                                    <X />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{t('cancelDisconnect')}</TooltipContent>
+                        </Tooltip>
+                    ) : (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    size="icon"
+                                    variant="destructiveGhost"
+                                    className="h-6 w-6"
+                                    onClick={onDelete}
+                                >
+                                    <Trash2 />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{t('disconnect')}</TooltipContent>
+                        </Tooltip>
+                    ))}
             </div>
             {networkInfo && (
                 <div className="grid grid-cols-2 gap-3 text-xs">

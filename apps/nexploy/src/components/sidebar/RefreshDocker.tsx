@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { cn } from '@workspace/ui/lib/utils';
 import { onDockerRefreshAction } from '@/actions/docker/dockerRefresh.action';
 import { useTranslations } from 'next-intl';
-import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore.ts';
 
 export function RefreshDocker() {
     const [isLoading, setIsloading] = useState(false);

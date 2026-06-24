@@ -8,14 +8,12 @@ import { clientT } from '@/lib/i18n/clientTranslations';
 
 export const useDockerStore = create<DockerState>((set, get) => ({
     status: 'connecting',
-    environmentStatus: 'unknown',
     error: null,
     lastUpdate: 0,
     eventSource: null,
     reconnectTimeout: null,
 
     setStatus: (status) => set({ status }),
-    setEnvironmentStatus: (environmentStatus) => set({ environmentStatus }),
 
     connect: () => {
         const state = get();
@@ -33,7 +31,6 @@ export const useDockerStore = create<DockerState>((set, get) => ({
 
                     set({
                         status: data.status,
-                        environmentStatus: 'connected',
                         lastUpdate: data.timestamp,
                         error: null,
                     });
@@ -93,8 +90,7 @@ export const useDockerStore = create<DockerState>((set, get) => ({
                             errorData.code === 'ENVIRONMENT_UNAVAILABLE'
                         ) {
                             set({
-                                environmentStatus: 'disconnected',
-                                status: 'error',
+                                status: 'not_accessible',
                                 lastUpdate: Date.now(),
                             });
                         } else {
@@ -150,7 +146,6 @@ export const useDockerStore = create<DockerState>((set, get) => ({
 
         set({
             status: 'connecting',
-            environmentStatus: 'unknown',
             error: null,
             lastUpdate: 0,
             eventSource: null,

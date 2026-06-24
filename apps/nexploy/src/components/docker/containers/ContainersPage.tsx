@@ -1,22 +1,9 @@
 'use client';
 
-import {
-    Container as IconContainer,
-    Container,
-    Layers,
-    LayoutGrid,
-    Plus,
-    Table2,
-} from 'lucide-react';
+import { Container as IconContainer, Container, Layers, LayoutGrid, Plus, Table2, } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { Badge } from '@workspace/ui/components/badge';
-import {
-    Empty,
-    EmptyDescription,
-    EmptyHeader,
-    EmptyMedia,
-    EmptyTitle,
-} from '@workspace/ui/components/empty';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, } from '@workspace/ui/components/empty';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { ContainersStack } from '@/components/docker/containers/ContainersStack';
@@ -30,12 +17,15 @@ import { useTranslations } from 'next-intl';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { cn } from '@workspace/ui/lib/utils';
 import { useLocalStorage } from 'usehooks-ts';
+import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
 
 export default function ContainersPage() {
     const t = useTranslations('docker');
     const tNav = useTranslations('navigation');
 
     const [viewMode, setViewMode] = useLocalStorage<'grid' | 'table'>('container-viewMode', 'grid');
+
+    const statusDocker = useDockerStore((state) => state.status);
 
     const lastUpdate = useContainersStore((state) => state.lastUpdate);
     const containers = useContainersStore((state) => state.containers);
@@ -99,22 +89,24 @@ export default function ContainersPage() {
                         )}
                     </div>
                 </div>
-                <Can resource="container" action="manage">
-                    <div className="mt-5 flex gap-2">
-                        <Button asChild variant="outline">
-                            <Link href={'/docker/containers/stacks/create'}>
-                                <Layers />
-                                {t('createStack.create')}
-                            </Link>
-                        </Button>
-                        <Button asChild>
-                            <Link href={'/docker/containers/create'}>
-                                <Plus />
-                                {t('createContainer.create')}
-                            </Link>
-                        </Button>
-                    </div>
-                </Can>
+                {statusDocker === 'connected' && (
+                    <Can resource="container" action="manage">
+                        <div className="mt-5 flex gap-2">
+                            <Button asChild variant="outline">
+                                <Link href={'/docker/containers/stacks/create'}>
+                                    <Layers />
+                                    {t('createStack.create')}
+                                </Link>
+                            </Button>
+                            <Button asChild>
+                                <Link href={'/docker/containers/create'}>
+                                    <Plus />
+                                    {t('createContainer.create')}
+                                </Link>
+                            </Button>
+                        </div>
+                    </Can>
+                )}
             </div>
 
             {isLoading && (

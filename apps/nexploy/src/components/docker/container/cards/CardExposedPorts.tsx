@@ -13,8 +13,7 @@ import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStor
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
-import { useIsSwarmContainer } from '@/hooks/useIsSwarmContainer';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore.ts';
 import { Can } from '@/components/permission/Can.tsx';
 
 function getPortUrl(port: number) {
@@ -31,7 +30,9 @@ export function CardExposedPorts() {
     const { openDialog } = useConfirmationDialogStore();
     const portChanges = useContainerChangesStore((state) => state.portChanges);
     const onPortChange = useContainerChangesStore((state) => state.onPortChange);
-    const isSwarmContainer = useIsSwarmContainer();
+    const isSwarmContainer = useContainerStore(
+        (state) => !!state.container?.labels?.['com.docker.swarm.service.id'],
+    );
     const t = useTranslations('docker.containerPorts');
 
     const handleAddPort = () =>

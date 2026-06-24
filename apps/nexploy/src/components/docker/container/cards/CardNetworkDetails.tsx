@@ -10,7 +10,6 @@ import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStor
 import { NetworkForm } from '@/components/docker/container/forms/NetworkForm';
 import { useTranslations } from 'next-intl';
 import { NetworkItem } from './NetworkItem';
-import { useIsSwarmContainer } from '@/hooks/useIsSwarmContainer';
 
 export function CardNetworkDetails() {
     const container = useContainerStore((state) => state.container);
@@ -18,7 +17,9 @@ export function CardNetworkDetails() {
 
     const { openDialog } = useConfirmationDialogStore();
     const networkChanges = useContainerChangesStore((state) => state.networkChanges);
-    const isSwarmContainer = useIsSwarmContainer();
+    const isSwarmContainer = useContainerStore(
+        (state) => !!state.container?.labels?.['com.docker.swarm.service.id'],
+    );
     const t = useTranslations('docker.containerNetworks');
 
     const handleOpenDialog = () => {

@@ -43,7 +43,6 @@ import { RenameContainerForm } from '@/components/docker/container/forms/RenameC
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
 import { NotFoundSSE } from '@/components/shared/NotFoundSSE';
 import Link from 'next/link';
-import { useIsSwarmContainer } from '@/hooks/useIsSwarmContainer';
 import { Badge } from '@workspace/ui/components/badge.tsx';
 
 export function ContainerDetailPage() {
@@ -53,7 +52,9 @@ export function ContainerDetailPage() {
 
     const t = useTranslations('docker.containerDetail');
     const { openDialog } = useConfirmationDialogStore();
-    const isSwarmContainer = useIsSwarmContainer();
+    const isSwarmContainer = useContainerStore(
+        (state) => !!state.container?.labels?.['com.docker.swarm.service.id'],
+    );
 
     const handleRename = () => {
         if (!container) return;

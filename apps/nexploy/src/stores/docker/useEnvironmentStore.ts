@@ -1,6 +1,24 @@
 import { create } from 'zustand';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { Environment } from 'generated/client';
+import { useDockerStore } from '@/stores/docker/useDockerStore';
+import { useContainersStore } from '@/stores/docker/useContainersStore';
+import { useImagesStore } from '@/stores/docker/useImagesStore';
+import { useVolumesStore } from '@/stores/docker/useVolumesStore';
+import { useNetworksStore } from '@/stores/docker/useNetworksStore';
+
+const resetDockerStores = () => {
+    const stores = [
+        useDockerStore,
+        useContainersStore,
+        useImagesStore,
+        useVolumesStore,
+        useNetworksStore,
+    ];
+
+    stores.forEach((store) => store.getState().reset());
+    stores.forEach((store) => store.getState().connect());
+};
 
 export interface EnvironmentState {
     environments: Environment[];
@@ -27,18 +45,22 @@ export const useEnvironmentStore = create<EnvironmentState>((set, get) => {
             const current = get().selectedEnvironmentId;
             if (!current || !environments.find((e) => e.id === current)) {
                 const newId = determineInitialEnvironmentId(environments);
-                if (newId) {
+                if (newId && newId !== current) {
                     set({ selectedEnvironmentId: newId });
                     sseMultiplexer.setEnvironmentId(newId);
                     setEnvironmentCookie(newId);
+                    resetDockerStores();
                 }
             }
         },
 
         selectEnvironment: (environmentId) => {
+            if (environmentId === get().selectedEnvironmentId) return;
+
             set({ selectedEnvironmentId: environmentId });
             sseMultiplexer.setEnvironmentId(environmentId);
             setEnvironmentCookie(environmentId);
+            resetDockerStores();
         },
 
         addEnvironment: (environment) => {
@@ -68,6 +90,7 @@ export const useEnvironmentStore = create<EnvironmentState>((set, get) => {
                         sseMultiplexer.setEnvironmentId(newSelectedId);
                         setEnvironmentCookie(newSelectedId);
                     }
+                    resetDockerStores();
                 }
 
                 return {

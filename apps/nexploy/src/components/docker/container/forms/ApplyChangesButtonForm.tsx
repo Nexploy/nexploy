@@ -7,7 +7,6 @@ import { onContainerRecreateAction } from '@/actions/docker/container/containerR
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
-import { useIsSwarmContainer } from '@/hooks/useIsSwarmContainer';
 
 export function ApplyChangesButtonForm() {
     const t = useTranslations('common');
@@ -20,7 +19,9 @@ export function ApplyChangesButtonForm() {
         resetAllChanges,
     } = useContainerChangesStore();
     const containerId = useContainerStore((state) => state.container?.id);
-    const isSwarmContainer = useIsSwarmContainer();
+    const isSwarmContainer = useContainerStore(
+        (state) => !!state.container?.labels?.['com.docker.swarm.service.id'],
+    );
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 

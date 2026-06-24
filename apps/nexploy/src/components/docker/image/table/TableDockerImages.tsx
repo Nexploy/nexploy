@@ -13,7 +13,14 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@workspace/ui/components/table';
 import React, { useMemo, useRef, useState } from 'react';
 import { getColumnsTableImages } from '@/components/docker/image/table/ColumnsDockerImages';
 import { useTranslations } from 'next-intl';
@@ -41,6 +48,7 @@ import { useRouter } from '@/i18n/navigation';
 import { Switch } from '@workspace/ui/components/switch';
 import { Label } from '@workspace/ui/components/label.tsx';
 import { cn } from '@workspace/ui/lib/utils.ts';
+import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
 
 const globalFilterFn: FilterFn<ImageRow> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -64,6 +72,8 @@ export function TableDockerImages() {
     const router = useRouter();
     const t = useTranslations('docker.tables');
     const tCommon = useTranslations('common');
+
+    const statusDocker = useDockerStore((state) => state.status);
 
     const images = useImagesStore((state) => state.images);
     const lastUpdate = useImagesStore((state) => state.lastUpdate);
@@ -184,7 +194,10 @@ export function TableDockerImages() {
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div>
-                                <Button onClick={handleUseAction} disabled={isUseDisabled}>
+                                <Button
+                                    onClick={handleUseAction}
+                                    disabled={isUseDisabled || statusDocker !== 'connected'}
+                                >
                                     <Play />
                                     {t('use')}
                                 </Button>
@@ -197,7 +210,7 @@ export function TableDockerImages() {
                     <Button
                         variant={'destructive'}
                         onClick={handleDeleteAction}
-                        disabled={numberOfSelectedRows === 0}
+                        disabled={numberOfSelectedRows === 0 || statusDocker !== 'connected'}
                     >
                         <Trash2 />
                         {tCommon('remove')}

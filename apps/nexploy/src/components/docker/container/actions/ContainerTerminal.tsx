@@ -23,7 +23,7 @@ import { statusMap } from '@/utils/statusMap';
 import { Terminal } from 'lucide-react';
 import { useTerminalStore } from '@/stores/useTerminalStore';
 import { useLocalStorage } from 'usehooks-ts';
-import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore.ts';
 import { useTranslations } from 'next-intl';
 
 interface ContainerTerminalProps {

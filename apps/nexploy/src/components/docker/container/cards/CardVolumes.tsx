@@ -10,7 +10,6 @@ import { VolumeForm } from '@/components/docker/container/forms/VolumeForm';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import { VolumeItem } from './VolumeItem';
-import { useIsSwarmContainer } from '@/hooks/useIsSwarmContainer';
 
 export function CardVolumes() {
     const container = useContainerStore((state) => state.container);
@@ -18,7 +17,9 @@ export function CardVolumes() {
 
     const { openDialog } = useConfirmationDialogStore();
     const { volumeChanges } = useContainerChangesStore();
-    const isSwarmContainer = useIsSwarmContainer();
+    const isSwarmContainer = useContainerStore(
+        (state) => !!state.container?.labels?.['com.docker.swarm.service.id'],
+    );
     const t = useTranslations('docker.containerVolumes');
 
     const handleOpenDialog = () => {

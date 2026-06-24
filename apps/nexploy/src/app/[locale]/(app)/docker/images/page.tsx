@@ -8,10 +8,14 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
 import { Can } from '@/components/permission/Can';
+import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
+import { cn } from '@workspace/ui/lib/utils.ts';
 
 export default function ImagesPage() {
     const t = useTranslations('docker.pages.images');
     const tDocker = useTranslations('docker');
+
+    const statusDocker = useDockerStore((state) => state.status);
 
     return (
         <div className="flex h-full flex-1 flex-col gap-5">
@@ -26,8 +30,13 @@ export default function ImagesPage() {
                     </div>
                 </div>
                 <Can resource="image" action="pull">
-                    <Button asChild className={'mt-5'}>
-                        <Link href={'/docker/images/pull'}>
+                    <Button asChild className={'mt-5'} disabled>
+                        <Link
+                            href={'/docker/images/pull'}
+                            className={cn(
+                                statusDocker !== 'connected' && 'pointer-events-none opacity-50',
+                            )}
+                        >
                             <Plus />
                             {tDocker('pullImage')}
                         </Link>

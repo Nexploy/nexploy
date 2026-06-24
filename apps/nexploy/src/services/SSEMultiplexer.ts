@@ -178,6 +178,11 @@ class SSEMultiplexerService {
             return;
         }
 
+        const environmentId = this.currentEnvironmentId || 'default';
+        if (this.permanentErrors.has(environmentId)) {
+            return;
+        }
+
         const remoteChannelKeys = Array.from(this.subscriptions.keys()).filter((key) => {
             const subscription = this.subscriptions.get(key);
             return subscription && !(subscription.config.channel in LOCAL_CHANNELS);
@@ -228,11 +233,25 @@ class SSEMultiplexerService {
                                 errorData.code === 'ENVIRONMENT_UNAVAILABLE'
                             ) {
                                 const environmentId = this.currentEnvironmentId || 'default';
+                                const alreadyKnown = this.permanentErrors.has(environmentId);
                                 this.permanentErrors.add(environmentId);
-                                console.warn(
-                                    `[SSE] Permanent error for environment ${environmentId}:`,
-                                    errorData,
-                                );
+
+                                if (!alreadyKnown) {
+                                    console.warn(
+                                        `[SSE] Permanent error for environment ${environmentId}`,
+                                    );
+                                }
+
+                                this.subscriptions.forEach((subscription) => {
+                                    this.dispatch(
+                                        subscription.config.channel,
+                                        'error',
+                                        data,
+                                        subscription.config.params,
+                                    );
+                                });
+                                this.disconnectMultiplexed();
+                                return;
                             }
                         } catch {
                             /* empty */

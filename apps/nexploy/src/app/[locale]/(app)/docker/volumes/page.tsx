@@ -8,10 +8,14 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
 import { Can } from '@/components/permission/Can';
+import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
+import { cn } from '@workspace/ui/lib/utils.ts';
 
 export default function VolumesPage() {
     const t = useTranslations('docker.pages.volumes');
     const tDocker = useTranslations('docker');
+
+    const statusDocker = useDockerStore((state) => state.status);
 
     return (
         <div className="flex h-full flex-1 flex-col">
@@ -30,7 +34,13 @@ export default function VolumesPage() {
                     </div>
                     <Can resource="volume" action="manage">
                         <Button asChild className={'mt-5'}>
-                            <Link href={'/docker/volumes/create'}>
+                            <Link
+                                href={'/docker/volumes/create'}
+                                className={cn(
+                                    statusDocker !== 'connected' &&
+                                        'pointer-events-none opacity-50',
+                                )}
+                            >
                                 <Plus />
                                 {tDocker('createVolume')}
                             </Link>

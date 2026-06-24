@@ -12,7 +12,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import { useEnvironmentStore } from '@/stores/environment/useEnvironmentStore';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore.ts';
 
 export function SetEnvironmentConfig() {
     const t = useTranslations('repository.pipeline.config');
