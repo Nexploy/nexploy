@@ -9,8 +9,8 @@ import {
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { LetsEncryptCertForm } from '@/components/repositories/tabs/domains/LetsEncryptCertForm';
-import { CustomCertForm } from '@/components/repositories/tabs/domains/CustomCertForm';
+import { LetsEncryptCertForm } from '@/components/domains/LetsEncryptCertForm';
+import { CustomCertForm } from '@/components/domains/CustomCertForm';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 

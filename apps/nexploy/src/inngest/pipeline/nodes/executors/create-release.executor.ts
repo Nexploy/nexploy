@@ -70,7 +70,7 @@ export class CreateReleaseExecutor implements INodeExecutor {
                 draft,
                 prerelease,
             });
-            releaseId = String(result.id);
+            releaseId = `${result.id}`;
             releaseUrl = result.html_url;
         } else if (provider === 'GITLAB') {
             const { baseUrl, owner, repo } = await extractGitLabRepo(buildConfig.gitUrl);

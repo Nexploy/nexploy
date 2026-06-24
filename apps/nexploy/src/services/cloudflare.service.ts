@@ -9,6 +9,7 @@ import {
 import { kyCloudflare } from '@/lib/api/kyCloudflare';
 import { tokenCloudflareStorage } from '@/lib/storage/token-cloudlfare-storage';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
+import { getUserSession } from '@/services/auth/auth.service.ts';
 
 export async function saveCloudflareCredential(
     userId: string,
@@ -50,11 +51,13 @@ export async function removeCloudflareCredential(id: string): Promise<void> {
     }
 }
 
-export async function getAllCloudflareAccounts(userId: string): Promise<CloudflareAccountInfo[]> {
+export async function getCloudflareAccounts(): Promise<CloudflareAccountInfo[]> {
+    const session = await getUserSession();
     const t = await getErrorTranslator();
+
     try {
         return await prisma.cloudflareCredential.findMany({
-            where: { userId },
+            where: { userId: session?.user.id },
             select: { id: true, displayName: true, serverIp: true, createdAt: true },
             orderBy: { createdAt: 'asc' },
         });

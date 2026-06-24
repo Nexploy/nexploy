@@ -16,8 +16,8 @@ export async function searchDockerHubImages(
 
     const params = new URLSearchParams({
         query: term,
-        from: String(from),
-        size: String(size),
+        from: `${from}`,
+        size: `${size}`,
     });
 
     if (sort === 'pull_count' || !term) {

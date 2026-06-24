@@ -124,6 +124,8 @@
     "chat": {
         "panelTitle": "Nexploy AI",
         "close": "Close",
+        "openPanel": "Open AI panel",
+        "closePanel": "Close AI panel",
         "newChat": "New chat",
         "disabled": "AI assistant disabled",
         "disabledDescription": "The administrator has disabled the AI assistant.",

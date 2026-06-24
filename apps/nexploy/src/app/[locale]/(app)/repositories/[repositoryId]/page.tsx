@@ -3,7 +3,6 @@ import { RunBuildButton } from '@/components/repositories/RunBuildButton';
 import { StageSelect } from '@/components/repositories/stages/StageSelect';
 import { RepositoryTabs } from '@/components/repositories/RepositoryTabs';
 import { RepositoryEnvTab } from '@/components/repositories/tabs/envs/RepositoryEnvTab';
-import { RepositoryDomainsTab } from '@/components/repositories/tabs/domains/RepositoryDomainsTab';
 import { RepositorySettingsTab } from '@/components/repositories/tabs/settings/RepositorySettingsTab';
 import { RepositoryVersionsTab } from '@/components/repositories/tabs/versions/RepositoryVersionsTab';
 import { ExternalLink } from 'lucide-react';
@@ -114,7 +113,6 @@ export default async function RepositoryIdPage({ params, searchParams }: Reposit
                                     stageId={stageId}
                                 />
                             ),
-                            domain: <RepositoryDomainsTab repositoryId={repository.id} />,
                             setting: <RepositorySettingsTab repositoryId={repository.id} />,
                         }}
                     </RepositoryTabs>

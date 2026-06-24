@@ -3,6 +3,7 @@ import { prisma } from '../../../../../prisma/prisma';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { decrypt } from '@/lib/encryption';
 import { idParamSchema } from '@workspace/schemas-zod/api/params.schema';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const GET = route
     .use(authRouteServer)
@@ -20,7 +21,8 @@ export const GET = route
             });
 
             if (!environment) {
-                return NextResponse.json({ error: 'Environment not found' }, { status: 404 });
+                const t = await getErrorTranslator();
+                return NextResponse.json({ error: t('api.environmentNotFound') }, { status: 404 });
             }
 
             return NextResponse.json({
@@ -29,7 +31,8 @@ export const GET = route
                 tlsKey: environment.tlsKey ? decrypt(environment.tlsKey) : null,
                 tlsCa: environment.tlsCa ? decrypt(environment.tlsCa) : null,
             });
-        } catch (error: unknown) {
-            return NextResponse.json({ error: 'Failed to fetch environment' }, { status: 500 });
+        } catch {
+            const t = await getErrorTranslator();
+            return NextResponse.json({ error: t('api.environmentFetchFailed') }, { status: 500 });
         }
     });

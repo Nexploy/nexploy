@@ -124,6 +124,8 @@
     "chat": {
         "panelTitle": "Nexploy AI",
         "close": "Fermer",
+        "openPanel": "Ouvrir le panneau IA",
+        "closePanel": "Fermer le panneau IA",
         "newChat": "Nouveau chat",
         "disabled": "Assistant IA désactivé",
         "disabledDescription": "L'administrateur a désactivé l'assistant IA.",

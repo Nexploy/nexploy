@@ -24,12 +24,14 @@ import { useEnvironmentContainers } from '@/hooks/sse/useEnvironmentContainers';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { isNodeFieldRef } from '@/lib/nodeFieldRef';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
 export function DeleteContainerConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const { containers, isLoading } = useEnvironmentContainers();
+    const environmentId = usePipelineEnvironmentId();
+    const { containers, isLoading } = useEnvironmentContainers(environmentId);
 
     return (
         <div className="space-y-4">

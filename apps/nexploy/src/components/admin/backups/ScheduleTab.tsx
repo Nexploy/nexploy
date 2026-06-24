@@ -191,7 +191,7 @@ export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
                                 <FormItem>
                                     <FormLabel>{t('scheduledDayOfWeek')}</FormLabel>
                                     <Select
-                                        value={String(field.value ?? 1)}
+                                        value={`${field.value ?? 1}`}
                                         onValueChange={(v) => field.onChange(Number(v))}
                                     >
                                         <FormControl>
@@ -203,7 +203,7 @@ export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
                                             <SelectGroup>
                                                 <SelectLabel>{t('scheduledDayOfWeek')}</SelectLabel>
                                                 {DAY_OF_WEEK_KEYS.map((key, i) => (
-                                                    <SelectItem key={i} value={String(i)}>
+                                                    <SelectItem key={i} value={`${i}`}>
                                                         {t(key)}
                                                     </SelectItem>
                                                 ))}
@@ -224,7 +224,7 @@ export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
                                 <FormItem>
                                     <FormLabel>{t('scheduledDayOfMonth')}</FormLabel>
                                     <Select
-                                        value={String(field.value ?? 1)}
+                                        value={`${field.value ?? 1}`}
                                         onValueChange={(v) => field.onChange(Number(v))}
                                     >
                                         <FormControl>
@@ -238,7 +238,7 @@ export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
                                                     {t('scheduledDayOfMonth')}
                                                 </SelectLabel>
                                                 {DAYS_OF_MONTH.map((d) => (
-                                                    <SelectItem key={d} value={String(d)}>
+                                                    <SelectItem key={d} value={`${d}`}>
                                                         {d}
                                                     </SelectItem>
                                                 ))}

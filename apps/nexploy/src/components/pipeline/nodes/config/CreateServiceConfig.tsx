@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -19,13 +25,15 @@ import { Plus, Trash2 } from 'lucide-react';
 import { useEnvironmentImages } from '@/hooks/sse/useEnvironmentImages';
 import { useMemo } from 'react';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
 export function CreateServiceConfig() {
     const t = useTranslations('repository.pipeline.config');
     const tDocker = useTranslations('docker.createContainer');
     const form = useFormContext();
 
-    const { images, isLoading: imagesLoading } = useEnvironmentImages();
+    const environmentId = usePipelineEnvironmentId();
+    const { images, isLoading: imagesLoading } = useEnvironmentImages(environmentId);
 
     const imageOptions = useMemo(() => {
         const tags = new Set<string>();

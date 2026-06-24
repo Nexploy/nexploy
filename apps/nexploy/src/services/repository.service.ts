@@ -281,10 +281,16 @@ export async function relinkGitAccount(
     isAdmin: boolean,
 ) {
     const t = await getErrorTranslator();
-    const repo = await prisma.repository.findUnique({
-        where: { id: repositoryId },
-        select: { gitId: true, repositoryUrl: true, gitProvider: true, userId: true },
-    });
+
+    let repo;
+    try {
+        repo = await prisma.repository.findUnique({
+            where: { id: repositoryId },
+            select: { gitId: true, repositoryUrl: true, gitProvider: true, userId: true },
+        });
+    } catch (error: unknown) {
+        throw new Error(t('repository.getFailed'));
+    }
 
     if (!repo) throw new Error(t('repository.notFound'));
 
@@ -292,23 +298,39 @@ export async function relinkGitAccount(
         throw new Error(t('repository.notAuthorizedRelink'));
     }
 
+    let gitAccount;
+    try {
+        gitAccount = await prisma.gitAccount.findUnique({
+            where: { id: gitAccountId },
+            select: { userId: true },
+        });
+    } catch (error: unknown) {
+        throw new Error(t('repository.relinkFailed'));
+    }
+
+    if (!gitAccount) throw new Error(t('git.gitAccountNotFound'));
+
     const repoInfo = await verifyRepoAccessFromAccount(
         repo.gitProvider,
         repo.gitId,
         repo.repositoryUrl,
         gitAccountId,
-        repo.userId,
+        gitAccount.userId,
     );
 
     await teardownRepositoryWebhook(repositoryId, repo.userId);
 
-    await prisma.repository.update({
-        where: { id: repositoryId },
-        data: {
-            gitAccountId,
-            gitId: repoInfo.id,
-            name: repoInfo.fullName,
-            repositoryUrl: repoInfo.url,
-        },
-    });
+    try {
+        await prisma.repository.update({
+            where: { id: repositoryId },
+            data: {
+                gitAccountId,
+                gitId: repoInfo.id,
+                name: repoInfo.fullName,
+                repositoryUrl: repoInfo.url,
+            },
+        });
+    } catch (error: unknown) {
+        throw new Error(t('repository.relinkFailed'));
+    }
 }

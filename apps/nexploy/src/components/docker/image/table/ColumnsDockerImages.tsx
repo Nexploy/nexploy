@@ -243,14 +243,16 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             }
             return (
                 <Can resource="image" action="manage">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className={'size-8'}>
-                                <MoreVertical />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <ImageDropdownActions image={row.original} />
-                    </DropdownMenu>
+                    <div className="flex justify-end">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                    <MoreVertical />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <ImageDropdownActions image={row.original} />
+                        </DropdownMenu>
+                    </div>
                 </Can>
             );
         },

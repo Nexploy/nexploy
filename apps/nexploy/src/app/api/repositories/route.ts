@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { getRepositories } from '@/services/repository.service';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const GET = route
     .use(authRouteServer)
@@ -10,6 +11,7 @@ export const GET = route
             const repositories = await getRepositories();
             return NextResponse.json(repositories);
         } catch {
-            return NextResponse.json({ error: 'Failed to fetch repositories' }, { status: 500 });
+            const t = await getErrorTranslator();
+            return NextResponse.json({ error: t('api.repositoriesFetchFailed') }, { status: 500 });
         }
     });

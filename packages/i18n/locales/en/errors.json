@@ -13,6 +13,7 @@
         "updateEnvFailed": "Failed to update env variables",
         "fetchWebhookStatusFailed": "Failed to fetch repository webhook status",
         "notAuthorizedRelink": "User not authorized to relink this repository",
+        "relinkFailed": "Failed to relink git account",
         "workDirNotConfigured": "DEPLOYER_WORK_DIR is not configured"
     },
     "pipeline": {
@@ -57,7 +58,8 @@
         "invalidPrivateKey": "Invalid private key: not a valid PEM private key",
         "keyMismatch": "The private key does not match the certificate",
         "createLetsEncryptFailed": "Failed to create LetsEncrypt certificate",
-        "writeFilesFailed": "Failed to write certificate files for Traefik"
+        "writeFilesFailed": "Failed to write certificate files for Traefik",
+        "fetchFailed": "Failed to fetch SSL certificates"
     },
     "cloudflare": {
         "saveCredentialFailed": "Cloudflare error saving credential",
@@ -193,5 +195,26 @@
         "updateDockerApiFailed": "Failed to update environment in docker-api: {error}",
         "deleteDbFailed": "Failed to delete environment from database",
         "unregisterFailed": "Failed to unregister environment from docker-api: {error}"
+    },
+    "api": {
+        "repositoriesFetchFailed": "Failed to fetch repositories",
+        "repositoryFetchFailed": "Failed to fetch repository",
+        "repositoryNotFound": "Repository not found",
+        "certificatesFetchFailed": "Failed to fetch SSL certificates",
+        "environmentsFetchFailed": "Failed to fetch environments",
+        "environmentFetchFailed": "Failed to fetch environment",
+        "environmentNotFound": "Environment not found",
+        "diskUsageFetchFailed": "Failed to fetch disk usage",
+        "stagesFetchFailed": "Failed to fetch stages",
+        "pipelineConfigFetchFailed": "Failed to fetch pipeline config",
+        "envVariablesFetchFailed": "Failed to fetch environment variables",
+        "buildNotFound": "Build not found",
+        "publicIpFailed": "Unable to detect public IP",
+        "invalidFilename": "Invalid filename",
+        "fileAlreadyExists": "File already exists",
+        "fileNotFound": "File not found",
+        "unknownProvider": "Unknown provider",
+        "providerNotConfigured": "Provider not configured",
+        "unsupportedProvider": "Unsupported provider"
     }
 }

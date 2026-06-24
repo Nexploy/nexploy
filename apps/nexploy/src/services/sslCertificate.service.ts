@@ -42,18 +42,23 @@ async function validateCertKeyPair(certPem: string, privateKeyPem: string): Prom
     }
 }
 
-export async function getAllCertificates() {
-    return prisma.sslCertificate.findMany({
-        orderBy: { createdAt: 'desc' },
-        select: {
-            id: true,
-            name: true,
-            type: true,
-            domain: true,
-            expiresAt: true,
-            createdAt: true,
-        },
-    });
+export async function getCertificates() {
+    const t = await getErrorTranslator();
+    try {
+        return await prisma.sslCertificate.findMany({
+            orderBy: { createdAt: 'desc' },
+            select: {
+                id: true,
+                name: true,
+                type: true,
+                domain: true,
+                expiresAt: true,
+                createdAt: true,
+            },
+        });
+    } catch (error: unknown) {
+        throw new Error(t('sslCertificate.fetchFailed'));
+    }
 }
 
 export async function createLetsEncryptCertificate(name: string, domain: string, email: string) {

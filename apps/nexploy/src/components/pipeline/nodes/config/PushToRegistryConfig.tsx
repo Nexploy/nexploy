@@ -26,6 +26,7 @@ import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware.t
 import { InputAutoComplete } from '@workspace/ui/components/search-command.tsx';
 import { useEnvironmentImages } from '@/hooks/sse/useEnvironmentImages.ts';
 import { useMemo } from 'react';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
 export function PushToRegistryConfig() {
     const t = useTranslations('repository.pipeline.config');
@@ -37,7 +38,8 @@ export function PushToRegistryConfig() {
     );
     const registryList = registries ?? [];
 
-    const { images, isLoading: imagesLoading } = useEnvironmentImages();
+    const environmentId = usePipelineEnvironmentId();
+    const { images, isLoading: imagesLoading } = useEnvironmentImages(environmentId);
 
     const imageOptions = useMemo(() => {
         const names = new Set<string>();

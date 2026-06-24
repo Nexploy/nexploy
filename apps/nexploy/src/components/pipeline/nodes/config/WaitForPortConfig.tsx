@@ -23,12 +23,14 @@ import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status
 import { useEnvironmentContainers } from '@/hooks/sse/useEnvironmentContainers';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware.tsx';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
 export function WaitForPortConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const { containers, isLoading } = useEnvironmentContainers();
+    const environmentId = usePipelineEnvironmentId();
+    const { containers, isLoading } = useEnvironmentContainers(environmentId);
 
     return (
         <div className="space-y-4">
@@ -75,7 +77,9 @@ export function WaitForPortConfig() {
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
-                                                <SelectLabel>{t('containersSelectLabel')}</SelectLabel>
+                                                <SelectLabel>
+                                                    {t('containersSelectLabel')}
+                                                </SelectLabel>
                                                 {containers.length === 0 ? (
                                                     <span className="text-muted-foreground px-2 py-1.5 text-sm">
                                                         {t('noContainersFound')}

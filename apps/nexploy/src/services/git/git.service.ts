@@ -111,16 +111,16 @@ export async function getRepositories(
 
             const seen = new Set<string>();
             const repositories = allRepos.filter((repo) => {
-                const id = String(repo.id);
+                const id = `${repo.id}`;
                 if (seen.has(id)) return false;
                 seen.add(id);
                 return true;
             });
 
             return repositories
-                .filter((repo: GithubRepo) => !existingGitIds.has(String(repo.id)))
+                .filter((repo: GithubRepo) => !existingGitIds.has(`${repo.id}`))
                 .map((repo: GithubRepo) => ({
-                    id: String(repo.id),
+                    id: `${repo.id}`,
                     name: repo.name,
                     fullName: repo.full_name,
                     url: repo.clone_url,
@@ -146,9 +146,9 @@ export async function getRepositories(
                 });
 
                 return repositories
-                    .filter((repo: GitlabRepo) => !existingGitIds.has(String(repo.id)))
+                    .filter((repo: GitlabRepo) => !existingGitIds.has(`${repo.id}`))
                     .map((repo: GitlabRepo) => ({
-                        id: String(repo.id),
+                        id: `${repo.id}`,
                         name: repo.name,
                         fullName: repo.path_with_namespace,
                         url: repo.http_url_to_repo,
@@ -300,11 +300,11 @@ export async function verifyRepoAccessFromAccount(
                 const repoData = await tokenGitStorage.run(token, async () => {
                     return await githubGetRepository(owner, repo);
                 });
-                if (String(repoData.id) !== gitId) {
+                if (`${repoData.id}` !== gitId) {
                     throw new Error('REPO_NOT_ACCESSIBLE');
                 }
                 return {
-                    id: String(repoData.id),
+                    id: `${repoData.id}`,
                     name: repoData.name,
                     fullName: repoData.full_name,
                     url: repoData.clone_url,
@@ -327,7 +327,7 @@ export async function verifyRepoAccessFromAccount(
                         .json<GitlabRepo>();
                 });
                 return {
-                    id: String(repoData.id),
+                    id: `${repoData.id}`,
                     name: repoData.name,
                     fullName: repoData.path_with_namespace,
                     url: repoData.http_url_to_repo,

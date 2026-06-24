@@ -102,7 +102,7 @@ export const containersGroup: ToolGroup = {
                 try {
                     const { logs } = await kyDocker
                         .get(`container/${idOrName}/logs`, {
-                            searchParams: { tail: String(tail ?? 50) },
+                            searchParams: { tail: `${tail ?? 50}` },
                             environmentId: ctx.environmentId,
                         } as KyDockerOptions)
                         .json<{ logs: string }>();

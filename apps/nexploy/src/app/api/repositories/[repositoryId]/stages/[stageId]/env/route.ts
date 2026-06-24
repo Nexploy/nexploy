@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { getAllEnvsBuild } from '@/services/repository/build.service';
 import { stageParamSchema } from '@workspace/schemas-zod/api/params.schema';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const GET = route
     .use(authRouteServer)
@@ -13,6 +14,7 @@ export const GET = route
             const envVariables = await getAllEnvsBuild(stageId);
             return NextResponse.json(envVariables);
         } catch {
-            return NextResponse.json({ error: 'Failed to fetch env variables' }, { status: 500 });
+            const t = await getErrorTranslator();
+            return NextResponse.json({ error: t('api.envVariablesFetchFailed') }, { status: 500 });
         }
     });

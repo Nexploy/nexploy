@@ -1,18 +1,5 @@
-import { ContainerInfo, ContainerInspectInfo } from 'dockerode';
+import { ContainerInspectInfo } from 'dockerode';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
-
-export async function getContainerByProjectName(
-    projectName: string,
-    environmentId?: string,
-): Promise<ContainerInfo[]> {
-    try {
-        return await kyDocker
-            .get(`composes/${projectName}/list`, { environmentId } as KyDockerOptions)
-            .json<ContainerInfo[]>();
-    } catch {
-        return [];
-    }
-}
 
 export async function getContainerPortMappings(
     containerNameOrId: string,

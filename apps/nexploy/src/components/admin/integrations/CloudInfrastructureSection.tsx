@@ -1,5 +1,4 @@
-import { getUserSession } from '@/services/auth/auth.service';
-import { getAllCloudflareAccounts } from '@/services/cloudflare.service';
+import { getCloudflareAccounts } from '@/services/cloudflare.service';
 import { getAllAwsAccounts } from '@/services/aws.service';
 import { Cloud } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
@@ -7,15 +6,11 @@ import { CloudflareAccordionSection } from '@/components/admin/integrations/Clou
 import { AwsAccordionSection } from '@/components/admin/integrations/AwsAccordionSection';
 
 export async function CloudInfrastructureSection() {
-    const [session, t, awsAccounts] = await Promise.all([
-        getUserSession(),
+    const [t, awsAccounts, cloudflareAccounts] = await Promise.all([
         getTranslations('integrations'),
         getAllAwsAccounts(),
+        getCloudflareAccounts(),
     ]);
-
-    const cloudflareAccounts = session
-        ? await getAllCloudflareAccounts(session.user.id)
-        : [];
 
     return (
         <section className="space-y-2">

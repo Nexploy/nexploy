@@ -13,6 +13,7 @@ export interface ContainerState {
     updateContainer: (container: Containers) => void;
     removeContainer: (containerId: string) => void;
 
+    getContainerByName: (name: string) => Containers | undefined;
     getContainer: (id: string) => Containers | undefined;
     getContainersByState: (state: Containers['state']) => Containers[];
     getOrganizedContainers: () => {

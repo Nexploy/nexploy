@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { getPublicIp } from '@/lib/network/getPublicIp';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const GET = route
     .use(authRouteServer)
@@ -8,6 +9,9 @@ export const GET = route
     .handler(async () => {
         const ip = await getPublicIp();
 
-        if (!ip) return NextResponse.json({ error: 'Unable to detect public IP' }, { status: 503 });
+        if (!ip) {
+            const t = await getErrorTranslator();
+            return NextResponse.json({ error: t('api.publicIpFailed') }, { status: 503 });
+        }
         return NextResponse.json({ ip });
     });

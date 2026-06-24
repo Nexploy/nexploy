@@ -35,7 +35,7 @@ export const GET = route
 
         await saveGitHubApp({
             displayName,
-            appId: String(data.id),
+            appId: `${data.id}`,
             appName: data.slug ?? data.name,
             clientId: data.client_id,
             clientSecret: data.client_secret,

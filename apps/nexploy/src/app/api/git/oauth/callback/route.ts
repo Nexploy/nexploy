@@ -78,7 +78,7 @@ export const GET = route
                         async () => githubGetAuthenticatedUser(),
                     );
 
-                    providerAccountId = String(userData.id);
+                    providerAccountId = `${userData.id}`;
                     providerUsername = userData.login;
                 } else if (gitProvider.provider === 'GITLAB') {
                     const body = new URLSearchParams({
@@ -111,7 +111,7 @@ export const GET = route
                     });
                     const userData = await userRes.json();
 
-                    providerAccountId = String(userData.id);
+                    providerAccountId = `${userData.id}`;
                     providerUsername = userData.username;
                 } else {
                     return NextResponse.redirect(`${accountUrl}?error=unsupported_provider`);

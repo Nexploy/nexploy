@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -17,12 +23,14 @@ import { useEnvironmentVolumes } from '@/hooks/sse/useEnvironmentVolumes';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { isNodeFieldRef } from '@/lib/nodeFieldRef';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
 export function DeleteVolumeConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const { volumes, isLoading } = useEnvironmentVolumes();
+    const environmentId = usePipelineEnvironmentId();
+    const { volumes, isLoading } = useEnvironmentVolumes(environmentId);
 
     return (
         <div className="space-y-4">

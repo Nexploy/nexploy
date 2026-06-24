@@ -106,8 +106,8 @@ services:
       NEXPLOY_API_URL: http://nexploy:3000
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       LOG_LEVEL: ${LOG_LEVEL:-info}
-      TRAEFIK_CONTAINER_NAME: nexploy_traefik_pre_prod
-      TRAEFIK_NETWORK_NAME: nexploy_traefik_network_pre_prod
+      TRAEFIK_CONTAINER_NAME: nexploy_traefik
+      TRAEFIK_NETWORK_NAME: nexploy_traefik_network
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - deployer_workdir:/tmp/deployer

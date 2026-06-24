@@ -1,7 +1,7 @@
 import { Shield } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { getTranslations } from 'next-intl/server';
-import { getAllCertificates } from '@/services/sslCertificate.service';
+import { getCertificates } from '@/services/sslCertificate.service';
 import { SSLCertificatesTable } from '@/components/admin/ssl/SSLCertificatesTable';
 import { AddSSLButton } from '@/components/admin/ssl/AddSSLButton';
 import type { Metadata } from 'next';
@@ -12,10 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SSLCertificatesPage() {
-    const [t, certificates] = await Promise.all([
-        getTranslations('admin.ssl'),
-        getAllCertificates(),
-    ]);
+    const [t, certificates] = await Promise.all([getTranslations('admin.ssl'), getCertificates()]);
 
     return (
         <div className="flex h-full flex-1 flex-col">

@@ -237,7 +237,7 @@ export default function EventsPage() {
                                     {t('eventsPerPage')}:
                                 </span>
                                 <Select
-                                    value={pageSize === 'all' ? 'all' : String(pageSize)}
+                                    value={pageSize === 'all' ? 'all' : `${pageSize}`}
                                     onValueChange={(value) => {
                                         if (value === 'all') {
                                             setPageSize('all');

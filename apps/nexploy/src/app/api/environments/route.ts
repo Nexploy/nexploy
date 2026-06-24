@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '../../../../prisma/prisma';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { decrypt } from '@/lib/encryption';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const GET = route
     .use(authRouteServer)
@@ -25,7 +26,8 @@ export const GET = route
         }));
 
         return NextResponse.json(decryptedEnvironments);
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to fetch environments' }, { status: 500 });
+    } catch {
+        const t = await getErrorTranslator();
+        return NextResponse.json({ error: t('api.environmentsFetchFailed') }, { status: 500 });
     }
 });

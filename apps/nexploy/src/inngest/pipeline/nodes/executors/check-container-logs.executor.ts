@@ -58,7 +58,7 @@ export class CheckContainerLogsExecutor implements INodeExecutor {
                     .get(`container/${containerId}/logs`, {
                         searchParams: {
                             tail: '100',
-                            ...(sinceTimestamp !== undefined && { since: String(sinceTimestamp) }),
+                            ...(sinceTimestamp !== undefined && { since: `${sinceTimestamp}` }),
                         },
                         signal: abortSignal,
                         environmentId,

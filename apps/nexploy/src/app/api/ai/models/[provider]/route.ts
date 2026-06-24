@@ -3,6 +3,7 @@ import { authRouteServer, route } from '@/lib/api/nextRoute';
 import { getProviderApiKey } from '@/services/aiConfig.service';
 import type { ModelOption } from '@workspace/typescript-interface/ai/aiConfig';
 import { providerParamSchema } from '@workspace/schemas-zod/api/params.schema';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 async function fetchOpenAIModels(apiKey: string): Promise<ModelOption[]> {
     const res = await fetch('https://api.openai.com/v1/models', {
@@ -146,8 +147,10 @@ export const GET = route
                 case 'GROK':
                     models = await fetchGrokModels(apiKey);
                     break;
-                default:
-                    return NextResponse.json({ error: 'Unknown provider' }, { status: 400 });
+                default: {
+                    const t = await getErrorTranslator();
+                    return NextResponse.json({ error: t('api.unknownProvider') }, { status: 400 });
+                }
             }
             return NextResponse.json({ models });
         } catch (err) {

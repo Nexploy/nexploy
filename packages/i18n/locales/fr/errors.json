@@ -13,6 +13,7 @@
         "updateEnvFailed": "Échec de la mise à jour des variables d'environnement",
         "fetchWebhookStatusFailed": "Échec de la récupération du statut du webhook du dépôt",
         "notAuthorizedRelink": "Utilisateur non autorisé à relier ce dépôt",
+        "relinkFailed": "Échec de la réassociation du compte Git",
         "workDirNotConfigured": "DEPLOYER_WORK_DIR n'est pas configuré"
     },
     "pipeline": {
@@ -57,7 +58,8 @@
         "invalidPrivateKey": "Clé privée invalide : ce n'est pas une clé privée PEM valide",
         "keyMismatch": "La clé privée ne correspond pas au certificat",
         "createLetsEncryptFailed": "Échec de la création du certificat LetsEncrypt",
-        "writeFilesFailed": "Échec de l'écriture des fichiers de certificat pour Traefik"
+        "writeFilesFailed": "Échec de l'écriture des fichiers de certificat pour Traefik",
+        "fetchFailed": "Échec de la récupération des certificats SSL"
     },
     "cloudflare": {
         "saveCredentialFailed": "Erreur Cloudflare lors de l'enregistrement de l'identifiant",
@@ -193,5 +195,26 @@
         "updateDockerApiFailed": "Échec de la mise à jour de l'environnement dans docker-api : {error}",
         "deleteDbFailed": "Échec de la suppression de l'environnement de la base de données",
         "unregisterFailed": "Échec du désenregistrement de l'environnement auprès de docker-api : {error}"
+    },
+    "api": {
+        "repositoriesFetchFailed": "Échec de la récupération des dépôts",
+        "repositoryFetchFailed": "Échec de la récupération du dépôt",
+        "repositoryNotFound": "Dépôt introuvable",
+        "certificatesFetchFailed": "Échec de la récupération des certificats SSL",
+        "environmentsFetchFailed": "Échec de la récupération des environnements",
+        "environmentFetchFailed": "Échec de la récupération de l'environnement",
+        "environmentNotFound": "Environnement introuvable",
+        "diskUsageFetchFailed": "Échec de la récupération de l'utilisation du disque",
+        "stagesFetchFailed": "Échec de la récupération des étapes",
+        "pipelineConfigFetchFailed": "Échec de la récupération de la configuration du pipeline",
+        "envVariablesFetchFailed": "Échec de la récupération des variables d'environnement",
+        "buildNotFound": "Build introuvable",
+        "publicIpFailed": "Impossible de détecter l'adresse IP publique",
+        "invalidFilename": "Nom de fichier invalide",
+        "fileAlreadyExists": "Le fichier existe déjà",
+        "fileNotFound": "Fichier introuvable",
+        "unknownProvider": "Fournisseur inconnu",
+        "providerNotConfigured": "Fournisseur non configuré",
+        "unsupportedProvider": "Fournisseur non pris en charge"
     }
 }

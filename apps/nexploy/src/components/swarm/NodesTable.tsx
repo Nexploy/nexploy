@@ -184,7 +184,7 @@ export function NodesTable() {
                 <div className="flex items-center gap-2">
                     <span className="text-muted-foreground text-sm">{t('nodesPerPage')}:</span>
                     <Select
-                        value={pageSize === 'all' ? 'all' : String(pageSize)}
+                        value={pageSize === 'all' ? 'all' : `${pageSize}`}
                         onValueChange={(value) => {
                             if (value === 'all') {
                                 setPageSize('all');

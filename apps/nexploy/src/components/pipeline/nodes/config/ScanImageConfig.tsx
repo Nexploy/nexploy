@@ -24,12 +24,14 @@ import { useEnvironmentImages } from '@/hooks/sse/useEnvironmentImages';
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { useMemo } from 'react';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
 export function ScanImageConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const { images, isLoading } = useEnvironmentImages();
+    const environmentId = usePipelineEnvironmentId();
+    const { images, isLoading } = useEnvironmentImages(environmentId);
 
     const imageOptions = useMemo(() => {
         const seen = new Set<string>();

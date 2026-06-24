@@ -21,7 +21,7 @@ export function ServiceDetailInfo() {
     const fields: { label: string; value: ReactNode; hasCopy?: boolean; copyText?: string }[] = [
         { label: t('detail.serviceId'), value: service?.id, hasCopy: true, copyText: service?.id },
         { label: t('image'), value: service?.image, hasCopy: true, copyText: service?.image },
-        { label: t('detail.version'), value: String(service?.version) },
+        { label: t('detail.version'), value: `${service?.version}` },
         {
             label: t('mode'),
             value: (
@@ -30,7 +30,7 @@ export function ServiceDetailInfo() {
                 </Badge>
             ),
         },
-        ...(service?.replicas ? [{ label: t('replicas'), value: String(service.replicas) }] : []),
+        ...(service?.replicas ? [{ label: t('replicas'), value: `${service.replicas}` }] : []),
         {
             label: t('detail.createdAt'),
             value: dayjs(service?.createdAt).format('DD/MM/YYYY HH:mm:ss'),

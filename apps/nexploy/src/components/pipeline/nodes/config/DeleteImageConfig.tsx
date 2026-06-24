@@ -25,12 +25,14 @@ import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status
 import { isNodeFieldRef } from '@/lib/nodeFieldRef';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 import { useMemo } from 'react';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
 export function DeleteImageConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const { images, isLoading } = useEnvironmentImages();
+    const environmentId = usePipelineEnvironmentId();
+    const { images, isLoading } = useEnvironmentImages(environmentId);
 
     const uniqueImages = useMemo(
         () => images.filter((img, idx, arr) => arr.findIndex((i) => i.id === img.id) === idx),

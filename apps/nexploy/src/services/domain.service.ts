@@ -1,263 +1,62 @@
 import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
-import {
-    createCloudflareDnsRecord,
-    deleteCloudflareDnsRecord,
-    updateCloudflareDnsRecord,
-} from '@/services/cloudflare.service';
-import {
-    generateTraefikConfigForRepository,
-    getDomainsFromTraefikConfig,
-} from '@/services/traefik.service';
-import { ApplyDomainOperationsInput } from '@workspace/typescript-interface/domain';
+import { generateTraefikConfig, getDomainKey, getDomains } from '@/services/traefik.service';
+import { provisionDomainDns, removeDomainDns, syncDomainDns, } from '@/services/domainCloudflare.service';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
-export async function applyDomainOperations({
-    repositoryId,
-    operations,
-}: ApplyDomainOperationsInput): Promise<Domain[]> {
-    const existingDomains = await getDomainsFromTraefikConfig(repositoryId);
+export async function createDomain(domain: Domain): Promise<Domain> {
+    const existingDomains = await getDomains();
+    const host = cleanDomainHost(domain.host);
 
-    await handleDeletions(operations.delete);
+    const cloudflareDnsRecordId = await provisionDomainDns(domain, host);
 
-    const editedDomains = await Promise.all(
-        operations.edit.map((domain) => handleEdit({ domain, existingDomains })),
-    );
-
-    const addedDomains = await Promise.all(
-        operations.add.map((domain) => handleAdd({ domain, repositoryId })),
-    );
-
-    const allDomains = [...operations.unchanged, ...editedDomains, ...addedDomains];
-
-    const handledIds = new Set(
-        [...operations.unchanged, ...operations.edit, ...operations.delete]
-            .map((d) => d.id)
-            .filter(Boolean) as string[],
-    );
-    const preservedDomains = existingDomains.filter((d) => d.id && !handledIds.has(d.id));
-
-    await generateTraefikConfigForRepository(repositoryId, [...allDomains, ...preservedDomains]);
-
-    return allDomains;
-}
-
-async function handleDeletions(domainsToDelete: Domain[]): Promise<void> {
-    await Promise.all(
-        domainsToDelete
-            .filter(
-                (domain) =>
-                    domain.cloudflareCredentialId &&
-                    domain.cloudflareZoneId &&
-                    domain.cloudflareDnsRecordId,
-            )
-            .map((domain) =>
-                deleteCloudflareDnsRecord(
-                    domain.cloudflareCredentialId!,
-                    domain.cloudflareZoneId!,
-                    domain.cloudflareDnsRecordId!,
-                ).catch((error) => {
-                    console.error(`Failed to delete Cloudflare DNS for ${domain.host}:`, error);
-                }),
-            ),
-    );
-}
-
-async function handleEdit({
-    domain,
-    existingDomains,
-}: {
-    domain: Domain;
-    existingDomains: Domain[];
-}): Promise<Domain> {
-    const t = await getErrorTranslator();
-    const originalDomain = existingDomains.find((d) => d.id === domain.id);
-    if (!originalDomain) {
-        throw new Error(t('domain.originNotFound', { id: domain.id ?? '' }));
-    }
-
-    const credentialId = domain.cloudflareCredentialId ?? originalDomain.cloudflareCredentialId;
-    if (!credentialId) return domain;
-
-    const wasCloudflare = !!originalDomain.cloudflareZoneId;
-    const isCloudflare = !!domain.cloudflareZoneId;
-    const zoneChanged =
-        wasCloudflare &&
-        isCloudflare &&
-        originalDomain.cloudflareZoneId !== domain.cloudflareZoneId;
-    const hostChanged = originalDomain.host !== domain.host;
-
-    let cloudflareDnsRecordId = domain.cloudflareDnsRecordId;
-
-    if (wasCloudflare && !isCloudflare && originalDomain.cloudflareDnsRecordId) {
-        try {
-            await deleteCloudflareDnsRecord(
-                credentialId,
-                originalDomain.cloudflareZoneId!,
-                originalDomain.cloudflareDnsRecordId,
-            );
-            cloudflareDnsRecordId = undefined;
-        } catch (error) {
-            console.error('Failed to delete Cloudflare DNS:', error);
-        }
-    } else if (
-        !wasCloudflare &&
-        isCloudflare &&
-        domain.cloudflareZoneId &&
-        domain.cloudflareZoneName
-    ) {
-        try {
-            const subdomain = extractSubdomain(domain.host, domain.cloudflareZoneName);
-            const record = await createCloudflareDnsRecord(
-                credentialId,
-                domain.cloudflareZoneId,
-                subdomain,
-                domain.cloudflareZoneName,
-            );
-            cloudflareDnsRecordId = record.id;
-        } catch (error) {
-            throw new Error(t('domain.createDnsFailed', { host: domain.host, error: String(error) }));
-        }
-    } else if (zoneChanged && domain.cloudflareZoneId && domain.cloudflareZoneName) {
-        if (originalDomain.cloudflareDnsRecordId) {
-            try {
-                await deleteCloudflareDnsRecord(
-                    credentialId,
-                    originalDomain.cloudflareZoneId!,
-                    originalDomain.cloudflareDnsRecordId,
-                );
-            } catch (error) {
-                console.error('Failed to delete old DNS:', error);
-            }
-        }
-        try {
-            const subdomain = extractSubdomain(domain.host, domain.cloudflareZoneName);
-            const record = await createCloudflareDnsRecord(
-                credentialId,
-                domain.cloudflareZoneId,
-                subdomain,
-                domain.cloudflareZoneName,
-            );
-            cloudflareDnsRecordId = record.id;
-        } catch (error) {
-            throw new Error(t('domain.createDnsFailed', { host: domain.host, error: String(error) }));
-        }
-    } else if (
-        hostChanged &&
-        isCloudflare &&
-        domain.cloudflareZoneId &&
-        domain.cloudflareZoneName &&
-        domain.cloudflareDnsRecordId
-    ) {
-        try {
-            const subdomain = extractSubdomain(domain.host, domain.cloudflareZoneName);
-            await updateCloudflareDnsRecord(
-                credentialId,
-                domain.cloudflareZoneId,
-                domain.cloudflareDnsRecordId,
-                subdomain,
-                domain.cloudflareZoneName,
-            );
-        } catch (error) {
-            throw new Error(t('domain.updateDnsFailed', { host: domain.host, error: String(error) }));
-        }
-    }
-
-    return { ...domain, cloudflareDnsRecordId: cloudflareDnsRecordId ?? undefined };
-}
-
-export function classifyDomainOperations(
-    domains: Domain[],
-    existingDomains: Domain[],
-    deletedIds: string[],
-): { add: Domain[]; edit: Domain[]; delete: Domain[]; unchanged: Domain[] } {
-    const add: Domain[] = [];
-    const edit: Domain[] = [];
-    const unchanged: Domain[] = [];
-    const deleteSet = new Set(deletedIds);
-
-    const domainsToDelete = existingDomains.filter((d) => d.id && deleteSet.has(d.id));
-
-    for (const domain of domains) {
-        const cleanedDomain = {
-            ...domain,
-            host: domain.host.replace(/^https?:\/\//, '').replace(/^@\./, ''),
-        };
-
-        if (!domain.id) {
-            add.push(cleanedDomain);
-        } else if (!deleteSet.has(domain.id)) {
-            const originalDomain = existingDomains.find((d) => d.id === domain.id);
-
-            if (originalDomain && hasChanges(cleanedDomain, originalDomain)) {
-                edit.push(cleanedDomain);
-            } else {
-                unchanged.push(cleanedDomain);
-            }
-        }
-    }
-
-    return { add, edit, delete: domainsToDelete, unchanged };
-}
-
-function hasChanges(domain: Domain, original: Domain): boolean {
-    const fieldsToCompare: (keyof Domain)[] = [
-        'host',
-        'path',
-        'internalPath',
-        'stripPath',
-        'containerPort',
-        'https',
-        'certificateId',
-        'cloudflareZoneId',
-        'cloudflareZoneName',
-    ];
-
-    return fieldsToCompare.some((field) => {
-        const domainValue = domain[field];
-        const originalValue = original[field];
-        if (domainValue == null && originalValue == null) return false;
-        if (domainValue == null || originalValue == null) return true;
-        return domainValue !== originalValue;
-    });
-}
-
-async function handleAdd({
-    domain,
-    repositoryId,
-}: {
-    domain: Domain;
-    repositoryId: string;
-}): Promise<Domain> {
-    const t = await getErrorTranslator();
-    let cloudflareDnsRecordId: string | undefined;
-
-    if (domain.cloudflareCredentialId && domain.cloudflareZoneId && domain.cloudflareZoneName) {
-        try {
-            const subdomain = extractSubdomain(domain.host, domain.cloudflareZoneName);
-            const record = await createCloudflareDnsRecord(
-                domain.cloudflareCredentialId,
-                domain.cloudflareZoneId,
-                subdomain,
-                domain.cloudflareZoneName,
-            );
-            cloudflareDnsRecordId = record.id;
-        } catch (error) {
-            throw new Error(t('domain.createDnsFailed', { host: domain.host, error: String(error) }));
-        }
-    }
-
-    const stageSeg = domain.stageId ? `${domain.stageId}-` : '';
-
-    return {
+    const newDomain: Domain = {
         ...domain,
-        id: `repo-${repositoryId}-${stageSeg}${domain.host}`,
+        host,
+        id: getDomainKey({ host }),
         cloudflareDnsRecordId,
     };
+
+    const others = existingDomains.filter((d) => d.id !== newDomain.id);
+    await generateTraefikConfig([...others, newDomain]);
+
+    return newDomain;
 }
 
-function extractSubdomain(host: string, zoneName: string): string {
-    const cleanHost = host.replace(/^https?:\/\//, '');
-    if (cleanHost === zoneName) return '@';
-    const subdomain = cleanHost.replace(`.${zoneName}`, '').replace(zoneName, '');
-    return subdomain || '@';
+export async function updateDomain(domain: Domain): Promise<Domain> {
+    const existingDomains = await getDomains();
+    const original = existingDomains.find((d) => d.id === domain.id);
+
+    if (!domain.id || !original) {
+        throw new Error((await getErrorTranslator())('domain.notFound'));
+    }
+
+    const host = cleanDomainHost(domain.host);
+    const cloudflareDnsRecordId = await syncDomainDns(domain, original, host);
+
+    const updatedDomain: Domain = {
+        ...domain,
+        host,
+        cloudflareDnsRecordId: cloudflareDnsRecordId ?? undefined,
+    };
+
+    const nextDomains = existingDomains.map((d) => (d.id === domain.id ? updatedDomain : d));
+    await generateTraefikConfig(nextDomains);
+
+    return updatedDomain;
+}
+
+export async function removeDomain(domainId: string): Promise<void> {
+    const existingDomains = await getDomains();
+    const domainToDelete = existingDomains.find((d) => d.id === domainId);
+
+    if (!domainToDelete) {
+        throw new Error((await getErrorTranslator())('domain.notFound'));
+    }
+
+    await removeDomainDns(domainToDelete);
+    await generateTraefikConfig(existingDomains.filter((d) => d.id !== domainId));
+}
+
+function cleanDomainHost(host: string): string {
+    return host.replace(/^https?:\/\//, '').replace(/^@\./, '');
 }

@@ -3,7 +3,6 @@ import {
     DeploymentStageSchemaType,
     UpdateDeploymentStageSchemaType,
 } from '@workspace/schemas-zod/repository/deploymentStage.schema';
-import { generateTraefikConfigForRepository, getDomainsFromTraefikConfig, } from '@/services/traefik.service';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export async function getStagesByRepository(repositoryId: string) {
@@ -120,14 +119,6 @@ export async function deleteStage(id: string) {
     if (count <= 1) {
         throw new Error(t('deploymentStage.cannotDeleteLast'));
     }
-
-    try {
-        const domains = await getDomainsFromTraefikConfig(stage.repositoryId);
-        const remaining = domains.filter((d) => d.stageId !== id);
-        if (remaining.length !== domains.length) {
-            await generateTraefikConfigForRepository(stage.repositoryId, remaining);
-        }
-    } catch {}
 
     try {
         await prisma.deploymentStage.delete({ where: { id } });

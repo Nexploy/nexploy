@@ -2,43 +2,37 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as yaml from 'yaml';
 import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
-import {
-    getContainerByProjectName,
-    getContainerPortMappings,
-} from '@/services/docker/container.service';
+import { getContainerPortMappings } from '@/services/docker/container.service';
 import { getEnvironmentById } from '@/services/environment/environment.service';
 import { prisma } from '../../prisma/prisma';
 
 const TRAEFIK_SERVICE_DIR = path.join(process.cwd(), '..', '..', 'infra', 'traefik', 'service');
 
+const DOMAINS_FILE = path.join(TRAEFIK_SERVICE_DIR, 'domains.yml');
+
 export type TraefikDomainInput = Omit<Domain, 'environmentId'> & { environmentId?: string };
 
-export async function generateTraefikConfigForRepository(
-    repositoryId: string,
-    domains: TraefikDomainInput[],
-): Promise<void> {
+export function getDomainKey(domain: { host: string }): string {
+    const sanitizedHost = domain.host.replace(/\./g, '-');
+    return `domain-${sanitizedHost}`;
+}
+
+export async function generateTraefikConfig(domains: TraefikDomainInput[]): Promise<void> {
     await fs.mkdir(TRAEFIK_SERVICE_DIR, { recursive: true });
 
-    const filePath = path.join(TRAEFIK_SERVICE_DIR, `${repositoryId}.yml`);
-
     if (domains.length === 0) {
-        await deleteTraefikConfigForRepository(repositoryId);
+        await deleteTraefikDomainsFile();
         return;
     }
 
     const certIds = domains.map((d) => d.certificateId).filter(Boolean) as string[];
-    const repoCerts = await prisma.sslCertificate.findMany({
+    const certs = await prisma.sslCertificate.findMany({
         where: { id: { in: certIds } },
         select: { id: true, type: true, domain: true },
     });
     const certMap = new Map(
-        repoCerts.map((c) => [
-            c.id,
-            { type: c.type as 'LETS_ENCRYPT' | 'CUSTOM', domain: c.domain },
-        ]),
+        certs.map((c) => [c.id, { type: c.type as 'LETS_ENCRYPT' | 'CUSTOM', domain: c.domain }]),
     );
-
-    const projectName = `nexploy-${repositoryId}`;
 
     const config: {
         http: {
@@ -48,24 +42,27 @@ export async function generateTraefikConfigForRepository(
         };
         'x-nexploy-domains': Record<string, unknown>;
     } = {
-        http: {
-            routers: {},
-            services: {},
-            middlewares: {},
-        },
+        http: { routers: {}, services: {}, middlewares: {} },
         'x-nexploy-domains': {},
     };
 
     for (const domain of domains) {
-        const sanitizedHost = domain.host.replace(/\./g, '-');
-        const stageSeg = domain.stageId ? `${domain.stageId}-` : '';
-        const routerName = `repo-${repositoryId}-${stageSeg}${sanitizedHost}`;
-        const serviceName = `svc-${repositoryId}-${stageSeg}${sanitizedHost}`;
+        const containerName = domain.containerName;
+        if (!containerName) {
+            console.warn(
+                `[traefik] Domain "${domain.host}" has no target container; skipping. ` +
+                    `Select a container for this domain so Traefik knows where to route it.`,
+            );
+            continue;
+        }
+
+        const key = getDomainKey(domain);
+        const routerName = key;
+        const serviceName = key.replace(/^domain-/, 'svc-');
 
         const env = domain.environmentId ? await getEnvironmentById(domain.environmentId) : null;
         const isRemote = env?.connectionType === 'TCP' || env?.connectionType === 'TCP_TLS';
         const remoteHost = env?.host ?? undefined;
-        const containers = await getContainerByProjectName(projectName, domain.environmentId);
 
         let rule = `Host(\`${domain.host}\`)`;
         if (domain.path && domain.path !== '/') {
@@ -74,13 +71,10 @@ export async function generateTraefikConfigForRepository(
         const middlewares: string[] = ['maintenance-errors@file'];
 
         if (domain.stripPath && domain.path !== '/') {
-            const stripMiddlewareName = `strip-${repositoryId}-${stageSeg}${sanitizedHost}`;
+            const stripMiddlewareName = key.replace(/^domain-/, 'strip-');
             middlewares.push(stripMiddlewareName);
-
             config.http.middlewares[stripMiddlewareName] = {
-                stripPrefix: {
-                    prefixes: [domain.path],
-                },
+                stripPrefix: { prefixes: [domain.path] },
             };
         }
 
@@ -89,13 +83,10 @@ export async function generateTraefikConfigForRepository(
             domain.internalPath !== '/' &&
             domain.internalPath !== domain.path
         ) {
-            const addPrefixMiddlewareName = `addprefix-${repositoryId}-${stageSeg}${sanitizedHost}`;
+            const addPrefixMiddlewareName = key.replace(/^domain-/, 'addprefix-');
             middlewares.push(addPrefixMiddlewareName);
-
             config.http.middlewares[addPrefixMiddlewareName] = {
-                addPrefix: {
-                    prefix: domain.internalPath,
-                },
+                addPrefix: { prefix: domain.internalPath },
             };
         }
 
@@ -111,9 +102,7 @@ export async function generateTraefikConfigForRepository(
 
         if (domain.https) {
             const cert = domain.certificateId ? certMap.get(domain.certificateId) : null;
-            if (cert?.type === 'CUSTOM') {
-                router.tls = {};
-            } else if (cert?.type === 'LETS_ENCRYPT') {
+            if (cert?.type === 'LETS_ENCRYPT') {
                 router.tls = {
                     certResolver: 'letsencrypt',
                     domains: [{ main: domain.host }],
@@ -125,57 +114,37 @@ export async function generateTraefikConfigForRepository(
 
         config.http.routers[routerName] = router;
 
-        const matchedContainer =
-            containers.find((container) =>
-                container.Ports?.some((p) => p.PrivatePort === domain.containerPort),
-            ) ?? containers[0];
-
-        const containerName = matchedContainer
-            ? matchedContainer.Names[0]?.replace(/^\//, '')
-            : projectName;
-
         if (isRemote && remoteHost) {
-            let hostPort: number | undefined;
-            if (matchedContainer) {
-                const portMappings = await getContainerPortMappings(
-                    matchedContainer.Id,
-                    domain.environmentId,
-                );
-                hostPort = portMappings[domain.containerPort];
-            }
+            const portMappings = await getContainerPortMappings(
+                containerName,
+                domain.environmentId,
+            );
+            const hostPort = portMappings[domain.containerPort];
 
             if (hostPort === undefined) {
                 console.warn(
-                    `[traefik] Remote domain "${domain.host}" (repo ${repositoryId}) has no published host port for container port ${domain.containerPort} on ${remoteHost}. ` +
+                    `[traefik] Remote domain "${domain.host}" has no published host port for container port ${domain.containerPort} on ${remoteHost}. ` +
                         `Traefik will not be able to reach the container. Ensure the container publishes port ${domain.containerPort} and that ${remoteHost} is reachable from the Traefik host.`,
                 );
             }
 
             config.http.services[serviceName] = {
                 loadBalancer: {
-                    servers: [
-                        {
-                            url: `http://${remoteHost}:${hostPort ?? domain.containerPort}`,
-                        },
-                    ],
+                    servers: [{ url: `http://${remoteHost}:${hostPort ?? domain.containerPort}` }],
                 },
             };
         } else {
             config.http.services[serviceName] = {
                 loadBalancer: {
-                    servers: [
-                        {
-                            url: `http://${containerName}:${domain.containerPort}`,
-                        },
-                    ],
+                    servers: [{ url: `http://${containerName}:${domain.containerPort}` }],
                 },
             };
         }
 
         config['x-nexploy-domains'][routerName] = {
+            containerName,
             containerPort: domain.containerPort,
             environmentId: domain.environmentId,
-            stageId: domain.stageId,
             certificateId: domain.certificateId,
             cloudflare: domain.cloudflareZoneId && {
                 credentialId: domain.cloudflareCredentialId,
@@ -190,25 +159,25 @@ export async function generateTraefikConfigForRepository(
         delete (config.http as Record<string, unknown>).middlewares;
     }
 
-    const yamlContent = yaml.stringify(config);
-    await fs.writeFile(filePath, yamlContent, 'utf-8');
+    if (Object.keys(config.http.routers).length === 0) {
+        await deleteTraefikDomainsFile();
+        return;
+    }
+
+    await fs.writeFile(DOMAINS_FILE, yaml.stringify(config), 'utf-8');
 }
 
-export async function deleteTraefikConfigForRepository(repositoryId: string): Promise<void> {
-    const filePath = path.join(TRAEFIK_SERVICE_DIR, `${repositoryId}.yml`);
-
+export async function deleteTraefikDomainsFile(): Promise<void> {
     try {
-        await fs.unlink(filePath);
+        await fs.unlink(DOMAINS_FILE);
     } catch {
         /* empty */
     }
 }
 
-export async function getDomainsFromTraefikConfig(repositoryId: string): Promise<Domain[]> {
-    const filePath = path.join(TRAEFIK_SERVICE_DIR, `${repositoryId}.yml`);
-
+export async function getDomains(): Promise<Domain[]> {
     try {
-        const content = await fs.readFile(filePath, 'utf-8');
+        const content = await fs.readFile(DOMAINS_FILE, 'utf-8');
         const config = yaml.parse(content);
 
         const routers = config?.http?.routers ?? {};
@@ -217,8 +186,8 @@ export async function getDomainsFromTraefikConfig(repositoryId: string): Promise
         const nexployDomains = config?.['x-nexploy-domains'] ?? {};
 
         return Object.entries(routers).map(([routerName, router]: [string, any]) => {
-            const stripName = routerName.replace(/^repo-/, 'strip-');
-            const addPrefixName = routerName.replace(/^repo-/, 'addprefix-');
+            const stripName = routerName.replace(/^domain-/, 'strip-');
+            const addPrefixName = routerName.replace(/^domain-/, 'addprefix-');
 
             const hostMatch = router.rule?.match(/Host\(`([^`]+)`\)/);
             const pathMatch = router.rule?.match(/PathPrefix\(`([^`]+)`\)/);
@@ -241,11 +210,11 @@ export async function getDomainsFromTraefikConfig(repositoryId: string): Promise
                 path: pathMatch?.[1] ?? '/',
                 internalPath: middlewares[addPrefixName]?.addPrefix?.prefix ?? '/',
                 stripPath: !!middlewares[stripName],
+                containerName: domainMeta.containerName,
                 containerPort,
                 https: !!router.tls,
-                certificateId: domainMeta.certificateId ?? undefined,
-                environmentId: domainMeta.environmentId ?? undefined,
-                stageId: domainMeta.stageId ?? undefined,
+                certificateId: domainMeta.certificateId,
+                environmentId: domainMeta.environmentId,
                 cloudflareCredentialId: cloudflare?.credentialId,
                 cloudflareZoneId: cloudflare?.zoneId,
                 cloudflareZoneName: cloudflare?.zoneName,

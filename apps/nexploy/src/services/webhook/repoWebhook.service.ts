@@ -68,7 +68,7 @@ export async function setupRepositoryWebhook(
                 const [owner, repoName] = repo.name.split('/');
                 if (!owner || !repoName) throw new Error(t('webhook.invalidRepositoryName', { name: repo.name }));
                 const result = await githubCreateWebhook(owner, repoName, webhookUrl, secret);
-                webhookId = String(result.id);
+                webhookId = `${result.id}`;
             } else if (repo.gitProvider === 'GITLAB') {
                 const gitlabBase = repo.gitAccount?.gitProvider?.baseUrl as string;
                 const result = await gitlabCreateWebhook(
@@ -77,7 +77,7 @@ export async function setupRepositoryWebhook(
                     webhookUrl,
                     secret,
                 );
-                webhookId = String(result.id);
+                webhookId = `${result.id}`;
             }
         });
 

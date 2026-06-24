@@ -26,13 +26,15 @@ import { AlertTriangle, Loader2 } from 'lucide-react';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { isNodeFieldRef } from '@/lib/nodeFieldRef';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
 export function BackupVolumeS3Config() {
     const t = useTranslations('repository.pipeline.config');
     const tAdmin = useTranslations('admin');
     const form = useFormContext();
 
-    const { volumes, isLoading } = useEnvironmentVolumes();
+    const environmentId = usePipelineEnvironmentId();
+    const { volumes, isLoading } = useEnvironmentVolumes(environmentId);
     const { data: awsAccounts, isLoading: isLoadingAccounts } = useSWR<AwsAccountInfo[]>(
         { url: '/api/aws/accounts' },
         fetcherApi,

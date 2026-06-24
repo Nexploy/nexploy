@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { getPipelineConfig } from '@/services/pipeline.service';
 import { stageParamSchema } from '@workspace/schemas-zod/api/params.schema';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const GET = route
     .use(authRouteServer)
@@ -18,6 +19,7 @@ export const GET = route
 
             return NextResponse.json(config);
         } catch {
-            return NextResponse.json({ error: 'Failed to fetch pipeline config' }, { status: 500 });
+            const t = await getErrorTranslator();
+            return NextResponse.json({ error: t('api.pipelineConfigFetchFailed') }, { status: 500 });
         }
     });

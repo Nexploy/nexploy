@@ -22,12 +22,14 @@ import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status
 import { useEnvironmentContainers } from '@/hooks/sse/useEnvironmentContainers';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware.tsx';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
 export function StartContainerConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const { containers, isLoading } = useEnvironmentContainers();
+    const environmentId = usePipelineEnvironmentId();
+    const { containers, isLoading } = useEnvironmentContainers(environmentId);
 
     return (
         <FormField

@@ -122,7 +122,7 @@ export function CleanupScheduleCard({ settings }: { settings: CleanupSettings })
                                         </span>
                                     </div>
                                     <Select
-                                        value={String(field.value)}
+                                        value={`${field.value}`}
                                         onValueChange={(v) => field.onChange(Number(v))}
                                     >
                                         <FormControl>
@@ -132,7 +132,7 @@ export function CleanupScheduleCard({ settings }: { settings: CleanupSettings })
                                         </FormControl>
                                         <SelectContent>
                                             {Array.from({ length: 24 }, (_, h) => (
-                                                <SelectItem key={h} value={String(h)}>
+                                                <SelectItem key={h} value={`${h}`}>
                                                     {formatHour(h)} UTC
                                                 </SelectItem>
                                             ))}

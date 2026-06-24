@@ -1,4 +1,3 @@
-import { DropdownActionTool } from '../commun';
 import { ContainerState } from './docker.container';
 
 export type ContainersAction =
@@ -31,11 +30,6 @@ export type Event =
     | 'container-added'
     | 'container-removed'
     | 'container-updated';
-
-export interface ContainersTool extends DropdownActionTool {
-    disabledStates: ContainerState[];
-    variant?: 'default' | 'destructive';
-}
 
 export type ContainersPorts = {
     privatePort: number;

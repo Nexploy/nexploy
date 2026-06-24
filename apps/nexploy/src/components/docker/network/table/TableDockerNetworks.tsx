@@ -239,7 +239,7 @@ export function TableDockerNetworks() {
                         {tDocker('network')} {tCommon('perPage')}:
                     </span>
                     <Select
-                        value={pageSize === 'all' ? 'all' : String(pageSize)}
+                        value={pageSize === 'all' ? 'all' : `${pageSize}`}
                         onValueChange={(value) => {
                             if (value === 'all') {
                                 setPageSize('all');

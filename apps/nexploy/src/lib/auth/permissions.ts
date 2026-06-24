@@ -93,6 +93,7 @@ const developer = ac.newRole({
     environment: ['read', 'update'],
     stage: ['read', 'manage'],
     domain: ['read', 'manage'],
+    ssl: ['read', 'manage'],
     container: ['read', 'manage', 'remove'],
     image: ['read', 'pull', 'manage', 'remove'],
     network: ['read', 'manage', 'remove'],

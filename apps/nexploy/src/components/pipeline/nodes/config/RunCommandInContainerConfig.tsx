@@ -24,12 +24,14 @@ import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status
 import { Switch } from '@workspace/ui/components/switch';
 import { useEnvironmentContainers } from '@/hooks/sse/useEnvironmentContainers.ts';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware.tsx';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
 export function RunCommandInContainerConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const { containers, isLoading } = useEnvironmentContainers();
+    const environmentId = usePipelineEnvironmentId();
+    const { containers, isLoading } = useEnvironmentContainers(environmentId);
 
     return (
         <div className="space-y-4">

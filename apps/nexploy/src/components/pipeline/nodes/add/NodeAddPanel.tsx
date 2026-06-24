@@ -20,7 +20,7 @@ import {
 } from '@/components/pipeline/pipelineTheme';
 import { useReactFlow } from '@xyflow/react';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
-import { getConfigSchema } from '@/components/pipeline/nodeManifestRegistry';
+import { getConfigDefaults } from '@/components/pipeline/nodeManifestRegistry';
 import { useIsViewingBuild, usePipelineActions } from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
@@ -80,7 +80,7 @@ export function NodeAddPanel() {
                     label: nodeType,
                     nodeType,
                     definition: def,
-                    config: getConfigSchema(nodeType)?.partial().safeParse({}).data ?? {},
+                    config: getConfigDefaults(nodeType),
                     isStartNode: def.isStartNode ?? false,
                     isEndNode: def.isEndNode ?? false,
                 },

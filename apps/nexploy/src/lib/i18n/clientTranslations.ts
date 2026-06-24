@@ -26,7 +26,7 @@ export function clientT(key: string, params?: Record<string, string | number>): 
     if (typeof value !== 'string') return key;
 
     if (params) {
-        return value.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`));
+        return value.replace(/\{(\w+)\}/g, (_, k) => `${params[k] ?? `{${k}}`}`);
     }
 
     return value;

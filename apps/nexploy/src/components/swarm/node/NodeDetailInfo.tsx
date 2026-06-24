@@ -25,7 +25,7 @@ export function NodeDetailInfo() {
     const fields: { label: string; value: ReactNode; hasCopy?: boolean; copyText?: string }[] = [
         { label: t('node.nodeId'), value: node.id, hasCopy: true, copyText: node.id },
         { label: t('hostname'), value: node.hostname },
-        { label: t('node.version'), value: String(node.version) },
+        { label: t('node.version'), value: `${node.version}` },
         {
             label: t('role'),
             value: (

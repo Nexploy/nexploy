@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -20,13 +26,15 @@ import { isBuiltinNetwork } from '@workspace/shared/nexployFilter';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { isNodeFieldRef } from '@/lib/nodeFieldRef';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
 export function DeleteNetworkConfig() {
     const t = useTranslations('repository.pipeline.config');
     const tDocker = useTranslations('docker.tables');
     const form = useFormContext();
 
-    const { networks, isLoading } = useEnvironmentNetworks();
+    const environmentId = usePipelineEnvironmentId();
+    const { networks, isLoading } = useEnvironmentNetworks(environmentId);
 
     return (
         <div className="space-y-4">

@@ -7,14 +7,11 @@ import {
     ContainersEvent,
 } from '@workspace/typescript-interface/docker/docker.containers';
 import { useContainersStore } from '@/stores/docker/useContainersStore';
-import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
-export function useEnvironmentContainers(): {
+export function useEnvironmentContainers(environmentId?: string): {
     containers: Containers[];
     isLoading: boolean;
 } {
-    const environmentId = usePipelineEnvironmentId();
-
     const globalContainers = useContainersStore((s) => s.containers);
     const [containers, setContainers] = useState<Containers[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -85,7 +82,7 @@ export function useEnvironmentContainers(): {
             unsubscribers.forEach((fn) => fn());
             setIsLoading(false);
         };
-    }, [environmentId]);
+    }, [environmentId, globalContainers]);
 
     if (!environmentId) {
         return { containers: globalContainers, isLoading: false };

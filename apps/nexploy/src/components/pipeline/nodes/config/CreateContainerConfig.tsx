@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -28,14 +22,16 @@ import { useEnvironmentImages } from '@/hooks/sse/useEnvironmentImages';
 import { useEnvironmentNetworks } from '@/hooks/sse/useEnvironmentNetworks';
 import { useMemo } from 'react';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
 export function CreateContainerConfig() {
     const t = useTranslations('repository.pipeline.config');
     const tDocker = useTranslations('docker.createContainer');
     const form = useFormContext();
 
-    const { images, isLoading: imagesLoading } = useEnvironmentImages();
-    const { networks, isLoading: networksLoading } = useEnvironmentNetworks();
+    const environmentId = usePipelineEnvironmentId();
+    const { images, isLoading: imagesLoading } = useEnvironmentImages(environmentId);
+    const { networks, isLoading: networksLoading } = useEnvironmentNetworks(environmentId);
 
     const networkOptions = useMemo(() => {
         return networks

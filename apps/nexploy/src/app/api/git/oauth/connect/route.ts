@@ -6,6 +6,7 @@ import { getBaseUrl } from '@/lib/getBaseUrl';
 import { authRouteServer, route } from '@/lib/api/nextRoute';
 import { Session } from '@/lib/auth/auth';
 import { oauthConnectQuerySchema } from '@workspace/schemas-zod/git/gitAccount.schema';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const GET = route
     .use(authRouteServer)
@@ -22,7 +23,8 @@ export const GET = route
             });
 
             if (!gitProvider || !gitProvider.clientId || !gitProvider.clientSecret) {
-                return NextResponse.json({ error: 'Provider not configured' }, { status: 400 });
+                const t = await getErrorTranslator();
+                return NextResponse.json({ error: t('api.providerNotConfigured') }, { status: 400 });
             }
 
             const clientId = decrypt(gitProvider.clientId);
@@ -50,7 +52,8 @@ export const GET = route
                 });
                 authUrl = `${gitProvider.baseUrl}/oauth/authorize?${params.toString()}`;
             } else {
-                return NextResponse.json({ error: 'Unsupported provider' }, { status: 400 });
+                const t = await getErrorTranslator();
+                return NextResponse.json({ error: t('api.unsupportedProvider') }, { status: 400 });
             }
 
             return NextResponse.redirect(authUrl);

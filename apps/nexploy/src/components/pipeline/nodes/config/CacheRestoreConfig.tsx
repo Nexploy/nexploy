@@ -13,12 +13,14 @@ import { Input } from '@workspace/ui/components/input';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware.tsx';
 import { useEnvironmentVolumes } from '@/hooks/sse/useEnvironmentVolumes';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
 export function CacheRestoreConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const { volumes, isLoading } = useEnvironmentVolumes();
+    const environmentId = usePipelineEnvironmentId();
+    const { volumes, isLoading } = useEnvironmentVolumes(environmentId);
     const volumeOptions = volumes.map((v) => ({ value: v.name, label: v.name }));
 
     return (

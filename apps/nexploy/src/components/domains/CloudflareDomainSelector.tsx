@@ -4,7 +4,10 @@ import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
+    SelectSeparator,
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
@@ -22,27 +25,28 @@ import { useTranslations } from 'next-intl';
 
 interface CloudflareDomainSelectorProps<T extends FieldValues> {
     form: UseFormReturn<T>;
-    index: number;
-    cloudflareAccounts: CloudflareAccountInfo[];
+    basePath?: string;
 }
 
 export function CloudflareDomainSelector<T extends FieldValues>({
     form,
-    index,
-    cloudflareAccounts,
+    basePath,
 }: CloudflareDomainSelectorProps<T>) {
     const t = useTranslations('repository.settings.cloudflare');
 
-    const selectedCredentialId = form.watch(
-        `domains.${index}.cloudflareCredentialId` as Path<T>,
-    ) as string | undefined;
-    const selectedZoneId = form.watch(`domains.${index}.cloudflareZoneId` as Path<T>) as
+    const { data: cloudflareAccounts = [] } = useSWR<CloudflareAccountInfo[]>(
+        { url: '/api/cloudflare/accounts' },
+        fetcherApi,
+    );
+
+    const fieldPath = (field: string) => (basePath ? `${basePath}.${field}` : field) as Path<T>;
+
+    const selectedCredentialId = form.watch(fieldPath('cloudflareCredentialId')) as
         | string
         | undefined;
-    const selectedZoneName = form.watch(`domains.${index}.cloudflareZoneName` as Path<T>) as
-        | string
-        | undefined;
-    const currentHost = form.watch(`domains.${index}.host` as Path<T>) as string | undefined;
+    const selectedZoneId = form.watch(fieldPath('cloudflareZoneId')) as string | undefined;
+    const selectedZoneName = form.watch(fieldPath('cloudflareZoneName')) as string | undefined;
+    const currentHost = form.watch(fieldPath('host')) as string | undefined;
 
     const { data: zones, isLoading: isLoadingZones } = useSWR<CloudflareZone[]>(
         selectedCredentialId
@@ -61,38 +65,36 @@ export function CloudflareDomainSelector<T extends FieldValues>({
             : '';
 
     const handleAccountChange = (credentialId: string) => {
-        form.setValue(`domains.${index}.cloudflareCredentialId` as Path<T>, credentialId as never, {
+        form.setValue(fieldPath('cloudflareCredentialId'), credentialId as never, {
             shouldDirty: true,
         });
-        form.setValue(`domains.${index}.cloudflareZoneId` as Path<T>, undefined as never, {
+        form.setValue(fieldPath('cloudflareZoneId'), undefined as never, {
             shouldDirty: true,
         });
-        form.setValue(`domains.${index}.cloudflareZoneName` as Path<T>, undefined as never, {
+        form.setValue(fieldPath('cloudflareZoneName'), undefined as never, {
             shouldDirty: true,
         });
     };
 
     const handleZoneChange = (zoneId: string) => {
         if (zoneId === 'manual') {
-            form.setValue(`domains.${index}.cloudflareZoneId` as Path<T>, undefined as never, {
+            form.setValue(fieldPath('cloudflareZoneId'), undefined as never, {
                 shouldDirty: true,
             });
-            form.setValue(`domains.${index}.cloudflareZoneName` as Path<T>, undefined as never, {
+            form.setValue(fieldPath('cloudflareZoneName'), undefined as never, {
                 shouldDirty: true,
             });
         } else {
             const zone = zones?.find((z) => z.id === zoneId);
             if (zone) {
-                form.setValue(`domains.${index}.cloudflareZoneId` as Path<T>, zoneId as never, {
+                form.setValue(fieldPath('cloudflareZoneId'), zoneId as never, {
                     shouldDirty: true,
                 });
-                form.setValue(
-                    `domains.${index}.cloudflareZoneName` as Path<T>,
-                    zone.name as never,
-                    { shouldDirty: true },
-                );
+                form.setValue(fieldPath('cloudflareZoneName'), zone.name as never, {
+                    shouldDirty: true,
+                });
                 if (!currentHost || !currentHost.includes(zone.name)) {
-                    form.setValue(`domains.${index}.host` as Path<T>, zone.name as never, {
+                    form.setValue(fieldPath('host'), zone.name as never, {
                         shouldDirty: true,
                     });
                 }
@@ -105,7 +107,7 @@ export function CloudflareDomainSelector<T extends FieldValues>({
         if (zoneName) {
             const cleanValue = value.trim();
             const host = cleanValue ? `${cleanValue}.${zoneName}` : zoneName;
-            form.setValue(`domains.${index}.host` as Path<T>, host as never, { shouldDirty: true });
+            form.setValue(fieldPath('host'), host as never, { shouldDirty: true });
         }
     };
 
@@ -130,11 +132,14 @@ export function CloudflareDomainSelector<T extends FieldValues>({
                         <SelectValue placeholder={t('selectAccount')} />
                     </SelectTrigger>
                     <SelectContent>
-                        {cloudflareAccounts.map((account) => (
-                            <SelectItem key={account.id} value={account.id}>
-                                {account.displayName}
-                            </SelectItem>
-                        ))}
+                        <SelectGroup>
+                            <SelectLabel>{t('selectAccount')}</SelectLabel>
+                            {cloudflareAccounts.map((account) => (
+                                <SelectItem key={account.id} value={account.id}>
+                                    {account.displayName}
+                                </SelectItem>
+                            ))}
+                        </SelectGroup>
                     </SelectContent>
                 </Select>
             </div>
@@ -157,23 +162,27 @@ export function CloudflareDomainSelector<T extends FieldValues>({
                                     <SelectValue placeholder={t('selectZone')} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="manual">
-                                        <span className="text-muted-foreground">
-                                            {t('manualEntry')}
-                                        </span>
-                                    </SelectItem>
-                                    {isOrphanedZone && (
-                                        <SelectItem value={selectedZoneId}>
+                                    <SelectGroup>
+                                        <SelectLabel>{t('zone')}</SelectLabel>
+                                        <SelectItem value="manual">
                                             <span className="text-muted-foreground">
-                                                {selectedZoneName} ({t('zoneNotFound')})
+                                                {t('manualEntry')}
                                             </span>
                                         </SelectItem>
-                                    )}
-                                    {zones?.map((zone) => (
-                                        <SelectItem key={zone.id} value={zone.id}>
-                                            {zone.name}
-                                        </SelectItem>
-                                    ))}
+                                        <SelectSeparator />
+                                        {isOrphanedZone && (
+                                            <SelectItem value={selectedZoneId}>
+                                                <span className="text-muted-foreground">
+                                                    {selectedZoneName} ({t('zoneNotFound')})
+                                                </span>
+                                            </SelectItem>
+                                        )}
+                                        {zones?.map((zone) => (
+                                            <SelectItem key={zone.id} value={zone.id}>
+                                                {zone.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
                                 </SelectContent>
                             </Select>
                             <FormDescription>

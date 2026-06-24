@@ -168,7 +168,7 @@ export function SSLCertificatesTable({ certificates }: SSLCertificatesTableProps
                 <div className="flex items-center gap-2">
                     <span className="text-muted-foreground text-sm">{t('perPage')}:</span>
                     <Select
-                        value={pageSize === 'all' ? 'all' : String(pageSize)}
+                        value={pageSize === 'all' ? 'all' : `${pageSize}`}
                         onValueChange={(value) => {
                             if (value === 'all') {
                                 setPageSize('all');

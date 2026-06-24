@@ -6,7 +6,7 @@ import { PIPELINE_TEMPLATES, PipelineTemplate } from './pipelineTemplates';
 import { TemplateItem } from '@/components/pipeline/nodes/template/TemplateItem';
 import { useReactFlow } from '@xyflow/react';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
-import { getConfigSchema } from '@/components/pipeline/nodeManifestRegistry';
+import { getConfigDefaults } from '@/components/pipeline/nodeManifestRegistry';
 import { NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { useIsViewingBuild, usePipelineActions } from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
@@ -42,7 +42,7 @@ export function NodeTemplatePanel() {
                     nodeType: tn.type,
                     definition: def,
                     config: {
-                        ...(getConfigSchema(tn.type)?.partial().safeParse({}).data ?? {}),
+                        ...getConfigDefaults(tn.type),
                         ...(tn.config ?? {}),
                     },
                     isStartNode: def?.isStartNode ?? false,

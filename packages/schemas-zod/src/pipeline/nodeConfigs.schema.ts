@@ -445,13 +445,17 @@ export const fetchSecretsDopplerConfigSchema = z.object({
 
 export const addDomainConfigSchema = z
     .object({
-        host: z.string().min(1, 'Host is required').default(''),
-        path: z.string().min(1).default('/'),
-        internalPath: z.string().min(1).default('/'),
-        stripPath: z.boolean().default(false),
-        containerPort: z.coerce.number().int().min(1).max(65535).default(3000),
-        https: z.boolean().default(false),
-        certificateId: z.string().optional(),
+        host: refable(z.string().min(1, 'Host is required')).default(''),
+        path: refable(z.string().min(1)).default('/'),
+        internalPath: refable(z.string().min(1)).default('/'),
+        stripPath: refable(z.boolean()).default(false),
+        containerName: refable(z.string().min(1, 'Container name is required')).default(''),
+        containerPort: refable(z.number().min(1).max(65535)).default(3000),
+        https: refable(z.boolean()).default(false),
+        certificateId: refable(z.string()).optional(),
+        cloudflareCredentialId: z.string().optional(),
+        cloudflareZoneId: z.string().optional(),
+        cloudflareZoneName: z.string().optional(),
     })
     .superRefine((data, ctx) => {
         if (data.https && !data.certificateId) {

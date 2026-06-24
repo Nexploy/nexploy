@@ -2,7 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
 import {
@@ -19,12 +25,14 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
 import { useEnvironmentContainers } from '@/hooks/sse/useEnvironmentContainers.ts';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware.tsx';
+import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
 export function CheckContainerLogsConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const { containers, isLoading } = useEnvironmentContainers();
+    const environmentId = usePipelineEnvironmentId();
+    const { containers, isLoading } = useEnvironmentContainers(environmentId);
 
     return (
         <div className="space-y-4">

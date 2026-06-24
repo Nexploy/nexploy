@@ -3,6 +3,7 @@ import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { readTraefikTree, resolveTraefikYmlPath } from '@/lib/traefik/fileTree';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const GET = route
     .use(authRouteServer)
@@ -20,12 +21,14 @@ export const POST = route
 
         const filePath = resolveTraefikYmlPath(filename);
         if (!filePath) {
-            return NextResponse.json({ message: 'Invalid filename' }, { status: 400 });
+            const t = await getErrorTranslator();
+            return NextResponse.json({ message: t('api.invalidFilename') }, { status: 400 });
         }
 
         try {
             await fs.access(filePath);
-            return NextResponse.json({ message: 'File already exists' }, { status: 409 });
+            const t = await getErrorTranslator();
+            return NextResponse.json({ message: t('api.fileAlreadyExists') }, { status: 409 });
         } catch {}
 
         await fs.mkdir(path.dirname(filePath), { recursive: true });

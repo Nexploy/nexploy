@@ -12,6 +12,7 @@ const PUBLIC_ROUTES = ['/signin', '/2fa', '/2fa/backup-codes'];
 const SIMPLE_REDIRECTS: Record<string, string> = {
     '/': '/repositories',
     '/docker': '/docker/containers',
+    '/admin/ai': '/admin/ai/models',
 };
 
 const PERMISSION_ROUTES: { path: string; resource: PermissionResource; action: string }[] = [

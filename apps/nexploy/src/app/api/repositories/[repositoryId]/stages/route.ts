@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { getStagesByRepository } from '@/services/repository/deploymentStage.service';
 import { repositoryIdParamSchema } from '@workspace/schemas-zod/api/params.schema';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const GET = route
     .use(authRouteServer)
@@ -13,6 +14,7 @@ export const GET = route
             const stages = await getStagesByRepository(repositoryId);
             return NextResponse.json(stages);
         } catch {
-            return NextResponse.json({ error: 'Failed to fetch stages' }, { status: 500 });
+            const t = await getErrorTranslator();
+            return NextResponse.json({ error: t('api.stagesFetchFailed') }, { status: 500 });
         }
     });

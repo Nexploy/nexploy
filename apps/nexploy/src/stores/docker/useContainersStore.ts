@@ -38,6 +38,10 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
         return get().containers.find((c) => c.id === id);
     },
 
+    getContainerByName: (name) => {
+        return get().containers.find((c) => c.name === name);
+    },
+
     getContainersByState: (state) => {
         return get().containers.filter((c) => c.state === state);
     },

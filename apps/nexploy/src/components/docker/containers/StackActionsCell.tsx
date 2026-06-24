@@ -6,6 +6,7 @@ import { Play, RotateCw, Square, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
 import { Switch } from '@workspace/ui/components/switch';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { onComposesAction } from '@/actions/docker/composes/composeAction';
 import { ComposesAction } from '@workspace/typescript-interface/docker/docker.composeStack';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
@@ -74,51 +75,79 @@ export function StackActionsCell({ stackName, runningCount, totalCount }: StackA
 
     return (
         <div className="flex items-center justify-end gap-1">
-            <Button
-                onClick={(e) => handleAction('start', e)}
-                disabled={isLoading || allRunning}
-                isLoading={isLoading}
-                variant="outline"
-                icon={Play}
-                size="icon"
-                className="size-7"
-            >
-                <span className="sr-only">Start</span>
-            </Button>
-            <Button
-                onClick={(e) => handleAction('stop', e)}
-                disabled={isLoading || !hasRunning}
-                isLoading={isLoading}
-                variant="outline"
-                icon={Square}
-                size="icon"
-                className="size-7"
-            >
-                <span className="sr-only">Stop</span>
-            </Button>
-            <Button
-                onClick={(e) => handleAction('restart', e)}
-                disabled={isLoading || !hasRunning}
-                isLoading={isLoading}
-                variant="outline"
-                icon={RotateCw}
-                size="icon"
-                className="size-7"
-            >
-                <span className="sr-only">Restart</span>
-            </Button>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button
+                        onClick={(e) => handleAction('start', e)}
+                        disabled={isLoading || allRunning}
+                        isLoading={isLoading}
+                        variant="outline"
+                        icon={Play}
+                        size="icon"
+                        className="size-7"
+                    >
+                        <span className="sr-only">{t('start')}</span>
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{t('start')}</p>
+                </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button
+                        onClick={(e) => handleAction('stop', e)}
+                        disabled={isLoading || !hasRunning}
+                        isLoading={isLoading}
+                        variant="outline"
+                        icon={Square}
+                        size="icon"
+                        className="size-7"
+                    >
+                        <span className="sr-only">{t('stop')}</span>
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{t('stop')}</p>
+                </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button
+                        onClick={(e) => handleAction('restart', e)}
+                        disabled={isLoading || !hasRunning}
+                        isLoading={isLoading}
+                        variant="outline"
+                        icon={RotateCw}
+                        size="icon"
+                        className="size-7"
+                    >
+                        <span className="sr-only">{t('restart')}</span>
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{t('restart')}</p>
+                </TooltipContent>
+            </Tooltip>
             <Separator orientation="vertical" className="mx-1 !h-5" />
-            <Button
-                onClick={handleRemove}
-                disabled={isLoading}
-                isLoading={isLoading}
-                variant="destructiveOutline"
-                icon={Trash2}
-                size="icon"
-                className="size-7"
-            >
-                <span className="sr-only">Remove</span>
-            </Button>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button
+                        onClick={handleRemove}
+                        disabled={isLoading}
+                        isLoading={isLoading}
+                        variant="destructiveOutline"
+                        icon={Trash2}
+                        size="icon"
+                        className="size-7"
+                    >
+                        <span className="sr-only">{t('remove')}</span>
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{t('remove')}</p>
+                </TooltipContent>
+            </Tooltip>
         </div>
     );
 }

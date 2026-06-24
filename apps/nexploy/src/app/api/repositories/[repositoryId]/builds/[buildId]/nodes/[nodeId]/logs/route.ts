@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { getBuildNodeLogs } from '@/services/repository.service';
 import { buildNodeParamSchema } from '@workspace/schemas-zod/api/params.schema';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const GET = route
     .use(authRouteServer)
@@ -13,7 +14,8 @@ export const GET = route
         const logs = await getBuildNodeLogs(repositoryId, buildId, nodeId);
 
         if (!logs) {
-            return NextResponse.json({ error: 'Build not found' }, { status: 404 });
+            const t = await getErrorTranslator();
+            return NextResponse.json({ error: t('api.buildNotFound') }, { status: 404 });
         }
 
         return NextResponse.json(logs);

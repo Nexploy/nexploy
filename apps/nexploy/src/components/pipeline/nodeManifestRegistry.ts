@@ -33,6 +33,12 @@ export function getConfigSchema(type: string) {
     return getManifest(type)?.configSchema ?? z.object({});
 }
 
+export function getConfigDefaults(type: string): Record<string, unknown> {
+    const schema = getManifest(type)?.configSchema;
+    if (!schema || !(schema instanceof z.ZodObject)) return {};
+    return z.object(schema.shape).partial().safeParse({}).data ?? {};
+}
+
 export function getConfigPanel(type: string) {
     return getManifest(type)?.configPanel;
 }

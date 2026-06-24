@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { getRepositorieById } from '@/services/repository.service';
 import { repositoryIdParamSchema } from '@workspace/schemas-zod/api/params.schema';
+import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const GET = route
     .use(authRouteServer)
@@ -13,11 +14,13 @@ export const GET = route
             const repository = await getRepositorieById(repositoryId);
 
             if (!repository) {
-                return NextResponse.json({ error: 'Repository not found' }, { status: 404 });
+                const t = await getErrorTranslator();
+                return NextResponse.json({ error: t('api.repositoryNotFound') }, { status: 404 });
             }
 
             return NextResponse.json(repository);
         } catch {
-            return NextResponse.json({ error: 'Failed to fetch repository' }, { status: 500 });
+            const t = await getErrorTranslator();
+            return NextResponse.json({ error: t('api.repositoryFetchFailed') }, { status: 500 });
         }
     });

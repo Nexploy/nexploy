@@ -7,7 +7,7 @@ import { Card, CardContent } from '@workspace/ui/components/card';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
-import { useNetworksStore } from '../../../stores/docker/useNetworksStore';
+import { useNetworksStore } from '@/stores/docker/useNetworksStore.ts';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 
 export function ServiceNetworks() {
