@@ -1,5 +1,5 @@
 import { GitProviderType } from 'generated/client';
-import { prisma } from '../../prisma/prisma';
+import { prisma } from '../../../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
@@ -20,6 +20,7 @@ export interface GitProviderCredentials {
     clientSecret: string;
     privateKey?: string;
     appId?: string;
+    appName?: string;
     baseUrl?: string;
 }
 
@@ -95,6 +96,7 @@ export async function getGitProviderCredentials(
             clientSecret: decrypt(record.clientSecret),
             privateKey: record.privateKey ? decrypt(record.privateKey) : undefined,
             appId: record.appId ?? undefined,
+            appName: record.appName ?? undefined,
             baseUrl: record.baseUrl ?? undefined,
         };
     } catch (error: unknown) {
@@ -116,6 +118,7 @@ async function getGitProviderCredentialsById(id: string): Promise<GitProviderCre
         clientSecret: decrypt(record.clientSecret),
         privateKey: record.privateKey ? decrypt(record.privateKey) : undefined,
         appId: record.appId ?? undefined,
+        appName: record.appName ?? undefined,
         baseUrl: record.baseUrl ?? undefined,
     };
 }
@@ -171,6 +174,28 @@ export async function saveGitLabProvider(
         });
     } catch (error: unknown) {
         throw new Error(t('oauthProvider.saveGitlabFailed'));
+    }
+}
+
+export async function saveGiteaProvider(
+    displayName: string,
+    clientId: string,
+    clientSecret: string,
+    baseUrl: string,
+): Promise<void> {
+    const t = await getErrorTranslator();
+    try {
+        await prisma.gitProvider.create({
+            data: {
+                provider: 'GITEA',
+                displayName,
+                clientId: encrypt(clientId),
+                clientSecret: encrypt(clientSecret),
+                baseUrl,
+            },
+        });
+    } catch (error: unknown) {
+        throw new Error(t('oauthProvider.saveGiteaFailed'));
     }
 }
 

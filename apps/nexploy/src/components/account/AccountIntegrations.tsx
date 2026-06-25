@@ -1,8 +1,8 @@
 import { getTranslations } from 'next-intl/server';
 import { IntegrationCard } from '@/components/git/IntegrationCard';
 import { PROVIDER_ICONS } from '@/components/git/providerIcons';
-import { getAllGitProviders } from '@/services/oauthProvider.service';
-import { listGitAccounts } from '@/services/git/git.service';
+import { getAllGitProviders } from '@/services/git/gitProviders.service';
+import { listGitAccounts } from '@/services/git/gitAccounts.service';
 import { getUserSession } from '@/services/auth/auth.service';
 
 export async function AcountIntegrations() {

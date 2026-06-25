@@ -1,6 +1,6 @@
 export interface GitAccountSummary {
     id: string;
-    provider: 'GITHUB' | 'GITLAB';
+    provider: 'GITHUB' | 'GITLAB' | 'GITEA';
     providerAccountId: string;
     providerUsername: string | null;
     gitProviderId: string;

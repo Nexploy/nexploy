@@ -1,4 +1,4 @@
-import { getBranches } from '@/services/git/git.service';
+import { getBranches } from '@/services/git/gitAccounts.service';
 import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { Session } from '@/lib/auth/auth';

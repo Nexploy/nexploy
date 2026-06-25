@@ -11,6 +11,10 @@
         "title": "GitLab",
         "description": "Connectez votre compte GitLab pour déployer des dépôts"
     },
+    "gitea": {
+        "title": "Gitea",
+        "description": "Connectez votre instance Gitea ou Forgejo pour déployer des dépôts"
+    },
     "oauth": {
         "title": "Fournisseurs Git",
         "description": "Configurez les intégrations Git pour que les utilisateurs puissent connecter leurs dépôts",
@@ -35,6 +39,7 @@
         "connectedSuccess": "Fournisseur Git connecté avec succès.",
         "addGithub": "Ajouter GitHub",
         "addGitlab": "Ajouter GitLab",
+        "addGitea": "Ajouter Gitea",
         "instanceCount": "{count, plural, =0 {Aucune instance} one {# instance} other {# instances}}",
         "guide": {
             "github": {
@@ -56,6 +61,14 @@
                 "customUrlLabel": "URL de l'instance GitLab",
                 "customUrlPlaceholder": "https://gitlab.monentreprise.com",
                 "createApp": "Créer la GitLab App"
+            },
+            "gitea": {
+                "step1": "Dans Gitea, allez dans Paramètres → Applications → Gérer les applications OAuth2 → Créer une application OAuth2",
+                "step2": "Définissez l'URI de redirection sur : {url}/api/git/oauth/callback",
+                "step3": "Copiez le Client ID et le Client Secret",
+                "baseUrlLabel": "URL de l'instance Gitea",
+                "baseUrlPlaceholder": "https://gitea.monentreprise.com",
+                "createApp": "Créer l'application Gitea"
             }
         }
     },

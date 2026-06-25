@@ -1,4 +1,4 @@
-import { getRepositories } from '@/services/git/git.service';
+import { getRepositories } from '@/services/git/gitAccounts.service';
 import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { getRepositoriesSchema } from '@workspace/schemas-zod/git/git.schema';

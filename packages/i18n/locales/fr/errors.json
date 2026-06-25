@@ -90,6 +90,7 @@
         "getCredentialsFailed": "Échec de la récupération des identifiants du fournisseur Git",
         "saveGithubAppFailed": "Échec de l'enregistrement de l'application GitHub",
         "saveGitlabFailed": "Échec de l'enregistrement du fournisseur GitLab",
+        "saveGiteaFailed": "Échec de l'enregistrement du fournisseur Gitea",
         "deleteProviderFailed": "Échec de la suppression du fournisseur Git"
     },
     "registry": {
@@ -161,7 +162,9 @@
         "refreshTokenFailedStatus": "Échec du rafraîchissement du jeton. Statut {status}. Message : {message}",
         "noRefreshTokenGithub": "Aucun jeton de rafraîchissement disponible pour GitHub",
         "githubNotConfigured": "Fournisseur GitHub non configuré",
-        "githubTokenRefreshFailed": "Échec du rafraîchissement du jeton GitHub : {error}"
+        "githubTokenRefreshFailed": "Échec du rafraîchissement du jeton GitHub : {error}",
+        "noRefreshToken": "Aucun jeton de rafraîchissement disponible pour {provider}",
+        "providerNotConfigured": "Fournisseur {provider} non configuré"
     },
     "git": {
         "invalidGithubUrl": "URL de dépôt GitHub invalide : {url}",
@@ -176,7 +179,9 @@
         "updateTokenFailed": "Échec de la mise à jour du jeton du fournisseur Git",
         "listAccountsFailed": "Échec de la liste des comptes Git",
         "gitAccountNotFound": "Compte Git introuvable",
-        "disconnectFailed": "Échec de la déconnexion du compte Git"
+        "disconnectFailed": "Échec de la déconnexion du compte Git",
+        "fetchReposFailed": "Échec de la récupération des dépôts",
+        "fetchBranchesFailed": "Échec de la récupération des branches"
     },
     "oauth": {
         "invalidState": "État OAuth invalide",

@@ -11,7 +11,7 @@ export interface BuildConfig {
     repositoryName: string;
     gitAccountId?: string;
     repositoryId: string;
-    gitProvider: 'GITHUB' | 'GITLAB';
+    gitProvider: 'GITHUB' | 'GITLAB' | 'GITEA';
     gitUrl: string;
     gitBranch?: string;
     buildId: string;

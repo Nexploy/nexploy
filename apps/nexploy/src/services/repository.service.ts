@@ -6,7 +6,7 @@ import { decrypt, encrypt } from '@/lib/encryption';
 import { Prisma } from 'generated/client';
 import { RepositoryPayload } from '@/types/repository.type';
 import { teardownRepositoryWebhook } from '@/services/webhook/repoWebhook.service';
-import { verifyRepoAccessFromAccount } from '@/services/git/git.service';
+import { verifyRepoAccessFromAccount } from '@/services/git/gitAccounts.service';
 import { DeleteRepositoryInput } from '@workspace/schemas-zod/repository/settings/deleteRepository.schema';
 import { getFirstStage } from '@/services/repository/deploymentStage.service';
 import { getDefaultEnvironment } from '@/services/environment/environment.service';

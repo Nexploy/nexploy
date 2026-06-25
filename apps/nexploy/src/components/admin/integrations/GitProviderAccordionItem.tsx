@@ -8,10 +8,10 @@ import {
 } from '@workspace/ui/components/accordion';
 import { getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
-import { GitProviderInfo } from '@/services/oauthProvider.service';
+import { GitProviderInfo } from '@/services/git/gitProviders.service';
 
 type GitProviderAccordionItemProps = {
-    value: 'github' | 'gitlab';
+    value: 'github' | 'gitlab' | 'gitea';
     icon: ReactNode;
     titleKey: string;
     instances: GitProviderInfo[];

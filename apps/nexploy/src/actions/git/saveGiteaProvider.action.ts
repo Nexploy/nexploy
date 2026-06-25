@@ -1,18 +1,18 @@
 'use server';
 
-import { deleteGitProviderSchema } from '@workspace/schemas-zod/git/git.schema';
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
-import { deleteGitProvider } from '@/services/git/gitProviders.service';
+import { saveGiteaProvider } from '@/services/git/gitProviders.service';
 import { revalidatePath } from 'next/cache';
+import { giteaSetupSchema } from '@workspace/schemas-zod/git/giteaSetup.schema';
 import { setToastServer } from '@/lib/toastServer.ts';
 
-export const deleteGitProviderAction = authActionServer
-    .use(requirePermission('gitProvider', 'delete'))
-    .inputSchema(deleteGitProviderSchema)
+export const saveGiteaProviderAction = authActionServer
+    .use(requirePermission('gitProvider', 'create'))
+    .inputSchema(giteaSetupSchema)
     .action(async ({ parsedInput }) => {
         try {
-            const { id } = parsedInput;
-            await deleteGitProvider(id);
+            const { displayName, clientId, clientSecret, baseUrl } = parsedInput;
+            await saveGiteaProvider(displayName, clientId, clientSecret, baseUrl);
             revalidatePath('/admin/integrations');
         } catch (err: unknown) {
             if (err instanceof Error) {

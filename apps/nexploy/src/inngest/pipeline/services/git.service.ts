@@ -5,8 +5,8 @@ import { join } from 'path';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { BuildConfig } from '@workspace/typescript-interface/repository/build';
 import { GitProviderToken } from '@workspace/typescript-interface/git/git';
-import { getValidToken } from '@/services/api/gitProvider.service';
-import { getGitProviderToken } from '@/services/git/git.service';
+import { getGitProviderToken, getValidToken } from '@/services/git/core/token.service';
+import { getGitAdapter } from '@/services/git/core/registry';
 import { ProgressCallback } from '@workspace/typescript-interface/pipeline/pipeline';
 
 const ALLOWED_GIT_PROTOCOLS = ['http:', 'https:'];
@@ -161,7 +161,7 @@ class GitService {
     }
 
     private gitCredentialUsername(provider: BuildConfig['gitProvider']): string {
-        return provider === 'GITHUB' ? 'x-access-token' : 'oauth2';
+        return getGitAdapter(provider).cloneCredentialUsername;
     }
 
     private buildAuthedUrl(

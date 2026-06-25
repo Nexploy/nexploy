@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { saveGitHubApp } from '@/services/oauthProvider.service';
+import { saveGitHubApp } from '@/services/git/gitProviders.service';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { setToastServer } from '@/lib/toastServer';
 import { getBaseUrl } from '@/lib/getBaseUrl';
-import { githubExchangeManifestCode } from '@/lib/api/github.api';
+import { githubExchangeManifestCode } from '@/services/git/providers/github/github.client';
 import { githubSetupCallbackQuerySchema } from '@workspace/schemas-zod/git/githubSetup.schema';
 
 export const GET = route

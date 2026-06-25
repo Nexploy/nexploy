@@ -37,9 +37,7 @@ import { getHostname } from '@/utils/url';
 import Github from '@thesvg/react/github';
 import Gitlab from '@thesvg/react/gitlab';
 import { STATUS_PIPELINE } from '@/components/shared/buildStatusMapping';
-
-type BuildStatus = 'QUEUED' | 'BUILDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
-type GitProviderType = 'GITHUB' | 'GITLAB';
+import { BuildStatus, GitProviderType } from 'generated/client';
 
 type Repository = {
     id: string;

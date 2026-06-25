@@ -1,4 +1,4 @@
-import { getAllGitProviders } from '@/services/oauthProvider.service';
+import { getAllGitProviders } from '@/services/git/gitProviders.service';
 import { GitBranch } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { Accordion } from '@workspace/ui/components/accordion';
@@ -20,7 +20,7 @@ export async function GitProvidersSection() {
             <Accordion
                 type="multiple"
                 className="flex flex-col gap-3"
-                defaultValue={['github', 'gitlab']}
+                defaultValue={['github', 'gitlab', 'gitea']}
             >
                 <GitProviderAccordionItem
                     value="github"
@@ -33,6 +33,12 @@ export async function GitProvidersSection() {
                     icon={<PROVIDER_ICONS.GITLAB className="size-5" />}
                     titleKey="gitlab.title"
                     instances={providers.filter((p) => p.provider === 'GITLAB')}
+                />
+                <GitProviderAccordionItem
+                    value="gitea"
+                    icon={<PROVIDER_ICONS.GITEA className="size-5" />}
+                    titleKey="gitea.title"
+                    instances={providers.filter((p) => p.provider === 'GITEA')}
                 />
             </Accordion>
         </section>

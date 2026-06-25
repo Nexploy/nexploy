@@ -4,13 +4,13 @@ import { prisma } from '@/../prisma/prisma';
 import { fail, guard, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 import { decrypt } from '@/lib/encryption';
-import { getValidToken } from '@/services/api/gitProvider.service';
+import { getValidToken } from '@/services/git/core/token.service';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { savePipelineConfig } from '@/services/pipeline.service';
 import { getFirstStage } from '@/services/repository/deploymentStage.service';
-import { extractGitHubRepo, extractGitLabRepo } from '@/services/git/git.service';
-import { kyGithubApi } from '@/lib/api/kyGithub';
-import { kyGitlab } from '@/lib/api/kyGitlab';
+import { kyGithubApi } from '@/services/git/providers/github/github.client';
+import { kyGitlab } from '@/services/git/providers/gitlab/gitlab.client';
+import { getGitAdapter } from '@/services/git/core/registry';
 import type { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { getCompactCatalog, PIPELINE_NODE_CATALOG } from '@/lib/ai/pipelineNodeCatalog';
 import {
@@ -201,12 +201,12 @@ export const pipelineGroup: ToolGroup = {
                     let files: Record<string, string> = {};
 
                     if (repo.gitProvider === 'GITHUB') {
-                        const { owner, repo: repoName } = await extractGitHubRepo(repo.repositoryUrl);
+                        const { owner, repo: repoName } = getGitAdapter('GITHUB').parseRepoUrl(repo.repositoryUrl);
                         ({ rootFiles, files } = await tokenGitStorage.run(token, () =>
                             fetchGithubFiles(owner, repoName, ref),
                         ));
                     } else if (repo.gitProvider === 'GITLAB') {
-                        const { baseUrl } = await extractGitLabRepo(repo.repositoryUrl);
+                        const { baseUrl } = getGitAdapter('GITLAB').parseRepoUrl(repo.repositoryUrl);
                         const url = new URL(repo.repositoryUrl);
                         const pathWithNamespace = url.pathname
                             .replace(/^\//, '')

@@ -42,4 +42,5 @@ model GitAccount {
 enum GitProviderType {
   GITHUB
   GITLAB
+  GITEA
 }

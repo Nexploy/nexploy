@@ -5,21 +5,17 @@ import { getGitAdapter } from '@/services/git/core/registry';
 
 export async function POST(request: Request) {
     try {
-        const event = request.headers.get('x-github-event');
+        const event = request.headers.get('x-gitea-event');
 
-        if (event === 'ping') {
-            return NextResponse.json({ message: 'pong' });
-        }
-
-        if (event !== 'push') {
+        if (event && event !== 'push') {
             return NextResponse.json({ message: 'Event ignored', event });
         }
 
         const rawBody = await request.text();
-        const body = JSON.parse(rawBody);
+        const payload = JSON.parse(rawBody);
 
-        const adapter = getGitAdapter('GITHUB');
-        const parsed = adapter.parseWebhookPayload(body);
+        const adapter = getGitAdapter('GITEA');
+        const parsed = adapter.parseWebhookPayload(payload);
 
         if (!parsed) {
             return NextResponse.json({ message: 'Not a branch push, ignored' });

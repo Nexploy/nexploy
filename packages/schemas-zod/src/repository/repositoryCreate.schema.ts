@@ -22,7 +22,7 @@ export const repositoryCreateFormSchema = z.object({
         },
         { error: 'Repository is required' },
     ),
-    gitProvider: z.enum(['GITHUB', 'GITLAB']),
+    gitProvider: z.enum(['GITHUB', 'GITLAB', 'GITEA']),
     gitAccountId: z.string({ error: 'Git account is required' }).min(1, 'Git account is required'),
 });
 

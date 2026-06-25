@@ -1,19 +1,9 @@
 import crypto from 'crypto';
 import { prisma } from '../../../prisma/prisma';
-import { tokenGitStorage } from '@/lib/storage/token-git-storage';
-import { getGitProviderToken } from '@/services/git/git.service';
-import { getValidToken } from '@/services/api/gitProvider.service';
-import { githubCreateWebhook, githubDeleteWebhook } from '@/lib/api/github.api';
-import { gitlabCreateWebhook, gitlabDeleteWebhook } from '@/lib/api/gitlab.api';
+import { getGitProviderToken, getValidToken } from '@/services/git/core/token.service';
+import { getGitAdapter } from '@/services/git/core/registry';
 import { encrypt } from '@/lib/encryption';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
-
-async function getWebhookUrl(baseUrl: string, provider: string): Promise<string> {
-    const t = await getErrorTranslator();
-    if (provider === 'github') return `${baseUrl}/api/webhooks/github`;
-    if (provider === 'gitlab') return `${baseUrl}/api/webhooks/gitlab`;
-    throw new Error(t('webhook.unsupportedProvider', { provider }));
-}
 
 export type WebhookSetupResult = { configured: true } | { configured: false; error: string };
 
@@ -46,7 +36,8 @@ export async function setupRepositoryWebhook(
         return { configured: true };
     }
 
-    const webhookUrl = await getWebhookUrl(baseUrl, repo.gitProvider);
+    const adapter = getGitAdapter(repo.gitProvider);
+    const webhookUrl = `${baseUrl}${adapter.webhookPath}`;
     const secret = crypto.randomUUID();
 
     try {
@@ -61,24 +52,12 @@ export async function setupRepositoryWebhook(
             repo.gitAccountId ?? undefined,
         );
 
-        let webhookId: string | undefined;
-
-        await tokenGitStorage.run(token, async () => {
-            if (repo.gitProvider === 'GITHUB') {
-                const [owner, repoName] = repo.name.split('/');
-                if (!owner || !repoName) throw new Error(t('webhook.invalidRepositoryName', { name: repo.name }));
-                const result = await githubCreateWebhook(owner, repoName, webhookUrl, secret);
-                webhookId = `${result.id}`;
-            } else if (repo.gitProvider === 'GITLAB') {
-                const gitlabBase = repo.gitAccount?.gitProvider?.baseUrl as string;
-                const result = await gitlabCreateWebhook(
-                    gitlabBase,
-                    repo.gitId,
-                    webhookUrl,
-                    secret,
-                );
-                webhookId = `${result.id}`;
-            }
+        const webhookId = await adapter.createWebhook({
+            token,
+            baseUrl: repo.gitAccount?.gitProvider?.baseUrl ?? '',
+            repo: { gitId: repo.gitId, fullName: repo.name },
+            webhookUrl,
+            secret,
         });
 
         await prisma.repository.update({
@@ -134,17 +113,11 @@ export async function teardownRepositoryWebhook(
                     repo.gitAccountId ?? undefined,
                 );
 
-                await tokenGitStorage.run(token, async () => {
-                    if (repo.gitProvider === 'GITHUB') {
-                        const [owner, repoName] = repo.name.split('/');
-                        if (!owner || !repoName)
-                            throw new Error(t('webhook.invalidRepositoryName', { name: repo.name }));
-                        await githubDeleteWebhook(owner, repoName, repo.webhookId!);
-                    } else if (repo.gitProvider === 'GITLAB') {
-                        const gitlabBase = repo.gitAccount?.gitProvider?.baseUrl;
-                        if (!gitlabBase) throw new Error(t('webhook.gitlabBaseNotFound'));
-                        await gitlabDeleteWebhook(gitlabBase, repo.gitId, repo.webhookId!);
-                    }
+                await getGitAdapter(repo.gitProvider).deleteWebhook({
+                    token,
+                    baseUrl: repo.gitAccount?.gitProvider?.baseUrl ?? '',
+                    repo: { gitId: repo.gitId, fullName: repo.name },
+                    webhookId: repo.webhookId,
                 });
             } catch {}
         }

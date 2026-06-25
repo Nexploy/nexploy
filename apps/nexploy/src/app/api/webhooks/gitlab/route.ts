@@ -1,19 +1,15 @@
 import { NextResponse } from 'next/server';
-import { parseGitLabWebhook } from '@/services/webhook/gitlab.webhook.service';
 import { startBuildRepository } from '@/services/repository/build.service';
 import { findRepositoryByWebhook } from '@/services/webhook/webhook.service';
-import { timingSafeEqual } from '@/lib/api/crypto-utils';
+import { getGitAdapter } from '@/services/git/core/registry';
 
 export async function POST(request: Request) {
     try {
         const rawBody = await request.text();
         const payload = JSON.parse(rawBody);
 
-        if (payload.object_kind !== 'push') {
-            return NextResponse.json({ message: 'Event ignored', event: payload.object_kind });
-        }
-
-        const parsed = parseGitLabWebhook(payload);
+        const adapter = getGitAdapter('GITLAB');
+        const parsed = adapter.parseWebhookPayload(payload);
 
         if (!parsed) {
             return NextResponse.json({ message: 'Not a branch push, ignored' });
@@ -25,12 +21,14 @@ export async function POST(request: Request) {
             return NextResponse.json({ message: 'Repository not found' }, { status: 404 });
         }
 
-        const token = request.headers.get('x-gitlab-token');
-        if (!token || !repo.webhookSecret) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        if (!timingSafeEqual(token, repo.webhookSecret)) {
+        if (
+            !repo.webhookSecret ||
+            !adapter.verifyWebhookSignature({
+                headers: request.headers,
+                rawBody,
+                secret: repo.webhookSecret,
+            })
+        ) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 

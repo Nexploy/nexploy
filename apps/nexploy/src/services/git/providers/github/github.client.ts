@@ -1,4 +1,5 @@
-import { kyGithubApi, KyGithubOptions, kyGithubPublic } from '@/lib/api/kyGithub';
+import ky, { Options } from 'ky';
+import { getTokenGitStorage } from '@/lib/storage/token-git-storage';
 import { GithubRepo } from '@workspace/typescript-interface/git/repository/github.repository';
 import { GithubBranch } from '@workspace/typescript-interface/git/branch/github.branch';
 import {
@@ -14,6 +15,32 @@ export type {
     GitHubUserResponse,
     GitHubManifestResponse,
 };
+
+export interface KyGithubOptions extends Options {
+    withAuth?: boolean;
+    token?: string;
+}
+
+export const kyGithubApi = ky.create({
+    prefixUrl: 'https://api.github.com',
+    hooks: {
+        beforeRequest: [
+            (request, options) => {
+                const opts = options as KyGithubOptions;
+                if (opts.withAuth === false) return;
+                const accessToken = opts.token ?? getTokenGitStorage().accessToken;
+                request.headers.set('Authorization', `Bearer ${accessToken}`);
+            },
+        ],
+    },
+});
+
+export const kyGithubPublic = ky.create({
+    prefixUrl: 'https://github.com',
+    headers: {
+        Accept: 'application/json',
+    },
+});
 
 export async function githubGetRepository(owner: string, repo: string): Promise<GithubRepo> {
     return kyGithubApi
@@ -211,7 +238,7 @@ export async function githubUpdateCommitStatus(
         if (status === 403) {
             throw new Error(
                 'GitHub returned 403: the GitHub App is missing the "Commit statuses: Read & write" permission. ' +
-                'Go to your GitHub App settings → Permissions & events → Commit statuses → Read & write, then reinstall the app.',
+                    'Go to your GitHub App settings → Permissions & events → Commit statuses → Read & write, then reinstall the app.',
             );
         }
         throw error;

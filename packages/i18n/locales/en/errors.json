@@ -90,6 +90,7 @@
         "getCredentialsFailed": "Failed to get git provider credentials",
         "saveGithubAppFailed": "Failed to save GitHub App",
         "saveGitlabFailed": "Failed to save GitLab provider",
+        "saveGiteaFailed": "Failed to save Gitea provider",
         "deleteProviderFailed": "Failed to delete git provider"
     },
     "registry": {
@@ -161,7 +162,9 @@
         "refreshTokenFailedStatus": "Failed to refresh token. Status {status}. Message: {message}",
         "noRefreshTokenGithub": "No refresh token available for GitHub",
         "githubNotConfigured": "GitHub provider not configured",
-        "githubTokenRefreshFailed": "GitHub token refresh failed: {error}"
+        "githubTokenRefreshFailed": "GitHub token refresh failed: {error}",
+        "noRefreshToken": "No refresh token available for {provider}",
+        "providerNotConfigured": "{provider} provider not configured"
     },
     "git": {
         "invalidGithubUrl": "Invalid GitHub repository URL: {url}",
@@ -176,7 +179,9 @@
         "updateTokenFailed": "Failed to update git provider token",
         "listAccountsFailed": "Failed to list git accounts",
         "gitAccountNotFound": "Git account not found",
-        "disconnectFailed": "Failed to disconnect git account"
+        "disconnectFailed": "Failed to disconnect git account",
+        "fetchReposFailed": "Failed to fetch repositories",
+        "fetchBranchesFailed": "Failed to fetch branches"
     },
     "oauth": {
         "invalidState": "Invalid OAuth state",

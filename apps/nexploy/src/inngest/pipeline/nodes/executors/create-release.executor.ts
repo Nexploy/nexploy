@@ -2,14 +2,8 @@ import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
 import { createReleaseConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
-import { githubCreateRelease } from '@/lib/api/github.api';
-import { gitlabCreateRelease } from '@/lib/api/gitlab.api';
-import {
-    extractGitHubRepo,
-    extractGitLabRepo,
-    getGitProviderToken,
-} from '@/services/git/git.service';
-import { getValidToken } from '@/services/api/gitProvider.service';
+import { getGitAdapter } from '@/services/git/core/registry';
+import { getGitProviderToken, getValidToken } from '@/services/git/core/token.service';
 import { z } from 'zod';
 
 export class CreateReleaseExecutor implements INodeExecutor {
@@ -57,34 +51,21 @@ export class CreateReleaseExecutor implements INodeExecutor {
 
         if (abortSignal.aborted) throw new Error('Build cancelled');
 
-        let releaseId: string;
-        let releaseUrl: string;
+        const adapter = getGitAdapter(provider);
+        const { baseUrl, owner, repo } = adapter.parseRepoUrl(buildConfig.gitUrl);
 
-        if (provider === 'GITHUB') {
-            const { owner, repo } = await extractGitHubRepo(buildConfig.gitUrl);
-            const result = await githubCreateRelease(token, owner, repo, {
-                tagName,
-                targetBranch,
-                name: releaseTitle,
-                body: releaseNotes,
-                draft,
-                prerelease,
-            });
-            releaseId = `${result.id}`;
-            releaseUrl = result.html_url;
-        } else if (provider === 'GITLAB') {
-            const { baseUrl, owner, repo } = await extractGitLabRepo(buildConfig.gitUrl);
-            const result = await gitlabCreateRelease(token, baseUrl, owner, repo, {
-                tagName,
-                ref: targetBranch,
-                name: releaseTitle,
-                description: releaseNotes,
-            });
-            releaseId = result.tag_name;
-            releaseUrl = result._links.self;
-        } else {
-            throw new Error(`Unsupported provider: ${provider}`);
-        }
+        const { releaseId, releaseUrl } = await adapter.createRelease({
+            token,
+            baseUrl,
+            owner,
+            repo,
+            tagName,
+            targetBranch,
+            title: releaseTitle,
+            notes: releaseNotes,
+            draft,
+            prerelease,
+        });
 
         await logger.info(nodeId, `Release created: ${releaseUrl}`);
 

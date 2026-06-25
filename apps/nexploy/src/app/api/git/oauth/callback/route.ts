@@ -4,11 +4,10 @@ import { prisma } from '@/../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
 import { getBaseUrl } from '@/lib/getBaseUrl';
 import { authRouteServer, route } from '@/lib/api/nextRoute';
-import dayjs from 'dayjs';
 import { Session } from '@/lib/auth/auth';
-import { githubExchangeCodeForToken, githubGetAuthenticatedUser } from '@/lib/api/github.api';
-import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { oauthCallbackQuerySchema } from '@workspace/schemas-zod/git/gitAccount.schema';
+import { getGitAdapter, isSupportedGitProvider } from '@/services/git/core/registry';
+import { GIT_OAUTH_EXCHANGE_FAILED } from '@/services/git/providers/github/github.adapter';
 
 export const GET = route
     .use(authRouteServer)
@@ -45,6 +44,10 @@ export const GET = route
                 return NextResponse.redirect(`${accountUrl}?error=provider_not_found`);
             }
 
+            if (!isSupportedGitProvider(payload.provider)) {
+                return NextResponse.redirect(`${accountUrl}?error=unsupported_provider`);
+            }
+
             const clientId = decrypt(gitProvider.clientId);
             const clientSecret = decrypt(gitProvider.clientSecret);
             const redirectUri = `${origin}/api/git/oauth/callback`;
@@ -56,65 +59,29 @@ export const GET = route
                 let providerAccountId: string;
                 let providerUsername: string | null = null;
 
-                if (payload.provider === 'GITHUB') {
-                    const tokenData = await githubExchangeCodeForToken(
+                try {
+                    const result = await getGitAdapter(payload.provider).exchangeCodeForToken({
                         code,
-                        clientId,
-                        clientSecret,
+                        credentials: {
+                            clientId,
+                            clientSecret,
+                            baseUrl: gitProvider.baseUrl ?? undefined,
+                        },
                         redirectUri,
-                    );
-                    if (tokenData.error) {
+                    });
+                    accessToken = result.accessToken;
+                    refreshToken = result.refreshToken;
+                    expiresAt = result.accessTokenExpiresAt;
+                    providerAccountId = result.providerAccountId;
+                    providerUsername = result.providerUsername;
+                } catch (exchangeError) {
+                    if (
+                        exchangeError instanceof Error &&
+                        exchangeError.message === GIT_OAUTH_EXCHANGE_FAILED
+                    ) {
                         return NextResponse.redirect(`${accountUrl}?error=token_exchange_failed`);
                     }
-
-                    accessToken = tokenData.access_token;
-                    refreshToken = tokenData.refresh_token ?? null;
-                    if (tokenData.expires_in) {
-                        expiresAt = dayjs().add(tokenData.expires_in, 'second').toDate();
-                    }
-
-                    const userData = await tokenGitStorage.run(
-                        { accessToken, refreshToken, accessTokenExpiresAt: expiresAt },
-                        async () => githubGetAuthenticatedUser(),
-                    );
-
-                    providerAccountId = `${userData.id}`;
-                    providerUsername = userData.login;
-                } else if (gitProvider.provider === 'GITLAB') {
-                    const body = new URLSearchParams({
-                        client_id: clientId,
-                        client_secret: clientSecret,
-                        code,
-                        grant_type: 'authorization_code',
-                        redirect_uri: redirectUri,
-                    });
-
-                    const tokenRes = await fetch(`${gitProvider.baseUrl}/oauth/token`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body,
-                    });
-
-                    const tokenData = await tokenRes.json();
-                    if (tokenData.error) {
-                        return NextResponse.redirect(`${accountUrl}?error=token_exchange_failed`);
-                    }
-
-                    accessToken = tokenData.access_token;
-                    refreshToken = tokenData.refresh_token ?? null;
-                    if (tokenData.expires_in) {
-                        expiresAt = dayjs().add(tokenData.expires_in, 'second').toDate();
-                    }
-
-                    const userRes = await fetch(`${gitProvider.baseUrl}/api/v4/user`, {
-                        headers: { Authorization: `Bearer ${accessToken}` },
-                    });
-                    const userData = await userRes.json();
-
-                    providerAccountId = `${userData.id}`;
-                    providerUsername = userData.username;
-                } else {
-                    return NextResponse.redirect(`${accountUrl}?error=unsupported_provider`);
+                    throw exchangeError;
                 }
 
                 await prisma.gitAccount.upsert({
