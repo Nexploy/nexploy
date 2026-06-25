@@ -132,7 +132,7 @@ export function CardExposedPorts() {
                                         <div
                                             key={idx}
                                             className={cn(
-                                                'group bg-muted/60 relative flex h-8 items-center justify-between gap-2 rounded-md px-3 py-2',
+                                                'group bg-muted/60 relative flex h-9 items-center justify-between gap-2 rounded-md px-3 py-2',
                                             )}
                                         >
                                             <code className="flex items-center gap-2 text-sm leading-none">

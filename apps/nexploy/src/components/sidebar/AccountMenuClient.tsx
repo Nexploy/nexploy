@@ -1,11 +1,6 @@
 'use client';
 
-import {
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    useSidebar,
-} from '@workspace/ui/components/sidebar';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar, } from '@workspace/ui/components/sidebar';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -21,18 +16,20 @@ import { SignOutButton } from '@/components/account/SignOutButton';
 import { useTranslations } from 'next-intl';
 import type { Session } from '@/lib/auth/auth';
 import Image from 'next/image';
-import { glass } from '@dicebear/collection';
-import { createAvatar } from '@dicebear/core';
+import { Avatar, Style } from '@dicebear/core';
+import glass from '@dicebear/styles/glass.json' with { type: 'json' };
 
 interface AccountMenuClientProps {
     session: Session | null;
 }
 
+const style = new Style(glass);
+
 export function AccountMenuClient({ session }: AccountMenuClientProps) {
     const { isMobile, state } = useSidebar();
     const tAccount = useTranslations('account');
 
-    const avatar = createAvatar(glass, {
+    const dataUri = new Avatar(style, {
         seed: session?.user.name,
         size: 32,
     }).toDataUri();
@@ -47,7 +44,7 @@ export function AccountMenuClient({ session }: AccountMenuClientProps) {
                         <SidebarMenuButton className={'cursor-pointer'} size="lg">
                             <Image
                                 className={'size-fit rounded-md'}
-                                src={avatar}
+                                src={dataUri}
                                 width={28}
                                 height={28}
                                 alt="Account Image"
