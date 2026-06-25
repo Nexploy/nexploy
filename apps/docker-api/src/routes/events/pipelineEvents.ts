@@ -189,8 +189,12 @@ app.post('/stream/compose', async (c) => {
                 .filter(([, s]) => !!s.build)
                 .map(([name]) => name);
 
-            if (labels && Object.keys(labels).length > 0) {
-                for (const service of Object.values(composeContent.services || {})) {
+            for (const [serviceName, service] of Object.entries(composeContent.services || {})) {
+                if (!service.container_name) {
+                    service.container_name = serviceName;
+                }
+
+                if (labels && Object.keys(labels).length > 0) {
                     const existingLabels =
                         service.labels && !Array.isArray(service.labels)
                             ? (service.labels as Record<string, string>)
@@ -206,6 +210,7 @@ app.post('/stream/compose', async (c) => {
                         service.build.labels = { ...existingBuildLabels, ...labels };
                     }
                 }
+
                 composeModified = true;
             }
 

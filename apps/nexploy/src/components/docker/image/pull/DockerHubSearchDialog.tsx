@@ -134,7 +134,7 @@ export function DockerHubSearchDialog({
                     <DialogDescription>{t('browseImagesDescription')}</DialogDescription>
                 </DialogHeader>
 
-                <div className="flex flex-col gap-2 px-3 sm:flex-row">
+                <div className="flex flex-col gap-2 px-6 sm:flex-row">
                     <div className="relative flex-1">
                         <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
                         <Input
@@ -177,7 +177,7 @@ export function DockerHubSearchDialog({
                 <ScrollAreaWithShadow
                     ref={setViewport}
                     bottomShadow
-                    className="h-[70vh] overflow-hidden px-3"
+                    className="h-[70vh] overflow-hidden px-6"
                 >
                     {isLoading && (
                         <div className="text-muted-foreground flex items-center justify-center gap-2 py-10 text-sm">
@@ -195,7 +195,7 @@ export function DockerHubSearchDialog({
                         </div>
                     )}
 
-                    <div className="grid grid-cols-1 gap-3 pb-3 sm:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-3 pb-6 sm:grid-cols-3">
                         {filteredImages.map((image) => (
                             <button
                                 key={image.name}

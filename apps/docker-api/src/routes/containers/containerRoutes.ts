@@ -10,16 +10,17 @@ import { PortType } from '@workspace/typescript-interface/docker/docker.port';
 import { HttpError } from '@workspace/shared/http-error';
 import {
     containerActionsSchema,
-    containerRemoveSchema,
     containerExecBodySchema,
     containerIdOrNameParamSchema,
     containerLogsQuerySchema,
+    containerRemoveSchema,
     containerRenameBodySchema,
     containerRunEphemeralSchema,
 } from '@workspace/schemas-zod/docker/container/containerAction.schema';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 import { containersStateManager } from '@/managers/list/containersStateManager';
+import { pullImage as pullImageService } from '@/services/imageService';
 
 const NAMED_VOLUME_REGEX = /\/var\/lib\/docker\/volumes\/([^/]+)\/_data/;
 
@@ -172,6 +173,7 @@ app.post(
             image,
             privileged,
             autoRemove,
+            auth,
         } = c.req.valid('json');
 
         const createOptions: ContainerCreateOptions = {
@@ -226,7 +228,7 @@ app.post(
                 return `${vol.hostPath}:${vol.containerPath}:${mode}`;
             });
         }
-        await ensureImage(docker, image);
+        await ensureImage(docker, image, auth);
         const container = await docker.createContainer(createOptions);
 
         try {
@@ -242,10 +244,18 @@ app.post(
 app.post(
     '/recreate',
     route({ json: ContainerRecreateFormSchema }, async (c) => {
-        const { ports, envVars, volumes, networks, containerId } = c.req.valid('json');
+        const { ports, envVars, volumes, networks, containerId, image, pullImage, auth } =
+            c.req.valid('json');
 
         const container = docker.getContainer(containerId);
         const containerInfo = await container.inspect();
+
+        const targetImage = image?.trim() || containerInfo.Config.Image;
+        const imageChanged = targetImage !== containerInfo.Config.Image;
+
+        if (pullImage || imageChanged) {
+            await pullImageService(targetImage, auth);
+        }
 
         if (containerInfo.State.Running) await container.stop();
 
@@ -384,7 +394,7 @@ app.post(
 
         const newContainer = await docker.createContainer({
             name: containerInfo.Name.replace('/', ''),
-            Image: containerInfo.Config.Image,
+            Image: targetImage,
             Hostname: containerInfo.Config.Hostname,
             Env: env,
             Cmd: containerInfo.Config.Cmd,

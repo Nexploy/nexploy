@@ -82,7 +82,7 @@ export function useEnvironmentContainers(environmentId?: string): {
             unsubscribers.forEach((fn) => fn());
             setIsLoading(false);
         };
-    }, [environmentId, globalContainers]);
+    }, [environmentId]);
 
     if (!environmentId) {
         return { containers: globalContainers, isLoading: false };

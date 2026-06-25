@@ -2,17 +2,15 @@
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { HTTPError } from 'ky';
-import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { setToastServer } from '@/lib/toastServer';
 import { kyDocker } from '@/lib/api/kyDocker';
+import { containerChangeImageSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 import { getRegistryWithPassword } from '@/services/registry.service';
 
-export const onContainerCreateAction = authActionServer
+export const onContainerChangeImageAction = authActionServer
     .use(requirePermission('container', 'manage'))
-    .inputSchema(containerCreateFormSchema)
-    .action(async ({ parsedInput }) => {
-        const { registryId, ...createInput } = parsedInput;
-
+    .inputSchema(containerChangeImageSchema)
+    .action(async ({ parsedInput: { containerId, image, registryId, pullImage } }) => {
         let auth: { username: string; password: string; serveraddress: string } | undefined;
 
         if (registryId && registryId !== 'none') {
@@ -28,7 +26,10 @@ export const onContainerCreateAction = authActionServer
 
         try {
             return await kyDocker
-                .post(`container/create`, { json: { ...createInput, auth }, timeout: false })
+                .post('container/recreate', {
+                    json: { containerId, image, pullImage, auth },
+                    timeout: false,
+                })
                 .json<{ id: string }>();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {

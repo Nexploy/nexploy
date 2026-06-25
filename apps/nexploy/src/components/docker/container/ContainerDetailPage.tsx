@@ -4,8 +4,8 @@ import {
     Activity,
     Container as IconContainer,
     FileText,
-    Globe,
     PencilLine,
+    Replace,
     Terminal,
 } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
@@ -21,7 +21,6 @@ import { CardNetworkDetails } from '@/components/docker/container/cards/CardNetw
 import { CardError } from '@/components/docker/container/cards/CardError';
 import { CardInfoContainer } from '@/components/docker/container/cards/CardInfoContainer';
 import { ContainerActionButtons } from '@/components/docker/container/actions/ContainerActionButtons';
-import { Button } from '@workspace/ui/components/button';
 import { ContainerTerminal } from '@/components/docker/container/actions/ContainerTerminal';
 import { ContainerAttach } from '@/components/docker/container/actions/ContainerAttach';
 import { ButtonGroup } from '@workspace/ui/components/button-group';
@@ -33,16 +32,14 @@ import { CardExecuteId } from '@/components/docker/container/cards/CardExecuteId
 import { ApplyChangesButtonForm } from '@/components/docker/container/forms/ApplyChangesButtonForm';
 import { CardLabels } from '@/components/docker/container/cards/label/CardLabels';
 import { useTranslations } from 'next-intl';
-import { z } from 'zod';
 import { ToolbarButton } from '@/components/shared/ToolbarButton';
-import { useMemo } from 'react';
 import { CardDriverGraph } from '@/components/docker/container/cards/CardDriverGraph';
 import { CardSecurity } from '@/components/docker/container/cards/CardSecurity';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { RenameContainerForm } from '@/components/docker/container/forms/RenameContainerForm';
+import { ChangeImageForm } from '@/components/docker/container/forms/ChangeImageForm';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
 import { NotFoundSSE } from '@/components/shared/NotFoundSSE';
-import Link from 'next/link';
 import { Badge } from '@workspace/ui/components/badge.tsx';
 
 export function ContainerDetailPage() {
@@ -67,18 +64,19 @@ export function ContainerDetailPage() {
         });
     };
 
-    const repositoryId = useMemo(() => {
-        const fromName = container?.name?.replace(/^nexploy-/, '');
-        if (fromName && fromName !== container?.name && z.cuid().safeParse(fromName).success) {
-            return fromName;
-        }
-        const projectLabel = container?.labels?.['com.docker.compose.project'];
-        const fromStack = projectLabel?.replace(/^nexploy-/, '');
-        if (fromStack && fromStack !== projectLabel && z.cuid().safeParse(fromStack).success) {
-            return fromStack;
-        }
-        return null;
-    }, [container?.name, container?.labels]);
+    const handleChangeImage = () => {
+        if (!container) return;
+        openDialog({
+            title: t('changeImageTitle'),
+            description: t('changeImageDescription'),
+            content: (
+                <ChangeImageForm
+                    containerId={container.id}
+                    currentImage={container.image ?? ''}
+                />
+            ),
+        });
+    };
 
     if (notFound) {
         return (
@@ -179,24 +177,12 @@ export function ContainerDetailPage() {
                                                 />
                                             )}
                                         </ContainerAttach>
-                                        {repositoryId && (
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Button variant="outline" asChild>
-                                                        <Link
-                                                            href={`/repositories/${repositoryId}?tab=domain`}
-                                                        >
-                                                            <Globe />
-                                                            <span className="sm:hidden md:block">
-                                                                {t('domains')}
-                                                            </span>
-                                                        </Link>
-                                                    </Button>
-                                                </TooltipTrigger>
-                                                <TooltipContent className="hidden sm:block md:hidden">
-                                                    {t('domains')}
-                                                </TooltipContent>
-                                            </Tooltip>
+                                        {!isSwarmContainer && (
+                                            <ToolbarButton
+                                                icon={Replace}
+                                                label={t('changeImage')}
+                                                onClick={handleChangeImage}
+                                            />
                                         )}
                                     </ButtonGroup>
                                     <ContainerActionButtons />

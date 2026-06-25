@@ -32,6 +32,12 @@ const networkSchema = z.object({
     name: z.string().min(1, 'Network is required'),
 });
 
+const createAuthSchema = z.object({
+    username: z.string(),
+    password: z.string(),
+    serveraddress: z.string().optional(),
+});
+
 export const containerCreateFormSchema = z.object({
     name: z.string().optional(),
     image: z.string().min(1, 'Image is required'),
@@ -44,6 +50,8 @@ export const containerCreateFormSchema = z.object({
     envVars: z.array(envVarSchema).default([]),
     volumes: z.array(volumeMountSchema).default([]),
     labels: z.array(labelsSchema).default([]),
+    registryId: z.string().optional(),
+    auth: createAuthSchema.optional(),
 });
 
 export type ContainerCreateForm = z.infer<typeof containerCreateFormSchema>;

@@ -38,5 +38,34 @@
     "toggleMenu": "Basculer le menu",
     "up": "Actif",
     "down": "Inactif",
-    "forbidden": "Vous n'avez pas la permission d'effectuer cette action."
+    "forbidden": "Vous n'avez pas la permission d'effectuer cette action.",
+    "onboarding": {
+        "welcome": {
+            "title": "Bienvenue sur Nexploy 🎉",
+            "content": "Votre compte administrateur est prêt. Faisons un rapide tour pour bien démarrer en quelques étapes."
+        },
+        "docker": {
+            "title": "Docker",
+            "content": "Voici votre espace Docker — gérez vos conteneurs, images, volumes, réseaux et événements, le tout au même endroit."
+        },
+        "integrations": {
+            "title": "Intégrations",
+            "content": "Commencez ici en ajoutant un fournisseur Git (GitHub, GitLab ou Gitea). C'est la connexion que Nexploy utilise pour accéder à vos dépôts."
+        },
+        "account": {
+            "title": "Liez votre compte",
+            "content": "Une fois un fournisseur ajouté, rendez-vous dans votre compte pour y lier votre compte personnel. Cela autorise Nexploy à cloner et déployer vos dépôts."
+        },
+        "repositories": {
+            "title": "Dépôts",
+            "content": "Tout est prêt ! Créez votre premier dépôt ici et déployez-le sur Docker en quelques clics."
+        },
+        "controls": {
+            "back": "Retour",
+            "close": "Fermer",
+            "last": "Terminer",
+            "next": "Suivant",
+            "skip": "Passer le tour"
+        }
+    }
 }

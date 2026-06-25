@@ -1,9 +1,22 @@
 'use client';
 
-import { Container as IconContainer, Container, Layers, LayoutGrid, Plus, Table2, } from 'lucide-react';
+import {
+    Container as IconContainer,
+    Container,
+    Layers,
+    LayoutGrid,
+    Plus,
+    Table2,
+} from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { Badge } from '@workspace/ui/components/badge';
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, } from '@workspace/ui/components/empty';
+import {
+    Empty,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from '@workspace/ui/components/empty';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { ContainersStack } from '@/components/docker/containers/ContainersStack';
@@ -91,7 +104,7 @@ export default function ContainersPage() {
                 </div>
                 {statusDocker === 'connected' && (
                     <Can resource="container" action="manage">
-                        <div className="mt-5 flex gap-2">
+                        <div className="mt-5 flex gap-3">
                             <Button asChild variant="outline">
                                 <Link href={'/docker/containers/stacks/create'}>
                                     <Layers />

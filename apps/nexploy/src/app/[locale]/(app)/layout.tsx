@@ -9,6 +9,7 @@ import { ReactNode } from 'react';
 import { InsetPanel } from '@/components/layout/InsetPanel';
 import { cn } from '@workspace/ui/lib/utils';
 import { ChatAIPanel } from '@/components/ai/ChatAIPanel.tsx';
+import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 
 export default async function DockerLayout({
     children,
@@ -34,6 +35,7 @@ export default async function DockerLayout({
                         <ChatAIPanel />
                     </main>
                 </div>
+                <OnboardingTour />
             </SidebarProvider>
         </PermissionProvider>
     );

@@ -31,6 +31,9 @@ import { useMemo } from 'react';
 import { DockerHubSearchDialog } from '@/components/docker/image/pull/DockerHubSearchDialog.tsx';
 import { Button } from '@workspace/ui/components/button.tsx';
 import { Docker } from '@thesvg/react';
+import useSWR from 'swr';
+import { fetcherApi } from '@/lib/api/fetcherApi';
+import type { RegistryInfo } from '@/services/registry.service';
 
 export function ContainerBasicConfig() {
     const t = useTranslations('docker.createContainer');
@@ -53,6 +56,11 @@ export function ContainerBasicConfig() {
     }, [images]);
 
     const selectedImage = form.watch('image');
+
+    const { data: registries = [] } = useSWR<RegistryInfo[]>(
+        { url: '/api/registries' },
+        fetcherApi,
+    );
 
     return (
         <Card>
@@ -114,6 +122,42 @@ export function ContainerBasicConfig() {
                         </FormItem>
                     )}
                 />
+
+                {registries.length > 0 && (
+                    <FormField
+                        control={form.control}
+                        name="registryId"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('registryLabel')}</FormLabel>
+                                <Select
+                                    onValueChange={field.onChange}
+                                    value={field.value ?? 'none'}
+                                >
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder={t('registryNone')} />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem value="none">
+                                                {t('registryNone')}
+                                            </SelectItem>
+                                            {registries.map((registry) => (
+                                                <SelectItem key={registry.id} value={registry.id}>
+                                                    {registry.name} ({registry.url})
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                                <FormDescription>{t('registryDescription')}</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                )}
 
                 <FormField
                     control={form.control}

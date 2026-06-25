@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 export function AddRepository() {
     const t = useTranslations('repository');
     return (
-        <Button asChild className={'mt-5'}>
+        <Button asChild className={'mt-5'} data-tour="add-repository">
             <Link href={'/repositories/create'}>
                 <Plus />
                 {t('addRepository')}

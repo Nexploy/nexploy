@@ -1,7 +1,11 @@
 import type Docker from 'dockerode';
 import { logger } from '@/utils/logger';
 
-export async function ensureImage(docker: Docker, image: string): Promise<void> {
+export async function ensureImage(
+    docker: Docker,
+    image: string,
+    auth?: { username: string; password: string; serveraddress?: string },
+): Promise<void> {
     try {
         await docker.getImage(image).inspect();
     } catch {

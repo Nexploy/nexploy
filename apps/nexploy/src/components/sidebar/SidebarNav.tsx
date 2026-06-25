@@ -50,6 +50,7 @@ import { useTranslations } from 'next-intl';
 interface PermissionedSidebarItem extends SidebarItem {
     permission?: NavPermission;
     children?: PermissionedSidebarItem[];
+    tourId?: string;
 }
 
 interface PermissionedSidebarNavGroup extends SidebarNavGroup {
@@ -79,6 +80,7 @@ const groups: PermissionedSidebarNavGroup[] = [
                 actionIcon: <RefreshDocker />,
                 enableCollapsible: false,
                 permission: { resource: 'container', action: 'read' },
+                tourId: 'docker',
                 children: [
                     { titleKey: 'containers', icon: Container, href: '/docker/containers' },
                     { titleKey: 'images', icon: LayoutList, href: '/docker/images' },
@@ -134,6 +136,7 @@ const groups: PermissionedSidebarNavGroup[] = [
                 href: '/admin/integrations',
                 icon: Plug,
                 permission: { resource: 'gitProvider', action: 'create' },
+                tourId: 'integrations',
             },
             {
                 titleKey: 'ai',
@@ -205,7 +208,7 @@ export function SidebarNav() {
                                     return (
                                         <SidebarMenuItem key={item.titleKey}>
                                             <SidebarMenuButton tooltip={title} asChild>
-                                                <Link href={item.href}>
+                                                <Link href={item.href} data-tour={item.tourId}>
                                                     <item.icon />
                                                     <span>{title}</span>
                                                     {item.actionIcon}
@@ -241,7 +244,7 @@ export function SidebarNav() {
                             return (
                                 <SidebarMenuItem key={item.titleKey}>
                                     <SidebarMenuButton tooltip={title} asChild>
-                                        <Link href={item.href}>
+                                        <Link href={item.href} data-tour={item.tourId}>
                                             <item.icon />
                                             <span>{title}</span>
                                         </Link>

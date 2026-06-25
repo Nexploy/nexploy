@@ -24,9 +24,13 @@ import { Button } from '@workspace/ui/components/button';
 import { Alert, AlertDescription } from '@workspace/ui/components/alert';
 import { Shield } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useLocalStorage } from 'usehooks-ts';
+import { ONBOARDING_STORAGE_KEY } from '@/components/onboarding/storage';
+import type { OnboardingStatus } from '@workspace/typescript-interface/onboarding/onboarding';
 
 export function SetupForm() {
     const tAuth = useTranslations('auth');
+    const [, setOnboarding] = useLocalStorage<OnboardingStatus>(ONBOARDING_STORAGE_KEY, null);
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onSetupAction,
@@ -57,7 +61,13 @@ export function SetupForm() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <Form {...form}>
-                        <form onSubmit={handleSubmitWithAction} className="space-y-6">
+                        <form
+                            onSubmit={(event) => {
+                                setOnboarding('pending');
+                                return handleSubmitWithAction(event);
+                            }}
+                            className="space-y-6"
+                        >
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold">
                                     {tAuth('setup.personalInfo')}

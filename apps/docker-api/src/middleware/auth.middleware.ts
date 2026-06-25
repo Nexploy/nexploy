@@ -19,7 +19,7 @@ export async function authMiddleware(c: Context, next: Next) {
         );
     }
 
-    const expected = process.env.NEXPLOY_API_KEY ?? '';
+    const expected = process.env.NEXPLOY_API_KEY as string;
     if (!constantTimeCompare(token, expected)) {
         logger.warn('Invalid API key');
         return c.json({ error: 'Invalid API key.' }, 401);

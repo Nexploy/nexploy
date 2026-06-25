@@ -34,12 +34,30 @@ const networkMappingSchema = z.object({
     currentName: z.string().optional(),
 });
 
+const recreateAuthSchema = z.object({
+    username: z.string(),
+    password: z.string(),
+    serveraddress: z.string().optional(),
+});
+
 export const ContainerRecreateFormSchema = z.object({
     containerId: z.string(),
     ports: z.array(portMappingSchema).default([]),
     envVars: z.array(envVarMappingSchema).default([]),
     volumes: z.array(volumeMappingSchema).default([]),
     networks: z.array(networkMappingSchema).default([]),
+    image: z.string().optional(),
+    pullImage: z.boolean().optional(),
+    auth: recreateAuthSchema.optional(),
 });
 
 export type ContainerRecreateForm = z.infer<typeof ContainerRecreateFormSchema>;
+
+export const containerChangeImageSchema = z.object({
+    containerId: z.string().min(1),
+    image: z.string().min(1, 'Image is required'),
+    registryId: z.string().optional(),
+    pullImage: z.boolean().default(true),
+});
+
+export type ContainerChangeImageForm = z.infer<typeof containerChangeImageSchema>;

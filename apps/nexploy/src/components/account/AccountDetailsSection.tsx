@@ -29,7 +29,7 @@ export async function AccountDetailsSection() {
                 </CardContent>
             </Card>
 
-            <Card id="integrations">
+            <Card id="integrations" data-tour="account-integrations">
                 <CardHeaderWithIcon
                     icon={Plug}
                     title={t('integrations.title')}

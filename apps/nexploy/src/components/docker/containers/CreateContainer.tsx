@@ -34,6 +34,7 @@ export default function CreateContainerPage() {
                     name: '',
                     image: imageFromUrl ?? '',
                     hostname: '',
+                    registryId: 'none',
                 },
             },
             actionProps: {
