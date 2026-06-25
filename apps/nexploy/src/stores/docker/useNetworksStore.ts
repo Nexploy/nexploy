@@ -1,10 +1,10 @@
 import { create } from 'zustand';
 import { Network, NetworkEvent } from '@workspace/typescript-interface/docker/docker.network';
-import { toast } from 'sonner';
 import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
 import { NetworkState } from '@workspace/typescript-interface/stores/docker/networksStore';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { clientT } from '@/lib/i18n/clientTranslations';
+import { notifyDocker } from '@/lib/notifications/notifyDocker';
 import { isBuiltinNetwork } from '@workspace/shared/nexployFilter';
 
 export const useNetworksStore = create<NetworkState>((set, get) => ({
@@ -131,7 +131,11 @@ export const useNetworksStore = create<NetworkState>((set, get) => ({
                     if (!data.network) return;
 
                     get().addNetwork(data.network);
-                    toast.success(clientT('toasts.networkAdded', { name: data.network.name }));
+                    notifyDocker(
+                        'networks',
+                        'success',
+                        clientT('toasts.networkAdded', { name: data.network.name }),
+                    );
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -154,7 +158,11 @@ export const useNetworksStore = create<NetworkState>((set, get) => ({
 
                     get().removeNetwork(data.networkId);
                     const networkName = data.oldState?.name || data.networkId;
-                    toast.success(clientT('toasts.networkRemoved', { name: networkName }));
+                    notifyDocker(
+                        'networks',
+                        'success',
+                        clientT('toasts.networkRemoved', { name: networkName }),
+                    );
                     set({ lastUpdate: data.timestamp });
                 }),
             );

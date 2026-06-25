@@ -37,7 +37,7 @@ export function TwoFactorDisableForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={handleSubmitWithAction} className="space-y-4">
+            <form onSubmit={handleSubmitWithAction} className="mt-1 space-y-4">
                 <FormField
                     control={form.control}
                     name="password"

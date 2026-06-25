@@ -1,10 +1,10 @@
 import { create } from 'zustand';
 import { VolumeEvent } from '@workspace/typescript-interface/docker/docker.volume';
-import { toast } from 'sonner';
 import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
 import { VolumeState } from '@workspace/typescript-interface/stores/docker/volumesStore';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { clientT } from '@/lib/i18n/clientTranslations';
+import { notifyDocker } from '@/lib/notifications/notifyDocker';
 
 export const useVolumesStore = create<VolumeState>((set, get) => ({
     volumes: [],
@@ -101,7 +101,11 @@ export const useVolumesStore = create<VolumeState>((set, get) => ({
                     if (!data.volume) return;
 
                     get().addVolume(data.volume);
-                    toast.success(clientT('toasts.volumeAdded', { name: data.volume.name }));
+                    notifyDocker(
+                        'volumes',
+                        'success',
+                        clientT('toasts.volumeAdded', { name: data.volume.name }),
+                    );
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -123,7 +127,11 @@ export const useVolumesStore = create<VolumeState>((set, get) => ({
                     if (!data.volumeName) return;
 
                     get().removeVolume(data.volumeName);
-                    toast.success(clientT('toasts.volumeRemoved', { name: data.volumeName }));
+                    notifyDocker(
+                        'volumes',
+                        'success',
+                        clientT('toasts.volumeRemoved', { name: data.volumeName }),
+                    );
                     set({ lastUpdate: data.timestamp });
                 }),
             );

@@ -82,8 +82,10 @@
         "imageStatusChanges": "Get notified when images are pulled, built, or removed",
         "volumeAlerts": "Volume Alerts",
         "volumeStatusChanges": "Get notified when volumes are created or deleted",
-        "buildAlerts": "Build Alerts",
-        "buildStatusChanges": "Get notified when builds complete or fail"
+        "networkAlerts": "Network Alerts",
+        "networkStatusChanges": "Get notified when networks are created or deleted",
+        "swarmAlerts": "Swarm Alerts",
+        "swarmStatusChanges": "Get notified about swarm nodes, services, and tasks"
     },
     "language": {
         "title": "Language",

@@ -15,8 +15,7 @@ export const deleteMcpApiKeyAction = authActionServer
                 body: { keyId: parsedInput.keyId },
                 headers: await headers(),
             });
-
-            return { success: true };
+            return;
         } catch (error: unknown) {
             if (error instanceof Error) {
                 await setToastServer({ type: 'error', message: error.message });

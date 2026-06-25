@@ -24,6 +24,10 @@ export function MCPSection({ mcpUrl, keys }: MCPSectionProps) {
     const openAlertDialog = useAlertConfirmationDialogStore((s) => s.openAlertDialog);
 
     const { executeAsync: deleteKey } = useAction(deleteMcpApiKeyAction, {
+        onSuccess: () => {
+            toast.success(t('keyRevokedSuccess'));
+            router.refresh();
+        },
         onError: () => toast.error(t('keyRevokedFailed')),
     });
 
@@ -31,13 +35,7 @@ export function MCPSection({ mcpUrl, keys }: MCPSectionProps) {
         openAlertDialog({
             title: t('revokeKey'),
             description: t('confirmRevoke'),
-            onAction: async () => {
-                const result = await deleteKey({ keyId });
-                if (!result.serverError) {
-                    toast.success(t('keyRevokedSuccess'));
-                    router.refresh();
-                }
-            },
+            onAction: async () => await deleteKey({ keyId }),
         });
     }
 

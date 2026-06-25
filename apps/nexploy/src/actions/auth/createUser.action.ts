@@ -1,7 +1,7 @@
 'use server';
 
 import { actionServer } from '@/lib/api/safe-action';
-import { returnValidationErrors } from 'next-safe-action';
+import { setToastServer } from '@/lib/toastServer';
 import { createUserFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 import { createUser } from '@/services/auth/createUser.service';
 import { revalidatePath } from 'next/cache';
@@ -16,9 +16,7 @@ export const onCreateUserAction = actionServer
             return user;
         } catch (err: any) {
             if (err instanceof Error) {
-                return returnValidationErrors(createUserFormSchema, {
-                    _errors: [err.message],
-                });
+                await setToastServer({ type: 'error', message: err.message });
             }
             throw err;
         }

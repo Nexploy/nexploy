@@ -1,7 +1,7 @@
 'use server';
 
 import { actionServer } from '@/lib/api/safe-action';
-import { returnValidationErrors } from 'next-safe-action';
+import { setToastServer } from '@/lib/toastServer';
 import { setupFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 import { setupAdminAccount } from '@/services/auth/setup.auth.service';
 import { redirect, RedirectType } from 'next/navigation';
@@ -16,9 +16,7 @@ export const onSetupAction = actionServer
         } catch (err: any) {
             if (isRedirectError(err)) throw err;
             if (err instanceof Error) {
-                return returnValidationErrors(setupFormSchema, {
-                    _errors: [err.message],
-                });
+                await setToastServer({ type: 'error', message: err.message });
             }
             throw err;
         }

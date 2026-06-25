@@ -82,8 +82,10 @@
         "imageStatusChanges": "Recevoir une notification quand des images sont téléchargées, construites ou supprimées",
         "volumeAlerts": "Alertes volumes",
         "volumeStatusChanges": "Recevoir une notification quand des volumes sont créés ou supprimés",
-        "buildAlerts": "Alertes builds",
-        "buildStatusChanges": "Recevoir une notification quand les builds se terminent ou échouent"
+        "networkAlerts": "Alertes réseaux",
+        "networkStatusChanges": "Recevoir une notification quand des réseaux sont créés ou supprimés",
+        "swarmAlerts": "Alertes swarm",
+        "swarmStatusChanges": "Recevoir une notification sur les nœuds, services et tâches du swarm"
     },
     "language": {
         "title": "Langue",

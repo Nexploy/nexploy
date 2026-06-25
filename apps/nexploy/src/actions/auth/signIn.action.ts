@@ -1,7 +1,7 @@
 'use server';
 
 import { actionServer } from '@/lib/api/safe-action';
-import { returnValidationErrors } from 'next-safe-action';
+import { setToastServer } from '@/lib/toastServer';
 import { signInUser } from '@/services/auth/auth.service';
 import { signInFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 import { redirect, RedirectType } from 'next/navigation';
@@ -16,9 +16,7 @@ export const onSignInAction = actionServer
         } catch (err: any) {
             if (isRedirectError(err)) throw err;
             if (err instanceof Error) {
-                return returnValidationErrors(signInFormSchema, {
-                    _errors: [err.message],
-                });
+                await setToastServer({ type: 'error', message: err.message });
             }
             throw err;
         }

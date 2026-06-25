@@ -1,48 +1,49 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { DockerToastCategory } from '@workspace/typescript-interface/stores/notificationStore';
 import { NotificationSwitch } from '@/components/account/NotificationSwitch';
 import { useNotificationStore } from '@/stores/useNotificationStore';
 
+const categories: {
+    key: DockerToastCategory;
+    labelKey: string;
+    descriptionKey: string;
+}[] = [
+    {
+        key: 'containers',
+        labelKey: 'alerts.containerAlerts',
+        descriptionKey: 'alerts.containerStatusChanges',
+    },
+    { key: 'images', labelKey: 'alerts.imageAlerts', descriptionKey: 'alerts.imageStatusChanges' },
+    {
+        key: 'volumes',
+        labelKey: 'alerts.volumeAlerts',
+        descriptionKey: 'alerts.volumeStatusChanges',
+    },
+    {
+        key: 'networks',
+        labelKey: 'alerts.networkAlerts',
+        descriptionKey: 'alerts.networkStatusChanges',
+    },
+    { key: 'swarm', labelKey: 'alerts.swarmAlerts', descriptionKey: 'alerts.swarmStatusChanges' },
+];
+
 export function NotificationPreferences() {
     const t = useTranslations('account');
-    const {
-        showContainerToast,
-        setShowContainerToast,
-        showImageToast,
-        setShowImageToast,
-        showVolumeToast,
-        setShowVolumeToast,
-        showBuildToast,
-        setShowBuildToast,
-    } = useNotificationStore();
+    const { categories: enabled, setCategoryEnabled } = useNotificationStore();
 
     return (
         <div className={'space-y-2'}>
-            <NotificationSwitch
-                label={t('alerts.containerAlerts')}
-                description={t('alerts.containerStatusChanges')}
-                checked={showContainerToast}
-                onCheckedChange={setShowContainerToast}
-            />
-            <NotificationSwitch
-                label={t('alerts.imageAlerts')}
-                description={t('alerts.imageStatusChanges')}
-                checked={showImageToast}
-                onCheckedChange={setShowImageToast}
-            />
-            <NotificationSwitch
-                label={t('alerts.volumeAlerts')}
-                description={t('alerts.volumeStatusChanges')}
-                checked={showVolumeToast}
-                onCheckedChange={setShowVolumeToast}
-            />
-            <NotificationSwitch
-                label={t('alerts.buildAlerts')}
-                description={t('alerts.buildStatusChanges')}
-                checked={showBuildToast}
-                onCheckedChange={setShowBuildToast}
-            />
+            {categories.map((category) => (
+                <NotificationSwitch
+                    key={category.key}
+                    label={t(category.labelKey)}
+                    description={t(category.descriptionKey)}
+                    checked={enabled[category.key]}
+                    onCheckedChange={(value) => setCategoryEnabled(category.key, value)}
+                />
+            ))}
         </div>
     );
 }

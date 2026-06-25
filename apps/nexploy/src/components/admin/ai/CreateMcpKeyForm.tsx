@@ -13,7 +13,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from 
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { DialogFooter } from '@workspace/ui/components/dialog';
-import { KeyRevealContent } from '@/components/admin/ai/KeyRevealContent.tsx';
+import { Key } from 'lucide-react';
+import CopyButton from '@/components/shared/CopyButton.tsx';
 
 export function CreateMcpKeyForm() {
     const t = useTranslations('ai.admin.mcp');
@@ -35,7 +36,23 @@ export function CreateMcpKeyForm() {
                     router.refresh();
                     openAlertDialog({
                         title: t('generateKey'),
-                        description: <KeyRevealContent value={data.key} />,
+                        description: (
+                            <div className="flex flex-col gap-3 pt-1">
+                                <div className="flex items-center gap-2 rounded-lg border p-3">
+                                    <Key className="text-muted-foreground size-4 shrink-0" />
+                                    <code className="text-xs break-all">{data.key}</code>
+                                    <CopyButton
+                                        text={data.key}
+                                        className="size-8 shrink-0"
+                                        size="icon"
+                                        variant="ghost"
+                                    />
+                                </div>
+                                <p className="text-muted-foreground text-xs">
+                                    {t('generatedWarning')}
+                                </p>
+                            </div>
+                        ),
                         cancelLabel: tCommon('close'),
                         disableActionButton: true,
                     });

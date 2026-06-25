@@ -5,6 +5,7 @@ import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { ImageState } from '@workspace/typescript-interface/stores/docker/imagesStore';
 import { clientT } from '@/lib/i18n/clientTranslations';
+import { notifyDocker } from '@/lib/notifications/notifyDocker';
 
 export const useImagesStore = create<ImageState>((set, get) => ({
     images: [],
@@ -136,7 +137,11 @@ export const useImagesStore = create<ImageState>((set, get) => ({
                     const imageName = data.image.repoTags?.find((t) => t !== '<none>:<none>');
                     if (imageName) {
                         toast.dismiss('downloadingImage');
-                        toast.success(clientT('toasts.imageAdded', { name: imageName }));
+                        notifyDocker(
+                            'images',
+                            'success',
+                            clientT('toasts.imageAdded', { name: imageName }),
+                        );
                     }
                     set({ lastUpdate: data.timestamp });
                 }),
@@ -161,7 +166,11 @@ export const useImagesStore = create<ImageState>((set, get) => ({
                     get().removeImage(data.imageId);
                     const imageName = data.oldState?.repoTags?.find((t) => t !== '<none>:<none>');
                     if (imageName) {
-                        toast.success(clientT('toasts.imageRemoved', { name: imageName }));
+                        notifyDocker(
+                            'images',
+                            'success',
+                            clientT('toasts.imageRemoved', { name: imageName }),
+                        );
                     }
                     set({ lastUpdate: data.timestamp });
                 }),

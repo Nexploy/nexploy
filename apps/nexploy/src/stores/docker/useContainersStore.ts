@@ -3,10 +3,10 @@ import {
     Containers,
     ContainersEvent,
 } from '@workspace/typescript-interface/docker/docker.containers';
-import { toast } from 'sonner';
 import { ContainerState } from '@workspace/typescript-interface/stores/docker/containersStore';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { clientT } from '@/lib/i18n/clientTranslations';
+import { notifyDocker } from '@/lib/notifications/notifyDocker';
 
 export const useContainersStore = create<ContainerState>((set, get) => ({
     containers: [],
@@ -119,7 +119,9 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
 
                     if (!data.container.image?.startsWith('sha256:')) {
                         get().addContainer(data.container);
-                        toast.success(
+                        notifyDocker(
+                            'containers',
+                            'success',
                             clientT('toasts.containerAdded', { name: data.container.name }),
                         );
                     }
@@ -140,9 +142,15 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
 
                     if (!data.container?.image?.startsWith('sha256:')) {
                         if (action === 'die') {
-                            toast.error(clientT('toasts.containerDied', { name }));
+                            notifyDocker(
+                                'containers',
+                                'error',
+                                clientT('toasts.containerDied', { name }),
+                            );
                         } else {
-                            toast.success(
+                            notifyDocker(
+                                'containers',
+                                'success',
                                 clientT('toasts.containerAction', { name, action: action || '' }),
                             );
                         }
@@ -159,7 +167,9 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
 
                     get().removeContainer(data.containerId);
                     if (!data.oldState?.image?.startsWith('sha256:')) {
-                        toast.success(
+                        notifyDocker(
+                            'containers',
+                            'success',
                             clientT('toasts.containerRemoved', {
                                 name: data.oldState?.name || '',
                             }),

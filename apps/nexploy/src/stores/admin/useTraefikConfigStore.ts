@@ -133,7 +133,7 @@ export function createTraefikConfigStore(initialTree: TraefikTreeNode[]) {
                     filename: selectedFile,
                     content: fileContent,
                 });
-                if (!result?.serverError && result?.data?.success) {
+                if (!result?.serverError) {
                     set({ savedContent: fileContent });
                 }
             } finally {
@@ -152,7 +152,7 @@ export function createTraefikConfigStore(initialTree: TraefikTreeNode[]) {
                 actionLabel: t('delete'),
                 onAction: async () => {
                     const result = await deleteTraefikFile({ filename: target });
-                    if (result?.serverError || !result?.data?.success) {
+                    if (result?.serverError) {
                         toast.error(t('deleteError'));
                         return;
                     }
@@ -194,7 +194,7 @@ export function createTraefikConfigStore(initialTree: TraefikTreeNode[]) {
             });
 
             const result = await moveTraefikEntry({ source, destinationDir });
-            if (result?.serverError || !result?.data?.success) {
+            if (result?.serverError) {
                 toast.error(t('moveError'));
                 set({ tree: prevTree, selectedFile: prevSelected });
                 return;

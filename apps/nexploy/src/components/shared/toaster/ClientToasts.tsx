@@ -4,12 +4,8 @@ import { startTransition, useEffect, useOptimistic, useState } from 'react';
 import { Toaster } from '@workspace/ui/components/sonner';
 import { toast as sonnerToast } from 'sonner';
 import { ToastItem } from '@workspace/typescript-interface/toast';
-import { useNotificationStore } from '@/stores/useNotificationStore';
-import { cn } from '@workspace/ui/lib/utils.ts';
 
 export function ClientToasts({ toasts }: { toasts: ToastItem[] }) {
-    const { showContainerToast } = useNotificationStore();
-
     const [optimisticToasts, remove] = useOptimistic(toasts, (current, id) =>
         current.filter((toast) => toast.id !== id),
     );
@@ -41,9 +37,5 @@ export function ClientToasts({ toasts }: { toasts: ToastItem[] }) {
             });
     }, [localToasts, sentToSonner]);
 
-    return (
-        <div className={cn(showContainerToast ? 'flex' : 'flex-none')}>
-            <Toaster />
-        </div>
-    );
+    return <Toaster />;
 }

@@ -1,10 +1,7 @@
+export type DockerToastCategory = 'containers' | 'images' | 'volumes' | 'networks' | 'swarm';
+
 export interface NotificationState {
-    showContainerToast: boolean;
-    setShowContainerToast: (enabled: boolean) => void;
-    showImageToast: boolean;
-    setShowImageToast: (enabled: boolean) => void;
-    showVolumeToast: boolean;
-    setShowVolumeToast: (enabled: boolean) => void;
-    showBuildToast: boolean;
-    setShowBuildToast: (enabled: boolean) => void;
+    categories: Record<DockerToastCategory, boolean>;
+    setCategoryEnabled: (category: DockerToastCategory, enabled: boolean) => void;
+    isCategoryEnabled: (category: DockerToastCategory) => boolean;
 }
