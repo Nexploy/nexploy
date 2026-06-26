@@ -10,6 +10,7 @@ import { InsetPanel } from '@/components/layout/InsetPanel';
 import { cn } from '@workspace/ui/lib/utils';
 import { ChatAIPanel } from '@/components/ai/ChatAIPanel.tsx';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
+import { getAllGitProviders } from '@/services/git/gitProviders.service';
 
 export default async function DockerLayout({
     children,
@@ -21,6 +22,10 @@ export default async function DockerLayout({
     const hasCookieSidebar = cookieStore.has('sidebar_state');
     const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true';
     const session = await getUserSession();
+
+    const isAdmin = session?.user.role === 'admin';
+    const gitProviders = isAdmin ? await getAllGitProviders() : [];
+    const showOnboardingTour = isAdmin && gitProviders.length === 0;
 
     return (
         <PermissionProvider role={session?.user.role}>
@@ -35,7 +40,7 @@ export default async function DockerLayout({
                         <ChatAIPanel />
                     </main>
                 </div>
-                <OnboardingTour />
+                {showOnboardingTour && <OnboardingTour />}
             </SidebarProvider>
         </PermissionProvider>
     );
