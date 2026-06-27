@@ -1,8 +1,8 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, KyDockerOptions } from '@/lib/api/kyDocker';
-import { createS3Client, putS3Object } from '@/lib/aws/s3';
-import { getAwsCredentials } from '@/services/aws.service';
+import { createS3Client, putS3Object } from '@/lib/s3/s3';
+import { getS3Credentials } from '@/services/s3.service';
 import { backupVolumeS3ConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { z } from 'zod';
@@ -27,7 +27,7 @@ export class BackupVolumeS3Executor implements INodeExecutor {
         );
 
         await logger.info(nodeId, `Fetching AWS credentials for account ${accountId}`);
-        const creds = await getAwsCredentials(accountId);
+        const creds = await getS3Credentials(accountId);
 
         await logger.info(nodeId, `Downloading volume archive: ${volumeName}`);
         if (abortSignal.aborted) throw new Error('Build cancelled');

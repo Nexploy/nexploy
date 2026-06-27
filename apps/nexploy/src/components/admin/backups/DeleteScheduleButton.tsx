@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
-import { deleteBackupScheduleAction } from '@/actions/aws/deleteSchedule.action';
+import { deleteBackupScheduleAction } from '@/actions/s3/deleteSchedule.action';
 
 interface DeleteScheduleButtonProps {
     scheduleId: string;

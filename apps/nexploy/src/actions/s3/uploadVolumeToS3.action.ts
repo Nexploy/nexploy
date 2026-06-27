@@ -1,10 +1,10 @@
 'use server';
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
-import { uploadVolumeToS3Schema } from '@workspace/schemas-zod/aws/aws.schema';
-import { getAwsCredentials } from '@/services/aws.service';
+import { uploadVolumeToS3Schema } from '@workspace/schemas-zod/s3/s3.schema';
+import { getS3Credentials } from '@/services/s3.service';
 import { kyDocker } from '@/lib/api/kyDocker';
-import { createS3Client, putS3Object } from '@/lib/aws/s3';
+import { createS3Client, putS3Object } from '@/lib/s3/s3';
 import { setToastServer } from '@/lib/toastServer';
 
 export const uploadVolumeToS3Action = authActionServer
@@ -13,7 +13,7 @@ export const uploadVolumeToS3Action = authActionServer
     .action(async ({ parsedInput }) => {
         try {
             const { volumeName, bucket, accountId } = parsedInput;
-            const creds = await getAwsCredentials(accountId);
+            const creds = await getS3Credentials(accountId);
             const buffer = await kyDocker
                 .get(`backups/download/${encodeURIComponent(volumeName)}`, { timeout: false })
                 .arrayBuffer();

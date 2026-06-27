@@ -7,29 +7,31 @@ import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/k
 import { statusMap } from '@/utils/statusMap';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
-import { deleteAwsAccountAction } from '@/actions/aws/deleteAccount.action';
+import { deleteS3AccountAction } from '@/actions/s3/deleteAccount.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useAction } from 'next-safe-action/hooks';
 
-interface AwsInstanceCardProps {
+interface S3InstanceCardProps {
     id: string;
     displayName: string;
     region: string;
+    endpoint: string | null;
     maskedAccessKeyId: string;
 }
 
-export function AwsInstanceCard({
+export function S3InstanceCard({
     id,
     displayName,
     region,
+    endpoint,
     maskedAccessKeyId,
-}: AwsInstanceCardProps) {
+}: S3InstanceCardProps) {
     const router = useRouter();
-    const t = useTranslations('integrations.aws');
+    const t = useTranslations('integrations.s3');
     const tCommon = useTranslations('common');
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
-    const { executeAsync, isPending } = useAction(deleteAwsAccountAction, {
+    const { executeAsync, isPending } = useAction(deleteS3AccountAction, {
         onSuccess: () => {
             toast.success(t('deletedSuccess'));
             router.refresh();
@@ -54,7 +56,8 @@ export function AwsInstanceCard({
                     <Status status={statusMap['connected'].status}>
                         <StatusIndicator />
                         <StatusLabel>
-                            {t('configured')} — {region}
+                            {t('configured')} — {endpoint ? new URL(endpoint).host : 'AWS S3'} ·{' '}
+                            {region}
                         </StatusLabel>
                     </Status>
                 </div>

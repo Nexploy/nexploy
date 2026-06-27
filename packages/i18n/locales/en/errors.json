@@ -32,12 +32,12 @@
         "getProvidersFailed": "Failed to get configured providers",
         "getKeyStatusFailed": "Failed to get all provider key status"
     },
-    "aws": {
-        "getAccountsFailed": "Failed to get AWS accounts",
-        "saveAccountFailed": "Failed to save AWS account",
-        "deleteAccountFailed": "Failed to delete AWS account",
-        "accountNotFound": "AWS account not found",
-        "retrieveCredentialsFailed": "Failed to retrieve AWS credentials"
+    "s3": {
+        "getAccountsFailed": "Failed to get S3 accounts",
+        "saveAccountFailed": "Failed to save S3 account",
+        "deleteAccountFailed": "Failed to delete S3 account",
+        "accountNotFound": "S3 account not found",
+        "retrieveCredentialsFailed": "Failed to retrieve S3 credentials"
     },
     "domain": {
         "originNotFound": "Original domain not found for ID: {id}",

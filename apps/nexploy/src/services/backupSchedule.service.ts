@@ -91,7 +91,7 @@ export async function getBackupSchedulesForVolumes(
 export async function createBackupSchedule(
     volumeName: string,
     bucket: string,
-    awsAccountId: string,
+    s3AccountId: string,
     frequency: Frequency,
     scheduledHour: number,
     scheduledMinute: number,
@@ -107,7 +107,7 @@ export async function createBackupSchedule(
                 volumeName,
                 environmentId,
                 bucket,
-                awsAccountId,
+                s3AccountId,
                 frequency,
                 scheduledHour,
                 scheduledMinute,

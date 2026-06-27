@@ -20,7 +20,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Input } from '@workspace/ui/components/input';
-import { type AwsAccountInfo } from '@workspace/typescript-interface/aws/aws';
+import { type S3AccountInfo } from '@workspace/typescript-interface/s3/s3';
 import { useEnvironmentVolumes } from '@/hooks/sse/useEnvironmentVolumes';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { fetcherApi } from '@/lib/api/fetcherApi';
@@ -35,11 +35,11 @@ export function BackupVolumeS3Config() {
 
     const environmentId = usePipelineEnvironmentId();
     const { volumes, isLoading } = useEnvironmentVolumes(environmentId);
-    const { data: awsAccounts, isLoading: isLoadingAccounts } = useSWR<AwsAccountInfo[]>(
-        { url: '/api/aws/accounts' },
+    const { data: s3Accounts, isLoading: isLoadingAccounts } = useSWR<S3AccountInfo[]>(
+        { url: '/api/s3/accounts' },
         fetcherApi,
     );
-    const awsAccountList = awsAccounts ?? [];
+    const s3AccountList = s3Accounts ?? [];
 
     return (
         <div className="space-y-4">
@@ -118,11 +118,11 @@ export function BackupVolumeS3Config() {
                     const isStaleAccount =
                         !isLoadingAccounts &&
                         !!field.value &&
-                        !awsAccountList.find((a) => a.id === field.value);
+                        !s3AccountList.find((a) => a.id === field.value);
 
                     return (
                         <FormItem>
-                            <FormLabel>{tAdmin('awsAccount')}</FormLabel>
+                            <FormLabel>{tAdmin('s3Account')}</FormLabel>
                             <FormControl>
                                 <Select
                                     value={field.value}
@@ -133,26 +133,26 @@ export function BackupVolumeS3Config() {
                                         {isLoadingAccounts ? (
                                             <span className="text-muted-foreground flex items-center gap-2">
                                                 <Loader2 className="h-3 w-3 animate-spin" />
-                                                {tAdmin('awsAccountsLoading')}
+                                                {tAdmin('s3AccountsLoading')}
                                             </span>
                                         ) : isStaleAccount ? (
                                             <span className="flex items-center gap-1.5">
                                                 <AlertTriangle className="h-3 w-3 shrink-0" />
-                                                {tAdmin('awsAccountUnavailable')}
+                                                {tAdmin('s3AccountUnavailable')}
                                             </span>
                                         ) : (
-                                            <SelectValue placeholder={tAdmin('selectAwsAccount')} />
+                                            <SelectValue placeholder={tAdmin('selectS3Account')} />
                                         )}
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectLabel>{tAdmin('awsAccount')}</SelectLabel>
-                                            {awsAccountList.length === 0 ? (
+                                            <SelectLabel>{tAdmin('s3Account')}</SelectLabel>
+                                            {s3AccountList.length === 0 ? (
                                                 <span className="text-muted-foreground px-2 py-1.5 text-sm">
-                                                    {tAdmin('noAwsAccounts')}
+                                                    {tAdmin('noS3Accounts')}
                                                 </span>
                                             ) : (
-                                                awsAccountList.map((a) => (
+                                                s3AccountList.map((a) => (
                                                     <SelectItem key={a.id} value={a.id}>
                                                         {a.displayName} — {a.region}
                                                     </SelectItem>

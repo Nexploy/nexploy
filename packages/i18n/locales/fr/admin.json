@@ -80,7 +80,7 @@
     "roleDescriptions": {
         "guest": "Accès en lecture seule : dépôts, builds, ressources Docker et monitoring. Aucune modification ni accès aux secrets.",
         "developer": "Travail de déploiement au quotidien : gérer les dépôts, builds, déploiements, variables d'environnement, pipelines, domaines, certificats SSL et ressources Docker. Sans gestion des intégrations ni des utilisateurs.",
-        "admin": "Accès complet : tout ce que peut faire un Développeur, plus la gestion des intégrations (Git, registres, Cloudflare, AWS), de l'infrastructure Swarm, de Traefik, du nettoyage, de l'IA et des utilisateurs."
+        "admin": "Accès complet : tout ce que peut faire un Développeur, plus la gestion des intégrations (Git, registres, Cloudflare, S3), de l'infrastructure Swarm, de Traefik, du nettoyage, de l'IA et des utilisateurs."
     },
     "email": "Email",
     "name": "Nom",
@@ -98,11 +98,11 @@
     "local": "Local",
     "noVolumesAvailable": "Aucun volume disponible",
     "noVolumesAvailableDescription": "Créez un volume pour commencer à configurer les sauvegardes",
-    "noAwsAccounts": "Aucun compte AWS configuré. Ajoutez-en un dans Intégrations.",
-    "awsAccount": "Compte AWS",
-    "selectAwsAccount": "Sélectionnez un compte AWS",
-    "awsAccountsLoading": "Chargement des comptes AWS...",
-    "awsAccountUnavailable": "Compte AWS non disponible",
+    "noS3Accounts": "Aucun compte S3 configuré. Ajoutez-en un dans Intégrations.",
+    "s3Account": "Compte S3",
+    "selectS3Account": "Sélectionnez un compte S3",
+    "s3AccountsLoading": "Chargement des comptes S3...",
+    "s3AccountUnavailable": "Compte S3 non disponible",
     "uploadNow": "Envoyer maintenant",
     "scheduleBackup": "Planifier",
     "frequency": "Fréquence",

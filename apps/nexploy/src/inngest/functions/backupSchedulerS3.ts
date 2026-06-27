@@ -1,11 +1,11 @@
 import { inngest } from '@/inngest/client';
-import { BackupScheduleStartEvent } from '@workspace/typescript-interface/aws/backupSchedule';
+import { BackupScheduleStartEvent } from '@workspace/typescript-interface/s3/backupSchedule';
 import { getNextRunAt, markScheduleRan } from '@/services/backupSchedule.service';
-import { getAwsCredentials } from '@/services/aws.service';
+import { getS3Credentials } from '@/services/s3.service';
 import { kyDocker, KyDockerOptions } from '@/lib/api/kyDocker';
-import { createS3Client, putS3Object } from '@/lib/aws/s3';
+import { createS3Client, putS3Object } from '@/lib/s3/s3';
 
-export const backupSchedulerAwsFunction = inngest.createFunction(
+export const backupSchedulerS3Function = inngest.createFunction(
     {
         id: 'backup-schedule-run',
         triggers: [{ event: 'backup/schedule.start' }],
@@ -23,7 +23,7 @@ export const backupSchedulerAwsFunction = inngest.createFunction(
             volumeName,
             environmentId,
             bucket,
-            awsAccountId,
+            s3AccountId,
             frequency,
             scheduledHour = 0,
             scheduledMinute = 0,
@@ -34,7 +34,7 @@ export const backupSchedulerAwsFunction = inngest.createFunction(
         await step.sleepUntil('wait-until-scheduled', nextRunAt);
 
         const result = await step.run('do-backup', async () => {
-            const creds = await getAwsCredentials(awsAccountId);
+            const creds = await getS3Credentials(s3AccountId);
 
             const buffer = await kyDocker
                 .get(`backups/download/${encodeURIComponent(volumeName)}`, {
@@ -61,7 +61,7 @@ export const backupSchedulerAwsFunction = inngest.createFunction(
                 volumeName,
                 environmentId,
                 bucket,
-                awsAccountId,
+                s3AccountId,
                 frequency,
                 scheduledHour,
                 scheduledMinute,

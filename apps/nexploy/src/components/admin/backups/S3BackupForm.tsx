@@ -2,16 +2,16 @@
 
 import { useTranslations } from 'next-intl';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
-import { AwsAccountInfo } from '@workspace/typescript-interface/aws/aws';
+import { S3AccountInfo } from '@workspace/typescript-interface/s3/s3';
 import { UploadNowTab } from '@/components/admin/backups/UploadNowTab';
 import { ScheduleTab } from '@/components/admin/backups/ScheduleTab';
 
 interface S3BackupContentProps {
     volumeName: string;
-    awsAccounts: AwsAccountInfo[];
+    s3Accounts: S3AccountInfo[];
 }
 
-export function S3BackupForm({ volumeName, awsAccounts }: S3BackupContentProps) {
+export function S3BackupForm({ volumeName, s3Accounts }: S3BackupContentProps) {
     const t = useTranslations('admin');
 
     return (
@@ -26,11 +26,11 @@ export function S3BackupForm({ volumeName, awsAccounts }: S3BackupContentProps) 
             </TabsList>
 
             <TabsContent value="now">
-                <UploadNowTab volumeName={volumeName} awsAccounts={awsAccounts} />
+                <UploadNowTab volumeName={volumeName} s3Accounts={s3Accounts} />
             </TabsContent>
 
             <TabsContent value="schedule">
-                <ScheduleTab volumeName={volumeName} awsAccounts={awsAccounts} />
+                <ScheduleTab volumeName={volumeName} s3Accounts={s3Accounts} />
             </TabsContent>
         </Tabs>
     );

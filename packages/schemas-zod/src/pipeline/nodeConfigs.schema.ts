@@ -278,7 +278,7 @@ export const downloadFileConfigSchema = z.object({
 
 export const backupVolumeS3ConfigSchema = z.object({
     volumeName: refable(z.string().min(1, 'Volume name is required')).default(''),
-    accountId: z.string().min(1, 'AWS account ID is required').default(''),
+    accountId: z.string().min(1, 'S3 account ID is required').default(''),
     bucket: refable(z.string().min(1, 'Bucket name is required')).default(''),
 });
 

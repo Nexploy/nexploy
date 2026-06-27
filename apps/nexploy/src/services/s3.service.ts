@@ -1,14 +1,14 @@
 import { prisma } from '../../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
-import { AwsAccountInfo, AwsCredentials } from '@workspace/typescript-interface/aws/aws';
+import { S3AccountInfo, S3Credentials } from '@workspace/typescript-interface/s3/s3';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
-export type { AwsAccountInfo, AwsCredentials };
+export type { S3AccountInfo, S3Credentials };
 
-export async function getAllAwsAccounts(): Promise<AwsAccountInfo[]> {
+export async function getAllS3Accounts(): Promise<S3AccountInfo[]> {
     const t = await getErrorTranslator();
     try {
-        const records = await prisma.awsCredential.findMany({
+        const records = await prisma.s3Credential.findMany({
             orderBy: { createdAt: 'asc' },
         });
 
@@ -21,29 +21,32 @@ export async function getAllAwsAccounts(): Promise<AwsAccountInfo[]> {
                 id: r.id,
                 displayName: r.displayName,
                 region: r.region,
+                endpoint: r.endpoint,
                 maskedAccessKeyId: masked,
                 createdAt: r.createdAt,
             };
         });
     } catch (error: unknown) {
-        throw new Error(t('aws.getAccountsFailed'));
+        throw new Error(t('s3.getAccountsFailed'));
     }
 }
 
-export async function saveAwsAccount(
+export async function saveS3Account(
     displayName: string,
     accessKeyId: string,
     secretAccessKey: string,
     region: string,
-): Promise<AwsAccountInfo> {
+    endpoint?: string,
+): Promise<S3AccountInfo> {
     const t = await getErrorTranslator();
     try {
-        const record = await prisma.awsCredential.create({
+        const record = await prisma.s3Credential.create({
             data: {
                 displayName,
                 accessKeyId: encrypt(accessKeyId),
                 secretAccessKey: encrypt(secretAccessKey),
                 region,
+                endpoint: endpoint || null,
             },
         });
 
@@ -56,35 +59,37 @@ export async function saveAwsAccount(
             id: record.id,
             displayName: record.displayName,
             region: record.region,
+            endpoint: record.endpoint,
             maskedAccessKeyId: masked,
             createdAt: record.createdAt,
         };
     } catch (error: unknown) {
-        throw new Error(t('aws.saveAccountFailed'));
+        throw new Error(t('s3.saveAccountFailed'));
     }
 }
 
-export async function deleteAwsAccount(id: string): Promise<void> {
+export async function deleteS3Account(id: string): Promise<void> {
     const t = await getErrorTranslator();
     try {
-        await prisma.awsCredential.delete({ where: { id } });
+        await prisma.s3Credential.delete({ where: { id } });
     } catch (error: unknown) {
-        throw new Error(t('aws.deleteAccountFailed'));
+        throw new Error(t('s3.deleteAccountFailed'));
     }
 }
 
-export async function getAwsCredentials(id: string): Promise<AwsCredentials> {
+export async function getS3Credentials(id: string): Promise<S3Credentials> {
     const t = await getErrorTranslator();
     try {
-        const record = await prisma.awsCredential.findUnique({ where: { id } });
-        if (!record) throw new Error(t('aws.accountNotFound'));
+        const record = await prisma.s3Credential.findUnique({ where: { id } });
+        if (!record) throw new Error(t('s3.accountNotFound'));
 
         return {
             accessKeyId: decrypt(record.accessKeyId),
             secretAccessKey: decrypt(record.secretAccessKey),
             region: record.region,
+            endpoint: record.endpoint,
         };
     } catch (error: unknown) {
-        throw new Error(t('aws.retrieveCredentialsFailed'));
+        throw new Error(t('s3.retrieveCredentialsFailed'));
     }
 }

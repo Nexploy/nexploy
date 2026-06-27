@@ -1,12 +1,13 @@
-model AwsCredential {
+model S3Credential {
   id              String           @id @default(cuid())
   displayName     String
   accessKeyId     String
   secretAccessKey String
   region          String
+  endpoint        String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   schedules       BackupSchedule[]
 
-  @@map("aws_credential")
+  @@map("s3_credential")
 }

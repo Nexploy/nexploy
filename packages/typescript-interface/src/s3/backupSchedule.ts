@@ -5,7 +5,7 @@ export interface BackupScheduleStartEvent {
     volumeName: string;
     environmentId?: string;
     bucket: string;
-    awsAccountId: string;
+    s3AccountId: string;
     frequency: Frequency;
     scheduledHour: number;
     scheduledMinute: number;

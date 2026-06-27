@@ -5,15 +5,15 @@ import { CloudBackup } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { S3BackupForm } from '@/components/admin/backups/S3BackupForm';
-import { AwsAccountInfo } from '@workspace/typescript-interface/aws/aws';
+import { S3AccountInfo } from '@workspace/typescript-interface/s3/s3';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 interface VolumeS3ButtonProps {
     volumeName: string;
-    awsAccounts: AwsAccountInfo[];
+    s3Accounts: S3AccountInfo[];
 }
 
-export function VolumeS3Button({ volumeName, awsAccounts }: VolumeS3ButtonProps) {
+export function VolumeS3Button({ volumeName, s3Accounts }: VolumeS3ButtonProps) {
     const t = useTranslations('admin');
     const { openDialog } = useConfirmationDialogStore();
 
@@ -22,7 +22,7 @@ export function VolumeS3Button({ volumeName, awsAccounts }: VolumeS3ButtonProps)
             title: t('uploadToS3'),
             description: volumeName,
             props: { className: 'sm:max-w-[480px]' },
-            content: <S3BackupForm volumeName={volumeName} awsAccounts={awsAccounts} />,
+            content: <S3BackupForm volumeName={volumeName} s3Accounts={s3Accounts} />,
         });
     };
 
@@ -34,13 +34,13 @@ export function VolumeS3Button({ volumeName, awsAccounts }: VolumeS3ButtonProps)
                         variant="outline"
                         onClick={handleClick}
                         icon={CloudBackup}
-                        disabled={awsAccounts.length === 0}
+                        disabled={s3Accounts.length === 0}
                     >
                         {t('uploadToS3')}
                     </Button>
                 </div>
             </TooltipTrigger>
-            {awsAccounts.length === 0 && <TooltipContent>{t('noAwsAccounts')}</TooltipContent>}
+            {s3Accounts.length === 0 && <TooltipContent>{t('noS3Accounts')}</TooltipContent>}
         </Tooltip>
     );
 }

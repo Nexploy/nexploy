@@ -16,10 +16,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import { createBackupScheduleSchema } from '@workspace/schemas-zod/aws/backupSchedule.schema';
+import { createBackupScheduleSchema } from '@workspace/schemas-zod/s3/backupSchedule.schema';
 import { to24h } from '@/utils/time';
-import { createBackupScheduleAction } from '@/actions/aws/createSchedule.action';
-import { AwsAccountInfo } from '@workspace/typescript-interface/aws/aws';
+import { createBackupScheduleAction } from '@/actions/s3/createSchedule.action';
+import { S3AccountInfo } from '@workspace/typescript-interface/s3/s3';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 
@@ -38,10 +38,10 @@ const DAYS_OF_MONTH = Array.from({ length: 31 }, (_, i) => i + 1);
 interface ScheduleTabProps {
     volumeName: string;
     environmentId?: string;
-    awsAccounts: AwsAccountInfo[];
+    s3Accounts: S3AccountInfo[];
 }
 
-export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
+export function ScheduleTab({ volumeName, s3Accounts }: ScheduleTabProps) {
     const t = useTranslations('admin');
     const locale = useLocale();
 
@@ -58,7 +58,7 @@ export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
                 defaultValues: {
                     volumeName,
                     bucket: '',
-                    awsAccountId: awsAccounts[0]?.id ?? '',
+                    s3AccountId: s3Accounts[0]?.id ?? '',
                     frequency: 'DAILY',
                     scheduledHour: 0,
                     scheduledMinute: 0,
@@ -71,7 +71,7 @@ export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
                     form.reset({
                         volumeName,
                         bucket: '',
-                        awsAccountId: form.getValues('awsAccountId'),
+                        s3AccountId: form.getValues('s3AccountId'),
                         frequency: form.getValues('frequency'),
                         scheduledHour: 0,
                         scheduledMinute: 0,
@@ -95,20 +95,20 @@ export function ScheduleTab({ volumeName, awsAccounts }: ScheduleTabProps) {
                 <form onSubmit={handleSubmitWithAction} className="space-y-3">
                     <FormField
                         control={form.control}
-                        name="awsAccountId"
+                        name="s3AccountId"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>{t('awsAccount')}</FormLabel>
+                                <FormLabel>{t('s3Account')}</FormLabel>
                                 <Select value={field.value} onValueChange={field.onChange}>
                                     <FormControl>
                                         <SelectTrigger>
-                                            <SelectValue placeholder={t('selectAwsAccount')} />
+                                            <SelectValue placeholder={t('selectS3Account')} />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectLabel>{t('awsAccount')}</SelectLabel>
-                                            {awsAccounts.map((a) => (
+                                            <SelectLabel>{t('s3Account')}</SelectLabel>
+                                            {s3Accounts.map((a) => (
                                                 <SelectItem key={a.id} value={a.id}>
                                                     {a.displayName} — {a.region}
                                                 </SelectItem>

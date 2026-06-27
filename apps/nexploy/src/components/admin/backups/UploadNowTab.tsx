@@ -24,17 +24,17 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { DialogFooter } from '@workspace/ui/components/dialog';
-import { uploadVolumeToS3Schema } from '@workspace/schemas-zod/aws/aws.schema';
-import { uploadVolumeToS3Action } from '@/actions/aws/uploadVolumeToS3.action';
-import { AwsAccountInfo } from '@workspace/typescript-interface/aws/aws';
+import { uploadVolumeToS3Schema } from '@workspace/schemas-zod/s3/s3.schema';
+import { uploadVolumeToS3Action } from '@/actions/s3/uploadVolumeToS3.action';
+import { S3AccountInfo } from '@workspace/typescript-interface/s3/s3';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 
 interface UploadNowTabProps {
     volumeName: string;
-    awsAccounts: AwsAccountInfo[];
+    s3Accounts: S3AccountInfo[];
 }
 
-export function UploadNowTab({ volumeName, awsAccounts }: UploadNowTabProps) {
+export function UploadNowTab({ volumeName, s3Accounts }: UploadNowTabProps) {
     const t = useTranslations('admin');
     const { closeDialog } = useConfirmationDialogStore();
 
@@ -46,7 +46,7 @@ export function UploadNowTab({ volumeName, awsAccounts }: UploadNowTabProps) {
                 defaultValues: {
                     volumeName,
                     bucket: '',
-                    accountId: awsAccounts[0]?.id,
+                    accountId: s3Accounts[0]?.id,
                 },
             },
             actionProps: {
@@ -71,17 +71,17 @@ export function UploadNowTab({ volumeName, awsAccounts }: UploadNowTabProps) {
                     name="accountId"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('awsAccount')}</FormLabel>
+                            <FormLabel>{t('s3Account')}</FormLabel>
                             <Select value={field.value} onValueChange={field.onChange}>
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue placeholder={t('selectAwsAccount')} />
+                                        <SelectValue placeholder={t('selectS3Account')} />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectLabel>{t('awsAccount')}</SelectLabel>
-                                        {awsAccounts.map((a) => (
+                                        <SelectLabel>{t('s3Account')}</SelectLabel>
+                                        {s3Accounts.map((a) => (
                                             <SelectItem key={a.id} value={a.id}>
                                                 {a.displayName} — {a.region}
                                             </SelectItem>

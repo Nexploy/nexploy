@@ -80,7 +80,7 @@
     "roleDescriptions": {
         "guest": "Read-only access: repositories, builds, Docker resources and monitoring. No modifications and no access to secrets.",
         "developer": "Day-to-day deployment work: manage repositories, builds, deployments, environment variables, pipelines, domains, SSL certificates and Docker resources. No integration or user management.",
-        "admin": "Full access: everything a Developer can do, plus management of integrations (Git, registries, Cloudflare, AWS), Swarm infrastructure, Traefik, cleanup, AI and users."
+        "admin": "Full access: everything a Developer can do, plus management of integrations (Git, registries, Cloudflare, S3), Swarm infrastructure, Traefik, cleanup, AI and users."
     },
     "email": "Email",
     "name": "Name",
@@ -98,11 +98,11 @@
     "local": "Local",
     "noVolumesAvailable": "No volumes available",
     "noVolumesAvailableDescription": "Create a volume to start configuring backups",
-    "noAwsAccounts": "No AWS accounts configured. Add one in Integrations.",
-    "awsAccount": "AWS Account",
-    "selectAwsAccount": "Select an AWS account",
-    "awsAccountsLoading": "Loading AWS accounts...",
-    "awsAccountUnavailable": "AWS account unavailable",
+    "noS3Accounts": "No S3 accounts configured. Add one in Integrations.",
+    "s3Account": "S3 Account",
+    "selectS3Account": "Select an S3 account",
+    "s3AccountsLoading": "Loading S3 accounts...",
+    "s3AccountUnavailable": "S3 account unavailable",
     "uploadNow": "Upload now",
     "scheduleBackup": "Schedule",
     "frequency": "Frequency",

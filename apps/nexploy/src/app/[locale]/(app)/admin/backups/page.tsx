@@ -3,17 +3,17 @@ import { getTranslations } from 'next-intl/server';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
 import { formatBytes } from '@/utils/formatBytes';
-import { getAllAwsAccounts } from '@/services/aws.service';
+import { getAllS3Accounts } from '@/services/s3.service';
 import { getBackupSchedulesForVolumes } from '@/services/backupSchedule.service';
 import { VolumeS3Button } from '@/components/admin/backups/VolumeS3Button';
 import { SchedulesAccordion } from '@/components/admin/backups/SchedulesAccordion';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 
 export default async function BackupsPage() {
-    const [t, volumes, awsAccounts] = await Promise.all([
+    const [t, volumes, s3Accounts] = await Promise.all([
         getTranslations('admin'),
         kyDocker.get('volumes').json<Volume[]>(),
-        getAllAwsAccounts(),
+        getAllS3Accounts(),
     ]);
 
     const volumeSchedules = await getBackupSchedulesForVolumes(volumes.map((v) => v.name));
@@ -69,7 +69,7 @@ export default async function BackupsPage() {
                                             <div className="flex shrink-0 items-center gap-2">
                                                 <VolumeS3Button
                                                     volumeName={volume.name}
-                                                    awsAccounts={awsAccounts}
+                                                    s3Accounts={s3Accounts}
                                                 />
                                             </div>
                                         </div>
