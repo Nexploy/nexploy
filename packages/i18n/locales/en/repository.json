@@ -519,9 +519,9 @@
                 "name": "Download File",
                 "description": "Download a file from a URL into the work directory"
             },
-            "backup-volume-s3": {
-                "name": "Backup Volume to S3",
-                "description": "Archive a Docker volume and upload it to an S3 bucket"
+            "backup-volume-bucket-storage": {
+                "name": "Backup Volume to Bucket Storage",
+                "description": "Archive a Docker volume and upload it to a bucket"
             },
             "create-service": {
                 "name": "Create Service",
@@ -784,7 +784,7 @@
             "dopplerServiceToken": "Service Token",
             "dopplerProject": "Project (optional)",
             "dopplerConfig": "Config / Environment (optional)",
-            "s3BucketName": "S3 Bucket Name",
+            "bucketName": "Bucket Name",
             "sonarqubeMode": "Mode",
             "sonarqubeModeCustom": "Custom SonarQube / SonarCloud",
             "sonarqubeModeLocal": "Local (Docker)",
@@ -975,8 +975,8 @@
             "desc_remote": "Remote URL the tag was pushed to",
             "desc_environmentId": "ID of the environment that was set",
             "desc_registryUrl": "Registry URL the image was pushed to",
-            "desc_fileName": "Name of the backup archive uploaded to S3",
-            "desc_bucket": "S3 bucket name",
+            "desc_fileName": "Name of the backup archive uploaded to the bucket",
+            "desc_bucket": "Bucket name",
             "desc_volumeName": "Name of the Docker volume",
             "desc_sizeBytes": "Size of the file or cache in bytes",
             "desc_found": "Whether the pattern was found in logs",

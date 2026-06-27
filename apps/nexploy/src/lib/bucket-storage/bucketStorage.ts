@@ -1,7 +1,7 @@
 import { ListBucketsCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { S3Credentials } from '@workspace/typescript-interface/s3/s3';
+import { BucketStorageCredentials } from '@workspace/typescript-interface/bucket-storage/bucketStorage';
 
-export function createS3Client(creds: S3Credentials): S3Client {
+export function createBucketStorageClient(creds: BucketStorageCredentials): S3Client {
     const endpoint = creds.endpoint?.trim();
 
     return new S3Client({
@@ -24,8 +24,8 @@ const AUTH_FAILURE_NAMES = new Set([
     'AccountProblem',
 ]);
 
-export async function verifyS3Credentials(creds: S3Credentials): Promise<void> {
-    const client = createS3Client(creds);
+export async function verifyBucketStorageCredentials(creds: BucketStorageCredentials): Promise<void> {
+    const client = createBucketStorageClient(creds);
     try {
         await client.send(new ListBucketsCommand({}));
     } catch (err: any) {
@@ -33,15 +33,15 @@ export async function verifyS3Credentials(creds: S3Credentials): Promise<void> {
         const name = (err?.name ?? '') as string;
 
         if (status === undefined) {
-            throw new Error(`Could not reach S3 endpoint: ${err?.message ?? name}`);
+            throw new Error(`Could not reach storage endpoint: ${err?.message ?? name}`);
         }
         if (status === 401 || AUTH_FAILURE_NAMES.has(name)) {
-            throw new Error(`Invalid S3 credentials: ${err?.message ?? name}`);
+            throw new Error(`Invalid storage credentials: ${err?.message ?? name}`);
         }
     }
 }
 
-export async function putS3Object(
+export async function putBucketStorageObject(
     client: S3Client,
     bucket: string,
     key: string,

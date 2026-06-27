@@ -1,11 +1,11 @@
 import { inngest } from '@/inngest/client';
-import { BackupScheduleStartEvent } from '@workspace/typescript-interface/s3/backupSchedule';
+import { BackupScheduleStartEvent } from '@workspace/typescript-interface/bucket-storage/backupSchedule';
 import { getNextRunAt, markScheduleRan } from '@/services/backupSchedule.service';
-import { getS3Credentials } from '@/services/s3.service';
+import { getBucketStorageCredentials } from '@/services/bucketStorage.service';
 import { kyDocker, KyDockerOptions } from '@/lib/api/kyDocker';
-import { createS3Client, putS3Object } from '@/lib/s3/s3';
+import { createBucketStorageClient, putBucketStorageObject } from '@/lib/bucket-storage/bucketStorage';
 
-export const backupSchedulerS3Function = inngest.createFunction(
+export const backupSchedulerBucketStorageFunction = inngest.createFunction(
     {
         id: 'backup-schedule-run',
         triggers: [{ event: 'backup/schedule.start' }],
@@ -23,7 +23,7 @@ export const backupSchedulerS3Function = inngest.createFunction(
             volumeName,
             environmentId,
             bucket,
-            s3AccountId,
+            bucketStorageAccountId,
             frequency,
             scheduledHour = 0,
             scheduledMinute = 0,
@@ -34,7 +34,7 @@ export const backupSchedulerS3Function = inngest.createFunction(
         await step.sleepUntil('wait-until-scheduled', nextRunAt);
 
         const result = await step.run('do-backup', async () => {
-            const creds = await getS3Credentials(s3AccountId);
+            const creds = await getBucketStorageCredentials(bucketStorageAccountId);
 
             const buffer = await kyDocker
                 .get(`backups/download/${encodeURIComponent(volumeName)}`, {
@@ -44,8 +44,8 @@ export const backupSchedulerS3Function = inngest.createFunction(
                 .arrayBuffer();
 
             const objectKey = `${volumeName}-${Date.now()}.tar.gz`;
-            const s3 = createS3Client(creds);
-            await putS3Object(s3, bucket, objectKey, new Uint8Array(buffer), 'application/gzip');
+            const client = createBucketStorageClient(creds);
+            await putBucketStorageObject(client, bucket, objectKey, new Uint8Array(buffer), 'application/gzip');
 
             await markScheduleRan(id);
 
@@ -61,7 +61,7 @@ export const backupSchedulerS3Function = inngest.createFunction(
                 volumeName,
                 environmentId,
                 bucket,
-                s3AccountId,
+                bucketStorageAccountId,
                 frequency,
                 scheduledHour,
                 scheduledMinute,

@@ -2,16 +2,16 @@
 
 import { useTranslations } from 'next-intl';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
-import { S3AccountInfo } from '@workspace/typescript-interface/s3/s3';
+import { BucketStorageAccountInfo } from '@workspace/typescript-interface/bucket-storage/bucketStorage';
 import { UploadNowTab } from '@/components/admin/backups/UploadNowTab';
 import { ScheduleTab } from '@/components/admin/backups/ScheduleTab';
 
-interface S3BackupContentProps {
+interface BucketStorageBackupContentProps {
     volumeName: string;
-    s3Accounts: S3AccountInfo[];
+    bucketStorageAccounts: BucketStorageAccountInfo[];
 }
 
-export function S3BackupForm({ volumeName, s3Accounts }: S3BackupContentProps) {
+export function BucketStorageBackupForm({ volumeName, bucketStorageAccounts }: BucketStorageBackupContentProps) {
     const t = useTranslations('admin');
 
     return (
@@ -26,11 +26,11 @@ export function S3BackupForm({ volumeName, s3Accounts }: S3BackupContentProps) {
             </TabsList>
 
             <TabsContent value="now">
-                <UploadNowTab volumeName={volumeName} s3Accounts={s3Accounts} />
+                <UploadNowTab volumeName={volumeName} bucketStorageAccounts={bucketStorageAccounts} />
             </TabsContent>
 
             <TabsContent value="schedule">
-                <ScheduleTab volumeName={volumeName} s3Accounts={s3Accounts} />
+                <ScheduleTab volumeName={volumeName} bucketStorageAccounts={bucketStorageAccounts} />
             </TabsContent>
         </Tabs>
     );

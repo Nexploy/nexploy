@@ -7,11 +7,11 @@ import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/k
 import { statusMap } from '@/utils/statusMap';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
-import { deleteS3AccountAction } from '@/actions/s3/deleteAccount.action';
+import { deleteBucketStorageAccountAction } from '@/actions/bucket-storage/deleteAccount.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useAction } from 'next-safe-action/hooks';
 
-interface S3InstanceCardProps {
+interface BucketStorageInstanceCardProps {
     id: string;
     displayName: string;
     region: string;
@@ -19,19 +19,19 @@ interface S3InstanceCardProps {
     maskedAccessKeyId: string;
 }
 
-export function S3InstanceCard({
+export function BucketStorageInstanceCard({
     id,
     displayName,
     region,
     endpoint,
     maskedAccessKeyId,
-}: S3InstanceCardProps) {
+}: BucketStorageInstanceCardProps) {
     const router = useRouter();
-    const t = useTranslations('integrations.s3');
+    const t = useTranslations('integrations.bucketStorage');
     const tCommon = useTranslations('common');
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
-    const { executeAsync, isPending } = useAction(deleteS3AccountAction, {
+    const { executeAsync, isPending } = useAction(deleteBucketStorageAccountAction, {
         onSuccess: () => {
             toast.success(t('deletedSuccess'));
             router.refresh();

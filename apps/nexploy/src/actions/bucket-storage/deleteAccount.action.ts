@@ -1,17 +1,17 @@
 'use server';
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
-import { s3DeleteAccountSchema } from '@workspace/schemas-zod/s3/s3.schema';
-import { deleteS3Account } from '@/services/s3.service';
+import { bucketStorageDeleteAccountSchema } from '@workspace/schemas-zod/bucket-storage/bucketStorage.schema';
+import { deleteBucketStorageAccount } from '@/services/bucketStorage.service';
 import { revalidatePath } from 'next/cache';
 import { setToastServer } from '@/lib/toastServer';
 
-export const deleteS3AccountAction = authActionServer
+export const deleteBucketStorageAccountAction = authActionServer
     .use(requirePermission('cloudBackup', 'manage'))
-    .inputSchema(s3DeleteAccountSchema)
+    .inputSchema(bucketStorageDeleteAccountSchema)
     .action(async ({ parsedInput }) => {
         try {
-            await deleteS3Account(parsedInput.id);
+            await deleteBucketStorageAccount(parsedInput.id);
             revalidatePath('/admin/integrations');
         } catch (err: any) {
             if (err instanceof Error) {

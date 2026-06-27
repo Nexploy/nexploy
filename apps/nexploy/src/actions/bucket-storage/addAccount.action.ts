@@ -1,20 +1,20 @@
 'use server';
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
-import { s3AddAccountSchema } from '@workspace/schemas-zod/s3/s3.schema';
-import { saveS3Account } from '@/services/s3.service';
-import { verifyS3Credentials } from '@/lib/s3/s3';
+import { bucketStorageAddAccountSchema } from '@workspace/schemas-zod/bucket-storage/bucketStorage.schema';
+import { saveBucketStorageAccount } from '@/services/bucketStorage.service';
+import { verifyBucketStorageCredentials } from '@/lib/bucket-storage/bucketStorage';
 import { revalidatePath } from 'next/cache';
 import { setToastServer } from '@/lib/toastServer';
 
-export const addS3AccountAction = authActionServer
+export const addBucketStorageAccountAction = authActionServer
     .use(requirePermission('cloudBackup', 'manage'))
-    .inputSchema(s3AddAccountSchema)
+    .inputSchema(bucketStorageAddAccountSchema)
     .action(async ({ parsedInput }) => {
         try {
             const { displayName, accessKeyId, secretAccessKey, region, endpoint } = parsedInput;
-            await verifyS3Credentials({ accessKeyId, secretAccessKey, region, endpoint });
-            await saveS3Account(displayName, accessKeyId, secretAccessKey, region, endpoint);
+            await verifyBucketStorageCredentials({ accessKeyId, secretAccessKey, region, endpoint });
+            await saveBucketStorageAccount(displayName, accessKeyId, secretAccessKey, region, endpoint);
             revalidatePath('/admin/integrations');
         } catch (err: any) {
             if (err instanceof Error) {

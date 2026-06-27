@@ -4,25 +4,25 @@ import { useTranslations } from 'next-intl';
 import { CloudBackup } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { S3BackupForm } from '@/components/admin/backups/S3BackupForm';
-import { S3AccountInfo } from '@workspace/typescript-interface/s3/s3';
+import { BucketStorageBackupForm } from '@/components/admin/backups/BucketStorageBackupForm';
+import { BucketStorageAccountInfo } from '@workspace/typescript-interface/bucket-storage/bucketStorage';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
-interface VolumeS3ButtonProps {
+interface VolumeBucketStorageButtonProps {
     volumeName: string;
-    s3Accounts: S3AccountInfo[];
+    bucketStorageAccounts: BucketStorageAccountInfo[];
 }
 
-export function VolumeS3Button({ volumeName, s3Accounts }: VolumeS3ButtonProps) {
+export function VolumeBucketStorageButton({ volumeName, bucketStorageAccounts }: VolumeBucketStorageButtonProps) {
     const t = useTranslations('admin');
     const { openDialog } = useConfirmationDialogStore();
 
     const handleClick = () => {
         openDialog({
-            title: t('uploadToS3'),
+            title: t('uploadToBucketStorage'),
             description: volumeName,
             props: { className: 'sm:max-w-[480px]' },
-            content: <S3BackupForm volumeName={volumeName} s3Accounts={s3Accounts} />,
+            content: <BucketStorageBackupForm volumeName={volumeName} bucketStorageAccounts={bucketStorageAccounts} />,
         });
     };
 
@@ -34,13 +34,13 @@ export function VolumeS3Button({ volumeName, s3Accounts }: VolumeS3ButtonProps) 
                         variant="outline"
                         onClick={handleClick}
                         icon={CloudBackup}
-                        disabled={s3Accounts.length === 0}
+                        disabled={bucketStorageAccounts.length === 0}
                     >
-                        {t('uploadToS3')}
+                        {t('uploadToBucketStorage')}
                     </Button>
                 </div>
             </TooltipTrigger>
-            {s3Accounts.length === 0 && <TooltipContent>{t('noS3Accounts')}</TooltipContent>}
+            {bucketStorageAccounts.length === 0 && <TooltipContent>{t('noBucketStorageAccounts')}</TooltipContent>}
         </Tooltip>
     );
 }

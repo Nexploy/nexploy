@@ -1,7 +1,7 @@
 'use server';
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
-import { deleteBackupScheduleSchema } from '@workspace/schemas-zod/s3/backupSchedule.schema';
+import { deleteBackupScheduleSchema } from '@workspace/schemas-zod/bucket-storage/backupSchedule.schema';
 import { deleteBackupSchedule } from '@/services/backupSchedule.service';
 import { inngest } from '@/inngest/client';
 import { revalidatePath } from 'next/cache';

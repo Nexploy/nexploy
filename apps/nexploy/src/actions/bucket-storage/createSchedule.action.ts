@@ -1,7 +1,7 @@
 'use server';
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
-import { createBackupScheduleSchema } from '@workspace/schemas-zod/s3/backupSchedule.schema';
+import { createBackupScheduleSchema } from '@workspace/schemas-zod/bucket-storage/backupSchedule.schema';
 import { createBackupSchedule } from '@/services/backupSchedule.service';
 import { inngest } from '@/inngest/client';
 import { revalidatePath } from 'next/cache';
@@ -15,7 +15,7 @@ export const createBackupScheduleAction = authActionServer
             const {
                 volumeName,
                 bucket,
-                s3AccountId,
+                bucketStorageAccountId,
                 frequency,
                 scheduledHour,
                 scheduledMinute,
@@ -25,7 +25,7 @@ export const createBackupScheduleAction = authActionServer
             const schedule = await createBackupSchedule(
                 volumeName,
                 bucket,
-                s3AccountId,
+                bucketStorageAccountId,
                 frequency,
                 scheduledHour,
                 scheduledMinute,
@@ -39,7 +39,7 @@ export const createBackupScheduleAction = authActionServer
                     volumeName: schedule.volumeName,
                     environmentId: schedule.environmentId ?? undefined,
                     bucket: schedule.bucket,
-                    s3AccountId: schedule.s3AccountId,
+                    bucketStorageAccountId: schedule.bucketStorageAccountId,
                     frequency: schedule.frequency,
                     scheduledHour: schedule.scheduledHour,
                     scheduledMinute: schedule.scheduledMinute,

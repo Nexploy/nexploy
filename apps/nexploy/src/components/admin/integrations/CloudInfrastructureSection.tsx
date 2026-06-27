@@ -1,14 +1,14 @@
 import { getCloudflareAccounts } from '@/services/cloudflare.service';
-import { getAllS3Accounts } from '@/services/s3.service';
+import { getAllBucketStorageAccounts } from '@/services/bucketStorage.service';
 import { Cloud } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { CloudflareAccordionSection } from '@/components/admin/integrations/CloudflareAccordionSection';
-import { S3AccordionSection } from '@/components/admin/integrations/S3AccordionSection';
+import { BucketStorageAccordionSection } from '@/components/admin/integrations/BucketStorageAccordionSection';
 
 export async function CloudInfrastructureSection() {
-    const [t, s3Accounts, cloudflareAccounts] = await Promise.all([
+    const [t, bucketStorageAccounts, cloudflareAccounts] = await Promise.all([
         getTranslations('integrations'),
-        getAllS3Accounts(),
+        getAllBucketStorageAccounts(),
         getCloudflareAccounts(),
     ]);
 
@@ -20,7 +20,7 @@ export async function CloudInfrastructureSection() {
             </div>
             <div className={'flex flex-col gap-3'}>
                 <CloudflareAccordionSection accounts={cloudflareAccounts} />
-                <S3AccordionSection s3Accounts={s3Accounts} />
+                <BucketStorageAccordionSection bucketStorageAccounts={bucketStorageAccounts} />
             </div>
         </section>
     );

@@ -20,7 +20,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Input } from '@workspace/ui/components/input';
-import { type S3AccountInfo } from '@workspace/typescript-interface/s3/s3';
+import { type BucketStorageAccountInfo } from '@workspace/typescript-interface/bucket-storage/bucketStorage';
 import { useEnvironmentVolumes } from '@/hooks/sse/useEnvironmentVolumes';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { fetcherApi } from '@/lib/api/fetcherApi';
@@ -28,18 +28,18 @@ import { isNodeFieldRef } from '@/lib/nodeFieldRef';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId.ts';
 
-export function BackupVolumeS3Config() {
+export function BackupVolumeBucketStorageConfig() {
     const t = useTranslations('repository.pipeline.config');
     const tAdmin = useTranslations('admin');
     const form = useFormContext();
 
     const environmentId = usePipelineEnvironmentId();
     const { volumes, isLoading } = useEnvironmentVolumes(environmentId);
-    const { data: s3Accounts, isLoading: isLoadingAccounts } = useSWR<S3AccountInfo[]>(
-        { url: '/api/s3/accounts' },
+    const { data: bucketStorageAccounts, isLoading: isLoadingAccounts } = useSWR<BucketStorageAccountInfo[]>(
+        { url: '/api/bucket-storage/accounts' },
         fetcherApi,
     );
-    const s3AccountList = s3Accounts ?? [];
+    const bucketStorageAccountList = bucketStorageAccounts ?? [];
 
     return (
         <div className="space-y-4">
@@ -118,11 +118,11 @@ export function BackupVolumeS3Config() {
                     const isStaleAccount =
                         !isLoadingAccounts &&
                         !!field.value &&
-                        !s3AccountList.find((a) => a.id === field.value);
+                        !bucketStorageAccountList.find((a) => a.id === field.value);
 
                     return (
                         <FormItem>
-                            <FormLabel>{tAdmin('s3Account')}</FormLabel>
+                            <FormLabel>{tAdmin('bucketStorageAccount')}</FormLabel>
                             <FormControl>
                                 <Select
                                     value={field.value}
@@ -133,26 +133,26 @@ export function BackupVolumeS3Config() {
                                         {isLoadingAccounts ? (
                                             <span className="text-muted-foreground flex items-center gap-2">
                                                 <Loader2 className="h-3 w-3 animate-spin" />
-                                                {tAdmin('s3AccountsLoading')}
+                                                {tAdmin('bucketStorageAccountsLoading')}
                                             </span>
                                         ) : isStaleAccount ? (
                                             <span className="flex items-center gap-1.5">
                                                 <AlertTriangle className="h-3 w-3 shrink-0" />
-                                                {tAdmin('s3AccountUnavailable')}
+                                                {tAdmin('bucketStorageAccountUnavailable')}
                                             </span>
                                         ) : (
-                                            <SelectValue placeholder={tAdmin('selectS3Account')} />
+                                            <SelectValue placeholder={tAdmin('selectBucketStorageAccount')} />
                                         )}
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectLabel>{tAdmin('s3Account')}</SelectLabel>
-                                            {s3AccountList.length === 0 ? (
+                                            <SelectLabel>{tAdmin('bucketStorageAccount')}</SelectLabel>
+                                            {bucketStorageAccountList.length === 0 ? (
                                                 <span className="text-muted-foreground px-2 py-1.5 text-sm">
-                                                    {tAdmin('noS3Accounts')}
+                                                    {tAdmin('noBucketStorageAccounts')}
                                                 </span>
                                             ) : (
-                                                s3AccountList.map((a) => (
+                                                bucketStorageAccountList.map((a) => (
                                                     <SelectItem key={a.id} value={a.id}>
                                                         {a.displayName} — {a.region}
                                                     </SelectItem>
@@ -173,10 +173,10 @@ export function BackupVolumeS3Config() {
                 name="bucket"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t('s3BucketName')}</FormLabel>
+                        <FormLabel>{t('bucketName')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input {...field} placeholder={tAdmin('s3BucketNamePlaceholder')} />
+                                <Input {...field} placeholder={tAdmin('bucketNamePlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />

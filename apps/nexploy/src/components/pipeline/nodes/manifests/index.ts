@@ -33,7 +33,7 @@ import { tagImageManifest } from './tag-image.manifest';
 import { scanImageManifest } from './scan-image.manifest';
 import { pruneImagesManifest } from './prune-images.manifest';
 import { downloadFileManifest } from './download-file.manifest';
-import { backupVolumeS3Manifest } from './backup-volume-s3.manifest';
+import { backupVolumeBucketStorageManifest } from './backup-volume-bucket-storage.manifest';
 import { createServiceManifest } from './create-service.manifest';
 import { updateServiceManifest } from './update-service.manifest';
 import { scaleServiceManifest } from './scale-service.manifest';
@@ -107,7 +107,7 @@ export const allBuiltinManifests: NodeManifest[] = [
     // Files & Artifacts
     downloadFileManifest,
     // Database
-    backupVolumeS3Manifest,
+    backupVolumeBucketStorageManifest,
     // Docker Swarm
     createServiceManifest,
     updateServiceManifest,

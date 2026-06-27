@@ -1,19 +1,19 @@
-import { backupVolumeS3ConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { BackupVolumeS3Config } from '../config/BackupVolumeS3Config';
+import { backupVolumeBucketStorageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { BackupVolumeBucketStorageConfig } from '../config/BackupVolumeBucketStorageConfig';
 import { type NodeManifest } from '../../types/nodeManifest';
 import { Position } from '@xyflow/react';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 import { CloudBackup } from 'lucide-react';
 
-export const backupVolumeS3Manifest: NodeManifest = {
-    type: 'backup-volume-s3',
+export const backupVolumeBucketStorageManifest: NodeManifest = {
+    type: 'backup-volume-bucket-storage',
     definition: {
-        id: 'backup-volume-s3',
+        id: 'backup-volume-bucket-storage',
         type: 'base-node',
         category: 'database',
         metadata: {
-            name: 'backup-volume-s3.name',
-            description: 'backup-volume-s3.description',
+            name: 'backup-volume-bucket-storage.name',
+            description: 'backup-volume-bucket-storage.description',
             icon: CloudBackup,
             color: `${CATEGORY_BG_MUTED['database']} ${CATEGORY_TEXT['database']}`,
         },
@@ -23,8 +23,8 @@ export const backupVolumeS3Manifest: NodeManifest = {
             attachments: [],
         },
     },
-    configSchema: backupVolumeS3ConfigSchema,
-    configPanel: BackupVolumeS3Config,
+    configSchema: backupVolumeBucketStorageConfigSchema,
+    configPanel: BackupVolumeBucketStorageConfig,
     inputFields: [
         {
             key: 'fileName',

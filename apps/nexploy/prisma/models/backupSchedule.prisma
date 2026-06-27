@@ -3,8 +3,8 @@ model BackupSchedule {
   volumeName      String
   environmentId   String?
   bucket          String
-  s3AccountId     String
-  s3Account       S3Credential  @relation(fields: [s3AccountId], references: [id], onDelete: Cascade)
+  bucketStorageAccountId     String
+  bucketStorageAccount       BucketStorageCredential  @relation(fields: [bucketStorageAccountId], references: [id], onDelete: Cascade)
   frequency       Frequency
   scheduledHour   Int           @default(0)
   scheduledMinute Int           @default(0)

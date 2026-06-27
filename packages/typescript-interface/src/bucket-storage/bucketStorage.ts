@@ -1,4 +1,4 @@
-export interface S3AccountInfo {
+export interface BucketStorageAccountInfo {
     id: string;
     displayName: string;
     region: string;
@@ -7,7 +7,7 @@ export interface S3AccountInfo {
     createdAt: Date;
 }
 
-export interface S3Credentials {
+export interface BucketStorageCredentials {
     accessKeyId: string;
     secretAccessKey: string;
     region: string;

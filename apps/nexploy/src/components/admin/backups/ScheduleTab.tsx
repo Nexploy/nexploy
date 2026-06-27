@@ -16,10 +16,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import { createBackupScheduleSchema } from '@workspace/schemas-zod/s3/backupSchedule.schema';
+import { createBackupScheduleSchema } from '@workspace/schemas-zod/bucket-storage/backupSchedule.schema';
 import { to24h } from '@/utils/time';
-import { createBackupScheduleAction } from '@/actions/s3/createSchedule.action';
-import { S3AccountInfo } from '@workspace/typescript-interface/s3/s3';
+import { createBackupScheduleAction } from '@/actions/bucket-storage/createSchedule.action';
+import { BucketStorageAccountInfo } from '@workspace/typescript-interface/bucket-storage/bucketStorage';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 
@@ -38,10 +38,10 @@ const DAYS_OF_MONTH = Array.from({ length: 31 }, (_, i) => i + 1);
 interface ScheduleTabProps {
     volumeName: string;
     environmentId?: string;
-    s3Accounts: S3AccountInfo[];
+    bucketStorageAccounts: BucketStorageAccountInfo[];
 }
 
-export function ScheduleTab({ volumeName, s3Accounts }: ScheduleTabProps) {
+export function ScheduleTab({ volumeName, bucketStorageAccounts }: ScheduleTabProps) {
     const t = useTranslations('admin');
     const locale = useLocale();
 
@@ -58,7 +58,7 @@ export function ScheduleTab({ volumeName, s3Accounts }: ScheduleTabProps) {
                 defaultValues: {
                     volumeName,
                     bucket: '',
-                    s3AccountId: s3Accounts[0]?.id ?? '',
+                    bucketStorageAccountId: bucketStorageAccounts[0]?.id ?? '',
                     frequency: 'DAILY',
                     scheduledHour: 0,
                     scheduledMinute: 0,
@@ -71,7 +71,7 @@ export function ScheduleTab({ volumeName, s3Accounts }: ScheduleTabProps) {
                     form.reset({
                         volumeName,
                         bucket: '',
-                        s3AccountId: form.getValues('s3AccountId'),
+                        bucketStorageAccountId: form.getValues('bucketStorageAccountId'),
                         frequency: form.getValues('frequency'),
                         scheduledHour: 0,
                         scheduledMinute: 0,
@@ -95,20 +95,20 @@ export function ScheduleTab({ volumeName, s3Accounts }: ScheduleTabProps) {
                 <form onSubmit={handleSubmitWithAction} className="space-y-3">
                     <FormField
                         control={form.control}
-                        name="s3AccountId"
+                        name="bucketStorageAccountId"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>{t('s3Account')}</FormLabel>
+                                <FormLabel>{t('bucketStorageAccount')}</FormLabel>
                                 <Select value={field.value} onValueChange={field.onChange}>
                                     <FormControl>
                                         <SelectTrigger>
-                                            <SelectValue placeholder={t('selectS3Account')} />
+                                            <SelectValue placeholder={t('selectBucketStorageAccount')} />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectLabel>{t('s3Account')}</SelectLabel>
-                                            {s3Accounts.map((a) => (
+                                            <SelectLabel>{t('bucketStorageAccount')}</SelectLabel>
+                                            {bucketStorageAccounts.map((a) => (
                                                 <SelectItem key={a.id} value={a.id}>
                                                     {a.displayName} — {a.region}
                                                 </SelectItem>
@@ -126,9 +126,9 @@ export function ScheduleTab({ volumeName, s3Accounts }: ScheduleTabProps) {
                         name="bucket"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>{t('s3BucketName')}</FormLabel>
+                                <FormLabel>{t('bucketName')}</FormLabel>
                                 <FormControl>
-                                    <Input placeholder={t('s3BucketNamePlaceholder')} {...field} />
+                                    <Input placeholder={t('bucketNamePlaceholder')} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

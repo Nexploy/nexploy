@@ -1,18 +1,18 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, KyDockerOptions } from '@/lib/api/kyDocker';
-import { createS3Client, putS3Object } from '@/lib/s3/s3';
-import { getS3Credentials } from '@/services/s3.service';
-import { backupVolumeS3ConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { createBucketStorageClient, putBucketStorageObject } from '@/lib/bucket-storage/bucketStorage';
+import { getBucketStorageCredentials } from '@/services/bucketStorage.service';
+import { backupVolumeBucketStorageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { z } from 'zod';
 
-export class BackupVolumeS3Executor implements INodeExecutor {
-    readonly type = 'backup-volume-s3';
-    readonly configSchema = backupVolumeS3ConfigSchema;
+export class BackupVolumeBucketStorageExecutor implements INodeExecutor {
+    readonly type = 'backup-volume-bucket-storage';
+    readonly configSchema = backupVolumeBucketStorageConfigSchema;
 
     async execute(
-        ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof backupVolumeS3ConfigSchema>>>,
+        ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof backupVolumeBucketStorageConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
         const { nodeId, nodeConfig, allOutputs, logger, abortSignal, edges } = ctx;
 
@@ -27,7 +27,7 @@ export class BackupVolumeS3Executor implements INodeExecutor {
         );
 
         await logger.info(nodeId, `Fetching AWS credentials for account ${accountId}`);
-        const creds = await getS3Credentials(accountId);
+        const creds = await getBucketStorageCredentials(accountId);
 
         await logger.info(nodeId, `Downloading volume archive: ${volumeName}`);
         if (abortSignal.aborted) throw new Error('Build cancelled');
@@ -43,12 +43,12 @@ export class BackupVolumeS3Executor implements INodeExecutor {
 
         await logger.info(
             nodeId,
-            `Uploading ${fileName} to s3://${bucket} (${buffer.byteLength} bytes)`,
+            `Uploading ${fileName} to ${bucket} (${buffer.byteLength} bytes)`,
         );
         if (abortSignal.aborted) throw new Error('Build cancelled');
 
-        const s3 = createS3Client(creds);
-        await putS3Object(s3, bucket, fileName, new Uint8Array(buffer), 'application/gzip');
+        const client = createBucketStorageClient(creds);
+        await putBucketStorageObject(client, bucket, fileName, new Uint8Array(buffer), 'application/gzip');
 
         await logger.info(nodeId, `Volume backup uploaded successfully: ${fileName}`);
 
@@ -58,4 +58,4 @@ export class BackupVolumeS3Executor implements INodeExecutor {
     }
 }
 
-export const backupVolumeS3Executor = new BackupVolumeS3Executor();
+export const backupVolumeBucketStorageExecutor = new BackupVolumeBucketStorageExecutor();

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { getBackupSchedulesForVolume } from '@/services/backupSchedule.service';
-import { backupSchedulesQuerySchema } from '@workspace/schemas-zod/s3/s3.schema';
+import { backupSchedulesQuerySchema } from '@workspace/schemas-zod/bucket-storage/bucketStorage.schema';
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const GET = route

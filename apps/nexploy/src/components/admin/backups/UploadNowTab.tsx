@@ -24,29 +24,29 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { DialogFooter } from '@workspace/ui/components/dialog';
-import { uploadVolumeToS3Schema } from '@workspace/schemas-zod/s3/s3.schema';
-import { uploadVolumeToS3Action } from '@/actions/s3/uploadVolumeToS3.action';
-import { S3AccountInfo } from '@workspace/typescript-interface/s3/s3';
+import { uploadVolumeToBucketStorageSchema } from '@workspace/schemas-zod/bucket-storage/bucketStorage.schema';
+import { uploadVolumeToBucketStorageAction } from '@/actions/bucket-storage/uploadVolumeToBucketStorage.action';
+import { BucketStorageAccountInfo } from '@workspace/typescript-interface/bucket-storage/bucketStorage';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 
 interface UploadNowTabProps {
     volumeName: string;
-    s3Accounts: S3AccountInfo[];
+    bucketStorageAccounts: BucketStorageAccountInfo[];
 }
 
-export function UploadNowTab({ volumeName, s3Accounts }: UploadNowTabProps) {
+export function UploadNowTab({ volumeName, bucketStorageAccounts }: UploadNowTabProps) {
     const t = useTranslations('admin');
     const { closeDialog } = useConfirmationDialogStore();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
-        uploadVolumeToS3Action,
-        zodResolver(uploadVolumeToS3Schema),
+        uploadVolumeToBucketStorageAction,
+        zodResolver(uploadVolumeToBucketStorageSchema),
         {
             formProps: {
                 defaultValues: {
                     volumeName,
                     bucket: '',
-                    accountId: s3Accounts[0]?.id,
+                    accountId: bucketStorageAccounts[0]?.id,
                 },
             },
             actionProps: {
@@ -71,17 +71,17 @@ export function UploadNowTab({ volumeName, s3Accounts }: UploadNowTabProps) {
                     name="accountId"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('s3Account')}</FormLabel>
+                            <FormLabel>{t('bucketStorageAccount')}</FormLabel>
                             <Select value={field.value} onValueChange={field.onChange}>
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue placeholder={t('selectS3Account')} />
+                                        <SelectValue placeholder={t('selectBucketStorageAccount')} />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectLabel>{t('s3Account')}</SelectLabel>
-                                        {s3Accounts.map((a) => (
+                                        <SelectLabel>{t('bucketStorageAccount')}</SelectLabel>
+                                        {bucketStorageAccounts.map((a) => (
                                             <SelectItem key={a.id} value={a.id}>
                                                 {a.displayName} — {a.region}
                                             </SelectItem>
@@ -99,9 +99,9 @@ export function UploadNowTab({ volumeName, s3Accounts }: UploadNowTabProps) {
                     name="bucket"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('s3BucketName')}</FormLabel>
+                            <FormLabel>{t('bucketName')}</FormLabel>
                             <FormControl>
-                                <Input placeholder={t('s3BucketNamePlaceholder')} {...field} />
+                                <Input placeholder={t('bucketNamePlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

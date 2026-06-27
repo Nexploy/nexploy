@@ -44,7 +44,7 @@ export const nodeTypeSchema = z.enum([
     // Files & Artifacts
     'download-file',
     // Database
-    'backup-volume-s3',
+    'backup-volume-bucket-storage',
     // Docker Swarm
     'create-service',
     'update-service',

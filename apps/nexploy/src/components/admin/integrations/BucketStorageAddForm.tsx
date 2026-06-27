@@ -7,8 +7,8 @@ import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { DialogFooter } from '@workspace/ui/components/dialog';
-import { addS3AccountAction } from '@/actions/s3/addAccount.action';
-import { s3AddAccountSchema } from '@workspace/schemas-zod/s3/s3.schema';
+import { addBucketStorageAccountAction } from '@/actions/bucket-storage/addAccount.action';
+import { bucketStorageAddAccountSchema } from '@workspace/schemas-zod/bucket-storage/bucketStorage.schema';
 import {
     Form,
     FormControl,
@@ -92,14 +92,14 @@ const PROVIDERS: ProviderConfig[] = [
     },
 ];
 
-export function S3AddForm() {
+export function BucketStorageAddForm() {
     const { closeDialog } = useConfirmationDialogStore();
-    const t = useTranslations('integrations.s3');
+    const t = useTranslations('integrations.bucketStorage');
     const [provider, setProvider] = useState<ProviderConfig>(PROVIDERS[0]!);
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
-        addS3AccountAction,
-        zodResolver(s3AddAccountSchema),
+        addBucketStorageAccountAction,
+        zodResolver(bucketStorageAddAccountSchema),
         {
             formProps: {
                 defaultValues: {

@@ -23,12 +23,12 @@ export default async function DockerLayout({
     const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true';
     const session = await getUserSession();
 
-    const isAdmin = session?.user.role === 'admin';
+    const isAdmin = session?.user?.role === 'admin';
     const gitProviders = isAdmin ? await getAllGitProviders() : [];
     const showOnboardingTour = isAdmin && gitProviders.length === 0;
 
     return (
-        <PermissionProvider role={session?.user.role}>
+        <PermissionProvider role={session?.user?.role}>
             <SidebarProvider defaultOpen={hasCookieSidebar ? defaultOpen : true}>
                 <AppSidebar variant={'inset'} />
                 <div className={'flex h-screen w-full flex-col'}>

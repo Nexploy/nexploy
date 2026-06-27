@@ -5,7 +5,7 @@ import {
     getBackupSchedulesForVolume,
 } from '@/services/backupSchedule.service';
 import { inngest } from '@/inngest/client';
-import { syncVolumeDeleteSchema } from '@workspace/schemas-zod/s3/backupSchedule.schema';
+import { syncVolumeDeleteSchema } from '@workspace/schemas-zod/bucket-storage/backupSchedule.schema';
 
 export const POST = route
     .use(internalApiAuth({ service: 'docker-api' }))

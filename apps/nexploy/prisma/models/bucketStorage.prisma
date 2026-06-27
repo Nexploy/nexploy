@@ -1,4 +1,4 @@
-model S3Credential {
+model BucketStorageCredential {
   id              String           @id @default(cuid())
   displayName     String
   accessKeyId     String
@@ -9,5 +9,5 @@ model S3Credential {
   updatedAt       DateTime         @updatedAt
   schedules       BackupSchedule[]
 
-  @@map("s3_credential")
+  @@map("bucket_storage_credential")
 }

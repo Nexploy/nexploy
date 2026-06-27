@@ -3,7 +3,7 @@ import {
     addDomainConfigSchema,
     removeDomainConfigSchema,
     addSslCertificateConfigSchema,
-    backupVolumeS3ConfigSchema,
+    backupVolumeBucketStorageConfigSchema,
     buildDockerImageConfigSchema,
     cacheRestoreConfigSchema,
     cacheSaveConfigSchema,
@@ -379,10 +379,10 @@ export const NODE_META_MAP: Record<string, NodeMeta> = {
         description: 'Downloads a file from a URL into the working directory.',
         outputs: ['filePath'],
     },
-    'backup-volume-s3': {
-        schema: backupVolumeS3ConfigSchema,
+    'backup-volume-bucket-storage': {
+        schema: backupVolumeBucketStorageConfigSchema,
         category: 'files',
-        description: 'Backs up a Docker volume to an S3-compatible bucket.',
+        description: 'Backs up a Docker volume to an object-storage bucket.',
         outputs: [],
     },
     'send-notification': {

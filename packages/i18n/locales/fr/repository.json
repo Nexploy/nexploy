@@ -519,9 +519,9 @@
                 "name": "Télécharger un fichier",
                 "description": "Télécharge un fichier depuis une URL dans le répertoire de travail"
             },
-            "backup-volume-s3": {
-                "name": "Sauvegarder le volume sur S3",
-                "description": "Archive un volume Docker et l'envoie vers un bucket S3"
+            "backup-volume-bucket-storage": {
+                "name": "Sauvegarder le volume vers Bucket Storage",
+                "description": "Archive un volume Docker et l'envoie vers un bucket"
             },
             "create-service": {
                 "name": "Créer un service",
@@ -784,7 +784,7 @@
             "url": "URL",
             "workdir": "Répertoire de travail",
             "execUser": "Utilisateur",
-            "s3BucketName": "Nom du bucket S3",
+            "bucketName": "Nom du bucket",
             "sonarqubeMode": "Mode",
             "sonarqubeModeCustom": "SonarQube personnalisé / SonarCloud",
             "sonarqubeModeLocal": "Local (Docker)",
@@ -975,8 +975,8 @@
             "desc_remote": "URL distante vers laquelle le tag a été poussé",
             "desc_environmentId": "ID de l'environnement qui a été défini",
             "desc_registryUrl": "URL du registre vers lequel l'image a été poussée",
-            "desc_fileName": "Nom de l'archive de sauvegarde téléversée sur S3",
-            "desc_bucket": "Nom du bucket S3",
+            "desc_fileName": "Nom de l'archive de sauvegarde téléversée vers le bucket",
+            "desc_bucket": "Nom du bucket",
             "desc_volumeName": "Nom du volume Docker",
             "desc_sizeBytes": "Taille du fichier ou du cache en octets",
             "desc_found": "Si le motif a été trouvé dans les journaux",

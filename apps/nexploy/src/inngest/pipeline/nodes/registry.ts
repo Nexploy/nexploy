@@ -33,7 +33,7 @@ import { tagImageExecutor } from './executors/tag-image.executor';
 import { scanImageExecutor } from './executors/scan-image.executor';
 import { pruneImagesExecutor } from './executors/prune-images.executor';
 import { downloadFileExecutor } from './executors/download-file.executor';
-import { backupVolumeS3Executor } from './executors/backup-volume-s3.executor';
+import { backupVolumeBucketStorageExecutor } from './executors/backup-volume-bucket-storage.executor';
 import { createServiceExecutor } from './executors/create-service.executor';
 import { updateServiceExecutor } from './executors/update-service.executor';
 import { scaleServiceExecutor } from './executors/scale-service.executor';
@@ -108,7 +108,7 @@ const executors: INodeExecutor[] = [
     // Files & Artifacts
     downloadFileExecutor,
     // Database
-    backupVolumeS3Executor,
+    backupVolumeBucketStorageExecutor,
     // Docker Swarm
     createServiceExecutor,
     updateServiceExecutor,

@@ -5,7 +5,7 @@ export const backupFrequencies = ['HOURLY', 'DAILY', 'WEEKLY', 'MONTHLY'] as con
 export const createBackupScheduleSchema = z.object({
     volumeName: z.string().min(1),
     bucket: z.string().min(1, 'Bucket is required'),
-    s3AccountId: z.string().min(1, 'S3 account is required'),
+    bucketStorageAccountId: z.string().min(1, 'Bucket storage account is required'),
     frequency: z.enum(backupFrequencies),
     scheduledHour: z.number().int().min(0).max(23).default(0),
     scheduledMinute: z.number().int().min(0).max(59).default(0),

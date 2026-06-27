@@ -1,14 +1,14 @@
 import { prisma } from '../../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
-import { S3AccountInfo, S3Credentials } from '@workspace/typescript-interface/s3/s3';
+import { BucketStorageAccountInfo, BucketStorageCredentials } from '@workspace/typescript-interface/bucket-storage/bucketStorage';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
-export type { S3AccountInfo, S3Credentials };
+export type { BucketStorageAccountInfo, BucketStorageCredentials };
 
-export async function getAllS3Accounts(): Promise<S3AccountInfo[]> {
+export async function getAllBucketStorageAccounts(): Promise<BucketStorageAccountInfo[]> {
     const t = await getErrorTranslator();
     try {
-        const records = await prisma.s3Credential.findMany({
+        const records = await prisma.bucketStorageCredential.findMany({
             orderBy: { createdAt: 'asc' },
         });
 
@@ -27,20 +27,20 @@ export async function getAllS3Accounts(): Promise<S3AccountInfo[]> {
             };
         });
     } catch (error: unknown) {
-        throw new Error(t('s3.getAccountsFailed'));
+        throw new Error(t('bucketStorage.getAccountsFailed'));
     }
 }
 
-export async function saveS3Account(
+export async function saveBucketStorageAccount(
     displayName: string,
     accessKeyId: string,
     secretAccessKey: string,
     region: string,
     endpoint?: string,
-): Promise<S3AccountInfo> {
+): Promise<BucketStorageAccountInfo> {
     const t = await getErrorTranslator();
     try {
-        const record = await prisma.s3Credential.create({
+        const record = await prisma.bucketStorageCredential.create({
             data: {
                 displayName,
                 accessKeyId: encrypt(accessKeyId),
@@ -64,24 +64,24 @@ export async function saveS3Account(
             createdAt: record.createdAt,
         };
     } catch (error: unknown) {
-        throw new Error(t('s3.saveAccountFailed'));
+        throw new Error(t('bucketStorage.saveAccountFailed'));
     }
 }
 
-export async function deleteS3Account(id: string): Promise<void> {
+export async function deleteBucketStorageAccount(id: string): Promise<void> {
     const t = await getErrorTranslator();
     try {
-        await prisma.s3Credential.delete({ where: { id } });
+        await prisma.bucketStorageCredential.delete({ where: { id } });
     } catch (error: unknown) {
-        throw new Error(t('s3.deleteAccountFailed'));
+        throw new Error(t('bucketStorage.deleteAccountFailed'));
     }
 }
 
-export async function getS3Credentials(id: string): Promise<S3Credentials> {
+export async function getBucketStorageCredentials(id: string): Promise<BucketStorageCredentials> {
     const t = await getErrorTranslator();
     try {
-        const record = await prisma.s3Credential.findUnique({ where: { id } });
-        if (!record) throw new Error(t('s3.accountNotFound'));
+        const record = await prisma.bucketStorageCredential.findUnique({ where: { id } });
+        if (!record) throw new Error(t('bucketStorage.accountNotFound'));
 
         return {
             accessKeyId: decrypt(record.accessKeyId),
@@ -90,6 +90,6 @@ export async function getS3Credentials(id: string): Promise<S3Credentials> {
             endpoint: record.endpoint,
         };
     } catch (error: unknown) {
-        throw new Error(t('s3.retrieveCredentialsFailed'));
+        throw new Error(t('bucketStorage.retrieveCredentialsFailed'));
     }
 }

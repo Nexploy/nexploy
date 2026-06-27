@@ -173,7 +173,7 @@ const NODE_CATEGORY: Record<string, string> = {
     // Files & Artifacts
     'download-file': 'files',
     // Database
-    'backup-volume-s3': 'database',
+    'backup-volume-bucket-storage': 'database',
     // Docker Swarm
     'create-service': 'deploy',
     'update-service': 'deploy',
@@ -254,7 +254,7 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     // Files & Artifacts
     'download-file': Download,
     // Database
-    'backup-volume-s3': CloudBackup,
+    'backup-volume-bucket-storage': CloudBackup,
     // Docker Swarm
     'create-service': Layers,
     'update-service': RefreshCw,

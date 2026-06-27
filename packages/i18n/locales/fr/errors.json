@@ -32,12 +32,12 @@
         "getProvidersFailed": "Échec de la récupération des fournisseurs configurés",
         "getKeyStatusFailed": "Échec de la récupération du statut des clés des fournisseurs"
     },
-    "s3": {
-        "getAccountsFailed": "Échec de la récupération des comptes S3",
-        "saveAccountFailed": "Échec de l'enregistrement du compte S3",
-        "deleteAccountFailed": "Échec de la suppression du compte S3",
-        "accountNotFound": "Compte S3 introuvable",
-        "retrieveCredentialsFailed": "Échec de la récupération des identifiants S3"
+    "bucketStorage": {
+        "getAccountsFailed": "Échec de la récupération des comptes de stockage",
+        "saveAccountFailed": "Échec de l'enregistrement du compte de stockage",
+        "deleteAccountFailed": "Échec de la suppression du compte de stockage",
+        "accountNotFound": "Compte de stockage introuvable",
+        "retrieveCredentialsFailed": "Échec de la récupération des identifiants de stockage"
     },
     "domain": {
         "originNotFound": "Domaine d'origine introuvable pour l'ID : {id}",
