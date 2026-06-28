@@ -149,7 +149,7 @@ export function ChatAIPanel() {
     return (
         <div
             className={cn(
-                'ml-2 shrink-0 overflow-hidden rounded-none bg-red-500 shadow-none transition-[width,margin] duration-300 ease-in-out md:rounded-xl md:shadow-sm',
+                'ml-2 shrink-0 overflow-hidden rounded-none shadow-none transition-[width,margin] duration-300 ease-in-out md:rounded-xl md:shadow-sm',
                 isOpen ? 'w-[30%]' : 'ml-0 w-0',
             )}
         >

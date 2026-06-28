@@ -77,55 +77,58 @@ export function RepositoryVersions({
                 key={`${version.repositoryId}-${version.imageTag}`}
                 className="bg-card flex items-center justify-between gap-4 p-3"
             >
-                <div className="flex flex-col gap-2">
+                <div className="flex min-w-0 flex-1 flex-col gap-2">
                     <div className="flex items-center gap-2">
                         <Badge
                             variant={isCurrent ? 'default' : 'secondary'}
-                            className="font-mono text-xs"
+                            className="shrink-0 font-mono text-xs"
                         >
                             v{version.versionNumber}
                         </Badge>
-                        <span className="line-clamp-1 text-sm font-medium">
+                        <span className="line-clamp-1 truncate text-sm font-medium">
                             {version.commitMessage ?? `Build #${version.imageTag}`}
                         </span>
                     </div>
                     <div className="text-muted-foreground flex min-w-0 items-center gap-2 text-xs">
-                        <span className="flex items-center gap-1">
-                            <Clock className="size-3" />
+                        <span className="flex shrink-0 items-center gap-1">
+                            <Clock className="size-3 shrink-0" />
                             {dayjs(version.createdAt).format('DD/MM/YYYY HH:mm:ss')}
                         </span>
                         {version.commitHash && (
                             <>
-                                <Separator orientation="vertical" className="h-3! w-1" />
-                                <span className="flex items-center gap-1 font-mono">
-                                    <GitCommit className="size-3" />
-                                    {version.commitHash}
+                                <Separator orientation="vertical" className="h-3! w-1 shrink-0" />
+                                <span className="flex min-w-0 items-center gap-1 font-mono">
+                                    <GitCommit className="size-3 shrink-0" />
+                                    <span className="truncate">{version.commitHash}</span>
                                 </span>
                             </>
                         )}
                         {version.branch && (
                             <>
-                                <Separator orientation="vertical" className="h-3! w-1" />
-                                <span className="flex items-center gap-1">
-                                    <GitBranch className="size-3" />
-                                    {version.branch}
+                                <Separator orientation="vertical" className="h-3! w-1 shrink-0" />
+                                <span className="flex min-w-0 items-center gap-1">
+                                    <GitBranch className="size-3 shrink-0" />
+                                    <span className="truncate">{version.branch}</span>
                                 </span>
                             </>
                         )}
                         {version.hasComposeConfig ? (
                             <>
-                                <Separator orientation="vertical" className="h-3! w-1" />
-                                <span className="flex items-center gap-1">
-                                    <Boxes className="size-3" />
-                                    {t('stack')}
+                                <Separator orientation="vertical" className="h-3! w-1 shrink-0" />
+                                <span className="flex min-w-0 items-center gap-1">
+                                    <Boxes className="size-3 shrink-0" />
+                                    <span className="truncate">{t('stack')}</span>
                                 </span>
                             </>
                         ) : (
                             containerName && (
                                 <>
-                                    <Separator orientation="vertical" className="h-3! w-1" />
+                                    <Separator
+                                        orientation="vertical"
+                                        className="h-3! w-1 shrink-0"
+                                    />
                                     <span className="flex min-w-0 items-center gap-1">
-                                        <Container className="size-3" />
+                                        <Container className="size-3 shrink-0" />
                                         <span className="truncate">{containerName}</span>
                                     </span>
                                 </>
@@ -133,7 +136,7 @@ export function RepositoryVersions({
                         )}
                     </div>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex shrink-0 items-center gap-1">
                     <VersionDeployButton
                         version={version}
                         repositoryId={repositoryId}

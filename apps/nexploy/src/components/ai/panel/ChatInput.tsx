@@ -47,7 +47,7 @@ export function ChatInput({ input, onChange, onSubmit, onStop, isLoading }: Chat
                     <Button
                         onClick={onStop}
                         size="icon"
-                        variant="destructive"
+                        variant="outline"
                         className="m-2 size-7 shrink-0"
                         icon={Square}
                     />
