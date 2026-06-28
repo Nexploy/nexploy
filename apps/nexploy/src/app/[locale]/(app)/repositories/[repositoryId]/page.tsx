@@ -15,7 +15,9 @@ import { getHostname } from '@/utils/url';
 import Link from 'next/link';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
 import { Separator } from '@workspace/ui/components/separator';
-import { ReassociateGitAccountDialog } from '@/components/repositories/reassociateGitAccount/ReassociateGitAccountDialog';
+import {
+    ReassociateGitAccountDialog
+} from '@/components/repositories/reassociateGitAccount/ReassociateGitAccountDialog';
 import { PROVIDER_ICONS } from '@/components/git/providerIcons.tsx';
 
 interface RepositoryIdPageProps {
@@ -78,7 +80,7 @@ export default async function RepositoryIdPage({ params, searchParams }: Reposit
                                         <>
                                             <Separator
                                                 orientation={'vertical'}
-                                                className={'!h-3 w-1'}
+                                                className={'h-3! w-1'}
                                             />
                                             <span>{hostname}</span>
                                         </>
@@ -86,7 +88,7 @@ export default async function RepositoryIdPage({ params, searchParams }: Reposit
                                 </div>
                             </div>
                         </div>
-                        <div className="mt-5 flex items-center gap-2">
+                        <div className="mt-5 flex items-center gap-3">
                             <StageSelect repositoryId={repository.id} />
                             <RunBuildButton repositoryId={repository.id} />
                         </div>
@@ -108,10 +110,7 @@ export default async function RepositoryIdPage({ params, searchParams }: Reposit
                             ),
                             versions: <RepositoryVersionsTab repositoryId={repository.id} />,
                             env: (
-                                <RepositoryEnvTab
-                                    repositoryId={repository.id}
-                                    stageId={stageId}
-                                />
+                                <RepositoryEnvTab repositoryId={repository.id} stageId={stageId} />
                             ),
                             setting: <RepositorySettingsTab repositoryId={repository.id} />,
                         }}

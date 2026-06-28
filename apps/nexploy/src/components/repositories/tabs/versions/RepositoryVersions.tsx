@@ -40,12 +40,12 @@ export function RepositoryVersions({
     const { deployedBuildIds, containerNameByBuildId } = useMemo(() => {
         const ids = new Set<string>();
         const nameMap = new Map<string, string>();
-        for (const c of containers) {
-            if (c.labels?.[NEXPLOY_LABELS.repositoryId] === repositoryId) {
-                const buildId = c.labels?.[NEXPLOY_LABELS.buildId];
+        for (const container of containers) {
+            if (container.labels?.[NEXPLOY_LABELS.repositoryId] === repositoryId) {
+                const buildId = container.labels?.[NEXPLOY_LABELS.buildId];
                 if (buildId) {
                     ids.add(buildId);
-                    if (!nameMap.has(buildId)) nameMap.set(buildId, c.name);
+                    if (!nameMap.has(buildId)) nameMap.set(buildId, container.name);
                 }
             }
         }
@@ -71,6 +71,7 @@ export function RepositoryVersions({
 
     const renderVersion = (version: Version) => {
         const isCurrent = isCurrentVersion(version);
+        const containerName = containerNameByBuildId.get(version.imageTag);
         return (
             <div
                 key={`${version.repositoryId}-${version.imageTag}`}
@@ -111,19 +112,24 @@ export function RepositoryVersions({
                                 </span>
                             </>
                         )}
-                        <Separator orientation="vertical" className="h-3! w-1" />
                         {version.hasComposeConfig ? (
-                            <span className="flex items-center gap-1">
-                                <Boxes className="size-3" />
-                                {t('stack')}
-                            </span>
-                        ) : (
-                            <span className="flex min-w-0 items-center gap-1">
-                                <Container className="size-3 shrink-0" />
-                                <span className="truncate">
-                                    {containerNameByBuildId.get(version.imageTag)}
+                            <>
+                                <Separator orientation="vertical" className="h-3! w-1" />
+                                <span className="flex items-center gap-1">
+                                    <Boxes className="size-3" />
+                                    {t('stack')}
                                 </span>
-                            </span>
+                            </>
+                        ) : (
+                            containerName && (
+                                <>
+                                    <Separator orientation="vertical" className="h-3! w-1" />
+                                    <span className="flex min-w-0 items-center gap-1">
+                                        <Container className="size-3" />
+                                        <span className="truncate">{containerName}</span>
+                                    </span>
+                                </>
+                            )
                         )}
                     </div>
                 </div>
