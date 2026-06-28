@@ -11,9 +11,7 @@ export function Suggestions({ categories, onSelect }: SuggestionsProps) {
         <div className="flex flex-col gap-4 pt-2">
             {categories.map((category) => (
                 <div key={category.id}>
-                    <p className="text-muted-foreground mb-1.5 px-1 text-xs font-semibold tracking-wider uppercase">
-                        {category.label}
-                    </p>
+                    <p className="text-muted-foreground mb-1.5 px-1 text-xs">{category.label}</p>
                     <div className="flex flex-col gap-1">
                         {category.suggestions.map((text, i) => (
                             <Button

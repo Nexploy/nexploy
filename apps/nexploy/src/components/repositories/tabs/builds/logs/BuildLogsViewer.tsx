@@ -11,6 +11,8 @@ import { useTranslations } from 'next-intl';
 import { LogsToolbar } from '@/components/shared/LogsToolbar';
 import { useLogsToolbar } from '@/hooks/useLogsToolbar';
 import type { BuildMessage } from '@workspace/typescript-interface/repository/buildRealtime';
+import { DurationLive } from '@/components/shared/DurationLive.tsx';
+import { Separator } from '@workspace/ui/components/separator.tsx';
 
 interface BuildLogsViewerProps {
     inngestData: {
@@ -21,6 +23,7 @@ interface BuildLogsViewerProps {
     initialStatus: BuildStatus;
     initialLogs: BuildLogEntry[];
     createdAt: Date;
+    updatedAt: Date;
 }
 
 export function BuildLogsViewer({
@@ -29,6 +32,7 @@ export function BuildLogsViewer({
     initialStatus,
     initialLogs,
     createdAt,
+    updatedAt,
 }: BuildLogsViewerProps) {
     const t = useTranslations('repository.builds.logs');
 
@@ -51,8 +55,16 @@ export function BuildLogsViewer({
     return (
         <div className="flex flex-1 flex-col overflow-hidden">
             <div className="flex items-center justify-between border-b p-2">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                     <StatusLive key={buildId} buildId={buildId} initialStatus={initialStatus} />
+                    <Separator orientation={'vertical'} className={'h-3! w-1'} />
+                    <DurationLive
+                        buildId={buildId}
+                        initialStatus={initialStatus}
+                        createdAt={createdAt}
+                        updatedAt={updatedAt}
+                    />
+                    <Separator orientation={'vertical'} className={'h-3! w-1'} />
                     <span className="text-muted-foreground text-sm">
                         {t('started')} {dayjs(createdAt).format('DD/MM/YYYY HH:mm:ss')}
                     </span>

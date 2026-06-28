@@ -46,12 +46,10 @@ export function OutputHandle({
                 : '!-right-[3px]';
 
     const offset = total > 1 ? `${((index + 1) / (total + 1)) * 100}%` : undefined;
+    const isVertical = position === Position.Left || position === Position.Right;
+
     const positionStyle =
-        offset === undefined
-            ? undefined
-            : position === Position.Left || position === Position.Right
-              ? { top: offset }
-              : { left: offset };
+        offset !== undefined ? (isVertical ? { top: offset } : { left: offset }) : undefined;
 
     return (
         <Tooltip>
@@ -62,7 +60,7 @@ export function OutputHandle({
                     position={position}
                     style={positionStyle}
                     className={cn(
-                        '!bg-base-7 !border-card !size-4.5 !rounded-full !border-2 transition-all hover:!size-6',
+                        'bg-base-7! border-card! size-4.5! rounded-full! border-2! transition-all hover:size-6!',
                         offsetClass,
                         active && handleColor,
                     )}

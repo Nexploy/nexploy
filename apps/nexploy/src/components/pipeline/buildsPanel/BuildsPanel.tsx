@@ -42,7 +42,7 @@ export function BuildsPanel() {
     if (builds.length === 0) return null;
 
     return (
-        <Panel position="top-left" className="!m-0">
+        <Panel position="top-left" className="m-0!">
             <ScrollAreaWithShadow
                 ref={scrollViewportRef}
                 bottomShadow

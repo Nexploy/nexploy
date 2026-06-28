@@ -11,7 +11,7 @@ export function substituteEnvVars(content: string, envVars: Record<string, strin
             value = process.env[varName];
         }
 
-        const isEmpty = value === undefined || value === '';
+        const isEmpty = !value || value === '';
 
         const op = operator ? operator.slice(1) : undefined;
 

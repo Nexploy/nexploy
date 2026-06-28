@@ -95,7 +95,7 @@ export function RepositoryVersions({
                         </span>
                         {version.commitHash && (
                             <>
-                                <Separator orientation="vertical" className="!h-3 w-1" />
+                                <Separator orientation="vertical" className="h-3! w-1" />
                                 <span className="flex items-center gap-1 font-mono">
                                     <GitCommit className="size-3" />
                                     {version.commitHash}
@@ -104,14 +104,14 @@ export function RepositoryVersions({
                         )}
                         {version.branch && (
                             <>
-                                <Separator orientation="vertical" className="!h-3 w-1" />
+                                <Separator orientation="vertical" className="h-3! w-1" />
                                 <span className="flex items-center gap-1">
                                     <GitBranch className="size-3" />
                                     {version.branch}
                                 </span>
                             </>
                         )}
-                        <Separator orientation="vertical" className="!h-3 w-1" />
+                        <Separator orientation="vertical" className="h-3! w-1" />
                         {version.hasComposeConfig ? (
                             <span className="flex items-center gap-1">
                                 <Boxes className="size-3" />

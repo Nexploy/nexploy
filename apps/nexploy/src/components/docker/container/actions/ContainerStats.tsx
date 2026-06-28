@@ -252,7 +252,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                             </div>
                             <div className="flex flex-row items-center gap-2">
                                 <Select value={refreshRate} onValueChange={setRefreshRate}>
-                                    <SelectTrigger className="!h-7">
+                                    <SelectTrigger className="h-7!">
                                         <SelectValue placeholder={t('refreshRatePlaceholder')} />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -276,7 +276,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                                 >
                                     {t('download')}
                                 </Button>
-                                <Separator orientation="vertical" className="!h-5" />
+                                <Separator orientation="vertical" className="h-5!" />
                                 <Button onClick={handleClose} className="h-7 text-xs" size="sm">
                                     {t('close')}
                                 </Button>
@@ -309,7 +309,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                                             key={index}
                                             className={'rounded-md bg-transparent py-4'}
                                         >
-                                            <CardHeader className={'border-b px-4 !pb-4'}>
+                                            <CardHeader className={'border-b px-4 pb-4!'}>
                                                 <CardTitle>{stat.title}</CardTitle>
                                                 <CardDescription>
                                                     {stat.description}

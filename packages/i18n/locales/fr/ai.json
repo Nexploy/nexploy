@@ -129,6 +129,8 @@
         "newChat": "Nouveau chat",
         "disabled": "Assistant IA désactivé",
         "disabledDescription": "L'administrateur a désactivé l'assistant IA.",
+        "noProvider": "Aucun modèle d'IA configuré",
+        "noProviderDescription": "Un administrateur doit configurer un fournisseur d'IA avant que vous puissiez utiliser l'assistant.",
         "confirmation": {
             "title": "Confirmer l'action destructive",
             "target": "Cible",

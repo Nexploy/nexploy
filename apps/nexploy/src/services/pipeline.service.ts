@@ -7,6 +7,8 @@ import { decryptPipelineNodes, encryptPipelineNodes } from '@/lib/pipelineEncryp
 
 export interface BuildPipelineStatus {
     nodeStatuses: Record<string, NodeRunStatus>;
+    nodeDurations: Record<string, number>;
+    nodeStartTimes: Record<string, number>;
     status: string;
 }
 
@@ -15,13 +17,20 @@ export async function getBuildPipelineStatus(buildId: string): Promise<BuildPipe
     try {
         const build = await prisma.build.findUnique({
             where: { id: buildId },
-            select: { nodeStatuses: true, status: true },
+            select: {
+                nodeStatuses: true,
+                nodeDurations: true,
+                nodeStartTimes: true,
+                status: true,
+            },
         });
 
         if (!build) return null;
 
         return {
             nodeStatuses: (build.nodeStatuses as Record<string, NodeRunStatus>) ?? {},
+            nodeDurations: (build.nodeDurations as Record<string, number>) ?? {},
+            nodeStartTimes: (build.nodeStartTimes as Record<string, number>) ?? {},
             status: build.status,
         };
     } catch (e) {

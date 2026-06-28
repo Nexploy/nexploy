@@ -11,6 +11,8 @@ export interface PipelineBuild {
     commitHash: string | null;
     commitMessage: string | null;
     createdAt: Date;
+    updatedAt: Date;
+    finishedAt?: number;
     pipelineSnapshot?: unknown;
 }
 
@@ -39,6 +41,18 @@ export interface PipelineActionsContextValue {
             | Record<string, NodeRunStatus>
             | ((prev: Record<string, NodeRunStatus>) => Record<string, NodeRunStatus>),
     ) => void;
+    setBuildNodeDurations: (
+        buildId: string,
+        updater:
+            | Record<string, number>
+            | ((prev: Record<string, number>) => Record<string, number>),
+    ) => void;
+    setBuildNodeStartTimes: (
+        buildId: string,
+        updater:
+            | Record<string, number>
+            | ((prev: Record<string, number>) => Record<string, number>),
+    ) => void;
 }
 
 export interface PipelineStateContextValue {
@@ -54,6 +68,8 @@ export interface PipelineStateContextValue {
     isLoadingMoreBuilds: boolean;
     loadMoreBuilds: () => void;
     nodeStatuses: Record<string, NodeRunStatus>;
+    nodeDurations: Record<string, number>;
+    nodeStartTimes: Record<string, number>;
     canUndo: boolean;
     canRedo: boolean;
 }
@@ -74,6 +90,8 @@ export interface PipelineStoreState {
     stageId: string;
     buildOverlays: Record<string, Partial<PipelineBuild>>;
     buildNodeStatuses: Record<string, Record<string, NodeRunStatus>>;
+    buildNodeDurations: Record<string, Record<string, number>>;
+    buildNodeStartTimes: Record<string, Record<string, number>>;
 
     setNodes: (nodes: Node[] | ((prev: Node[]) => Node[])) => void;
     setEdges: (edges: Edge[] | ((prev: Edge[]) => Edge[])) => void;
@@ -96,6 +114,18 @@ export interface PipelineStoreState {
         updater:
             | Record<string, NodeRunStatus>
             | ((prev: Record<string, NodeRunStatus>) => Record<string, NodeRunStatus>),
+    ) => void;
+    setBuildNodeDurations: (
+        buildId: string,
+        updater:
+            | Record<string, number>
+            | ((prev: Record<string, number>) => Record<string, number>),
+    ) => void;
+    setBuildNodeStartTimes: (
+        buildId: string,
+        updater:
+            | Record<string, number>
+            | ((prev: Record<string, number>) => Record<string, number>),
     ) => void;
 
     _commit: (snapshot: Snapshot) => void;

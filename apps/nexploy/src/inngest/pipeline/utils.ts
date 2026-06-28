@@ -1,5 +1,5 @@
 import { type NodeFieldRef } from '@workspace/typescript-interface/pipeline/nodeFieldRef';
-import { type LogLevel, type NodeOutputStore } from '@workspace/typescript-interface/pipeline/pipeline';
+import { type LogLevel, type NodeOutputStore, } from '@workspace/typescript-interface/pipeline/pipeline';
 import { isNodeFieldRef } from '@/lib/nodeFieldRef';
 
 export function formatErrorDetails(error: unknown): string {
@@ -60,7 +60,7 @@ function resolveRef(
     const sourceOutput = allOutputs.get(ref.nodeId);
     const resolvedValue = sourceOutput?.[ref.inputKey];
 
-    if (resolvedValue === undefined) {
+    if (!resolvedValue) {
         const sourceLabel = ref.nodeType ?? nodeTypeMap.get(ref.nodeId) ?? ref.nodeId;
         if (!sourceOutput) {
             warnings.add(
@@ -68,7 +68,7 @@ function resolveRef(
             );
         } else {
             warnings.add(
-                `Field "${ref.inputKey}" from node "${sourceLabel}" (id: ${ref.nodeId}) is unavailable — the field does not exist in the source node's output (available fields: ${Object.keys(sourceOutput).join(", ") || "none"})`,
+                `Field "${ref.inputKey}" from node "${sourceLabel}" (id: ${ref.nodeId}) is unavailable — the field does not exist in the source node's output (available fields: ${Object.keys(sourceOutput).join(', ') || 'none'})`,
             );
         }
     }

@@ -59,15 +59,28 @@ export function PipelineProvider({
     const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 
-    useSWR<{ nodeStatuses: Record<string, NodeRunStatus> }>(
+    useSWR<{
+        nodeStatuses: Record<string, NodeRunStatus>;
+        nodeDurations: Record<string, number>;
+        nodeStartTimes: Record<string, number>;
+    }>(
         activeBuildId ? { url: `/api/repositories/${repositoryId}/builds/${activeBuildId}` } : null,
         fetcherApi,
         {
-            onSuccess: (data) =>
+            onSuccess: (data) => {
                 store.getState().setBuildNodeStatuses(activeBuildId!, (prev) => ({
                     ...(data?.nodeStatuses ?? {}),
                     ...prev,
-                })),
+                }));
+                store.getState().setBuildNodeDurations(activeBuildId!, (prev) => ({
+                    ...(data?.nodeDurations ?? {}),
+                    ...prev,
+                }));
+                store.getState().setBuildNodeStartTimes(activeBuildId!, (prev) => ({
+                    ...(data?.nodeStartTimes ?? {}),
+                    ...prev,
+                }));
+            },
         },
     );
 

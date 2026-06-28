@@ -103,7 +103,7 @@ export function PushToRegistryConfig() {
                                 >
                                     <SelectTrigger
                                         className={
-                                            'min-w-40 overflow-hidden data-[placeholder]:!pl-3'
+                                            'min-w-40 overflow-hidden data-[placeholder]:pl-3!'
                                         }
                                     >
                                         {isLoading ? (

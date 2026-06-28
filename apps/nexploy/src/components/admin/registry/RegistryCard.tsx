@@ -62,7 +62,7 @@ export function RegistryCard({ registry }: RegistryCardProps) {
                         <p className="text-muted-foreground text-sm">{registry.url}</p>
                         {registry.username && (
                             <>
-                                <Separator orientation="vertical" className="!h-3" />
+                                <Separator orientation="vertical" className="h-3!" />
                                 <p className="text-muted-foreground text-sm">{registry.username}</p>
                             </>
                         )}

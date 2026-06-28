@@ -155,7 +155,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton className="flex h-10 w-18 cursor-pointer justify-between gap-1 group-data-[state=collapsed]:justify-start group-data-[state=collapsed]:!bg-transparent group-data-[state=collapsed]:p-0!">
+                        <SidebarMenuButton className="flex h-10 w-18 cursor-pointer justify-between gap-1 group-data-[state=collapsed]:justify-start group-data-[state=collapsed]:bg-transparent! group-data-[state=collapsed]:p-0!">
                             <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg font-semibold">
                                 {currentEnvironment?.name?.charAt(0).toUpperCase() ?? '?'}
                             </div>

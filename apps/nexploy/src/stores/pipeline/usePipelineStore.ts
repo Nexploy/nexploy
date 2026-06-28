@@ -20,6 +20,7 @@ export type {
 } from '@workspace/typescript-interface/stores/pipelineStore';
 
 const EMPTY_NODE_STATUSES: Record<string, NodeRunStatus> = {};
+const EMPTY_NODE_DURATIONS: Record<string, number> = {};
 
 export function usePipelineActions(): PipelineActionsContextValue {
     const store = usePipelineStoreInstance();
@@ -43,6 +44,8 @@ export function usePipelineActions(): PipelineActionsContextValue {
             handleDeleteSelection: s.handleDeleteSelection,
             patchBuildOverlay: s.patchBuildOverlay,
             setBuildNodeStatuses: s.setBuildNodeStatuses,
+            setBuildNodeDurations: s.setBuildNodeDurations,
+            setBuildNodeStartTimes: s.setBuildNodeStartTimes,
         })),
     );
 }
@@ -129,6 +132,18 @@ export function usePipelineDisplay() {
             : EMPTY_NODE_STATUSES,
     );
 
+    const nodeDurations = useStore(store, (s) =>
+        activeBuildId
+            ? (s.buildNodeDurations[activeBuildId] ?? EMPTY_NODE_DURATIONS)
+            : EMPTY_NODE_DURATIONS,
+    );
+
+    const nodeStartTimes = useStore(store, (s) =>
+        activeBuildId
+            ? (s.buildNodeStartTimes[activeBuildId] ?? EMPTY_NODE_DURATIONS)
+            : EMPTY_NODE_DURATIONS,
+    );
+
     const isViewingBuild = !!snapshot;
 
     const snapshotFlow = useMemo(
@@ -141,7 +156,12 @@ export function usePipelineDisplay() {
         return {
             displayNodes: snapshotFlow.nodes.map((node) => ({
                 ...node,
-                data: { ...node.data, status: nodeStatuses[node.id] ?? undefined, viewOnly: true },
+                data: {
+                    ...node.data,
+                    status: nodeStatuses[node.id] ?? undefined,
+                    durationMs: nodeDurations[node.id] ?? undefined,
+                    viewOnly: true,
+                },
             })),
             displayEdges: snapshotFlow.edges.map((edge) => ({
                 ...edge,
@@ -151,7 +171,15 @@ export function usePipelineDisplay() {
                         nodeStatuses[edge.target] === 'running'),
             })),
         };
-    }, [snapshotFlow, nodeStatuses, nodes, edges]);
+    }, [snapshotFlow, nodeStatuses, nodeDurations, nodes, edges]);
 
-    return { nodes, displayNodes, displayEdges, isViewingBuild, nodeStatuses };
+    return {
+        nodes,
+        displayNodes,
+        displayEdges,
+        isViewingBuild,
+        nodeStatuses,
+        nodeDurations,
+        nodeStartTimes,
+    };
 }

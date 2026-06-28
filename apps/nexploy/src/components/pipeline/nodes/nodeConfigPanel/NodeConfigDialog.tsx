@@ -2,13 +2,7 @@
 
 import { useRef } from 'react';
 import { type Node } from '@xyflow/react';
-import {
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@workspace/ui/components/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, } from '@workspace/ui/components/dialog';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
 import { usePipelineActions, usePipelineDisplay } from '@/stores/pipeline/usePipelineStore';
@@ -27,7 +21,8 @@ export function NodeConfigDialog() {
     const tConfig = useTranslations('repository.pipeline.config');
     const tCommon = useTranslations('common');
 
-    const { nodes, displayNodes, isViewingBuild, nodeStatuses } = usePipelineDisplay();
+    const { nodes, displayNodes, isViewingBuild, nodeStatuses, nodeDurations, nodeStartTimes } =
+        usePipelineDisplay();
     const { handleResetPanelNode } = usePipelineActions();
     const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
     const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
@@ -51,8 +46,8 @@ export function NodeConfigDialog() {
             <DialogContent
                 aria-describedby={undefined}
                 className={cn(
-                    'flex !h-[80%] !max-w-[70%] !min-w-[700px] flex-col gap-0 !p-0',
-                    isViewing && '!max-w-[80%]',
+                    'flex h-[80%]! max-w-[70%]! min-w-[700px]! flex-col gap-0 p-0!',
+                    isViewing && 'max-w-[80%]!',
                 )}
                 onOpenAutoFocus={(e) => e.preventDefault()}
             >
@@ -99,6 +94,8 @@ export function NodeConfigDialog() {
                                             buildId={activeBuildId!}
                                             nodeId={node.id}
                                             nodeStatus={nodeStatuses[node.id]}
+                                            nodeDurationMs={nodeDurations[node.id]}
+                                            nodeStartedAt={nodeStartTimes[node.id]}
                                         />
                                     </div>
                                     <DialogFooter className="bg-muted/40 border-t p-4">

@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@workspace/ui/components/card';
-import { Network, Plus } from 'lucide-react';
+import { EthernetPort, Plus } from 'lucide-react';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
@@ -11,7 +11,7 @@ import { NetworkForm } from '@/components/docker/container/forms/NetworkForm';
 import { useTranslations } from 'next-intl';
 import { NetworkItem } from './NetworkItem';
 
-export function CardNetworkDetails() {
+export function CardNetworks() {
     const container = useContainerStore((state) => state.container);
     const isConnecting = useContainerStore((state) => state.isConnecting);
 
@@ -43,7 +43,11 @@ export function CardNetworkDetails() {
 
     return (
         <Card>
-            <CardHeaderWithIcon icon={Network} title={t('title')} className={'justify-between'}>
+            <CardHeaderWithIcon
+                icon={EthernetPort}
+                title={t('title')}
+                className={'justify-between'}
+            >
                 {!isSwarmContainer && (
                     <Button className="size-9 md:size-fit" icon={Plus} onClick={handleOpenDialog}>
                         <span className="hidden md:flex">{t('add')}</span>

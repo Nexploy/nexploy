@@ -13,7 +13,7 @@ export function ButtonPanel() {
     if (!can('repository', 'update')) return null;
 
     return (
-        <Panel position="top-right" className="!m-2 flex flex-col items-center gap-1.5">
+        <Panel position="top-right" className="m-2! flex flex-col items-center gap-1.5">
             <Button
                 variant={activePanel === 'palette' ? 'default' : 'secondary'}
                 size="icon"

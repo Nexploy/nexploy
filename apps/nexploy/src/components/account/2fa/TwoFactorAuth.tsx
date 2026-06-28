@@ -66,14 +66,14 @@ export function TwoFactorAuth({ user }: TwoFactorAuthProps) {
                                         />
                                         <CopyButton
                                             text={secretKey}
-                                            className="rounded-l-none border-l-0 !text-xs"
+                                            className="rounded-l-none border-l-0 text-xs!"
                                             size={'icon'}
                                             variant={'ghost'}
                                         />
                                     </ButtonGroup>
                                 </div>
                                 <div className={'flex flex-col gap-4'}>
-                                    <DialogTitle className={'!text-base'}>
+                                    <DialogTitle className={'text-base!'}>
                                         {t('enterVerificationCode')}
                                     </DialogTitle>
                                     <TwoFactorVerifCodeForm

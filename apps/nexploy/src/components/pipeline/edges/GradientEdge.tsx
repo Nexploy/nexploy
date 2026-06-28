@@ -98,7 +98,7 @@ export function GradientEdge(props: EdgeProps) {
             />
             <EdgeToolbar edgeId={id} x={centerX} y={centerY} isVisible={hoveredEdgeId === id}>
                 <Button
-                    className="nodrag nopan !bg-card size-8 opacity-100 duration-0"
+                    className="nodrag nopan bg-card! size-8 opacity-100 duration-0"
                     size={'icon'}
                     variant={'destructiveOutline'}
                     style={{ transform: `scale(${zoom})` }}

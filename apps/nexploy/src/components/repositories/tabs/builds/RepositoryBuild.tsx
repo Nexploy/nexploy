@@ -7,6 +7,7 @@ import type { PipelineBuild } from '@workspace/typescript-interface/stores/pipel
 import { Separator } from '@workspace/ui/components/separator';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { StatusLive } from '@/components/shared/StatusLive';
+import { DurationLive } from '@/components/shared/DurationLive';
 import { onCancelBuild } from '@/actions/repository/builds/cancelBuild.action';
 import { Button } from '@workspace/ui/components/button';
 import { useRealtime } from 'inngest/react';
@@ -79,15 +80,22 @@ export function RepositoryBuild({ repositoryId, build }: BuildLogsProps) {
                         <Clock className="size-3" />
                         {dayjs(build.createdAt).format('DD/MM/YYYY HH:mm:ss')}
                     </span>
+                    <Separator orientation={'vertical'} className={'h-3! w-1'} />
+                    <DurationLive
+                        buildId={build.id}
+                        initialStatus={build.status}
+                        createdAt={build.createdAt}
+                        updatedAt={build.updatedAt}
+                    />
                     {isLive && !commitHash ? (
                         <>
-                            <Separator orientation={'vertical'} className={'!h-3 w-1'} />
+                            <Separator orientation={'vertical'} className={'h-3! w-1'} />
                             <Skeleton className="h-3 w-16" />
                         </>
                     ) : (
                         commitHash && (
                             <>
-                                <Separator orientation={'vertical'} className={'!h-3 w-1'} />
+                                <Separator orientation={'vertical'} className={'h-3! w-1'} />
                                 <span className="flex items-center gap-1 font-mono">
                                     <GitCommit className="size-3" />
                                     {commitHash}
@@ -97,7 +105,7 @@ export function RepositoryBuild({ repositoryId, build }: BuildLogsProps) {
                     )}
                     {branch && (
                         <>
-                            <Separator orientation={'vertical'} className={'!h-3 w-1'} />
+                            <Separator orientation={'vertical'} className={'h-3! w-1'} />
                             <span className="flex shrink-0 items-center gap-1">
                                 <GitBranch className="size-3" />
                                 {branch}

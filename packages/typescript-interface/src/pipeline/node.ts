@@ -18,6 +18,7 @@ export interface NodeData {
     disabled?: boolean;
     viewOnly?: boolean;
     status?: NodeRunStatus;
+    durationMs?: number;
 }
 
 export type NodeId =

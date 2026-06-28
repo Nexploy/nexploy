@@ -20,6 +20,8 @@ export function BuildTracker({
     const store = usePipelineStoreInstance();
     const patchBuildOverlay = useStore(store, (s) => s.patchBuildOverlay);
     const setBuildNodeStatuses = useStore(store, (s) => s.setBuildNodeStatuses);
+    const setBuildNodeDurations = useStore(store, (s) => s.setBuildNodeDurations);
+    const setBuildNodeStartTimes = useStore(store, (s) => s.setBuildNodeStartTimes);
 
     const status = useStore(store, (s) => s.buildOverlays[buildId]?.status ?? initialStatus);
     const isLive = isBuildLive(status);
@@ -44,13 +46,18 @@ export function BuildTracker({
         if (newEvents.length === 0) return;
 
         const nodeUpdates: Record<string, NodeRunStatus> = {};
+        const durationUpdates: Record<string, number> = {};
+        const startTimeUpdates: Record<string, number> = {};
         for (const event of newEvents) {
             switch (event.topic) {
-                case 'build-status':
+                case 'build-status': {
+                    const buildStatus = event.data.buildStatus as PipelineBuildStatus;
                     patchBuildOverlay(buildId, {
-                        status: event.data.buildStatus as PipelineBuildStatus,
+                        status: buildStatus,
+                        ...(isBuildLive(buildStatus) ? {} : { finishedAt: Date.now() }),
                     });
                     break;
+                }
                 case 'commit-info': {
                     const info = event.data as CommitInfo;
                     patchBuildOverlay(buildId, {
@@ -64,6 +71,12 @@ export function BuildTracker({
                     if (event.data?.nodeId) {
                         nodeUpdates[event.data.nodeId as string] = event.data
                             .nodeStatus as NodeRunStatus;
+                        if (typeof event.data.durationMs === 'number') {
+                            durationUpdates[event.data.nodeId as string] = event.data.durationMs;
+                        }
+                        if (typeof event.data.startedAt === 'number') {
+                            startTimeUpdates[event.data.nodeId as string] = event.data.startedAt;
+                        }
                     }
                     break;
             }
@@ -72,7 +85,20 @@ export function BuildTracker({
         if (Object.keys(nodeUpdates).length > 0) {
             setBuildNodeStatuses(buildId, (prev) => ({ ...prev, ...nodeUpdates }));
         }
-    }, [liveEvents, buildId, patchBuildOverlay, setBuildNodeStatuses]);
+        if (Object.keys(durationUpdates).length > 0) {
+            setBuildNodeDurations(buildId, (prev) => ({ ...prev, ...durationUpdates }));
+        }
+        if (Object.keys(startTimeUpdates).length > 0) {
+            setBuildNodeStartTimes(buildId, (prev) => ({ ...prev, ...startTimeUpdates }));
+        }
+    }, [
+        liveEvents,
+        buildId,
+        patchBuildOverlay,
+        setBuildNodeStatuses,
+        setBuildNodeDurations,
+        setBuildNodeStartTimes,
+    ]);
 
     return null;
 }

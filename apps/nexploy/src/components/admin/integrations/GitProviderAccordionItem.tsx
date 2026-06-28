@@ -27,7 +27,7 @@ export async function GitProviderAccordionItem({
     const hasInstances = instances.length > 0;
 
     return (
-        <AccordionItem value={value} className="bg-card rounded-lg border !border-b">
+        <AccordionItem value={value} className="bg-card rounded-lg border border-b!">
             <AccordionTrigger
                 position="left"
                 showChevron={hasInstances}

@@ -38,7 +38,7 @@ export function TwoFactorAuthBackupCodes({ backupCodes }: TwoFactorAuthBackupCod
                         <code className={`font-mono text-sm`}>{backupCode}</code>
                         <CopyButton
                             text={backupCode}
-                            className="size-8 !text-xs"
+                            className="size-8 text-xs!"
                             size={'icon'}
                             variant={'ghost'}
                         />

@@ -173,7 +173,7 @@ export function DomainFields({ form }: DomainFieldsProps) {
                             >
                                 <FormControl>
                                     <SelectTrigger
-                                        className={'w-full !pl-0 data-[placeholder]:!pl-3'}
+                                        className={'w-full pl-0! data-[placeholder]:pl-3!'}
                                     >
                                         <SelectValue placeholder={t('selectContainer')} />
                                     </SelectTrigger>

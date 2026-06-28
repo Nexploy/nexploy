@@ -5,8 +5,9 @@ import dayjs from 'dayjs';
 import { buttonVariants } from '@workspace/ui/components/button';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import type { PipelineBuild } from '@workspace/typescript-interface/stores/pipelineStore';
-import { isBuildLive } from '@/utils/buildStatus';
+import { getBuildDuration, isBuildLive } from '@/utils/buildStatus';
 import { StatusView } from '@/components/shared/StatusView';
+import { DurationNode } from '@/components/shared/DurationNode';
 import { cn } from '@workspace/ui/lib/utils';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { StopBuild } from '../StopBuild.tsx';
@@ -23,6 +24,7 @@ export const BuildsPanelItem = memo(function BuildsPanelItem({
     locale,
 }: BuildsPanelItemProps) {
     const isLive = isBuildLive(build.status);
+    const duration = getBuildDuration(build);
 
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 
@@ -54,6 +56,13 @@ export const BuildsPanelItem = memo(function BuildsPanelItem({
                         </span>
                     )
                 )}
+                <DurationNode
+                    isRunning={duration.isRunning}
+                    startedAt={duration.startedAt}
+                    durationMs={duration.durationMs}
+                    className="ml-auto"
+                    variant={'secondary'}
+                />
                 <StopBuild buildId={build.id} status={build.status} variant={'secondary'} />
             </div>
         </div>

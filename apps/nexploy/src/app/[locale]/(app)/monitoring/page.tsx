@@ -221,7 +221,7 @@ export default function MonitoringPage() {
                                     <Skeleton key={index} className="h-[300px] w-full" />
                                 ) : (
                                     <Card key={index} className="py-4">
-                                        <CardHeader className="border-b px-4 !pb-4">
+                                        <CardHeader className="border-b px-4 pb-4!">
                                             <CardTitle>{chart.title}</CardTitle>
                                             <CardDescription>{chart.description}</CardDescription>
                                         </CardHeader>

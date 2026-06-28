@@ -57,7 +57,7 @@ export function StackActionsCell({ stackName, runningCount, totalCount }: StackA
                         </div>
                         <Switch
                             id={'force-remove-stack'}
-                            className={'data-[state=checked]:!bg-destructive'}
+                            className={'data-[state=checked]:bg-destructive!'}
                             onCheckedChange={(checked) => (forceRef.current = checked)}
                         />
                     </label>
@@ -129,7 +129,7 @@ export function StackActionsCell({ stackName, runningCount, totalCount }: StackA
                     <p>{t('restart')}</p>
                 </TooltipContent>
             </Tooltip>
-            <Separator orientation="vertical" className="mx-1 !h-5" />
+            <Separator orientation="vertical" className="mx-1 h-5!" />
             <Tooltip>
                 <TooltipTrigger asChild>
                     <Button

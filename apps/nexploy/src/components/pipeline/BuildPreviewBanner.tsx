@@ -29,7 +29,7 @@ export function BuildPreviewBanner({ buildNumber, onExit }: BuildPreviewBannerPr
     );
 
     return (
-        <Panel position="top-center" className="!m-2 flex-1">
+        <Panel position="top-center" className="m-2! flex-1">
             <div className="bg-background/90 flex flex-1 items-center gap-2 rounded-lg border px-2 py-1.5 whitespace-nowrap shadow-sm backdrop-blur-sm">
                 <span className="text-muted-foreground text-xs">
                     {t('viewingBuild', { number: buildNumber })}

@@ -33,7 +33,7 @@ export default async function DockerLayout({
                 <AppSidebar variant={'inset'} />
                 <div className={'flex h-screen w-full flex-col'}>
                     <Header />
-                    <main className="flex !min-h-0 w-full flex-1 pl-1 md:pr-2 md:pb-2">
+                    <main className="flex min-h-0 w-full flex-1 pl-1 md:pr-2 md:pb-2">
                         <InsetPanel className={cn('flex-1')}>
                             <SSEProvider>{children}</SSEProvider>
                         </InsetPanel>

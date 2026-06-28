@@ -29,7 +29,7 @@ export function AttachmentHandle({ attach, handleColor, position }: AttachmentHa
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 className={cn(
-                    '!bg-base-7 !border-card !size-4.5 -translate-x-16 !rounded-[2px] !border-2 transition-all hover:!size-6',
+                    'bg-base-7! border-card! size-4.5! -translate-x-16 rounded-[2px]! border-2! transition-all hover:size-6!',
                     active && handleColor,
                 )}
             />

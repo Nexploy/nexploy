@@ -25,7 +25,7 @@ export function BucketStorageAccordionSection({ bucketStorageAccounts }: BucketS
 
     return (
         <Accordion type="multiple" className="flex flex-col gap-3" defaultValue={['aws']}>
-            <AccordionItem value="aws" className="bg-card rounded-lg border !border-b">
+            <AccordionItem value="aws" className="bg-card rounded-lg border border-b!">
                 <AccordionTrigger
                     position="left"
                     showChevron={hasBucketStorageAccounts}

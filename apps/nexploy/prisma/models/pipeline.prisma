@@ -43,6 +43,8 @@ model Build {
   commitHash       String?
   commitMessage    String?
   nodeStatuses     Json    @default("{}")
+  nodeDurations    Json    @default("{}")
+  nodeStartTimes   Json    @default("{}")
   pipelineSnapshot Json?
 
   log Log[]

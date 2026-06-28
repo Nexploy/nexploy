@@ -3,20 +3,8 @@
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import {
-    Card,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
-import {
-    Empty,
-    EmptyDescription,
-    EmptyHeader,
-    EmptyMedia,
-    EmptyTitle,
-} from '@workspace/ui/components/empty';
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, } from '@workspace/ui/components/empty';
 import {
     Select,
     SelectContent,
@@ -166,7 +154,7 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
 
                         return (
                             <Link href={`/repositories/${repository.id}`} key={repository.id}>
-                                <Card className="group border-muted-foreground/20 bg-background relative flex flex-col overflow-hidden p-4 px-0 pt-0 !pb-0 transition-all duration-300 hover:scale-[1.03] hover:shadow-xl has-[button:hover]:scale-100 has-[button:hover]:shadow-none">
+                                <Card className="group border-muted-foreground/20 bg-background relative flex flex-col overflow-hidden p-4 px-0 pt-0 pb-0! transition-all duration-300 hover:scale-[1.03] hover:shadow-xl has-[button:hover]:scale-100 has-[button:hover]:shadow-none">
                                     <CardHeader className="flex flex-row items-start justify-between px-4">
                                         <div className="flex w-full items-center gap-3">
                                             <div className="bg-secondary/50 text-secondary-foreground ring-border group-hover:bg-primary/10 group-hover:text-primary group-has-[button:hover]:bg-secondary/50 group-has-[button:hover]:text-secondary-foreground mt-4 flex size-10 items-center justify-center rounded-full ring-1 transition-colors">
@@ -182,7 +170,7 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                                                         <>
                                                             <Separator
                                                                 orientation="vertical"
-                                                                className="!h-3 w-1"
+                                                                className="h-3! w-1"
                                                             />
                                                             <span className="truncate">
                                                                 {hostname}
@@ -193,7 +181,7 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                                             </div>
                                         </div>
                                     </CardHeader>
-                                    <CardFooter className="bg-muted/40 text-muted-foreground flex h-14 justify-between border-t !p-3">
+                                    <CardFooter className="bg-muted/40 text-muted-foreground flex h-14 justify-between border-t p-3!">
                                         <StatusLive
                                             key={lastDeployment?.id}
                                             buildId={lastDeployment?.id ?? null}

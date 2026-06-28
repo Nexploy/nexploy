@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
-import { Database, Plus } from 'lucide-react';
+import { HardDrive, Plus } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
@@ -44,7 +44,7 @@ export function CardVolumes() {
         <Card>
             <CardHeader>
                 <div className="flex items-center justify-between gap-3">
-                    <CardHeaderWithIcon as={'div'} icon={Database} title={t('title')} />
+                    <CardHeaderWithIcon as={'div'} icon={HardDrive} title={t('title')} />
                     {!isSwarmContainer && (
                         <Button
                             className="size-9 md:size-fit"

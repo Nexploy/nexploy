@@ -90,7 +90,7 @@ export function PipelineToolbar() {
                         </>
                     )}
                 </div>
-                <Separator orientation="vertical" className="!h-4" />
+                <Separator orientation="vertical" className="h-4!" />
                 <div className="flex items-center gap-1">
                     <div className="flex items-center gap-0.5">
                         <Tooltip>
@@ -128,7 +128,7 @@ export function PipelineToolbar() {
                             </TooltipContent>
                         </Tooltip>
                     </div>
-                    <Separator orientation="vertical" className="!h-4" />
+                    <Separator orientation="vertical" className="h-4!" />
                     <div className="flex items-center gap-0.5">
                         <Tooltip>
                             <TooltipTrigger asChild>
@@ -198,7 +198,7 @@ export function PipelineToolbar() {
                         </Tooltip>
                         {selectedNodeIds.length === 1 && (
                             <>
-                                <Separator orientation="vertical" className="!h-4" />
+                                <Separator orientation="vertical" className="h-4!" />
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <Button
@@ -220,7 +220,7 @@ export function PipelineToolbar() {
                 </div>
                 {activeBuild && (
                     <div className="flex items-center gap-1.5">
-                        <Separator orientation="vertical" className="!h-4" />
+                        <Separator orientation="vertical" className="h-4!" />
                         <div key={activeBuild.id} className="flex items-center gap-1.5">
                             <StatusView status={activeBuild.status} />
                             <StopBuild

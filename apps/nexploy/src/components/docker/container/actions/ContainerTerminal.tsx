@@ -135,13 +135,13 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                                         onKeyDown={onUserKeyDown}
                                         onBlur={onUserBlur}
                                         placeholder={t('userPlaceholder')}
-                                        className="!h-7 w-36 bg-white/10 text-xs text-white/90 placeholder:text-white/40"
+                                        className="h-7! w-36 bg-white/10 text-xs text-white/90 placeholder:text-white/40"
                                     />
                                 </TooltipTrigger>
                                 <TooltipContent>{t('userPlaceholder')}</TooltipContent>
                             </Tooltip>
                             <Select value={selectedShell} onValueChange={onValueChange}>
-                                <SelectTrigger className="!h-7 bg-white/10 text-white/90">
+                                <SelectTrigger className="h-7! bg-white/10 text-white/90">
                                     <SelectValue placeholder={t('shellPlaceholder')} />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -166,7 +166,7 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                             </Button>
                             <Separator
                                 orientation="vertical"
-                                className="!h-5 border-white bg-white/50"
+                                className="h-5! border-white bg-white/50"
                             />
                             <Button
                                 onClick={handleClose}

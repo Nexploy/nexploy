@@ -58,7 +58,7 @@ export function CheckContainerLogsConfig() {
                                     >
                                         <SelectTrigger
                                             className={
-                                                'w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3'
+                                                'w-full overflow-hidden pl-0! data-[placeholder]:pl-3!'
                                             }
                                         >
                                             {isLoading ? (

@@ -74,7 +74,7 @@ export function GitlabAppSetupForm() {
                                     onCheckedChange={field.onChange}
                                 />
                             </FormControl>
-                            <FormLabel className="!mt-0 cursor-pointer">
+                            <FormLabel className="mt-0! cursor-pointer">
                                 {t('guide.gitlab.useCustomUrl')}
                             </FormLabel>
                         </FormItem>

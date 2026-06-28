@@ -17,7 +17,7 @@ import { CardNetworkConfig } from '@/components/docker/container/cards/CardNetwo
 import { CardVolumes } from '@/components/docker/container/cards/CardVolumes';
 import { CardEnv } from '@/components/docker/container/cards/CardEnv';
 import { CardHealthDetails } from '@/components/docker/container/cards/CardHealthDetails';
-import { CardNetworkDetails } from '@/components/docker/container/cards/CardNetworkDetails';
+import { CardNetworks } from '@/components/docker/container/cards/CardNetworks.tsx';
 import { CardError } from '@/components/docker/container/cards/CardError';
 import { CardInfoContainer } from '@/components/docker/container/cards/CardInfoContainer';
 import { ContainerActionButtons } from '@/components/docker/container/actions/ContainerActionButtons';
@@ -70,10 +70,7 @@ export function ContainerDetailPage() {
             title: t('changeImageTitle'),
             description: t('changeImageDescription'),
             content: (
-                <ChangeImageForm
-                    containerId={container.id}
-                    currentImage={container.image ?? ''}
-                />
+                <ChangeImageForm containerId={container.id} currentImage={container.image ?? ''} />
             ),
         });
     };
@@ -195,7 +192,7 @@ export function ContainerDetailPage() {
                             </div>
                             <CardEnv />
                             <CardVolumes />
-                            <CardNetworkDetails />
+                            <CardNetworks />
                             <CardLabels />
                             <CardNetworkConfig />
                             <CardProcessExecution />

@@ -157,18 +157,28 @@ export async function updateNodeStatus(
     nodeId: string,
     status: string,
     buildStatus?: BuildStatus,
+    durationMs?: number,
+    startedAt?: number,
 ) {
     const t = await getErrorTranslator();
     try {
         const build = await prisma.build.findUnique({
             where: { id: buildId },
-            select: { nodeStatuses: true },
+            select: { nodeStatuses: true, nodeDurations: true, nodeStartTimes: true },
         });
         const current = (build?.nodeStatuses as Record<string, string>) ?? {};
+        const currentDurations = (build?.nodeDurations as Record<string, number>) ?? {};
+        const currentStartTimes = (build?.nodeStartTimes as Record<string, number>) ?? {};
         await prisma.build.update({
             where: { id: buildId },
             data: {
                 nodeStatuses: { ...current, [nodeId]: status },
+                ...(durationMs !== undefined
+                    ? { nodeDurations: { ...currentDurations, [nodeId]: durationMs } }
+                    : {}),
+                ...(startedAt !== undefined
+                    ? { nodeStartTimes: { ...currentStartTimes, [nodeId]: startedAt } }
+                    : {}),
                 ...(buildStatus ? { status: buildStatus } : {}),
             },
         });

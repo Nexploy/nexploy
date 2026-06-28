@@ -44,12 +44,10 @@ export function InputHandle({
                 : '!-left-[3px]';
 
     const offset = total > 1 ? `${((index + 1) / (total + 1)) * 100}%` : undefined;
+    const isVertical = position === Position.Left || position === Position.Right;
+
     const positionStyle =
-        offset === undefined
-            ? undefined
-            : position === Position.Left || position === Position.Right
-              ? { top: offset }
-              : { left: offset };
+        offset !== undefined ? (isVertical ? { top: offset } : { left: offset }) : undefined;
 
     return (
         <Handle
@@ -58,8 +56,8 @@ export function InputHandle({
             position={position}
             style={positionStyle}
             className={cn(
-                '!bg-base-7 !border-card !size-4.5 !border-2 transition-all hover:!size-6',
-                square ? '!rounded-[2px]' : '!rounded-full',
+                'bg-base-7! border-card! size-4.5! border-2! transition-all hover:size-6!',
+                square ? 'rounded-xs!' : 'rounded-full!',
                 offsetClass,
                 active && handleColor,
             )}

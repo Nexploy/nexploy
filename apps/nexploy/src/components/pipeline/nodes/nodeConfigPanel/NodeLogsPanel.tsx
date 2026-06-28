@@ -22,9 +22,17 @@ interface NodeLogsPanelProps {
     buildId: string;
     nodeId: string;
     nodeStatus: NodeRunStatus | undefined;
+    nodeDurationMs?: number;
+    nodeStartedAt?: number;
 }
 
-export function NodeLogsPanel({ buildId, nodeId, nodeStatus }: NodeLogsPanelProps) {
+export function NodeLogsPanel({
+    buildId,
+    nodeId,
+    nodeStatus,
+    nodeDurationMs,
+    nodeStartedAt,
+}: NodeLogsPanelProps) {
     const t = useTranslations('repository.builds.logs');
     const params = useParams<{ repositoryId: string }>();
 
@@ -66,7 +74,13 @@ export function NodeLogsPanel({ buildId, nodeId, nodeStatus }: NodeLogsPanelProp
     return (
         <div className="flex flex-1 flex-col overflow-hidden">
             <div className="flex items-center justify-between gap-2 border-b p-2">
-                <StatusNodeLive buildId={buildId} nodeId={nodeId} initialStatus={nodeStatus} />
+                <StatusNodeLive
+                    buildId={buildId}
+                    nodeId={nodeId}
+                    initialStatus={nodeStatus}
+                    initialDurationMs={nodeDurationMs}
+                    initialStartedAt={nodeStartedAt}
+                />
                 <LogsToolbar
                     id="node-log-showTimestamp"
                     sizeButton={'xs'}

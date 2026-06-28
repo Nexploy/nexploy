@@ -170,7 +170,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                                 </Button>
                                 <Separator
                                     orientation="vertical"
-                                    className="!h-5 border-white bg-white/50"
+                                    className="h-5! border-white bg-white/50"
                                 />
                                 <Button
                                     onClick={handleClose}

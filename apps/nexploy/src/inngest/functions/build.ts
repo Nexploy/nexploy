@@ -68,18 +68,40 @@ export const buildFunction = inngest.createFunction(
                 await publishSafe(buildChannel['build-status'], { buildStatus: status });
             };
 
-            const mark = async (nodeId: string, nodeStatus: string, buildStatus?: BuildStatus) =>
+            const nodeStartTimes = new Map<string, number>();
+
+            const mark = async (
+                nodeId: string,
+                nodeStatus: string,
+                buildStatus?: BuildStatus,
+                durationMs?: number,
+                startedAt?: number,
+            ) =>
                 Promise.all([
-                    updateNodeStatus(buildId, nodeId, nodeStatus, buildStatus),
-                    publishSafe(buildChannel['node-status'], { nodeId, nodeStatus }),
+                    updateNodeStatus(buildId, nodeId, nodeStatus, buildStatus, durationMs, startedAt),
+                    publishSafe(buildChannel['node-status'], {
+                        nodeId,
+                        nodeStatus,
+                        durationMs,
+                        startedAt,
+                    }),
                 ]).then(() => undefined);
 
+            const elapsed = (nodeId: string): number | undefined => {
+                const start = nodeStartTimes.get(nodeId);
+                return start !== undefined ? Date.now() - start : undefined;
+            };
+
             const reporter: PipelineReporter = {
-                markRunning: (nodeId) => mark(nodeId, 'running'),
-                markCompleted: (nodeId) => mark(nodeId, 'completed'),
+                markRunning: (nodeId) => {
+                    const startedAt = Date.now();
+                    nodeStartTimes.set(nodeId, startedAt);
+                    return mark(nodeId, 'running', undefined, undefined, startedAt);
+                },
+                markCompleted: (nodeId) => mark(nodeId, 'completed', undefined, elapsed(nodeId)),
                 markSkipped: (nodeId) => mark(nodeId, 'skipped'),
-                markFailed: (nodeId) => mark(nodeId, 'failed', 'FAILED'),
-                markCancelled: (nodeId) => mark(nodeId, 'cancelled'),
+                markFailed: (nodeId) => mark(nodeId, 'failed', 'FAILED', elapsed(nodeId)),
+                markCancelled: (nodeId) => mark(nodeId, 'cancelled', undefined, elapsed(nodeId)),
                 markNotConfigured: (nodeId) => mark(nodeId, 'not-configured'),
                 async publishCommitInfo(data) {
                     await publishSafe(buildChannel['commit-info'], data);

@@ -69,7 +69,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                         </div>
                         <Switch
                             id={'force-remove-stack'}
-                            className={'data-[state=checked]:!bg-destructive'}
+                            className={'data-[state=checked]:bg-destructive!'}
                             onCheckedChange={(checked) => (forceRef.current = checked)}
                         />
                     </label>
@@ -87,7 +87,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
 
     return (
         <Accordion type="single" collapsible defaultValue={stackName}>
-            <AccordionItem value={stackName} className="bg-card rounded-lg border !border-b">
+            <AccordionItem value={stackName} className="bg-card rounded-lg border border-b!">
                 <AccordionTrigger
                     position={'left'}
                     classNameChevron={'size-5'}
@@ -98,7 +98,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                                 <StatusLabel>{allRunning ? t('up') : t('down')}</StatusLabel>
                             </Status>
 
-                            <Separator orientation="vertical" className="!h-6" />
+                            <Separator orientation="vertical" className="h-6!" />
 
                             <div className="flex items-center gap-2">
                                 <Button
@@ -134,7 +134,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                                     <span className="sr-only">{t('restart')}</span>
                                 </Button>
 
-                                <Separator orientation="vertical" className="!h-6" />
+                                <Separator orientation="vertical" className="h-6!" />
 
                                 <Button
                                     onClick={handleRemove}

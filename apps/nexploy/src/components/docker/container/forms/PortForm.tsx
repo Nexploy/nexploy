@@ -153,7 +153,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                     )}
                 />
 
-                <DialogFooter className="flex !justify-between pt-4">
+                <DialogFooter className="flex justify-between! pt-4">
                     {mode === 'edit' && (
                         <Button
                             size="icon"

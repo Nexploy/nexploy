@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
@@ -25,6 +24,7 @@ import { deleteAiConfigAction } from '@/actions/admin/ai/deleteAiConfig.action';
 import { addProviderApiKeySchema } from '@workspace/schemas-zod/ai/aiConfig.schema';
 import type { ProviderCardConfig } from '@workspace/typescript-interface/ai/aiConfig';
 import Link from 'next/link';
+import { mutate } from 'swr';
 import { useAction } from 'next-safe-action/hooks';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 
@@ -38,7 +38,6 @@ export function ModelProviderCard({
 }: ProviderCardConfig) {
     const t = useTranslations('ai.admin.models');
     const tCommon = useTranslations('common');
-    const router = useRouter();
 
     const [editing, setEditing] = useState(!hasKey);
 
@@ -58,7 +57,7 @@ export function ModelProviderCard({
                 onSuccess: () => {
                     setEditing(false);
                     toast.success(t('saveSuccess'));
-                    router.refresh();
+                    mutate({ url: '/api/ai/providers' });
                 },
                 onError: () => toast.error(t('saveFailed')),
             },
@@ -83,7 +82,7 @@ export function ModelProviderCard({
                     form.reset();
                     form.clearErrors();
                     setEditing(true);
-                    router.refresh();
+                    mutate({ url: '/api/ai/providers' });
                 }
             },
         });

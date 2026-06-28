@@ -254,7 +254,7 @@ export function PipelineCanvas() {
                     />
                 )}
                 {displayNodes.length > 0 && (
-                    <Panel className={'!m-2'} position="bottom-left">
+                    <Panel className={'m-2!'} position="bottom-left">
                         <div className="flex gap-1.5">
                             <Button
                                 variant="secondary"

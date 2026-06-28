@@ -39,7 +39,7 @@ export function ChatInput({ input, onChange, onSubmit, onStop, isLoading }: Chat
                         onChange={(e) => onChange(e.target.value)}
                         onKeyDown={handleKeyDown}
                         placeholder={t('inputPlaceholder')}
-                        className="resize-none border-0 !bg-transparent shadow-none focus-visible:ring-0"
+                        className="resize-none border-0 bg-transparent! shadow-none focus-visible:ring-0"
                         rows={1}
                     />
                 </ScrollAreaWithShadow>

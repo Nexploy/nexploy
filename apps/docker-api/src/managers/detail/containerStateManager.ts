@@ -163,9 +163,7 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
                     }
                 }
             } else {
-                const exists = portsMap.some(
-                    (p) => p.privatePort === privatePort && p.publicPort === undefined,
-                );
+                const exists = portsMap.some((p) => p.privatePort === privatePort && !p.publicPort);
 
                 if (!exists) {
                     portsMap.push({

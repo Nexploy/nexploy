@@ -56,7 +56,7 @@ export function RemoveContainerConfig() {
                                     onValueChange={field.onChange}
                                     disabled={isLoading}
                                 >
-                                    <SelectTrigger className="w-full overflow-hidden !pl-0 data-[placeholder]:!pl-3">
+                                    <SelectTrigger className="w-full overflow-hidden pl-0! data-[placeholder]:pl-3!">
                                         {isLoading ? (
                                             <span className="text-muted-foreground flex items-center gap-2 pl-2">
                                                 <Loader2 className="h-3 w-3 animate-spin" />

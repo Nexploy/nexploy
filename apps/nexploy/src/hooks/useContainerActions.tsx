@@ -97,7 +97,7 @@ export function useContainerActions({
                                     </div>
                                     <Switch
                                         id={'force-remove'}
-                                        className={'data-[state=checked]:!bg-destructive'}
+                                        className={'data-[state=checked]:bg-destructive!'}
                                         onCheckedChange={(checked) => (forceRef.current = checked)}
                                     />
                                 </label>

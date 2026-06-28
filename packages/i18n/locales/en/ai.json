@@ -129,6 +129,8 @@
         "newChat": "New chat",
         "disabled": "AI assistant disabled",
         "disabledDescription": "The administrator has disabled the AI assistant.",
+        "noProvider": "No AI model configured",
+        "noProviderDescription": "An administrator must configure an AI provider before you can use the assistant.",
         "confirmation": {
             "title": "Confirm destructive action",
             "target": "Target",

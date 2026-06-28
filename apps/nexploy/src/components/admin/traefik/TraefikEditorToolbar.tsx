@@ -30,7 +30,7 @@ export function TraefikEditorToolbar() {
             <div className="flex min-w-0 items-center gap-2">
                 <FileCode2 className="text-muted-foreground size-4 shrink-0" />
                 <span className="min-w-0 truncate text-sm font-medium">{selectedFile}</span>
-                <Separator orientation={'vertical'} className={'!h-3 w-1'} />
+                <Separator orientation={'vertical'} className={'h-3! w-1'} />
                 <div
                     className={cn(
                         'text-muted-foreground flex items-center gap-1.5 text-xs transition-opacity duration-300',
@@ -51,7 +51,7 @@ export function TraefikEditorToolbar() {
                 </div>
                 {yamlError && (
                     <>
-                        <Separator orientation={'vertical'} className={'!h-3 w-1'} />
+                        <Separator orientation={'vertical'} className={'h-3! w-1'} />
                         <Badge variant="destructive" className="shrink-0 text-xs">
                             {t('yamlInvalid')}
                         </Badge>

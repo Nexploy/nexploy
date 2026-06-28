@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { type UIMessage, useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
+import useSWR from 'swr';
+import type { Provider } from '@workspace/typescript-interface/ai/aiConfig';
+import { fetcherApi } from '@/lib/api/fetcherApi.ts';
 import { useAIPanelStore } from '@/stores/useAIPanelStore';
 import { useAIContext } from '@/hooks/useAIContext';
 import { useHotkeys } from '@/lib/useHotKeys';
@@ -16,7 +19,7 @@ import { cn } from '@workspace/ui/lib/utils';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow.tsx';
 import { SelectModel } from '@/components/ai/panel/SelectModel.tsx';
 import { useTranslations } from 'next-intl';
-import { BotOff } from 'lucide-react';
+import { BotOff, Settings2 } from 'lucide-react';
 import { useLocalStorage } from 'usehooks-ts';
 
 export function ChatAIPanel() {
@@ -61,6 +64,12 @@ export function ChatAIPanel() {
 
     const isLoading = status === 'submitted' || status === 'streaming';
     const { categories } = useAIContext();
+
+    const { data: providersData, isLoading: providersLoading } = useSWR<{ providers: Provider[] }>(
+        aiEnabled ? { url: '/api/ai/providers' } : null,
+        fetcherApi,
+    );
+    const hasConfiguredProvider = (providersData?.providers.length ?? 0) > 0;
 
     useEffect(() => {
         if (persistedMessages.length > 0) setMessages(persistedMessages);
@@ -154,13 +163,25 @@ export function ChatAIPanel() {
                     />
                     {!aiEnabled ? (
                         <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
-                            <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-full">
-                                <BotOff className="text-muted-foreground h-6 w-6" />
+                            <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
+                                <BotOff className="text-primary size-5" />
                             </div>
                             <div className="flex flex-col gap-1">
                                 <p className="text-sm font-medium">{t('disabled')}</p>
                                 <p className="text-muted-foreground text-xs">
                                     {t('disabledDescription')}
+                                </p>
+                            </div>
+                        </div>
+                    ) : !providersLoading && !hasConfiguredProvider ? (
+                        <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
+                            <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
+                                <Settings2 className="text-primary size-5" />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <p className="text-sm font-medium">{t('noProvider')}</p>
+                                <p className="text-muted-foreground text-xs">
+                                    {t('noProviderDescription')}
                                 </p>
                             </div>
                         </div>

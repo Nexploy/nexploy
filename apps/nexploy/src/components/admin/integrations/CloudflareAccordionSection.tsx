@@ -25,7 +25,7 @@ export function CloudflareAccordionSection({ accounts }: CloudflareAccordionSect
 
     return (
         <Accordion type="multiple" className="flex flex-col gap-3" defaultValue={['cloudflare']}>
-            <AccordionItem value="cloudflare" className="bg-card rounded-lg border !border-b">
+            <AccordionItem value="cloudflare" className="bg-card rounded-lg border border-b!">
                 <AccordionTrigger
                     position="left"
                     showChevron={hasAccounts}

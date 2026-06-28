@@ -74,7 +74,7 @@ export function BuildLogs({ build }: BuildLogsProps) {
                             )}
                             {isLive && !commitHash ? (
                                 <>
-                                    <Separator orientation={'vertical'} className={'!h-3 w-1'} />
+                                    <Separator orientation={'vertical'} className={'h-3! w-1'} />
                                     <Skeleton className="h-3 w-16" />
                                 </>
                             ) : (
@@ -82,7 +82,7 @@ export function BuildLogs({ build }: BuildLogsProps) {
                                     <>
                                         <Separator
                                             orientation={'vertical'}
-                                            className={'!h-3 w-1'}
+                                            className={'h-3! w-1'}
                                         />
                                         <code className="flex shrink-0 items-center gap-1">
                                             <GitCommit className="size-3" />
@@ -120,6 +120,7 @@ export function BuildLogs({ build }: BuildLogsProps) {
                 initialStatus={build.status}
                 initialLogs={build.log}
                 createdAt={build.createdAt}
+                updatedAt={build.updatedAt}
             />
         </div>
     );
