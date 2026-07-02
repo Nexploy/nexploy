@@ -47,6 +47,7 @@ export const composeFileConfigSchema = z.object({
         'docker-compose.yml',
     ),
     composeFilePath: refable(relativePath('Compose file path')).optional(),
+    noCache: z.boolean().default(false),
 });
 
 export const varEntrySchema = z.object({

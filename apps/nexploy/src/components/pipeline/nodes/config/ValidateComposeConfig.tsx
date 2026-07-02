@@ -23,11 +23,7 @@ export function ValidateComposeConfig() {
                     <FormItem>
                         <FormLabel>{t('composeFileName')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder={t('composeFileNamePlaceholder')}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} placeholder={t('composeFileNamePlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -40,11 +36,7 @@ export function ValidateComposeConfig() {
                     <FormItem>
                         <FormLabel>{t('composeFilePath')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder={t('composeFilePathPlaceholder')}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} placeholder={t('composeFilePathPlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

@@ -22,11 +22,7 @@ export function ValidateDockerfileConfig() {
                 <FormItem>
                     <FormLabel>{t('dockerfilePath')}</FormLabel>
                     <FormControl>
-                        <Input
-                            {...field}
-                            placeholder={t('dockerfileNamePlaceholder')}
-                            className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                        />
+                        <Input {...field} placeholder={t('dockerfileNamePlaceholder')} />
                     </FormControl>
                     <FormMessage className="text-xs" />
                 </FormItem>

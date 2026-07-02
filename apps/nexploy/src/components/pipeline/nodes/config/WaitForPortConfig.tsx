@@ -131,7 +131,6 @@ export function WaitForPortConfig() {
                                 min={1}
                                 max={65535}
                                 placeholder={t('portNumberPlaceholder')}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -145,12 +144,7 @@ export function WaitForPortConfig() {
                     <FormItem>
                         <FormLabel>{t('timeoutSeconds')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                type="number"
-                                min={1}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} type="number" min={1} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>
@@ -163,12 +157,7 @@ export function WaitForPortConfig() {
                     <FormItem>
                         <FormLabel>{t('intervalSeconds')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                type="number"
-                                min={1}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
-                            />
+                            <Input {...field} type="number" min={1} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

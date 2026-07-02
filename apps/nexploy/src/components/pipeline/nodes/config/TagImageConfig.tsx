@@ -152,11 +152,7 @@ export function TagImageConfig() {
                     <FormItem>
                         <FormLabel>{t('targetTag')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder={t('versionTagPlaceholder')}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 font-mono text-xs"
-                            />
+                            <Input {...field} placeholder={t('versionTagPlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

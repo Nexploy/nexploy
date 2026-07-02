@@ -77,7 +77,10 @@ export function SonarqubeScanConfig() {
                         <FormItem>
                             <FormLabel>{t('sonarqubeServerUrl')}</FormLabel>
                             <FormControl>
-                                <Input {...field} placeholder={t('sonarqubeServerUrlPlaceholder')} />
+                                <Input
+                                    {...field}
+                                    placeholder={t('sonarqubeServerUrlPlaceholder')}
+                                />
                             </FormControl>
                             <FormMessage className="text-xs" />
                         </FormItem>
@@ -162,7 +165,6 @@ export function SonarqubeScanConfig() {
                                 {...field}
                                 type="password"
                                 placeholder={t('passwordPlaceholder')}
-                                className="border-border bg-background text-foreground focus:border-primary h-8 text-xs"
                             />
                         </FormControl>
                         <FormDescription className="text-xs">

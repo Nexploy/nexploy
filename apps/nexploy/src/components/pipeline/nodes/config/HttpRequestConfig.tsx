@@ -138,7 +138,7 @@ export function HttpRequestConfig() {
                                 <Textarea
                                     {...field}
                                     placeholder={t('jsonBodyPlaceholder')}
-                                    className="border-border bg-background text-foreground focus:border-primary font-mono text-xs"
+                                    className="font-mono"
                                     rows={4}
                                 />
                             </RefAware>

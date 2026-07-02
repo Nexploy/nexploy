@@ -49,7 +49,7 @@ function cleanupEnvFile(workDir: string): void {
 }
 
 app.post('/stream/compose', async (c) => {
-    const { workDir, projectName, composePath, envVars, labels } = await c.req.json<{
+    const { workDir, projectName, composePath, envVars, labels, noCache } = await c.req.json<{
         workDir: string;
         projectName: string;
         composePath: string;
@@ -57,6 +57,7 @@ app.post('/stream/compose', async (c) => {
         buildId?: string;
         repositoryId?: string;
         labels?: Record<string, string>;
+        noCache?: boolean;
     }>();
 
     const environmentId = getCurrentEnvironmentId();
@@ -270,7 +271,14 @@ app.post('/stream/compose', async (c) => {
                     `Building ${servicesToBuild.length} service(s): ${servicesToBuild.join(', ')}`,
                 );
                 const buildCode = await runDockerCompose(
-                    ['-p', projectName, '-f', activeComposeFile, 'build'],
+                    [
+                        '-p',
+                        projectName,
+                        '-f',
+                        activeComposeFile,
+                        'build',
+                        ...(noCache ? ['--no-cache'] : []),
+                    ],
                     workDir,
                     dockerEnv,
                     sendLog,
@@ -398,18 +406,31 @@ app.post('/stream/compose', async (c) => {
             });
             const containerIds = runningContainers.map((c) => c.Id);
 
-            sendLog(`Connecting ${containerIds.length} containers to Traefik network...`);
-            for (const containerId of containerIds) {
-                try {
-                    const network = docker.getNetwork(TRAEFIK_NETWORK_NAME);
-                    await network.connect({
-                        Container: containerId,
-                    });
-                    sendLog(`Container ${containerId} connected to Traefik network`);
-                } catch (e) {
-                    sendLog(
-                        `Warning: Could not connect container ${containerId} to Traefik network`,
-                    );
+            if (isRemoteEnvironment) {
+                sendLog(
+                    'Remote environment: routing via published host ports (skipping Traefik network attach)',
+                );
+            } else {
+                sendLog(`Connecting ${containerIds.length} containers to Traefik network...`);
+                for (const containerId of containerIds) {
+                    try {
+                        const network = docker.getNetwork(TRAEFIK_NETWORK_NAME);
+                        await network.connect({
+                            Container: containerId,
+                        });
+                        sendLog(`Container ${containerId} connected to Traefik network`);
+                    } catch (e) {
+                        const reason = e instanceof Error ? e.message : String(e);
+                        if (/already exists|already connected/i.test(reason)) {
+                            sendLog(
+                                `Container ${containerId} already connected to Traefik network`,
+                            );
+                        } else {
+                            sendLog(
+                                `Warning: Could not connect container ${containerId} to Traefik network: ${reason}`,
+                            );
+                        }
+                    }
                 }
             }
 

@@ -68,7 +68,6 @@ export function TwoFactorAuth({ user }: TwoFactorAuthProps) {
                                             text={secretKey}
                                             className="rounded-l-none border-l-0 text-xs!"
                                             size={'icon'}
-                                            variant={'ghost'}
                                         />
                                     </ButtonGroup>
                                 </div>

@@ -81,6 +81,7 @@ export class DeployComposeExecutor implements INodeExecutor {
                 buildConfig.buildId,
                 buildConfig.repositoryId,
                 labels,
+                nodeConfig.noCache,
             );
 
             await logger.info(

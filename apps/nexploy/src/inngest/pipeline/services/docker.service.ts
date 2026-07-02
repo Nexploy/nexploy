@@ -48,6 +48,7 @@ class DockerService {
         buildId?: string,
         repositoryId?: string,
         labels?: Record<string, string>,
+        noCache?: boolean,
     ): Promise<{ success: boolean; containers?: string[]; composeConfig?: string }> {
         return this.streamSSERequest<{
             success: boolean;
@@ -55,7 +56,7 @@ class DockerService {
             composeConfig?: string;
         }>(
             'pipeline/events/stream/compose',
-            { workDir, projectName, composePath, envVars, buildId, repositoryId, labels },
+            { workDir, projectName, composePath, envVars, buildId, repositoryId, labels, noCache },
             signal,
             onLog,
             environmentId,

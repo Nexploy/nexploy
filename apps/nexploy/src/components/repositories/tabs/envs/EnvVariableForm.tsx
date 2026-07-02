@@ -63,7 +63,11 @@ export function EnvVariableForm({ repositoryId, stageId, variable }: EnvVariable
 
     return (
         <Form {...form}>
-            <form onSubmit={handleSubmitWithAction} className="flex flex-col gap-4">
+            <form
+                onSubmit={handleSubmitWithAction}
+                className="flex flex-col gap-4"
+                autoComplete="off"
+            >
                 <FormField
                     control={form.control}
                     name="envVariables.0.key"
@@ -74,6 +78,9 @@ export function EnvVariableForm({ repositoryId, stageId, variable }: EnvVariable
                                 <Input
                                     {...field}
                                     autoComplete="off"
+                                    data-1p-ignore
+                                    data-lpignore="true"
+                                    data-form-type="other"
                                     placeholder={t('keyPlaceholder')}
                                     className="font-mono"
                                 />
@@ -93,7 +100,10 @@ export function EnvVariableForm({ repositoryId, stageId, variable }: EnvVariable
                                     <Input
                                         {...field}
                                         type={showValue ? 'text' : 'password'}
-                                        autoComplete="off"
+                                        autoComplete="new-password"
+                                        data-1p-ignore
+                                        data-lpignore="true"
+                                        data-form-type="other"
                                         placeholder={t('valuePlaceholder')}
                                         className="pr-10 font-mono"
                                     />
