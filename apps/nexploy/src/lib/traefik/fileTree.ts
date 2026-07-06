@@ -1,15 +1,9 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import type { TraefikTreeNode } from './types';
+import { TRAEFIK_SERVICE_DIR } from './paths';
 
-export const TRAEFIK_SERVICE_DIR = path.join(
-    process.cwd(),
-    '..',
-    '..',
-    'infra',
-    'traefik',
-    'service',
-);
+export { TRAEFIK_SERVICE_DIR };
 
 export function resolveTraefikPath(relPath: string): string | null {
     if (!relPath || relPath.includes('\0')) return null;

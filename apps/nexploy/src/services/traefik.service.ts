@@ -5,8 +5,7 @@ import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
 import { getContainerPortMappings } from '@/services/docker/container.service';
 import { getEnvironmentById } from '@/services/environment/environment.service';
 import { prisma } from '../../prisma/prisma';
-
-const TRAEFIK_SERVICE_DIR = path.join(process.cwd(), '..', '..', 'infra', 'traefik', 'service');
+import { TRAEFIK_SERVICE_DIR } from '@/lib/traefik/paths';
 
 const DOMAINS_FILE = path.join(TRAEFIK_SERVICE_DIR, 'domains.yml');
 

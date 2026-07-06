@@ -4,10 +4,8 @@ import * as path from 'path';
 import * as crypto from 'crypto';
 import * as yaml from 'yaml';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
+import { TRAEFIK_SERVICE_DIR } from '@/lib/traefik/paths';
 
-const TRAEFIK_SERVICE_DIR =
-    process.env.TRAEFIK_SERVICE_DIR ??
-    path.join(process.cwd(), '..', '..', 'infra', 'traefik', 'service');
 const CERTS_DIR = path.join(TRAEFIK_SERVICE_DIR, 'certs');
 const TRAEFIK_CERTS_CONTAINER_PATH =
     process.env.TRAEFIK_CERTS_CONTAINER_PATH ?? '/etc/nexploy/traefik/service/certs';
