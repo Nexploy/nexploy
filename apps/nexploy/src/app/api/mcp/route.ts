@@ -47,6 +47,25 @@ async function mcpRouteHandler(request: Request): Promise<Response> {
         });
     }
 
+    const aiSettings = await getAISettings();
+    if (!aiSettings?.mcpEnabled) {
+        const disabledSessionId = request.headers.get('mcp-session-id');
+        if (disabledSessionId) {
+            const existing = mcpSessions.get(disabledSessionId);
+            if (existing) {
+                await existing.server.close();
+                mcpSessions.delete(disabledSessionId);
+            }
+        }
+        return new Response(
+            JSON.stringify({ error: 'MCP server is disabled by the administrator.' }),
+            {
+                status: 403,
+                headers: { 'Content-Type': 'application/json' },
+            },
+        );
+    }
+
     const sessionId = request.headers.get('mcp-session-id');
 
     if (sessionId) {
@@ -56,17 +75,6 @@ async function mcpRouteHandler(request: Request): Promise<Response> {
             status: 404,
             headers: { 'Content-Type': 'application/json' },
         });
-    }
-
-    const aiSettings = await getAISettings();
-    if (!aiSettings?.mcpEnabled) {
-        return new Response(
-            JSON.stringify({ error: 'MCP server is disabled by the administrator.' }),
-            {
-                status: 403,
-                headers: { 'Content-Type': 'application/json' },
-            },
-        );
     }
 
     const [user, defaultEnv] = await Promise.all([
