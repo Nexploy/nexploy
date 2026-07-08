@@ -1,11 +1,12 @@
 import { DropdownActionTool } from '@workspace/typescript-interface/commun';
-import { Scaling, Trash2 } from 'lucide-react';
+import { RefreshCw, Scaling, Trash2 } from 'lucide-react';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
 import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
 import { ScaleServiceForm } from '@/components/swarm/ScaleServiceForm';
 import { onRemoveServicesAction } from '@/actions/docker/swarm/removeServices.action.ts';
+import { onForceUpdateServiceAction } from '@/actions/docker/swarm/forceUpdateService.action.ts';
 
 interface UseServiceActionsProps {
     service: SwarmService;
@@ -32,6 +33,28 @@ export function useServiceActions({ service }: UseServiceActionsProps): Dropdown
             },
         });
     }
+
+    tools.push({
+        icon: RefreshCw,
+        label: t('forceUpdateService'),
+        onClick: () =>
+            new Promise((resolve, reject) => {
+                openAlertDialog({
+                    title: t('forceUpdateServiceConfirmTitle'),
+                    cancelLabel: t('cancel'),
+                    actionLabel: t('forceUpdateService'),
+                    description: t('forceUpdateServiceConfirmDescription', { name: service.name }),
+                    onAction: async () => {
+                        try {
+                            const result = await onForceUpdateServiceAction({ id: service.id });
+                            resolve(result);
+                        } catch (error) {
+                            reject(error);
+                        }
+                    },
+                });
+            }),
+    });
 
     tools.push({
         icon: Trash2,

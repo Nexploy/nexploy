@@ -216,6 +216,27 @@ app.patch(
 );
 
 app.post(
+    '/:id/force-update',
+    route({ param: serviceIdParamSchema }, async (c) => {
+        const { id } = c.req.valid('param');
+
+        const service = docker.getService(id);
+        const serviceInfo = await service.inspect();
+
+        await service.update({
+            version: serviceInfo.Version.Index,
+            ...serviceInfo.Spec,
+            TaskTemplate: {
+                ...serviceInfo.Spec.TaskTemplate,
+                ForceUpdate: (serviceInfo.Spec.TaskTemplate.ForceUpdate ?? 0) + 1,
+            },
+        });
+
+        return { success: true };
+    }),
+);
+
+app.post(
     '/:id/scale',
     route({ param: serviceIdParamSchema, json: scaleServiceSchema }, async (c) => {
         const { id } = c.req.valid('param');
