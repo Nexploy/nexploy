@@ -245,16 +245,59 @@ call `fetch('/api/...')` instead of a server action.
 
 ## Production deployment
 
+On any machine with Docker:
+
 ```bash
-./install.sh
+curl -fsSL https://nexploy.app/install.sh | sh
 ```
 
-The script asks for your domain and a Let's Encrypt email, generates the secrets and `.env.production`, renders the
-Traefik static configuration, then builds and starts `infra/docker/docker-compose.pre-prod.yml` (Postgres, Inngest,
-Traefik, nexploy, docker-api).
+Nothing is cloned and nothing is compiled — the installer pulls the published images
+(`nexploy/nexploy` and `nexploy/docker-api`), so a fresh install takes about a minute.
 
-Requirements: DNS pointing at the machine, ports **80** and **443** open (Let's Encrypt uses an HTTP challenge), and
-at least **4 GB of RAM** for the image build.
+It installs Docker if needed, asks for your domain and a Let's Encrypt email, generates every secret into
+`/etc/nexploy/nexploy.env`, writes the Traefik configuration, then starts five containers:
+
+| Container | Role |
+|---|---|
+| `nexploy_traefik` | Reverse proxy, TLS, ports 80/443 |
+| `nexploy_app` | The application (runs migrations and the seed on first boot) |
+| `nexploy_docker_api` | Docker operations |
+| `nexploy_postgres` | Database |
+| `nexploy_inngest` | Build pipeline jobs |
+
+Requirements: DNS pointing at the machine, and ports **80** and **443** free and reachable — Let's Encrypt uses
+an HTTP challenge.
+
+### Non-interactive install
+
+```bash
+NEXPLOY_DOMAIN=nexploy.example.com NEXPLOY_EMAIL=you@example.com \
+  sh -c "$(curl -fsSL https://nexploy.app/install.sh)"
+```
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `NEXPLOY_DOMAIN` | *(prompted)* | Domain the app is served on |
+| `NEXPLOY_EMAIL` | *(prompted)* | Let's Encrypt contact address |
+| `NEXPLOY_VERSION` | *(latest release)* | Image tag to deploy, e.g. `v1.0.0` |
+| `NEXPLOY_DIR` | `/etc/nexploy` | Where secrets and Traefik config live |
+
+### Upgrading
+
+```bash
+curl -fsSL https://nexploy.app/install.sh | sh -s update
+```
+
+The update pulls the requested version and recreates the containers. Your secrets, database and domain are
+untouched — re-running the installer never regenerates them.
+
+### Managing the instance
+
+```bash
+docker logs -f nexploy_app          # application logs
+docker restart nexploy_app          # restart the app
+docker ps --filter name=nexploy_    # every Nexploy container
+```
 
 ## Security
 
