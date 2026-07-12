@@ -30,6 +30,7 @@ import {
     httpRequestConfigSchema,
     mergeBranchConfigSchema,
     pruneImagesConfigSchema,
+    pruneBuildCacheConfigSchema,
     pullFromRegistryConfigSchema,
     pushToRegistryConfigSchema,
     removeContainerConfigSchema,
@@ -345,6 +346,13 @@ export const NODE_META_MAP: Record<string, NodeMeta> = {
         category: 'utility',
         description: 'Prunes unused Docker images to free disk space.',
         outputs: [],
+    },
+    'prune-build-cache': {
+        schema: pruneBuildCacheConfigSchema,
+        category: 'utility',
+        description:
+            'Clears the Docker build cache (docker builder prune) to free disk space. Use "all" to also remove cache still in use, "keepStorage" (e.g. 10GB) to cap retained cache, or "filter" (e.g. until=24h) to target old entries.',
+        outputs: ['deletedCaches', 'reclaimedSpace'],
     },
     'delete-image': {
         schema: deleteImageConfigSchema,
