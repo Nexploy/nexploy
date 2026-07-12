@@ -32,140 +32,251 @@
 | Layer | Technologies |
 |---|---|
 | **Frontend** | Next.js 16, React 19, Tailwind CSS, shadcn/ui, Zustand |
-| **Backend** | Next.js Server Actions, Hono.js, Prisma, PostgreSQL |
-| **Auth** | Better Auth (email/password, OAuth, 2FA) |
-| **Jobs** | Inngest (resumable background build pipeline) |
-| **Infra** | Docker, Traefik, SSE, WebSocket |
+| **Backend** | Next.js Server Actions, Hono.js, Prisma 7, PostgreSQL 18 |
+| **Auth** | Better Auth (email/password, OAuth, 2FA, API keys) |
+| **Jobs** | Inngest (self-hosted, resumable build pipeline) |
+| **Infra** | Docker, Traefik v3, SSE, WebSocket |
+| **Tooling** | pnpm 11 workspaces + Turborepo |
 
-## Quick Start
+---
 
-### Prerequisites
+# Development setup
 
-- **Node.js** 18+ and **pnpm**
-- **Docker** and **Docker Compose**
+## Prerequisites
 
-### Setup
+| Tool | Version | Why |
+|---|---|---|
+| **Node.js** | **22.13+** | pnpm 11 requires it (it loads `node:sqlite`) |
+| **pnpm** | 11.9+ | `corepack enable` picks up the version pinned in `package.json` |
+| **Docker** | with Compose v2 | Runs Postgres, Inngest and Traefik — and is what Nexploy deploys to |
+
+```bash
+corepack enable
+node -v   # must be >= 22.13
+```
+
+## 1. Install dependencies
 
 ```bash
 git clone https://github.com/yourusername/nexploy.git
 cd nexploy
 pnpm install
+```
 
-# Configure environment
-cp apps/nexploy/.env.example apps/nexploy/.env
+## 2. Create the env files
+
+```bash
+cp apps/nexploy/.env.example    apps/nexploy/.env
 cp apps/docker-api/.env.example apps/docker-api/.env
+```
 
-# Start infrastructure (PostgreSQL, Inngest, Traefik)
-docker compose -f docker-compose.dev.yml up -d
+Two secrets have no default — generate them and paste them into `apps/nexploy/.env`:
 
-# Run database migrations
+```bash
+openssl rand -hex 32   # -> BETTER_AUTH_SECRET
+openssl rand -hex 32   # -> ENCRYPTION_KEY
+```
+
+Every other value already points at the dev stack (Postgres on `5433`, Inngest on `8288`).
+Leave `DOCKER_API_KEY` and `NEXPLOY_API_KEY` empty for now — step 5 produces them.
+
+## 3. Start the infrastructure
+
+```bash
+docker compose -f infra/docker/docker-compose.dev.yml up -d
+```
+
+| Container | Port | Notes |
+|---|---|---|
+| PostgreSQL | `5433` | user / password / database: `nexploy` |
+| Inngest dev server | `8288` | UI to inspect build jobs |
+| Traefik | `80`, `443`, `8080` | `8080` is the dashboard |
+
+Wait until Postgres reports `healthy`:
+
+```bash
+docker compose -f infra/docker/docker-compose.dev.yml ps
+```
+
+## 4. Run the database migrations
+
+```bash
 pnpm --filter=nexploy db:migrate:dev
+```
 
-# Start development
-pnpm dev
+## 5. Seed, and wire the internal API key
+
+Nexploy and `docker-api` authenticate to each other with a shared **Better Auth API key**. The seed creates it —
+along with the default local Docker environment — and prints it:
+
+```bash
+pnpm --filter=nexploy db:seed
+```
+
+```
+NEXPLOY_API_KEY=nxp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+Copy that value into **both** env files. The same key on both sides, or every call between the two services is a `401`:
+
+```env
+# apps/nexploy/.env      — the key nexploy sends to docker-api
+DOCKER_API_KEY=nxp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# apps/docker-api/.env   — the key docker-api expects, and uses to call nexploy back
+NEXPLOY_API_KEY=nxp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+> Re-running the seed **revokes and recreates** the key. If `docker-api` suddenly answers `401`, copy it again.
+> In the Docker deployments this is automated: the app writes the key to a file and `docker-api` fetches it at boot.
+
+## 6. Start the apps
+
+```bash
+pnpm dev            # nexploy + docker-api
 ```
 
 | Service | URL |
 |---|---|
-| Web App | http://localhost:3000 |
+| Web app | http://localhost:3000 |
 | Docker API | http://localhost:3300 |
-| Inngest Dev | http://localhost:8288 |
-| Traefik Dashboard | http://localhost:8080 |
+| Inngest dev UI | http://localhost:8288 |
+| Traefik dashboard | http://localhost:8080 |
 
-## Project Structure
+Open http://localhost:3000 — it redirects to `/setup`, where you create the first admin account.
 
-```
-nexploy/
-├── apps/
-│   ├── nexploy/             # Next.js app — UI, server actions, orchestration
-│   └── docker-api/          # Hono.js API — Docker operations
-├── packages/
-│   ├── ui/                  # Shared shadcn/ui components
-│   ├── schemas-zod/         # Zod validation schemas
-│   ├── typescript-interface/# Shared TypeScript types
-│   ├── i18n/                # Internationalization (en, fr)
-│   ├── eslint-config/       # Shared ESLint config
-│   └── typescript-config/   # Shared TypeScript config
-└── infra/
-    └── traefik/             # Traefik routing and SSL config
+### Running a single app
+
+```bash
+pnpm dev:nexploy      # Next.js only (port 3000)
+pnpm dev:docker-api   # Docker API only (port 3300)
 ```
 
-## Architecture
+`docker-api` needs access to the Docker socket (`/var/run/docker.sock`). On macOS this works out of the box with
+Docker Desktop, OrbStack or Colima — give the VM at least **4 GB of RAM**, the Next.js production build gets
+OOM-killed below that.
 
-### Deployment Flow
+## Troubleshooting
 
-```
-Git Push → Webhook → Inngest Build Pipeline → Docker API → Container + Traefik Route
-```
+| Symptom | Cause |
+|---|---|
+| `docker-api` answers `401` on every route | `NEXPLOY_API_KEY` and `DOCKER_API_KEY` differ, or the seed has been re-run since |
+| `EADDRINUSE: :::3300` | A previous `docker-api` is still alive — `lsof -nP -iTCP:3300 -sTCP:LISTEN` |
+| Prisma cannot reach the database | The dev stack listens on **5433**, not 5432 |
+| `pnpm lint` fails | Known issue: `next lint` was removed in Next 16 and the lint scripts are not migrated yet — use `pnpm types` |
 
-### Build Pipeline
-
-Powered by Inngest with resumable steps:
-
-1. Clone repository with OAuth token
-2. Prepare Dockerfile
-3. Write encrypted environment variables
-4. Build Docker image (streamed logs)
-5. Deploy container with Traefik routing
-6. Cleanup and finalize
-
-### Real-time Updates
-
-```
-Docker Events → State Manager → SSE → Zustand Store → React UI
-```
-
-A single SSE connection multiplexes multiple channels (containers, images, builds, etc.).
+---
 
 ## Commands
 
 ```bash
 # Development
-pnpm dev                                # Start all apps
+pnpm dev                                # nexploy + docker-api
 pnpm dev:nexploy                        # Next.js only (port 3000)
 pnpm dev:docker-api                     # Docker API only (port 3300)
 
-# Build
-pnpm build                              # Build all apps
-
-# Database
-pnpm --filter=nexploy db:migrate:dev    # Create & run migrations
-pnpm --filter=nexploy db:migrate:prod   # Apply migrations (production)
-pnpm --filter=nexploy db:generate       # Generate Prisma client
-pnpm --filter=nexploy db:studio         # Open Prisma Studio
-pnpm --filter=nexploy db:reset          # Reset database
-
-# Code Quality
-pnpm lint                               # Lint all apps
-pnpm types                              # Type check
+# Build & checks
+pnpm build                              # Build every workspace (Turborepo)
+pnpm types                              # Type check every workspace
 pnpm format                             # Format with Prettier
+
+# Database (scoped to the nexploy app)
+pnpm --filter=nexploy db:migrate:dev    # Create & apply a migration
+pnpm --filter=nexploy db:migrate:prod   # Apply migrations (production)
+pnpm --filter=nexploy db:migrate:only   # Create a migration without applying it
+pnpm --filter=nexploy db:generate       # Regenerate the Prisma client
+pnpm --filter=nexploy db:seed           # Seed + print the internal API key
+pnpm --filter=nexploy db:studio         # Prisma Studio
+pnpm --filter=nexploy db:reset          # Drop, re-migrate, re-seed
+
+# End-to-end tests
+pnpm test:e2e                           # Playwright
 ```
 
-## Environment Variables
+## Project structure
 
-Key variables — see `.env.example` for the full list:
-
-```env
-DATABASE_URL="postgresql://user:password@localhost:5432/nexploy"
-ENCRYPTION_KEY="your-32-byte-hex-key"
-BETTER_AUTH_SECRET="your-secret"
-BETTER_AUTH_URL="http://localhost:3000"
-INNGEST_EVENT_KEY="your-event-key"
-INNGEST_SIGNING_KEY="your-signing-key"
 ```
+nexploy/
+├── apps/
+│   ├── nexploy/              # Next.js app — UI, server actions, orchestration
+│   │   ├── prisma/           # Schema, migrations, seed
+│   │   ├── server.ts         # Custom server (WebSocket proxy to docker-api)
+│   │   └── docker/           # Assets used by the production image
+│   └── docker-api/           # Hono.js API — every Docker operation
+├── packages/
+│   ├── ui/                   # Shared shadcn/ui components
+│   ├── schemas-zod/          # Zod validation schemas
+│   ├── typescript-interface/ # Shared TypeScript types
+│   ├── shared/               # Shared utilities
+│   ├── i18n/                 # Internationalization (en, fr)
+│   ├── eslint-config/        # Shared ESLint config
+│   └── typescript-config/    # Shared TypeScript config
+└── infra/
+    ├── docker/               # Compose files (dev, test, pre-prod)
+    └── traefik/              # Traefik static + dynamic configuration
+```
+
+Each dependency is declared in the workspace that actually imports it; the root `package.json` only carries the
+cross-cutting tooling (Turborepo, TypeScript, Prettier, ESLint, Playwright).
+
+## Architecture
+
+### Deployment flow
+
+```
+Git push → Webhook → Inngest build pipeline → docker-api → Container + Traefik route
+```
+
+### Build pipeline
+
+Inngest runs the build as resumable steps — a failed build restarts from `Build.lastCompletedStep`, not from zero:
+
+1. Clone the repository with the OAuth token
+2. Prepare the Dockerfile
+3. Write the decrypted environment variables to `.env`
+4. Build the Docker image (logs streamed over SSE)
+5. Deploy the container and register its Traefik route
+6. Clean up and finalize the logs
+
+### Real-time updates
+
+```
+Docker events → State manager → SSE → Zustand store → React UI
+```
+
+A single `EventSource` connection multiplexes every channel (containers, images, builds, Traefik requests…).
+
+### Server actions vs API routes
+
+Mutations go through `next-safe-action` server actions; **every read is a Next.js API route**. Client components
+call `fetch('/api/...')` instead of a server action.
+
+## Production deployment
+
+```bash
+./install.sh
+```
+
+The script asks for your domain and a Let's Encrypt email, generates the secrets and `.env.production`, renders the
+Traefik static configuration, then builds and starts `infra/docker/docker-compose.pre-prod.yml` (Postgres, Inngest,
+Traefik, nexploy, docker-api).
+
+Requirements: DNS pointing at the machine, ports **80** and **443** open (Let's Encrypt uses an HTTP challenge), and
+at least **4 GB of RAM** for the image build.
 
 ## Security
 
 - Environment variables encrypted at rest (AES-256-CBC)
-- OAuth tokens securely stored with automatic refresh
+- OAuth tokens stored encrypted and refreshed automatically
 - Webhook secrets validate Git provider callbacks
+- Service-to-service calls authenticated with a Better Auth API key
 - CSRF protection and session-based authentication
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Run `pnpm lint && pnpm types` before committing
+1. Fork the repository and create a feature branch
+2. Run `pnpm types` before committing
+3. Add every new user-facing string to **both** the `en` and `fr` locales in `packages/i18n`
 4. Open a Pull Request
 
 ## Acknowledgments
