@@ -1,7 +1,8 @@
-import { auth } from '@/lib/auth/auth';
 import { getPrismaClient } from './getPrismaClient';
+import { createSeedAuth } from './seedAuth';
 
 const prisma = getPrismaClient();
+const auth = createSeedAuth(prisma);
 
 const DOCKER_API_USER_ID = 'docker-api-system';
 const DOCKER_API_KEY_NAME = 'docker-api';

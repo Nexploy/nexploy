@@ -41,7 +41,7 @@ services:
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ../traefik/traefik.pre-prod.yml:/etc/traefik/traefik.yml:ro
+      - ${TRAEFIK_STATIC_CONFIG:-../traefik/traefik.pre-prod.yml}:/etc/traefik/traefik.yml:ro
       - ../traefik/service:/etc/traefik/dynamic
       - traefik_acme:/etc/traefik
     ports:
@@ -64,6 +64,15 @@ services:
     restart: unless-stopped
     networks:
       - nexploy_network_pre_prod
+      - nexploy_traefik_network_pre_prod
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=nexploy_traefik_network_pre_prod"
+      - "traefik.http.routers.nexploy-app.rule=Host(`${DOMAIN:?DOMAIN is required}`)"
+      - "traefik.http.routers.nexploy-app.entrypoints=websecure"
+      - "traefik.http.routers.nexploy-app.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.nexploy-app.middlewares=gzip-compress@file,security-headers@file"
+      - "traefik.http.services.nexploy-app.loadbalancer.server.port=3000"
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://${POSTGRES_USER:-nexploy}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nexploy}

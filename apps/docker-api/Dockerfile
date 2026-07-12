@@ -1,13 +1,13 @@
 # ---- Base ----
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 # Disable anonymous telemetry/update notices for a quiet, reproducible build
 ENV TURBO_TELEMETRY_DISABLED=1
 ENV DO_NOT_TRACK=1
 # pnpm global bin dir (used for turbo, esbuild)
 ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
+ENV PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
 RUN apk add --no-cache libc6-compat
-RUN corepack enable && corepack prepare pnpm@10.18.3 --activate
+RUN corepack enable && corepack prepare pnpm@11.9.0 --activate
 
 # ---- Prepare (prune monorepo) ----
 FROM base AS prepare
@@ -53,7 +53,7 @@ RUN pnpm add -g esbuild && esbuild apps/docker-api/src/index.ts \
 FROM docker:27-cli AS docker-cli
 
 # ---- Runner ----
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 
 COPY --from=docker-cli /usr/local/bin/docker /usr/local/bin/docker
