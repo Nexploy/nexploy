@@ -24,3 +24,11 @@ export const runCleanupSchema = z.object({
 });
 
 export type RunCleanupInput = z.infer<typeof runCleanupSchema>;
+
+export const buildCachePruneSchema = z.object({
+    all: z.boolean().optional(),
+    keepStorage: z.number().int().nonnegative().optional(),
+    filter: z.string().optional(),
+});
+
+export type BuildCachePruneInput = z.infer<typeof buildCachePruneSchema>;

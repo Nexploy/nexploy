@@ -503,6 +503,10 @@
                 "name": "Prune Images",
                 "description": "Remove unused Docker images to free disk space"
             },
+            "prune-build-cache": {
+                "name": "Prune Build Cache",
+                "description": "Clear the Docker build cache to free disk space"
+            },
             "delete-image": {
                 "name": "Delete Image",
                 "description": "Delete a specific Docker image by name or ID"
@@ -736,6 +740,9 @@
             "pruneOnlyDangling": "Only Dangling Images",
             "pruneOlderThan": "Older Than",
             "pruneFilter": "Label Filter",
+            "pruneBuildCacheAll": "Remove All Cache",
+            "pruneBuildCacheKeepStorage": "Keep Storage",
+            "pruneBuildCacheFilter": "Filter",
             "downloadDestination": "Destination Directory",
             "downloadFilename": "Filename",
             "downloadFilenamePlaceholder": "Leave empty to use filename from URL",
@@ -867,6 +874,8 @@
             "gitRemotePlaceholder": "origin",
             "pruneOlderThanPlaceholder": "24h",
             "pruneFilterPlaceholder": "label=project=myapp",
+            "pruneBuildCacheKeepStoragePlaceholder": "10GB",
+            "pruneBuildCacheFilterPlaceholder": "until=24h",
             "webhookUrlPlaceholder": "https://hooks.example.com/…",
             "jsonBodyPlaceholder": "'{'\"key\": \"value\"'}'",
             "httpUrlPlaceholder": "https://example.com/webhook",
@@ -938,6 +947,7 @@
             "outputFile": "Output file",
             "filename": "Filename",
             "removedImages": "Removed images",
+            "deletedCaches": "Deleted cache entries",
             "reclaimedSpace": "Reclaimed space",
             "versionNumber": "Version number",
             "serviceName": "Service name",
@@ -995,6 +1005,7 @@
             "desc_repoUrl": "URL of the cloned repository",
             "desc_targetDir": "Directory where the repository was cloned",
             "desc_removedImages": "Number of Docker images removed",
+            "desc_deletedCaches": "Number of build cache entries removed",
             "desc_reclaimedSpace": "Disk space reclaimed in bytes",
             "desc_versionNumber": "Version number that was saved",
             "serviceId": "Service ID",

@@ -503,6 +503,10 @@
                 "name": "Nettoyer les images",
                 "description": "Supprime les images Docker inutilisées pour libérer de l'espace disque"
             },
+            "prune-build-cache": {
+                "name": "Vider le cache de build",
+                "description": "Vide le cache de build Docker pour libérer de l'espace disque"
+            },
             "delete-image": {
                 "name": "Supprimer une image",
                 "description": "Supprime une image Docker spécifique par nom ou identifiant"
@@ -744,6 +748,9 @@
             "pruneFilter": "Filtre par label",
             "pruneOlderThan": "Plus ancien que",
             "pruneOnlyDangling": "Uniquement les images orphelines",
+            "pruneBuildCacheAll": "Supprimer tout le cache",
+            "pruneBuildCacheKeepStorage": "Cache à conserver",
+            "pruneBuildCacheFilter": "Filtre",
             "scanImage": "Nom de l'image",
             "scanImagePlaceholder": "ex. image:version",
             "noImagesAvailable": "Aucune image disponible",
@@ -867,6 +874,8 @@
             "gitRemotePlaceholder": "origin",
             "pruneOlderThanPlaceholder": "24h",
             "pruneFilterPlaceholder": "label=project=myapp",
+            "pruneBuildCacheKeepStoragePlaceholder": "10GB",
+            "pruneBuildCacheFilterPlaceholder": "until=24h",
             "webhookUrlPlaceholder": "https://hooks.example.com/…",
             "jsonBodyPlaceholder": "'{'\"key\": \"value\"'}'",
             "httpUrlPlaceholder": "https://example.com/webhook",
@@ -938,6 +947,7 @@
             "outputFile": "Fichier de sortie",
             "filename": "Nom de fichier",
             "removedImages": "Images supprimées",
+            "deletedCaches": "Entrées de cache supprimées",
             "reclaimedSpace": "Espace récupéré",
             "versionNumber": "Numéro de version",
             "serviceName": "Nom du service",
@@ -995,6 +1005,7 @@
             "desc_repoUrl": "URL du dépôt cloné",
             "desc_targetDir": "Répertoire où le dépôt a été cloné",
             "desc_removedImages": "Nombre d'images Docker supprimées",
+            "desc_deletedCaches": "Nombre d'entrées du cache de build supprimées",
             "desc_reclaimedSpace": "Espace disque récupéré en octets",
             "desc_versionNumber": "Numéro de version qui a été sauvegardé",
             "serviceId": "ID du service",

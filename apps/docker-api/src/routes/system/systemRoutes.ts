@@ -1,7 +1,10 @@
 import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
 import { route } from '@/utils/route';
-import type { CleanupTarget } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
+import {
+    buildCachePruneSchema,
+    type CleanupTarget,
+} from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
 import type { DiskUsage } from '@workspace/typescript-interface/docker/docker.system';
 
 const app = new Hono();
@@ -20,6 +23,10 @@ interface DfVolume {
 interface DfBuildCache {
     Size?: number;
     InUse?: boolean;
+}
+interface BuildCachePruneResult {
+    CachesDeleted?: string[];
+    SpaceReclaimed?: number;
 }
 
 app.get(
@@ -140,6 +147,55 @@ app.post(
         const target = c.req.param('target') as CleanupTarget;
         const reclaimedSpace = await runCleanup(target);
         return { reclaimedSpace };
+    }),
+);
+
+function parseFilters(filter?: string): Record<string, string[]> {
+    if (!filter) return {};
+
+    const filters: Record<string, string[]> = {};
+    for (const entry of filter.split(',')) {
+        const [key, ...rest] = entry.split('=');
+        const name = key?.trim();
+        const value = rest.join('=').trim();
+        if (!name || !value) continue;
+        filters[name] = [...(filters[name] ?? []), value];
+    }
+    return filters;
+}
+
+app.post(
+    '/build-cache/prune',
+    route({ json: buildCachePruneSchema }, async (c) => {
+        const { all, keepStorage, filter } = c.req.valid('json');
+
+        const query = new URLSearchParams();
+        if (all) query.set('all', 'true');
+        if (keepStorage !== undefined) query.set('keep-storage', String(keepStorage));
+
+        const filters = parseFilters(filter);
+        if (Object.keys(filters).length > 0) query.set('filters', JSON.stringify(filters));
+
+        const queryString = query.toString();
+
+        const result = await new Promise<BuildCachePruneResult>((resolve, reject) => {
+            docker.modem.dial(
+                {
+                    path: `/build/prune${queryString ? `?${queryString}` : ''}`,
+                    method: 'POST',
+                    statusCodes: { 200: true, 500: 'server error' },
+                },
+                (err: Error | null, data: unknown) => {
+                    if (err) return reject(err);
+                    resolve((data ?? {}) as BuildCachePruneResult);
+                },
+            );
+        });
+
+        return {
+            deletedCaches: result.CachesDeleted?.length ?? 0,
+            reclaimedSpace: result.SpaceReclaimed ?? 0,
+        };
     }),
 );
 
